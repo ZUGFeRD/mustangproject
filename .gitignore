@@ -1,5 +1,9 @@
-/target
-/.project
-/.classpath
-/.settings
-/PDFA*.pdf
+.project
+.classpath
+.settings/
+PDFA*.pdf
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.next
+release.properties
