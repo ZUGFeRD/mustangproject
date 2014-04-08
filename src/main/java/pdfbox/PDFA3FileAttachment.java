@@ -161,7 +161,7 @@ public class PDFA3FileAttachment
 
       doc.addPage(page);
 
-      InputStream fontStream = PDFA3FileAttachment.class.getResourceAsStream("/Ubuntu-R.ttf");
+      InputStream fontStream = PDFA3FileAttachment.class.getResourceAsStream("/resources/Ubuntu-R.ttf");
       PDFont font = PDTrueTypeFont.loadTTF(doc, fontStream);
 
       // create a page with the message where needed
@@ -237,7 +237,7 @@ public class PDFA3FileAttachment
     doc.getDocumentCatalog().setMarkInfo(markinfo);
 
     pdfaid.setPart(3);
-    pdfaid.setConformance("A");/*
+    pdfaid.setConformance("B");/*
                                 * All files are PDF/A-3, setConformance refers
                                 * to the level conformance, e.g. PDF/A-3-B where
                                 * B means only visually preservable, U means
