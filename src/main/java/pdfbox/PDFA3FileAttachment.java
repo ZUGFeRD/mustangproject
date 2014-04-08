@@ -20,9 +20,8 @@ package pdfbox;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.transform.TransformerException;
 
@@ -33,7 +32,6 @@ import org.apache.jempbox.xmp.XMPSchemaPDF;
 import org.apache.jempbox.xmp.pdfa.XMPSchemaPDFAId;
 import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSDictionary;
-import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -87,7 +85,7 @@ public class PDFA3FileAttachment
     // set some of the attributes of the embedded file
 
     ef.setSubtype("text/plain");
-    ef.setFile(fs);
+//    ef.setFile(fs);
 //    ef.getStream().setItem(COSName.UF, fs);
 
     ef.setModDate(GregorianCalendar.getInstance());
@@ -103,9 +101,7 @@ public class PDFA3FileAttachment
     fs.setEmbeddedFile(ef);
 
     // now add the entry to the embedded file tree and set in the document.
-    Map efMap = new HashMap();
-    efMap.put("My first attachment", fs);
-    efTree.setNames(efMap);
+    efTree.setNames(Collections.singletonMap("My first attachment", fs));
 
     /**
      * Validating file "RE-20131206_22.pdf" for conformance level pdfa-3a The
@@ -161,7 +157,7 @@ public class PDFA3FileAttachment
 
       doc.addPage(page);
 
-      InputStream fontStream = PDFA3FileAttachment.class.getResourceAsStream("/resources/Ubuntu-R.ttf");
+      InputStream fontStream = PDFA3FileAttachment.class.getResourceAsStream("/Ubuntu-R.ttf");
       PDFont font = PDTrueTypeFont.loadTTF(doc, fontStream);
 
       // create a page with the message where needed
