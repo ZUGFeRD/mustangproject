@@ -31,7 +31,9 @@ import org.apache.jempbox.xmp.XMPSchemaBasic;
 import org.apache.jempbox.xmp.XMPSchemaDublinCore;
 import org.apache.jempbox.xmp.XMPSchemaPDF;
 import org.apache.jempbox.xmp.pdfa.XMPSchemaPDFAId;
+import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSDictionary;
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -71,7 +73,8 @@ public class PDFA3FileAttachment
     fs.setFile("Test.txt");
     COSDictionary dict = fs.getCOSDictionary();
     // Relation "Source" for linking with eg. catalog
-    dict.setName("AFRelationship", "Source");
+    dict.setName("AFRelationship", "Alternative");
+//    dict.setName("AFRelationship", "Source");
 
     dict.setString("UF", "Test.txt");
     // fs.put(new PdfName("AFRelationship"), new PdfName("Source"));
@@ -85,6 +88,7 @@ public class PDFA3FileAttachment
 
     ef.setSubtype("text/plain");
     ef.setFile(fs);
+//    ef.getStream().setItem(COSName.UF, fs);
 
     ef.setModDate(GregorianCalendar.getInstance());
 
@@ -92,7 +96,7 @@ public class PDFA3FileAttachment
     // src.getAbsolutePath(), src.getName(), null, false, "image/jpeg",
     // fileParameter);
 
-    // fs.put(new PdfName("AFRelationship"), new PdfName("Source"));
+//     fs.put(new PdfName("AFRelationship"), new PdfName("Source"));
 
     ef.setSize(payload.length());
     ef.setCreationDate(new GregorianCalendar());
@@ -111,10 +115,17 @@ public class PDFA3FileAttachment
      * */
     // attachments are stored as part of the "names" dictionary in the document
     // catalog
+    PDDocumentCatalog catalog = doc.getDocumentCatalog();
+
     PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
     names.setEmbeddedFiles(efTree);
-
-    doc.getDocumentCatalog().setNames(names);
+    catalog.setNames(names);
+    
+    // AF entry (Array) in catalog with the FileSpec
+    COSArray cosArray = new COSArray();
+    cosArray.add(fs);
+    catalog.getCOSDictionary().setItem("AF", cosArray);
+    
 
   }
 
