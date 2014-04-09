@@ -1,4 +1,9 @@
 PDFA3
 =====
 
-A demo application how to create PDF/A3 files with file attachments using Apache PDFBOX
+Some samples how to create PDF/A3 files and PDF/A3 files with embedded files using Apache PDFBOX.
+
+License
+-----
+
+The samples PDFAFile, PDFA3File and PDFA3FileAttachment are subject to the Apache license http://www.apache.org/licenses/LICENSE-2.0.html
