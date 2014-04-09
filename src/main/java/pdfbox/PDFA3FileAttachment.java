@@ -233,7 +233,7 @@ public class PDFA3FileAttachment
     doc.getDocumentCatalog().setMarkInfo(markinfo);
 
     pdfaid.setPart(3);
-    pdfaid.setConformance("B");/*
+    pdfaid.setConformance("A");/*
                                 * All files are PDF/A-3, setConformance refers
                                 * to the level conformance, e.g. PDF/A-3-B where
                                 * B means only visually preservable, U means
