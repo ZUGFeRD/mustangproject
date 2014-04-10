@@ -12,3 +12,9 @@ Running
 -----
 
 Requires Maven to run. Use "mvn test" to generate the output.
+
+
+Contact
+-----
+
+Developers: Thomas Chojecki and Jochen Stärk. For questions please contact Jochen at jstaerk [at] usegroup.de 
