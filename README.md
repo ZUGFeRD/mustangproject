@@ -1,17 +1,19 @@
 PDFA3
 =====
 
-Some samples how to create PDF/A3 files and PDF/A3 files with embedded files using Apache PDFBOX.
+Some samples how to create PDF/A3 files and PDF/A3 files with embedded files using Apache PDFBox and
+the source code for the [Mustang project](http://www.mustangproject.org/).
 
 License
 -----
 
-The samples PDFAFile, PDFA3File and PDFA3FileAttachment are subject to the Apache license http://www.apache.org/licenses/LICENSE-2.0.html
+Subject to the Apache license http://www.apache.org/licenses/LICENSE-2.0.html
 
 Running
 -----
 
-Requires Maven to run. Use "mvn test" to generate the output.
+Requires Maven to run. Use "mvn test" to generate the output for the test PDF file attachments,
+chdir to mustang and use "mvn package" to build the Mustang JAR.
 
 
 Contact
