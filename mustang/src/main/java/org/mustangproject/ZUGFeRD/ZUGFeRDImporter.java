@@ -62,7 +62,9 @@ public class ZUGFeRDImporter {
 			etn = names.getEmbeddedFiles();
 			Map<String, COSObjectable> efMap = etn.getNames();
 			// String filePath = "/tmp/";
-
+			if (efMap==null)  {
+				return;
+			}
 			for (String filename : efMap.keySet()) {
 				/**
 				 * currently (in the release candidate of version 1) only one
