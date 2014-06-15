@@ -52,19 +52,20 @@ public class ZUGFeRDImporter {
 	
 
 	public void extract(String pdfFilename) {
-		PDDocument doc;
+		PDDocument doc = null;
 		try {
 			doc = PDDocument.load(pdfFilename);
 //			PDDocumentInformation info = doc.getDocumentInformation();
-			PDEmbeddedFilesNameTreeNode etn;
 			PDDocumentNameDictionary names = new PDDocumentNameDictionary(
 					doc.getDocumentCatalog());
+			PDEmbeddedFilesNameTreeNode etn;
 			etn = names.getEmbeddedFiles();
-			Map<String, COSObjectable> efMap = etn.getNames();
-			// String filePath = "/tmp/";
-			if (efMap==null)  {
+			if (etn==null)  {
+				doc.close();
 				return;
 			}
+			Map<String, COSObjectable> efMap = etn.getNames();
+			// String filePath = "/tmp/";
 			for (String filename : efMap.keySet()) {
 				/**
 				 * currently (in the release candidate of version 1) only one
@@ -92,6 +93,13 @@ public class ZUGFeRDImporter {
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		}
+		finally {
+			try {
+				if(doc!=null) {
+					doc.close();
+				}
+			} catch (IOException e) {}
 		}
 
 	}
