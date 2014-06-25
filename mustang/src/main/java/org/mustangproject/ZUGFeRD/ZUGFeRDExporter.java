@@ -195,18 +195,22 @@ public class ZUGFeRDExporter {
 	private String getZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans) {
 		SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
 		String xml= "﻿<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //$NON-NLS-1$
-				+ "<rsm:Invoice xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CBFBUY:5\"  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"urn:un:unece:uncefact:data:standard:CBFBUY:5 ../Schema/Invoice.xsd\">\n" //$NON-NLS-1$
+				
+				+ "<rsm:CrossIndustryDocument xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:ferd:CrossIndustryDocument:invoice:1p0\""
+				+ " xsi:schemaLocation=\"urn:ferd:CrossIndustryDocument:invoice:1p0 ../Schema/ZUGFeRD_1p0.xsd\""
+				+ " xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12\""
+				+ " xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15\">\n" //$NON-NLS-1$
 				+ "	<rsm:SpecifiedExchangedDocumentContext>\n" //$NON-NLS-1$
-				+ "		<TestIndicator>false</TestIndicator>\n" //$NON-NLS-1$
-				+ "		<GuidelineSpecifiedDocumentContextParameter>\n" //$NON-NLS-1$
-				+ "			<ID>urn:ferd:invoice:rc:comfort</ID>\n" //$NON-NLS-1$
-				+ "		</GuidelineSpecifiedDocumentContextParameter>\n" //$NON-NLS-1$
+				+ "		<ram:TestIndicator><udt:Indicator>false</udt:Indicator></ram:TestIndicator>\n" //$NON-NLS-1$
+				+ "		<ram:GuidelineSpecifiedDocumentContextParameter>\n" //$NON-NLS-1$
+				+ "			<ram:ID>urn:ferd:invoice:rc:comfort</ram:ID>\n" //$NON-NLS-1$
+				+ "		</ram:GuidelineSpecifiedDocumentContextParameter>\n" //$NON-NLS-1$
 				+ "	</rsm:SpecifiedExchangedDocumentContext>\n" //$NON-NLS-1$
 				+ "	<rsm:HeaderExchangedDocument>\n" //$NON-NLS-1$
-				+ "		<ID>"+trans.getNumber()+"</ID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "		<Name>RECHNUNG</Name>\n" //$NON-NLS-1$
-				+ "		<TypeCode>380</TypeCode>\n" //$NON-NLS-1$
-				+ "		<IssueDateTime format=\"102\">"+zugferdDateFormat.format(trans.getIssueDate())+"</IssueDateTime>\n" //date format was 20130605 //$NON-NLS-1$ //$NON-NLS-2$
+				+ "		<ram:ID>"+trans.getNumber()+"</ram:ID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "		<ram:Name>RECHNUNG</ram:Name>\n" //$NON-NLS-1$
+				+ "		<ram:TypeCode>380</ram:TypeCode>\n" //$NON-NLS-1$
+				+ "		<ram:IssueDateTime><udt:DateTimeString format=\"102\">"+zugferdDateFormat.format(trans.getIssueDate())+"</udt:DateTimeString></ram:IssueDateTime>\n" //date format was 20130605 //$NON-NLS-1$ //$NON-NLS-2$
 //				+ "		<IncludedNote>\n"
 //				+ "			<Content>\n"
 //				+ "Rechnung gemäß Bestellung Nr. 2013-471331 vom 01.03.2013.\n"
@@ -221,73 +225,73 @@ public class ZUGFeRDExporter {
 //				+ "		</IncludedNote>\n"
 				+ "	</rsm:HeaderExchangedDocument>\n" //$NON-NLS-1$
 				+ "	<rsm:SpecifiedSupplyChainTradeTransaction>\n" //$NON-NLS-1$
-				+ "		<ApplicableSupplyChainTradeAgreement>\n" //$NON-NLS-1$
+				+ "		<ram:ApplicableSupplyChainTradeAgreement>\n" //$NON-NLS-1$
 //				+ "			<BuyerReference>AB-312</BuyerReference>\n"
-				+ "			<SellerTradeParty>\n" //$NON-NLS-1$
+				+ "			<ram:SellerTradeParty>\n" //$NON-NLS-1$
 //				+ "				<GlobalID schemeID=\"0088\">4000001123452</GlobalID>\n"
-				+ "				<Name>"+trans.getOwnOrganisationName()+"</Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
-/*				+ "				<PostalTradeAddress>\n"
-				+ "					<PostcodeCode>80333</PostcodeCode>\n"
-				+ "					<LineOne>Lieferantenstraße 20</LineOne>\n"
-				+ "					<CityName>München</CityName>\n"
-				+ "					<CountryID>DE</CountryID>\n"
-				+ "				</PostalTradeAddress>\n"*/
-				+ "				<SpecifiedTaxRegistration>\n" //$NON-NLS-1$
-				+ "					<ID schemeID=\"FC\">"+trans.getOwnTaxID()+"</ID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				</SpecifiedTaxRegistration>\n" //$NON-NLS-1$
-				+ "				<SpecifiedTaxRegistration>\n" //$NON-NLS-1$
-				+ "					<ID schemeID=\"VA\">"+trans.getOwnVATID()+"</ID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				</SpecifiedTaxRegistration>\n" //$NON-NLS-1$
-				+ "			</SellerTradeParty>\n" //$NON-NLS-1$
-				+ "			<BuyerTradeParty>\n" //$NON-NLS-1$
+				+ "				<ram:Name>"+trans.getOwnOrganisationName()+"</ram:Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:PostalTradeAddress>\n"
+				+ "					<ram:PostcodeCode>"+trans.getOwnZIP()+"</ram:PostcodeCode>\n"
+				+ "					<ram:LineOne>"+trans.getOwnStreet()+"</ram:LineOne>\n"
+				+ "					<ram:CityName>"+trans.getOwnLocation()+"</ram:CityName>\n"
+				+ "					<ram:CountryID>"+trans.getOwnCountry()+"</ram:CountryID>\n"
+				+ "				</ram:PostalTradeAddress>\n"
+				+ "				<ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
+				+ "					<ram:ID schemeID=\"FC\">"+trans.getOwnTaxID()+"</ram:ID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				</ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
+				+ "				<ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
+				+ "					<ram:ID schemeID=\"VA\">"+trans.getOwnVATID()+"</ram:ID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				</ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
+				+ "			</ram:SellerTradeParty>\n" //$NON-NLS-1$
+				+ "			<ram:BuyerTradeParty>\n" //$NON-NLS-1$
 //				+ "				<ID>GE2020211</ID>\n"
 //				+ "				<GlobalID schemeID=\"0088\">4000001987658</GlobalID>\n"
-				+ "				<Name>"+trans.getRecipient().getName()+"</Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:Name>"+trans.getRecipient().getName()+"</ram:Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
 //				+ "				<DefinedTradeContact>\n"
 //				+ "					<PersonName>xxx</PersonName>\n"
 //				+ "				</DefinedTradeContact>\n"
-				+ "				<PostalTradeAddress>\n" //$NON-NLS-1$
-				+ "					<PostcodeCode>"+trans.getRecipient().getZIP()+"</PostcodeCode>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "					<LineOne>"+trans.getRecipient().getStreet()+"</LineOne>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "					<CityName>"+trans.getRecipient().getLocation()+"</CityName>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "					<CountryID>"+trans.getRecipient().getCountry()+"</CountryID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				</PostalTradeAddress>\n" //$NON-NLS-1$
-				+ "				<SpecifiedTaxRegistration>\n" //$NON-NLS-1$
-				+ "					<ID schemeID=\"VA\">"+trans.getRecipient().getVATID()+"</ID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				</SpecifiedTaxRegistration>\n" //$NON-NLS-1$
-				+ "			</BuyerTradeParty>\n" //$NON-NLS-1$
+				+ "				<ram:PostalTradeAddress>\n" //$NON-NLS-1$
+				+ "					<ram:PostcodeCode>"+trans.getRecipient().getZIP()+"</ram:PostcodeCode>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "					<ram:LineOne>"+trans.getRecipient().getStreet()+"</ram:LineOne>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "					<ram:CityName>"+trans.getRecipient().getLocation()+"</ram:CityName>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "					<ram:CountryID>"+trans.getRecipient().getCountry()+"</ram:CountryID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				</ram:PostalTradeAddress>\n" //$NON-NLS-1$
+				+ "				<ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
+				+ "					<ram:ID schemeID=\"VA\">"+trans.getRecipient().getVATID()+"</ram:ID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				</ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
+				+ "			</ram:BuyerTradeParty>\n" //$NON-NLS-1$
 //				+ "			<BuyerOrderReferencedDocument>\n"
 //				+ "				<IssueDateTime format=\"102\">20130301</IssueDateTime>\n"
 //				+ "			<ID>2013-471331</ID>\n"
 //				+ "			</BuyerOrderReferencedDocument>\n"
-				+ "		</ApplicableSupplyChainTradeAgreement>\n" //$NON-NLS-1$
-/*				+ "		<ApplicableSupplyChainTradeDelivery>\n"
-				+ "			<ActualDeliverySupplyChainEvent>\n"
-				+ "				<OccurrenceDateTime format=\"102\">20130603</OccurrenceDateTime>\n"
-				+ "			</ActualDeliverySupplyChainEvent>\n"
+				+ "		</ram:ApplicableSupplyChainTradeAgreement>\n" //$NON-NLS-1$
+				+ "		<ram:ApplicableSupplyChainTradeDelivery>\n"
+				+ "			<ram:ActualDeliverySupplyChainEvent>\n"
+				+ "				<ram:OccurrenceDateTime><udt:DateTimeString format=\"102\">"+zugferdDateFormat.format(trans.getDeliveryDate())+"</udt:DateTimeString></ram:OccurrenceDateTime>\n"
+				+ "			</ram:ActualDeliverySupplyChainEvent>\n"
+				/*
 				+ "			<DeliveryNoteReferencedDocument>\n"
 				+ "				<IssueDateTime format=\"102\">20130603</IssueDateTime>\n"
 				+ "				<ID>2013-51112</ID>\n"
-				+ "			</DeliveryNoteReferencedDocument>\n"
-				+ "		</ApplicableSupplyChainTradeDelivery>\n"*/
-				+ "		<ApplicableSupplyChainTradeSettlement>\n" //$NON-NLS-1$
-				// it's unclear if this is supposed to refer to the SEPA mandate or the transaction purpose
-//				+ "			<PaymentReference>"+trans.getNumber()+"</PaymentReference>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "			<InvoiceCurrencyCode>EUR</InvoiceCurrencyCode>\n" //$NON-NLS-1$
-				+ "			<SpecifiedTradeSettlementPaymentMeans>\n" //$NON-NLS-1$
-				+ "				<TypeCode>42</TypeCode>\n" //$NON-NLS-1$
-				+ "				<Information>Überweisung</Information>\n" //$NON-NLS-1$
-				+ "				<PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
-				+ "					<IBANID>"+trans.getOwnIBAN()+"</IBANID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				</PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
-				+ "				<PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
-				+ "					<BICID>"+trans.getOwnBIC()+"</BICID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "					<Name>"+trans.getOwnBankName()+"</Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				</PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
-				+ "			</SpecifiedTradeSettlementPaymentMeans>\n"; //$NON-NLS-1$
+				+ "			</DeliveryNoteReferencedDocument>\n" */
+				+ "		</ram:ApplicableSupplyChainTradeDelivery>\n"
+				+ "		<ram:ApplicableSupplyChainTradeSettlement>\n" //$NON-NLS-1$
+				+ "			<ram:PaymentReference>"+trans.getNumber()+"</ram:PaymentReference>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "			<ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>\n" //$NON-NLS-1$
+				+ "			<ram:SpecifiedTradeSettlementPaymentMeans>\n" //$NON-NLS-1$
+				+ "				<ram:TypeCode>42</ram:TypeCode>\n" //$NON-NLS-1$
+				+ "				<ram:Information>Überweisung</ram:Information>\n" //$NON-NLS-1$
+				+ "				<ram:PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
+				+ "					<ram:IBANID>"+trans.getOwnIBAN()+"</ram:IBANID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				</ram:PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
+				+ "				<ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
+				+ "					<ram:BICID>"+trans.getOwnBIC()+"</ram:BICID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "					<ram:Name>"+trans.getOwnBankName()+"</ram:Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				</ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
+				+ "			</ram:SpecifiedTradeSettlementPaymentMeans>\n"; //$NON-NLS-1$
 				
 		
-		
+		/*
 		HashMap<BigDecimal, BigDecimal> VATPercentAmountMap=trans.getVATPercentAmountMap();
 		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
 			BigDecimal amount = VATPercentAmountMap.get(currentTaxPercent);
@@ -303,7 +307,7 @@ public class ZUGFeRDExporter {
 
 	
 			}
-		}
+		}*/
 /*				xml+= "
 				+ "			<SpecifiedTradeAllowanceCharge>\n"
 				+ "				<ChargeIndicator>false</ChargeIndicator>\n"
@@ -337,21 +341,21 @@ public class ZUGFeRDExporter {
 				+ "				</AppliedTradeTax>\n"
 				+ "			</SpecifiedLogisticsServiceCharge>\n"*/
 		
-				xml=xml+ "			<SpecifiedTradePaymentTerms>\n" //$NON-NLS-1$
+				xml=xml+ "			<ram:SpecifiedTradePaymentTerms>\n" //$NON-NLS-1$
 //				+ "				<Description>Zahlbar innerhalb 30 Tagen netto bis 04.07.2013, 3% Skonto innerhalb 10 Tagen bis 15.06.2013</Description>\n"
-				+ "				<DueDateDateTime format=\"102\">"+zugferdDateFormat.format(trans.getDueDate())+"</DueDateDateTime>\n"//20130704 //$NON-NLS-1$ //$NON-NLS-2$
-				+ "			</SpecifiedTradePaymentTerms>\n" //$NON-NLS-1$
-				+ "			<SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
-				+ "				<LineTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal(), '.')+"</LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:DueDateDateTime><udt:DateTimeString format=\"102\">"+zugferdDateFormat.format(trans.getDueDate())+"</udt:DateTimeString></ram:DueDateDateTime>\n"//20130704 //$NON-NLS-1$ //$NON-NLS-2$
+				+ "			</ram:SpecifiedTradePaymentTerms>\n" //$NON-NLS-1$
+				+ "			<ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
+				+ "				<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal(), '.')+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 //				+ "				<ChargeTotalAmount currencyID=\"EUR\">5.80</ChargeTotalAmount>\n"
 //				+ "				<AllowanceTotalAmount currencyID=\"EUR\">14.73</AllowanceTotalAmount>\n"
-				+ "				<TaxBasisTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal(), '.')+"</TaxBasisTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				<TaxTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross().subtract(trans.getTotal()), '.')+"</TaxTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				<GrandTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross(), '.')+"</GrandTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:TaxBasisTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal(), '.')+"</ram:TaxBasisTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:TaxTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross().subtract(trans.getTotal()), '.')+"</ram:TaxTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:GrandTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross(), '.')+"</ram:GrandTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 //				+ "				<TotalPrepaidAmount currencyID=\"EUR\">0.00</TotalPrepaidAmount>\n"
-				+ "				<DuePayableAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross(), '.')+"</DuePayableAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "			</SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
-				+ "		</ApplicableSupplyChainTradeSettlement>\n"; //$NON-NLS-1$
+				+ "				<ram:DuePayableAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross(), '.')+"</ram:DuePayableAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "			</ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
+				+ "		</ram:ApplicableSupplyChainTradeSettlement>\n"; //$NON-NLS-1$
 //				+ "		<IncludedSupplyChainTradeLineItem>\n"
 //				+ "			<AssociatedDocumentLineDocument>\n"
 //				+ "				<IncludedNote>\n"
@@ -364,48 +368,48 @@ public class ZUGFeRDExporter {
 				int lineID=0;
 				for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 					lineID++;
-					xml=xml+ "		<IncludedSupplyChainTradeLineItem>\n"+ //$NON-NLS-1$
-					"			<AssociatedDocumentLineDocument>\n" //$NON-NLS-1$
-							+ "				<LineID>"+lineID+"</LineID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-							+ "			</AssociatedDocumentLineDocument>\n" //$NON-NLS-1$
+					xml=xml+ "		<ram:IncludedSupplyChainTradeLineItem>\n"+ //$NON-NLS-1$
+					"			<ram:AssociatedDocumentLineDocument>\n" //$NON-NLS-1$
+							+ "				<ram:LineID>"+lineID+"</ram:LineID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "			</ram:AssociatedDocumentLineDocument>\n" //$NON-NLS-1$
 							
-							+ "			<SpecifiedSupplyChainTradeAgreement>\n" //$NON-NLS-1$
-							+ "				<GrossPriceProductTradePrice>\n" //$NON-NLS-1$
-							+ "					<ChargeAmount currencyID=\"EUR\">"+currencyFormat(currentItem.getPriceGross(),'.')+"</ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-							+ "					<BasisQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">1</BasisQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "			<ram:SpecifiedSupplyChainTradeAgreement>\n" //$NON-NLS-1$
+							+ "				<ram:GrossPriceProductTradePrice>\n" //$NON-NLS-1$
+							+ "					<ram:ChargeAmount currencyID=\"EUR\">"+currencyFormat(currentItem.getPriceGross(),'.')+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "					<ram:BasisQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">1</ram:BasisQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$
 //							+ "					<AppliedTradeAllowanceCharge>\n"
 //							+ "						<ChargeIndicator>false</ChargeIndicator>\n"
 //							+ "						<ActualAmount currencyID=\"EUR\">0.6667</ActualAmount>\n"
 //							+ "						<Reason>Rabatt</Reason>\n"
 //							+ "					</AppliedTradeAllowanceCharge>\n"
-							+ "				</GrossPriceProductTradePrice>\n" //$NON-NLS-1$
-							+ "				<NetPriceProductTradePrice>\n" //$NON-NLS-1$
-							+ "					<ChargeAmount currencyID=\"EUR\">"+currencyFormat(currentItem.getPrice(),'.')+"</ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-							+ "					<BasisQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">1</BasisQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$
-							+ "				</NetPriceProductTradePrice>\n" //$NON-NLS-1$
-							+ "			</SpecifiedSupplyChainTradeAgreement>\n" //$NON-NLS-1$
+							+ "				</ram:GrossPriceProductTradePrice>\n" //$NON-NLS-1$
+							+ "				<ram:NetPriceProductTradePrice>\n" //$NON-NLS-1$
+							+ "					<ram:ChargeAmount currencyID=\"EUR\">"+currencyFormat(currentItem.getPrice(),'.')+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "					<ram:BasisQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">1</ram:BasisQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "				</ram:NetPriceProductTradePrice>\n" //$NON-NLS-1$
+							+ "			</ram:SpecifiedSupplyChainTradeAgreement>\n" //$NON-NLS-1$
 							
-							+ "			<SpecifiedSupplyChainTradeDelivery>\n" //$NON-NLS-1$
-							+ "				<BilledQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">"+currentItem.getQuantity()+"</BilledQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							+ "			</SpecifiedSupplyChainTradeDelivery>\n" //$NON-NLS-1$
-							+ "			<SpecifiedSupplyChainTradeSettlement>\n" //$NON-NLS-1$
-							+ "				<ApplicableTradeTax>\n" //$NON-NLS-1$
-							+ "					<TypeCode>VAT</TypeCode>\n" //$NON-NLS-1$
-							+ "					<CategoryCode>S</CategoryCode>\n" //$NON-NLS-1$
-							+ "					<ApplicablePercent>"+currentItem.getProduct().getVATPercent()+"</ApplicablePercent>\n" //$NON-NLS-1$ //$NON-NLS-2$
-							+ "				</ApplicableTradeTax>\n" //$NON-NLS-1$
-							+ "				<SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
-							+ "					<LineTotalAmount currencyID=\"EUR\">"+currencyFormat(currentItem.getTotalGross(),'.')+"</LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-							+ "				</SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
-							+ "			</SpecifiedSupplyChainTradeSettlement>\n" //$NON-NLS-1$
-							+ "			<SpecifiedTradeProduct>\n" //$NON-NLS-1$
+							+ "			<ram:SpecifiedSupplyChainTradeDelivery>\n" //$NON-NLS-1$
+							+ "				<ram:BilledQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">"+currentItem.getQuantity()+"</ram:BilledQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							+ "			</ram:SpecifiedSupplyChainTradeDelivery>\n" //$NON-NLS-1$
+							+ "			<ram:SpecifiedSupplyChainTradeSettlement>\n" //$NON-NLS-1$
+							+ "				<ram:ApplicableTradeTax>\n" //$NON-NLS-1$
+							+ "					<ram:TypeCode>VAT</ram:TypeCode>\n" //$NON-NLS-1$
+							+ "					<ram:CategoryCode>S</ram:CategoryCode>\n" //$NON-NLS-1$
+							+ "					<ram:ApplicablePercent>"+currentItem.getProduct().getVATPercent()+"</ram:ApplicablePercent>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "				</ram:ApplicableTradeTax>\n" //$NON-NLS-1$
+							+ "				<ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
+							+ "					<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(currentItem.getTotalGross(),'.')+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "				</ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
+							+ "			</ram:SpecifiedSupplyChainTradeSettlement>\n" //$NON-NLS-1$
+							+ "			<ram:SpecifiedTradeProduct>\n" //$NON-NLS-1$
 //							+ "				<GlobalID schemeID=\"0160\">4012345001235</GlobalID>\n"
 //							+ "				<SellerAssignedID>KR3M</SellerAssignedID>\n"
 //							+ "				<BuyerAssignedID>55T01</BuyerAssignedID>\n"
-							+ "				<Name>"+currentItem.getProduct().getName()+"</Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
-							+ "				<Description>"+currentItem.getProduct().getDescription()+"</Description>\n" //$NON-NLS-1$ //$NON-NLS-2$
-							+ "			</SpecifiedTradeProduct>\n" //$NON-NLS-1$
-							+ "		</IncludedSupplyChainTradeLineItem>\n"; //$NON-NLS-1$
+							+ "				<ram:Name>"+currentItem.getProduct().getName()+"</ram:Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "				<ram:Description>"+currentItem.getProduct().getDescription()+"</ram:Description>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "			</ram:SpecifiedTradeProduct>\n" //$NON-NLS-1$
+							+ "		</ram:IncludedSupplyChainTradeLineItem>\n"; //$NON-NLS-1$
 							
 								
 					
@@ -413,7 +417,7 @@ public class ZUGFeRDExporter {
 				
 				
 				xml=xml	+ "	</rsm:SpecifiedSupplyChainTradeTransaction>\n" //$NON-NLS-1$
-				+ "</rsm:Invoice>"; //$NON-NLS-1$
+				+ "</rsm:CrossIndustryDocument>"; //$NON-NLS-1$
 				return xml;
 	}
 

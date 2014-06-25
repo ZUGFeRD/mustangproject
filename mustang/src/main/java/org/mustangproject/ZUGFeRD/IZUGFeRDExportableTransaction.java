@@ -3,8 +3,8 @@ package org.mustangproject.ZUGFeRD;
  * Mustangproject's ZUGFeRD implementation
  * Neccessary interface for ZUGFeRD exporter
  * Licensed under the APLv2
- * @date 2014-05-10
- * @version 1.0
+ * @date 2014-05-10 to 2014-06-25
+ * @version 1.0.2
  * @author jstaerk
  * */
 
@@ -91,12 +91,44 @@ public interface IZUGFeRDExportableTransaction {
 	String getOwnOrganisationName();
 
 	/**
+	 * own street address
+	 * @return
+	 */
+	String getOwnStreet();
+
+	/**
+	 * own street postal code
+	 * @return
+	 */
+	String getOwnZIP();
+	
+	/**
+	 * own city
+	 * @return
+	 */
+	String getOwnLocation();
+
+	/**
+	 * own two digit country code
+	 * @return
+	 */
+	String getOwnCountry();
+	
+	/**
+	 * get delivery date
+	 * @return
+	 */
+	Date getDeliveryDate();
+	
+	
+	
+	/**
 	 * which taxes have been used with which amounts in this transaction,
 	 * empty for no taxes, or e.g. 19=>190 and 7=>14 if 1000 Eur were applicable
 	 * to 19% VAT (=>190 EUR VAT) and 200 EUR were applicable to 7% (=>14 EUR VAT)
 	 * 190 Eur  
 	 * @return
-	 */
+	 *
 	HashMap<BigDecimal, BigDecimal> getVATPercentAmountMap();
-	
+	*/
 }
