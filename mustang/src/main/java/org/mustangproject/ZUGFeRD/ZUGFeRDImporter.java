@@ -28,6 +28,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+//root.setNamespace(Namespace.getNamespace("http://www.energystar.gov/manageBldgs/req"));
+
 public class ZUGFeRDImporter {
 	/*
 	call extract(importFilename). 
@@ -110,6 +112,7 @@ public class ZUGFeRDImporter {
 		Document document = null;
 
 		factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true); //otherwise we can not act namespace independend, i.e. use document.getElementsByTagNameNS("*",...
 		try {
 			builder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException ex3) {
@@ -125,10 +128,13 @@ public class ZUGFeRDImporter {
 		} catch (IOException ex2) {
 			ex2.printStackTrace();
 		}
+		NodeList ndList ;
+		
 		// rootNode = document.getDocumentElement();
 		// ApplicableSupplyChainTradeSettlement
-		NodeList ndList = document
-				.getElementsByTagName("PaymentReference"); //$NON-NLS-1$
+		 ndList =  document.getDocumentElement()
+				.getElementsByTagNameNS("*","PaymentReference"); //$NON-NLS-1$
+				
 		for (int bookingIndex = 0; bookingIndex < ndList
 				.getLength(); bookingIndex++) {
 			Node booking = ndList.item(bookingIndex);
@@ -158,26 +164,38 @@ public class ZUGFeRDImporter {
 			setIBAN(booking.getTextContent());
 
 		}
+			<ram:PayeePartyCreditorFinancialAccount>
+					<ram:IBANID>DE1234</ram:IBANID>
+				</ram:PayeePartyCreditorFinancialAccount>
+				<ram:PayeeSpecifiedCreditorFinancialInstitution>
+					<ram:BICID>DE5656565</ram:BICID>
+					<ram:Name>Commerzbank</ram:Name>
+				</ram:PayeeSpecifiedCreditorFinancialInstitution>
+			
 */
-		ndList = document.getElementsByTagName("PayeePartyCreditorFinancialAccount"); //$NON-NLS-1$
+		ndList = document.getElementsByTagNameNS("*","PayeePartyCreditorFinancialAccount"); //$NON-NLS-1$
 
 		for (int bookingIndex = 0; bookingIndex < ndList
 				.getLength(); bookingIndex++) {
+
 			Node booking = ndList.item(bookingIndex);
 			// there are many "name" elements, so get the one below
 			// SellerTradeParty
 			NodeList bookingDetails = booking.getChildNodes();
+			
+
 			for (int detailIndex = 0; detailIndex < bookingDetails
 					.getLength(); detailIndex++) {
 				Node detail = bookingDetails.item(detailIndex);
-				if (detail.getNodeName().equals("IBANID")) { //$NON-NLS-1$
+				if ((detail.getLocalName()!=null)&&(detail.getLocalName().equals("IBANID"))) { //$NON-NLS-1$
 					setIBAN(detail.getTextContent());
-				}
+
+				} 
 			}
 
 		}
 
-		ndList = document.getElementsByTagName("PayeeSpecifiedCreditorFinancialInstitution"); //$NON-NLS-1$
+		ndList = document.getElementsByTagNameNS("*","PayeeSpecifiedCreditorFinancialInstitution"); //$NON-NLS-1$
 
 		for (int bookingIndex = 0; bookingIndex < ndList
 				.getLength(); bookingIndex++) {
@@ -188,10 +206,10 @@ public class ZUGFeRDImporter {
 			for (int detailIndex = 0; detailIndex < bookingDetails
 					.getLength(); detailIndex++) {
 				Node detail = bookingDetails.item(detailIndex);
-				if (detail.getNodeName().equals("BICID")) { //$NON-NLS-1$
+				if ((detail.getLocalName()!=null)&&(detail.getLocalName().equals("BICID"))) { //$NON-NLS-1$
 					setBIC(detail.getTextContent());
 				}
-				if (detail.getNodeName().equals("Name")) { //$NON-NLS-1$
+				if ((detail.getLocalName()!=null)&&(detail.getLocalName().equals("Name"))) { //$NON-NLS-1$
 					setBankName(detail.getTextContent());
 				}
 			}
@@ -199,7 +217,7 @@ public class ZUGFeRDImporter {
 		}
 
 		//
-		ndList = document.getElementsByTagName("SellerTradeParty"); //$NON-NLS-1$
+		ndList = document.getElementsByTagNameNS("*","SellerTradeParty"); //$NON-NLS-1$
 
 		for (int bookingIndex = 0; bookingIndex < ndList
 				.getLength(); bookingIndex++) {
@@ -210,14 +228,14 @@ public class ZUGFeRDImporter {
 			for (int detailIndex = 0; detailIndex < bookingDetails
 					.getLength(); detailIndex++) {
 				Node detail = bookingDetails.item(detailIndex);
-				if (detail.getNodeName().equals("Name")) { //$NON-NLS-1$
+				if ((detail.getLocalName()!=null)&&(detail.getLocalName().equals("Name"))) { //$NON-NLS-1$
 					setHolder(detail.getTextContent());
 				}
 			}
 
 		}
 
-		ndList = document.getElementsByTagName("DuePayableAmount"); //$NON-NLS-1$
+		ndList = document.getElementsByTagNameNS("*","DuePayableAmount"); //$NON-NLS-1$
 
 		for (int bookingIndex = 0; bookingIndex < ndList
 				.getLength(); bookingIndex++) {
@@ -233,7 +251,7 @@ public class ZUGFeRDImporter {
 			/* there is apparently no requirement to mention DuePayableAmount,, 
 			 * if it's not there, check for GrandTotalAmount
 			 */
-			ndList = document.getElementsByTagName("GrandTotalAmount"); //$NON-NLS-1$
+			ndList = document.getElementsByTagNameNS("*","GrandTotalAmount"); //$NON-NLS-1$
 			for (int bookingIndex = 0; bookingIndex < ndList
 					.getLength(); bookingIndex++) {
 				Node booking = ndList.item(bookingIndex);
