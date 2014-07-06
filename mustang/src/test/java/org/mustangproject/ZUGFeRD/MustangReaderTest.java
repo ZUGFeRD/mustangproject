@@ -9,14 +9,14 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  */
-public class AppTest extends TestCase {
+public class MustangReaderTest extends TestCase {
 	/**
 	 * Create the test case
 	 * 
 	 * @param testName
 	 *            name of the test case
 	 */
-	public AppTest(String testName) {
+	public MustangReaderTest(String testName) {
 		super(testName);
 	}
 
@@ -24,7 +24,7 @@ public class AppTest extends TestCase {
 	 * @return the suite of tests being tested
 	 */
 	public static Test suite() {
-		return new TestSuite(AppTest.class);
+		return new TestSuite(MustangReaderTest.class);
 	}
 
 	/**
@@ -32,7 +32,7 @@ public class AppTest extends TestCase {
 	 */
 	public void testImport() {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter();
-		zi.extract("./src/test/java/org/mustangproject/ZUGFeRD/RE-20140628_9.pdf");
+		zi.extract("./src/test/MustangGnuaccountingBeispielRE-20140703_502.pdf");
 		// Reading ZUGFeRD
 		
 		String amount=null;
@@ -51,12 +51,13 @@ public class AppTest extends TestCase {
 		}
 		
 
-		assertEquals(amount, "1.19");
-		assertEquals(bic, "DE5656565");
-		assertEquals(iban, "DE1234");
-		assertEquals(holder, "usegroup");
-		assertEquals(ref, "RE-20140628/9");
+		assertEquals(amount, "571.04");
+		assertEquals(bic, "COBADEFXXX");
+		assertEquals(iban, "DE88 2008 0000 0970 3757 00");
+		assertEquals(holder, "Bei Spiel GmbH");
+		assertEquals(ref, "RE-20140703/502");
 		
 		
 	}
+	
 }

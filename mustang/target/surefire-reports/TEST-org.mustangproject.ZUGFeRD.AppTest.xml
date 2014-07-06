@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.011" errors="0" skipped="0" tests="1" name="org.mustangproject.ZUGFeRD.AppTest">
+<testsuite failures="0" time="0.224" errors="0" skipped="0" tests="1" name="org.mustangproject.ZUGFeRD.AppTest">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-6-openjdk-amd64/jre/lib/amd64"/>
@@ -29,7 +29,7 @@
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="50.0"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
-    <property name="os.version" value="3.5.0-51-generic"/>
+    <property name="os.version" value="3.5.0-52-generic"/>
     <property name="user.home" value="/home/jstaerk"/>
     <property name="user.timezone" value="Europe/Berlin"/>
     <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
@@ -40,7 +40,7 @@
     <property name="java.vm.specification.version" value="1.0"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.home" value="/usr/lib/jvm/java-6-openjdk-amd64/jre"/>
-    <property name="sun.java.command" value="org.codehaus.classworlds.Launcher &quot;package&quot;"/>
+    <property name="sun.java.command" value="org.codehaus.classworlds.Launcher &quot;test&quot;"/>
     <property name="java.specification.vendor" value="Sun Microsystems Inc."/>
     <property name="user.language" value="de"/>
     <property name="java.vm.info" value="mixed mode"/>
@@ -56,5 +56,5 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase time="0.001" classname="org.mustangproject.ZUGFeRD.AppTest" name="testApp"/>
+  <testcase time="0.213" classname="org.mustangproject.ZUGFeRD.AppTest" name="testImport"/>
 </testsuite>

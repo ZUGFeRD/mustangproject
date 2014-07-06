@@ -5,6 +5,14 @@
   <groupId>org.mustangproject.ZUGFeRD</groupId>
   <artifactId>mustang</artifactId>
   <version>1.1.0.alpha</version>
+  
+	<repositories>
+		<repository>
+			<id>apache-snapshot</id>
+			<url>http://repository.apache.org/content/groups/snapshots</url>
+		</repository>
+	</repositories>
+  
   <packaging>jar</packaging>
 
   <name>mustang</name>
