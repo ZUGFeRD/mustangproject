@@ -13,13 +13,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTransaction;
-import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
 
 
 public class MustangWriterTest extends TestCase implements IZUGFeRDExportableTransaction {
@@ -286,9 +280,7 @@ public class MustangWriterTest extends TestCase implements IZUGFeRDExportableTra
 			e.printStackTrace();
 		} catch (TransformerException e) {
 			e.printStackTrace();
-		} catch (COSVisitorException e) {
-			e.printStackTrace();
-		}
+		} 
 
 	}
 	
@@ -312,6 +304,10 @@ public class MustangWriterTest extends TestCase implements IZUGFeRDExportableTra
 
 
 	public void testExport() {
+		// generate ./src/test/MustangGnuaccountingBeispielRE-20140703_502new.pdf from ./src/test/MustangGnuaccountingBeispielRE-20140703_502blank.pdf:
+		// the writing part
+		apply();
+		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter();
 		zi.extract("./src/test/MustangGnuaccountingBeispielRE-20140703_502new.pdf");
 		// Reading ZUGFeRD
