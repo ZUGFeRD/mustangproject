@@ -2,6 +2,7 @@ package org.mustangproject.ZUGFeRD;
 
 
 import java.io.IOException;
+
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,9 +16,11 @@ import junit.framework.TestSuite;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.jempbox.xmp.*;
+import org.junit.*;
+import org.junit.runners.MethodSorters;
 
-
-public class MustangWriterTest extends TestCase implements IZUGFeRDExportableTransaction {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExportableTransaction {
 
 	@Override
 	public Date getDeliveryDate() {
@@ -261,22 +264,84 @@ public class MustangWriterTest extends TestCase implements IZUGFeRDExportableTra
 
 	}
 
-	private void apply() {
+	
+	/**
+	 * Create the test case
+	 * 
+	 * @param testName
+	 *            name of the test case
+	 */
+	public MustangReaderWriterTest(String testName) {
+		super(testName);
+	}
+
+	/**
+	 * @return the suite of tests being tested
+	 */
+	public static Test suite() {
+		return new TestSuite(MustangReaderWriterTest.class);
+	}
+
+////////// TESTS //////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * The importer test imports from ./src/test/MustangGnuaccountingBeispielRE-20140703_502.pdf to check the values.
+	 * 
+	 * --> as only Name Ascending is supported for Test Unit sequence, I renamed the this test-A-Export to run before testZExport 
+	 */
+
+	public void testAImport() {
+		ZUGFeRDImporter zi = new ZUGFeRDImporter();
+		zi.extract("./src/test/MustangGnuaccountingBeispielRE-20140703_502.pdf");
+		// Reading ZUGFeRD
+		
+		String amount=null;
+		String bic=null;
+		String iban=null;
+		String holder=null;
+		String ref=null;
+		
+		if (zi.canParse()) {
+			zi.parse();
+			amount=zi.getAmount();
+			bic=zi.getBIC();
+			iban=zi.getIBAN();
+			holder=zi.getHolder();
+			ref=zi.getForeignReference();
+		}
+		
+
+		assertEquals(amount, "571.04");
+		assertEquals(bic, "COBADEFXXX");
+		assertEquals(iban, "DE88 2008 0000 0970 3757 00");
+		assertEquals(holder, "Bei Spiel GmbH");
+		assertEquals(ref, "RE-20140703/502");
+		
+		
+	}
+
+
+	/**
+	 * The exporter test bases on ./src/test/MustangGnuaccountingBeispielRE-20140703_502blanko.pdf, adds metadata, writes 
+	 * (to ./src/test/MustangGnuaccountingBeispielRE-20140703_502new.pdf) and then imports to check the values.
+	 * 
+	 * It would not make sense to have it run before the less complex importer test (which is probably redundant)
+	 * --> as only Name Ascending is supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
+	 */
+	public void testZExport() {
+		// generate ./src/test/MustangGnuaccountingBeispielRE-20140703_502new.pdf from ./src/test/MustangGnuaccountingBeispielRE-20140703_502blank.pdf:
+		// the writing part
+
 		PDDocument doc;
 		try {
-			System.out.println("Lese Blanko-PDF");
 			doc = PDDocument
 					.load("./src/test/MustangGnuaccountingBeispielRE-20140703_502blanko.pdf");
 			// automatically add Zugferd to all outgoing invoices
 			ZUGFeRDExporter ze = new ZUGFeRDExporter();
-			System.out.println("Wandle in PDF/A-3u um");
 			ze.PDFmakeA3compliant(doc, "My Application",
 					System.getProperty("user.name"), true);
-			System.out.println("ZUGFeRD-Daten generieren und anhängen");
 			ze.PDFattachZugferdFile(doc, this);
-			System.out.println("Schreibe ZUGFeRD-PDF");
 			doc.save("./src/test/MustangGnuaccountingBeispielRE-20140703_502new.pdf");
-			System.out.println("Fertig.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (TransformerException e) {
@@ -285,31 +350,7 @@ public class MustangWriterTest extends TestCase implements IZUGFeRDExportableTra
 			e.printStackTrace();
 		} 
 
-	}
-	
-	/**
-	 * Create the test case
-	 * 
-	 * @param testName
-	 *            name of the test case
-	 */
-	public MustangWriterTest(String testName) {
-		super(testName);
-	}
 
-	/**
-	 * @return the suite of tests being tested
-	 */
-	public static Test suite() {
-		return new TestSuite(MustangWriterTest.class);
-	}
-
-
-
-	public void testExport() {
-		// generate ./src/test/MustangGnuaccountingBeispielRE-20140703_502new.pdf from ./src/test/MustangGnuaccountingBeispielRE-20140703_502blank.pdf:
-		// the writing part
-		apply();
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter();
 		zi.extract("./src/test/MustangGnuaccountingBeispielRE-20140703_502new.pdf");
