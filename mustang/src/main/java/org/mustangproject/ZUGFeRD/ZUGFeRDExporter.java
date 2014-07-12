@@ -3,8 +3,8 @@ package org.mustangproject.ZUGFeRD;
  * Mustangproject's ZUGFeRD implementation
  * ZUGFeRD exporter
  * Licensed under the APLv2
- * @date 2014-05-10
- * @version 1.0
+ * @date 2014-07-12
+ * @version 1.1
  * @author jstaerk
  * */
 
