@@ -11,6 +11,8 @@ package org.mustangproject.ZUGFeRD;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -46,17 +48,34 @@ public class ZUGFeRDImporter {
 	private String IBAN;
 	private String holder;
 	private String amount;
-	private String meta;
+	/** Raw XML form of the extracted data - may be directly obtained. */
+	private byte[] rawXML=null;
 	private String bankName;
 	private boolean amountFound;
 	
-	
-	
+	/**
+	 * Extracts a ZUGFeRD invoice from a PDF document represented by a file name.
+	 * Errors are just logged to STDOUT.
+	 */
+	public void extract(String pdfFilename) 
+	{
+		try
+		{
+			extractLowLevel(new BufferedInputStream(new FileInputStream(pdfFilename)));
+		} catch (IOException ioe)
+		{
+			ioe.printStackTrace();
+		}
+	}	
 
-	public void extract(String pdfFilename) {
+	/**
+	 * Extracts a ZUGFeRD invoice from a PDF document represented by an input stream.
+	 * Errors are reported via exception handling.
+	 */
+	public void extractLowLevel(InputStream pdfStream) throws IOException  {
 		PDDocument doc = null;
 		try {
-			doc = PDDocument.load(pdfFilename);
+			doc = PDDocument.load(pdfStream);
 //			PDDocumentInformation info = doc.getDocumentInformation();
 			PDDocumentNameDictionary names = new PDDocumentNameDictionary(
 					doc.getDocumentCatalog());
@@ -85,16 +104,15 @@ public class ZUGFeRDImporter {
 					// ByteArrayOutputStream fileBytes=new
 					// ByteArrayOutputStream();
 					// FileOutputStream fos = new FileOutputStream(file);
-
-					setMeta(new String(embeddedFile.getByteArray()));
+					rawXML = embeddedFile.getByteArray();
+					setMeta(new String(rawXML));
 					// fos.write(embeddedFile.getByteArray());
 					// fos.close();
 				}
 			}
 
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			throw e1;
 		}
 		finally {
 			try {
@@ -121,7 +139,7 @@ public class ZUGFeRDImporter {
 		}
 
 		try {
-			InputStream bais = new ByteArrayInputStream(meta.getBytes());
+			InputStream bais = new ByteArrayInputStream(rawXML);
 			document = builder.parse(bais);
 		} catch (SAXException ex1) {
 			ex1.printStackTrace();
@@ -339,11 +357,24 @@ public class ZUGFeRDImporter {
 	}
 
 	public void setMeta(String meta) {
-		this.meta=meta;
+		this.rawXML=meta.getBytes();
 	}
 
 	public String getMeta() {
-		return meta;
+		if (rawXML==null){
+			return null; 
+		} else {
+			return new String(rawXML);
+		}
+	}
+
+
+	/**
+	 * Returns the raw XML data as extracted from the ZUGFeRD PDF file.
+	 */
+	public byte[] getRawXML() 
+	{
+		return rawXML;
 	}
 
 	/**
@@ -353,6 +384,7 @@ public class ZUGFeRDImporter {
 		
 		
 		//SpecifiedExchangedDocumentContext is in the schema, so a relatively good indication if zugferd is present - better than just invoice
+		String meta=getMeta();
 		return (meta!=null)&&( meta.length()>0)&&( meta.contains("SpecifiedExchangedDocumentContext")); //$NON-NLS-1$
 	}
 }

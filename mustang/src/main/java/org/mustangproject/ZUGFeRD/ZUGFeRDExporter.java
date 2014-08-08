@@ -63,6 +63,13 @@ public class ZUGFeRDExporter {
 	
 	private String conformanceLevel="U";
 	private String versionStr="1.0";
+
+	/**
+	 * Data (XML invoice) to be added to the ZUGFeRD PDF. It may be externally set, in which case passing a
+	 * IZUGFeRDExportableTransaction is not necessary. By default it is null meaning the caller needs to
+	 * pass a IZUGFeRDExportableTransaction for the XML to be populated.
+	 */
+	byte[] zugferdData = null;
 	
 	private String currencyFormat(BigDecimal value, char decimalDelimiter) {
 		/*
@@ -131,7 +138,7 @@ public class ZUGFeRDExporter {
 	public PDDocumentCatalog PDFmakeA3compliant(PDDocument doc, String producer, String creator, 
 			boolean attachZugferdHeaders) throws IOException,
 			TransformerException {
-		String fullProducer=producer+"(via mustangproject.org "+versionStr+")";
+		String fullProducer=producer + " (via mustangproject.org " + versionStr + ")";
 		PDDocumentCatalog cat = doc.getDocumentCatalog();
 		PDMetadata metadata = new PDMetadata(doc);
 		cat.setMetadata(metadata);
@@ -422,8 +429,12 @@ public class ZUGFeRDExporter {
 	}
 
 	/**
-	 * embed the Zugferd XML structure in a file named ZUGFeRD-invoice.xml
-	 * */
+	 * Embeds the Zugferd XML structure in a file named ZUGFeRD-invoice.xml.
+	 *
+	 * @param doc PDDocument to attach an XML invoice to
+	 * @param trans a IZUGFeRDExportableTransaction that provides the data-model to populate the XML.
+	 *        This parameter may be null, if so the XML data should hav ebeen set via <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
+	 */
 	public void PDFattachZugferdFile(PDDocument doc, IZUGFeRDExportableTransaction trans) throws IOException {
 
 		// embedded files are stored in a named tree
@@ -439,22 +450,21 @@ public class ZUGFeRDExporter {
 		dict.setName("AFRelationship", "Alternative"); // as defined in Zugferd standard //$NON-NLS-1$ //$NON-NLS-2$
 
 		dict.setString("UF", filename); //$NON-NLS-1$
-
-		// create a dummy file stream, this would probably normally be a
-		// FileInputStream
-		
-		byte[] zugferdRaw = getZugferdXMLForTransaction(trans).getBytes("UTF-8"); //$NON-NLS-1$
 		  
-		byte[] zugferdData;
+		if (zugferdData == null) // XML ZUGFeRD data not set externally, needs to be built
+		{
+			// create a dummy file stream, this would probably normally be a
+			// FileInputStream
 		
-        
-        		
-		if ((zugferdRaw[0]==(byte)0xEF)&&(zugferdRaw[1]==(byte)0xBB)&&(zugferdRaw[2]==(byte)0xBF)) {
-			// I don't like BOMs, lets remove it
-			zugferdData=new byte[zugferdRaw.length-3];
-			System.arraycopy(zugferdRaw,3,zugferdData,0,zugferdRaw.length-3);
-		}	else {
-			zugferdData=zugferdRaw;			
+			byte[] zugferdRaw = getZugferdXMLForTransaction(trans).getBytes("UTF-8"); //$NON-NLS-1$
+
+			if ((zugferdRaw[0]==(byte)0xEF)&&(zugferdRaw[1]==(byte)0xBB)&&(zugferdRaw[2]==(byte)0xBF)) {
+				// I don't like BOMs, lets remove it
+				zugferdData=new byte[zugferdRaw.length-3];
+				System.arraycopy(zugferdRaw,3,zugferdData,0,zugferdRaw.length-3);
+			}	else {
+				zugferdData=zugferdRaw;			
+			}
 		}
 		  
 		ByteArrayInputStream fakeFile = new ByteArrayInputStream(zugferdData);
@@ -479,6 +489,17 @@ public class ZUGFeRDExporter {
 		cosArray.add(fs);
 		doc.getDocumentCatalog().getCOSDictionary().setItem("AF", cosArray); //$NON-NLS-1$
 
+	}
+
+	/**
+	 * Sets the ZUGFeRD XML data to be attached as a single byte array. This is useful for
+	 * use-cases where the XML has already been produced by some external API or component.
+	 * 
+	 * @param zugferdData XML data to be set as a byte array (XML file in raw form).
+	 */
+	public void setZUGFeRDXMLData(byte[] zugferdData)
+	{
+		this.zugferdData = zugferdData;
 	}
 
 /***
