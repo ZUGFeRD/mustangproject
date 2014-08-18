@@ -13,7 +13,7 @@ Running
 -----
 
 Requires Maven to run. Use "mvn test" to generate the output for the test PDF file attachments,
-chdir to mustang and use "mvn package" to build the Mustang JAR.
+chdir to mustang and use "mvn package" to build the Mustang JAR (more info in [the mustang documentation](https://github.com/Rayman2200/PDFA3/blob/master/mustang/doc/ZugferdDev.en.pdf?raw=true)).
 
 
 Contact
