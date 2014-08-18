@@ -20,7 +20,7 @@ import org.junit.*;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExportableTransaction {
+public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExportableTransaction {
 
 	@Override
 	public Date getDeliveryDate() {
@@ -69,7 +69,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 
 	@Override
 	public String getOwnOrganisationName() {
-		return "Bei Spiel GmbH";
+		return "Öäüß'\"<em>test";
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 	public IZUGFeRDExportableItem[] getZFItems() {
 		Item[] allItems = new Item[3];
 		Product designProduct = new Product("",
-				"Künstlerische Gestaltung (Stunde)", "HUR", new BigDecimal(
+				"Produkt Öäüß'\"<em>test", "HUR", new BigDecimal(
 						"7.000000"));
 		Product balloonProduct = new Product("", "Luftballon", "C62",
 				new BigDecimal("19.000000"));
@@ -271,7 +271,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 	 * @param testName
 	 *            name of the test case
 	 */
-	public MustangReaderWriterTest(String testName) {
+	public MustangReaderWriterEdgeTest(String testName) {
 		super(testName);
 	}
 
@@ -279,7 +279,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 	 * @return the suite of tests being tested
 	 */
 	public static Test suite() {
-		return new TestSuite(MustangReaderWriterTest.class);
+		return new TestSuite(MustangReaderWriterEdgeTest.class);
 	}
 
 ////////// TESTS //////////////////////////////////////////////////////////////////////////////////////////
@@ -341,7 +341,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 			ze.PDFmakeA3compliant(doc, "My Application",
 					System.getProperty("user.name"), true);
 			ze.PDFattachZugferdFile(doc, this);
-			doc.save("./src/test/MustangGnuaccountingBeispielRE-20140703_502new.pdf");
+			doc.save("./src/test/MustangGnuaccountingBeispielRE-20140703_502newEdge.pdf");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (TransformerException e) {
@@ -353,7 +353,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter();
-		zi.extract("./src/test/MustangGnuaccountingBeispielRE-20140703_502new.pdf");
+		zi.extract("./src/test/MustangGnuaccountingBeispielRE-20140703_502newEdge.pdf");
 		// Reading ZUGFeRD
 		
 		String amount=null;
