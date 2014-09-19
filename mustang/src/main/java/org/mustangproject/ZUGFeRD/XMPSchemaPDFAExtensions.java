@@ -15,16 +15,16 @@ import org.w3c.dom.Element;
 	 * Additionally to adding a RDF namespace with a indication which file
 	 * attachment if Zugferd, this namespace has to be described in a PDFA
 	 * Extension Schema.
-	 * 
+	 *
 	 * I know there is a PDFAExtensionSchema in the context of PDFBox' XMPBOX
-	 * but I have been using  PDFBox' JempBOX so far because I could not find out 
+	 * but I have been using  PDFBox' JempBOX so far because I could not find out
 	 * how to write XMPBOX XMPMetadata to a PDF file.
-	 * 
-	 * So this is my version of PDFAExtensionSchema  
+	 *
+	 * So this is my version of PDFAExtensionSchema
 	 * for PDFBox' jempbox XMPMetadata
-	 * 
+	 *
 	 * @author jstaerk
-	 * 
+	 *
 	 */
 	public class XMPSchemaPDFAExtensions extends XMPSchemaBasic {
 
@@ -52,8 +52,8 @@ import org.w3c.dom.Element;
 
 		}
 
-		
-		
+
+
 		public XMPSchemaPDFAExtensions(org.apache.jempbox.xmp.XMPMetadata parent) {
 			super(parent);
 
@@ -101,7 +101,7 @@ import org.w3c.dom.Element;
 
 			Element nsInfoNode = schema.getOwnerDocument().createElement(
 					"pdfaSchema:namespaceURI"); //$NON-NLS-1$
-			XMLUtil.setStringValue(nsInfoNode, "urn:ferd:pdfa:invoice:rc#"); //$NON-NLS-1$
+			XMLUtil.setStringValue(nsInfoNode, "urn:ferd:pdfa:CrossIndustryDocument:invoice:1p0#"); //$NON-NLS-1$
 			bagListNode.appendChild(nsInfoNode);
 
 			Element prefixInfoNode = schema.getOwnerDocument().createElement(
