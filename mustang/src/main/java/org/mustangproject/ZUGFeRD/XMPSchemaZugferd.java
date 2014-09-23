@@ -12,14 +12,23 @@ import org.apache.jempbox.xmp.XMPSchemaBasic;
 import org.w3c.dom.Element;
 
 
-public class XMPSchemaZugferd extends XMPSchemaBasic {
+public class XMPSchemaZugferd extends XMPSchemaBasic
+{
+
+	private String conformanceLevel = "COMFORT";
 
 		/**
 		 * This is what needs to be added to the RDF metadata - basically the name of the embedded
 		 * Zugferd file
 		 * */
-		public XMPSchemaZugferd(org.apache.jempbox.xmp.XMPMetadata parent) {
+		public XMPSchemaZugferd(org.apache.jempbox.xmp.XMPMetadata parent, String conformanceLevel)
+		{
 			super(parent);
+
+			if (conformanceLevel != null)
+			{
+				this.conformanceLevel = conformanceLevel;
+			}
 
 			schema.setAttributeNS(NS_NAMESPACE, "xmlns:zf", //$NON-NLS-1$
 					"urn:ferd:pdfa:CrossIndustryDocument:invoice:1p0#"); //$NON-NLS-1$
@@ -42,7 +51,7 @@ public class XMPSchemaZugferd extends XMPSchemaBasic {
 
 			textNode = schema.getOwnerDocument().createElement(
 					"zf:ConformanceLevel"); //$NON-NLS-1$
-			XMLUtil.setStringValue(textNode, "COMFORT"); //$NON-NLS-1$
+			XMLUtil.setStringValue(textNode, this.conformanceLevel); //$NON-NLS-1$
 			schema.appendChild(textNode);
 
 		}
