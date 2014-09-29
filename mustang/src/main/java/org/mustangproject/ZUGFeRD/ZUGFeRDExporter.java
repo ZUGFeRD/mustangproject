@@ -25,7 +25,9 @@ import org.apache.jempbox.xmp.XMPSchemaDublinCore;
 import org.apache.jempbox.xmp.XMPSchemaPDF;
 import org.apache.jempbox.xmp.pdfa.XMPSchemaPDFAId;
 import org.apache.pdfbox.cos.COSArray;
+import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSDictionary;
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -481,6 +483,12 @@ public class ZUGFeRDExporter {
 		ef.setModDate(GregorianCalendar.getInstance());
 
 		fs.setEmbeddedFile(ef);
+
+		// In addition make sure the embedded file is set under /UF
+		dict = fs.getCOSDictionary();
+		COSDictionary efDict = (COSDictionary)dict.getDictionaryObject(COSName.EF);
+		COSBase lowerLevelFile = efDict.getItem(COSName.F);
+		efDict.setItem(COSName.UF, lowerLevelFile);
 
 		// now add the entry to the embedded file tree and set in the document.
 		efTree.setNames(Collections.singletonMap(filename, fs));
