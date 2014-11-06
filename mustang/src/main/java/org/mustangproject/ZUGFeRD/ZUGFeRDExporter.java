@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.transform.TransformerException;
 
@@ -33,6 +34,7 @@ import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
+import org.apache.pdfbox.pdmodel.common.COSObjectable;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
@@ -63,8 +65,8 @@ public class ZUGFeRDExporter {
 
 	//// MAIN CLASS
 
-	private String conformanceLevel="U";
-	private String versionStr="1.0";
+	private String conformanceLevel = "U";
+	private String versionStr       = "1.1";
 
 	// BASIC, COMFORT etc - may be set from outside.
 	private String ZUGFeRDConformanceLevel = null;
@@ -502,6 +504,75 @@ public class ZUGFeRDExporter {
 		doc.getDocumentCatalog().getCOSDictionary().setItem("AF", cosArray); //$NON-NLS-1$
 
 	}
+
+
+	/**
+	 * Embeds an external file (generic - any type allowed) in the PDF.
+	 *
+	 * @param doc PDDocument to attach the file to.
+	 * @param filename name of the file that will become attachment name in the PDF
+	 * @param subType type of the data e.g. could be "text/xml" - mime like
+	 * @param data the binary data of the file/attachment
+	 */
+	public void PDFAttachGenericFile(PDDocument doc, String filename, String subType, byte[] data)
+		throws IOException
+	{
+		PDComplexFileSpecification fs = new PDComplexFileSpecification();
+		fs.setFile(filename);
+
+		COSDictionary dict = fs.getCOSDictionary();
+		dict.setName("AFRelationship", "Alternative");
+		dict.setString("UF", filename);
+
+		ByteArrayInputStream fakeFile = new ByteArrayInputStream(data);
+		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
+		ef.setSubtype(subType);
+		ef.setSize(data.length);
+		ef.setCreationDate(new GregorianCalendar());
+
+		ef.setModDate(GregorianCalendar.getInstance());
+
+		fs.setEmbeddedFile(ef);
+
+		// In addition make sure the embedded file is set under /UF
+		dict = fs.getCOSDictionary();
+		COSDictionary efDict = (COSDictionary)dict.getDictionaryObject(COSName.EF);
+		COSBase lowerLevelFile = efDict.getItem(COSName.F);
+		efDict.setItem(COSName.UF, lowerLevelFile);
+
+		// now add the entry to the embedded file tree and set in the document.
+		PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
+		PDEmbeddedFilesNameTreeNode efTree = names.getEmbeddedFiles();
+		if (efTree == null)
+		{
+			efTree = new PDEmbeddedFilesNameTreeNode();
+		}
+
+		Map<String, COSObjectable> namesMap = new HashMap<String, COSObjectable>();
+		Map<String, COSObjectable> oldNamesMap = efTree.getNames();
+		if (oldNamesMap != null)
+		{
+			for (String key : oldNamesMap.keySet())
+			{
+				namesMap.put(key, oldNamesMap.get(key));
+			}
+		}
+		namesMap.put(filename, fs);
+		efTree.setNames(namesMap);
+
+		names.setEmbeddedFiles(efTree);
+		doc.getDocumentCatalog().setNames(names);
+
+		// AF entry (Array) in catalog with the FileSpec
+		COSArray cosArray = (COSArray)doc.getDocumentCatalog().getCOSDictionary().getItem("AF");
+		if (cosArray == null)
+		{
+			cosArray = new COSArray();
+		}
+		cosArray.add(fs);
+		doc.getDocumentCatalog().getCOSDictionary().setItem("AF", cosArray);
+	}
+
 
 	/**
 	 * Sets the ZUGFeRD XML data to be attached as a single byte array. This is useful for
