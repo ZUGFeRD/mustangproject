@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata modelVersion="1.1.0">
+  <groupId>org.mustangproject.ZUGFeRD</groupId>
+  <artifactId>mustang</artifactId>
+  <version>1.1.1alpha-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <timestamp>20150221.212144</timestamp>
+      <buildNumber>3</buildNumber>
+    </snapshot>
+    <lastUpdated>20150221212144</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>jar</extension>
+        <value>1.1.1alpha-20150221.212144-3</value>
+        <updated>20150221212144</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <extension>pom</extension>
+        <value>1.1.1alpha-20150221.212144-3</value>
+        <updated>20150221212144</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>
