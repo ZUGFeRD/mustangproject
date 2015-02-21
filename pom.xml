@@ -75,6 +75,7 @@
 					<includes>
 						<include>**/*</include>
 					</includes>
+					<merge>true</merge>
 					<repositoryName>PDFA3</repositoryName>      <!-- github repo name -->
 					<repositoryOwner>Rayman2200</repositoryOwner>    <!-- github username -->
 				</configuration>
