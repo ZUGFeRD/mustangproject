@@ -16,6 +16,30 @@ This project requires Maven to run. Build project with "mvn clean install". This
 
 More informations in [the mustang documentation](https://github.com/Rayman2200/PDFA3/blob/master/mustang/doc/ZugferdDev.en.pdf?raw=true)).
 
+Usage
+-----
+
+If you setup a Maven project, you can grab the artifacts from this maven repository.
+ 
+
+```xml
+<repositories>
+    <repository>
+        <id>mustang-mvn-repo</id>
+        <url>https://raw.github.com/Rayman2200/PDFA3/mvn-repo/</url>
+    </repository>
+</repositories>
+```
+
+As dependency use this
+
+```xml
+<dependency>
+  <groupId>org.mustangproject.ZUGFeRD</groupId>
+  <artifactId>mustang</artifactId>
+  <version>1.1.1alpha</version>
+</dependency>
+```
 
 Contact
 -----
