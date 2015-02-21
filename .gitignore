@@ -3,8 +3,5 @@
 .settings/
 PDFA*.pdf
 target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.next
-release.properties
+pom.xml.*
 bin/
