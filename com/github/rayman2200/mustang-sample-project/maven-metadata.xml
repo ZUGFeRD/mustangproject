@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
   <groupId>com.github.rayman2200</groupId>
-  <artifactId>pdfa3-samples</artifactId>
+  <artifactId>mustang-sample-project</artifactId>
   <versioning>
     <versions>
       <version>1.0.0-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20150221202927</lastUpdated>
+    <lastUpdated>20150221204541</lastUpdated>
   </versioning>
 </metadata>
