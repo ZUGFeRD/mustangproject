@@ -31,37 +31,32 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDMarkInfo;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.pdmodel.graphics.color.PDOutputIntent;
 
 /**
  * This is an example that creates a simple PDF/A document.
- * 
  */
 public class PDFA3File
 {
 
   /**
    * Create a simple PDF/A-3 document.
-   * 
    * This example is based on HelloWorld example.
-   * 
    * As it is a simple case, to conform the PDF/A norm, are added : - the font
    * used in the document - the sRGB color profile - a light xmp block with only
    * PDF identification schema (the only mandatory) - an output intent To
    * conform to A/3 - the mandatory MarkInfo dictionary displays tagged PDF
    * support - and optional producer and - optional creator info is added
    * 
-   * 
    * @param file
    *          The file to write the PDF to.
    * @param message
    *          The message to write in the file.
-   * 
    * @throws Exception
    *           If something bad occurs
    */
@@ -69,7 +64,8 @@ public class PDFA3File
   {
     // the document
     PDDocument doc = null;
-    try {
+    try
+    {
       doc = new PDDocument();
 
       // now create the page and add content
@@ -104,8 +100,11 @@ public class PDFA3File
 
       doc.save(file);
 
-    } finally {
-      if (doc != null) {
+    }
+    finally
+    {
+      if (doc != null)
+      {
         doc.close();
       }
     }
@@ -114,7 +113,7 @@ public class PDFA3File
   /**
    * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
    * metadata level, this will not e.g. convert graphics to JPG-2000)
-   * */
+   */
   private PDDocumentCatalog makeA3compliant(PDDocument doc) throws IOException, TransformerException
   {
     PDDocumentCatalog cat = doc.getDocumentCatalog();
@@ -162,7 +161,7 @@ public class PDFA3File
                                 * visually, unicode and structurally preservable
                                 */
     pdfaid.setAbout("");
-    metadata.importXMPMetadata(xmp);
+    metadata.importXMPMetadata(xmp.asByteArray());
     return cat;
   }
 
@@ -176,13 +175,19 @@ public class PDFA3File
   public static void main(String[] args)
   {
     PDFA3File app = new PDFA3File();
-    try {
-      if (args.length != 2) {
+    try
+    {
+      if (args.length != 2)
+      {
         app.usage();
-      } else {
+      }
+      else
+      {
         app.doIt(args[0], args[1]);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e)
+    {
       e.printStackTrace();
     }
   }

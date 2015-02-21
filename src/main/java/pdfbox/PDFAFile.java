@@ -23,15 +23,14 @@ import org.apache.jempbox.xmp.pdfa.XMPSchemaPDFAId;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.pdmodel.graphics.color.PDOutputIntent;
 
 /**
  * This is an example that creates a simple PDF/A document.
- * 
  */
 public class PDFAFile
 {
@@ -45,9 +44,7 @@ public class PDFAFile
 
   /**
    * Create a simple PDF/A document.
-   * 
    * This example is based on HelloWorld example.
-   * 
    * As it is a simple case, to conform the PDF/A norm, are added : - the font
    * used in the document - a light xmp block with only PDF identification
    * schema (the only mandatory) - an output intent
@@ -56,7 +53,6 @@ public class PDFAFile
    *          The file to write the PDF to.
    * @param message
    *          The message to write in the file.
-   * 
    * @throws Exception
    *           If something bad occurs
    */
@@ -64,7 +60,8 @@ public class PDFAFile
   {
     // the document
     PDDocument doc = null;
-    try {
+    try
+    {
       doc = new PDDocument();
 
       PDPage page = new PDPage();
@@ -94,7 +91,7 @@ public class PDFAFile
       pdfaid.setConformance("B");
       pdfaid.setPart(1);
       pdfaid.setAbout("");
-      metadata.importXMPMetadata(xmp);
+      metadata.importXMPMetadata(xmp.asByteArray());
 
       InputStream colorProfile = PDFA3File.class.getResourceAsStream("/sRGB Color Space Profile.icm");
       // create output intent
@@ -107,8 +104,11 @@ public class PDFAFile
 
       doc.save(file);
 
-    } finally {
-      if (doc != null) {
+    }
+    finally
+    {
+      if (doc != null)
+      {
         doc.close();
       }
     }
@@ -124,13 +124,19 @@ public class PDFAFile
   public static void main(String[] args)
   {
     PDFAFile app = new PDFAFile();
-    try {
-      if (args.length != 2) {
+    try
+    {
+      if (args.length != 2)
+      {
         app.usage();
-      } else {
+      }
+      else
+      {
         app.doIt(args[0], args[1]);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e)
+    {
       e.printStackTrace();
     }
   }

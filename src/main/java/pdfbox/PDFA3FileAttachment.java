@@ -30,7 +30,6 @@ import org.apache.jempbox.xmp.XMPSchemaBasic;
 import org.apache.jempbox.xmp.XMPSchemaDublinCore;
 import org.apache.jempbox.xmp.XMPSchemaPDF;
 import org.apache.jempbox.xmp.pdfa.XMPSchemaPDFAId;
-import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
@@ -38,18 +37,17 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDMarkInfo;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.pdmodel.graphics.color.PDOutputIntent;
 
 /**
  * This is an example that creates a simple PDF/A document.
- * 
  */
 public class PDFA3FileAttachment
 {
@@ -72,7 +70,7 @@ public class PDFA3FileAttachment
     COSDictionary dict = fs.getCOSDictionary();
     // Relation "Source" for linking with eg. catalog
     dict.setName("AFRelationship", "Alternative");
-//    dict.setName("AFRelationship", "Source");
+    // dict.setName("AFRelationship", "Source");
 
     dict.setString("UF", "Test.txt");
     // fs.put(new PdfName("AFRelationship"), new PdfName("Source"));
@@ -85,8 +83,8 @@ public class PDFA3FileAttachment
     // set some of the attributes of the embedded file
 
     ef.setSubtype("text/plain");
-//    ef.setFile(fs);
-//    ef.getStream().setItem(COSName.UF, fs);
+    // ef.setFile(fs);
+    // ef.getStream().setItem(COSName.UF, fs);
 
     ef.setModDate(GregorianCalendar.getInstance());
 
@@ -94,7 +92,7 @@ public class PDFA3FileAttachment
     // src.getAbsolutePath(), src.getName(), null, false, "image/jpeg",
     // fileParameter);
 
-//     fs.put(new PdfName("AFRelationship"), new PdfName("Source"));
+    // fs.put(new PdfName("AFRelationship"), new PdfName("Source"));
 
     ef.setSize(payload.length());
     ef.setCreationDate(new GregorianCalendar());
@@ -107,8 +105,7 @@ public class PDFA3FileAttachment
      * Validating file "RE-20131206_22.pdf" for conformance level pdfa-3a The
      * key UF is required but missing. The key AFRelationship is required but
      * missing. File specification 'Test.txt' not associated with an object.
-     * 
-     * */
+     */
     // attachments are stored as part of the "names" dictionary in the document
     // catalog
     PDDocumentCatalog catalog = doc.getDocumentCatalog();
@@ -116,32 +113,28 @@ public class PDFA3FileAttachment
     PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
     names.setEmbeddedFiles(efTree);
     catalog.setNames(names);
-    
-    // AF entry (Array) in catalog with the FileSpec
-    COSArray cosArray = new COSArray();
-    cosArray.add(fs);
-    catalog.getCOSDictionary().setItem("AF", cosArray);
-    
+
+    // // AF entry (Array) in catalog with the FileSpec
+    // PDAcroForm pdAcroForm = new PDAcroForm(doc);
+    // COSArray cosArray = new COSArray();
+    // cosArray.add(fs);
+    // catalog.setItem("AF", cosArray);
 
   }
 
   /**
    * Create a simple PDF/A-3 document.
-   * 
    * This example is based on HelloWorld example.
-   * 
    * As it is a simple case, to conform the PDF/A norm, are added : - the font
    * used in the document - the sRGB color profile - a light xmp block with only
    * PDF identification schema (the only mandatory) - an output intent To
    * conform to A/3 - the mandatory MarkInfo dictionary displays tagged PDF
    * support - and optional producer and - optional creator info is added
    * 
-   * 
    * @param file
    *          The file to write the PDF to.
    * @param message
    *          The message to write in the file.
-   * 
    * @throws Exception
    *           If something bad occurs
    */
@@ -149,7 +142,8 @@ public class PDFA3FileAttachment
   {
     // the document
     PDDocument doc = null;
-    try {
+    try
+    {
       doc = new PDDocument();
 
       // now create the page and add content
@@ -184,8 +178,11 @@ public class PDFA3FileAttachment
 
       doc.save(file);
 
-    } finally {
-      if (doc != null) {
+    }
+    finally
+    {
+      if (doc != null)
+      {
         doc.close();
       }
     }
@@ -194,7 +191,7 @@ public class PDFA3FileAttachment
   /**
    * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
    * metadata level, this will not e.g. convert graphics to JPG-2000)
-   * */
+   */
   private PDDocumentCatalog makeA3compliant(PDDocument doc) throws IOException, TransformerException
   {
     PDDocumentCatalog cat = doc.getDocumentCatalog();
@@ -242,7 +239,7 @@ public class PDFA3FileAttachment
                                 * visually, unicode and structurally preservable
                                 */
     pdfaid.setAbout("");
-    metadata.importXMPMetadata(xmp);
+    metadata.importXMPMetadata(xmp.asByteArray());
     return cat;
   }
 
@@ -256,13 +253,19 @@ public class PDFA3FileAttachment
   public static void main(String[] args)
   {
     PDFA3FileAttachment app = new PDFA3FileAttachment();
-    try {
-      if (args.length != 2) {
+    try
+    {
+      if (args.length != 2)
+      {
         app.usage();
-      } else {
+      }
+      else
+      {
         app.doIt(args[0], args[1]);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e)
+    {
       e.printStackTrace();
     }
   }
