@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>com.github.rayman2200</groupId>
 		<artifactId>mustang-sample-project</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 
 	<groupId>org.mustangproject.ZUGFeRD</groupId>
 	<artifactId>mustang</artifactId>
-	<version>1.1.1alpha</version>
+	<version>1.1.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Mustang</name>
