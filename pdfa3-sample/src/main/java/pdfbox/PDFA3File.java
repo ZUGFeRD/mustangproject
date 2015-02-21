@@ -31,9 +31,9 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDMarkInfo;
+import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.pdmodel.graphics.color.PDOutputIntent;
@@ -161,7 +161,7 @@ public class PDFA3File
                                 * visually, unicode and structurally preservable
                                 */
     pdfaid.setAbout("");
-    metadata.importXMPMetadata(xmp.asByteArray());
+    metadata.importXMPMetadata(xmp);
     return cat;
   }
 

@@ -6,13 +6,5 @@
 		<artifactId>mustang-sample-project</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-
-	<groupId>org.mustangproject.ZUGFeRD</groupId>
-	<artifactId>mustang</artifactId>
-	<version>1.1.1alpha</version>
-	<packaging>jar</packaging>
-
-	<name>mustang</name>
-	<url>http://maven.apache.org</url>
-
+	<artifactId>pdfa3-samples</artifactId>
 </project>
