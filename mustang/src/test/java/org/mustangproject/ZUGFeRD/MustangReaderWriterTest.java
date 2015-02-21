@@ -322,26 +322,26 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 
 
 	/**
-	 * The exporter test bases on ./src/test/MustangGnuaccountingBeispielRE-20140703_502blanko.pdf, adds metadata, writes 
-	 * (to ./src/test/MustangGnuaccountingBeispielRE-20140703_502new.pdf) and then imports to check the values.
-	 * 
+	 * The exporter test bases on @{code ./src/test/MustangGnuaccountingBeispielRE-20140703_502blanko.pdf}, adds metadata, writes
+	 * to @{code ./target/testout-*} and then imports to check the values.
+	 *
 	 * It would not make sense to have it run before the less complex importer test (which is probably redundant)
 	 * --> as only Name Ascending is supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
 	 */
 	public void testZExport() {
-		// generate ./src/test/MustangGnuaccountingBeispielRE-20140703_502new.pdf from ./src/test/MustangGnuaccountingBeispielRE-20140703_502blank.pdf:
-		// the writing part
+		final String SOURCE_PDF = "./src/test/MustangGnuaccountingBeispielRE-20140703_502blanko.pdf";
+		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20140703_502new.pdf";
 
+		// the writing part
 		PDDocument doc;
 		try {
-			doc = PDDocument
-					.load("./src/test/MustangGnuaccountingBeispielRE-20140703_502blanko.pdf");
+			doc = PDDocument.load(SOURCE_PDF);
 			// automatically add Zugferd to all outgoing invoices
 			ZUGFeRDExporter ze = new ZUGFeRDExporter();
 			ze.PDFmakeA3compliant(doc, "My Application",
 					System.getProperty("user.name"), true);
 			ze.PDFattachZugferdFile(doc, this);
-			doc.save("./src/test/MustangGnuaccountingBeispielRE-20140703_502new.pdf");
+			doc.save(TARGET_PDF);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (TransformerException e) {
@@ -353,7 +353,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter();
-		zi.extract("./src/test/MustangGnuaccountingBeispielRE-20140703_502new.pdf");
+		zi.extract(TARGET_PDF);
 		// Reading ZUGFeRD
 		
 		String amount=null;
