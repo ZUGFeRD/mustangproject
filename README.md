@@ -12,11 +12,13 @@ Subject to the Apache license http://www.apache.org/licenses/LICENSE-2.0.html
 Running
 -----
 
-Requires Maven to run. Use "mvn test" to generate the output for the test PDF file attachments,
-chdir to mustang and use "mvn package" to build the Mustang JAR (more info in [the mustang documentation](https://github.com/Rayman2200/PDFA3/blob/master/mustang/doc/ZugferdDev.en.pdf?raw=true)).
+This project requires Maven to run. Build project with "mvn clean install". This will build the project, test it and install the artifacts to local cache. After that the mustang jar can be used.
+
+More informations in [the mustang documentation](https://github.com/Rayman2200/PDFA3/blob/master/mustang/doc/ZugferdDev.en.pdf?raw=true)).
 
 
 Contact
 -----
 
-Developers: Thomas Chojecki and Jochen Stärk. For questions please contact Jochen at jstaerk [at] usegroup.de 
+Developer: Jochen Stärk. For questions please contact Jochen at jstaerk [at] usegroup.de 
+
