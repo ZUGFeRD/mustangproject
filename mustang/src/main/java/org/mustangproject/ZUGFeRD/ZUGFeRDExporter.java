@@ -81,6 +81,7 @@ public class ZUGFeRDExporter {
 	 * pass a IZUGFeRDExportableTransaction for the XML to be populated.
 	 */
 	byte[] zugferdData = null;
+	private boolean isTest;
 	
 	
 	private String nDigitFormat(BigDecimal value, int scale) {
@@ -154,6 +155,12 @@ public class ZUGFeRDExporter {
 		conformanceLevel=newLevel;
 	}
 
+	/**
+	 * enables the flag to indicate a test invoice in the XML structure
+	 * */
+	public void setTest() {
+		isTest=true;
+	}
 
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on
@@ -225,6 +232,11 @@ public class ZUGFeRDExporter {
 
 	private String getZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans) {
 		SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
+		String testBooleanStr="false";
+		if (isTest) {
+			testBooleanStr="true";
+			
+		}
 		String xml= "﻿<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //$NON-NLS-1$
 
 				+ "<rsm:CrossIndustryDocument xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:ferd:CrossIndustryDocument:invoice:1p0\""
@@ -232,7 +244,7 @@ public class ZUGFeRDExporter {
 				+ " xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12\""
 				+ " xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15\">\n" //$NON-NLS-1$
 				+ "	<rsm:SpecifiedExchangedDocumentContext>\n" //$NON-NLS-1$
-				+ "		<ram:TestIndicator><udt:Indicator>false</udt:Indicator></ram:TestIndicator>\n" //$NON-NLS-1$
+				+ "		<ram:TestIndicator><udt:Indicator>"+testBooleanStr+"</udt:Indicator></ram:TestIndicator>\n" //$NON-NLS-1$
 				+ "		<ram:GuidelineSpecifiedDocumentContextParameter>\n" //$NON-NLS-1$
 				+ "			<ram:ID>urn:ferd:CrossIndustryDocument:invoice:1p0:comfort</ram:ID>\n" //$NON-NLS-1$
 				+ "		</ram:GuidelineSpecifiedDocumentContextParameter>\n" //$NON-NLS-1$
