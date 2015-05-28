@@ -16,7 +16,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +40,7 @@ import org.apache.pdfbox.pdmodel.common.COSObjectable;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
+
 
 
 public class ZUGFeRDExporter {
@@ -81,6 +81,7 @@ public class ZUGFeRDExporter {
 	 * pass a IZUGFeRDExportableTransaction for the XML to be populated.
 	 */
 	byte[] zugferdData = null;
+	private boolean isTest;
 	
 	
 	private String nDigitFormat(BigDecimal value, int scale) {
@@ -154,6 +155,12 @@ public class ZUGFeRDExporter {
 		conformanceLevel=newLevel;
 	}
 
+	/**
+	 * enables the flag to indicate a test invoice in the XML structure
+	 * */
+	public void setTest() {
+		isTest=true;
+	}
 
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on
@@ -224,7 +231,13 @@ public class ZUGFeRDExporter {
 	}
 
 	private String getZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans) {
+		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
 		SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
+		String testBooleanStr="false";
+		if (isTest) {
+			testBooleanStr="true";
+			
+		}
 		String xml= "﻿<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //$NON-NLS-1$
 
 				+ "<rsm:CrossIndustryDocument xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:ferd:CrossIndustryDocument:invoice:1p0\""
@@ -232,7 +245,7 @@ public class ZUGFeRDExporter {
 				+ " xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12\""
 				+ " xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15\">\n" //$NON-NLS-1$
 				+ "	<rsm:SpecifiedExchangedDocumentContext>\n" //$NON-NLS-1$
-				+ "		<ram:TestIndicator><udt:Indicator>false</udt:Indicator></ram:TestIndicator>\n" //$NON-NLS-1$
+				+ "		<ram:TestIndicator><udt:Indicator>"+testBooleanStr+"</udt:Indicator></ram:TestIndicator>\n" //$NON-NLS-1$
 				+ "		<ram:GuidelineSpecifiedDocumentContextParameter>\n" //$NON-NLS-1$
 				+ "			<ram:ID>urn:ferd:CrossIndustryDocument:invoice:1p0:comfort</ram:ID>\n" //$NON-NLS-1$
 				+ "		</ram:GuidelineSpecifiedDocumentContextParameter>\n" //$NON-NLS-1$
@@ -322,23 +335,23 @@ public class ZUGFeRDExporter {
 				+ "			</ram:SpecifiedTradeSettlementPaymentMeans>\n"; //$NON-NLS-1$
 
 
-		/*
-		HashMap<BigDecimal, BigDecimal> VATPercentAmountMap=trans.getVATPercentAmountMap();
+		
+		HashMap<BigDecimal, VATAmount> VATPercentAmountMap=getVATPercentAmountMap(trans);
 		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-			BigDecimal amount = VATPercentAmountMap.get(currentTaxPercent);
+			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			if (amount != null) {
-				xml += "			<ApplicableTradeTax>\n" //$NON-NLS-1$
-								+ "				<CalculatedAmount currencyID=\"EUR\">"+currencyFormat(amount, '.')+"</CalculatedAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-								+ "				<TypeCode>VAT</TypeCode>\n" //$NON-NLS-1$
-//								+ "				<BasisAmount currencyID=\"EUR\">129.37</BasisAmount>\n"
-								+ "				<CategoryCode>S</CategoryCode>\n" //$NON-NLS-1$
-								+ "				<ApplicablePercent>"+currentTaxPercent+"</ApplicablePercent>\n" //$NON-NLS-1$
-								+ "			</ApplicableTradeTax>\n"; //$NON-NLS-1$
+				xml += "			<ram:ApplicableTradeTax>\n" //$NON-NLS-1$
+								+ "				<ram:CalculatedAmount currencyID=\"EUR\">"+currencyFormat(amount.getCalculated())+"</ram:CalculatedAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+								+ "				<ram:TypeCode>VAT</ram:TypeCode>\n" //$NON-NLS-1$
+								+ "				<ram:BasisAmount currencyID=\"EUR\">"+currencyFormat(amount.getCalculated())+"</ram:BasisAmount>\n"
+								+ "				<ram:CategoryCode>S</ram:CategoryCode>\n" //$NON-NLS-1$
+								+ "				<ram:ApplicablePercent>"+vatFormat(currentTaxPercent)+"</ram:ApplicablePercent>\n" //$NON-NLS-1$
+								+ "			</ram:ApplicableTradeTax>\n"; //$NON-NLS-1$
 
 
 
 			}
-		}*/
+		}
 /*				xml+= "
 				+ "			<SpecifiedTradeAllowanceCharge>\n"
 				+ "				<ChargeIndicator>false</ChargeIndicator>\n"
@@ -373,13 +386,13 @@ public class ZUGFeRDExporter {
 				+ "			</SpecifiedLogisticsServiceCharge>\n"*/
 
 				xml=xml+ "			<ram:SpecifiedTradePaymentTerms>\n" //$NON-NLS-1$
-//				+ "				<Description>Zahlbar innerhalb 30 Tagen netto bis 04.07.2013, 3% Skonto innerhalb 10 Tagen bis 15.06.2013</Description>\n"
+				+ "				<ram:Description>Zahlbar ohne Abzug bis "+germanDateFormat.format(trans.getDueDate())+"</ram:Description>\n"
 				+ "				<ram:DueDateDateTime><udt:DateTimeString format=\"102\">"+zugferdDateFormat.format(trans.getDueDate())+"</udt:DateTimeString></ram:DueDateDateTime>\n"//20130704 //$NON-NLS-1$ //$NON-NLS-2$
 				+ "			</ram:SpecifiedTradePaymentTerms>\n" //$NON-NLS-1$
 				+ "			<ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
 				+ "				<ram:ChargeTotalAmount currencyID=\"EUR\">0.00</ram:ChargeTotalAmount>\n" //$NON-NLS-1$
 				+ "				<ram:AllowanceTotalAmount currencyID=\"EUR\">0.00</ram:AllowanceTotalAmount>\n" //$NON-NLS-1$
-				+ "				<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+//				+ "				<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 //				+ "				<ChargeTotalAmount currencyID=\"EUR\">5.80</ChargeTotalAmount>\n"
 //				+ "				<AllowanceTotalAmount currencyID=\"EUR\">14.73</AllowanceTotalAmount>\n"
 				+ "				<ram:TaxBasisTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal())+"</ram:TaxBasisTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
@@ -452,6 +465,34 @@ public class ZUGFeRDExporter {
 				xml=xml	+ "	</rsm:SpecifiedSupplyChainTradeTransaction>\n" //$NON-NLS-1$
 				+ "</rsm:CrossIndustryDocument>"; //$NON-NLS-1$
 				return xml;
+	}
+
+
+	/**
+	 * which taxes have been used with which amounts in this transaction,
+	 * empty for no taxes, or e.g. 19=>190 and 7=>14 if 1000 Eur were applicable
+	 * to 19% VAT (=>190 EUR VAT) and 200 EUR were applicable to 7% (=>14 EUR VAT)
+	 * 190 Eur  
+	 * @return
+	 *
+	*/
+	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap(IZUGFeRDExportableTransaction trans) {
+		HashMap<BigDecimal, VATAmount> hm=new HashMap<BigDecimal, VATAmount> ();
+		
+		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
+			BigDecimal percent=currentItem.getProduct().getVATPercent();
+			BigDecimal currentBasis=currentItem.getPriceGross().subtract(currentItem.getPrice());
+			VATAmount itemVATAmount=new VATAmount(currentBasis, currentBasis.multiply(percent)) ;
+			VATAmount current=hm.get(percent);
+			if (current==null) {
+				hm.put(percent, itemVATAmount);
+			} else {
+				hm.put(percent, current.add(itemVATAmount));
+				
+			}
+		}
+
+		return hm;
 	}
 
 	/**
