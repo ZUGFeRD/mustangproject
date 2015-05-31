@@ -12,6 +12,7 @@ package org.mustangproject.ZUGFeRD;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -343,7 +344,7 @@ public class ZUGFeRDExporter {
 				xml += "			<ram:ApplicableTradeTax>\n" //$NON-NLS-1$
 								+ "				<ram:CalculatedAmount currencyID=\"EUR\">"+currencyFormat(amount.getCalculated())+"</ram:CalculatedAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 								+ "				<ram:TypeCode>VAT</ram:TypeCode>\n" //$NON-NLS-1$
-								+ "				<ram:BasisAmount currencyID=\"EUR\">"+currencyFormat(amount.getCalculated())+"</ram:BasisAmount>\n"
+								+ "				<ram:BasisAmount currencyID=\"EUR\">"+currencyFormat(amount.getBasis())+"</ram:BasisAmount>\n"
 								+ "				<ram:CategoryCode>S</ram:CategoryCode>\n" //$NON-NLS-1$
 								+ "				<ram:ApplicablePercent>"+vatFormat(currentTaxPercent)+"</ram:ApplicablePercent>\n" //$NON-NLS-1$
 								+ "			</ram:ApplicableTradeTax>\n"; //$NON-NLS-1$
@@ -481,8 +482,8 @@ public class ZUGFeRDExporter {
 		
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			BigDecimal percent=currentItem.getProduct().getVATPercent();
-			BigDecimal currentBasis=currentItem.getPriceGross().subtract(currentItem.getPrice());
-			VATAmount itemVATAmount=new VATAmount(currentBasis, currentBasis.multiply(percent)) ;
+			BigDecimal currentBasis=currentItem.getQuantity().multiply(currentItem.getPrice()).setScale(2,BigDecimal.ROUND_HALF_UP );// item total net amount
+			VATAmount itemVATAmount=new VATAmount(currentBasis, currentItem.getTotalGross().subtract(currentBasis)) ;
 			VATAmount current=hm.get(percent);
 			if (current==null) {
 				hm.put(percent, itemVATAmount);
