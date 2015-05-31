@@ -242,7 +242,7 @@ public class ZUGFeRDExporter {
 		String xml= "﻿<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //$NON-NLS-1$
 
 				+ "<rsm:CrossIndustryDocument xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:ferd:CrossIndustryDocument:invoice:1p0\""
-				+ " xsi:schemaLocation=\"urn:ferd:CrossIndustryDocument:invoice:1p0 ../Schema/ZUGFeRD_1p0.xsd\""
+				+ " xsi:schemaLocation=\"urn:ferd:CrossIndustryDocument:invoice:1p0 ../Schema/ZUGFeRD1p0.xsd\""
 				+ " xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12\""
 				+ " xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15\">\n" //$NON-NLS-1$
 				+ "	<rsm:SpecifiedExchangedDocumentContext>\n" //$NON-NLS-1$
@@ -391,9 +391,9 @@ public class ZUGFeRDExporter {
 				+ "				<ram:DueDateDateTime><udt:DateTimeString format=\"102\">"+zugferdDateFormat.format(trans.getDueDate())+"</udt:DateTimeString></ram:DueDateDateTime>\n"//20130704 //$NON-NLS-1$ //$NON-NLS-2$
 				+ "			</ram:SpecifiedTradePaymentTerms>\n" //$NON-NLS-1$
 				+ "			<ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
+				+ "				<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 				+ "				<ram:ChargeTotalAmount currencyID=\"EUR\">0.00</ram:ChargeTotalAmount>\n" //$NON-NLS-1$
 				+ "				<ram:AllowanceTotalAmount currencyID=\"EUR\">0.00</ram:AllowanceTotalAmount>\n" //$NON-NLS-1$
-				+ "				<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 //				+ "				<ChargeTotalAmount currencyID=\"EUR\">5.80</ChargeTotalAmount>\n"
 //				+ "				<AllowanceTotalAmount currencyID=\"EUR\">14.73</AllowanceTotalAmount>\n"
 				+ "				<ram:TaxBasisTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal())+"</ram:TaxBasisTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
