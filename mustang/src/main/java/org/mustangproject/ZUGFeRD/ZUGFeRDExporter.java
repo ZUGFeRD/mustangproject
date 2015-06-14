@@ -12,8 +12,11 @@ package org.mustangproject.ZUGFeRD;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +41,7 @@ import org.apache.pdfbox.pdmodel.common.COSObjectable;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
+
 
 
 public class ZUGFeRDExporter {
@@ -78,8 +82,10 @@ public class ZUGFeRDExporter {
 	 * pass a IZUGFeRDExportableTransaction for the XML to be populated.
 	 */
 	byte[] zugferdData = null;
-
-	private String currencyFormat(BigDecimal value, char decimalDelimiter) {
+	private boolean isTest;
+	
+	
+	private String nDigitFormat(BigDecimal value, int scale) {
 		/*
 		 * I needed 123,45, locale independent.I tried
 		 * NumberFormat.getCurrencyInstance().format( 12345.6789 ); but that is
@@ -106,18 +112,30 @@ public class ZUGFeRDExporter {
 		 *
 		 * results 0.00 -1,10 -1,10 -1,01 20000123,34 20000123,34 12,00
 		 */
-		value=value.setScale( 2, BigDecimal.ROUND_HALF_UP ); // first, round so that e.g. 1.189999999999999946709294817992486059665679931640625 becomes 1.19
-		long totalCent = value.multiply(new BigDecimal(100)).intValue(); //now get the cents
-		long eurOnly = value.longValue();
-		long centOnly = Math.abs(totalCent % 100);
-		StringBuffer res = new StringBuffer();
-		res.append(eurOnly);
-		res.append(decimalDelimiter);
-		if (centOnly < 10) {
-			res.append('0');
-		}
-		res.append(centOnly);
-		return res.toString();
+		value=value.setScale( scale, BigDecimal.ROUND_HALF_UP ); // first, round so that e.g. 1.189999999999999946709294817992486059665679931640625 becomes 1.19
+		char[] repeat = new char[scale];
+		Arrays.fill(repeat, '0');
+		
+		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
+		otherSymbols.setDecimalSeparator('.');
+		DecimalFormat dec = new DecimalFormat("0."+new String(repeat), otherSymbols);
+		return dec.format(value);
+		
+	}
+
+	private String vatFormat(BigDecimal value) {
+		return nDigitFormat(value, 2);
+	}
+
+	private String currencyFormat(BigDecimal value) {
+		return nDigitFormat(value, 2);
+	}
+
+	private String priceFormat(BigDecimal value) {
+		return nDigitFormat(value, 4);
+	}
+	private String quantityFormat(BigDecimal value) {
+		return nDigitFormat(value, 4);
 	}
 
 	/**
@@ -138,6 +156,12 @@ public class ZUGFeRDExporter {
 		conformanceLevel=newLevel;
 	}
 
+	/**
+	 * enables the flag to indicate a test invoice in the XML structure
+	 * */
+	public void setTest() {
+		isTest=true;
+	}
 
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on
@@ -208,17 +232,23 @@ public class ZUGFeRDExporter {
 	}
 
 	private String getZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans) {
+		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
 		SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
+		String testBooleanStr="false";
+		if (isTest) {
+			testBooleanStr="true";
+			
+		}
 		String xml= "﻿<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //$NON-NLS-1$
 
 				+ "<rsm:CrossIndustryDocument xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:ferd:CrossIndustryDocument:invoice:1p0\""
-//				+ " xsi:schemaLocation=\"urn:ferd:CrossIndustryDocument:invoice:1p0 ../Schema/ZUGFeRD1p0.xsd\""
+				+ " xsi:schemaLocation=\"urn:ferd:CrossIndustryDocument:invoice:1p0 ../Schema/ZUGFeRD1p0.xsd\""
 				+ " xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12\""
 				+ " xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15\">\n" //$NON-NLS-1$
 				+ "	<rsm:SpecifiedExchangedDocumentContext>\n" //$NON-NLS-1$
-				+ "		<ram:TestIndicator><udt:Indicator>false</udt:Indicator></ram:TestIndicator>\n" //$NON-NLS-1$
+				+ "		<ram:TestIndicator><udt:Indicator>"+testBooleanStr+"</udt:Indicator></ram:TestIndicator>\n" //$NON-NLS-1$
 				+ "		<ram:GuidelineSpecifiedDocumentContextParameter>\n" //$NON-NLS-1$
-				+ "			<ram:ID>urn:ferd:invoice:rc:comfort</ram:ID>\n" //$NON-NLS-1$
+				+ "			<ram:ID>urn:ferd:CrossIndustryDocument:invoice:1p0:comfort</ram:ID>\n" //$NON-NLS-1$
 				+ "		</ram:GuidelineSpecifiedDocumentContextParameter>\n" //$NON-NLS-1$
 				+ "	</rsm:SpecifiedExchangedDocumentContext>\n" //$NON-NLS-1$
 				+ "	<rsm:HeaderExchangedDocument>\n" //$NON-NLS-1$
@@ -306,23 +336,23 @@ public class ZUGFeRDExporter {
 				+ "			</ram:SpecifiedTradeSettlementPaymentMeans>\n"; //$NON-NLS-1$
 
 
-		/*
-		HashMap<BigDecimal, BigDecimal> VATPercentAmountMap=trans.getVATPercentAmountMap();
+		
+		HashMap<BigDecimal, VATAmount> VATPercentAmountMap=getVATPercentAmountMap(trans);
 		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-			BigDecimal amount = VATPercentAmountMap.get(currentTaxPercent);
+			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			if (amount != null) {
-				xml += "			<ApplicableTradeTax>\n" //$NON-NLS-1$
-								+ "				<CalculatedAmount currencyID=\"EUR\">"+currencyFormat(amount, '.')+"</CalculatedAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-								+ "				<TypeCode>VAT</TypeCode>\n" //$NON-NLS-1$
-//								+ "				<BasisAmount currencyID=\"EUR\">129.37</BasisAmount>\n"
-								+ "				<CategoryCode>S</CategoryCode>\n" //$NON-NLS-1$
-								+ "				<ApplicablePercent>"+currentTaxPercent+"</ApplicablePercent>\n" //$NON-NLS-1$
-								+ "			</ApplicableTradeTax>\n"; //$NON-NLS-1$
+				xml += "			<ram:ApplicableTradeTax>\n" //$NON-NLS-1$
+								+ "				<ram:CalculatedAmount currencyID=\"EUR\">"+currencyFormat(amount.getCalculated())+"</ram:CalculatedAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+								+ "				<ram:TypeCode>VAT</ram:TypeCode>\n" //$NON-NLS-1$
+								+ "				<ram:BasisAmount currencyID=\"EUR\">"+currencyFormat(amount.getBasis())+"</ram:BasisAmount>\n"
+								+ "				<ram:CategoryCode>S</ram:CategoryCode>\n" //$NON-NLS-1$
+								+ "				<ram:ApplicablePercent>"+vatFormat(currentTaxPercent)+"</ram:ApplicablePercent>\n" //$NON-NLS-1$
+								+ "			</ram:ApplicableTradeTax>\n"; //$NON-NLS-1$
 
 
 
 			}
-		}*/
+		}
 /*				xml+= "
 				+ "			<SpecifiedTradeAllowanceCharge>\n"
 				+ "				<ChargeIndicator>false</ChargeIndicator>\n"
@@ -357,18 +387,20 @@ public class ZUGFeRDExporter {
 				+ "			</SpecifiedLogisticsServiceCharge>\n"*/
 
 				xml=xml+ "			<ram:SpecifiedTradePaymentTerms>\n" //$NON-NLS-1$
-//				+ "				<Description>Zahlbar innerhalb 30 Tagen netto bis 04.07.2013, 3% Skonto innerhalb 10 Tagen bis 15.06.2013</Description>\n"
+				+ "				<ram:Description>Zahlbar ohne Abzug bis "+germanDateFormat.format(trans.getDueDate())+"</ram:Description>\n"
 				+ "				<ram:DueDateDateTime><udt:DateTimeString format=\"102\">"+zugferdDateFormat.format(trans.getDueDate())+"</udt:DateTimeString></ram:DueDateDateTime>\n"//20130704 //$NON-NLS-1$ //$NON-NLS-2$
 				+ "			</ram:SpecifiedTradePaymentTerms>\n" //$NON-NLS-1$
 				+ "			<ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
-				+ "				<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal(), '.')+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:ChargeTotalAmount currencyID=\"EUR\">0.00</ram:ChargeTotalAmount>\n" //$NON-NLS-1$
+				+ "				<ram:AllowanceTotalAmount currencyID=\"EUR\">0.00</ram:AllowanceTotalAmount>\n" //$NON-NLS-1$
 //				+ "				<ChargeTotalAmount currencyID=\"EUR\">5.80</ChargeTotalAmount>\n"
 //				+ "				<AllowanceTotalAmount currencyID=\"EUR\">14.73</AllowanceTotalAmount>\n"
-				+ "				<ram:TaxBasisTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal(), '.')+"</ram:TaxBasisTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				<ram:TaxTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross().subtract(trans.getTotal()), '.')+"</ram:TaxTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				<ram:GrandTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross(), '.')+"</ram:GrandTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:TaxBasisTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal())+"</ram:TaxBasisTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:TaxTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross().subtract(trans.getTotal()))+"</ram:TaxTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:GrandTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross())+"</ram:GrandTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 //				+ "				<TotalPrepaidAmount currencyID=\"EUR\">0.00</TotalPrepaidAmount>\n"
-				+ "				<ram:DuePayableAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross(), '.')+"</ram:DuePayableAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:DuePayableAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross())+"</ram:DuePayableAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 				+ "			</ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
 				+ "		</ram:ApplicableSupplyChainTradeSettlement>\n"; //$NON-NLS-1$
 //				+ "		<IncludedSupplyChainTradeLineItem>\n"
@@ -390,8 +422,8 @@ public class ZUGFeRDExporter {
 
 							+ "			<ram:SpecifiedSupplyChainTradeAgreement>\n" //$NON-NLS-1$
 							+ "				<ram:GrossPriceProductTradePrice>\n" //$NON-NLS-1$
-							+ "					<ram:ChargeAmount currencyID=\"EUR\">"+currencyFormat(currentItem.getPriceGross(),'.')+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-							+ "					<ram:BasisQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">1</ram:BasisQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "					<ram:ChargeAmount currencyID=\"EUR\">"+priceFormat(currentItem.getPriceGross())+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "					<ram:BasisQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">1.0000</ram:BasisQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$
 //							+ "					<AppliedTradeAllowanceCharge>\n"
 //							+ "						<ChargeIndicator>false</ChargeIndicator>\n"
 //							+ "						<ActualAmount currencyID=\"EUR\">0.6667</ActualAmount>\n"
@@ -399,22 +431,22 @@ public class ZUGFeRDExporter {
 //							+ "					</AppliedTradeAllowanceCharge>\n"
 							+ "				</ram:GrossPriceProductTradePrice>\n" //$NON-NLS-1$
 							+ "				<ram:NetPriceProductTradePrice>\n" //$NON-NLS-1$
-							+ "					<ram:ChargeAmount currencyID=\"EUR\">"+currencyFormat(currentItem.getPrice(),'.')+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-							+ "					<ram:BasisQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">1</ram:BasisQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "					<ram:ChargeAmount currencyID=\"EUR\">"+priceFormat(currentItem.getPrice())+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "					<ram:BasisQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">1.0000</ram:BasisQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$
 							+ "				</ram:NetPriceProductTradePrice>\n" //$NON-NLS-1$
 							+ "			</ram:SpecifiedSupplyChainTradeAgreement>\n" //$NON-NLS-1$
 
 							+ "			<ram:SpecifiedSupplyChainTradeDelivery>\n" //$NON-NLS-1$
-							+ "				<ram:BilledQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">"+currentItem.getQuantity()+"</ram:BilledQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							+ "				<ram:BilledQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">"+quantityFormat(currentItem.getQuantity())+"</ram:BilledQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							+ "			</ram:SpecifiedSupplyChainTradeDelivery>\n" //$NON-NLS-1$
 							+ "			<ram:SpecifiedSupplyChainTradeSettlement>\n" //$NON-NLS-1$
 							+ "				<ram:ApplicableTradeTax>\n" //$NON-NLS-1$
 							+ "					<ram:TypeCode>VAT</ram:TypeCode>\n" //$NON-NLS-1$
 							+ "					<ram:CategoryCode>S</ram:CategoryCode>\n" //$NON-NLS-1$
-							+ "					<ram:ApplicablePercent>"+currentItem.getProduct().getVATPercent()+"</ram:ApplicablePercent>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "					<ram:ApplicablePercent>"+vatFormat(currentItem.getProduct().getVATPercent())+"</ram:ApplicablePercent>\n" //$NON-NLS-1$ //$NON-NLS-2$
 							+ "				</ram:ApplicableTradeTax>\n" //$NON-NLS-1$
 							+ "				<ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
-							+ "					<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(currentItem.getTotalGross(),'.')+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "					<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(currentItem.getTotalGross())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 							+ "				</ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
 							+ "			</ram:SpecifiedSupplyChainTradeSettlement>\n" //$NON-NLS-1$
 							+ "			<ram:SpecifiedTradeProduct>\n" //$NON-NLS-1$
@@ -436,6 +468,34 @@ public class ZUGFeRDExporter {
 				return xml;
 	}
 
+
+	/**
+	 * which taxes have been used with which amounts in this transaction,
+	 * empty for no taxes, or e.g. 19=>190 and 7=>14 if 1000 Eur were applicable
+	 * to 19% VAT (=>190 EUR VAT) and 200 EUR were applicable to 7% (=>14 EUR VAT)
+	 * 190 Eur  
+	 * @return
+	 *
+	*/
+	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap(IZUGFeRDExportableTransaction trans) {
+		HashMap<BigDecimal, VATAmount> hm=new HashMap<BigDecimal, VATAmount> ();
+		
+		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
+			BigDecimal percent=currentItem.getProduct().getVATPercent();
+			BigDecimal currentBasis=currentItem.getQuantity().multiply(currentItem.getPrice()).setScale(2,BigDecimal.ROUND_HALF_UP );// item total net amount
+			VATAmount itemVATAmount=new VATAmount(currentBasis, currentItem.getTotalGross().subtract(currentBasis)) ;
+			VATAmount current=hm.get(percent);
+			if (current==null) {
+				hm.put(percent, itemVATAmount);
+			} else {
+				hm.put(percent, current.add(itemVATAmount));
+				
+			}
+		}
+
+		return hm;
+	}
+
 	/**
 	 * Embeds the Zugferd XML structure in a file named ZUGFeRD-invoice.xml.
 	 *
@@ -444,20 +504,6 @@ public class ZUGFeRDExporter {
 	 *        This parameter may be null, if so the XML data should hav ebeen set via <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
 	 */
 	public void PDFattachZugferdFile(PDDocument doc, IZUGFeRDExportableTransaction trans) throws IOException {
-
-		// embedded files are stored in a named tree
-		PDEmbeddedFilesNameTreeNode efTree = new PDEmbeddedFilesNameTreeNode();
-
-		String filename="ZUGFeRD-invoice.xml"; //$NON-NLS-1$
-		// first create the file specification, which holds the embedded file
-		PDComplexFileSpecification fs = new PDComplexFileSpecification();
-		fs.setFile(filename);
-
-		COSDictionary dict = fs.getCOSDictionary();
-		// Relation "Source" for linking with eg. catalog
-		dict.setName("AFRelationship", "Alternative"); // as defined in Zugferd standard //$NON-NLS-1$ //$NON-NLS-2$
-
-		dict.setString("UF", filename); //$NON-NLS-1$
 
 		if (zugferdData == null) // XML ZUGFeRD data not set externally, needs to be built
 		{
@@ -475,34 +521,8 @@ public class ZUGFeRDExporter {
 			}
 		}
 
-		ByteArrayInputStream fakeFile = new ByteArrayInputStream(zugferdData);
-		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
-		// now lets some of the optional parameters
-		ef.setSubtype("text/xml");// as defined in Zugferd standard //$NON-NLS-1$
-		ef.setSize(zugferdData.length);
-		ef.setCreationDate(new GregorianCalendar());
 
-		ef.setModDate(GregorianCalendar.getInstance());
-
-		fs.setEmbeddedFile(ef);
-
-		// In addition make sure the embedded file is set under /UF
-		dict = fs.getCOSDictionary();
-		COSDictionary efDict = (COSDictionary)dict.getDictionaryObject(COSName.EF);
-		COSBase lowerLevelFile = efDict.getItem(COSName.F);
-		efDict.setItem(COSName.UF, lowerLevelFile);
-
-		// now add the entry to the embedded file tree and set in the document.
-		efTree.setNames(Collections.singletonMap(filename, fs));
-		PDDocumentNameDictionary names = new PDDocumentNameDictionary(
-				doc.getDocumentCatalog());
-		names.setEmbeddedFiles(efTree);
-		doc.getDocumentCatalog().setNames(names);
-		// AF entry (Array) in catalog with the FileSpec
-		COSArray cosArray = new COSArray();
-		cosArray.add(fs);
-		doc.getDocumentCatalog().getCOSDictionary().setItem("AF", cosArray); //$NON-NLS-1$
-
+		PDFAttachGenericFile(doc, "ZUGFeRD-invoice.xml", "Alternative", "Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)", "text/xml", zugferdData);
 	}
 
 
@@ -511,18 +531,21 @@ public class ZUGFeRDExporter {
 	 *
 	 * @param doc PDDocument to attach the file to.
 	 * @param filename name of the file that will become attachment name in the PDF
+	 * @param relationship how the file relates to the content, e.g. "Alternative"
+	 * @param description Human-readable description of the file content
 	 * @param subType type of the data e.g. could be "text/xml" - mime like
 	 * @param data the binary data of the file/attachment
 	 */
-	public void PDFAttachGenericFile(PDDocument doc, String filename, String subType, byte[] data)
+	public void PDFAttachGenericFile(PDDocument doc, String filename, String relationship, String description, String subType, byte[] data)
 		throws IOException
 	{
 		PDComplexFileSpecification fs = new PDComplexFileSpecification();
 		fs.setFile(filename);
 
 		COSDictionary dict = fs.getCOSDictionary();
-		dict.setName("AFRelationship", "Alternative");
+		dict.setName("AFRelationship", relationship);
 		dict.setString("UF", filename);
+		dict.setString("Desc", description);
 
 		ByteArrayInputStream fakeFile = new ByteArrayInputStream(data);
 		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
