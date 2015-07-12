@@ -3,10 +3,9 @@
   <groupId>com.github.rayman2200</groupId>
   <artifactId>mustang-sample-project</artifactId>
   <versioning>
-    <release>1.0.0</release>
     <versions>
-      <version>1.0.0</version>
+      <version>1.0.1-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20150221215246</lastUpdated>
+    <lastUpdated>20150712085304</lastUpdated>
   </versioning>
 </metadata>
