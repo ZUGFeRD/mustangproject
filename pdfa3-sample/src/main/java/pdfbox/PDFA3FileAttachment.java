@@ -30,6 +30,7 @@ import org.apache.jempbox.xmp.XMPSchemaBasic;
 import org.apache.jempbox.xmp.XMPSchemaDublinCore;
 import org.apache.jempbox.xmp.XMPSchemaPDF;
 import org.apache.jempbox.xmp.pdfa.XMPSchemaPDFAId;
+import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
@@ -120,6 +121,10 @@ public class PDFA3FileAttachment
     // cosArray.add(fs);
     // catalog.setItem("AF", cosArray);
 
+    COSDictionary dict2 = catalog.getCOSDictionary();
+    COSArray array = new COSArray();
+    array.add(fs.getCOSDictionary()); // see below
+    dict2.setItem("AF",array);
   }
 
   /**
