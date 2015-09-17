@@ -14,11 +14,7 @@ public interface IZUGFeRDExportableItem {
 
 	IZUGFeRDExportableProduct getProduct();
 
-	/**
-	 * The price of one item incl. taxes
-	 * @return
-	 */
-	BigDecimal getPriceGross();
+
 
 	/**
 	 * The price of one item excl. taxes
@@ -32,10 +28,6 @@ public interface IZUGFeRDExportableItem {
 	 */
 	BigDecimal getQuantity();
 
-	/**
-	 * The price of quantity items incl. taxes
-	 * @return
-	 */
-	BigDecimal getTotalGross();
+
 
 }

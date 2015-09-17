@@ -64,6 +64,37 @@ public class ZUGFeRDExporter {
 	 */
 
 
+	
+	private class LineCalc {
+		private IZUGFeRDExportableItem currentItem=null;
+		private BigDecimal priceGross;
+		private BigDecimal totalGross;
+		private BigDecimal itemTotalNetAmount;
+		private BigDecimal itemTotalVATAmount;
+		
+		public LineCalc(IZUGFeRDExportableItem currentItem) {
+			this.currentItem=currentItem;
+			BigDecimal multiplicator=currentItem.getProduct().getVATPercent().divide(new BigDecimal(100)).add(new BigDecimal(1));
+			priceGross=currentItem.getPrice().multiply(multiplicator);
+			totalGross=currentItem.getPrice().multiply(multiplicator).multiply(currentItem.getQuantity());
+			itemTotalNetAmount=currentItem.getQuantity().multiply(currentItem.getPrice()).setScale(2,BigDecimal.ROUND_HALF_UP);
+			itemTotalVATAmount=totalGross.subtract(itemTotalNetAmount);
+		}
+		public BigDecimal getPriceGross() {
+			return priceGross;
+		}
+		public BigDecimal getTotalGross() {
+			return totalGross;
+		}
+		public BigDecimal getItemTotalNetAmount() {
+			return itemTotalNetAmount;
+		}
+
+		public BigDecimal getItemTotalVATAmount() {
+			return itemTotalVATAmount;
+		}
+
+	}
 
 
 
@@ -415,6 +446,8 @@ public class ZUGFeRDExporter {
 				int lineID=0;
 				for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 					lineID++;
+
+					LineCalc lc=new LineCalc(currentItem);
 					xml=xml+ "		<ram:IncludedSupplyChainTradeLineItem>\n"+ //$NON-NLS-1$
 					"			<ram:AssociatedDocumentLineDocument>\n" //$NON-NLS-1$
 							+ "				<ram:LineID>"+lineID+"</ram:LineID>\n" //$NON-NLS-1$ //$NON-NLS-2$
@@ -422,7 +455,7 @@ public class ZUGFeRDExporter {
 
 							+ "			<ram:SpecifiedSupplyChainTradeAgreement>\n" //$NON-NLS-1$
 							+ "				<ram:GrossPriceProductTradePrice>\n" //$NON-NLS-1$
-							+ "					<ram:ChargeAmount currencyID=\"EUR\">"+priceFormat(currentItem.getPriceGross())+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "					<ram:ChargeAmount currencyID=\"EUR\">"+priceFormat(lc.getPriceGross())+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 							+ "					<ram:BasisQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">1.0000</ram:BasisQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$
 //							+ "					<AppliedTradeAllowanceCharge>\n"
 //							+ "						<ChargeIndicator>false</ChargeIndicator>\n"
@@ -431,7 +464,7 @@ public class ZUGFeRDExporter {
 //							+ "					</AppliedTradeAllowanceCharge>\n"
 							+ "				</ram:GrossPriceProductTradePrice>\n" //$NON-NLS-1$
 							+ "				<ram:NetPriceProductTradePrice>\n" //$NON-NLS-1$
-							+ "					<ram:ChargeAmount currencyID=\"EUR\">"+priceFormat(currentItem.getPrice())+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "					<ram:ChargeAmount currencyID=\"EUR\">"+priceFormat(lc.getPriceGross())+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 							+ "					<ram:BasisQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">1.0000</ram:BasisQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$
 							+ "				</ram:NetPriceProductTradePrice>\n" //$NON-NLS-1$
 							+ "			</ram:SpecifiedSupplyChainTradeAgreement>\n" //$NON-NLS-1$
@@ -446,7 +479,7 @@ public class ZUGFeRDExporter {
 							+ "					<ram:ApplicablePercent>"+vatFormat(currentItem.getProduct().getVATPercent())+"</ram:ApplicablePercent>\n" //$NON-NLS-1$ //$NON-NLS-2$
 							+ "				</ram:ApplicableTradeTax>\n" //$NON-NLS-1$
 							+ "				<ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
-							+ "					<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(currentItem.getTotalGross())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "					<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(lc.getTotalGross())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 							+ "				</ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
 							+ "			</ram:SpecifiedSupplyChainTradeSettlement>\n" //$NON-NLS-1$
 							+ "			<ram:SpecifiedTradeProduct>\n" //$NON-NLS-1$
@@ -482,8 +515,8 @@ public class ZUGFeRDExporter {
 		
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			BigDecimal percent=currentItem.getProduct().getVATPercent();
-			BigDecimal currentBasis=currentItem.getQuantity().multiply(currentItem.getPrice()).setScale(2,BigDecimal.ROUND_HALF_UP );// item total net amount
-			VATAmount itemVATAmount=new VATAmount(currentBasis, currentItem.getTotalGross().subtract(currentBasis)) ;
+			LineCalc lc=new LineCalc(currentItem);
+			VATAmount itemVATAmount=new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount() ) ;
 			VATAmount current=hm.get(percent);
 			if (current==null) {
 				hm.put(percent, itemVATAmount);
