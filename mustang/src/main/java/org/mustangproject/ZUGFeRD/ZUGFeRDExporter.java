@@ -12,7 +12,6 @@ package org.mustangproject.ZUGFeRD;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -80,12 +79,12 @@ public class ZUGFeRDExporter {
 			itemTotalNetAmount=currentItem.getQuantity().multiply(currentItem.getPrice()).setScale(2,BigDecimal.ROUND_HALF_UP);
 			itemTotalVATAmount=totalGross.subtract(itemTotalNetAmount);
 		}
-		public BigDecimal getPriceGross() {
+/*		public BigDecimal getPriceGross() {
 			return priceGross;
 		}
 		public BigDecimal getTotalGross() {
 			return totalGross;
-		}
+		}*/
 		public BigDecimal getItemTotalNetAmount() {
 			return itemTotalNetAmount;
 		}
@@ -101,7 +100,7 @@ public class ZUGFeRDExporter {
 	//// MAIN CLASS
 
 	private String conformanceLevel = "U";
-	private String versionStr       = "1.1";
+	private String versionStr       = "1.1.3";
 
 	// BASIC, COMFORT etc - may be set from outside.
 	private String ZUGFeRDConformanceLevel = null;
@@ -455,7 +454,7 @@ public class ZUGFeRDExporter {
 
 							+ "			<ram:SpecifiedSupplyChainTradeAgreement>\n" //$NON-NLS-1$
 							+ "				<ram:GrossPriceProductTradePrice>\n" //$NON-NLS-1$
-							+ "					<ram:ChargeAmount currencyID=\"EUR\">"+priceFormat(lc.getPriceGross())+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "					<ram:ChargeAmount currencyID=\"EUR\">"+priceFormat(currentItem.getPrice())+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 							+ "					<ram:BasisQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">1.0000</ram:BasisQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$
 //							+ "					<AppliedTradeAllowanceCharge>\n"
 //							+ "						<ChargeIndicator>false</ChargeIndicator>\n"
@@ -464,7 +463,7 @@ public class ZUGFeRDExporter {
 //							+ "					</AppliedTradeAllowanceCharge>\n"
 							+ "				</ram:GrossPriceProductTradePrice>\n" //$NON-NLS-1$
 							+ "				<ram:NetPriceProductTradePrice>\n" //$NON-NLS-1$
-							+ "					<ram:ChargeAmount currencyID=\"EUR\">"+priceFormat(lc.getPriceGross())+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "					<ram:ChargeAmount currencyID=\"EUR\">"+priceFormat(currentItem.getPrice())+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 							+ "					<ram:BasisQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">1.0000</ram:BasisQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$
 							+ "				</ram:NetPriceProductTradePrice>\n" //$NON-NLS-1$
 							+ "			</ram:SpecifiedSupplyChainTradeAgreement>\n" //$NON-NLS-1$
@@ -479,7 +478,7 @@ public class ZUGFeRDExporter {
 							+ "					<ram:ApplicablePercent>"+vatFormat(currentItem.getProduct().getVATPercent())+"</ram:ApplicablePercent>\n" //$NON-NLS-1$ //$NON-NLS-2$
 							+ "				</ram:ApplicableTradeTax>\n" //$NON-NLS-1$
 							+ "				<ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
-							+ "					<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(lc.getTotalGross())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+							+ "					<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(lc.getItemTotalNetAmount())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 							+ "				</ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
 							+ "			</ram:SpecifiedSupplyChainTradeSettlement>\n" //$NON-NLS-1$
 							+ "			<ram:SpecifiedTradeProduct>\n" //$NON-NLS-1$
