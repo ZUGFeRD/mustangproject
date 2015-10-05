@@ -29,18 +29,6 @@ public interface IZUGFeRDExportableTransaction {
 
 
 	/**
-	 * total amount incl. taxes 
-	 * @return
-	 */
-	BigDecimal getTotalGross();
-
-	/**
-	 * total amount excl. taxes 
-	 * @return
-	 */
-	BigDecimal getTotal();
-
-	/**
 	 * when the invoice is to be paid
 	 * @return
 	 */

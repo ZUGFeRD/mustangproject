@@ -113,6 +113,7 @@ public class ZUGFeRDExporter {
 	 */
 	byte[] zugferdData = null;
 	private boolean isTest;
+	IZUGFeRDExportableTransaction trans=null;
 	
 	
 	private String nDigitFormat(BigDecimal value, int scale) {
@@ -262,6 +263,8 @@ public class ZUGFeRDExporter {
 	}
 
 	private String getZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans) {
+		this.trans=trans;
+	
 		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
 		SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
 		String testBooleanStr="false";
@@ -367,7 +370,7 @@ public class ZUGFeRDExporter {
 
 
 		
-		HashMap<BigDecimal, VATAmount> VATPercentAmountMap=getVATPercentAmountMap(trans);
+		HashMap<BigDecimal, VATAmount> VATPercentAmountMap=getVATPercentAmountMap();
 		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
 			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			if (amount != null) {
@@ -421,16 +424,16 @@ public class ZUGFeRDExporter {
 				+ "				<ram:DueDateDateTime><udt:DateTimeString format=\"102\">"+zugferdDateFormat.format(trans.getDueDate())+"</udt:DateTimeString></ram:DueDateDateTime>\n"//20130704 //$NON-NLS-1$ //$NON-NLS-2$
 				+ "			</ram:SpecifiedTradePaymentTerms>\n" //$NON-NLS-1$
 				+ "			<ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
-				+ "				<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(getTotal())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 				+ "				<ram:ChargeTotalAmount currencyID=\"EUR\">0.00</ram:ChargeTotalAmount>\n" //$NON-NLS-1$
 				+ "				<ram:AllowanceTotalAmount currencyID=\"EUR\">0.00</ram:AllowanceTotalAmount>\n" //$NON-NLS-1$
 //				+ "				<ChargeTotalAmount currencyID=\"EUR\">5.80</ChargeTotalAmount>\n"
 //				+ "				<AllowanceTotalAmount currencyID=\"EUR\">14.73</AllowanceTotalAmount>\n"
-				+ "				<ram:TaxBasisTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotal())+"</ram:TaxBasisTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				<ram:TaxTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross().subtract(trans.getTotal()))+"</ram:TaxTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				<ram:GrandTotalAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross())+"</ram:GrandTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:TaxBasisTotalAmount currencyID=\"EUR\">"+currencyFormat(getTotal())+"</ram:TaxBasisTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:TaxTotalAmount currencyID=\"EUR\">"+currencyFormat(getTotalGross().subtract(getTotal()))+"</ram:TaxTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:GrandTotalAmount currencyID=\"EUR\">"+currencyFormat(getTotalGross())+"</ram:GrandTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 //				+ "				<TotalPrepaidAmount currencyID=\"EUR\">0.00</TotalPrepaidAmount>\n"
-				+ "				<ram:DuePayableAmount currencyID=\"EUR\">"+currencyFormat(trans.getTotalGross())+"</ram:DuePayableAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "				<ram:DuePayableAmount currencyID=\"EUR\">"+currencyFormat(getTotalGross())+"</ram:DuePayableAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 				+ "			</ram:SpecifiedTradeSettlementMonetarySummation>\n" //$NON-NLS-1$
 				+ "		</ram:ApplicableSupplyChainTradeSettlement>\n"; //$NON-NLS-1$
 //				+ "		<IncludedSupplyChainTradeLineItem>\n"
@@ -501,6 +504,28 @@ public class ZUGFeRDExporter {
 	}
 
 
+	private BigDecimal getTotalGross() {
+		
+		BigDecimal res=getTotal();
+		HashMap<BigDecimal, VATAmount> VATPercentAmountMap=getVATPercentAmountMap();
+		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
+			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
+			res=res.add(amount.getCalculated()); 
+		}
+
+			
+		return res;
+	}
+
+	private BigDecimal getTotal() {
+		BigDecimal res=new BigDecimal(0);
+		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
+			LineCalc lc=new LineCalc(currentItem);
+			res=res.add(lc.getItemTotalNetAmount());
+		}
+		return res;
+	}
+
 	/**
 	 * which taxes have been used with which amounts in this transaction,
 	 * empty for no taxes, or e.g. 19=>190 and 7=>14 if 1000 Eur were applicable
@@ -509,7 +534,7 @@ public class ZUGFeRDExporter {
 	 * @return
 	 *
 	*/
-	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap(IZUGFeRDExportableTransaction trans) {
+	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap() {
 		HashMap<BigDecimal, VATAmount> hm=new HashMap<BigDecimal, VATAmount> ();
 		
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
