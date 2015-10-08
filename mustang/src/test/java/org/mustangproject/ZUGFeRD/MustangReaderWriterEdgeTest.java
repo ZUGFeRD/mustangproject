@@ -325,7 +325,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
       ref = zi.getForeignReference();
     }
 
-    assertEquals(amount, "406.82");
+    assertEquals(amount, "571.04");
     assertEquals(bic, getOwnBIC());
     assertEquals(iban, getOwnIBAN());
     assertEquals(holder, getOwnOrganisationName());
@@ -343,8 +343,8 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   public void testZExport()
   {
 
-    final InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20140703_502blanko.pdf");
-    final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20140703_502newEdge.pdf";
+    final InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20151008_504blanko.pdf");
+    final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20151008_504newEdge.pdf";
     // the writing part
 
     PDDocument doc;
@@ -392,7 +392,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
       ref = zi.getForeignReference();
     }
 
-    assertEquals(amount, "406.82");
+    assertEquals(amount, "571.04");
     assertEquals(bic, getOwnBIC());
     assertEquals(iban, getOwnIBAN());
     assertEquals(holder, getOwnOrganisationName());
