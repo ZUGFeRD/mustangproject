@@ -42,7 +42,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   @Override
   public String getNumber()
   {
-    return "RE-20140703/502";
+    return "RE-20151008/504";
   }
 
   @Override
@@ -112,18 +112,6 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   }
 
   @Override
-  public BigDecimal getTotal()
-  {
-    return new BigDecimal("496.00");
-  }
-
-  @Override
-  public BigDecimal getTotalGross()
-  {
-    return new BigDecimal("571.04");
-  }
-
-  @Override
   public IZUGFeRDExportableItem[] getZFItems()
   {
     Item[] allItems = new Item[3];
@@ -131,9 +119,9 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     Product balloonProduct = new Product("", "Luftballon: Bunt, ca. 500ml", "C62", new BigDecimal("19.000000"));
     Product airProduct = new Product("", "Heiße Luft pro Liter", "LTR", new BigDecimal("19.000000"));
 
-    allItems[0] = new Item(new BigDecimal("160"), new BigDecimal("171.20"), new BigDecimal("1"), new BigDecimal("171.20"), designProduct);
-    allItems[1] = new Item(new BigDecimal("0.79"), new BigDecimal("0.94"), new BigDecimal("400"), new BigDecimal("376.04"), balloonProduct);
-    allItems[2] = new Item(new BigDecimal("0.10"), new BigDecimal("0.12"), new BigDecimal("200"), new BigDecimal("23.80"), airProduct);
+    allItems[0] = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
+    allItems[1] = new Item(new BigDecimal("0.79"), new BigDecimal("400"), balloonProduct);
+    allItems[2] = new Item(new BigDecimal("0.10"), new BigDecimal("200"), airProduct);
     return allItems;
   }
 
@@ -180,17 +168,15 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   class Item implements IZUGFeRDExportableItem
   {
 
-    public Item(BigDecimal price, BigDecimal priceGross, BigDecimal quantity, BigDecimal totalGross, Product product)
+    public Item(BigDecimal price, BigDecimal quantity, Product product)
     {
       super();
       this.price = price;
-      this.priceGross = priceGross;
       this.quantity = quantity;
-      this.totalGross = totalGross;
       this.product = product;
     }
 
-    private BigDecimal price, priceGross, quantity, totalGross;
+    private BigDecimal price,quantity;
     private Product product;
 
     @Override
@@ -205,17 +191,6 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     }
 
     @Override
-    public BigDecimal getPriceGross()
-    {
-      return priceGross;
-    }
-
-    public void setPriceGross(BigDecimal priceGross)
-    {
-      this.priceGross = priceGross;
-    }
-
-    @Override
     public BigDecimal getQuantity()
     {
       return quantity;
@@ -224,17 +199,6 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     public void setQuantity(BigDecimal quantity)
     {
       this.quantity = quantity;
-    }
-
-    @Override
-    public BigDecimal getTotalGross()
-    {
-      return totalGross;
-    }
-
-    public void setTotalGross(BigDecimal totalGross)
-    {
-      this.totalGross = totalGross;
     }
 
     @Override
@@ -332,7 +296,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   // //////// TESTS //////////////////////////////////////////////////////////////////////////////////////////
 
   /**
-   * The importer test imports from ./src/test/MustangGnuaccountingBeispielRE-20140703_502.pdf to check the values.
+   * The importer test imports from ./src/test/MustangGnuaccountingBeispielRE-20151008_504.pdf to check the values.
    * --> as only Name Ascending is supported for Test Unit sequence, I renamed the this test-A-Export to run before
    * testZExport
    * 
@@ -342,7 +306,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   public void testAImport() throws IOException
   {
     ZUGFeRDImporter zi = new ZUGFeRDImporter();
-    zi.extractLowLevel(this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20140703_502.pdf"));
+    zi.extractLowLevel(this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20151008_504.pdf"));
     // Reading ZUGFeRD
 
     String amount = null;
@@ -361,7 +325,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
       ref = zi.getForeignReference();
     }
 
-    assertEquals(amount, getTotalGross().toString());
+    assertEquals(amount, "406.82");
     assertEquals(bic, getOwnBIC());
     assertEquals(iban, getOwnIBAN());
     assertEquals(holder, getOwnOrganisationName());
@@ -428,7 +392,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
       ref = zi.getForeignReference();
     }
 
-    assertEquals(amount, getTotalGross().toString());
+    assertEquals(amount, "406.82");
     assertEquals(bic, getOwnBIC());
     assertEquals(iban, getOwnIBAN());
     assertEquals(holder, getOwnOrganisationName());
