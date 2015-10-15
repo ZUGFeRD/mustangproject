@@ -3,10 +3,9 @@
   <groupId>org.mustangproject.ZUGFeRD</groupId>
   <artifactId>mustang</artifactId>
   <versioning>
-    <release>1.1.2</release>
     <versions>
-      <version>1.1.2</version>
+      <version>1.2.1-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20150712090104</lastUpdated>
+    <lastUpdated>20151015125819</lastUpdated>
   </versioning>
 </metadata>

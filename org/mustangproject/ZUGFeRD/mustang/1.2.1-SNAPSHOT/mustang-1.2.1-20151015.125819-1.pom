@@ -1,0 +1,45 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.github.rayman2200</groupId>
+		<artifactId>mustang-sample-project</artifactId>
+		<version>1.2.1-SNAPSHOT</version>
+	</parent>
+
+	<groupId>org.mustangproject.ZUGFeRD</groupId>
+	<artifactId>mustang</artifactId>
+	<version>1.2.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>Mustang</name>
+	<description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs</description>
+	<url>http://www.mustangproject.org/</url>
+
+	<mailingLists>
+		<mailingList>
+			<name>User List</name>
+			<archive>https://groups.google.com/forum/?hl=de#!forum/mustangproject</archive>
+		</mailingList>
+	</mailingLists>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Jochen Stärk</name>
+			<email>jstaerk@usegroup.de</email>
+				<roles>
+					<role>architect</role>
+					<role>developer</role>
+				</roles>
+		</developer>
+	</developers>
+
+</project>
