@@ -111,6 +111,13 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     return new Contact();
   }
 
+
+  @Override
+  public String getOwnOrganisationFullPlaintextInfo()
+  {
+    return null;
+  }
+  
   @Override
   public IZUGFeRDExportableItem[] getZFItems()
   {

@@ -112,6 +112,12 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
   }
 
   @Override
+  public String getOwnOrganisationFullPlaintextInfo()
+  {
+    return null;
+  }
+
+  @Override
   public IZUGFeRDExportableItem[] getZFItems()
   {
     Item[] allItems = new Item[3];
