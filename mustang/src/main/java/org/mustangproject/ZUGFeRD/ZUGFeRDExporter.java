@@ -66,7 +66,6 @@ public class ZUGFeRDExporter {
 	
 	private class LineCalc {
 		private IZUGFeRDExportableItem currentItem=null;
-		private BigDecimal priceGross;
 		private BigDecimal totalGross;
 		private BigDecimal itemTotalNetAmount;
 		private BigDecimal itemTotalVATAmount;
@@ -74,17 +73,12 @@ public class ZUGFeRDExporter {
 		public LineCalc(IZUGFeRDExportableItem currentItem) {
 			this.currentItem=currentItem;
 			BigDecimal multiplicator=currentItem.getProduct().getVATPercent().divide(new BigDecimal(100)).add(new BigDecimal(1));
-			priceGross=currentItem.getPrice().multiply(multiplicator);
+//			priceGross=currentItem.getPrice().multiply(multiplicator);
 			totalGross=currentItem.getPrice().multiply(multiplicator).multiply(currentItem.getQuantity());
 			itemTotalNetAmount=currentItem.getQuantity().multiply(currentItem.getPrice()).setScale(2,BigDecimal.ROUND_HALF_UP);
 			itemTotalVATAmount=totalGross.subtract(itemTotalNetAmount);
 		}
-/*		public BigDecimal getPriceGross() {
-			return priceGross;
-		}
-		public BigDecimal getTotalGross() {
-			return totalGross;
-		}*/
+
 		public BigDecimal getItemTotalNetAmount() {
 			return itemTotalNetAmount;
 		}
@@ -272,6 +266,17 @@ public class ZUGFeRDExporter {
 			testBooleanStr="true";
 			
 		}
+		String senderReg="";
+		if (trans.getOwnOrganisationFullPlaintextInfo()!=null) {
+		 senderReg=""
+					+ "<ram:IncludedNote>\n"
+					+ "		<ram:Content>\n"
+					+ trans.getOwnOrganisationFullPlaintextInfo()
+					+ "		</ram:Content>\n"
+					+ "<ram:SubjectCode>REG</ram:SubjectCode>\n"
+					+ "</ram:IncludedNote>\n";
+			
+		}
 		String xml= "﻿<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //$NON-NLS-1$
 
 				+ "<rsm:CrossIndustryDocument xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:ferd:CrossIndustryDocument:invoice:1p0\""
@@ -289,6 +294,7 @@ public class ZUGFeRDExporter {
 				+ "		<ram:Name>RECHNUNG</ram:Name>\n" //$NON-NLS-1$
 				+ "		<ram:TypeCode>380</ram:TypeCode>\n" //$NON-NLS-1$
 				+ "		<ram:IssueDateTime><udt:DateTimeString format=\"102\">"+zugferdDateFormat.format(trans.getIssueDate())+"</udt:DateTimeString></ram:IssueDateTime>\n" //date format was 20130605 //$NON-NLS-1$ //$NON-NLS-2$
+				+ senderReg
 //				+ "		<IncludedNote>\n"
 //				+ "			<Content>\n"
 //				+ "Rechnung gemäß Bestellung Nr. 2013-471331 vom 01.03.2013.\n"

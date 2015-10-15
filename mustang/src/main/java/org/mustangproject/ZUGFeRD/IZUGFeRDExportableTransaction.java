@@ -10,7 +10,6 @@ package org.mustangproject.ZUGFeRD;
 
 
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 public interface IZUGFeRDExportableTransaction {
@@ -27,6 +26,19 @@ public interface IZUGFeRDExportableTransaction {
 	 */
 	Date getIssueDate();
 
+	/**
+	 * this should be the full sender institution name, details, manager and tax registration like.
+	 * It is one of the few functions which may return null.
+	 * 
+	 Lieferant GmbH
+	 Lieferantenstraße 20
+	 80333 München
+	 Deutschland
+     Geschäftsführer: Hans Muster
+	 Handelsregisternummer: H A 123
+	 * @return
+	 */
+	String getOwnOrganisationFullPlaintextInfo();
 
 	/**
 	 * when the invoice is to be paid
