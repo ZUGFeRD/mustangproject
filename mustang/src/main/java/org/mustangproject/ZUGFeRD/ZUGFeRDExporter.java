@@ -94,7 +94,7 @@ public class ZUGFeRDExporter {
 	//// MAIN CLASS
 
 	private String conformanceLevel = "U";
-	private String versionStr       = "1.1.3";
+	private String versionStr       = "1.2.0";
 
 	// BASIC, COMFORT etc - may be set from outside.
 	private String ZUGFeRDConformanceLevel = null;
