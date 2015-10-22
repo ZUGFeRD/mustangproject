@@ -22,7 +22,7 @@ public class Toecount {
 	}
 	private static void printHelp() {
 		System.out
-		.println("Mustangproject.org's Toecount 0.0.5 \r\n"
+		.println("Mustangproject.org's Toecount 0.0.6 \r\n"
 				+ "A Apache Public License command line tool for statistics on PDF invoices with\r\n"
 				+ "ZUGFeRD Metadata (http://www.zugferd.de)\r\n"
 				+ "\r\n"
@@ -75,23 +75,21 @@ public class Toecount {
 		}
 
 		StatRun sr=new StatRun();
+		if (ignoreFileExt) { 
+			sr.ignoreFileExtension();
+		}
 		if (directoryName != null) {
 			Path startingDir = Paths.get(directoryName);
 
 			if (Files.isRegularFile(startingDir)) {
 				String filename = startingDir.toString();
 				FileChecker fc = new FileChecker(filename, sr);
-				if (ignoreFileExt) { 
-					fc.ignoreFileExtension();
-				}
+				
 				fc.checkForZUGFeRD();
 				System.out.print(fc.getOutputLine());
 
 			} else if (Files.isDirectory(startingDir)) {
 				FileTraverser pf = new FileTraverser(sr);
-				if (ignoreFileExt) { 
-					pf.ignoreFileExtension();
-				}
 				try {
 					Files.walkFileTree(startingDir, pf);
 				} catch (IOException e) {
@@ -109,9 +107,7 @@ public class Toecount {
 			    try {
 					while ((s = in.readLine()) != null && s.length() != 0) {
 						FileChecker fc = new FileChecker(s, sr);
-						if (ignoreFileExt) { 
-							fc.ignoreFileExtension();
-						}
+						
 						fc.checkForZUGFeRD();
 						System.out.print(fc.getOutputLine());
 					  

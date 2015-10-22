@@ -5,7 +5,15 @@ public class StatRun {
 	private int horseCount = 0;
 	private int fileCount = 0;
 	private int dirCount = 0;
+	private boolean checkFileExt=true;
 
+	public void ignoreFileExtension() {
+		checkFileExt=false;
+	}
+	
+	public boolean shallIgnoreFileExt() {
+		return !checkFileExt;
+	}
 	public void incFileCount(){
 		fileCount++;
 	}

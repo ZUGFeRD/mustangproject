@@ -12,7 +12,6 @@ public class FileTraverser extends SimpleFileVisitor<Path> {
 
 
 	private StatRun thisRun;
-	private boolean checkFileExt=true;
 	public FileTraverser(StatRun statistics) {
 		this.thisRun=statistics;
 	}
@@ -27,15 +26,10 @@ public class FileTraverser extends SimpleFileVisitor<Path> {
 		} else if (attr.isRegularFile()) {
 			String filename = file.toString();
 			FileChecker fc = new FileChecker(filename, thisRun);
-			if (!checkFileExt) {
-				fc.ignoreFileExtension();
-			}
 			fc.checkForZUGFeRD();
 			System.out.print(fc.getOutputLine());
 
-		} else {
-			// Not yet handled
-		}
+		} 
 		return CONTINUE;
 	}
 
@@ -59,7 +53,4 @@ public class FileTraverser extends SimpleFileVisitor<Path> {
 		return CONTINUE;
 	}
 
-	public void ignoreFileExtension() {
-		checkFileExt=false;
-	}
 }

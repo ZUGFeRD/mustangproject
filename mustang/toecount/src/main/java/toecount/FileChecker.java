@@ -6,14 +6,13 @@ public class FileChecker {
 	String filename;
 	StatRun thisRun;
 	boolean isPDF=false;
-	boolean checkFileExt=true;
 	
 	public FileChecker(String filename, StatRun statistics) {
 		this.filename=filename;
 		thisRun=statistics;
 		thisRun.incFileCount();
 		String extension = "";
-		if (checkFileExt) {
+		if (!thisRun.shallIgnoreFileExt()) {
 			int extIndex = filename.lastIndexOf(".");
 			if (extIndex >= 0) {
 				extension = filename.substring(extIndex).toLowerCase();
@@ -27,9 +26,9 @@ public class FileChecker {
 	}
 	
 	public boolean checkForZUGFeRD() {
-		if ((!isPDF)&&(checkFileExt)) {
+		if ((!isPDF)&&(!thisRun.shallIgnoreFileExt())) {
 			return false;
-		} 
+		}
 		ZUGFeRDImporter zi=new ZUGFeRDImporter();
 		zi.extract(filename);
 		if (zi.canParse()) {
@@ -46,10 +45,6 @@ public class FileChecker {
 
 	public String getOutputLine() {
 		return thisRun.getOutputLine();
-	}
-
-	public void ignoreFileExtension() {
-		checkFileExt=false;
 	}
 	
 }
