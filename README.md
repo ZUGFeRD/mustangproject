@@ -37,7 +37,7 @@ As dependency use this
 <dependency>
   <groupId>org.mustangproject.ZUGFeRD</groupId>
   <artifactId>mustang</artifactId>
-  <version>1.1.2</version>
+  <version>1.3.0</version>
 </dependency>
 ```
 
