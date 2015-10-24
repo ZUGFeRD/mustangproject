@@ -22,7 +22,7 @@ public class Toecount {
 	}
 	private static void printHelp() {
 		System.out
-		.println("Mustangproject.org's Toecount 0.0.6 \r\n"
+		.println("Mustangproject.org's Toecount 0.0.7 \r\n"
 				+ "A Apache Public License command line tool for statistics on PDF invoices with\r\n"
 				+ "ZUGFeRD Metadata (http://www.zugferd.de)\r\n"
 				+ "\r\n"
