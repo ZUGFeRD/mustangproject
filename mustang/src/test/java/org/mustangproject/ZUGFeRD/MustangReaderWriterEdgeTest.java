@@ -3,6 +3,7 @@ package org.mustangproject.ZUGFeRD;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -131,6 +132,22 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     allItems[2] = new Item(new BigDecimal("0.10"), new BigDecimal("200"), airProduct);
     return allItems;
   }
+
+    @Override
+    public String getInvoiceCurrency() {
+        return "EUR";
+    }
+
+    @Override
+    public String getOwnPaymentInfoText() {
+        return "Überweisung";
+    }
+
+    @Override
+    public String getPaymentTermDescription() {
+        SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        return "Zahlbar ohne Abzug bis zum " + germanDateFormat.format(getDueDate());
+    }
 
   class Contact implements IZUGFeRDExportableContact
   {

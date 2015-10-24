@@ -119,6 +119,24 @@ public interface IZUGFeRDExportableTransaction {
 	 */
 	Date getDeliveryDate();
 	
-	
+        /**
+	 * get main invoice currency used on the invoice
+	 * @return
+	 */        
+        String getInvoiceCurrency();
+        
+        /**
+	 * get payment information text. e.g. Bank transfer
+	 * @return
+	 */  	
+        String getOwnPaymentInfoText();
+
+        /**
+	 * get payment term descriptional text
+         * e.g. Bis zum 22.10.2015 ohne Abzug
+	 * @return
+	 */         
+        String getPaymentTermDescription();
+        
 	
 }
