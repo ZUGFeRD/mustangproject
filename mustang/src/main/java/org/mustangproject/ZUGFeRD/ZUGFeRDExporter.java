@@ -72,7 +72,7 @@ public class ZUGFeRDExporter {
         jaxbContext = JAXBContext.newInstance("org.mustangproject.ZUGFeRD.model");
         marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        marshaller.setProperty("jaxb.encoding", "UTF-8");
+        marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
     }
 
     private class LineCalc {
@@ -749,7 +749,7 @@ public class ZUGFeRDExporter {
             // create a dummy file stream, this would probably normally be a
             // FileInputStream
 
-            byte[] zugferdRaw = getZugferdXMLForTransaction(trans).getBytes("UTF-8"); //$NON-NLS-1$
+            byte[] zugferdRaw = getZugferdXMLForTransaction(trans).getBytes(); //$NON-NLS-1$
 
             if ((zugferdRaw[0] == (byte) 0xEF) && (zugferdRaw[1] == (byte) 0xBB) && (zugferdRaw[2] == (byte) 0xBF)) {
                 // I don't like BOMs, lets remove it
