@@ -5,7 +5,7 @@ package org.mustangproject.ZUGFeRD;
  * APLv2
  *
  * @date 2014-07-12
- * @version 1.1
+ * @version 1.2.0
  * @author jstaerk
  *
  */
@@ -23,11 +23,12 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.activation.FileDataSource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-
 import javax.xml.transform.TransformerException;
 
 import org.apache.jempbox.xmp.XMPMetadata;
@@ -48,6 +49,11 @@ import org.apache.pdfbox.pdmodel.common.COSObjectable;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
+import org.apache.pdfbox.preflight.PreflightDocument;
+import org.apache.pdfbox.preflight.ValidationResult;
+import org.apache.pdfbox.preflight.exception.SyntaxValidationException;
+import org.apache.pdfbox.preflight.exception.ValidationException;
+import org.apache.pdfbox.preflight.parser.PreflightParser;
 import org.mustangproject.ZUGFeRD.model.*;
 
 public class ZUGFeRDExporter {
@@ -117,6 +123,8 @@ public class ZUGFeRDExporter {
     byte[] zugferdData = null;
     private boolean isTest;
     IZUGFeRDExportableTransaction trans = null;
+	private boolean ignoreA1Errors;
+	private PDDocument doc;
 
     private BigDecimal nDigitFormat(BigDecimal value, int scale) {
         /*
@@ -197,16 +205,70 @@ public class ZUGFeRDExporter {
     public void setTest() {
         isTest = true;
     }
+    
+    public void ignoreA1Errors() {
+    	ignoreA1Errors=true;
+    }
+    
+    public boolean isValidA1(String filename) {
+    	ValidationResult result = null;
+
+    	FileDataSource fd = new FileDataSource(filename);
+    	try
+    	{
+    	   	PreflightParser parser = new PreflightParser(fd);
+    	    
+    	    /* Parse the PDF file with PreflightParser that inherits from the NonSequentialParser.
+    	     * Some additional controls are present to check a set of PDF/A requirements. 
+    	     * (Stream length consistency, EOL after some Keyword...)
+    	     */
+    	    parser.parse();
+
+    	    /* Once the syntax validation is done, 
+    	     * the parser can provide a PreflightDocument 
+    	     * (that inherits from PDDocument) 
+    	     * This document process the end of PDF/A validation.
+    	     */
+    	    PreflightDocument document = parser.getPreflightDocument();
+    	    document.validate();
+
+    	    // Get validation result
+    	    result = document.getResult();
+    	    document.close();
+
+    	}
+    	catch (ValidationException e)
+    	{
+    	    /* the parse method can throw a SyntaxValidationException 
+    	     * if the PDF file can't be parsed.
+    	     * In this case, the exception contains an instance of ValidationResult  
+    	     */
+    	    return false;
+    	} catch (IOException e) {
+			return false;
+		}
+
+    	// display validation result
+    	return result.isValid();
+    }
 
     /**
      * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on
      * the metadata level, this will not e.g. convert graphics to JPG-2000)
      *
      */
-    public PDDocumentCatalog PDFmakeA3compliant(PDDocument doc, String producer, String creator,
+    public PDDocumentCatalog PDFmakeA3compliant(String filename, String producer, String creator,
             boolean attachZugferdHeaders) throws IOException,
             TransformerException {
+    	
+    	if (!ignoreA1Errors&&!isValidA1(filename)) {
+    		throw new IOException("File is not a valid PDF/A-1 input file");
+    	}
+    	doc = PDDocument
+				.load(filename);
+    	
         String fullProducer = producer + " (via mustangproject.org " + versionStr + ")";
+        
         PDDocumentCatalog cat = doc.getDocumentCatalog();
         PDMetadata metadata = new PDMetadata(doc);
         cat.setMetadata(metadata);
@@ -870,5 +932,13 @@ public class ZUGFeRDExporter {
         metadata.addSchema(pdfaex);
 
     }
+    
+    /****
+     * Returns the PDFBox PDF Document
+     * @return
+     */
+	public PDDocument getDoc() {
+		return doc;
+	}
 
 }

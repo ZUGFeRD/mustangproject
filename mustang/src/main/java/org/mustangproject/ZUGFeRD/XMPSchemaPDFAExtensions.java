@@ -4,7 +4,7 @@ package org.mustangproject.ZUGFeRD;
  * ZUGFeRD exporter helper class
  * Licensed under the APLv2
  * @date 2014-05-10
- * @version 1.0
+ * @version 1.2.0
  * @author jstaerk
  * */
 import org.apache.jempbox.impl.XMLUtil;

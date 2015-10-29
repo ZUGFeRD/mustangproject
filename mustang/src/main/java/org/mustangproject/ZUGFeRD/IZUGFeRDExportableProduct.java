@@ -5,7 +5,7 @@ import java.math.BigDecimal;
  * Necessary interface for ZUGFeRD exporter
  * Licensed under the APLv2
  * @date 2014-05-10
- * @version 1.0
+ * @version 1.2.0
  * @author jstaerk
  * */
 
