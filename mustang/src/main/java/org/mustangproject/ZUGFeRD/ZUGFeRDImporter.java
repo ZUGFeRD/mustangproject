@@ -15,6 +15,7 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.util.Map;
 
+import javax.management.RuntimeErrorException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -290,18 +291,24 @@ public class ZUGFeRDImporter {
 	}
 
 	public String getForeignReference() {
+		if (rawXML==null) {
+			throw new RuntimeException("use parse() before requesting a value");
+		}
 		return foreignReference;
 	}
 
 
 
-	public void setForeignReference(String foreignReference) {
+	private void setForeignReference(String foreignReference) {
 		this.foreignReference = foreignReference;
 	}
 
 
 
 	public String getBIC() {
+		if (rawXML==null) {
+			throw new RuntimeException("use parse() before requesting a value");
+		}
 		return BIC;
 	}
 
@@ -319,23 +326,32 @@ public class ZUGFeRDImporter {
 
 
 	public String getIBAN() {
+		if (rawXML==null) {
+			throw new RuntimeException("use parse() before requesting a value");
+		}
 		return IBAN;
 	}
 
 
 	public String getBankName() {
+		if (rawXML==null) {
+			throw new RuntimeException("use parse() before requesting a value");
+		}
 		return bankName;
 	}
 
 
 
-	public void setIBAN(String IBAN) {
+	private void setIBAN(String IBAN) {
 		this.IBAN = IBAN;
 	}
 
 
 
 	public String getHolder() {
+		if (rawXML==null) {
+			throw new RuntimeException("use parse() before requesting a value");
+		}
 		return holder;
 	}
 
@@ -348,6 +364,9 @@ public class ZUGFeRDImporter {
 
 
 	public String getAmount() {
+		if (rawXML==null) {
+			throw new RuntimeException("use parse() before requesting a value");
+		}
 		return amount;
 	}
 
