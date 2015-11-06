@@ -326,6 +326,10 @@ public class ZUGFeRDExporter {
         documentCodeType.setValue(DocumentCodeType.INVOICE);
         document.setTypeCode(documentCodeType);
 
+        TextType name = xmlFactory.createTextType();
+        name.setValue("RECHNUNG");
+        document.getName().add(name);
+        
         if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
             NoteType regularInfo = xmlFactory.createNoteType();
             CodeType regularInfoSubjectCode = xmlFactory.createCodeType();
@@ -653,6 +657,15 @@ public class ZUGFeRDExporter {
 
             SupplyChainTradeSettlementType tradeSettlement = xmlFactory.createSupplyChainTradeSettlementType();
             TradeTaxType tradeTax = xmlFactory.createTradeTaxType();
+            
+            TaxCategoryCodeType taxCategoryCode = xmlFactory.createTaxCategoryCodeType();
+            taxCategoryCode.setValue(TaxCategoryCodeType.STANDARDRATE);
+            tradeTax.setCategoryCode(taxCategoryCode);
+            
+            TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
+            taxCode.setValue(TaxTypeCodeType.SALESTAX);
+            tradeTax.setTypeCode(taxCode);
+            
             PercentType taxPercent = xmlFactory.createPercentType();
             taxPercent.setValue(vatFormat(currentItem.getProduct().getVATPercent()));
             tradeTax.setApplicablePercent(taxPercent);
