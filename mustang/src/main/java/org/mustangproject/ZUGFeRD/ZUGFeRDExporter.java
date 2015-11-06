@@ -630,7 +630,7 @@ public class ZUGFeRDExporter {
 
             AmountType grossChargeAmount = xmlFactory.createAmountType();
             grossChargeAmount.setCurrencyID(trans.getInvoiceCurrency());
-            grossChargeAmount.setValue(currencyFormat(currentItem.getPrice()));
+            grossChargeAmount.setValue(priceFormat(currentItem.getPrice()));
             grossTradePrice.getChargeAmount().add(grossChargeAmount);
             tradeAgreement.getGrossPriceProductTradePrice().add(grossTradePrice);
 
@@ -642,7 +642,7 @@ public class ZUGFeRDExporter {
 
             AmountType netChargeAmount = xmlFactory.createAmountType();
             netChargeAmount.setCurrencyID(trans.getInvoiceCurrency());
-            netChargeAmount.setValue(currencyFormat(currentItem.getPrice()));
+            netChargeAmount.setValue(priceFormat(currentItem.getPrice()));
             netTradePrice.getChargeAmount().add(netChargeAmount);
             tradeAgreement.getNetPriceProductTradePrice().add(netTradePrice);
 
