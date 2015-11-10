@@ -476,7 +476,9 @@ public class ZUGFeRDExporter {
         tradeSettlement.getSpecifiedTradeSettlementPaymentMeans().add(this.getPaymentData());
         tradeSettlement.getApplicableTradeTax().addAll(this.getTradeTax());
         tradeSettlement.getSpecifiedTradePaymentTerms().addAll(this.getPaymentTerms());
-        tradeSettlement.getSpecifiedTradeAllowanceCharge().addAll(this.getHeaderAllowances());
+        if(trans.getZFAllowances() != null){
+            tradeSettlement.getSpecifiedTradeAllowanceCharge().addAll(this.getHeaderAllowances());
+        }
         tradeSettlement.setSpecifiedTradeSettlementMonetarySummation(this.getMonetarySummation());
 
         return tradeSettlement;
