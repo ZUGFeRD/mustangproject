@@ -476,6 +476,7 @@ public class ZUGFeRDExporter {
         tradeSettlement.getSpecifiedTradeSettlementPaymentMeans().add(this.getPaymentData());
         tradeSettlement.getApplicableTradeTax().addAll(this.getTradeTax());
         tradeSettlement.getSpecifiedTradePaymentTerms().addAll(this.getPaymentTerms());
+        tradeSettlement.getSpecifiedTradeAllowanceCharge().addAll(this.getHeaderAllowances());
         tradeSettlement.setSpecifiedTradeSettlementMonetarySummation(this.getMonetarySummation());
 
         return tradeSettlement;
@@ -545,6 +546,43 @@ public class ZUGFeRDExporter {
         return tradeTaxTypes;
     }
 
+    private Collection<TradeAllowanceChargeType> getHeaderAllowances() {
+        List<TradeAllowanceChargeType> headerAllowances = new ArrayList<TradeAllowanceChargeType>();
+
+        for (IZUGFeRDAllowanceCharge iAllowance : trans.getZFAllowances()) {
+            
+            TradeAllowanceChargeType allowance = xmlFactory.createTradeAllowanceChargeType();
+            
+            IndicatorType chargeIndicator = xmlFactory.createIndicatorType();
+            chargeIndicator.setIndicator(false);
+            allowance.setChargeIndicator(chargeIndicator);
+            
+            TextType reason = xmlFactory.createTextType();
+            reason.setValue(iAllowance.getReason());
+            allowance.setReason(reason);
+            
+            TradeTaxType tradeTax = xmlFactory.createTradeTaxType();
+            
+            PercentType vatPercent = xmlFactory.createPercentType();
+            vatPercent.setValue(iAllowance.getTaxPercent());
+            tradeTax.setApplicablePercent(vatPercent);
+            
+            TaxCategoryCodeType taxType = xmlFactory.createTaxCategoryCodeType();
+            taxType.setValue(TaxCategoryCodeType.STANDARDRATE);
+            tradeTax.setCategoryCode(taxType);
+            
+            TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
+            taxCode.setValue(TaxTypeCodeType.SALESTAX);
+            tradeTax.setTypeCode(taxCode);
+            
+            allowance.getCategoryTradeTax().add(tradeTax);
+            headerAllowances.add(allowance);
+            
+        }
+
+        return headerAllowances;
+    }
+
     private Collection<TradePaymentTermsType> getPaymentTerms() {
         List<TradePaymentTermsType> paymentTerms = new ArrayList<TradePaymentTermsType>();
 
@@ -564,7 +602,7 @@ public class ZUGFeRDExporter {
         paymentTerms.add(paymentTerm);
 
         return paymentTerms;
-    }
+    }    
 
     private TradeSettlementMonetarySummationType getMonetarySummation() {
         TradeSettlementMonetarySummationType monetarySummation = xmlFactory.createTradeSettlementMonetarySummationType();
