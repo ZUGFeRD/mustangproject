@@ -550,7 +550,8 @@ public class ZUGFeRDExporter {
 
     private Collection<TradeAllowanceChargeType> getHeaderAllowances() {
         List<TradeAllowanceChargeType> headerAllowances = new ArrayList<TradeAllowanceChargeType>();
-
+        
+        HashMap<BigDecimal, VATAmount> VATPercentAmountMap = this.getVATPercentAmountMap();
         for (IZUGFeRDAllowanceCharge iAllowance : trans.getZFAllowances()) {
             
             TradeAllowanceChargeType allowance = xmlFactory.createTradeAllowanceChargeType();
@@ -559,6 +560,11 @@ public class ZUGFeRDExporter {
             chargeIndicator.setIndicator(false);
             allowance.setChargeIndicator(chargeIndicator);
             
+            AmountType actualAmount = xmlFactory.createAmountType();
+            actualAmount.setCurrencyID(trans.getInvoiceCurrency());       
+            actualAmount.setValue(currencyFormat(iAllowance.getAmount()));
+            allowance.getActualAmount().add(actualAmount);
+            
             TextType reason = xmlFactory.createTextType();
             reason.setValue(iAllowance.getReason());
             allowance.setReason(reason);
@@ -566,9 +572,17 @@ public class ZUGFeRDExporter {
             TradeTaxType tradeTax = xmlFactory.createTradeTaxType();
             
             PercentType vatPercent = xmlFactory.createPercentType();
-            vatPercent.setValue(iAllowance.getTaxPercent());
+            vatPercent.setValue(currencyFormat(iAllowance.getTaxPercent()));
             tradeTax.setApplicablePercent(vatPercent);
             
+            VATAmount amount = VATPercentAmountMap.get(iAllowance.getTaxPercent());
+
+            /* Only in extended
+            AmountType basisAmount = xmlFactory.createAmountType();
+            basisAmount.setCurrencyID(trans.getInvoiceCurrency());       
+            basisAmount.setValue(amount.getBasis());
+            allowance.setBasisAmount(basisAmount);
+            */
             TaxCategoryCodeType taxType = xmlFactory.createTaxCategoryCodeType();
             taxType.setValue(TaxCategoryCodeType.STANDARDRATE);
             tradeTax.setCategoryCode(taxType);
@@ -610,7 +624,16 @@ public class ZUGFeRDExporter {
         TradeSettlementMonetarySummationType monetarySummation = xmlFactory.createTradeSettlementMonetarySummationType();
         AmountType allowanceTotalAmount = xmlFactory.createAmountType();
         allowanceTotalAmount.setCurrencyID(trans.getInvoiceCurrency());
-        allowanceTotalAmount.setValue(currencyFormat(BigDecimal.ZERO));
+        if(trans.getZFAllowances() != null){
+            BigDecimal totalHeaderAllowance = BigDecimal.ZERO;
+            for(IZUGFeRDAllowanceCharge headerAllowance : trans.getZFAllowances()){
+                totalHeaderAllowance = headerAllowance.getAmount().add(totalHeaderAllowance);
+            }
+            allowanceTotalAmount.setValue(currencyFormat(totalHeaderAllowance));
+        }else{
+            allowanceTotalAmount.setValue(currencyFormat(BigDecimal.ZERO));           
+        }
+
         monetarySummation.getAllowanceTotalAmount().add(allowanceTotalAmount);
 
         AmountType chargeTotalAmount = xmlFactory.createAmountType();
@@ -620,7 +643,7 @@ public class ZUGFeRDExporter {
 
         AmountType lineTotalAmount = xmlFactory.createAmountType();
         lineTotalAmount.setCurrencyID(trans.getInvoiceCurrency());
-        lineTotalAmount.setValue(currencyFormat(this.getTotal()));
+        lineTotalAmount.setValue(currencyFormat(this.getLineTotal()));
         monetarySummation.getLineTotalAmount().add(lineTotalAmount);
 
         AmountType taxBasisTotalAmount = xmlFactory.createAmountType();
@@ -749,12 +772,28 @@ public class ZUGFeRDExporter {
         return res;
     }
 
-    private BigDecimal getTotal() {
-        BigDecimal res = new BigDecimal(0);
+    private BigDecimal getLineTotal() {
+        BigDecimal res = BigDecimal.ZERO;        
         for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
             LineCalc lc = new LineCalc(currentItem);
             res = res.add(lc.getItemTotalNetAmount());
         }
+        
+        return res;
+    }
+    
+    private BigDecimal getTotal() {
+        BigDecimal res = BigDecimal.ZERO;        
+        for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
+            LineCalc lc = new LineCalc(currentItem);
+            res = res.add(lc.getItemTotalNetAmount());
+        }
+        if(trans.getZFAllowances() != null){
+            for (IZUGFeRDAllowanceCharge headerAllowance : trans.getZFAllowances()){
+                res = res.subtract(headerAllowance.getAmount());
+            }
+        }
+              
         return res;
     }
 
@@ -779,7 +818,18 @@ public class ZUGFeRDExporter {
                 hm.put(percent, itemVATAmount);
             } else {
                 hm.put(percent, current.add(itemVATAmount));
-
+            }
+        }
+        if(trans.getZFAllowances() != null){
+            for (IZUGFeRDAllowanceCharge headerAllowance : trans.getZFAllowances()){
+                BigDecimal percent = headerAllowance.getTaxPercent();
+                VATAmount itemVATAmount = new VATAmount(headerAllowance.getAmount(), headerAllowance.getAmount().multiply(percent).divide(new BigDecimal(100)));
+                VATAmount current = hm.get(percent);
+                if (current == null) {
+                    hm.put(percent, itemVATAmount);
+                } else {
+                    hm.put(percent, current.subtract(itemVATAmount));
+                }
             }
         }
 
