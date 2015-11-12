@@ -479,6 +479,13 @@ public class ZUGFeRDExporter {
         if(trans.getZFAllowances() != null){
             tradeSettlement.getSpecifiedTradeAllowanceCharge().addAll(this.getHeaderAllowances());
         }
+        if(trans.getZFLogisticsServiceCharges()!= null){
+            tradeSettlement.getSpecifiedLogisticsServiceCharge().addAll(this.getHeaderLogisticsServiceCharges());
+        }
+        if(trans.getZFCharges()!= null){
+            tradeSettlement.getSpecifiedTradeAllowanceCharge().addAll(this.getHeaderCharges());
+        }
+        
         tradeSettlement.setSpecifiedTradeSettlementMonetarySummation(this.getMonetarySummation());
 
         return tradeSettlement;
@@ -550,8 +557,7 @@ public class ZUGFeRDExporter {
 
     private Collection<TradeAllowanceChargeType> getHeaderAllowances() {
         List<TradeAllowanceChargeType> headerAllowances = new ArrayList<TradeAllowanceChargeType>();
-        
-        HashMap<BigDecimal, VATAmount> VATPercentAmountMap = this.getVATPercentAmountMap();
+       
         for (IZUGFeRDAllowanceCharge iAllowance : trans.getZFAllowances()) {
             
             TradeAllowanceChargeType allowance = xmlFactory.createTradeAllowanceChargeType();
@@ -574,8 +580,6 @@ public class ZUGFeRDExporter {
             PercentType vatPercent = xmlFactory.createPercentType();
             vatPercent.setValue(currencyFormat(iAllowance.getTaxPercent()));
             tradeTax.setApplicablePercent(vatPercent);
-            
-            VATAmount amount = VATPercentAmountMap.get(iAllowance.getTaxPercent());
 
             /* Only in extended
             AmountType basisAmount = xmlFactory.createAmountType();
@@ -598,6 +602,100 @@ public class ZUGFeRDExporter {
 
         return headerAllowances;
     }
+    
+    private Collection<TradeAllowanceChargeType> getHeaderCharges() {
+        List<TradeAllowanceChargeType> headerCharges = new ArrayList<TradeAllowanceChargeType>();
+        
+        for (IZUGFeRDAllowanceCharge iCharge : trans.getZFCharges()) {
+            
+            TradeAllowanceChargeType charge = xmlFactory.createTradeAllowanceChargeType();
+            
+            IndicatorType chargeIndicator = xmlFactory.createIndicatorType();
+            chargeIndicator.setIndicator(true);
+            charge.setChargeIndicator(chargeIndicator);
+            
+            AmountType actualAmount = xmlFactory.createAmountType();
+            actualAmount.setCurrencyID(trans.getInvoiceCurrency());       
+            actualAmount.setValue(currencyFormat(iCharge.getAmount()));
+            charge.getActualAmount().add(actualAmount);
+            
+            TextType reason = xmlFactory.createTextType();
+            reason.setValue(iCharge.getReason());
+            charge.setReason(reason);
+            
+            TradeTaxType tradeTax = xmlFactory.createTradeTaxType();
+            
+            PercentType vatPercent = xmlFactory.createPercentType();
+            vatPercent.setValue(currencyFormat(iCharge.getTaxPercent()));
+            tradeTax.setApplicablePercent(vatPercent);
+
+            /* Only in extended
+            AmountType basisAmount = xmlFactory.createAmountType();
+            basisAmount.setCurrencyID(trans.getInvoiceCurrency());       
+            basisAmount.setValue(amount.getBasis());
+            allowance.setBasisAmount(basisAmount);
+            */
+            TaxCategoryCodeType taxType = xmlFactory.createTaxCategoryCodeType();
+            taxType.setValue(TaxCategoryCodeType.STANDARDRATE);
+            tradeTax.setCategoryCode(taxType);
+            
+            TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
+            taxCode.setValue(TaxTypeCodeType.SALESTAX);
+            tradeTax.setTypeCode(taxCode);
+            
+            charge.getCategoryTradeTax().add(tradeTax);
+            headerCharges.add(charge);
+            
+        }
+
+        return headerCharges;
+    }    
+    
+    private Collection<LogisticsServiceChargeType> getHeaderLogisticsServiceCharges() {
+        List<LogisticsServiceChargeType> headerServiceCharge = new ArrayList<LogisticsServiceChargeType>();
+        
+        for (IZUGFeRDAllowanceCharge iServiceCharge : trans.getZFLogisticsServiceCharges()) {
+            
+            LogisticsServiceChargeType serviceCharge = xmlFactory.createLogisticsServiceChargeType();
+
+            AmountType actualAmount = xmlFactory.createAmountType();
+            actualAmount.setCurrencyID(trans.getInvoiceCurrency());       
+            actualAmount.setValue(currencyFormat(iServiceCharge.getAmount()));
+            serviceCharge.getAppliedAmount().add(actualAmount);
+            
+            TextType reason = xmlFactory.createTextType();
+            reason.setValue(iServiceCharge.getReason());
+            serviceCharge.getDescription().add(reason);
+            
+            TradeTaxType tradeTax = xmlFactory.createTradeTaxType();
+            
+            PercentType vatPercent = xmlFactory.createPercentType();
+            vatPercent.setValue(currencyFormat(iServiceCharge.getTaxPercent()));            
+            tradeTax.setApplicablePercent(vatPercent);
+
+            /* Only in extended
+            AmountType basisAmount = xmlFactory.createAmountType();
+            basisAmount.setCurrencyID(trans.getInvoiceCurrency());       
+            basisAmount.setValue(amount.getBasis());
+            allowance.setBasisAmount(basisAmount);
+            */
+            TaxCategoryCodeType taxType = xmlFactory.createTaxCategoryCodeType();
+            taxType.setValue(TaxCategoryCodeType.STANDARDRATE);
+            tradeTax.setCategoryCode(taxType);
+            
+            TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
+            taxCode.setValue(TaxTypeCodeType.SALESTAX);
+            tradeTax.setTypeCode(taxCode);
+            
+
+            
+            serviceCharge.getAppliedTradeTax().add(tradeTax);
+            headerServiceCharge.add(serviceCharge);
+            
+        }
+
+        return headerServiceCharge;
+    }    
 
     private Collection<TradePaymentTermsType> getPaymentTerms() {
         List<TradePaymentTermsType> paymentTerms = new ArrayList<TradePaymentTermsType>();
@@ -622,6 +720,8 @@ public class ZUGFeRDExporter {
 
     private TradeSettlementMonetarySummationType getMonetarySummation() {
         TradeSettlementMonetarySummationType monetarySummation = xmlFactory.createTradeSettlementMonetarySummationType();
+        
+        // AllowanceTotalAmount = sum of all allowances
         AmountType allowanceTotalAmount = xmlFactory.createAmountType();
         allowanceTotalAmount.setCurrencyID(trans.getInvoiceCurrency());
         if(trans.getZFAllowances() != null){
@@ -633,13 +733,31 @@ public class ZUGFeRDExporter {
         }else{
             allowanceTotalAmount.setValue(currencyFormat(BigDecimal.ZERO));           
         }
+        monetarySummation.getAllowanceTotalAmount().add(allowanceTotalAmount);  
+        
+        // ChargeTotalAmount = sum of all Logistic service charges + normal charges
+        BigDecimal totalCharge = BigDecimal.ZERO;   
+        AmountType totalChargeAmount = xmlFactory.createAmountType();
+        totalChargeAmount.setCurrencyID(trans.getInvoiceCurrency());
+        if(trans.getZFLogisticsServiceCharges()!= null){
+            for(IZUGFeRDAllowanceCharge logisticsServiceCharge : trans.getZFLogisticsServiceCharges()){
+                totalCharge = logisticsServiceCharge.getAmount().add(totalCharge);
+            }          
+        }
+        if(trans.getZFCharges()!= null){
+            for(IZUGFeRDAllowanceCharge charge : trans.getZFCharges()){
+                totalCharge = charge.getAmount().add(totalCharge);
+            }
+        }
+                
+        totalChargeAmount.setValue(currencyFormat(totalCharge));
+        
+        monetarySummation.getChargeTotalAmount().add(totalChargeAmount);
 
-        monetarySummation.getAllowanceTotalAmount().add(allowanceTotalAmount);
-
-        AmountType chargeTotalAmount = xmlFactory.createAmountType();
+        /*AmountType chargeTotalAmount = xmlFactory.createAmountType();
         chargeTotalAmount.setCurrencyID(trans.getInvoiceCurrency());
         chargeTotalAmount.setValue(currencyFormat(BigDecimal.ZERO));
-        monetarySummation.getChargeTotalAmount().add(chargeTotalAmount);
+        monetarySummation.getChargeTotalAmount().add(chargeTotalAmount);*/
 
         AmountType lineTotalAmount = xmlFactory.createAmountType();
         lineTotalAmount.setCurrencyID(trans.getInvoiceCurrency());
@@ -788,11 +906,24 @@ public class ZUGFeRDExporter {
             LineCalc lc = new LineCalc(currentItem);
             res = res.add(lc.getItemTotalNetAmount());
         }
+        
         if(trans.getZFAllowances() != null){
             for (IZUGFeRDAllowanceCharge headerAllowance : trans.getZFAllowances()){
                 res = res.subtract(headerAllowance.getAmount());
             }
         }
+        
+        if(trans.getZFLogisticsServiceCharges()!= null){
+            for (IZUGFeRDAllowanceCharge logisticsServiceCharge : trans.getZFLogisticsServiceCharges()){
+                res = res.add(logisticsServiceCharge.getAmount());
+            }
+        }
+        
+        if(trans.getZFCharges()!= null){
+            for (IZUGFeRDAllowanceCharge charge : trans.getZFCharges()){
+                res = res.add(charge.getAmount());
+            }
+        }        
               
         return res;
     }
@@ -807,6 +938,10 @@ public class ZUGFeRDExporter {
      *
      */
     private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap() {
+        return getVATPercentAmountMap(false);
+    }
+    
+    private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap(Boolean itemOnly){
         HashMap<BigDecimal, VATAmount> hm = new HashMap<BigDecimal, VATAmount>();
 
         for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
@@ -820,6 +955,9 @@ public class ZUGFeRDExporter {
                 hm.put(percent, current.add(itemVATAmount));
             }
         }
+        if(itemOnly){
+            return hm;
+        }
         if(trans.getZFAllowances() != null){
             for (IZUGFeRDAllowanceCharge headerAllowance : trans.getZFAllowances()){
                 BigDecimal percent = headerAllowance.getTaxPercent();
@@ -832,8 +970,34 @@ public class ZUGFeRDExporter {
                 }
             }
         }
+        
+        if(trans.getZFLogisticsServiceCharges()!= null){
+            for (IZUGFeRDAllowanceCharge logisticsServiceCharge : trans.getZFLogisticsServiceCharges()){
+                BigDecimal percent = logisticsServiceCharge.getTaxPercent();
+                VATAmount itemVATAmount = new VATAmount(logisticsServiceCharge.getAmount(), logisticsServiceCharge.getAmount().multiply(percent).divide(new BigDecimal(100)));
+                VATAmount current = hm.get(percent);
+                if (current == null) {
+                    hm.put(percent, itemVATAmount);
+                } else {
+                    hm.put(percent, current.add(itemVATAmount));
+                }
+            }
+        }
+        
+        if(trans.getZFCharges()!= null){
+            for (IZUGFeRDAllowanceCharge charge : trans.getZFCharges()){
+                BigDecimal percent = charge.getTaxPercent();
+                VATAmount itemVATAmount = new VATAmount(charge.getAmount(), charge.getAmount().multiply(percent).divide(new BigDecimal(100)));
+                VATAmount current = hm.get(percent);
+                if (current == null) {
+                    hm.put(percent, itemVATAmount);
+                } else {
+                    hm.put(percent, current.add(itemVATAmount));
+                }
+            }
+        }
 
-        return hm;
+        return hm;        
     }
 
     /**
