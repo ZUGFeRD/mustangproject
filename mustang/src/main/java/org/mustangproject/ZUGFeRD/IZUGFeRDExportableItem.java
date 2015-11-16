@@ -13,7 +13,8 @@ import java.math.BigDecimal;
 public interface IZUGFeRDExportableItem {
 
 	IZUGFeRDExportableProduct getProduct();
-
+        IZUGFeRDAllowanceCharge[] getItemAllowances();
+        IZUGFeRDAllowanceCharge[] getItemCharges();
 
 
 	/**

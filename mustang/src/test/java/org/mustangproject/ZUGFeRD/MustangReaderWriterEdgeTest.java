@@ -251,6 +251,16 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
       this.product = product;
     }
 
+    @Override
+    public IZUGFeRDAllowanceCharge[] getItemAllowances() {
+        return null;        
+    }
+
+    @Override
+    public IZUGFeRDAllowanceCharge[] getItemCharges() {
+        return null;
+    }
+
   }
 
   class Product implements IZUGFeRDExportableProduct
