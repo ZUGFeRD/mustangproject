@@ -84,10 +84,22 @@ public class ZUGFeRDExporter {
 
         public LineCalc(IZUGFeRDExportableItem currentItem) {
             this.currentItem = currentItem;
-            BigDecimal multiplicator = currentItem.getProduct().getVATPercent().divide(new BigDecimal(100)).add(new BigDecimal(1));
+            BigDecimal totalAllowance = BigDecimal.ZERO;
+            BigDecimal totalCharge = BigDecimal.ZERO;
+            
+            for(IZUGFeRDAllowanceCharge itemAllowance : currentItem.getItemAllowances()){
+                totalAllowance = itemAllowance.getAmount().add(totalAllowance);
+            }
+            
+            for(IZUGFeRDAllowanceCharge itemCharge : currentItem.getItemCharges()){
+                totalCharge = itemCharge.getAmount().add(totalAllowance);
+            }
+            
+            BigDecimal multiplicator = currentItem.getProduct().getVATPercent().divide(new BigDecimal(100)).add(BigDecimal.ONE);
 //			priceGross=currentItem.getPrice().multiply(multiplicator);
-            totalGross = currentItem.getPrice().multiply(multiplicator).multiply(currentItem.getQuantity());
-            itemTotalNetAmount = currentItem.getQuantity().multiply(currentItem.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP);
+            
+            totalGross = currentItem.getPrice().multiply(currentItem.getQuantity()).subtract(totalAllowance).add(totalCharge).multiply(multiplicator);
+            itemTotalNetAmount = currentItem.getPrice().multiply(currentItem.getQuantity()).subtract(totalAllowance).add(totalCharge).setScale(2, BigDecimal.ROUND_HALF_UP);
             itemTotalVATAmount = totalGross.subtract(itemTotalNetAmount);
         }
 
@@ -814,6 +826,34 @@ public class ZUGFeRDExporter {
             grossChargeAmount.setValue(priceFormat(currentItem.getPrice()));
             grossTradePrice.getChargeAmount().add(grossChargeAmount);
             tradeAgreement.getGrossPriceProductTradePrice().add(grossTradePrice);
+            
+            if(currentItem.getItemAllowances() != null){
+                for(IZUGFeRDAllowanceCharge itemAllowance : currentItem.getItemAllowances()){
+                    TradeAllowanceChargeType eItemAllowance = xmlFactory.createTradeAllowanceChargeType();
+                    AmountType actualAmount = xmlFactory.createAmountType();
+                    actualAmount.setCurrencyID(trans.getInvoiceCurrency());
+                    actualAmount.setValue(itemAllowance.getAmount());
+                    eItemAllowance.getActualAmount().add(actualAmount);
+                    TextType reason = xmlFactory.createTextType();
+                    reason.setValue(itemAllowance.getReason());
+                    eItemAllowance.setReason(reason);
+                    grossTradePrice.getAppliedTradeAllowanceCharge().add(eItemAllowance);
+                }         
+            }
+            
+            if(currentItem.getItemCharges() != null){
+                for(IZUGFeRDAllowanceCharge itemCharge : currentItem.getItemCharges()){
+                    TradeAllowanceChargeType eItemCharge = xmlFactory.createTradeAllowanceChargeType();
+                    AmountType actualAmount = xmlFactory.createAmountType();
+                    actualAmount.setCurrencyID(trans.getInvoiceCurrency());
+                    actualAmount.setValue(itemCharge.getAmount());
+                    eItemCharge.getActualAmount().add(actualAmount);
+                    TextType reason = xmlFactory.createTextType();
+                    reason.setValue(itemCharge.getReason());
+                    eItemCharge.setReason(reason);
+                    grossTradePrice.getAppliedTradeAllowanceCharge().add(eItemCharge);
+                }               
+            }
 
             TradePriceType netTradePrice = xmlFactory.createTradePriceType();
             QuantityType netQuantity = xmlFactory.createQuantityType();
