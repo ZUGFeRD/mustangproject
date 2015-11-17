@@ -22,7 +22,7 @@ import java.math.BigDecimal;
  * @author AlexanderSchmidt
  */
 public interface IZUGFeRDAllowanceCharge {
-    BigDecimal getAmount();
+    BigDecimal getTotalAmount();
     
     String getReason();
     
