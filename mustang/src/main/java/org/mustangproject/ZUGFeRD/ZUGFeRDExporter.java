@@ -87,12 +87,16 @@ public class ZUGFeRDExporter {
             BigDecimal totalAllowance = BigDecimal.ZERO;
             BigDecimal totalCharge = BigDecimal.ZERO;
             
-            for(IZUGFeRDAllowanceCharge itemAllowance : currentItem.getItemAllowances()){
-                totalAllowance = itemAllowance.getTotalAmount().add(totalAllowance);
+            if(currentItem.getItemAllowances() != null){
+                for(IZUGFeRDAllowanceCharge itemAllowance : currentItem.getItemAllowances()){
+                    totalAllowance = itemAllowance.getTotalAmount().add(totalAllowance);
+                }
             }
             
-            for(IZUGFeRDAllowanceCharge itemCharge : currentItem.getItemCharges()){
-                totalCharge = itemCharge.getTotalAmount().add(totalCharge);
+            if(currentItem.getItemCharges() != null){
+                for(IZUGFeRDAllowanceCharge itemCharge : currentItem.getItemCharges()){
+                    totalCharge = itemCharge.getTotalAmount().add(totalCharge);
+                }
             }
             
             BigDecimal multiplicator = currentItem.getProduct().getVATPercent().divide(new BigDecimal(100), 4, BigDecimal.ROUND_HALF_UP).add(BigDecimal.ONE);
