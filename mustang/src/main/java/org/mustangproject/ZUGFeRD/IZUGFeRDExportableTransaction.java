@@ -142,5 +142,12 @@ public interface IZUGFeRDExportableTransaction {
 	 */         
         String getPaymentTermDescription();
         
+        /**
+         * get reference document number
+         * typically used for Invoice Corrections
+         * Will be added as IncludedNote in comfort profile
+         * @return 
+         */
+        String getReferenceNumber();
 	
 }

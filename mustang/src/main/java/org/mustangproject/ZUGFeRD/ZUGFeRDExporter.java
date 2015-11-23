@@ -432,6 +432,13 @@ public class ZUGFeRDExporter {
             regularInfo.getContent().add(regularInfoContent);
             document.getIncludedNote().add(regularInfo);
         }
+        if (trans.getReferenceNumber() != null && trans.getReferenceNumber() != new String()){
+            NoteType referenceInfo = xmlFactory.createNoteType();
+            TextType referenceInfoContent = xmlFactory.createTextType();
+            referenceInfoContent.setValue("Ursprungsbeleg: " + trans.getReferenceNumber());
+            referenceInfo.getContent().add(referenceInfoContent);
+            document.getIncludedNote().add(referenceInfo);            
+        }
 
         return document;
     }

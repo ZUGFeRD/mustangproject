@@ -164,6 +164,11 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
         return null;
     }
 
+    @Override
+    public String getReferenceNumber() {
+        return null;
+    }
+
   class Contact implements IZUGFeRDExportableContact
   {
 
