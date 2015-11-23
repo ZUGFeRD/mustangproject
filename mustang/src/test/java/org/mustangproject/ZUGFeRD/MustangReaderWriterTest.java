@@ -148,6 +148,24 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
         return "Zahlbar ohne Abzug bis zum " + germanDateFormat.format(getDueDate());
     }
 
+    @Override
+    public IZUGFeRDAllowanceCharge[] getZFAllowances() {
+        return null;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public IZUGFeRDAllowanceCharge[] getZFCharges() {
+        return null;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
+        return null;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
   class Contact implements IZUGFeRDExportableContact
   {
 
@@ -234,6 +252,16 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
     {
       this.product = product;
     }
+      
+    @Override
+    public IZUGFeRDAllowanceCharge[] getItemAllowances() {
+        return null;        
+    }
+
+    @Override
+    public IZUGFeRDAllowanceCharge[] getItemCharges() {
+        return null;
+    }    
 
   }
 

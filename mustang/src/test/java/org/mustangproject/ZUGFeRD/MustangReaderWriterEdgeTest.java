@@ -149,6 +149,21 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
         return "Zahlbar ohne Abzug bis zum " + germanDateFormat.format(getDueDate());
     }
 
+    @Override
+    public IZUGFeRDAllowanceCharge[] getZFAllowances() {
+        return null;
+    }
+
+    @Override
+    public IZUGFeRDAllowanceCharge[] getZFCharges() {
+        return null;
+    }
+
+    @Override
+    public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
+        return null;
+    }
+
   class Contact implements IZUGFeRDExportableContact
   {
 
@@ -234,6 +249,16 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     public void setProduct(Product product)
     {
       this.product = product;
+    }
+
+    @Override
+    public IZUGFeRDAllowanceCharge[] getItemAllowances() {
+        return null;        
+    }
+
+    @Override
+    public IZUGFeRDAllowanceCharge[] getItemCharges() {
+        return null;
     }
 
   }

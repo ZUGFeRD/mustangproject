@@ -45,6 +45,10 @@ public interface IZUGFeRDExportableTransaction {
 	 * @return
 	 */
 	Date getDueDate();
+        
+        IZUGFeRDAllowanceCharge[] getZFAllowances();
+        IZUGFeRDAllowanceCharge[] getZFCharges();
+        IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges();        
 
 	IZUGFeRDExportableItem[] getZFItems();
 
