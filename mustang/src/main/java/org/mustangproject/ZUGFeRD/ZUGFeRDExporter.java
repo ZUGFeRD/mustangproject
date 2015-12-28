@@ -40,6 +40,7 @@ import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -51,7 +52,6 @@ import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecifica
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.apache.pdfbox.preflight.PreflightDocument;
 import org.apache.pdfbox.preflight.ValidationResult;
-import org.apache.pdfbox.preflight.exception.SyntaxValidationException;
 import org.apache.pdfbox.preflight.exception.ValidationException;
 import org.apache.pdfbox.preflight.parser.PreflightParser;
 import org.mustangproject.ZUGFeRD.model.*;
@@ -213,6 +213,7 @@ public class ZUGFeRDExporter {
     IZUGFeRDExportableTransaction trans = null;
 	private boolean ignoreA1Errors;
 	private PDDocument doc;
+	private String currency="EUR";
 
     private BigDecimal nDigitFormat(BigDecimal value, int scale) {
         /*
@@ -340,6 +341,18 @@ public class ZUGFeRDExporter {
     	return result.isValid();
     }
 
+    public void loadPDFA3(String filename) {
+
+    	try {
+			doc = PDDocument
+					.load(filename);
+		
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    }
     /**
      * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on
      * the metadata level, this will not e.g. convert graphics to JPG-2000)
@@ -352,9 +365,8 @@ public class ZUGFeRDExporter {
     	if (!ignoreA1Errors&&!isValidA1(filename)) {
     		throw new IOException("File is not a valid PDF/A-1 input file");
     	}
-    	doc = PDDocument
-				.load(filename);
-    	
+    	loadPDFA3(filename);
+
         String fullProducer = producer + " (via mustangproject.org " + versionStr + ")";
         
         PDDocumentCatalog cat = doc.getDocumentCatalog();
@@ -428,8 +440,8 @@ public class ZUGFeRDExporter {
 
     private String getZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans) throws JAXBException {
         this.trans = trans;
-        
         this.totals = new Totals();
+        currency=trans.getCurrency();
 
         CrossIndustryDocumentType invoice = xmlFactory.createCrossIndustryDocumentType();
 
@@ -624,7 +636,7 @@ public class ZUGFeRDExporter {
         tradeSettlement.getPaymentReference().add(paymentReference);
 
         CodeType currencyCode = xmlFactory.createCodeType();
-        currencyCode.setValue(trans.getInvoiceCurrency());
+        currencyCode.setValue(currency);
         tradeSettlement.setInvoiceCurrencyCode(currencyCode);
 
         tradeSettlement.getSpecifiedTradeSettlementPaymentMeans().add(this.getPaymentData());
@@ -652,7 +664,11 @@ public class ZUGFeRDExporter {
         paymentData.setTypeCode(paymentDataType);
 
         TextType paymentInfo = xmlFactory.createTextType();
-        paymentInfo.setValue(trans.getOwnPaymentInfoText());
+        String paymentInfoText=trans.getOwnPaymentInfoText();
+        if (paymentInfoText==null) {
+        	paymentInfoText="";
+        }
+        paymentInfo.setValue(paymentInfoText);
         paymentData.getInformation().add(paymentInfo);
 
         CreditorFinancialAccountType bankAccount = xmlFactory.createCreditorFinancialAccountType();
@@ -694,12 +710,12 @@ public class ZUGFeRDExporter {
             tradeTax.setApplicablePercent(taxPercent);
 
             AmountType calculatedTaxAmount = xmlFactory.createAmountType();
-            calculatedTaxAmount.setCurrencyID(trans.getInvoiceCurrency());
+            calculatedTaxAmount.setCurrencyID(currency);
             calculatedTaxAmount.setValue(currencyFormat(amount.getCalculated()));
             tradeTax.getCalculatedAmount().add(calculatedTaxAmount);
 
             AmountType basisTaxAmount = xmlFactory.createAmountType();
-            basisTaxAmount.setCurrencyID(trans.getInvoiceCurrency());
+            basisTaxAmount.setCurrencyID(currency);
             basisTaxAmount.setValue(currencyFormat(amount.getBasis()));
             tradeTax.getBasisAmount().add(basisTaxAmount);
 
@@ -721,7 +737,7 @@ public class ZUGFeRDExporter {
             allowance.setChargeIndicator(chargeIndicator);
             
             AmountType actualAmount = xmlFactory.createAmountType();
-            actualAmount.setCurrencyID(trans.getInvoiceCurrency());       
+            actualAmount.setCurrencyID(currency);       
             actualAmount.setValue(currencyFormat(iAllowance.getTotalAmount()));
             allowance.getActualAmount().add(actualAmount);
             
@@ -769,7 +785,7 @@ public class ZUGFeRDExporter {
             charge.setChargeIndicator(chargeIndicator);
             
             AmountType actualAmount = xmlFactory.createAmountType();
-            actualAmount.setCurrencyID(trans.getInvoiceCurrency());       
+            actualAmount.setCurrencyID(currency);       
             actualAmount.setValue(currencyFormat(iCharge.getTotalAmount()));
             charge.getActualAmount().add(actualAmount);
             
@@ -813,7 +829,7 @@ public class ZUGFeRDExporter {
             LogisticsServiceChargeType serviceCharge = xmlFactory.createLogisticsServiceChargeType();
 
             AmountType actualAmount = xmlFactory.createAmountType();
-            actualAmount.setCurrencyID(trans.getInvoiceCurrency());       
+            actualAmount.setCurrencyID(currency);       
             actualAmount.setValue(currencyFormat(iServiceCharge.getTotalAmount()));
             serviceCharge.getAppliedAmount().add(actualAmount);
             
@@ -864,7 +880,11 @@ public class ZUGFeRDExporter {
 
         TextType paymentTermDescr = xmlFactory.createTextType();
 
-        paymentTermDescr.setValue(trans.getPaymentTermDescription());
+        String paymentTermDescription=trans.getPaymentTermDescription();
+        if (paymentTermDescription==null) {
+        	paymentTermDescription="";
+        }
+        paymentTermDescr.setValue(paymentTermDescription);
         paymentTerm.getDescription().add(paymentTermDescr);
 
         paymentTerms.add(paymentTerm);
@@ -877,7 +897,7 @@ public class ZUGFeRDExporter {
         
         // AllowanceTotalAmount = sum of all allowances
         AmountType allowanceTotalAmount = xmlFactory.createAmountType();
-        allowanceTotalAmount.setCurrencyID(trans.getInvoiceCurrency());
+        allowanceTotalAmount.setCurrencyID(currency);
         if(trans.getZFAllowances() != null){
             BigDecimal totalHeaderAllowance = BigDecimal.ZERO;
             for(IZUGFeRDAllowanceCharge headerAllowance : trans.getZFAllowances()){
@@ -892,7 +912,7 @@ public class ZUGFeRDExporter {
         // ChargeTotalAmount = sum of all Logistic service charges + normal charges
         BigDecimal totalCharge = BigDecimal.ZERO;   
         AmountType totalChargeAmount = xmlFactory.createAmountType();
-        totalChargeAmount.setCurrencyID(trans.getInvoiceCurrency());
+        totalChargeAmount.setCurrencyID(currency);
         if(trans.getZFLogisticsServiceCharges()!= null){
             for(IZUGFeRDAllowanceCharge logisticsServiceCharge : trans.getZFLogisticsServiceCharges()){
                 totalCharge = logisticsServiceCharge.getTotalAmount().add(totalCharge);
@@ -914,27 +934,27 @@ public class ZUGFeRDExporter {
         monetarySummation.getChargeTotalAmount().add(chargeTotalAmount);*/
 
         AmountType lineTotalAmount = xmlFactory.createAmountType();
-        lineTotalAmount.setCurrencyID(trans.getInvoiceCurrency());
+        lineTotalAmount.setCurrencyID(currency);
         lineTotalAmount.setValue(currencyFormat(totals.getLineTotal()));
         monetarySummation.getLineTotalAmount().add(lineTotalAmount);
 
         AmountType taxBasisTotalAmount = xmlFactory.createAmountType();
-        taxBasisTotalAmount.setCurrencyID(trans.getInvoiceCurrency());
+        taxBasisTotalAmount.setCurrencyID(currency);
         taxBasisTotalAmount.setValue(currencyFormat(totals.getTotalNet()));
         monetarySummation.getTaxBasisTotalAmount().add(taxBasisTotalAmount);
 
         AmountType taxTotalAmount = xmlFactory.createAmountType();
-        taxTotalAmount.setCurrencyID(trans.getInvoiceCurrency());
+        taxTotalAmount.setCurrencyID(currency);
         taxTotalAmount.setValue(currencyFormat(totals.getTaxTotal()));
         monetarySummation.getTaxTotalAmount().add(taxTotalAmount);
 
         AmountType grandTotalAmount = xmlFactory.createAmountType();
-        grandTotalAmount.setCurrencyID(trans.getInvoiceCurrency());
+        grandTotalAmount.setCurrencyID(currency);
         grandTotalAmount.setValue(currencyFormat(totals.getTotalGross()));
         monetarySummation.getGrandTotalAmount().add(grandTotalAmount);
 
         AmountType duePayableAmount = xmlFactory.createAmountType();
-        duePayableAmount.setCurrencyID(trans.getInvoiceCurrency());
+        duePayableAmount.setCurrencyID(currency);
         duePayableAmount.setValue(currencyFormat(totals.getTotalGross()));
         monetarySummation.getDuePayableAmount().add(duePayableAmount);
 
@@ -964,7 +984,7 @@ public class ZUGFeRDExporter {
             grossTradePrice.setBasisQuantity(grossQuantity);
 
             AmountType grossChargeAmount = xmlFactory.createAmountType();
-            grossChargeAmount.setCurrencyID(trans.getInvoiceCurrency());
+            grossChargeAmount.setCurrencyID(currency);
             grossChargeAmount.setValue(priceFormat(currentItem.getPrice()));
             grossTradePrice.getChargeAmount().add(grossChargeAmount);
             tradeAgreement.getGrossPriceProductTradePrice().add(grossTradePrice);
@@ -976,7 +996,7 @@ public class ZUGFeRDExporter {
                     chargeIndicator.setIndicator(false);
                     eItemAllowance.setChargeIndicator(chargeIndicator);                    
                     AmountType actualAmount = xmlFactory.createAmountType();
-                    actualAmount.setCurrencyID(trans.getInvoiceCurrency());
+                    actualAmount.setCurrencyID(currency);
                     actualAmount.setValue(priceFormat(itemAllowance.getTotalAmount().divide(currentItem.getQuantity(), 4, BigDecimal.ROUND_HALF_UP)));
                     eItemAllowance.getActualAmount().add(actualAmount);
                     TextType reason = xmlFactory.createTextType();
@@ -990,7 +1010,7 @@ public class ZUGFeRDExporter {
                 for(IZUGFeRDAllowanceCharge itemCharge : currentItem.getItemCharges()){
                     TradeAllowanceChargeType eItemCharge = xmlFactory.createTradeAllowanceChargeType();
                     AmountType actualAmount = xmlFactory.createAmountType();
-                    actualAmount.setCurrencyID(trans.getInvoiceCurrency());
+                    actualAmount.setCurrencyID(currency);
                     actualAmount.setValue(priceFormat(itemCharge.getTotalAmount().divide(currentItem.getQuantity(), 4, BigDecimal.ROUND_HALF_UP)));
                     eItemCharge.getActualAmount().add(actualAmount);
                     TextType reason = xmlFactory.createTextType();
@@ -1010,7 +1030,7 @@ public class ZUGFeRDExporter {
             netTradePrice.setBasisQuantity(netQuantity);
 
             AmountType netChargeAmount = xmlFactory.createAmountType();
-            netChargeAmount.setCurrencyID(trans.getInvoiceCurrency());
+            netChargeAmount.setCurrencyID(currency);
             netChargeAmount.setValue(priceFormat(lc.getItemNetAmount()));
             netTradePrice.getChargeAmount().add(netChargeAmount);
             tradeAgreement.getNetPriceProductTradePrice().add(netTradePrice);
@@ -1042,7 +1062,7 @@ public class ZUGFeRDExporter {
 
             TradeSettlementMonetarySummationType monetarySummation = xmlFactory.createTradeSettlementMonetarySummationType();
             AmountType itemAmount = xmlFactory.createAmountType();
-            itemAmount.setCurrencyID(trans.getInvoiceCurrency());
+            itemAmount.setCurrencyID(currency);
             itemAmount.setValue(currencyFormat(lc.getItemTotalNetAmount()));
             monetarySummation.getLineTotalAmount().add(itemAmount);
             tradeSettlement.setSpecifiedTradeSettlementMonetarySummation(monetarySummation);
@@ -1147,7 +1167,7 @@ public class ZUGFeRDExporter {
      * should hav ebeen set via
      * <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
      */
-    public void PDFattachZugferdFile(PDDocument doc, IZUGFeRDExportableTransaction trans) throws IOException, JAXBException {
+    public void PDFattachZugferdFile(IZUGFeRDExportableTransaction trans) throws IOException, JAXBException {
 
         if (zugferdData == null) // XML ZUGFeRD data not set externally, needs to be built
         {
@@ -1166,6 +1186,18 @@ public class ZUGFeRDExporter {
         }
 
         PDFAttachGenericFile(doc, "ZUGFeRD-invoice.xml", "Alternative", "Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)", "text/xml", zugferdData);
+    }
+    
+    public void export(String ZUGFeRDfilename) {
+    	try {
+			doc.save(ZUGFeRDfilename);
+		} catch (COSVisitorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     /**

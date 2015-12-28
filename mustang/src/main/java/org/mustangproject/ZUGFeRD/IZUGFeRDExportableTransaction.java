@@ -127,7 +127,7 @@ public interface IZUGFeRDExportableTransaction {
 	 * get main invoice currency used on the invoice
 	 * @return
 	 */        
-        String getInvoiceCurrency();
+     String getCurrency();
         
         /**
 	 * get payment information text. e.g. Bank transfer
