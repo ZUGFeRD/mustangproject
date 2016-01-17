@@ -21,6 +21,17 @@
             <artifactId>jaxb-runtime</artifactId>
             <version>2.2.11</version>
         </dependency>
+        
+        <dependency>
+	    <groupId>org.apache.pdfbox</groupId>
+	    <artifactId>preflight</artifactId>
+	    <version>1.8.8</version>
+	</dependency>
+        <dependency>
+	    <groupId>org.apache.pdfbox</groupId>
+	    <artifactId>pdfbox</artifactId>
+	    <version>1.8.8</version>
+	</dependency>
     </dependencies>
 
     <mailingLists>

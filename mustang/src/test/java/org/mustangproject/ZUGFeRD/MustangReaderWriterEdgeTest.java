@@ -118,6 +118,12 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   {
     return null;
   }
+
+  @Override
+  public String getCurrency()
+  {
+    return "EUR";
+  }
   
   @Override
   public IZUGFeRDExportableItem[] getZFItems()
@@ -399,13 +405,11 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     PDDocument doc;
     try
     {
-      doc = PDDocument.load(SOURCE_PDF);
       // automatically add Zugferd to all outgoing invoices
       ZUGFeRDExporter ze = new ZUGFeRDExporter();
-      ze.PDFmakeA3compliant(doc, "My Application", System.getProperty("user.name"), true);
+      ze.PDFmakeA3compliant(SOURCE_PDF, "My Application", System.getProperty("user.name"), true);
       ze.PDFattachZugferdFile(doc, this);
-      doc.save(TARGET_PDF);
-      doc.close();
+      ze.export(TARGET_PDF);
     }
     catch (IOException e)
     {

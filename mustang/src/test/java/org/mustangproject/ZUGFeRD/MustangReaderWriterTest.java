@@ -119,6 +119,12 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
   }
 
   @Override
+  public String getCurrency()
+  {
+    return "EUR";
+  }
+
+  @Override
   public IZUGFeRDExportableItem[] getZFItems()
   {
     Item[] allItems = new Item[3];
