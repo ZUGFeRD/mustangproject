@@ -139,11 +139,6 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
   }
 
     @Override
-    public String getInvoiceCurrency() {
-        return "EUR";
-    }
-
-    @Override
     public String getOwnPaymentInfoText() {
         return "Überweisung";
     }
@@ -404,16 +399,13 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
     final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20151008_504new.pdf";
 
     // the writing part
-    PDDocument doc;
     try
     {
-      doc = PDDocument.load(SOURCE_PDF);
       // automatically add Zugferd to all outgoing invoices
       ZUGFeRDExporter ze = new ZUGFeRDExporter();
-      ze.PDFmakeA3compliant(doc, "My Application", System.getProperty("user.name"), true);
-      ze.PDFattachZugferdFile(doc, this);
-      doc.save(TARGET_PDF);
-      doc.close();
+      ze.PDFmakeA3compliant(SOURCE_PDF, "My Application", System.getProperty("user.name"), true);
+      ze.PDFattachZugferdFile(this);
+      ze.export(TARGET_PDF);
     }
     catch (IOException e)
     {
