@@ -381,7 +381,13 @@ public class ZUGFeRDExporter {
 		return getA1ParserValidationResult(parser);
 	}
 
+	/***
+	 * Will return a boolean if the inputstream is valid PDF/A-1 and close the input stream
+	 * @param file
+	 * @return
+	 */
 	public boolean isValidA1(InputStream file) {
+		
 		ByteArrayDataSource fd;
 		try {
 			fd = new ByteArrayDataSource(file);
@@ -439,11 +445,22 @@ public class ZUGFeRDExporter {
 	public PDDocumentCatalog PDFmakeA3compliant(InputStream file,
 			String producer, String creator, boolean attachZugferdHeaders)
 			throws IOException, TransformerException {
+		/* cache the file content in memory, unfortunately the next step, isValidA1,
+		 * will close the input stream but the step thereafter (loadPDFA3) needs
+		 * and open one*/
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] buf = new byte[1024];
+		int n = 0;
+		while ((n = file.read(buf)) >= 0)
+		    baos.write(buf, 0, n);
+		byte[] content = baos.toByteArray();
 
-		if (!ignoreA1Errors && !isValidA1(file)) {
+		InputStream is1 = new ByteArrayInputStream(content);
+		if (!ignoreA1Errors && !isValidA1(is1)) {
 			throw new IOException("File is not a valid PDF/A-1 input file");
 		}
-		loadPDFA3(file);
+		InputStream is2 = new ByteArrayInputStream(content);
+		loadPDFA3(is2);
 
 		return makeDocPDFA3compliant(producer, creator, attachZugferdHeaders);
 	}	
