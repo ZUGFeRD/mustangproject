@@ -1478,6 +1478,10 @@ public class ZUGFeRDExporter {
 			cosArray = new COSArray();
 		}
 		cosArray.add(fs);
+		COSDictionary dict2 = doc.getDocumentCatalog().getCOSDictionary();
+		COSArray array = new COSArray();
+		array.add(fs.getCOSDictionary()); // see below
+	        dict2.setItem("AF",array);
 		doc.getDocumentCatalog().getCOSDictionary().setItem("AF", cosArray);
 	}
 
