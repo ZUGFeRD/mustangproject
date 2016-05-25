@@ -112,6 +112,12 @@ import org.w3c.dom.Element;
 			Element propertyNode = schema.getOwnerDocument().createElement(
 					"pdfaSchema:property"); //$NON-NLS-1$
 
+			Element valueTypeNode = schema.getOwnerDocument().createElement(
+					"pdfaSchema:valueType"); //$NON-NLS-1$
+
+			Element seqListValueType = schema.getOwnerDocument().createElement(
+					"rdf:Seq"); //$NON-NLS-1$
+
 			Element sequenceNode = schema.getOwnerDocument().createElement(
 					"rdf:Seq"); //$NON-NLS-1$
 
@@ -149,6 +155,9 @@ import org.w3c.dom.Element;
 			propertyNode.appendChild(sequenceNode);
 
 			bagListNode.appendChild(propertyNode);
+
+			valueTypeNode.appendChild(seqListValueType);
+			bagListNode.appendChild(valueTypeNode);
 
 			bagNode.appendChild(bagListNode);
 			schemasNode.appendChild(bagNode);
