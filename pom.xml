@@ -6,9 +6,9 @@
 	<packaging>pom</packaging>
 
 	<scm>
-		<connection>scm:git:https://github.com/Rayman2200/PDFA3.git</connection>
-		<developerConnection>scm:git:https://github.com/Rayman2200/PDFA3.git</developerConnection>
-		<url>https://github.com/Rayman2200/PDFA3</url>
+		<connection>scm:git:https://github.com/jstaerk/mustangproject.git</connection>
+		<developerConnection>scm:git:https://github.com/jstaerk/mustangproject.git</developerConnection>
+		<url>https://github.com/jstaerk/mustangproject</url>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -76,8 +76,8 @@
 						<include>**/*</include>
 					</includes>
 					<merge>true</merge>
-					<repositoryName>PDFA3</repositoryName>      <!-- github repo name -->
-					<repositoryOwner>Rayman2200</repositoryOwner>    <!-- github username -->
+					<repositoryName>mustangproject</repositoryName>      <!-- github repo name -->
+					<repositoryOwner>jstaerk</repositoryOwner>    <!-- github username -->
 				</configuration>
 				<executions>
 					<!-- run site-maven-plugin's 'site' target as part of the build's normal 
