@@ -4,8 +4,8 @@
   <artifactId>mustang-sample-project</artifactId>
   <versioning>
     <versions>
-      <version>1.3.0-SNAPSHOT</version>
+      <version>1.3.0.1-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20160601075517</lastUpdated>
+    <lastUpdated>20160819153334</lastUpdated>
   </versioning>
 </metadata>
