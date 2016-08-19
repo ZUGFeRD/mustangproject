@@ -4,8 +4,8 @@
   <artifactId>pdfa3-samples</artifactId>
   <versioning>
     <versions>
-      <version>1.3.0-SNAPSHOT</version>
+      <version>1.3.0.1-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20160601075523</lastUpdated>
+    <lastUpdated>20160819153403</lastUpdated>
   </versioning>
 </metadata>
