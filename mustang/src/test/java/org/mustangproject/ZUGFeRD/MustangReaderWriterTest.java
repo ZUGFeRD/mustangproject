@@ -49,7 +49,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
   @Override
   public String getOwnBIC()
   {
-    return "COBADEFXXX";
+    return "COBADEFFXXX";
   }
 
   @Override
@@ -253,16 +253,16 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
     {
       this.product = product;
     }
-      
+
     @Override
     public IZUGFeRDAllowanceCharge[] getItemAllowances() {
-        return null;        
+        return null;
     }
 
     @Override
     public IZUGFeRDAllowanceCharge[] getItemCharges() {
         return null;
-    }    
+    }
 
   }
 
@@ -328,7 +328,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 
   /**
    * Create the test case
-   * 
+   *
    * @param testName
    *          name of the test case
    */
@@ -351,7 +351,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
    * The importer test imports from ./src/test/MustangGnuaccountingBeispielRE-20151008_504.pdf to check the values.
    * --> as only Name Ascending is supported for Test Unit sequence, I renamed the this test-A-Export to run before
    * testZExport
-   * 
+   *
    * @throws IOException
    */
 
