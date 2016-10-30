@@ -49,7 +49,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   @Override
   public String getOwnBIC()
   {
-    return "COBADEFXXX";
+    return "COBADEFFXXX";
   }
 
   @Override
@@ -124,7 +124,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   {
     return "EUR";
   }
-  
+
   @Override
   public IZUGFeRDExportableItem[] getZFItems()
   {
@@ -254,7 +254,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
     @Override
     public IZUGFeRDAllowanceCharge[] getItemAllowances() {
-        return null;        
+        return null;
     }
 
     @Override
@@ -326,7 +326,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
   /**
    * Create the test case
-   * 
+   *
    * @param testName
    *          name of the test case
    */
@@ -349,7 +349,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
    * The importer test imports from ./src/test/MustangGnuaccountingBeispielRE-20151008_504.pdf to check the values.
    * --> as only Name Ascending is supported for Test Unit sequence, I renamed the this test-A-Export to run before
    * testZExport
-   * 
+   *
    * @throws IOException
    */
 
@@ -364,6 +364,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     String iban = null;
     String holder = null;
     String ref = null;
+    String dueDate = null;
 
     if (zi.canParse())
     {
@@ -372,6 +373,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
       bic = zi.getBIC();
       iban = zi.getIBAN();
       holder = zi.getHolder();
+      dueDate = zi.getDueDate();
       ref = zi.getForeignReference();
     }
 
@@ -379,6 +381,8 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     assertEquals(bic, getOwnBIC());
     assertEquals(iban, getOwnIBAN());
     assertEquals(holder, getOwnOrganisationName());
+
+    assertEquals(dueDate, "20141029");
     assertEquals(ref, getNumber());
 
   }
