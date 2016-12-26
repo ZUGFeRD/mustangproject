@@ -568,7 +568,7 @@ public class ZUGFeRDExporter {
 		DocumentContextParameterType contextParameter = xmlFactory
 				.createDocumentContextParameterType();
 		IDType idType = xmlFactory.createIDType();
-		idType.setValue(DocumentContextParameterType.COMFORT);
+		idType.setValue(DocumentContextParameterType.EXTENDED);
 		contextParameter.setID(idType);
 		context.getGuidelineSpecifiedDocumentContextParameter().add(
 				contextParameter);

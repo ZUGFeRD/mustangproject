@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
 public class XMPSchemaZugferd extends XMPSchemaBasic
 {
 
-	private String conformanceLevel = "COMFORT";
+	private String conformanceLevel = "EXTENDED";
 
 		/**
 		 * This is what needs to be added to the RDF metadata - basically the name of the embedded
