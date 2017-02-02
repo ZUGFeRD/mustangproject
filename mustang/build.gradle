@@ -118,13 +118,9 @@ publishing {
         }
     } else {
         repositories {
-	        maven {
-	            url "http://frog.css.de:8081/repository/thirdparty/"
-	            credentials {
-	                    username "deployment"
-	                    password "deploy99"
-	            }
-	        }
+		maven {
+		    url file("${project.build.directory}/mvn-repo")
+		}
         }
     }
 
