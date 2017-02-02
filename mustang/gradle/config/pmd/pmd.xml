@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<ruleset name="Monits Java ruleset"
+    xmlns="http://pmd.sf.net/ruleset/1.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+    xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+
+  <description>
+     Custom ruleset for Java projects
+  </description>
+
+  <!-- braces are already included in Checkstyle -->
+  <!-- <rule ref="rulesets/java/braces.xml" /> -->
+  <rule ref="rulesets/java/basic.xml" />
+  <rule ref="rulesets/java/clone.xml" >
+    <exclude name="CloneThrowsCloneNotSupportedException" />
+  </rule>
+  <rule ref="rulesets/java/comments.xml/CommentDefaultAccessModifier" />
+  <rule ref="rulesets/java/design.xml">
+    <!-- Confusing ternary needs special configuration -->
+    <exclude name="ConfusingTernary" />
+
+    <!-- We prefer checkstyle's FallThrough -->
+    <exclude name="MissingBreakInSwitch" />
+
+    <exclude name="TooFewBranchesForASwitchStatement"/>
+    <exclude name="SwitchStmtsShouldHaveDefault"/>
+    <exclude name="UseVarargs"/>
+    <exclude name="AccessorClassGeneration"/>
+  </rule>
+
+  <!-- ConfusingTernaryRule should ignore elseif since it creates lots of FPs -->
+  <rule ref="rulesets/java/design.xml/ConfusingTernary">
+    <properties>
+      <property name="ignoreElseIf" value="true" />
+    </properties>
+  </rule>
+
+  <rule ref="rulesets/java/empty.xml" />
+  <rule ref="rulesets/java/finalizers.xml" />
+  <rule ref="rulesets/java/imports.xml">
+    <exclude name="TooManyStaticImports" />
+    <!-- Duplicate of Checkstyle's UnusedImports, which understands javadoc -->
+    <exclude name="UnusedImports" />
+  </rule>
+  <rule ref="rulesets/java/junit.xml" >
+    <exclude name="JUnitTestContainsTooManyAsserts" />
+  </rule>
+  <!-- Logging rules -->
+  <rule ref="rulesets/java/logging-java.xml">
+    <!-- Our Findbugs plugin already detects this -->
+    <exclude name="SystemPrintln" />
+    <!-- Just no... SLF4J has a nice API that avoids string formating -->
+    <exclude name="GuardLogStatementJavaUtil" />
+  </rule>
+
+  <rule ref="rulesets/java/naming.xml/BooleanGetMethodName" />
+  <rule ref="rulesets/java/optimizations.xml">
+    <exclude name="AvoidInstantiatingObjectsInLoops" />
+    <!-- Duplicates of Checkstyle's FinalParametersCheck -->
+    <exclude name="MethodArgumentCouldBeFinal" />
+    <exclude name="LocalVariableCouldBeFinal" />
+  </rule>
+  <rule ref="rulesets/java/strings.xml">
+    <exclude name="AvoidDuplicateLiterals"/>
+  </rule>
+  <rule ref="rulesets/java/unnecessary.xml">
+    <!-- Less powerful than Checkstyle's RedundantModifier -->
+    <exclude name="UnnecessaryFinalModifier" />
+  </rule>
+  <rule ref="rulesets/java/unusedcode.xml">
+    <!-- Less powerful than Checkstyle's RedundantModifier -->
+    <exclude name="UnusedModifier" />
+  </rule>
+</ruleset>

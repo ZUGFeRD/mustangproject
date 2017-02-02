@@ -10,25 +10,32 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 
+
 public interface IZUGFeRDExportableItem {
 
 	IZUGFeRDExportableProduct getProduct();
-        IZUGFeRDAllowanceCharge[] getItemAllowances();
-        IZUGFeRDAllowanceCharge[] getItemCharges();
+
+
+	IZUGFeRDAllowanceCharge[] getItemAllowances();
+
+
+	IZUGFeRDAllowanceCharge[] getItemCharges();
 
 
 	/**
 	 * The price of one item excl. taxes
+	 *
 	 * @return
 	 */
 	BigDecimal getPrice();
 
+
 	/***
 	 * how many
+	 *
 	 * @return
 	 */
 	BigDecimal getQuantity();
-
 
 
 }

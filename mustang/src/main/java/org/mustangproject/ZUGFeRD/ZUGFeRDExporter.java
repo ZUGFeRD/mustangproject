@@ -11,6 +11,7 @@ package org.mustangproject.ZUGFeRD;
  */
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -19,66 +20,99 @@ import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.FileDataSource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.transform.TransformerException;
 
-import org.apache.jempbox.xmp.XMPMetadata;
-import org.apache.jempbox.xmp.XMPSchemaBasic;
-import org.apache.jempbox.xmp.XMPSchemaDublinCore;
-import org.apache.jempbox.xmp.XMPSchemaPDF;
-import org.apache.jempbox.xmp.pdfa.XMPSchemaPDFAId;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
-import org.apache.pdfbox.pdmodel.common.COSObjectable;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.apache.pdfbox.preflight.PreflightDocument;
 import org.apache.pdfbox.preflight.ValidationResult;
-import org.apache.pdfbox.preflight.exception.ValidationException;
 import org.apache.pdfbox.preflight.parser.PreflightParser;
 import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
-import org.mustangproject.ZUGFeRD.model.*;
+import org.apache.xmpbox.XMPMetadata;
+import org.apache.xmpbox.schema.AdobePDFSchema;
+import org.apache.xmpbox.schema.DublinCoreSchema;
+import org.apache.xmpbox.type.BadFieldValueException;
+import org.apache.xmpbox.xml.XmpSerializer;
+import org.mustangproject.ZUGFeRD.model.AmountType;
+import org.mustangproject.ZUGFeRD.model.CodeType;
+import org.mustangproject.ZUGFeRD.model.CountryIDType;
+import org.mustangproject.ZUGFeRD.model.CreditorFinancialAccountType;
+import org.mustangproject.ZUGFeRD.model.CreditorFinancialInstitutionType;
+import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
+import org.mustangproject.ZUGFeRD.model.DateTimeType;
+import org.mustangproject.ZUGFeRD.model.DocumentCodeType;
+import org.mustangproject.ZUGFeRD.model.DocumentContextParameterType;
+import org.mustangproject.ZUGFeRD.model.DocumentLineDocumentType;
+import org.mustangproject.ZUGFeRD.model.ExchangedDocumentContextType;
+import org.mustangproject.ZUGFeRD.model.ExchangedDocumentType;
+import org.mustangproject.ZUGFeRD.model.IDType;
+import org.mustangproject.ZUGFeRD.model.IndicatorType;
+import org.mustangproject.ZUGFeRD.model.LogisticsServiceChargeType;
+import org.mustangproject.ZUGFeRD.model.NoteType;
+import org.mustangproject.ZUGFeRD.model.ObjectFactory;
+import org.mustangproject.ZUGFeRD.model.PaymentMeansCodeType;
+import org.mustangproject.ZUGFeRD.model.PercentType;
+import org.mustangproject.ZUGFeRD.model.QuantityType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainEventType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeAgreementType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeDeliveryType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeLineItemType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeSettlementType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeTransactionType;
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeType;
+import org.mustangproject.ZUGFeRD.model.TaxRegistrationType;
+import org.mustangproject.ZUGFeRD.model.TaxTypeCodeType;
+import org.mustangproject.ZUGFeRD.model.TextType;
+import org.mustangproject.ZUGFeRD.model.TradeAddressType;
+import org.mustangproject.ZUGFeRD.model.TradeAllowanceChargeType;
+import org.mustangproject.ZUGFeRD.model.TradePartyType;
+import org.mustangproject.ZUGFeRD.model.TradePaymentTermsType;
+import org.mustangproject.ZUGFeRD.model.TradePriceType;
+import org.mustangproject.ZUGFeRD.model.TradeProductType;
+import org.mustangproject.ZUGFeRD.model.TradeSettlementMonetarySummationType;
+import org.mustangproject.ZUGFeRD.model.TradeSettlementPaymentMeansType;
+import org.mustangproject.ZUGFeRD.model.TradeTaxType;
+
 
 public class ZUGFeRDExporter {
 
+	private final static Logger LOG = LogManager.getLogger();
+
+
 	/**
-	 * * You will need Apache PDFBox. To use the ZUGFeRD exporter, implement
-	 * IZUGFeRDExportableTransaction in yourTransaction (which will require you
-	 * to implement Product, Item and Contact) then call doc =
-	 * PDDocument.load(PDFfilename); // automatically add Zugferd to all
-	 * outgoing invoices ZUGFeRDExporter ze = new ZUGFeRDExporter();
-	 * ze.PDFmakeA3compliant(doc, "Your application name",
-	 * System.getProperty("user.name"), true); ze.PDFattachZugferdFile(doc,
-	 * yourTransaction);
-	 *
-	 * doc.save(PDFfilename);
+	 * * You will need Apache PDFBox. To use the ZUGFeRD exporter, implement IZUGFeRDExportableTransaction in yourTransaction (which will require you to
+	 * implement Product, Item and Contact) then call doc = PDDocument.load(PDFfilename); // automatically add Zugferd to all outgoing invoices ZUGFeRDExporter
+	 * ze = new ZUGFeRDExporter(); ze.PDFmakeA3compliant(doc, "Your application name", System.getProperty("user.name"), true); ze.PDFattachZugferdFile(doc,
+	 * yourTransaction); doc.save(PDFfilename);
 	 *
 	 * @author jstaerk
 	 * @throws javax.xml.bind.JAXBException
-	 *
 	 */
 	public ZUGFeRDExporter() throws JAXBException {
-		jaxbContext = JAXBContext
-				.newInstance("org.mustangproject.ZUGFeRD.model");
+		jaxbContext = JAXBContext.newInstance("org.mustangproject.ZUGFeRD.model");
 		marshaller = jaxbContext.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
@@ -90,6 +124,7 @@ public class ZUGFeRDExporter {
 		private BigDecimal itemTotalNetAmount;
 		private BigDecimal itemTotalVATAmount;
 		private BigDecimal itemNetAmount;
+
 
 		public LineCalc(IZUGFeRDExportableItem currentItem) {
 			BigDecimal totalAllowance = BigDecimal.ZERO;
@@ -110,18 +145,21 @@ public class ZUGFeRDExporter {
 				}
 			}
 
-			BigDecimal multiplicator = currentItem.getProduct().getVATPercent()
+			BigDecimal multiplicator = currentItem.getProduct()
+					.getVATPercent()
 					.divide(new BigDecimal(100), 4, BigDecimal.ROUND_HALF_UP)
 					.add(BigDecimal.ONE);
 			// priceGross=currentItem.getPrice().multiply(multiplicator);
 
 			totalGross = currentItem.getPrice()
 					.multiply(currentItem.getQuantity())
-					.subtract(totalAllowance).add(totalCharge)
+					.subtract(totalAllowance)
+					.add(totalCharge)
 					.multiply(multiplicator);
 			itemTotalNetAmount = currentItem.getPrice()
 					.multiply(currentItem.getQuantity())
-					.subtract(totalAllowance).add(totalCharge)
+					.subtract(totalAllowance)
+					.add(totalCharge)
 					.setScale(2, BigDecimal.ROUND_HALF_UP);
 			itemTotalVATAmount = totalGross.subtract(itemTotalNetAmount);
 			itemNetAmount = currentItem
@@ -133,13 +171,16 @@ public class ZUGFeRDExporter {
 							BigDecimal.ROUND_HALF_UP);
 		}
 
+
 		public BigDecimal getItemTotalNetAmount() {
 			return itemTotalNetAmount;
 		}
 
+
 		public BigDecimal getItemTotalVATAmount() {
 			return itemTotalVATAmount;
 		}
+
 
 		public BigDecimal getItemNetAmount() {
 			return itemNetAmount;
@@ -148,10 +189,12 @@ public class ZUGFeRDExporter {
 	}
 
 	private class Totals {
+
 		private BigDecimal totalNetAmount;
 		private BigDecimal totalGrossAmount;
 		private BigDecimal lineTotalAmount;
 		private BigDecimal totalTaxAmount;
+
 
 		public Totals() {
 			BigDecimal res = BigDecimal.ZERO;
@@ -160,7 +203,7 @@ public class ZUGFeRDExporter {
 				res = res.add(lc.getItemTotalNetAmount());
 			}
 			// Set line total
-			this.lineTotalAmount = res;
+			lineTotalAmount = res;
 
 			if (trans.getZFAllowances() != null) {
 				for (IZUGFeRDAllowanceCharge headerAllowance : trans
@@ -183,32 +226,35 @@ public class ZUGFeRDExporter {
 			}
 
 			// Set total net amount
-			this.totalNetAmount = res;
+			totalNetAmount = res;
 
-			HashMap<BigDecimal, VATAmount> VATPercentAmountMap = getVATPercentAmountMap();
-			for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-				VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
+			HashMap<BigDecimal, VATAmount> vatPercentAmountMap = getVATPercentAmountMap();
+			for (BigDecimal currentTaxPercent : vatPercentAmountMap.keySet()) {
+				VATAmount amount = vatPercentAmountMap.get(currentTaxPercent);
 				res = res.add(amount.getCalculated());
 			}
 
 			// Set total gross amount
-			this.totalGrossAmount = res;
+			totalGrossAmount = res;
 
-			this.totalTaxAmount = this.totalGrossAmount
-					.subtract(this.totalNetAmount);
+			totalTaxAmount = totalGrossAmount.subtract(totalNetAmount);
 		}
+
 
 		public BigDecimal getTotalNet() {
 			return totalNetAmount;
 		}
 
+
 		public BigDecimal getTotalGross() {
 			return totalGrossAmount;
 		}
 
+
 		public BigDecimal getLineTotal() {
 			return lineTotalAmount;
 		}
+
 
 		public BigDecimal getTaxTotal() {
 			return totalTaxAmount;
@@ -221,13 +267,11 @@ public class ZUGFeRDExporter {
 	private String versionStr = "1.3.0";
 
 	// BASIC, COMFORT etc - may be set from outside.
-	private String ZUGFeRDConformanceLevel = null;
+	private String zUGFeRDConformanceLevel = null;
 
 	/**
-	 * Data (XML invoice) to be added to the ZUGFeRD PDF. It may be externally
-	 * set, in which case passing a IZUGFeRDExportableTransaction is not
-	 * necessary. By default it is null meaning the caller needs to pass a
-	 * IZUGFeRDExportableTransaction for the XML to be populated.
+	 * Data (XML invoice) to be added to the ZUGFeRD PDF. It may be externally set, in which case passing a IZUGFeRDExportableTransaction is not necessary. By
+	 * default it is null meaning the caller needs to pass a IZUGFeRDExportableTransaction for the XML to be populated.
 	 */
 	byte[] zugferdData = null;
 	private boolean isTest;
@@ -236,95 +280,80 @@ public class ZUGFeRDExporter {
 	private PDDocument doc;
 	private String currency = "EUR";
 
-	private BigDecimal nDigitFormat(BigDecimal value, int scale) {
+
+	private BigDecimal nDigitFormat(final BigDecimal value, int scale) {
 		/*
-		 * I needed 123,45, locale independent.I tried
-		 * NumberFormat.getCurrencyInstance().format( 12345.6789 ); but that is
-		 * locale specific.I also tried DecimalFormat df = new DecimalFormat(
-		 * "0,00" ); df.setDecimalSeparatorAlwaysShown(true);
-		 * df.setGroupingUsed(false); DecimalFormatSymbols symbols = new
-		 * DecimalFormatSymbols(); symbols.setDecimalSeparator(',');
-		 * symbols.setGroupingSeparator(' ');
-		 * df.setDecimalFormatSymbols(symbols);
-		 * 
-		 * but that would not switch off grouping. Although I liked very much
-		 * the (incomplete) "BNF diagram" in
-		 * http://docs.oracle.com/javase/tutorial/i18n/format/decimalFormat.html
-		 * in the end I decided to calculate myself and take eur+sparator+cents
-		 * 
-		 * This function will cut off, i.e. floor() subcent values Tests:
-		 * System.err.println(utils.currencyFormat(new BigDecimal(0),
-		 * ".")+"\n"+utils.currencyFormat(new BigDecimal("-1.10"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("-1.1"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("-1.01"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3489"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3419"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("12"), ","));
-		 * 
-		 * results 0.00 -1,10 -1,10 -1,01 20000123,34 20000123,34 12,00
+		 * I needed 123,45, locale independent.I tried NumberFormat.getCurrencyInstance().format( 12345.6789 ); but that is locale specific.I also tried
+		 * DecimalFormat df = new DecimalFormat( "0,00" ); df.setDecimalSeparatorAlwaysShown(true); df.setGroupingUsed(false); DecimalFormatSymbols symbols =
+		 * new DecimalFormatSymbols(); symbols.setDecimalSeparator(','); symbols.setGroupingSeparator(' '); df.setDecimalFormatSymbols(symbols); but that would
+		 * not switch off grouping. Although I liked very much the (incomplete) "BNF diagram" in
+		 * http://docs.oracle.com/javase/tutorial/i18n/format/decimalFormat.html in the end I decided to calculate myself and take eur+sparator+cents This
+		 * function will cut off, i.e. floor() subcent values Tests: System.err.println(utils.currencyFormat(new BigDecimal(0),
+		 * ".")+"\n"+utils.currencyFormat(new BigDecimal("-1.10"), ",")+"\n"+utils.currencyFormat(new BigDecimal("-1.1"), ",")+"\n"+utils.currencyFormat(new
+		 * BigDecimal("-1.01"), ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3489"), ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3419"),
+		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("12"), ",")); results 0.00 -1,10 -1,10 -1,01 20000123,34 20000123,34 12,00
 		 */
-		value = value.setScale(scale, BigDecimal.ROUND_HALF_UP); // first, round
-																	// so that
-																	// e.g.
-																	// 1.189999999999999946709294817992486059665679931640625
-																	// becomes
-																	// 1.19
+		BigDecimal formatedvalue = value.setScale(scale, BigDecimal.ROUND_HALF_UP); // first, round
+		// so that
+		// e.g.
+		// 1.189999999999999946709294817992486059665679931640625
+		// becomes
+		// 1.19
 		char[] repeat = new char[scale];
 		Arrays.fill(repeat, '0');
 
 		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
 		otherSymbols.setDecimalSeparator('.');
-		DecimalFormat dec = new DecimalFormat("0." + new String(repeat),
-				otherSymbols);
-		return new BigDecimal(dec.format(value));
-
+		DecimalFormat dec = new DecimalFormat("0." + new String(repeat), otherSymbols);
+		return new BigDecimal(dec.format(formatedvalue));
 	}
+
 
 	private BigDecimal vatFormat(BigDecimal value) {
 		return nDigitFormat(value, 2);
 	}
 
+
 	private BigDecimal currencyFormat(BigDecimal value) {
 		return nDigitFormat(value, 2);
 	}
+
 
 	private BigDecimal priceFormat(BigDecimal value) {
 		return nDigitFormat(value, 4);
 	}
 
+
 	private BigDecimal quantityFormat(BigDecimal value) {
 		return nDigitFormat(value, 4);
 	}
 
+
 	/**
-	 * All files are PDF/A-3, setConformance refers to the level conformance.
+	 * All files are PDF/A-3, setConformance refers to the level conformance. PDF/A-3 has three coformance levels, called "A", "U" and "B". PDF/A-3-B where B
+	 * means only visually preservable, U -standard for Mustang- means visually and unicode preservable and A means full compliance, i.e. visually, unicode and
+	 * structurally preservable and tagged PDF, i.e. useful metainformation for blind people. Feel free to pass "A" as new level if you know what you are doing
+	 * :-)
 	 *
-	 * PDF/A-3 has three coformance levels, called "A", "U" and "B".
-	 *
-	 * PDF/A-3-B where B means only visually preservable, U -standard for
-	 * Mustang- means visually and unicode preservable and A means full
-	 * compliance, i.e. visually, unicode and structurally preservable and
-	 * tagged PDF, i.e. useful metainformation for blind people.
-	 *
-	 * Feel free to pass "A" as new level if you know what you are doing :-)
-	 *
-	 *
+	 * @param newLevel
 	 */
 	public void setConformanceLevel(String newLevel) {
 		conformanceLevel = newLevel;
 	}
 
+
 	/**
 	 * enables the flag to indicate a test invoice in the XML structure
-	 *
 	 */
 	public void setTest() {
 		isTest = true;
 	}
 
+
 	public void ignoreA1Errors() {
 		ignoreA1Errors = true;
 	}
+
 
 	private boolean getA1ParserValidationResult(PreflightParser parser) {
 		ValidationResult result = null;
@@ -332,17 +361,14 @@ public class ZUGFeRDExporter {
 		try {
 
 			/*
-			 * Parse the PDF file with PreflightParser that inherits from the
-			 * NonSequentialParser. Some additional controls are present to
-			 * check a set of PDF/A requirements. (Stream length consistency,
-			 * EOL after some Keyword...)
+			 * Parse the PDF file with PreflightParser that inherits from the NonSequentialParser. Some additional controls are present to check a set of PDF/A
+			 * requirements. (Stream length consistency, EOL after some Keyword...)
 			 */
 			parser.parse();
 
 			/*
-			 * Once the syntax validation is done, the parser can provide a
-			 * PreflightDocument (that inherits from PDDocument) This document
-			 * process the end of PDF/A validation.
+			 * Once the syntax validation is done, the parser can provide a PreflightDocument (that inherits from PDDocument) This document process the end of
+			 * PDF/A validation.
 			 */
 			PreflightDocument document = parser.getPreflightDocument();
 			document.validate();
@@ -351,14 +377,12 @@ public class ZUGFeRDExporter {
 			result = document.getResult();
 			document.close();
 
-		} catch (ValidationException e) {
-			/*
-			 * the parse method can throw a SyntaxValidationException if the PDF
-			 * file can't be parsed. In this case, the exception contains an
-			 * instance of ValidationResult
-			 */
-			return false;
 		} catch (IOException e) {
+			LOG.catching(e);
+			/*
+			 * the parse method can throw a SyntaxValidationException if the PDF file can't be parsed. In this case, the exception contains an instance of
+			 * ValidationResult
+			 */
 			return false;
 		}
 
@@ -367,92 +391,122 @@ public class ZUGFeRDExporter {
 
 	}
 
+
 	public boolean isValidA1(String filename) {
-		FileDataSource fd = new FileDataSource(filename);
 		PreflightParser parser;
 		try {
-			parser = new PreflightParser(fd);
+			parser = new PreflightParser(filename);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.catching(e);
 			return false;
 		}
 
 		return getA1ParserValidationResult(parser);
 	}
 
+
 	/***
 	 * Will return a boolean if the inputstream is valid PDF/A-1 and close the input stream
-	 * @param file
-	 * @return
+	 *
+	 * @param filestream
+	 * @return isValid
 	 */
-	public boolean isValidA1(InputStream file) {
-		
-		ByteArrayDataSource fd;
+	public boolean isValidA1(InputStream filestream) {
+		ByteArrayDataSource fd = null;
 		try {
-			fd = new ByteArrayDataSource(file);
+			fd = new ByteArrayDataSource(filestream);
 			PreflightParser parser = new PreflightParser(fd);
 			return getA1ParserValidationResult(parser);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.catching(e);
 			return false;
 		}
-
 	}
+
 
 	public void loadPDFA3(String filename) {
-
 		try {
-			doc = PDDocument.load(filename);
-
+			File f = new File(filename);
+			doc = PDDocument.load(f); // must be close
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e);
 		}
-
 	}
 
-	public void loadPDFA3(InputStream file) {
 
+	public void loadPDFA3(InputStream filestream) {
 		try {
-			doc = PDDocument.load(file);
-
+			doc = PDDocument.load(filestream);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error(e);
 		}
-
 	}
+
 
 	/**
-	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on
-	 * the metadata level, this will not e.g. convert graphics to JPG-2000)
+	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the metadata level, this will not e.g. convert graphics to JPG-2000)
 	 *
+	 * @param filename
+	 * @param producer
+	 * @param creator
+	 * @param attachZugferdHeaders
+	 * @return PDDocumentCatalog
+	 * @throws IOException
+	 * @throws TransformerException
+	 * @throws BadFieldValueException
+	 * @deprecated Use {@link #createPDFmakeA3compliant(String,String,String,boolean)} instead
 	 */
-	public PDDocumentCatalog PDFmakeA3compliant(String filename,
-			String producer, String creator, boolean attachZugferdHeaders)
-			throws IOException, TransformerException {
+	@Deprecated
+	public PDDocumentCatalog PDFmakeA3compliant(String filename, String producer, String creator, boolean attachZugferdHeaders)
+			throws IOException, TransformerException, BadFieldValueException {
+		return createPDFmakeA3compliant(filename, producer, creator, attachZugferdHeaders);
+	}
 
+
+	/**
+	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the metadata level, this will not e.g. convert graphics to JPG-2000)
+	 *
+	 * @param filename
+	 * @param producer
+	 * @param creator
+	 * @param attachZugferdHeaders
+	 * @return PDDocumentCatalog
+	 * @throws IOException
+	 * @throws TransformerException
+	 * @throws BadFieldValueException
+	 */
+	public PDDocumentCatalog createPDFmakeA3compliant(String filename, String producer, String creator, boolean attachZugferdHeaders)
+			throws IOException, TransformerException, BadFieldValueException {
 		if (!ignoreA1Errors && !isValidA1(filename)) {
 			throw new IOException("File is not a valid PDF/A-1 input file");
 		}
 		loadPDFA3(filename);
-
 		return makeDocPDFA3compliant(producer, creator, attachZugferdHeaders);
 	}
 
-	public PDDocumentCatalog PDFmakeA3compliant(InputStream file,
-			String producer, String creator, boolean attachZugferdHeaders)
-			throws IOException, TransformerException {
-		/* cache the file content in memory, unfortunately the next step, isValidA1,
-		 * will close the input stream but the step thereafter (loadPDFA3) needs
-		 * and open one*/
+
+	/**
+	 * @deprecated Use {@link #createPDFmakeA3compliant(InputStream,String,String,boolean)} instead
+	 */
+	@Deprecated
+	public PDDocumentCatalog PDFmakeA3compliant(InputStream file, String producer, String creator, boolean attachZugferdHeaders)
+			throws IOException, TransformerException, BadFieldValueException {
+		return createPDFmakeA3compliant(file, producer, creator, attachZugferdHeaders);
+	}
+
+
+	public PDDocumentCatalog createPDFmakeA3compliant(InputStream file, String producer, String creator, boolean attachZugferdHeaders)
+			throws IOException, TransformerException, BadFieldValueException {
+		/*
+		 * cache the file content in memory, unfortunately the next step, isValidA1, will close the input stream but the step thereafter (loadPDFA3) needs and
+		 * open one
+		 */
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		byte[] buf = new byte[1024];
 		int n = 0;
-		while ((n = file.read(buf)) >= 0)
-		    baos.write(buf, 0, n);
+		while ((n = file.read(buf)) >= 0) {
+			baos.write(buf, 0, n);
+		}
 		byte[] content = baos.toByteArray();
 
 		InputStream is1 = new ByteArrayInputStream(content);
@@ -463,97 +517,85 @@ public class ZUGFeRDExporter {
 		loadPDFA3(is2);
 
 		return makeDocPDFA3compliant(producer, creator, attachZugferdHeaders);
-	}	
-	private PDDocumentCatalog makeDocPDFA3compliant(String producer,
-			String creator, boolean attachZugferdHeaders) throws IOException,
-			TransformerException {
-		String fullProducer = producer + " (via mustangproject.org "
-				+ versionStr + ")";
+	}
+
+
+	private PDDocumentCatalog makeDocPDFA3compliant(String producer, String creator, boolean attachZugferdHeaders)
+			throws IOException, TransformerException, BadFieldValueException {
+		String fullProducer = producer + " (via mustangproject.org " + versionStr + ")";
 
 		PDDocumentCatalog cat = doc.getDocumentCatalog();
 		PDMetadata metadata = new PDMetadata(doc);
 		cat.setMetadata(metadata);
-		// we're using the jempbox org.apache.jempbox.xmp.XMPMetadata version,
-		// not the xmpbox one
-		XMPMetadata xmp = new XMPMetadata();
 
-		XMPSchemaPDFAId pdfaid = new XMPSchemaPDFAId(xmp);
-		pdfaid.setAbout(""); //$NON-NLS-1$
-		xmp.addSchema(pdfaid);
+		XMPMetadata xmp = XMPMetadata.createXMPMetadata();
 
-		XMPSchemaDublinCore dc = xmp.addDublinCoreSchema();
+		org.apache.xmpbox.schema.PDFAIdentificationSchema pdfaid = xmp.createAndAddPFAIdentificationSchema();
+
+		DublinCoreSchema dc = xmp.createAndAddDublinCoreSchema();
 		dc.addCreator(creator);
-		dc.setAbout(""); //$NON-NLS-1$
 
-		XMPSchemaBasic xsb = xmp.addBasicSchema();
-		xsb.setAbout(""); //$NON-NLS-1$
+		org.apache.xmpbox.schema.XMPBasicSchema xsb = xmp.createAndAddXMPBasicSchema();
 
 		xsb.setCreatorTool(creator);
-		xsb.setCreateDate(GregorianCalendar.getInstance());
+		xsb.setCreateDate(Calendar.getInstance());
 		// PDDocumentInformation pdi=doc.getDocumentInformation();
 		PDDocumentInformation pdi = new PDDocumentInformation();
 		pdi.setProducer(fullProducer);
 		pdi.setAuthor(creator);
 		doc.setDocumentInformation(pdi);
 
-		XMPSchemaPDF pdf = xmp.addPDFSchema();
+		AdobePDFSchema pdf = xmp.createAndAddAdobePDFSchema();
 		pdf.setProducer(fullProducer);
-		pdf.setAbout(""); //$NON-NLS-1$
 
 		/*
-		 * // Mandatory: PDF/A3-a is tagged PDF which has to be expressed using
-		 * a // MarkInfo dictionary (PDF A/3 Standard sec. 6.7.2.2) PDMarkInfo
-		 * markinfo = new PDMarkInfo(); markinfo.setMarked(true);
-		 * doc.getDocumentCatalog().setMarkInfo(markinfo);
+		 * // Mandatory: PDF/A3-a is tagged PDF which has to be expressed using a // MarkInfo dictionary (PDF A/3 Standard sec. 6.7.2.2) PDMarkInfo markinfo =
+		 * new PDMarkInfo(); markinfo.setMarked(true); doc.getDocumentCatalog().setMarkInfo(markinfo);
 		 */
 		/*
-		 * 
-		 * To be on the safe side, we use level B without Markinfo because we
-		 * can not guarantee that the user correctly tagged the templates for
-		 * the PDF.
+		 * To be on the safe side, we use level B without Markinfo because we can not guarantee that the user correctly tagged the templates for the PDF.
 		 */
-		pdfaid.setConformance(conformanceLevel);//$NON-NLS-1$ //$NON-NLS-1$
+		pdfaid.setConformance(conformanceLevel);
 
 		pdfaid.setPart(3);
 
 		if (attachZugferdHeaders) {
 			addZugferdXMP(xmp); /*
-								 * this is the only line where we do something
-								 * Zugferd-specific, i.e. add PDF metadata
-								 * specifically for Zugferd, not generically for
-								 * a embedded file
+								 * this is the only line where we do something Zugferd-specific, i.e. add PDF metadata specifically for Zugferd, not generically
+								 * for a embedded file
 								 */
 
 		}
 
-		metadata.importXMPMetadata(xmp);
+
+		XmpSerializer serializer = new XmpSerializer();
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		serializer.serialize(xmp, baos, true);
+		metadata.importXMPMetadata(baos.toByteArray());
+
 		return cat;
 	}
 
 	private static final ObjectFactory xmlFactory = new ObjectFactory();
 	private final JAXBContext jaxbContext;
 	private final Marshaller marshaller;
-	private static final SimpleDateFormat zugferdDateFormat = new SimpleDateFormat(
-			"yyyyMMdd"); //$NON-NLS-1$
+	private static final SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	private Totals totals;
 
-	private String getZugferdXMLForTransaction(
-			IZUGFeRDExportableTransaction trans) throws JAXBException {
-		this.trans = trans;
-		this.totals = new Totals();
-		currency = trans.getCurrency();
 
-		CrossIndustryDocumentType invoice = xmlFactory
-				.createCrossIndustryDocumentType();
+	private String getZugferdXMLForTransaction(IZUGFeRDExportableTransaction transaction) throws JAXBException {
+		this.trans = transaction;
+		totals = new Totals();
+		currency = transaction.getCurrency();
 
-		invoice.setSpecifiedExchangedDocumentContext(this.getDocumentContext());
-		invoice.setHeaderExchangedDocument(this.getDocument());
-		invoice.setSpecifiedSupplyChainTradeTransaction(this
-				.getTradeTransaction());
+		CrossIndustryDocumentType invoice = xmlFactory.createCrossIndustryDocumentType();
+		invoice.setSpecifiedExchangedDocumentContext(getDocumentContext());
+		invoice.setHeaderExchangedDocument(getDocument());
+		invoice.setSpecifiedSupplyChainTradeTransaction(getTradeTransaction());
 
-		JAXBElement<CrossIndustryDocumentType> jaxElement = xmlFactory
-				.createCrossIndustryDocument(invoice);
+		JAXBElement<CrossIndustryDocumentType> jaxElement = xmlFactory.createCrossIndustryDocument(invoice);
 
 		ByteArrayOutputStream outputXml = new ByteArrayOutputStream();
 		marshaller.marshal(jaxElement, outputXml);
@@ -561,17 +603,14 @@ public class ZUGFeRDExporter {
 		return outputXml.toString();
 	}
 
-	private ExchangedDocumentContextType getDocumentContext() {
 
-		ExchangedDocumentContextType context = xmlFactory
-				.createExchangedDocumentContextType();
-		DocumentContextParameterType contextParameter = xmlFactory
-				.createDocumentContextParameterType();
+	private ExchangedDocumentContextType getDocumentContext() {
+		ExchangedDocumentContextType context = xmlFactory.createExchangedDocumentContextType();
+		DocumentContextParameterType contextParameter = xmlFactory.createDocumentContextParameterType();
 		IDType idType = xmlFactory.createIDType();
 		idType.setValue(DocumentContextParameterType.EXTENDED);
 		contextParameter.setID(idType);
-		context.getGuidelineSpecifiedDocumentContextParameter().add(
-				contextParameter);
+		context.getGuidelineSpecifiedDocumentContextParameter().add(contextParameter);
 
 		IndicatorType testIndicator = xmlFactory.createIndicatorType();
 		testIndicator.setIndicator(isTest);
@@ -580,21 +619,17 @@ public class ZUGFeRDExporter {
 		return context;
 	}
 
+
 	private ExchangedDocumentType getDocument() {
-
-		ExchangedDocumentType document = xmlFactory
-				.createExchangedDocumentType();
-
+		ExchangedDocumentType document = xmlFactory.createExchangedDocumentType();
 		IDType id = xmlFactory.createIDType();
 		id.setValue(trans.getNumber());
 		document.setID(id);
 
 		DateTimeType issueDateTime = xmlFactory.createDateTimeType();
-		DateTimeType.DateTimeString issueDateTimeString = xmlFactory
-				.createDateTimeTypeDateTimeString();
+		DateTimeType.DateTimeString issueDateTimeString = xmlFactory.createDateTimeTypeDateTimeString();
 		issueDateTimeString.setFormat(DateTimeType.DateTimeString.DATE);
-		issueDateTimeString.setValue(zugferdDateFormat.format(trans
-				.getIssueDate()));
+		issueDateTimeString.setValue(zugferdDateFormat.format(trans.getIssueDate()));
 		issueDateTime.setDateTimeString(issueDateTimeString);
 		document.setIssueDateTime(issueDateTime);
 
@@ -612,8 +647,7 @@ public class ZUGFeRDExporter {
 			regularInfoSubjectCode.setValue(NoteType.REGULARINFO);
 			regularInfo.setSubjectCode(regularInfoSubjectCode);
 			TextType regularInfoContent = xmlFactory.createTextType();
-			regularInfoContent.setValue(trans
-					.getOwnOrganisationFullPlaintextInfo());
+			regularInfoContent.setValue(trans.getOwnOrganisationFullPlaintextInfo());
 			regularInfo.getContent().add(regularInfoContent);
 			document.getIncludedNote().add(regularInfo);
 		}
@@ -621,32 +655,27 @@ public class ZUGFeRDExporter {
 		return document;
 	}
 
-	private SupplyChainTradeTransactionType getTradeTransaction() {
 
-		SupplyChainTradeTransactionType transaction = xmlFactory
-				.createSupplyChainTradeTransactionType();
-		transaction.getApplicableSupplyChainTradeAgreement().add(
-				this.getTradeAgreement());
-		transaction.setApplicableSupplyChainTradeDelivery(this
-				.getTradeDelivery());
-		transaction.setApplicableSupplyChainTradeSettlement(this
-				.getTradeSettlement());
-		transaction.getIncludedSupplyChainTradeLineItem().addAll(
-				this.getLineItems());
+	private SupplyChainTradeTransactionType getTradeTransaction() {
+		SupplyChainTradeTransactionType transaction = xmlFactory.createSupplyChainTradeTransactionType();
+		transaction.getApplicableSupplyChainTradeAgreement().add(getTradeAgreement());
+		transaction.setApplicableSupplyChainTradeDelivery(getTradeDelivery());
+		transaction.setApplicableSupplyChainTradeSettlement(getTradeSettlement());
+		transaction.getIncludedSupplyChainTradeLineItem().addAll(getLineItems());
 
 		return transaction;
 	}
 
+
 	private SupplyChainTradeAgreementType getTradeAgreement() {
+		SupplyChainTradeAgreementType tradeAgreement = xmlFactory.createSupplyChainTradeAgreementType();
 
-		SupplyChainTradeAgreementType tradeAgreement = xmlFactory
-				.createSupplyChainTradeAgreementType();
-
-		tradeAgreement.setBuyerTradeParty(this.getBuyer());
-		tradeAgreement.setSellerTradeParty(this.getSeller());
+		tradeAgreement.setBuyerTradeParty(getBuyer());
+		tradeAgreement.setSellerTradeParty(getSeller());
 
 		return tradeAgreement;
 	}
+
 
 	private TradePartyType getBuyer() {
 
@@ -675,8 +704,7 @@ public class ZUGFeRDExporter {
 		buyerTradeParty.setPostalTradeAddress(buyerAddressType);
 
 		// Ust-ID
-		TaxRegistrationType buyerTaxRegistration = xmlFactory
-				.createTaxRegistrationType();
+		TaxRegistrationType buyerTaxRegistration = xmlFactory.createTaxRegistrationType();
 		IDType buyerUstId = xmlFactory.createIDType();
 		buyerUstId.setValue(trans.getRecipient().getVATID());
 		buyerUstId.setSchemeID(TaxRegistrationType.USTID);
@@ -686,8 +714,8 @@ public class ZUGFeRDExporter {
 		return buyerTradeParty;
 	}
 
-	private TradePartyType getSeller() {
 
+	private TradePartyType getSeller() {
 		TradePartyType sellerTradeParty = xmlFactory.createTradePartyType();
 		TextType sellerName = xmlFactory.createTextType();
 		sellerName.setValue(trans.getOwnOrganisationName());
@@ -714,8 +742,7 @@ public class ZUGFeRDExporter {
 		sellerTradeParty.setPostalTradeAddress(sellerAddressType);
 
 		// Steuernummer
-		TaxRegistrationType sellerTaxRegistration = xmlFactory
-				.createTaxRegistrationType();
+		TaxRegistrationType sellerTaxRegistration = xmlFactory.createTaxRegistrationType();
 		IDType sellerTaxId = xmlFactory.createIDType();
 		sellerTaxId.setValue(trans.getOwnTaxID());
 		sellerTaxId.setSchemeID(TaxRegistrationType.TAXID);
@@ -735,18 +762,15 @@ public class ZUGFeRDExporter {
 		return sellerTradeParty;
 	}
 
+
 	private SupplyChainTradeDeliveryType getTradeDelivery() {
 
-		SupplyChainTradeDeliveryType tradeDelivery = xmlFactory
-				.createSupplyChainTradeDeliveryType();
-		SupplyChainEventType deliveryEvent = xmlFactory
-				.createSupplyChainEventType();
+		SupplyChainTradeDeliveryType tradeDelivery = xmlFactory.createSupplyChainTradeDeliveryType();
+		SupplyChainEventType deliveryEvent = xmlFactory.createSupplyChainEventType();
 		DateTimeType deliveryDate = xmlFactory.createDateTimeType();
-		DateTimeType.DateTimeString deliveryDateString = xmlFactory
-				.createDateTimeTypeDateTimeString();
+		DateTimeType.DateTimeString deliveryDateString = xmlFactory.createDateTimeTypeDateTimeString();
 		deliveryDateString.setFormat(DateTimeType.DateTimeString.DATE);
-		deliveryDateString.setValue(zugferdDateFormat.format(trans
-				.getDeliveryDate()));
+		deliveryDateString.setValue(zugferdDateFormat.format(trans.getDeliveryDate()));
 		deliveryDate.setDateTimeString(deliveryDateString);
 		deliveryEvent.getOccurrenceDateTime().add(deliveryDate);
 		tradeDelivery.getActualDeliverySupplyChainEvent().add(deliveryEvent);
@@ -754,9 +778,9 @@ public class ZUGFeRDExporter {
 		return tradeDelivery;
 	}
 
+
 	private SupplyChainTradeSettlementType getTradeSettlement() {
-		SupplyChainTradeSettlementType tradeSettlement = xmlFactory
-				.createSupplyChainTradeSettlementType();
+		SupplyChainTradeSettlementType tradeSettlement = xmlFactory.createSupplyChainTradeSettlementType();
 
 		TextType paymentReference = xmlFactory.createTextType();
 		paymentReference.setValue(trans.getNumber());
@@ -766,35 +790,28 @@ public class ZUGFeRDExporter {
 		currencyCode.setValue(currency);
 		tradeSettlement.setInvoiceCurrencyCode(currencyCode);
 
-		tradeSettlement.getSpecifiedTradeSettlementPaymentMeans().add(
-				this.getPaymentData());
-		tradeSettlement.getApplicableTradeTax().addAll(this.getTradeTax());
-		tradeSettlement.getSpecifiedTradePaymentTerms().addAll(
-				this.getPaymentTerms());
+		tradeSettlement.getSpecifiedTradeSettlementPaymentMeans().add(getPaymentData());
+		tradeSettlement.getApplicableTradeTax().addAll(getTradeTax());
+		tradeSettlement.getSpecifiedTradePaymentTerms().addAll(getPaymentTerms());
 		if (trans.getZFAllowances() != null) {
-			tradeSettlement.getSpecifiedTradeAllowanceCharge().addAll(
-					this.getHeaderAllowances());
+			tradeSettlement.getSpecifiedTradeAllowanceCharge().addAll(getHeaderAllowances());
 		}
 		if (trans.getZFLogisticsServiceCharges() != null) {
-			tradeSettlement.getSpecifiedLogisticsServiceCharge().addAll(
-					this.getHeaderLogisticsServiceCharges());
+			tradeSettlement.getSpecifiedLogisticsServiceCharge().addAll(getHeaderLogisticsServiceCharges());
 		}
 		if (trans.getZFCharges() != null) {
-			tradeSettlement.getSpecifiedTradeAllowanceCharge().addAll(
-					this.getHeaderCharges());
+			tradeSettlement.getSpecifiedTradeAllowanceCharge().addAll(getHeaderCharges());
 		}
 
-		tradeSettlement.setSpecifiedTradeSettlementMonetarySummation(this
-				.getMonetarySummation());
+		tradeSettlement.setSpecifiedTradeSettlementMonetarySummation(getMonetarySummation());
 
 		return tradeSettlement;
 	}
 
+
 	private TradeSettlementPaymentMeansType getPaymentData() {
-		TradeSettlementPaymentMeansType paymentData = xmlFactory
-				.createTradeSettlementPaymentMeansType();
-		PaymentMeansCodeType paymentDataType = xmlFactory
-				.createPaymentMeansCodeType();
+		TradeSettlementPaymentMeansType paymentData = xmlFactory.createTradeSettlementPaymentMeansType();
+		PaymentMeansCodeType paymentDataType = xmlFactory.createPaymentMeansCodeType();
 		paymentDataType.setValue(PaymentMeansCodeType.BANKACCOUNT);
 		paymentData.setTypeCode(paymentDataType);
 
@@ -806,15 +823,13 @@ public class ZUGFeRDExporter {
 		paymentInfo.setValue(paymentInfoText);
 		paymentData.getInformation().add(paymentInfo);
 
-		CreditorFinancialAccountType bankAccount = xmlFactory
-				.createCreditorFinancialAccountType();
+		CreditorFinancialAccountType bankAccount = xmlFactory.createCreditorFinancialAccountType();
 		IDType iban = xmlFactory.createIDType();
 		iban.setValue(trans.getOwnIBAN());
 		bankAccount.setIBANID(iban);
 		paymentData.setPayeePartyCreditorFinancialAccount(bankAccount);
 
-		CreditorFinancialInstitutionType bankData = xmlFactory
-				.createCreditorFinancialInstitutionType();
+		CreditorFinancialInstitutionType bankData = xmlFactory.createCreditorFinancialInstitutionType();
 		IDType bicId = xmlFactory.createIDType();
 		bicId.setValue(trans.getOwnBIC());
 		bankData.setBICID(bicId);
@@ -825,24 +840,22 @@ public class ZUGFeRDExporter {
 		return paymentData;
 	}
 
+
 	private Collection<TradeTaxType> getTradeTax() {
-		List<TradeTaxType> tradeTaxTypes = new ArrayList<TradeTaxType>();
+		List<TradeTaxType> tradeTaxTypes = new ArrayList<>();
+		HashMap<BigDecimal, VATAmount> vatPercentAmountMap = this.getVATPercentAmountMap();
 
-		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = this
-				.getVATPercentAmountMap();
-		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-
+		for (BigDecimal currentTaxPercent : vatPercentAmountMap.keySet()) {
 			TradeTaxType tradeTax = xmlFactory.createTradeTaxType();
 			TaxTypeCodeType taxTypeCode = xmlFactory.createTaxTypeCodeType();
 			taxTypeCode.setValue(TaxTypeCodeType.SALESTAX);
 			tradeTax.setTypeCode(taxTypeCode);
 
-			TaxCategoryCodeType taxCategoryCode = xmlFactory
-					.createTaxCategoryCodeType();
+			TaxCategoryCodeType taxCategoryCode = xmlFactory.createTaxCategoryCodeType();
 			taxCategoryCode.setValue(TaxCategoryCodeType.STANDARDRATE);
 			tradeTax.setCategoryCode(taxCategoryCode);
 
-			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
+			VATAmount amount = vatPercentAmountMap.get(currentTaxPercent);
 
 			PercentType taxPercent = xmlFactory.createPercentType();
 			taxPercent.setValue(vatFormat(currentTaxPercent));
@@ -850,8 +863,7 @@ public class ZUGFeRDExporter {
 
 			AmountType calculatedTaxAmount = xmlFactory.createAmountType();
 			calculatedTaxAmount.setCurrencyID(currency);
-			calculatedTaxAmount
-					.setValue(currencyFormat(amount.getCalculated()));
+			calculatedTaxAmount.setValue(currencyFormat(amount.getCalculated()));
 			tradeTax.getCalculatedAmount().add(calculatedTaxAmount);
 
 			AmountType basisTaxAmount = xmlFactory.createAmountType();
@@ -865,13 +877,12 @@ public class ZUGFeRDExporter {
 		return tradeTaxTypes;
 	}
 
+
 	private Collection<TradeAllowanceChargeType> getHeaderAllowances() {
-		List<TradeAllowanceChargeType> headerAllowances = new ArrayList<TradeAllowanceChargeType>();
+		List<TradeAllowanceChargeType> headerAllowances = new ArrayList<>();
 
 		for (IZUGFeRDAllowanceCharge iAllowance : trans.getZFAllowances()) {
-
-			TradeAllowanceChargeType allowance = xmlFactory
-					.createTradeAllowanceChargeType();
+			TradeAllowanceChargeType allowance = xmlFactory.createTradeAllowanceChargeType();
 
 			IndicatorType chargeIndicator = xmlFactory.createIndicatorType();
 			chargeIndicator.setIndicator(false);
@@ -893,14 +904,10 @@ public class ZUGFeRDExporter {
 			tradeTax.setApplicablePercent(vatPercent);
 
 			/*
-			 * Only in extended AmountType basisAmount =
-			 * xmlFactory.createAmountType();
-			 * basisAmount.setCurrencyID(trans.getInvoiceCurrency());
-			 * basisAmount.setValue(amount.getBasis());
-			 * allowance.setBasisAmount(basisAmount);
+			 * Only in extended AmountType basisAmount = xmlFactory.createAmountType(); basisAmount.setCurrencyID(trans.getInvoiceCurrency());
+			 * basisAmount.setValue(amount.getBasis()); allowance.setBasisAmount(basisAmount);
 			 */
-			TaxCategoryCodeType taxType = xmlFactory
-					.createTaxCategoryCodeType();
+			TaxCategoryCodeType taxType = xmlFactory.createTaxCategoryCodeType();
 			taxType.setValue(TaxCategoryCodeType.STANDARDRATE);
 			tradeTax.setCategoryCode(taxType);
 
@@ -910,19 +917,17 @@ public class ZUGFeRDExporter {
 
 			allowance.getCategoryTradeTax().add(tradeTax);
 			headerAllowances.add(allowance);
-
 		}
 
 		return headerAllowances;
 	}
 
+
 	private Collection<TradeAllowanceChargeType> getHeaderCharges() {
-		List<TradeAllowanceChargeType> headerCharges = new ArrayList<TradeAllowanceChargeType>();
+		List<TradeAllowanceChargeType> headerCharges = new ArrayList<>();
 
 		for (IZUGFeRDAllowanceCharge iCharge : trans.getZFCharges()) {
-
-			TradeAllowanceChargeType charge = xmlFactory
-					.createTradeAllowanceChargeType();
+			TradeAllowanceChargeType charge = xmlFactory.createTradeAllowanceChargeType();
 
 			IndicatorType chargeIndicator = xmlFactory.createIndicatorType();
 			chargeIndicator.setIndicator(true);
@@ -944,14 +949,10 @@ public class ZUGFeRDExporter {
 			tradeTax.setApplicablePercent(vatPercent);
 
 			/*
-			 * Only in extended AmountType basisAmount =
-			 * xmlFactory.createAmountType();
-			 * basisAmount.setCurrencyID(trans.getInvoiceCurrency());
-			 * basisAmount.setValue(amount.getBasis());
-			 * allowance.setBasisAmount(basisAmount);
+			 * Only in extended AmountType basisAmount = xmlFactory.createAmountType(); basisAmount.setCurrencyID(trans.getInvoiceCurrency());
+			 * basisAmount.setValue(amount.getBasis()); allowance.setBasisAmount(basisAmount);
 			 */
-			TaxCategoryCodeType taxType = xmlFactory
-					.createTaxCategoryCodeType();
+			TaxCategoryCodeType taxType = xmlFactory.createTaxCategoryCodeType();
 			taxType.setValue(TaxCategoryCodeType.STANDARDRATE);
 			tradeTax.setCategoryCode(taxType);
 
@@ -967,19 +968,17 @@ public class ZUGFeRDExporter {
 		return headerCharges;
 	}
 
+
 	private Collection<LogisticsServiceChargeType> getHeaderLogisticsServiceCharges() {
-		List<LogisticsServiceChargeType> headerServiceCharge = new ArrayList<LogisticsServiceChargeType>();
+		List<LogisticsServiceChargeType> headerServiceCharge = new ArrayList<>();
 
-		for (IZUGFeRDAllowanceCharge iServiceCharge : trans
-				.getZFLogisticsServiceCharges()) {
+		for (IZUGFeRDAllowanceCharge iServiceCharge : trans.getZFLogisticsServiceCharges()) {
 
-			LogisticsServiceChargeType serviceCharge = xmlFactory
-					.createLogisticsServiceChargeType();
+			LogisticsServiceChargeType serviceCharge = xmlFactory.createLogisticsServiceChargeType();
 
 			AmountType actualAmount = xmlFactory.createAmountType();
 			actualAmount.setCurrencyID(currency);
-			actualAmount.setValue(currencyFormat(iServiceCharge
-					.getTotalAmount()));
+			actualAmount.setValue(currencyFormat(iServiceCharge.getTotalAmount()));
 			serviceCharge.getAppliedAmount().add(actualAmount);
 
 			TextType reason = xmlFactory.createTextType();
@@ -993,14 +992,10 @@ public class ZUGFeRDExporter {
 			tradeTax.setApplicablePercent(vatPercent);
 
 			/*
-			 * Only in extended AmountType basisAmount =
-			 * xmlFactory.createAmountType();
-			 * basisAmount.setCurrencyID(trans.getInvoiceCurrency());
-			 * basisAmount.setValue(amount.getBasis());
-			 * allowance.setBasisAmount(basisAmount);
+			 * Only in extended AmountType basisAmount = xmlFactory.createAmountType(); basisAmount.setCurrencyID(trans.getInvoiceCurrency());
+			 * basisAmount.setValue(amount.getBasis()); allowance.setBasisAmount(basisAmount);
 			 */
-			TaxCategoryCodeType taxType = xmlFactory
-					.createTaxCategoryCodeType();
+			TaxCategoryCodeType taxType = xmlFactory.createTaxCategoryCodeType();
 			taxType.setValue(TaxCategoryCodeType.STANDARDRATE);
 			tradeTax.setCategoryCode(taxType);
 
@@ -1016,14 +1011,13 @@ public class ZUGFeRDExporter {
 		return headerServiceCharge;
 	}
 
-	private Collection<TradePaymentTermsType> getPaymentTerms() {
-		List<TradePaymentTermsType> paymentTerms = new ArrayList<TradePaymentTermsType>();
 
-		TradePaymentTermsType paymentTerm = xmlFactory
-				.createTradePaymentTermsType();
+	private Collection<TradePaymentTermsType> getPaymentTerms() {
+		List<TradePaymentTermsType> paymentTerms = new ArrayList<>();
+
+		TradePaymentTermsType paymentTerm = xmlFactory.createTradePaymentTermsType();
 		DateTimeType dueDate = xmlFactory.createDateTimeType();
-		DateTimeType.DateTimeString dueDateString = xmlFactory
-				.createDateTimeTypeDateTimeString();
+		DateTimeType.DateTimeString dueDateString = xmlFactory.createDateTimeTypeDateTimeString();
 		dueDateString.setFormat(DateTimeType.DateTimeString.DATE);
 		dueDateString.setValue(zugferdDateFormat.format(trans.getDueDate()));
 		dueDate.setDateTimeString(dueDateString);
@@ -1043,19 +1037,17 @@ public class ZUGFeRDExporter {
 		return paymentTerms;
 	}
 
+
 	private TradeSettlementMonetarySummationType getMonetarySummation() {
-		TradeSettlementMonetarySummationType monetarySummation = xmlFactory
-				.createTradeSettlementMonetarySummationType();
+		TradeSettlementMonetarySummationType monetarySummation = xmlFactory.createTradeSettlementMonetarySummationType();
 
 		// AllowanceTotalAmount = sum of all allowances
 		AmountType allowanceTotalAmount = xmlFactory.createAmountType();
 		allowanceTotalAmount.setCurrencyID(currency);
 		if (trans.getZFAllowances() != null) {
 			BigDecimal totalHeaderAllowance = BigDecimal.ZERO;
-			for (IZUGFeRDAllowanceCharge headerAllowance : trans
-					.getZFAllowances()) {
-				totalHeaderAllowance = headerAllowance.getTotalAmount().add(
-						totalHeaderAllowance);
+			for (IZUGFeRDAllowanceCharge headerAllowance : trans.getZFAllowances()) {
+				totalHeaderAllowance = headerAllowance.getTotalAmount().add(totalHeaderAllowance);
 			}
 			allowanceTotalAmount.setValue(currencyFormat(totalHeaderAllowance));
 		} else {
@@ -1069,10 +1061,8 @@ public class ZUGFeRDExporter {
 		AmountType totalChargeAmount = xmlFactory.createAmountType();
 		totalChargeAmount.setCurrencyID(currency);
 		if (trans.getZFLogisticsServiceCharges() != null) {
-			for (IZUGFeRDAllowanceCharge logisticsServiceCharge : trans
-					.getZFLogisticsServiceCharges()) {
-				totalCharge = logisticsServiceCharge.getTotalAmount().add(
-						totalCharge);
+			for (IZUGFeRDAllowanceCharge logisticsServiceCharge : trans.getZFLogisticsServiceCharges()) {
+				totalCharge = logisticsServiceCharge.getTotalAmount().add(totalCharge);
 			}
 		}
 		if (trans.getZFCharges() != null) {
@@ -1086,10 +1076,8 @@ public class ZUGFeRDExporter {
 		monetarySummation.getChargeTotalAmount().add(totalChargeAmount);
 
 		/*
-		 * AmountType chargeTotalAmount = xmlFactory.createAmountType();
-		 * chargeTotalAmount.setCurrencyID(trans.getInvoiceCurrency());
-		 * chargeTotalAmount.setValue(currencyFormat(BigDecimal.ZERO));
-		 * monetarySummation.getChargeTotalAmount().add(chargeTotalAmount);
+		 * AmountType chargeTotalAmount = xmlFactory.createAmountType(); chargeTotalAmount.setCurrencyID(trans.getInvoiceCurrency());
+		 * chargeTotalAmount.setValue(currencyFormat(BigDecimal.ZERO)); monetarySummation.getChargeTotalAmount().add(chargeTotalAmount);
 		 */
 
 		AmountType lineTotalAmount = xmlFactory.createAmountType();
@@ -1120,25 +1108,23 @@ public class ZUGFeRDExporter {
 		return monetarySummation;
 	}
 
+
 	private Collection<SupplyChainTradeLineItemType> getLineItems() {
 
-		ArrayList<SupplyChainTradeLineItemType> lineItems = new ArrayList<SupplyChainTradeLineItemType>();
+		ArrayList<SupplyChainTradeLineItemType> lineItems = new ArrayList<>();
 		int lineID = 0;
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			lineID++;
 			LineCalc lc = new LineCalc(currentItem);
-			SupplyChainTradeLineItemType lineItem = xmlFactory
-					.createSupplyChainTradeLineItemType();
+			SupplyChainTradeLineItemType lineItem = xmlFactory.createSupplyChainTradeLineItemType();
 
-			DocumentLineDocumentType lineDocument = xmlFactory
-					.createDocumentLineDocumentType();
+			DocumentLineDocumentType lineDocument = xmlFactory.createDocumentLineDocumentType();
 			IDType lineNumber = xmlFactory.createIDType();
 			lineNumber.setValue(Integer.toString(lineID));
 			lineDocument.setLineID(lineNumber);
 			lineItem.setAssociatedDocumentLineDocument(lineDocument);
 
-			SupplyChainTradeAgreementType tradeAgreement = xmlFactory
-					.createSupplyChainTradeAgreementType();
+			SupplyChainTradeAgreementType tradeAgreement = xmlFactory.createSupplyChainTradeAgreementType();
 			TradePriceType grossTradePrice = xmlFactory.createTradePriceType();
 			QuantityType grossQuantity = xmlFactory.createQuantityType();
 			grossQuantity.setUnitCode(currentItem.getProduct().getUnit());
@@ -1149,52 +1135,39 @@ public class ZUGFeRDExporter {
 			grossChargeAmount.setCurrencyID(currency);
 			grossChargeAmount.setValue(priceFormat(currentItem.getPrice()));
 			grossTradePrice.getChargeAmount().add(grossChargeAmount);
-			tradeAgreement.getGrossPriceProductTradePrice()
-					.add(grossTradePrice);
+			tradeAgreement.getGrossPriceProductTradePrice().add(grossTradePrice);
 
 			if (currentItem.getItemAllowances() != null) {
-				for (IZUGFeRDAllowanceCharge itemAllowance : currentItem
-						.getItemAllowances()) {
-					TradeAllowanceChargeType eItemAllowance = xmlFactory
-							.createTradeAllowanceChargeType();
-					IndicatorType chargeIndicator = xmlFactory
-							.createIndicatorType();
+				for (IZUGFeRDAllowanceCharge itemAllowance : currentItem.getItemAllowances()) {
+					TradeAllowanceChargeType eItemAllowance = xmlFactory.createTradeAllowanceChargeType();
+					IndicatorType chargeIndicator = xmlFactory.createIndicatorType();
 					chargeIndicator.setIndicator(false);
 					eItemAllowance.setChargeIndicator(chargeIndicator);
 					AmountType actualAmount = xmlFactory.createAmountType();
 					actualAmount.setCurrencyID(currency);
-					actualAmount.setValue(priceFormat(itemAllowance
-							.getTotalAmount().divide(currentItem.getQuantity(),
-									4, BigDecimal.ROUND_HALF_UP)));
+					actualAmount.setValue(priceFormat(itemAllowance.getTotalAmount().divide(currentItem.getQuantity(), 4, BigDecimal.ROUND_HALF_UP)));
 					eItemAllowance.getActualAmount().add(actualAmount);
 					TextType reason = xmlFactory.createTextType();
 					reason.setValue(itemAllowance.getReason());
 					eItemAllowance.setReason(reason);
-					grossTradePrice.getAppliedTradeAllowanceCharge().add(
-							eItemAllowance);
+					grossTradePrice.getAppliedTradeAllowanceCharge().add(eItemAllowance);
 				}
 			}
 
 			if (currentItem.getItemCharges() != null) {
-				for (IZUGFeRDAllowanceCharge itemCharge : currentItem
-						.getItemCharges()) {
-					TradeAllowanceChargeType eItemCharge = xmlFactory
-							.createTradeAllowanceChargeType();
+				for (IZUGFeRDAllowanceCharge itemCharge : currentItem.getItemCharges()) {
+					TradeAllowanceChargeType eItemCharge = xmlFactory.createTradeAllowanceChargeType();
 					AmountType actualAmount = xmlFactory.createAmountType();
 					actualAmount.setCurrencyID(currency);
-					actualAmount.setValue(priceFormat(itemCharge
-							.getTotalAmount().divide(currentItem.getQuantity(),
-									4, BigDecimal.ROUND_HALF_UP)));
+					actualAmount.setValue(priceFormat(itemCharge.getTotalAmount().divide(currentItem.getQuantity(), 4, BigDecimal.ROUND_HALF_UP)));
 					eItemCharge.getActualAmount().add(actualAmount);
 					TextType reason = xmlFactory.createTextType();
 					reason.setValue(itemCharge.getReason());
 					eItemCharge.setReason(reason);
-					IndicatorType chargeIndicator = xmlFactory
-							.createIndicatorType();
+					IndicatorType chargeIndicator = xmlFactory.createIndicatorType();
 					chargeIndicator.setIndicator(true);
 					eItemCharge.setChargeIndicator(chargeIndicator);
-					grossTradePrice.getAppliedTradeAllowanceCharge().add(
-							eItemCharge);
+					grossTradePrice.getAppliedTradeAllowanceCharge().add(eItemCharge);
 				}
 			}
 
@@ -1212,20 +1185,17 @@ public class ZUGFeRDExporter {
 
 			lineItem.setSpecifiedSupplyChainTradeAgreement(tradeAgreement);
 
-			SupplyChainTradeDeliveryType tradeDelivery = xmlFactory
-					.createSupplyChainTradeDeliveryType();
+			SupplyChainTradeDeliveryType tradeDelivery = xmlFactory.createSupplyChainTradeDeliveryType();
 			QuantityType billedQuantity = xmlFactory.createQuantityType();
 			billedQuantity.setUnitCode(currentItem.getProduct().getUnit());
 			billedQuantity.setValue(quantityFormat(currentItem.getQuantity()));
 			tradeDelivery.setBilledQuantity(billedQuantity);
 			lineItem.setSpecifiedSupplyChainTradeDelivery(tradeDelivery);
 
-			SupplyChainTradeSettlementType tradeSettlement = xmlFactory
-					.createSupplyChainTradeSettlementType();
+			SupplyChainTradeSettlementType tradeSettlement = xmlFactory.createSupplyChainTradeSettlementType();
 			TradeTaxType tradeTax = xmlFactory.createTradeTaxType();
 
-			TaxCategoryCodeType taxCategoryCode = xmlFactory
-					.createTaxCategoryCodeType();
+			TaxCategoryCodeType taxCategoryCode = xmlFactory.createTaxCategoryCodeType();
 			taxCategoryCode.setValue(TaxCategoryCodeType.STANDARDRATE);
 			tradeTax.setCategoryCode(taxCategoryCode);
 
@@ -1234,19 +1204,16 @@ public class ZUGFeRDExporter {
 			tradeTax.setTypeCode(taxCode);
 
 			PercentType taxPercent = xmlFactory.createPercentType();
-			taxPercent.setValue(vatFormat(currentItem.getProduct()
-					.getVATPercent()));
+			taxPercent.setValue(vatFormat(currentItem.getProduct().getVATPercent()));
 			tradeTax.setApplicablePercent(taxPercent);
 			tradeSettlement.getApplicableTradeTax().add(tradeTax);
 
-			TradeSettlementMonetarySummationType monetarySummation = xmlFactory
-					.createTradeSettlementMonetarySummationType();
+			TradeSettlementMonetarySummationType monetarySummation = xmlFactory.createTradeSettlementMonetarySummationType();
 			AmountType itemAmount = xmlFactory.createAmountType();
 			itemAmount.setCurrencyID(currency);
 			itemAmount.setValue(currencyFormat(lc.getItemTotalNetAmount()));
 			monetarySummation.getLineTotalAmount().add(itemAmount);
-			tradeSettlement
-					.setSpecifiedTradeSettlementMonetarySummation(monetarySummation);
+			tradeSettlement.setSpecifiedTradeSettlementMonetarySummation(monetarySummation);
 
 			lineItem.setSpecifiedSupplyChainTradeSettlement(tradeSettlement);
 
@@ -1256,8 +1223,7 @@ public class ZUGFeRDExporter {
 			tradeProduct.getName().add(productName);
 
 			TextType productDescription = xmlFactory.createTextType();
-			productDescription.setValue(currentItem.getProduct()
-					.getDescription());
+			productDescription.setValue(currentItem.getProduct().getDescription());
 			tradeProduct.getDescription().add(productDescription);
 			lineItem.setSpecifiedTradeProduct(tradeProduct);
 
@@ -1268,28 +1234,25 @@ public class ZUGFeRDExporter {
 
 	}
 
+
 	/**
-	 * which taxes have been used with which amounts in this transaction, empty
-	 * for no taxes, or e.g. 19=>190 and 7=>14 if 1000 Eur were applicable to
-	 * 19% VAT (=>190 EUR VAT) and 200 EUR were applicable to 7% (=>14 EUR VAT)
-	 * 190 Eur
+	 * which taxes have been used with which amounts in this transaction, empty for no taxes, or e.g. 19=>190 and 7=>14 if 1000 Eur were applicable to 19% VAT
+	 * (=>190 EUR VAT) and 200 EUR were applicable to 7% (=>14 EUR VAT) 190 Eur
 	 *
-	 * @return
-	 *
+	 * @return taxes map
 	 */
 	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap() {
 		return getVATPercentAmountMap(false);
 	}
 
-	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap(
-			Boolean itemOnly) {
-		HashMap<BigDecimal, VATAmount> hm = new HashMap<BigDecimal, VATAmount>();
+
+	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap(Boolean itemOnly) {
+		HashMap<BigDecimal, VATAmount> hm = new HashMap<>();
 
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			BigDecimal percent = currentItem.getProduct().getVATPercent();
 			LineCalc lc = new LineCalc(currentItem);
-			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(),
-					lc.getItemTotalVATAmount());
+			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount());
 			VATAmount current = hm.get(percent);
 			if (current == null) {
 				hm.put(percent, itemVATAmount);
@@ -1301,13 +1264,10 @@ public class ZUGFeRDExporter {
 			return hm;
 		}
 		if (trans.getZFAllowances() != null) {
-			for (IZUGFeRDAllowanceCharge headerAllowance : trans
-					.getZFAllowances()) {
+			for (IZUGFeRDAllowanceCharge headerAllowance : trans.getZFAllowances()) {
 				BigDecimal percent = headerAllowance.getTaxPercent();
-				VATAmount itemVATAmount = new VATAmount(
-						headerAllowance.getTotalAmount(), headerAllowance
-								.getTotalAmount().multiply(percent)
-								.divide(new BigDecimal(100)));
+				VATAmount itemVATAmount = new VATAmount(headerAllowance.getTotalAmount(),
+						headerAllowance.getTotalAmount().multiply(percent).divide(new BigDecimal(100)));
 				VATAmount current = hm.get(percent);
 				if (current == null) {
 					hm.put(percent, itemVATAmount);
@@ -1318,13 +1278,11 @@ public class ZUGFeRDExporter {
 		}
 
 		if (trans.getZFLogisticsServiceCharges() != null) {
-			for (IZUGFeRDAllowanceCharge logisticsServiceCharge : trans
-					.getZFLogisticsServiceCharges()) {
+			for (IZUGFeRDAllowanceCharge logisticsServiceCharge : trans.getZFLogisticsServiceCharges()) {
 				BigDecimal percent = logisticsServiceCharge.getTaxPercent();
 				VATAmount itemVATAmount = new VATAmount(
 						logisticsServiceCharge.getTotalAmount(),
-						logisticsServiceCharge.getTotalAmount()
-								.multiply(percent).divide(new BigDecimal(100)));
+						logisticsServiceCharge.getTotalAmount().multiply(percent).divide(new BigDecimal(100)));
 				VATAmount current = hm.get(percent);
 				if (current == null) {
 					hm.put(percent, itemVATAmount);
@@ -1338,8 +1296,7 @@ public class ZUGFeRDExporter {
 			for (IZUGFeRDAllowanceCharge charge : trans.getZFCharges()) {
 				BigDecimal percent = charge.getTaxPercent();
 				VATAmount itemVATAmount = new VATAmount(
-						charge.getTotalAmount(), charge.getTotalAmount()
-								.multiply(percent).divide(new BigDecimal(100)));
+						charge.getTotalAmount(), charge.getTotalAmount().multiply(percent).divide(new BigDecimal(100)));
 				VATAmount current = hm.get(percent);
 				if (current == null) {
 					hm.put(percent, itemVATAmount);
@@ -1352,27 +1309,37 @@ public class ZUGFeRDExporter {
 		return hm;
 	}
 
+
 	/**
 	 * Embeds the Zugferd XML structure in a file named ZUGFeRD-invoice.xml.
 	 *
-	 * @param doc
-	 *            PDDocument to attach an XML invoice to
-	 * @param trans
-	 *            a IZUGFeRDExportableTransaction that provides the data-model
-	 *            to populate the XML. This parameter may be null, if so the XML
-	 *            data should hav ebeen set via
-	 *            <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
+	 * @param transaction a IZUGFeRDExportableTransaction that provides the data-model to populate the XML. This parameter may be null, if so the XML data
+	 *        should hav ebeen set via <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
+	 * @throws IOException
+	 * @throws JAXBException
+	 * @deprecated Use {@link #createPDFattachZUGFeRDFile(IZUGFeRDExportableTransaction)} instead
 	 */
-	public void PDFattachZugferdFile(IZUGFeRDExportableTransaction trans)
-			throws IOException, JAXBException {
+	@Deprecated
+	public void PDFattachZugferdFile(IZUGFeRDExportableTransaction transaction) throws IOException, JAXBException {
+		createPDFattachZUGFeRDFile(transaction);
+	}
 
-		if (zugferdData == null) // XML ZUGFeRD data not set externally, needs
-									// to be built
-		{
+
+	/**
+	 * Embeds the Zugferd XML structure in a file named ZUGFeRD-invoice.xml.
+	 *
+	 * @param transaction a IZUGFeRDExportableTransaction that provides the data-model to populate the XML. This parameter may be null, if so the XML data
+	 *        should hav ebeen set via <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
+	 * @throws IOException
+	 * @throws JAXBException
+	 */
+	public void createPDFattachZUGFeRDFile(IZUGFeRDExportableTransaction transaction) throws IOException, JAXBException {
+		// XML ZUGFeRD data not set externally, needs to be built
+		if (zugferdData == null) {
 			// create a dummy file stream, this would probably normally be a
 			// FileInputStream
 
-			byte[] zugferdRaw = getZugferdXMLForTransaction(trans).getBytes(); //$NON-NLS-1$
+			byte[] zugferdRaw = getZugferdXMLForTransaction(transaction).getBytes();
 
 			if ((zugferdRaw[0] == (byte) 0xEF)
 					&& (zugferdRaw[1] == (byte) 0xBB)
@@ -1386,7 +1353,7 @@ public class ZUGFeRDExporter {
 			}
 		}
 
-		PDFAttachGenericFile(
+		createPDFAttachGenericFile(
 				doc,
 				"ZUGFeRD-invoice.xml",
 				"Alternative",
@@ -1394,72 +1361,82 @@ public class ZUGFeRDExporter {
 				"text/xml", zugferdData);
 	}
 
-	public void export(String ZUGFeRDfilename) {
+
+	public void export(String zUGFeRDfilename) {
 		try {
-			doc.save(ZUGFeRDfilename);
-		} catch (COSVisitorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			doc.save(zUGFeRDfilename);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.catching(e);
 		}
 	}
+
 
 	/**
 	 * Embeds an external file (generic - any type allowed) in the PDF.
 	 *
-	 * @param doc
-	 *            PDDocument to attach the file to.
-	 * @param filename
-	 *            name of the file that will become attachment name in the PDF
-	 * @param relationship
-	 *            how the file relates to the content, e.g. "Alternative"
-	 * @param description
-	 *            Human-readable description of the file content
-	 * @param subType
-	 *            type of the data e.g. could be "text/xml" - mime like
-	 * @param data
-	 *            the binary data of the file/attachment
+	 * @param pddoc PDDocument to attach the file to.
+	 * @param filename name of the file that will become attachment name in the PDF
+	 * @param relationship how the file relates to the content, e.g. "Alternative"
+	 * @param description Human-readable description of the file content
+	 * @param subType type of the data e.g. could be "text/xml" - mime like
+	 * @param data the binary data of the file/attachment
+	 * @throws IOException
+	 * @deprecated Use {@link #createPDFAttachGenericFile(PDDocument,String,String,String,String,byte[])} instead
 	 */
-	public void PDFAttachGenericFile(PDDocument doc, String filename,
-			String relationship, String description, String subType, byte[] data)
+	@Deprecated
+	public void PDFAttachGenericFile(PDDocument pddoc, String filename, String relationship, String description, String subType, byte[] data)
+			throws IOException {
+		createPDFAttachGenericFile(pddoc, filename, relationship, description, subType, data);
+	}
+
+
+	/**
+	 * Embeds an external file (generic - any type allowed) in the PDF.
+	 *
+	 * @param pddoc PDDocument to attach the file to.
+	 * @param filename name of the file that will become attachment name in the PDF
+	 * @param relationship how the file relates to the content, e.g. "Alternative"
+	 * @param description Human-readable description of the file content
+	 * @param subType type of the data e.g. could be "text/xml" - mime like
+	 * @param data the binary data of the file/attachment
+	 * @throws IOException
+	 */
+	public void createPDFAttachGenericFile(PDDocument pddoc, String filename, String relationship, String description, String subType, byte[] data)
 			throws IOException {
 		PDComplexFileSpecification fs = new PDComplexFileSpecification();
 		fs.setFile(filename);
 
-		COSDictionary dict = fs.getCOSDictionary();
+		COSDictionary dict = fs.getCOSObject();
 		dict.setName("AFRelationship", relationship);
 		dict.setString("UF", filename);
 		dict.setString("Desc", description);
 
 		ByteArrayInputStream fakeFile = new ByteArrayInputStream(data);
-		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
+		PDEmbeddedFile ef = new PDEmbeddedFile(pddoc, fakeFile);
 		ef.setSubtype(subType);
 		ef.setSize(data.length);
 		ef.setCreationDate(new GregorianCalendar());
 
-		ef.setModDate(GregorianCalendar.getInstance());
+		ef.setModDate(Calendar.getInstance());
 
 		fs.setEmbeddedFile(ef);
 
 		// In addition make sure the embedded file is set under /UF
-		dict = fs.getCOSDictionary();
+		dict = fs.getCOSObject();
 		COSDictionary efDict = (COSDictionary) dict
 				.getDictionaryObject(COSName.EF);
 		COSBase lowerLevelFile = efDict.getItem(COSName.F);
 		efDict.setItem(COSName.UF, lowerLevelFile);
 
 		// now add the entry to the embedded file tree and set in the document.
-		PDDocumentNameDictionary names = new PDDocumentNameDictionary(
-				doc.getDocumentCatalog());
+		PDDocumentNameDictionary names = new PDDocumentNameDictionary(pddoc.getDocumentCatalog());
 		PDEmbeddedFilesNameTreeNode efTree = names.getEmbeddedFiles();
 		if (efTree == null) {
 			efTree = new PDEmbeddedFilesNameTreeNode();
 		}
 
-		Map<String, COSObjectable> namesMap = new HashMap<String, COSObjectable>();
-		Map<String, COSObjectable> oldNamesMap = efTree.getNames();
+		Map<String, PDComplexFileSpecification> namesMap = new HashMap<>();
+		Map<String, PDComplexFileSpecification> oldNamesMap = efTree.getNames();
 		if (oldNamesMap != null) {
 			for (String key : oldNamesMap.keySet()) {
 				namesMap.put(key, oldNamesMap.get(key));
@@ -1469,68 +1446,62 @@ public class ZUGFeRDExporter {
 		efTree.setNames(namesMap);
 
 		names.setEmbeddedFiles(efTree);
-		doc.getDocumentCatalog().setNames(names);
+		pddoc.getDocumentCatalog().setNames(names);
 
 		// AF entry (Array) in catalog with the FileSpec
-		COSArray cosArray = (COSArray) doc.getDocumentCatalog()
-				.getCOSDictionary().getItem("AF");
+		COSArray cosArray = (COSArray) pddoc.getDocumentCatalog().getCOSObject().getItem("AF");
 		if (cosArray == null) {
 			cosArray = new COSArray();
 		}
 		cosArray.add(fs);
-		COSDictionary dict2 = doc.getDocumentCatalog().getCOSDictionary();
+		COSDictionary dict2 = pddoc.getDocumentCatalog().getCOSObject();
 		COSArray array = new COSArray();
-		array.add(fs.getCOSDictionary()); // see below
-	        dict2.setItem("AF",array);
-		doc.getDocumentCatalog().getCOSDictionary().setItem("AF", cosArray);
+		array.add(fs.getCOSObject()); // see below
+		dict2.setItem("AF", array);
+		pddoc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
 	}
 
+
 	/**
-	 * Sets the ZUGFeRD XML data to be attached as a single byte array. This is
-	 * useful for use-cases where the XML has already been produced by some
-	 * external API or component.
+	 * Sets the ZUGFeRD XML data to be attached as a single byte array. This is useful for use-cases where the XML has already been produced by some external
+	 * API or component.
 	 *
-	 * @param zugferdData
-	 *            XML data to be set as a byte array (XML file in raw form).
+	 * @param zugferdData XML data to be set as a byte array (XML file in raw form).
 	 */
 	public void setZUGFeRDXMLData(byte[] zugferdData) {
 		this.zugferdData = zugferdData;
 	}
 
+
 	/**
 	 * Sets the ZUGFeRD conformance level (override).
 	 *
-	 * @param ZUGFeRDConformanceLevel
-	 *            the new conformance level
+	 * @param zUGFeRDConformanceLevel the new conformance level
 	 */
-	public void setZUGFeRDConformanceLevel(String ZUGFeRDConformanceLevel) {
-		this.ZUGFeRDConformanceLevel = ZUGFeRDConformanceLevel;
+	public void setZUGFeRDConformanceLevel(String zUGFeRDConformanceLevel) {
+		this.zUGFeRDConformanceLevel = zUGFeRDConformanceLevel;
 	}
 
+
 	/**
-	 * * This will add both the RDF-indication which embedded file is Zugferd
-	 * and the neccessary PDF/A schema extension description to be able to add
-	 * this information to RDF
+	 * * This will add both the RDF-indication which embedded file is Zugferd and the neccessary PDF/A schema extension description to be able to add this
+	 * information to RDF
 	 *
 	 * @param metadata
 	 */
 	private void addZugferdXMP(XMPMetadata metadata) {
-
-		XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata,
-				this.ZUGFeRDConformanceLevel);
-		zf.setAbout(""); //$NON-NLS-1$
-		metadata.addSchema(zf);
-
 		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(metadata);
-		pdfaex.setAbout(""); //$NON-NLS-1$
 		metadata.addSchema(pdfaex);
 
+		XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, zUGFeRDConformanceLevel);
+		metadata.addSchema(zf);
 	}
+
 
 	/****
 	 * Returns the PDFBox PDF Document
-	 * 
-	 * @return
+	 *
+	 * @return PDF Document
 	 */
 	public PDDocument getDoc() {
 		return doc;
