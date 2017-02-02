@@ -112,8 +112,7 @@ public class ZUGFeRDExporter {
 	 * @throws javax.xml.bind.JAXBException
 	 */
 	public ZUGFeRDExporter() throws JAXBException {
-		jaxbContext = JAXBContext
-				.newInstance("org.mustangproject.ZUGFeRD.model");
+		jaxbContext = JAXBContext.newInstance("org.mustangproject.ZUGFeRD.model");
 		marshaller = jaxbContext.createMarshaller();
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 		marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
@@ -428,9 +427,11 @@ public class ZUGFeRDExporter {
 	public void loadPDFA3(String filename) {
 		try {
 			File f = new File(filename);
-			doc = PDDocument.load(f);
+			doc = PDDocument.load(f); // must be close
 		} catch (IOException e) {
 			LOG.catching(e);
+		} finally {
+
 		}
 	}
 

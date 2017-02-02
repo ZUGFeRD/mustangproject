@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration name="mustang-logging" status="error" strict="true" >
+	<Appenders>
+		<Appender type="Console" name="console" follow="true" target="SYSTEM_OUT">
+			<!-- TTCC layout but using absolute timestamp -->
+			<Layout type="PatternLayout" pattern="%d{ISO8601} [%t] %-5p %c{1} ~ %m%n" />
+		</Appender>
+
+		<!--
+		<Appender type="RollingFile" name="LogfileAppender" append="true" fileName="logs/mustang.log" filePattern="logs/mustang.%i.log">
+			<Layout type="PatternLayout" pattern="%d{ISO8601} [%t] %-5p %c{1} - %m%n" />
+			<Policies>
+				<OnStartupTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="10MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="2"/>
+		</Appender>
+		-->
+
+	</Appenders>
+
+	<Loggers>
+		<Logger name="org.mustangproject.ZUGFeRD" level="info" additivity="false">
+			<AppenderRef ref="console"/>
+		</Logger>
+		<Root level="error">
+			<AppenderRef ref="console"/>
+		</Root>
+	</Loggers>
+</Configuration>
