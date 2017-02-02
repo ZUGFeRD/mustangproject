@@ -1,0 +1,5 @@
+/target/
+/dependency-reduced-pom.xml
+/bin/
+/.gradle/
+/build/

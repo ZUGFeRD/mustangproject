@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.3//EN" "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+
+<!--
+    This configuration file was written by the eclipse-cs plugin configuration editor
+-->
+<!--
+    Checkstyle-Configuration: CSS Checks
+    Description:
+Diese Checkstyle Configuration verifiziert die Formatting Einstellungen der CSS
+-->
+<module name="Checker">
+  <property name="severity" value="error"/>
+  <module name="TreeWalker">
+    <property name="tabWidth" value="4"/>
+    <module name="FileContentsHolder"/>
+    <module name="AvoidStarImport">
+      <property name="allowStaticMemberImports" value="true"/>
+    </module>
+    <module name="IllegalImport"/>
+    <module name="RedundantImport"/>
+    <module name="UnusedImports"/>
+    <module name="OuterTypeNumber"/>
+    <module name="GenericWhitespace"/>
+    <module name="NoWhitespaceAfter"/>
+    <module name="NoWhitespaceBefore"/>
+    <module name="OperatorWrap">
+      <property name="tokens" value="BAND,BOR,BSR,BXOR,COLON,DIV,EQUAL,GE,GT,LE,LITERAL_INSTANCEOF,LT,MINUS,MOD,NOT_EQUAL,QUESTION,SL,SR,STAR"/>
+    </module>
+    <module name="OperatorWrap">
+      <metadata name="net.sf.eclipsecs.core.comment" value="ASSIGN* tokens must be EoL"/>
+      <property name="option" value="eol"/>
+      <property name="tokens" value="ASSIGN,BAND_ASSIGN,BOR_ASSIGN,BSR_ASSIGN,BXOR_ASSIGN,DIV_ASSIGN,MINUS_ASSIGN,MOD_ASSIGN,PLUS_ASSIGN,SL_ASSIGN,SR_ASSIGN,STAR_ASSIGN"/>
+    </module>
+    <module name="ParenPad"/>
+    <module name="TypecastParenPad"/>
+    <module name="WhitespaceAround">
+      <metadata name="net.sf.eclipsecs.core.comment" value="all but COLON and WILDCARD_TYPE"/>
+      <property name="tokens" value="ASSIGN,BAND,BAND_ASSIGN,BOR,BOR_ASSIGN,BSR,BSR_ASSIGN,BXOR,BXOR_ASSIGN,DIV,DIV_ASSIGN,EQUAL,GE,GT,LAND,LE,LITERAL_ASSERT,LITERAL_CATCH,LITERAL_DO,LITERAL_ELSE,LITERAL_FINALLY,LITERAL_FOR,LITERAL_IF,LITERAL_RETURN,LITERAL_SYNCHRONIZED,LITERAL_TRY,LITERAL_WHILE,LOR,LT,MINUS,MINUS_ASSIGN,MOD,MOD_ASSIGN,NOT_EQUAL,PLUS,PLUS_ASSIGN,QUESTION,SL,SL_ASSIGN,SR,SR_ASSIGN,STAR,STAR_ASSIGN,TYPE_EXTENSION_AND"/>
+    </module>
+    <module name="UpperEll"/>
+    <module name="LeftCurly"/>
+    <module name="NeedBraces"/>
+    <module name="RightCurly"/>
+    <module name="SeparatorWrap">
+      <metadata name="net.sf.eclipsecs.core.comment" value="Commas must be at line ends"/>
+      <property name="tokens" value="COMMA"/>
+    </module>
+    <module name="SeparatorWrap">
+      <metadata name="net.sf.eclipsecs.core.comment" value="Dots must be on new lines."/>
+      <property name="option" value="nl"/>
+      <property name="tokens" value="DOT"/>
+    </module>
+    <module name="MissingDeprecated"/>
+    <module name="MissingOverride">
+      <property name="javaFiveCompatibility" value="true"/>
+    </module>
+    <module name="SuppressWarnings"/>
+    <module name="WhitespaceAfter">
+      <property name="tokens" value="COMMA,TYPECAST"/>
+    </module>
+    <module name="NoWhitespaceBefore">
+      <property name="allowLineBreaks" value="true"/>
+      <property name="tokens" value="DOT"/>
+    </module>
+    <module name="ConstantName">
+      <metadata name="net.sf.eclipsecs.core.comment" value="nur die öffentlich sichtbaren Konstanten"/>
+      <property name="applyToPrivate" value="false"/>
+      <property name="format" value="^(([A-Z]|__)[A-Z0-9]*(_[A-Z0-9]+)*)|(_?copy[_a-zA-Z0-9]+)$"/>
+      <message key="name.invalidPattern" value="Konstante ''{0}'' muss mit einem Großbuchstaben beginnen und mit Großbuchstaben, Zahlen oder Unterstrichen fortgeführt werden. (Keine Umlaute)"/>
+    </module>
+    <module name="LocalVariableName">
+      <property name="format" value="^([a-z]|_?copy)[a-zA-Z0-9]*(_[a-zA-Z0-9]+)*$"/>
+      <message key="name.invalidPattern" value="Lokale Variable ''{0}'' muss mit einem Kleinbuchstaben beginnen und mit Buchstaben, Zahlen oder Unterstrichen fortgeführt werden. (Keine Umlaute)"/>
+    </module>
+    <module name="MemberName">
+      <property name="format" value="^([a-z]|__)[a-zA-Z0-9]*(_[a-zA-Z0-9]+)*$"/>
+      <message key="name.invalidPattern" value="Die Klassenvariable ''{0}'' muss mit einem Kleinbuchstaben beginnen und mit Buchstaben, Zahlen oder Unterstrichen fortgeführt werden. (Keine Umlaute)"/>
+    </module>
+    <module name="MethodName">
+      <property name="format" value="^[a-z][a-zA-Z0-9]*(_[a-zA-Z0-9]+)*$"/>
+      <message key="name.invalidPattern" value="Methodenname ''{0}'' muss mit einem Kleinbuchstaben beginnen und mit Buchstaben, Zahlen oder Unterstrichen fortgeführt werden. (Keine Umlaute)"/>
+    </module>
+    <module name="MethodTypeParameterName">
+      <message key="name.invalidPattern" value="Typ Parameter ''{0}'' darf nur ein Großbuchstabe sein."/>
+    </module>
+    <module name="InterfaceTypeParameterName">
+      <message key="name.invalidPattern" value="Typ Parameter ''{0}'' darf nur ein Großbuchstabe sein."/>
+    </module>
+    <module name="PackageName">
+      <message key="name.invalidPattern" value="Packagename ''{0}'' darf keine Umlaute oder Sonderzeichen enthalten."/>
+    </module>
+    <module name="ParameterName">
+      <property name="format" value="^[a-z][a-zA-Z0-9]*(_[a-zA-Z0-9]+)*$"/>
+      <message key="name.invalidPattern" value="Parameter ''{0}'' muss mit einem Kleinbuchstaben beginnen und mit Buchstaben, Zahlen oder Unterstrichen fortgeführt werden. (Keine Umlaute)"/>
+    </module>
+    <module name="StaticVariableName">
+      <metadata name="net.sf.eclipsecs.core.comment" value="nur die öffentlich sichtbaren Statics"/>
+      <property name="applyToPrivate" value="false"/>
+      <property name="format" value="^[a-z][a-zA-Z0-9]*(_[a-zA-Z0-9]+)*$"/>
+      <message key="name.invalidPattern" value="Static ''{0}'' muss mit einem Kleinbuchstaben beginnen und mit Buchstaben, Zahlen oder Unterstrichen fortgeführt werden. (Keine Umlaute)"/>
+    </module>
+    <module name="TypeName">
+      <message key="name.invalidPattern" value="Klasse ''{0}'' muss mit einem Großbuchstaben beginnen und mit Buchstaben oder Zahlen fortgeführt werden. (Keine Umlaute)"/>
+    </module>
+    <module name="ClassTypeParameterName"/>
+    <module name="EmptyBlock">
+      <property name="tokens" value="LITERAL_WHILE,LITERAL_TRY,LITERAL_FINALLY,LITERAL_DO,LITERAL_IF,LITERAL_ELSE,LITERAL_FOR,INSTANCE_INIT,STATIC_INIT,LITERAL_SWITCH"/>
+    </module>
+    <module name="EmptyBlock">
+      <property name="option" value="text"/>
+      <property name="tokens" value="LITERAL_CATCH"/>
+    </module>
+    <module name="EmptyCatchBlock" />
+    <module name="CovariantEquals"/>
+    <module name="DefaultComesLast"/>
+    <module name="EmptyStatement"/>
+    <module name="EqualsAvoidNull"/>
+    <module name="EqualsHashCode"/>
+    <module name="FallThrough">
+      <property name="reliefPattern" value="fallthru|falls? ?through|\$FALL-THROUGH\$"/>
+    </module>
+    <module name="HiddenField">
+      <property name="tokens" value="VARIABLE_DEF"/>
+    </module>
+    <module name="IllegalInstantiation"/>
+    <module name="InnerAssignment">
+      <metadata name="net.sf.eclipsecs.core.comment" value="ohne = ... kann nicht ohne = geprüft werden ... also auch deaktivieren"/>
+      <property name="severity" value="ignore"/>
+      <property name="tokens" value="BAND_ASSIGN,BOR_ASSIGN,BSR_ASSIGN,BXOR_ASSIGN,DIV_ASSIGN,MINUS_ASSIGN,MOD_ASSIGN,PLUS_ASSIGN,SL_ASSIGN,SR_ASSIGN,STAR_ASSIGN"/>
+      <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+    </module>
+    <module name="MissingSwitchDefault"/>
+    <module name="MultipleStringLiterals">
+      <property name="severity" value="warning"/>
+      <property name="ignoreStringsRegexp" value="^&quot;(([^a-zA-Z[rn]]*?)|.{0,5}|[\W[0-9]&amp;&amp;[^\n]]*?[\w]*?[\W[0-9]&amp;&amp;[^\n]]*?|gid://)&quot;$"/>
+    </module>
+    <module name="NestedTryDepth">
+      <property name="max" value="2"/>
+    </module>
+    <module name="NoClone"/>
+    <module name="NoFinalizer"/>
+    <module name="SimplifyBooleanReturn"/>
+    <module name="StringLiteralEquality"/>
+    <module name="OneStatementPerLine"/>
+    <module name="ConstantName">
+      <metadata name="net.sf.eclipsecs.core.comment" value="nur private Konstanten"/>
+      <property name="applyToPublic" value="false"/>
+      <property name="applyToProtected" value="false"/>
+      <property name="applyToPackage" value="false"/>
+      <property name="format" value="^([a-zA-Z]|__|_?copy)[a-zA-Z0-9]*(_[a-zA-Z0-9]+)*$"/>
+      <message key="name.invalidPattern" value="Konstante ''{0}'' muss mit einem Buchstaben beginnen und mit Buchstaben, Zahlen oder Unterstrichen fortgeführt werden. (Keine Umlaute)"/>
+    </module>
+    <module name="StaticVariableName">
+      <metadata name="net.sf.eclipsecs.core.comment" value="nur private Statics"/>
+      <property name="applyToPublic" value="false"/>
+      <property name="applyToProtected" value="false"/>
+      <property name="applyToPackage" value="false"/>
+      <property name="format" value="^[a-zA-Z][a-zA-Z0-9]*(_[a-zA-Z0-9]+)*$"/>
+      <message key="name.invalidPattern" value="Static ''{0}'' muss mit einem Buchstaben beginnen und mit Buchstaben, Zahlen oder Unterstrichen fortgeführt werden. (Keine Umlaute)"/>
+    </module>
+    <module name="InnerAssignment">
+      <metadata name="net.sf.eclipsecs.core.comment" value="nur = ... wegen Ausnahmen nur temporär aktivieren ... sollte auf RegEx umgestellt werden wenn möglich"/>
+      <property name="severity" value="ignore"/>
+      <property name="tokens" value="ASSIGN"/>
+      <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
+    </module>
+    <module name="RegexpSinglelineJava">
+      <property name="id" value="printStackTrace"/>
+      <property name="format" value="\w*\.printStackTrace\(\)\w*"/>
+      <property name="ignoreComments" value="true"/>
+      <property name="message" value="Statt printStacktrace sollte Logging verwendet werden."/>
+    </module>
+    <module name="RegexpSinglelineJava">
+      <property name="id" value="systemout"/>
+      <property name="format" value="^.*System\.(out|err).*$"/>
+      <property name="ignoreComments" value="true"/>
+      <property name="message" value="Statt System.out/err sollte Logging verwendet werden."/>
+    </module>
+    <module name="RegexpSinglelineJava">
+      <property name="id" value="systemgc"/>
+      <property name="format" value="^.*System\.gc\(\)"/>
+      <property name="ignoreComments" value="true"/>
+      <property name="message" value="Keine System.gc Aufrufe. Das kann Java viel besser als Du!"/>
+    </module>
+    <module name="RegexpSinglelineJava">
+      <property name="id" value="threadsleep"/>
+      <property name="severity" value="warning"/>
+      <property name="format" value="^.*Thread\.sleep\(\d*\)"/>
+      <property name="ignoreComments" value="true"/>
+      <property name="message" value="Thread.sleep ist ganz boese!"/>
+    </module>
+  </module>
+  <module name="SuppressionCommentFilter">
+    <property name="offCommentFormat" value="CSOFF\:(\w+) (\(.{5,}?\))"/>
+    <property name="onCommentFormat" value="CSON\:(\w+)"/>
+    <property name="checkFormat" value="$1"/>
+  </module>
+</module>

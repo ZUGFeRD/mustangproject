@@ -1,8 +1,8 @@
 //
-// Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.11 generiert 
-// Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// �nderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.10.16 um 06:16:03 PM CEST 
+// Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.11 generiert
+// Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// �nderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren.
+// Generiert: 2015.10.16 um 06:16:03 PM CEST
 //
 
 
@@ -16,11 +16,10 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java-Klasse f�r CrossIndustryDocumentType complex type.
- * 
- * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.
- * 
- * <pre>
+ * <p>
+ * Java-Klasse f�r CrossIndustryDocumentType complex type.
+ * <p>
+ * Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist. <pre>
  * &lt;complexType name="CrossIndustryDocumentType"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
@@ -33,96 +32,82 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name="CrossIndustryDocumentType", namespace="urn:ferd:CrossIndustryDocument:invoice:1p0")
+@XmlRootElement(name = "CrossIndustryDocumentType", namespace = "urn:ferd:CrossIndustryDocument:invoice:1p0")
 @XmlType(name = "CrossIndustryDocumentType", namespace = "urn:ferd:CrossIndustryDocument:invoice:1p0", propOrder = {
-    "specifiedExchangedDocumentContext",
-    "headerExchangedDocument",
-    "specifiedSupplyChainTradeTransaction"
+		"specifiedExchangedDocumentContext",
+		"headerExchangedDocument",
+		"specifiedSupplyChainTradeTransaction"
 })
 public class CrossIndustryDocumentType {
 
-    @XmlElement(name = "SpecifiedExchangedDocumentContext", required = true)
-    protected ExchangedDocumentContextType specifiedExchangedDocumentContext;
-    @XmlElement(name = "HeaderExchangedDocument", required = true)
-    protected ExchangedDocumentType headerExchangedDocument;
-    @XmlElement(name = "SpecifiedSupplyChainTradeTransaction", required = true)
-    protected SupplyChainTradeTransactionType specifiedSupplyChainTradeTransaction;
+	@XmlElement(name = "SpecifiedExchangedDocumentContext", required = true)
+	protected ExchangedDocumentContextType specifiedExchangedDocumentContext;
+	@XmlElement(name = "HeaderExchangedDocument", required = true)
+	protected ExchangedDocumentType headerExchangedDocument;
+	@XmlElement(name = "SpecifiedSupplyChainTradeTransaction", required = true)
+	protected SupplyChainTradeTransactionType specifiedSupplyChainTradeTransaction;
 
-    /**
-     * Ruft den Wert der specifiedExchangedDocumentContext-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ExchangedDocumentContextType }
-     *     
-     */
-    public ExchangedDocumentContextType getSpecifiedExchangedDocumentContext() {
-        return specifiedExchangedDocumentContext;
-    }
 
-    /**
-     * Legt den Wert der specifiedExchangedDocumentContext-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ExchangedDocumentContextType }
-     *     
-     */
-    public void setSpecifiedExchangedDocumentContext(ExchangedDocumentContextType value) {
-        this.specifiedExchangedDocumentContext = value;
-    }
+	/**
+	 * Ruft den Wert der specifiedExchangedDocumentContext-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link ExchangedDocumentContextType }
+	 */
+	public ExchangedDocumentContextType getSpecifiedExchangedDocumentContext() {
+		return specifiedExchangedDocumentContext;
+	}
 
-    /**
-     * Ruft den Wert der headerExchangedDocument-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ExchangedDocumentType }
-     *     
-     */
-    public ExchangedDocumentType getHeaderExchangedDocument() {
-        return headerExchangedDocument;
-    }
 
-    /**
-     * Legt den Wert der headerExchangedDocument-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ExchangedDocumentType }
-     *     
-     */
-    public void setHeaderExchangedDocument(ExchangedDocumentType value) {
-        this.headerExchangedDocument = value;
-    }
+	/**
+	 * Legt den Wert der specifiedExchangedDocumentContext-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link ExchangedDocumentContextType }
+	 */
+	public void setSpecifiedExchangedDocumentContext(ExchangedDocumentContextType value) {
+		specifiedExchangedDocumentContext = value;
+	}
 
-    /**
-     * Ruft den Wert der specifiedSupplyChainTradeTransaction-Eigenschaft ab.
-     * 
-     * @return
-     *     possible object is
-     *     {@link SupplyChainTradeTransactionType }
-     *     
-     */
-    public SupplyChainTradeTransactionType getSpecifiedSupplyChainTradeTransaction() {
-        return specifiedSupplyChainTradeTransaction;
-    }
 
-    /**
-     * Legt den Wert der specifiedSupplyChainTradeTransaction-Eigenschaft fest.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link SupplyChainTradeTransactionType }
-     *     
-     */
-    public void setSpecifiedSupplyChainTradeTransaction(SupplyChainTradeTransactionType value) {
-        this.specifiedSupplyChainTradeTransaction = value;
-    }
+	/**
+	 * Ruft den Wert der headerExchangedDocument-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link ExchangedDocumentType }
+	 */
+	public ExchangedDocumentType getHeaderExchangedDocument() {
+		return headerExchangedDocument;
+	}
+
+
+	/**
+	 * Legt den Wert der headerExchangedDocument-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link ExchangedDocumentType }
+	 */
+	public void setHeaderExchangedDocument(ExchangedDocumentType value) {
+		headerExchangedDocument = value;
+	}
+
+
+	/**
+	 * Ruft den Wert der specifiedSupplyChainTradeTransaction-Eigenschaft ab.
+	 *
+	 * @return possible object is {@link SupplyChainTradeTransactionType }
+	 */
+	public SupplyChainTradeTransactionType getSpecifiedSupplyChainTradeTransaction() {
+		return specifiedSupplyChainTradeTransaction;
+	}
+
+
+	/**
+	 * Legt den Wert der specifiedSupplyChainTradeTransaction-Eigenschaft fest.
+	 *
+	 * @param value allowed object is {@link SupplyChainTradeTransactionType }
+	 */
+	public void setSpecifiedSupplyChainTradeTransaction(SupplyChainTradeTransactionType value) {
+		specifiedSupplyChainTradeTransaction = value;
+	}
 
 }

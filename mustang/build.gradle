@@ -1,0 +1,140 @@
+apply plugin: 'java'
+apply plugin: 'ru.vyarus.pom'
+apply plugin: 'ru.vyarus.quality'
+apply plugin: 'maven-publish'
+
+buildscript {
+	repositories {
+		maven {
+		url "https://plugins.gradle.org/m2/"
+		}
+	}
+
+     dependencies {
+ 		classpath "ru.vyarus:gradle-quality-plugin:latest.release"
+ 		classpath "ru.vyarus:gradle-pom-plugin:latest.release"
+    }
+ }
+
+
+group = 'org.mustangproject.ZUGFeRD'
+version= '1.4.0'
+
+repositories {
+ 	mavenCentral()
+}
+
+dependencies {
+	   compile "org.glassfish.jaxb:jaxb-runtime:2.2.11"
+	   compile "org.apache.pdfbox:preflight:2.0.4"
+	   compile "org.apache.logging.log4j:log4j-api:2.7"
+
+ 	 	testCompile "junit:junit:4.12"
+}
+
+quality {
+    boolean autoRegistration = true
+
+    checkstyle = true
+    pmd = true
+    findbugs = true
+    codenarc = false
+
+    findbugsEffort = 'max'
+    findbugsLevel = 'medium'
+
+    lintOptions = ['deprecation', 'unchecked']
+    strict = false
+    boolean enabled = true
+    boolean consoleReporting = false
+    sourceSets = [project.sourceSets.main]
+    configDir = 'gradle/config/'
+}
+
+
+jar {
+    manifest {
+        attributes "Implementation-Title": project.name,
+                   "Implementation-Version": version
+    }
+}
+
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+pom {
+    name project.name
+    description 'The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs'
+    licenses {
+        license {
+            name "Apache License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+            comments  "A business-friendly OSS license"
+        }
+    }
+    scm {
+        url 'https://github.com/jstaerk/mustangproject'
+        connection 'scm:git:https://github.com/jstaerk/mustangproject.git'
+        developerConnection 'scm:git:https://github.com/jstaerk/mustangproject.git'
+    }
+    developers {
+        developer {
+            id "dev1"
+            name "jstaerk@usegroup.de"
+            email "jstaerk@usegroup.de"
+            roles {
+            	role 'architect'
+            	role 'developer'
+            }
+        }
+
+        developer {
+            id "dev2"
+            name "Alexander Schmidt"
+            email "schmidt.alexander@mail.de"
+            roles {
+            	role 'developer'
+            }
+        }
+    }
+	mailingLists {
+	    mailingList {
+	        name 'User List'
+	        archive 'https://groups.google.com/forum/?hl=de#!forum/mustangproject'
+	    }
+	}
+}
+
+publishing {
+	//Mit dem Schalter "-Plocalrepo" kann in das lokale Repos geschrieben werden
+    if ( project.hasProperty("localrepo") ) {
+        repositories {
+            maven {
+                url file("${buildDir}/ivy-repo/")
+            }
+        }
+    } else {
+        repositories {
+	        maven {
+	            url "http://frog.css.de:8081/repository/thirdparty/"
+	            credentials {
+	                    username "deployment"
+	                    password "deploy99"
+	            }
+	        }
+        }
+    }
+
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
