@@ -429,9 +429,7 @@ public class ZUGFeRDExporter {
 			File f = new File(filename);
 			doc = PDDocument.load(f); // must be close
 		} catch (IOException e) {
-			LOG.catching(e);
-		} finally {
-
+			LOG.error(e);
 		}
 	}
 
@@ -440,7 +438,7 @@ public class ZUGFeRDExporter {
 		try {
 			doc = PDDocument.load(filestream);
 		} catch (IOException e) {
-			LOG.catching(e);
+			LOG.error(e);
 		}
 	}
 
