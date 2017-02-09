@@ -124,11 +124,7 @@ pom {
 publishing {
 	repositories {
 	    maven {
-	            url "http://frog.css.de:8081/repository/thirdparty/"
-	            credentials {
-	                    username "deployment"
-	                    password "deploy99"
-	            }
+  		url file("${buildDir}/mvn-repo/")
 	    }
 	}
 
