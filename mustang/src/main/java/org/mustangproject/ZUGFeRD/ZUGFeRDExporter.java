@@ -486,6 +486,14 @@ public class ZUGFeRDExporter {
 
 
 	/**
+	 * @param file
+	 * @param producer
+	 * @param creator
+	 * @param attachZugferdHeaders
+	 * @return PDDocumentCatalog
+	 * @throws IOException
+	 * @throws TransformerException
+	 * @throws BadFieldValueException
 	 * @deprecated Use {@link #createPDFmakeA3compliant(InputStream,String,String,boolean)} instead
 	 */
 	@Deprecated

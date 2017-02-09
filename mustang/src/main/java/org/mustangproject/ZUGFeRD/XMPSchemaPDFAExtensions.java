@@ -93,6 +93,9 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 		addProperty(newSeq, "DocumentType", "Text", "external", "INVOICE");
 		addProperty(newSeq, "Version", "Text", "external", "The actual version of the ZUGFeRD XML schema");
 		addProperty(newSeq, "ConformanceLevel", "Text", "external", "The conformance level of the embedded ZUGFeRD data");
+		
+		ArrayProperty newValType= new ArrayProperty(metadata, xmlns_pdfaSchema, prefix_pdfaSchema, PDFASchemaType.VALUE_TYPE, Cardinality.Seq);				
+		li.addProperty(newValType);
 	}
 
 

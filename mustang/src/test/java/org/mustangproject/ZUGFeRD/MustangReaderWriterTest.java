@@ -16,6 +16,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.pdfbox.preflight.PreflightDocument;
+import org.apache.pdfbox.preflight.ValidationResult;
+import org.apache.pdfbox.preflight.ValidationResult.ValidationError;
+import org.apache.pdfbox.preflight.exception.SyntaxValidationException;
+import org.apache.pdfbox.preflight.parser.PreflightParser;
 import org.apache.xmpbox.type.BadFieldValueException;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,6 +30,9 @@ import org.junit.rules.TemporaryFolder;
 import org.xml.sax.SAXException;
 
 public class MustangReaderWriterTest {
+
+
+	private final static Logger LOG = LogManager.getLogger();
 
 	@Rule
 	public final TemporaryFolder tempFolderRule = new TemporaryFolder();
@@ -90,6 +100,9 @@ public class MustangReaderWriterTest {
 			ze.export(TARGET_PDF_PATH);
 		}
 
+		// Validation
+		testPDFFile(TARGET_PDF);
+
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter();
 		zi.extract(TARGET_PDF_PATH);
@@ -108,6 +121,39 @@ public class MustangReaderWriterTest {
 		assertEquals(zi.getHolder(), trans.getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), trans.getNumber());
 	}
+
+
+	/**
+	 * @param f
+	 * @return isValid
+	 * @throws IOException
+	 */
+	private boolean testPDFFile(File f) throws IOException {
+		ValidationResult result = null;
+		PreflightParser parser = new PreflightParser(f);
+		try {
+			parser.parse();
+			PreflightDocument document = parser.getPreflightDocument();
+			document.validate();
+
+			result = document.getResult();
+			document.close();
+		} catch (SyntaxValidationException e) {
+			result = e.getResult();
+		}
+
+		// display validation result
+		if (result.isValid()) {
+			LOG.error("The file " + f.getAbsolutePath() + " is a valid PDF/A-1b file");
+		} else {
+			LOG.error("The file" + f.getAbsolutePath() + " is not valid, error(s) :");
+			for (ValidationError error : result.getErrorsList()) {
+				LOG.error(error.getErrorCode() + " : " + error.getDetails());
+			}
+		}
+		return result.isValid();
+	}
+
 
 	private class Transaction implements IZUGFeRDExportableTransaction {
 		@Override

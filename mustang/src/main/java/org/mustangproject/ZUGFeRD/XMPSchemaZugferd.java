@@ -14,13 +14,24 @@ import org.apache.xmpbox.schema.XMPSchema;
 
 public class XMPSchemaZugferd extends XMPSchema {
 
+	private final String CONFORMANCELEVEL = "EXTENDED";
+
+
 	/**
 	 * This is what needs to be added to the RDF metadata - basically the name of the embedded Zugferd file
+	 *
+	 * @param pMetadata
+	 * @param pConformanceLevel
 	 */
-	public XMPSchemaZugferd(XMPMetadata metadata, String conformanceLevel) {
-		super(metadata, "urn:ferd:pdfa:CrossIndustryDocument:invoice:1p0#", "zf", "ZUGFeRD Schema");
+	public XMPSchemaZugferd(XMPMetadata pMetadata, String pConformanceLevel) {
+		super(pMetadata, "urn:ferd:pdfa:CrossIndustryDocument:invoice:1p0#", "zf", "ZUGFeRD Schema");
 
 		setAboutAsSimple("");
+
+		String conformanceLevel = pConformanceLevel;
+		if (conformanceLevel == null) {
+			conformanceLevel = CONFORMANCELEVEL;
+		}
 
 		setTextPropertyValue("ConformanceLevel", conformanceLevel);
 		setTextPropertyValue("DocumentType", "INVOICE");
