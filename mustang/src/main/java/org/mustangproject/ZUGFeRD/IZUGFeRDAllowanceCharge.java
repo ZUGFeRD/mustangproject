@@ -17,15 +17,18 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 
+
 /**
- *
  * @author AlexanderSchmidt
  */
 public interface IZUGFeRDAllowanceCharge {
-    BigDecimal getTotalAmount();
-    
-    String getReason();
-    
-    BigDecimal getTaxPercent();
-    
+
+	BigDecimal getTotalAmount();
+
+
+	String getReason();
+
+
+	BigDecimal getTaxPercent();
+
 }
