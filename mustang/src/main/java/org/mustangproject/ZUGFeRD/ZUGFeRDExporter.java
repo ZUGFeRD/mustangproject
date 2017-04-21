@@ -432,7 +432,7 @@ public class ZUGFeRDExporter {
             regularInfo.getContent().add(regularInfoContent);
             document.getIncludedNote().add(regularInfo);
         }
-        if (trans.getReferenceNumber() != null && trans.getReferenceNumber() != new String()){
+        if (trans.getReferenceNumber() != null && !new String().equals(trans.getReferenceNumber())){
             NoteType referenceInfo = xmlFactory.createNoteType();
             TextType referenceInfoContent = xmlFactory.createTextType();
             referenceInfoContent.setValue("Ursprungsbeleg: " + trans.getReferenceNumber());
