@@ -4,7 +4,7 @@ package org.mustangproject.ZUGFeRD;
  * ZUGFeRD exporter helper class
  * Licensed under the APLv2
  * @date 2014-05-10
- * @version 1.0
+ * @version 1.2.0s
  * @author jstaerk
  * */
 import org.apache.jempbox.impl.XMLUtil;
@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
 public class XMPSchemaZugferd extends XMPSchemaBasic
 {
 
-	private String conformanceLevel = "COMFORT";
+	private String conformanceLevel = "EXTENDED";
 
 		/**
 		 * This is what needs to be added to the RDF metadata - basically the name of the embedded

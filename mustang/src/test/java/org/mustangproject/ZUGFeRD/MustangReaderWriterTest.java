@@ -49,7 +49,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
   @Override
   public String getOwnBIC()
   {
-    return "COBADEFXXX";
+    return "COBADEFFXXX";
   }
 
   @Override
@@ -119,6 +119,12 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
   }
 
   @Override
+  public String getCurrency()
+  {
+    return "EUR";
+  }
+
+  @Override
   public IZUGFeRDExportableItem[] getZFItems()
   {
     Item[] allItems = new Item[3];
@@ -131,11 +137,6 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
     allItems[2] = new Item(new BigDecimal("0.10"), new BigDecimal("200"), airProduct);
     return allItems;
   }
-
-    @Override
-    public String getInvoiceCurrency() {
-        return "EUR";
-    }
 
     @Override
     public String getOwnPaymentInfoText() {
@@ -257,16 +258,16 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
     {
       this.product = product;
     }
-      
+
     @Override
     public IZUGFeRDAllowanceCharge[] getItemAllowances() {
-        return null;        
+        return null;
     }
 
     @Override
     public IZUGFeRDAllowanceCharge[] getItemCharges() {
         return null;
-    }    
+    }
 
   }
 
@@ -332,7 +333,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 
   /**
    * Create the test case
-   * 
+   *
    * @param testName
    *          name of the test case
    */
@@ -355,7 +356,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
    * The importer test imports from ./src/test/MustangGnuaccountingBeispielRE-20151008_504.pdf to check the values.
    * --> as only Name Ascending is supported for Test Unit sequence, I renamed the this test-A-Export to run before
    * testZExport
-   * 
+   *
    * @throws IOException
    */
 
@@ -403,16 +404,13 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
     final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20151008_504new.pdf";
 
     // the writing part
-    PDDocument doc;
     try
     {
-      doc = PDDocument.load(SOURCE_PDF);
       // automatically add Zugferd to all outgoing invoices
       ZUGFeRDExporter ze = new ZUGFeRDExporter();
-      ze.PDFmakeA3compliant(doc, "My Application", System.getProperty("user.name"), true);
-      ze.PDFattachZugferdFile(doc, this);
-      doc.save(TARGET_PDF);
-      doc.close();
+      ze.PDFmakeA3compliant(SOURCE_PDF, "My Application", System.getProperty("user.name"), true);
+      ze.PDFattachZugferdFile(this);
+      ze.export(TARGET_PDF);
     }
     catch (IOException e)
     {

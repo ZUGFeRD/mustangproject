@@ -49,7 +49,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   @Override
   public String getOwnBIC()
   {
-    return "COBADEFXXX";
+    return "COBADEFFXXX";
   }
 
   @Override
@@ -118,7 +118,13 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   {
     return null;
   }
-  
+
+  @Override
+  public String getCurrency()
+  {
+    return "EUR";
+  }
+
   @Override
   public IZUGFeRDExportableItem[] getZFItems()
   {
@@ -132,11 +138,6 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     allItems[2] = new Item(new BigDecimal("0.10"), new BigDecimal("200"), airProduct);
     return allItems;
   }
-
-    @Override
-    public String getInvoiceCurrency() {
-        return "EUR";
-    }
 
     @Override
     public String getOwnPaymentInfoText() {
@@ -258,7 +259,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
     @Override
     public IZUGFeRDAllowanceCharge[] getItemAllowances() {
-        return null;        
+        return null;
     }
 
     @Override
@@ -330,7 +331,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
   /**
    * Create the test case
-   * 
+   *
    * @param testName
    *          name of the test case
    */
@@ -353,7 +354,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
    * The importer test imports from ./src/test/MustangGnuaccountingBeispielRE-20151008_504.pdf to check the values.
    * --> as only Name Ascending is supported for Test Unit sequence, I renamed the this test-A-Export to run before
    * testZExport
-   * 
+   *
    * @throws IOException
    */
 
@@ -368,6 +369,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     String iban = null;
     String holder = null;
     String ref = null;
+    String dueDate = null;
 
     if (zi.canParse())
     {
@@ -376,6 +378,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
       bic = zi.getBIC();
       iban = zi.getIBAN();
       holder = zi.getHolder();
+      dueDate = zi.getDueDate();
       ref = zi.getForeignReference();
     }
 
@@ -383,6 +386,8 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     assertEquals(bic, getOwnBIC());
     assertEquals(iban, getOwnIBAN());
     assertEquals(holder, getOwnOrganisationName());
+
+    assertEquals(dueDate, "20141029");
     assertEquals(ref, getNumber());
 
   }
@@ -401,16 +406,13 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20151008_504newEdge.pdf";
     // the writing part
 
-    PDDocument doc;
     try
     {
-      doc = PDDocument.load(SOURCE_PDF);
       // automatically add Zugferd to all outgoing invoices
       ZUGFeRDExporter ze = new ZUGFeRDExporter();
-      ze.PDFmakeA3compliant(doc, "My Application", System.getProperty("user.name"), true);
-      ze.PDFattachZugferdFile(doc, this);
-      doc.save(TARGET_PDF);
-      doc.close();
+      ze.PDFmakeA3compliant(SOURCE_PDF, "My Application", System.getProperty("user.name"), true);
+      ze.PDFattachZugferdFile(this);
+      ze.export(TARGET_PDF);
     }
     catch (IOException e)
     {

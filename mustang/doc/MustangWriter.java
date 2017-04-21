@@ -167,7 +167,7 @@ public class MustangWriter implements IZUGFeRDExportableTransaction {
 
 	@Override
 	public String getOwnBIC() {
-		return "COBADEFXXX";
+		return "COBADEFFXXX";
 	}
 
 	@Override

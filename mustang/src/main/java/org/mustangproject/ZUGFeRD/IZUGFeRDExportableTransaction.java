@@ -4,7 +4,7 @@ package org.mustangproject.ZUGFeRD;
  * Neccessary interface for ZUGFeRD exporter
  * Licensed under the APLv2
  * @date 2014-05-10 to 2014-06-25
- * @version 1.0.2
+ * @version 1.2.0
  * @author jstaerk
  * */
 
@@ -127,7 +127,7 @@ public interface IZUGFeRDExportableTransaction {
 	 * get main invoice currency used on the invoice
 	 * @return
 	 */        
-        String getInvoiceCurrency();
+     String getCurrency();
         
         /**
 	 * get payment information text. e.g. Bank transfer

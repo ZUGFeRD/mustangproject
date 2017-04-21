@@ -4,7 +4,7 @@ package org.mustangproject.ZUGFeRD;
  * ZUGFeRD exporter helper class
  * Licensed under the APLv2
  * @date 2014-05-10
- * @version 1.0
+ * @version 1.2.0
  * @author jstaerk
  * */
 import org.apache.jempbox.impl.XMLUtil;
@@ -112,6 +112,12 @@ import org.w3c.dom.Element;
 			Element propertyNode = schema.getOwnerDocument().createElement(
 					"pdfaSchema:property"); //$NON-NLS-1$
 
+			Element valueTypeNode = schema.getOwnerDocument().createElement(
+					"pdfaSchema:valueType"); //$NON-NLS-1$
+
+			Element seqListValueType = schema.getOwnerDocument().createElement(
+					"rdf:Seq"); //$NON-NLS-1$
+
 			Element sequenceNode = schema.getOwnerDocument().createElement(
 					"rdf:Seq"); //$NON-NLS-1$
 
@@ -149,6 +155,9 @@ import org.w3c.dom.Element;
 			propertyNode.appendChild(sequenceNode);
 
 			bagListNode.appendChild(propertyNode);
+
+			valueTypeNode.appendChild(seqListValueType);
+			bagListNode.appendChild(valueTypeNode);
 
 			bagNode.appendChild(bagListNode);
 			schemasNode.appendChild(bagNode);
