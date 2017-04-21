@@ -49,7 +49,7 @@ public class ZUGFeRDImporter {
 	private String IBAN;
 	private String holder;
 	private String amount;
-  private String dueDate;
+        private String dueDate;
 	/** Raw XML form of the extracted data - may be directly obtained. */
 	private byte[] rawXML=null;
 	private String bankName;
@@ -90,7 +90,7 @@ public class ZUGFeRDImporter {
 				doc.close();
 				return;
 			}
-			Map<String, COSObjectable> efMap = etn.getNames();
+			Map<String, PDComplexFileSpecification> efMap = etn.getNames();
 			// String filePath = "/tmp/";
 			for (String filename : efMap.keySet()) {
 				/**
@@ -109,7 +109,8 @@ public class ZUGFeRDImporter {
 					// ByteArrayOutputStream fileBytes=new
 					// ByteArrayOutputStream();
 					// FileOutputStream fos = new FileOutputStream(file);
-					rawXML = embeddedFile.getByteArray();
+                                        
+					rawXML = embeddedFile.toByteArray();
 					setMeta(new String(rawXML));
 					extracted=true;
 					// fos.write(embeddedFile.getByteArray());

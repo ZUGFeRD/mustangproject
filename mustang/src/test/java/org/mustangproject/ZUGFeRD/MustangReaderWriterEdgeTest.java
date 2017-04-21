@@ -14,7 +14,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
@@ -129,9 +128,9 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   public IZUGFeRDExportableItem[] getZFItems()
   {
     Item[] allItems = new Item[3];
-    Product designProduct = new Product("", "KÃ¼nstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR", new BigDecimal("7.000000"));
+    Product designProduct = new Product("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR", new BigDecimal("7.000000"));
     Product balloonProduct = new Product("", "Luftballon: Bunt, ca. 500ml", "C62", new BigDecimal("19.000000"));
-    Product airProduct = new Product("", "HeiÃŸe Luft pro Liter", "LTR", new BigDecimal("19.000000"));
+    Product airProduct = new Product("", "Heiße Luft pro Liter", "LTR", new BigDecimal("19.000000"));
 
     allItems[0] = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
     allItems[1] = new Item(new BigDecimal("0.79"), new BigDecimal("400"), balloonProduct);
@@ -141,7 +140,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
     @Override
     public String getOwnPaymentInfoText() {
-        return "Ãœberweisung";
+        return "Überweisung";
     }
 
     @Override

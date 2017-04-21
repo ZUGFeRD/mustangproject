@@ -11,6 +11,7 @@ package org.mustangproject.ZUGFeRD;
  */
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -24,6 +25,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.activation.FileDataSource;
 import javax.xml.bind.JAXBContext;
@@ -32,22 +35,21 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.transform.TransformerException;
 
-import org.apache.jempbox.xmp.XMPMetadata;
-import org.apache.jempbox.xmp.XMPSchemaBasic;
-import org.apache.jempbox.xmp.XMPSchemaDublinCore;
-import org.apache.jempbox.xmp.XMPSchemaPDF;
-import org.apache.jempbox.xmp.pdfa.XMPSchemaPDFAId;
+
+import org.apache.xmpbox.XMPMetadata;
+import org.apache.xmpbox.schema.XMPBasicSchema;
+import org.apache.xmpbox.schema.DublinCoreSchema;
+import org.apache.xmpbox.schema.AdobePDFSchema;
+import org.apache.xmpbox.schema.PDFAIdentificationSchema;
 import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
-import org.apache.pdfbox.pdmodel.common.COSObjectable;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
@@ -56,6 +58,8 @@ import org.apache.pdfbox.preflight.ValidationResult;
 import org.apache.pdfbox.preflight.exception.ValidationException;
 import org.apache.pdfbox.preflight.parser.PreflightParser;
 import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
+import org.apache.xmpbox.type.BadFieldValueException;
+import org.apache.xmpbox.xml.XmpSerializer;
 import org.mustangproject.ZUGFeRD.model.*;
 
 public class ZUGFeRDExporter {
@@ -388,47 +392,27 @@ public class ZUGFeRDExporter {
 	 */
 	public boolean isValidA1(InputStream file) {
 		
-		ByteArrayDataSource fd;
-		try {
-			fd = new ByteArrayDataSource(file);
-			PreflightParser parser = new PreflightParser(fd);
-			return getA1ParserValidationResult(parser);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
-
-        TextType name = xmlFactory.createTextType();
-        name.setValue("RECHNUNG");
-        document.getName().add(name);
-        
-        if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
-            NoteType regularInfo = xmlFactory.createNoteType();
-            CodeType regularInfoSubjectCode = xmlFactory.createCodeType();
-            regularInfoSubjectCode.setValue(NoteType.REGULARINFO);
-            regularInfo.setSubjectCode(regularInfoSubjectCode);
-            TextType regularInfoContent = xmlFactory.createTextType();
-            regularInfoContent.setValue(trans.getOwnOrganisationFullPlaintextInfo());
-            regularInfo.getContent().add(regularInfoContent);
-            document.getIncludedNote().add(regularInfo);
-        }
-        if (trans.getReferenceNumber() != null && !new String().equals(trans.getReferenceNumber())){
-            NoteType referenceInfo = xmlFactory.createNoteType();
-            TextType referenceInfoContent = xmlFactory.createTextType();
-            referenceInfoContent.setValue("Ursprungsbeleg: " + trans.getReferenceNumber());
-            referenceInfo.getContent().add(referenceInfoContent);
-            document.getIncludedNote().add(referenceInfo);            
+            ByteArrayDataSource fd;
+            try {
+                    fd = new ByteArrayDataSource(file);
+                    PreflightParser parser = new PreflightParser(fd);
+                    return getA1ParserValidationResult(parser);
+            } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    return false;
+            }
         }
 
 	public void loadPDFA3(String filename) {
 
 		try {
-			doc = PDDocument.load(filename);
+                    
+                    doc = PDDocument.load(new File(filename));
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
 		}
 
 	}
@@ -493,21 +477,19 @@ public class ZUGFeRDExporter {
 		PDDocumentCatalog cat = doc.getDocumentCatalog();
 		PDMetadata metadata = new PDMetadata(doc);
 		cat.setMetadata(metadata);
-		// we're using the jempbox org.apache.jempbox.xmp.XMPMetadata version,
-		// not the xmpbox one
-		XMPMetadata xmp = new XMPMetadata();
+		XMPMetadata xmp = XMPMetadata.createXMPMetadata();
 
-		XMPSchemaPDFAId pdfaid = new XMPSchemaPDFAId(xmp);
-		pdfaid.setAbout(""); //$NON-NLS-1$
+                
+		PDFAIdentificationSchema pdfaid = new PDFAIdentificationSchema(xmp);
+                
 		xmp.addSchema(pdfaid);
 
-		XMPSchemaDublinCore dc = xmp.addDublinCoreSchema();
+		DublinCoreSchema dc = xmp.createAndAddDublinCoreSchema();
+                
 		dc.addCreator(creator);
-		dc.setAbout(""); //$NON-NLS-1$
-
-		XMPSchemaBasic xsb = xmp.addBasicSchema();
-		xsb.setAbout(""); //$NON-NLS-1$
-
+                
+		XMPBasicSchema xsb = xmp.createAndAddXMPBasicSchema();
+                
 		xsb.setCreatorTool(creator);
 		xsb.setCreateDate(GregorianCalendar.getInstance());
 		// PDDocumentInformation pdi=doc.getDocumentInformation();
@@ -516,23 +498,26 @@ public class ZUGFeRDExporter {
 		pdi.setAuthor(creator);
 		doc.setDocumentInformation(pdi);
 
-		XMPSchemaPDF pdf = xmp.addPDFSchema();
+		AdobePDFSchema pdf = xmp.createAndAddAdobePDFSchema();
 		pdf.setProducer(fullProducer);
-		pdf.setAbout(""); //$NON-NLS-1$
 
-		/*
-		 * // Mandatory: PDF/A3-a is tagged PDF which has to be expressed using
-		 * a // MarkInfo dictionary (PDF A/3 Standard sec. 6.7.2.2) PDMarkInfo
-		 * markinfo = new PDMarkInfo(); markinfo.setMarked(true);
-		 * doc.getDocumentCatalog().setMarkInfo(markinfo);
-		 */
-		/*
-		 * 
-		 * To be on the safe side, we use level B without Markinfo because we
-		 * can not guarantee that the user correctly tagged the templates for
-		 * the PDF.
-		 */
-		pdfaid.setConformance(conformanceLevel);//$NON-NLS-1$ //$NON-NLS-1$
+                /*
+                * // Mandatory: PDF/A3-a is tagged PDF which has to be expressed using
+                * a // MarkInfo dictionary (PDF A/3 Standard sec. 6.7.2.2) PDMarkInfo
+                * markinfo = new PDMarkInfo(); markinfo.setMarked(true);
+                * doc.getDocumentCatalog().setMarkInfo(markinfo);
+                */
+                /*
+                *
+                * To be on the safe side, we use level B without Markinfo because we
+                * can not guarantee that the user correctly tagged the templates for
+                * the PDF.
+                */
+                try {
+                    pdfaid.setConformance(conformanceLevel);//$NON-NLS-1$ //$NON-NLS-1$
+                } catch (BadFieldValueException ex) {
+                    Logger.getLogger(ZUGFeRDExporter.class.getName()).log(Level.SEVERE, null, ex);
+                }
 
 		pdfaid.setPart(3);
 
@@ -546,7 +531,11 @@ public class ZUGFeRDExporter {
 
 		}
 
-		metadata.importXMPMetadata(xmp);
+                XmpSerializer serializer = new XmpSerializer();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                serializer.serialize(xmp, baos, false);
+                metadata.importXMPMetadata( baos.toByteArray() );
+                
 		return cat;
 	}
 
@@ -625,7 +614,7 @@ public class ZUGFeRDExporter {
 		TextType name = xmlFactory.createTextType();
 		name.setValue("RECHNUNG");
 		document.getName().add(name);
-
+                
 		if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
 			NoteType regularInfo = xmlFactory.createNoteType();
 			CodeType regularInfoSubjectCode = xmlFactory.createCodeType();
@@ -637,6 +626,14 @@ public class ZUGFeRDExporter {
 			regularInfo.getContent().add(regularInfoContent);
 			document.getIncludedNote().add(regularInfo);
 		}
+                
+                if (trans.getReferenceNumber() != null && !new String().equals(trans.getReferenceNumber())){
+                    NoteType referenceInfo = xmlFactory.createNoteType();
+                    TextType referenceInfoContent = xmlFactory.createTextType();
+                    referenceInfoContent.setValue("Ursprungsbeleg: " + trans.getReferenceNumber());
+                    referenceInfo.getContent().add(referenceInfoContent);
+                    document.getIncludedNote().add(referenceInfo);            
+                }
 
 		return document;
 	}
@@ -1386,44 +1383,40 @@ public class ZUGFeRDExporter {
 	public void PDFattachZugferdFile(IZUGFeRDExportableTransaction trans)
 			throws IOException, JAXBException {
 
-		if (zugferdData == null) // XML ZUGFeRD data not set externally, needs
-									// to be built
-		{
-			// create a dummy file stream, this would probably normally be a
-			// FileInputStream
+            if (zugferdData == null) // XML ZUGFeRD data not set externally, needs
+                                                                    // to be built
+            {
+                    // create a dummy file stream, this would probably normally be a
+                    // FileInputStream
 
-			byte[] zugferdRaw = getZugferdXMLForTransaction(trans).getBytes(); //$NON-NLS-1$
+                    byte[] zugferdRaw = getZugferdXMLForTransaction(trans).getBytes(); //$NON-NLS-1$
 
-			if ((zugferdRaw[0] == (byte) 0xEF)
-					&& (zugferdRaw[1] == (byte) 0xBB)
-					&& (zugferdRaw[2] == (byte) 0xBF)) {
-				// I don't like BOMs, lets remove it
-				zugferdData = new byte[zugferdRaw.length - 3];
-				System.arraycopy(zugferdRaw, 3, zugferdData, 0,
-						zugferdRaw.length - 3);
-			} else {
-				zugferdData = zugferdRaw;
-			}
-		}
+                    if ((zugferdRaw[0] == (byte) 0xEF)
+                                    && (zugferdRaw[1] == (byte) 0xBB)
+                                    && (zugferdRaw[2] == (byte) 0xBF)) {
+                            // I don't like BOMs, lets remove it
+                            zugferdData = new byte[zugferdRaw.length - 3];
+                            System.arraycopy(zugferdRaw, 3, zugferdData, 0,
+                                            zugferdRaw.length - 3);
+                    } else {
+                            zugferdData = zugferdRaw;
+                    }
+            }
 
-		PDFAttachGenericFile(
-				doc,
-				"ZUGFeRD-invoice.xml",
-				"Alternative",
-				"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
-				"text/xml", zugferdData);
+            PDFAttachGenericFile(
+                            doc,
+                            "ZUGFeRD-invoice.xml",
+                            "Alternative",
+                            "Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
+                            "text/xml", zugferdData);
 	}
 
 	public void export(String ZUGFeRDfilename) {
-		try {
-			doc.save(ZUGFeRDfilename);
-		} catch (COSVisitorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            try {
+                doc.save(ZUGFeRDfilename);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
 	}
 
 	/**
@@ -1441,14 +1434,16 @@ public class ZUGFeRDExporter {
 	 *            type of the data e.g. could be "text/xml" - mime like
 	 * @param data
 	 *            the binary data of the file/attachment
+         * @throws java.io.IOException
 	 */
 	public void PDFAttachGenericFile(PDDocument doc, String filename,
 			String relationship, String description, String subType, byte[] data)
 			throws IOException {
 		PDComplexFileSpecification fs = new PDComplexFileSpecification();
 		fs.setFile(filename);
+                
 
-		COSDictionary dict = fs.getCOSDictionary();
+		COSDictionary dict = fs.getCOSObject();
 		dict.setName("AFRelationship", relationship);
 		dict.setString("UF", filename);
 		dict.setString("Desc", description);
@@ -1464,7 +1459,7 @@ public class ZUGFeRDExporter {
 		fs.setEmbeddedFile(ef);
 
 		// In addition make sure the embedded file is set under /UF
-		dict = fs.getCOSDictionary();
+		dict = fs.getCOSObject();
 		COSDictionary efDict = (COSDictionary) dict
 				.getDictionaryObject(COSName.EF);
 		COSBase lowerLevelFile = efDict.getItem(COSName.F);
@@ -1478,8 +1473,9 @@ public class ZUGFeRDExporter {
 			efTree = new PDEmbeddedFilesNameTreeNode();
 		}
 
-		Map<String, COSObjectable> namesMap = new HashMap<String, COSObjectable>();
-		Map<String, COSObjectable> oldNamesMap = efTree.getNames();
+		Map<String, PDComplexFileSpecification> namesMap = new HashMap<String, PDComplexFileSpecification>();
+
+		Map<String, PDComplexFileSpecification> oldNamesMap = efTree.getNames();
 		if (oldNamesMap != null) {
 			for (String key : oldNamesMap.keySet()) {
 				namesMap.put(key, oldNamesMap.get(key));
@@ -1493,16 +1489,16 @@ public class ZUGFeRDExporter {
 
 		// AF entry (Array) in catalog with the FileSpec
 		COSArray cosArray = (COSArray) doc.getDocumentCatalog()
-				.getCOSDictionary().getItem("AF");
+				.getCOSObject().getItem("AF");
 		if (cosArray == null) {
 			cosArray = new COSArray();
 		}
 		cosArray.add(fs);
-		COSDictionary dict2 = doc.getDocumentCatalog().getCOSDictionary();
+		COSDictionary dict2 = doc.getDocumentCatalog().getCOSObject();
 		COSArray array = new COSArray();
-		array.add(fs.getCOSDictionary()); // see below
+		array.add(fs.getCOSObject()); // see below
 	        dict2.setItem("AF",array);
-		doc.getDocumentCatalog().getCOSDictionary().setItem("AF", cosArray);
+		doc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
 	}
 
 	/**
@@ -1538,11 +1534,11 @@ public class ZUGFeRDExporter {
 
 		XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata,
 				this.ZUGFeRDConformanceLevel);
-		zf.setAbout(""); //$NON-NLS-1$
+
 		metadata.addSchema(zf);
 
 		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(metadata);
-		pdfaex.setAbout(""); //$NON-NLS-1$
+                
 		metadata.addSchema(pdfaex);
 
 	}
