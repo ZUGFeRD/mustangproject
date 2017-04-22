@@ -7,53 +7,22 @@ package org.mustangproject.ZUGFeRD;
  * @version 1.2.0s
  * @author jstaerk
  * */
-import org.apache.jempbox.impl.XMLUtil;
-import org.apache.jempbox.xmp.XMPSchemaBasic;
-import org.w3c.dom.Element;
+import org.apache.xmpbox.XMPMetadata;
+import org.apache.xmpbox.schema.XMPSchema;
 
+public class XMPSchemaZugferd extends XMPSchema {
 
-public class XMPSchemaZugferd extends XMPSchemaBasic
-{
+    /**
+     * This is what needs to be added to the RDF metadata - basically the name of the embedded Zugferd file
+     */
+    public XMPSchemaZugferd(XMPMetadata metadata, String conformanceLevel) {
+        super(metadata, "urn:ferd:pdfa:CrossIndustryDocument:invoice:1p0#", "zf", "ZUGFeRD Schema");
 
-	private String conformanceLevel = "EXTENDED";
+        setAboutAsSimple("");
 
-		/**
-		 * This is what needs to be added to the RDF metadata - basically the name of the embedded
-		 * Zugferd file
-		 * */
-		public XMPSchemaZugferd(org.apache.jempbox.xmp.XMPMetadata parent, String conformanceLevel)
-		{
-			super(parent);
-
-			if (conformanceLevel != null)
-			{
-				this.conformanceLevel = conformanceLevel;
-			}
-
-			schema.setAttributeNS(NS_NAMESPACE, "xmlns:zf", //$NON-NLS-1$
-					"urn:ferd:pdfa:CrossIndustryDocument:invoice:1p0#"); //$NON-NLS-1$
-// the superclass includes this two namespaces we don't need
-			schema.removeAttributeNS(NS_NAMESPACE, "xapGImg"); //$NON-NLS-1$
-			schema.removeAttributeNS(NS_NAMESPACE, "xmp"); //$NON-NLS-1$
-			Element textNode = schema.getOwnerDocument().createElement(
-					"zf:DocumentType"); //$NON-NLS-1$
-			XMLUtil.setStringValue(textNode, "INVOICE"); //$NON-NLS-1$
-			schema.appendChild(textNode);
-
-			textNode = schema.getOwnerDocument().createElement(
-					"zf:DocumentFileName"); //$NON-NLS-1$
-			XMLUtil.setStringValue(textNode, "ZUGFeRD-invoice.xml"); //$NON-NLS-1$
-			schema.appendChild(textNode);
-
-			textNode = schema.getOwnerDocument().createElement("zf:Version"); //$NON-NLS-1$
-			XMLUtil.setStringValue(textNode, "1.0"); //$NON-NLS-1$
-			schema.appendChild(textNode);
-
-			textNode = schema.getOwnerDocument().createElement(
-					"zf:ConformanceLevel"); //$NON-NLS-1$
-			XMLUtil.setStringValue(textNode, this.conformanceLevel); //$NON-NLS-1$
-			schema.appendChild(textNode);
-
-		}
-
-	}
+        setTextPropertyValue("ConformanceLevel", conformanceLevel);
+        setTextPropertyValue("DocumentType", "INVOICE");
+        setTextPropertyValue("DocumentFileName", "ZUGFeRD-invoice.xml");
+        setTextPropertyValue("Version", "1.0");
+    }
+}

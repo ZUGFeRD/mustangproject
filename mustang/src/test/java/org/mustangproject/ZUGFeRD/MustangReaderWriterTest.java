@@ -167,6 +167,11 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public String getReferenceNumber() {
+        return null;
+    }
+
   class Contact implements IZUGFeRDExportableContact
   {
 
