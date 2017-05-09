@@ -11,6 +11,7 @@ package org.mustangproject.ZUGFeRD;
  */
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,7 +63,7 @@ import org.apache.xmpbox.type.BadFieldValueException;
 import org.apache.xmpbox.xml.XmpSerializer;
 import org.mustangproject.ZUGFeRD.model.*;
 
-public class ZUGFeRDExporter {
+public class ZUGFeRDExporter implements Closeable {
 
 	/**
 	 * * You will need Apache PDFBox. To use the ZUGFeRD exporter, implement
@@ -537,6 +538,12 @@ public class ZUGFeRDExporter {
                 metadata.importXMPMetadata( baos.toByteArray() );
                 
 		return cat;
+	}
+
+	public void close() throws IOException {
+		if (doc != null) {
+			doc.close();
+		}
 	}
 
 	private static final ObjectFactory xmlFactory = new ObjectFactory();
