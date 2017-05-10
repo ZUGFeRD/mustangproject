@@ -26,10 +26,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.activation.FileDataSource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -37,30 +34,16 @@ import javax.xml.bind.Marshaller;
 import javax.xml.transform.TransformerException;
 
 
-import org.apache.xmpbox.XMPMetadata;
-import org.apache.xmpbox.schema.XMPBasicSchema;
-import org.apache.xmpbox.schema.DublinCoreSchema;
-import org.apache.xmpbox.schema.AdobePDFSchema;
-import org.apache.xmpbox.schema.PDFAIdentificationSchema;
 import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
-import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
-import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
-import org.apache.pdfbox.preflight.PreflightDocument;
-import org.apache.pdfbox.preflight.ValidationResult;
-import org.apache.pdfbox.preflight.exception.ValidationException;
-import org.apache.pdfbox.preflight.parser.PreflightParser;
-import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
-import org.apache.xmpbox.type.BadFieldValueException;
-import org.apache.xmpbox.xml.XmpSerializer;
 import org.mustangproject.ZUGFeRD.model.*;
 
 public class ZUGFeRDExporter implements Closeable {
@@ -78,15 +61,26 @@ public class ZUGFeRDExporter implements Closeable {
 	 * doc.save(PDFfilename);
 	 *
 	 * @author jstaerk
-	 * @throws javax.xml.bind.JAXBException
+	 * @deprecated Use the factory methods {@link #createFromPDFA3(String)}, {@link #createFromPDFA3(InputStream)} or
+     *             the {@link ZUGFeRDExporterFromA1Factory} instead
 	 *
 	 */
-	public ZUGFeRDExporter() throws JAXBException {
-		jaxbContext = JAXBContext
+	@Deprecated
+	public ZUGFeRDExporter() {
+		this(null);
+	}
+
+	ZUGFeRDExporter(PDDocument doc) {
+		this.doc = doc;
+		try {
+			jaxbContext = JAXBContext
 				.newInstance("org.mustangproject.ZUGFeRD.model");
-		marshaller = jaxbContext.createMarshaller();
-		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+			marshaller = jaxbContext.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+		} catch (JAXBException e) {
+			throw new ZUGFeRDExportException("Could not initialize JAXB", e);
+		}
 	}
 
 	private class LineCalc {
@@ -222,11 +216,12 @@ public class ZUGFeRDExporter implements Closeable {
 	}
 
 	// // MAIN CLASS
+	@Deprecated
 	private String conformanceLevel = "U";
-	private String versionStr = "1.4.0";
 
 	// BASIC, COMFORT etc - may be set from outside.
-	private String ZUGFeRDConformanceLevel = null;
+	@Deprecated
+	private String zugferdConformanceLevel = "EXTENDED";
 
 	/**
 	 * Data (XML invoice) to be added to the ZUGFeRD PDF. It may be externally
@@ -237,6 +232,7 @@ public class ZUGFeRDExporter implements Closeable {
 	byte[] zugferdData = null;
 	private boolean isTest;
 	IZUGFeRDExportableTransaction trans = null;
+	@Deprecated
 	private boolean ignoreA1Errors;
 	private PDDocument doc;
 	private String currency = "EUR";
@@ -315,6 +311,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 *
 	 *
 	 */
+	@Deprecated
 	public void setConformanceLevel(String newLevel) {
 		conformanceLevel = newLevel;
 	}
@@ -327,84 +324,15 @@ public class ZUGFeRDExporter implements Closeable {
 		isTest = true;
 	}
 
+	@Deprecated
 	public void ignoreA1Errors() {
 		ignoreA1Errors = true;
 	}
 
-	private boolean getA1ParserValidationResult(PreflightParser parser) {
-		ValidationResult result = null;
-
-		try {
-
-			/*
-			 * Parse the PDF file with PreflightParser that inherits from the
-			 * NonSequentialParser. Some additional controls are present to
-			 * check a set of PDF/A requirements. (Stream length consistency,
-			 * EOL after some Keyword...)
-			 */
-			parser.parse();
-
-			/*
-			 * Once the syntax validation is done, the parser can provide a
-			 * PreflightDocument (that inherits from PDDocument) This document
-			 * process the end of PDF/A validation.
-			 */
-			PreflightDocument document = parser.getPreflightDocument();
-			document.validate();
-
-			// Get validation result
-			result = document.getResult();
-			document.close();
-
-		} catch (ValidationException e) {
-			/*
-			 * the parse method can throw a SyntaxValidationException if the PDF
-			 * file can't be parsed. In this case, the exception contains an
-			 * instance of ValidationResult
-			 */
-			return false;
-		} catch (IOException e) {
-			return false;
-		}
-
-		// display validation result
-		return result.isValid();
-
-	}
-
-	public boolean isValidA1(String filename) {
-		FileDataSource fd = new FileDataSource(filename);
-		PreflightParser parser;
-		try {
-			parser = new PreflightParser(fd);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
-
-		return getA1ParserValidationResult(parser);
-	}
-
-	/***
-	 * Will return a boolean if the inputstream is valid PDF/A-1 and close the input stream
-	 * @param file
-	 * @return
-	 */
-	public boolean isValidA1(InputStream file) {
-		
-            ByteArrayDataSource fd;
-            try {
-                    fd = new ByteArrayDataSource(file);
-                    PreflightParser parser = new PreflightParser(fd);
-                    return getA1ParserValidationResult(parser);
-            } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    return false;
-            }
-        }
-
+    /**
+     * @deprecated Use the factory method {@link #createFromPDFA3(String)} instead
+     */
+	@Deprecated
 	public void loadPDFA3(String filename) {
 
 		try {
@@ -418,6 +346,14 @@ public class ZUGFeRDExporter implements Closeable {
 
 	}
 
+	public static ZUGFeRDExporter createFromPDFA3(String filename) throws IOException {
+		return new ZUGFeRDExporter(PDDocument.load(new File(filename)));
+	}
+
+    /**
+     * @deprecated Use the factory method {@link #createFromPDFA3(InputStream)} instead
+     */
+	@Deprecated
 	public void loadPDFA3(InputStream file) {
 
 		try {
@@ -430,114 +366,57 @@ public class ZUGFeRDExporter implements Closeable {
 
 	}
 
+	public static ZUGFeRDExporter createFromPDFA3(InputStream pdfSource) throws IOException {
+		return new ZUGFeRDExporter(PDDocument.load(pdfSource));
+	}
+
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on
 	 * the metadata level, this will not e.g. convert graphics to JPG-2000)
+     *
+     * @deprecated use the {@link ZUGFeRDExporterFromA1Factory} instead
 	 *
 	 */
+	@Deprecated
 	public PDDocumentCatalog PDFmakeA3compliant(String filename,
-			String producer, String creator, boolean attachZugferdHeaders)
+												String producer, String creator, boolean attachZugferdHeaders)
 			throws IOException, TransformerException {
 
-		if (!ignoreA1Errors && !isValidA1(filename)) {
-			throw new IOException("File is not a valid PDF/A-1 input file");
-		}
-		loadPDFA3(filename);
+		doc = createPDFA1Factory()
+            .setProducer(producer)
+            .setCreator(creator)
+            .setAttachZugferdHeaders(attachZugferdHeaders)
+			.loadFromPDFA1(filename)
+			.doc;
 
-		return makeDocPDFA3compliant(producer, creator, attachZugferdHeaders);
+		return doc.getDocumentCatalog();
 	}
 
+	/**
+     * @deprecated use the {@link ZUGFeRDExporterFromA1Factory} instead
+     */
+	@Deprecated
 	public PDDocumentCatalog PDFmakeA3compliant(InputStream file,
-			String producer, String creator, boolean attachZugferdHeaders)
-			throws IOException, TransformerException {
-		/* cache the file content in memory, unfortunately the next step, isValidA1,
-		 * will close the input stream but the step thereafter (loadPDFA3) needs
-		 * and open one*/
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		byte[] buf = new byte[1024];
-		int n = 0;
-		while ((n = file.read(buf)) >= 0)
-		    baos.write(buf, 0, n);
-		byte[] content = baos.toByteArray();
+			String producer, String creator, boolean attachZugferdHeaders) throws IOException, TransformerException {
 
-		InputStream is1 = new ByteArrayInputStream(content);
-		if (!ignoreA1Errors && !isValidA1(is1)) {
-			throw new IOException("File is not a valid PDF/A-1 input file");
+		doc = createPDFA1Factory()
+            .setProducer(producer)
+            .setCreator(creator)
+            .setAttachZugferdHeaders(attachZugferdHeaders)
+			.loadFromPDFA1(file)
+			.doc;
+
+		return doc.getDocumentCatalog();
+	}
+
+	private ZUGFeRDExporterFromA1Factory createPDFA1Factory() {
+		ZUGFeRDExporterFromA1Factory factory = new ZUGFeRDExporterFromA1Factory();
+		if (ignoreA1Errors) {
+			factory.ignoreA1Errors();
 		}
-		InputStream is2 = new ByteArrayInputStream(content);
-		loadPDFA3(is2);
-
-		return makeDocPDFA3compliant(producer, creator, attachZugferdHeaders);
-	}	
-	private PDDocumentCatalog makeDocPDFA3compliant(String producer,
-			String creator, boolean attachZugferdHeaders) throws IOException,
-			TransformerException {
-		String fullProducer = producer + " (via mustangproject.org "
-				+ versionStr + ")";
-
-		PDDocumentCatalog cat = doc.getDocumentCatalog();
-		PDMetadata metadata = new PDMetadata(doc);
-		cat.setMetadata(metadata);
-		XMPMetadata xmp = XMPMetadata.createXMPMetadata();
-
-                
-		PDFAIdentificationSchema pdfaid = new PDFAIdentificationSchema(xmp);
-                
-		xmp.addSchema(pdfaid);
-
-		DublinCoreSchema dc = xmp.createAndAddDublinCoreSchema();
-                
-		dc.addCreator(creator);
-                
-		XMPBasicSchema xsb = xmp.createAndAddXMPBasicSchema();
-                
-		xsb.setCreatorTool(creator);
-		xsb.setCreateDate(GregorianCalendar.getInstance());
-		// PDDocumentInformation pdi=doc.getDocumentInformation();
-		PDDocumentInformation pdi = new PDDocumentInformation();
-		pdi.setProducer(fullProducer);
-		pdi.setAuthor(creator);
-		doc.setDocumentInformation(pdi);
-
-		AdobePDFSchema pdf = xmp.createAndAddAdobePDFSchema();
-		pdf.setProducer(fullProducer);
-
-                /*
-                * // Mandatory: PDF/A3-a is tagged PDF which has to be expressed using
-                * a // MarkInfo dictionary (PDF A/3 Standard sec. 6.7.2.2) PDMarkInfo
-                * markinfo = new PDMarkInfo(); markinfo.setMarked(true);
-                * doc.getDocumentCatalog().setMarkInfo(markinfo);
-                */
-                /*
-                *
-                * To be on the safe side, we use level B without Markinfo because we
-                * can not guarantee that the user correctly tagged the templates for
-                * the PDF.
-                */
-                try {
-                    pdfaid.setConformance(conformanceLevel);//$NON-NLS-1$ //$NON-NLS-1$
-                } catch (BadFieldValueException ex) {
-                    Logger.getLogger(ZUGFeRDExporter.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-		pdfaid.setPart(3);
-
-		if (attachZugferdHeaders) {
-			addZugferdXMP(xmp); /*
-								 * this is the only line where we do something
-								 * Zugferd-specific, i.e. add PDF metadata
-								 * specifically for Zugferd, not generically for
-								 * a embedded file
-								 */
-
-		}
-
-                XmpSerializer serializer = new XmpSerializer();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                serializer.serialize(xmp, baos, false);
-                metadata.importXMPMetadata( baos.toByteArray() );
-                
-		return cat;
+		return factory
+			.setZugferdConformanceLevel(ZUGFeRDConformanceLevel.valueOf(zugferdConformanceLevel))
+			.setConformanceLevel(PDFAConformanceLevel.valueOf(conformanceLevel));
 	}
 
 	public void close() throws IOException {
@@ -554,8 +433,15 @@ public class ZUGFeRDExporter implements Closeable {
 
 	private Totals totals;
 
-	private String getZugferdXMLForTransaction(
-			IZUGFeRDExportableTransaction trans) throws JAXBException {
+	private String createZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans) {
+		try {
+			return tryCreateZugferdXMLForTransaction(trans);
+		} catch (JAXBException e) {
+			throw new ZUGFeRDExportException("Could not serialize transaction to XML", e);
+		}
+	}
+
+	private String tryCreateZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans) throws JAXBException {
 		this.trans = trans;
 		this.totals = new Totals();
 		currency = trans.getCurrency();
@@ -1388,7 +1274,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 *            <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
 	 */
 	public void PDFattachZugferdFile(IZUGFeRDExportableTransaction trans)
-			throws IOException, JAXBException {
+			throws IOException {
 
             if (zugferdData == null) // XML ZUGFeRD data not set externally, needs
                                                                     // to be built
@@ -1396,7 +1282,7 @@ public class ZUGFeRDExporter implements Closeable {
                     // create a dummy file stream, this would probably normally be a
                     // FileInputStream
 
-                    byte[] zugferdRaw = getZugferdXMLForTransaction(trans).getBytes(); //$NON-NLS-1$
+                    byte[] zugferdRaw = createZugferdXMLForTransaction(trans).getBytes(); //$NON-NLS-1$
 
                     if ((zugferdRaw[0] == (byte) 0xEF)
                                     && (zugferdRaw[1] == (byte) 0xBB)
@@ -1526,29 +1412,12 @@ public class ZUGFeRDExporter implements Closeable {
 	 * @param ZUGFeRDConformanceLevel
 	 *            the new conformance level
 	 */
+	@Deprecated
 	public void setZUGFeRDConformanceLevel(String ZUGFeRDConformanceLevel) {
-		this.ZUGFeRDConformanceLevel = ZUGFeRDConformanceLevel;
+		this.zugferdConformanceLevel = ZUGFeRDConformanceLevel;
 	}
 
-	/**
-	 * * This will add both the RDF-indication which embedded file is Zugferd
-	 * and the neccessary PDF/A schema extension description to be able to add
-	 * this information to RDF
-	 *
-	 * @param metadata
-	 */
-	private void addZugferdXMP(XMPMetadata metadata) {
 
-		XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata,
-				this.ZUGFeRDConformanceLevel);
-
-		metadata.addSchema(zf);
-
-		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(metadata);
-                
-		metadata.addSchema(pdfaex);
-
-	}
 
 	/****
 	 * Returns the PDFBox PDF Document
