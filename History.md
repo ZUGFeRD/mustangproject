@@ -1,3 +1,10 @@
+1.4.0
+=====
+2017-05-11
+Switched to ZUGFeRD extended, new all-in-one jar including dependencies, 
+switch to Apache PDFBox 2.0. Some bugfixes. 
+Thanks to AlexanderSchmidt and yankee42. 
+
 1.3.1
 =====
 2016-06-01

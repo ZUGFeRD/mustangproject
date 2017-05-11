@@ -147,22 +147,22 @@ public class MustangWriter implements IZUGFeRDExportableTransaction {
 
 	@Override
 	public Date getDeliveryDate() {
-		return new GregorianCalendar(2015, Calendar.OCTOBER, 7).getTime();
+		return new GregorianCalendar(2017, Calendar.MAY, 7).getTime();
 	}
 
 	@Override
 	public Date getDueDate() {
-		return new GregorianCalendar(2015, Calendar.OCTOBER, 29).getTime();
+		return new GregorianCalendar(2017, Calendar.MAY, 30).getTime();
 	}
 
 	@Override
 	public Date getIssueDate() {
-		return new GregorianCalendar(2015, Calendar.OCTOBER, 8).getTime();
+		return new GregorianCalendar(2017, Calendar.MAY, 9).getTime();
 	}
 
 	@Override
 	public String getNumber() {
-		return "RE-20151008/504";
+		return "RE-20170509/505";
 	}
 
 	@Override
@@ -245,7 +245,7 @@ public class MustangWriter implements IZUGFeRDExportableTransaction {
 		try {
 			System.out.println("Reading blank PDF");
 			doc = PDDocument
-					.load("/Users/jstaerk/workspace/zugferd/MustangGnuaccountingBeispielRE-20151008_504blanko.pdf");
+					.load("/Users/jstaerk/workspace/zugferd/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 			ZUGFeRDExporter ze = new ZUGFeRDExporter();
 			System.out.println("Converting to PDF/A-3u");
 			ze.PDFmakeA3compliant(doc, "Mustangproject",
@@ -255,7 +255,7 @@ public class MustangWriter implements IZUGFeRDExportableTransaction {
 			ze.PDFattachZugferdFile(doc, this);
 			System.out.println("Writing ZUGFeRD-PDF");
 
-			doc.save("/Users/jstaerk/workspace/zugferd/MustangGnuaccountingBeispielRE-20151008_504.pdf");
+			doc.save("/Users/jstaerk/workspace/zugferd/MustangGnuaccountingBeispielRE-20170509_505.pdf");
 			System.out.println("Done.");
 		} catch (IOException e) {
 			e.printStackTrace();
