@@ -25,25 +25,25 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
   @Override
   public Date getDeliveryDate()
   {
-    return new GregorianCalendar(2014, Calendar.JULY, 3).getTime();
+    return new GregorianCalendar(2017, Calendar.MAY, 7).getTime();
   }
 
   @Override
   public Date getDueDate()
   {
-    return new GregorianCalendar(2014, Calendar.JULY, 24).getTime();
+    return new GregorianCalendar(2017, Calendar.MAY, 30).getTime();
   }
 
   @Override
   public Date getIssueDate()
   {
-    return new GregorianCalendar(2014, Calendar.JULY, 3).getTime();
+    return new GregorianCalendar(2017, Calendar.MAY, 9).getTime();
   }
 
   @Override
   public String getNumber()
   {
-    return "RE-20151008/504";
+    return "RE-20170509/505";
   }
 
   @Override
@@ -129,7 +129,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
   {
     Item[] allItems = new Item[3];
     Product designProduct = new Product("", "Künstlerische Gestaltung (Stunde)", "HUR", new BigDecimal("7.000000"));
-    Product balloonProduct = new Product("", "Luftballon", "C62", new BigDecimal("19.000000"));
+    Product balloonProduct = new Product("", "Luftballon: Bunt, ca. 500ml", "C62", new BigDecimal("19.000000"));
     Product airProduct = new Product("", "Heiße Luft pro Liter", "LTR", new BigDecimal("19.000000"));
 
     allItems[0] = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
@@ -324,9 +324,9 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
       return VATPercent;
     }
 
-    public void setVATPercent(BigDecimal vATPercent)
+    public void setVATPercent(BigDecimal VATPercent)
     {
-      VATPercent = vATPercent;
+      VATPercent = VATPercent;
     }
 
   }
@@ -363,7 +363,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
   public void testAImport() throws IOException
   {
     ZUGFeRDImporter zi = new ZUGFeRDImporter();
-    InputStream inputStream = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20151008_504.pdf");
+    InputStream inputStream = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
     zi.extractLowLevel(inputStream);
     // Reading ZUGFeRD
 
@@ -400,8 +400,8 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
    */
   public void testZExport()
   {
-    final InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20151008_504blanko.pdf");
-    final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20151008_504new.pdf";
+    final InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
+    final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505new.pdf";
 
     // the writing part
     try

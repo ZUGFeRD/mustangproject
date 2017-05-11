@@ -24,25 +24,25 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   @Override
   public Date getDeliveryDate()
   {
-    return new GregorianCalendar(2014, Calendar.JULY, 3).getTime();
+    return new GregorianCalendar(2017, Calendar.MAY, 7).getTime();
   }
 
   @Override
   public Date getDueDate()
   {
-    return new GregorianCalendar(2014, Calendar.JULY, 24).getTime();
+    return new GregorianCalendar(2017, Calendar.MAY, 30).getTime();
   }
 
   @Override
   public Date getIssueDate()
   {
-    return new GregorianCalendar(2014, Calendar.JULY, 3).getTime();
+    return new GregorianCalendar(2017, Calendar.MAY, 9).getTime();
   }
 
   @Override
   public String getNumber()
   {
-    return "RE-20151008/504";
+    return "RE-20170509/505";
   }
 
   @Override
@@ -128,9 +128,9 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   public IZUGFeRDExportableItem[] getZFItems()
   {
     Item[] allItems = new Item[3];
-    Product designProduct = new Product("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR", new BigDecimal("7.000000"));
+    Product designProduct = new Product("", "KÃ¼nstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR", new BigDecimal("7.000000"));
     Product balloonProduct = new Product("", "Luftballon: Bunt, ca. 500ml", "C62", new BigDecimal("19.000000"));
-    Product airProduct = new Product("", "Heiße Luft pro Liter", "LTR", new BigDecimal("19.000000"));
+    Product airProduct = new Product("", "HeiÃŸe Luft pro Liter", "LTR", new BigDecimal("19.000000"));
 
     allItems[0] = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
     allItems[1] = new Item(new BigDecimal("0.79"), new BigDecimal("400"), balloonProduct);
@@ -140,7 +140,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
     @Override
     public String getOwnPaymentInfoText() {
-        return "Überweisung";
+        return "Ãœberweisung";
     }
 
     @Override
@@ -360,7 +360,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   public void testAImport() throws IOException
   {
     ZUGFeRDImporter zi = new ZUGFeRDImporter();
-    zi.extractLowLevel(this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20151008_504.pdf"));
+    zi.extractLowLevel(this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf"));
     // Reading ZUGFeRD
 
     String amount = null;
@@ -386,7 +386,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     assertEquals(iban, getOwnIBAN());
     assertEquals(holder, getOwnOrganisationName());
 
-    assertEquals(dueDate, "20141029");
+    assertEquals(dueDate, "20170530");
     assertEquals(ref, getNumber());
 
   }
@@ -401,8 +401,8 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   public void testZExport()
   {
 
-    final InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20151008_504blanko.pdf");
-    final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20151008_504newEdge.pdf";
+    final InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
+    final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505newEdge.pdf";
     // the writing part
 
     try
