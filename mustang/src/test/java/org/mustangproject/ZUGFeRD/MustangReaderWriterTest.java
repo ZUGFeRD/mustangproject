@@ -128,7 +128,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
   public IZUGFeRDExportableItem[] getZFItems()
   {
     Item[] allItems = new Item[3];
-    Product designProduct = new Product("", "Künstlerische Gestaltung (Stunde)", "HUR", new BigDecimal("7.000000"));
+    Product designProduct = new Product("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR", new BigDecimal("7.000000"));
     Product balloonProduct = new Product("", "Luftballon: Bunt, ca. 500ml", "C62", new BigDecimal("19.000000"));
     Product airProduct = new Product("", "Heiße Luft pro Liter", "LTR", new BigDecimal("19.000000"));
 
@@ -353,7 +353,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
   // //////// TESTS //////////////////////////////////////////////////////////////////////////////////////////
 
   /**
-   * The importer test imports from ./src/test/MustangGnuaccountingBeispielRE-20151008_504.pdf to check the values.
+   * The importer test imports from ./src/test/MustangGnuaccountingBeispielRE-20170509_505.pdf to check the values.
    * --> as only Name Ascending is supported for Test Unit sequence, I renamed the this test-A-Export to run before
    * testZExport
    *
