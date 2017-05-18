@@ -78,15 +78,19 @@ public class ZUGFeRDExporter implements Closeable {
 	 * doc.save(PDFfilename);
 	 *
 	 * @author jstaerk
-	 * @throws javax.xml.bind.JAXBException
+	 * @throws ZUGFeRDExportException if the exporter could not be initialized
 	 *
 	 */
-	public ZUGFeRDExporter() throws JAXBException {
-		jaxbContext = JAXBContext
-				.newInstance("org.mustangproject.ZUGFeRD.model");
-		marshaller = jaxbContext.createMarshaller();
-		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-		marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+	public ZUGFeRDExporter() {
+		try {
+			jaxbContext = JAXBContext
+					.newInstance("org.mustangproject.ZUGFeRD.model");
+			marshaller = jaxbContext.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+        } catch (JAXBException e) {
+            throw new ZUGFeRDExportException("Could not initialize JAXB", e);
+        }
 	}
 
 	private class LineCalc {
@@ -554,8 +558,7 @@ public class ZUGFeRDExporter implements Closeable {
 
 	private Totals totals;
 
-	private String getZugferdXMLForTransaction(
-			IZUGFeRDExportableTransaction trans) throws JAXBException {
+	private String createZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans) {
 		this.trans = trans;
 		this.totals = new Totals();
 		currency = trans.getCurrency();
@@ -571,9 +574,16 @@ public class ZUGFeRDExporter implements Closeable {
 		JAXBElement<CrossIndustryDocumentType> jaxElement = xmlFactory
 				.createCrossIndustryDocument(invoice);
 
+		try {
+			return marshalJaxToXMLString(jaxElement);
+		} catch (JAXBException e) {
+			throw new ZUGFeRDExportException("Could not marshal ZUGFeRD transaction to XML", e);
+		}
+	}
+
+	private String marshalJaxToXMLString(Object jaxElement) throws JAXBException {
 		ByteArrayOutputStream outputXml = new ByteArrayOutputStream();
 		marshaller.marshal(jaxElement, outputXml);
-
 		return outputXml.toString();
 	}
 
@@ -1388,7 +1398,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 *            <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
 	 */
 	public void PDFattachZugferdFile(IZUGFeRDExportableTransaction trans)
-			throws IOException, JAXBException {
+			throws IOException {
 
             if (zugferdData == null) // XML ZUGFeRD data not set externally, needs
                                                                     // to be built
@@ -1396,7 +1406,7 @@ public class ZUGFeRDExporter implements Closeable {
                     // create a dummy file stream, this would probably normally be a
                     // FileInputStream
 
-                    byte[] zugferdRaw = getZugferdXMLForTransaction(trans).getBytes(); //$NON-NLS-1$
+                    byte[] zugferdRaw = createZugferdXMLForTransaction(trans).getBytes(); //$NON-NLS-1$
 
                     if ((zugferdRaw[0] == (byte) 0xEF)
                                     && (zugferdRaw[1] == (byte) 0xBB)
