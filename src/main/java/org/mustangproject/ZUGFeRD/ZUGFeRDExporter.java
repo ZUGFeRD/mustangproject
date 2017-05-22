@@ -26,8 +26,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.activation.FileDataSource;
 import javax.xml.bind.JAXBContext;
@@ -226,11 +224,11 @@ public class ZUGFeRDExporter implements Closeable {
 	}
 
 	// // MAIN CLASS
-	private String conformanceLevel = "U";
+	private PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
 	private String versionStr = "1.4.0";
 
 	// BASIC, COMFORT etc - may be set from outside.
-	private String ZUGFeRDConformanceLevel = null;
+	private ZUGFeRDConformanceLevel zUGFeRDConformanceLevel = ZUGFeRDConformanceLevel.EXTENDED;
 
 	/**
 	 * Data (XML invoice) to be added to the ZUGFeRD PDF. It may be externally
@@ -308,7 +306,7 @@ public class ZUGFeRDExporter implements Closeable {
 	/**
 	 * All files are PDF/A-3, setConformance refers to the level conformance.
 	 *
-	 * PDF/A-3 has three coformance levels, called "A", "U" and "B".
+	 * PDF/A-3 has three conformance levels, called "A", "U" and "B".
 	 *
 	 * PDF/A-3-B where B means only visually preservable, U -standard for
 	 * Mustang- means visually and unicode preservable and A means full
@@ -319,8 +317,30 @@ public class ZUGFeRDExporter implements Closeable {
 	 *
 	 *
 	 */
-	public void setConformanceLevel(String newLevel) {
+	public void setConformanceLevel(PDFAConformanceLevel newLevel) {
+		if (newLevel == null) {
+			throw new NullPointerException("pdf conformance level");
+		}
 		conformanceLevel = newLevel;
+	}
+
+	/**
+	 * All files are PDF/A-3, setConformance refers to the level conformance.
+	 *
+	 * PDF/A-3 has three conformance levels, called "A", "U" and "B".
+	 *
+	 * PDF/A-3-B where B means only visually preservable, U -standard for
+	 * Mustang- means visually and unicode preservable and A means full
+	 * compliance, i.e. visually, unicode and structurally preservable and
+	 * tagged PDF, i.e. useful metainformation for blind people.
+	 *
+	 * Feel free to pass "A" as new level if you know what you are doing :-)
+	 *
+	 * @deprecated Use {@link #setConformanceLevel(org.mustangproject.ZUGFeRD.PDFAConformanceLevel)} instead
+	 */
+	@Deprecated
+	public void setConformanceLevel(String newLevel) {
+		conformanceLevel = PDFAConformanceLevel.findByLetter(newLevel);
 	}
 
 	/**
@@ -506,23 +526,25 @@ public class ZUGFeRDExporter implements Closeable {
 		AdobePDFSchema pdf = xmp.createAndAddAdobePDFSchema();
 		pdf.setProducer(fullProducer);
 
-                /*
-                * // Mandatory: PDF/A3-a is tagged PDF which has to be expressed using
-                * a // MarkInfo dictionary (PDF A/3 Standard sec. 6.7.2.2) PDMarkInfo
-                * markinfo = new PDMarkInfo(); markinfo.setMarked(true);
-                * doc.getDocumentCatalog().setMarkInfo(markinfo);
-                */
-                /*
-                *
-                * To be on the safe side, we use level B without Markinfo because we
-                * can not guarantee that the user correctly tagged the templates for
-                * the PDF.
-                */
-                try {
-                    pdfaid.setConformance(conformanceLevel);//$NON-NLS-1$ //$NON-NLS-1$
-                } catch (BadFieldValueException ex) {
-                    Logger.getLogger(ZUGFeRDExporter.class.getName()).log(Level.SEVERE, null, ex);
-                }
+		/*
+		* // Mandatory: PDF/A3-a is tagged PDF which has to be expressed using
+		* a // MarkInfo dictionary (PDF A/3 Standard sec. 6.7.2.2) PDMarkInfo
+		* markinfo = new PDMarkInfo(); markinfo.setMarked(true);
+		* doc.getDocumentCatalog().setMarkInfo(markinfo);
+		*/
+		/*
+		*
+		* To be on the safe side, we use level B without Markinfo because we
+		* can not guarantee that the user correctly tagged the templates for
+		* the PDF.
+		*/
+		try {
+			pdfaid.setConformance(conformanceLevel.getLetter());//$NON-NLS-1$ //$NON-NLS-1$
+		} catch (BadFieldValueException ex) {
+			// This should be impossible, because it would occur only if an illegal conformance level is
+			// supplied, however the enum enforces that the conformance level is valid.
+			throw new Error(ex);
+		}
 
 		pdfaid.setPart(3);
 
@@ -1533,11 +1555,27 @@ public class ZUGFeRDExporter implements Closeable {
 	/**
 	 * Sets the ZUGFeRD conformance level (override).
 	 *
-	 * @param ZUGFeRDConformanceLevel
+	 * @param zUGFeRDConformanceLevel
 	 *            the new conformance level
 	 */
-	public void setZUGFeRDConformanceLevel(String ZUGFeRDConformanceLevel) {
-		this.ZUGFeRDConformanceLevel = ZUGFeRDConformanceLevel;
+	public void setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel zUGFeRDConformanceLevel) {
+		if (zUGFeRDConformanceLevel == null) {
+			throw new NullPointerException("ZUGFeRD conformance level");
+		}
+		this.zUGFeRDConformanceLevel = zUGFeRDConformanceLevel;
+	}
+
+	/**
+	 * Sets the ZUGFeRD conformance level (override).
+	 *
+	 * @param zUGFeRDConformanceLevel
+	 *            the new conformance level
+	 *           
+	 * @deprecated Use {@link #setConformanceLevel(PDFAConformanceLevel)} instead
+	 */
+	@Deprecated
+	public void setZUGFeRDConformanceLevel(String zUGFeRDConformanceLevel) {
+		this.zUGFeRDConformanceLevel = ZUGFeRDConformanceLevel.valueOf(zUGFeRDConformanceLevel);
 	}
 
 	/**
@@ -1550,7 +1588,7 @@ public class ZUGFeRDExporter implements Closeable {
 	private void addZugferdXMP(XMPMetadata metadata) {
 
 		XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata,
-				this.ZUGFeRDConformanceLevel);
+				this.zUGFeRDConformanceLevel);
 
 		metadata.addSchema(zf);
 
