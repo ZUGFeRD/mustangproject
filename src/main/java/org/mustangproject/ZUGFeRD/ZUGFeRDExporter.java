@@ -396,19 +396,6 @@ public class ZUGFeRDExporter implements Closeable {
 
 	}
 
-	public boolean isValidA1(String filename) {
-		FileDataSource fd = new FileDataSource(filename);
-		PreflightParser parser;
-		try {
-			parser = new PreflightParser(fd);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
-		}
-
-		return getA1ParserValidationResult(parser);
-	}
 
 	/***
 	 * Will return a boolean if the inputstream is valid PDF/A-1 and close the input stream
