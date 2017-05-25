@@ -225,7 +225,7 @@ public class ZUGFeRDExporter implements Closeable {
 
 	// // MAIN CLASS
 	private PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
-	private String versionStr = "1.4.0";
+	private String versionStr = "1.4.1";
 
 	// BASIC, COMFORT etc - may be set from outside.
 	private ZUGFeRDConformanceLevel zUGFeRDConformanceLevel = ZUGFeRDConformanceLevel.EXTENDED;
@@ -355,7 +355,7 @@ public class ZUGFeRDExporter implements Closeable {
 		ignoreA1Errors = true;
 	}
 
-	private boolean getA1ParserValidationResult(PreflightParser parser) {
+	private boolean getA1ParserValidationResult(PreflightParser parser) throws IOException {
 		ValidationResult result = null;
 
 		try {
@@ -387,10 +387,7 @@ public class ZUGFeRDExporter implements Closeable {
 			 * instance of ValidationResult
 			 */
 			return false;
-		} catch (IOException e) {
-			return false;
 		}
-
 		// display validation result
 		return result.isValid();
 
@@ -402,43 +399,16 @@ public class ZUGFeRDExporter implements Closeable {
 	 * @param file
 	 * @return boolean
 	 */
-	public boolean isValidA1(InputStream file) {
-		
-            ByteArrayDataSource fd;
-            try {
-                    fd = new ByteArrayDataSource(file);
-                    PreflightParser parser = new PreflightParser(fd);
-                    return getA1ParserValidationResult(parser);
-            } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    return false;
-            }
-        }
-
-	public void loadPDFA3(String filename) {
-
-		try {
-                    
-                    doc = PDDocument.load(new File(filename));
-
-		} catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-		}
-
+	public boolean isValidA1(InputStream file) throws IOException {
+		return getA1ParserValidationResult(new PreflightParser(new ByteArrayDataSource(file)));
 	}
 
-	public void loadPDFA3(InputStream file) {
+	public void loadPDFA3(String filename) throws IOException {
+		doc = PDDocument.load(new File(filename));
+	}
 
-		try {
+	public void loadPDFA3(InputStream file) throws IOException {
 			doc = PDDocument.load(file);
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
 	}
 
 	/**
@@ -1437,12 +1407,8 @@ public class ZUGFeRDExporter implements Closeable {
                             "text/xml", zugferdData);
 	}
 
-	public void export(String ZUGFeRDfilename) {
-            try {
-                doc.save(ZUGFeRDfilename);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+	public void export(String ZUGFeRDfilename) throws IOException {
+		doc.save(ZUGFeRDfilename);
 	}
 
 	/**
