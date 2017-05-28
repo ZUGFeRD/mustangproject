@@ -178,7 +178,7 @@ public class ZUGFeRDExporterFromA1Factory {
      */
     private void addZugferdXMP(XMPMetadata metadata) {
 
-        XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, zugferdConformanceLevel.name());
+        XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, zugferdConformanceLevel);
 
         metadata.addSchema(zf);
 

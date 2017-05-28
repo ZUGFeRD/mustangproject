@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -63,6 +64,19 @@ import org.mustangproject.ZUGFeRD.model.*;
 
 public class ZUGFeRDExporter implements Closeable {
 
+	
+	private void init() {
+		try {
+			jaxbContext = JAXBContext
+					.newInstance("org.mustangproject.ZUGFeRD.model");
+			marshaller = jaxbContext.createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+        } catch (JAXBException e) {
+            throw new ZUGFeRDExportException("Could not initialize JAXB", e);
+        }
+	
+	}
 	/**
 	 * * You will need Apache PDFBox. To use the ZUGFeRD exporter, implement
 	 * IZUGFeRDExportableTransaction in yourTransaction (which will require you
@@ -80,15 +94,13 @@ public class ZUGFeRDExporter implements Closeable {
 	 *
 	 */
 	public ZUGFeRDExporter() {
-		try {
-			jaxbContext = JAXBContext
-					.newInstance("org.mustangproject.ZUGFeRD.model");
-			marshaller = jaxbContext.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-        } catch (JAXBException e) {
-            throw new ZUGFeRDExportException("Could not initialize JAXB", e);
-        }
+		init();
+	}
+
+	public ZUGFeRDExporter(PDDocument doc2) {
+		init();
+		doc=doc2;
+		
 	}
 
 	private class LineCalc {
@@ -419,8 +431,8 @@ public class ZUGFeRDExporter implements Closeable {
 	public PDDocumentCatalog PDFmakeA3compliant(String filename,
 			String producer, String creator, boolean attachZugferdHeaders)
 			throws IOException, TransformerException {
-
-		if (!ignoreA1Errors && !isValidA1(filename)) {
+		
+		if (!ignoreA1Errors && !isValidA1(new FileInputStream(filename))) {
 			throw new IOException("File is not a valid PDF/A-1 input file");
 		}
 		loadPDFA3(filename);
@@ -530,8 +542,8 @@ public class ZUGFeRDExporter implements Closeable {
 	}
 
 	private static final ObjectFactory xmlFactory = new ObjectFactory();
-	private final JAXBContext jaxbContext;
-	private final Marshaller marshaller;
+	private JAXBContext jaxbContext;
+	private Marshaller marshaller;
 	private static final SimpleDateFormat zugferdDateFormat = new SimpleDateFormat(
 			"yyyyMMdd"); //$NON-NLS-1$
 
