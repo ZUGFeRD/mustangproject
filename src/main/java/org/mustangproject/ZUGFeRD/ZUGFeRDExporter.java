@@ -237,7 +237,6 @@ public class ZUGFeRDExporter implements Closeable {
 
 	// // MAIN CLASS
 	private PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
-	private String versionStr = "1.4.1";
 
 	// BASIC, COMFORT etc - may be set from outside.
 	private ZUGFeRDConformanceLevel zUGFeRDConformanceLevel = ZUGFeRDConformanceLevel.EXTENDED;
@@ -466,7 +465,7 @@ public class ZUGFeRDExporter implements Closeable {
 			String creator, boolean attachZugferdHeaders) throws IOException,
 			TransformerException {
 		String fullProducer = producer + " (via mustangproject.org "
-				+ versionStr + ")";
+				+ Version.VERSION + ")";
 
 		PDDocumentCatalog cat = doc.getDocumentCatalog();
 		PDMetadata metadata = new PDMetadata(doc);
