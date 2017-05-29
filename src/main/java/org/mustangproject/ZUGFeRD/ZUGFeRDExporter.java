@@ -1380,8 +1380,6 @@ public class ZUGFeRDExporter implements Closeable {
 	/**
 	 * Embeds the Zugferd XML structure in a file named ZUGFeRD-invoice.xml.
 	 *
-	 * @param doc
-	 *            PDDocument to attach an XML invoice to
 	 * @param trans
 	 *            a IZUGFeRDExportableTransaction that provides the data-model
 	 *            to populate the XML. This parameter may be null, if so the XML
