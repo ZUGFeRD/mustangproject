@@ -16,7 +16,6 @@ import org.apache.xmpbox.schema.PDFAIdentificationSchema;
 import org.apache.xmpbox.schema.XMPBasicSchema;
 import org.apache.xmpbox.type.BadFieldValueException;
 import org.apache.xmpbox.xml.XmpSerializer;
-import org.mustangproject.ZUGFeRD.model.PDFAConformanceLevel;
 
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -31,7 +30,7 @@ import java.util.GregorianCalendar;
 public class ZUGFeRDExporterFromA1Factory {
     private boolean ignoreA1Errors = false;
     private ZUGFeRDConformanceLevel zugferdConformanceLevel = ZUGFeRDConformanceLevel.EXTENDED;
-    private PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.U;
+    private PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
     private String producer = "mustangproject";
     private String creator = "mustangproject";
     private boolean attachZugferdHeaders = true;
