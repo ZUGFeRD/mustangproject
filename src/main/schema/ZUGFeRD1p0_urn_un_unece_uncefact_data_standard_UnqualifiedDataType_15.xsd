@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15"
+    elementFormDefault="qualified"
+    version="15.0">
+  <xs:complexType name="AmountType">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal">
+        <xs:attribute name="currencyID" type="udt:AmountTypeCurrencyIDContentType"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="AmountTypeCurrencyIDContentType">
+    <xs:restriction base="xs:token"/>
+  </xs:simpleType>
+  <xs:complexType name="CodeType">
+    <xs:simpleContent>
+      <xs:extension base="xs:token">
+        <xs:attribute name="listID" type="xs:token"/>
+        <xs:attribute name="listVersionID" type="xs:token"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="DateTimeType">
+    <xs:choice>
+      <xs:element name="DateTimeString">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:string">
+              <xs:attribute name="format" type="xs:string"/>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="IDType">
+    <xs:simpleContent>
+      <xs:extension base="xs:token">
+        <xs:attribute name="schemeID" type="xs:token"/>
+        <xs:attribute name="schemeAgencyID" type="udt:IDTypeSchemeAgencyIDContentType"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="IDTypeSchemeAgencyIDContentType">
+    <xs:restriction base="xs:token"/>
+  </xs:simpleType>
+  <xs:complexType name="IndicatorType">
+    <xs:choice>
+      <xs:element name="Indicator" type="xs:boolean"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="MeasureType">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal">
+        <xs:attribute name="unitCode" type="udt:MeasureTypeUnitCodeContentType"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="MeasureTypeUnitCodeContentType">
+    <xs:restriction base="xs:token">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="3"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="NumericType">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal"/>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="PercentType">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal"/>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="QuantityType">
+    <xs:simpleContent>
+      <xs:extension base="xs:decimal">
+        <xs:attribute name="unitCode" type="udt:QuantityTypeUnitCodeContentType"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="QuantityTypeUnitCodeContentType">
+    <xs:restriction base="xs:token">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="3"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="TextType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string"/>
+    </xs:simpleContent>
+  </xs:complexType>
+</xs:schema>
