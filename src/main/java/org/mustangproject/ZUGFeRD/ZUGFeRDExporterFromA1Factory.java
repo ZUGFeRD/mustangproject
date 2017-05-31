@@ -29,8 +29,6 @@ import java.io.InputStream;
 import java.util.GregorianCalendar;
 
 public class ZUGFeRDExporterFromA1Factory {
-    private static final String VERSION_STR = "1.4.0";
-
     private boolean ignoreA1Errors = false;
     private ZUGFeRDConformanceLevel zugferdConformanceLevel = ZUGFeRDConformanceLevel.EXTENDED;
     private PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.U;
@@ -89,7 +87,7 @@ public class ZUGFeRDExporterFromA1Factory {
     }
 
     private void makePDFA3compliant(PDDocument doc) throws IOException {
-        String fullProducer = producer + " (via mustangproject.org " + VERSION_STR + ")";
+        String fullProducer = producer + " (via mustangproject.org " + Version.VERSION + ")";
 
         PDDocumentCatalog cat = doc.getDocumentCatalog();
         PDMetadata metadata = new PDMetadata(doc);
