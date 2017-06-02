@@ -28,19 +28,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.FileDataSource;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.transform.TransformerException;
 
-
-import org.apache.xmpbox.XMPMetadata;
-import org.apache.xmpbox.schema.XMPBasicSchema;
-import org.apache.xmpbox.schema.DublinCoreSchema;
-import org.apache.xmpbox.schema.AdobePDFSchema;
-import org.apache.xmpbox.schema.PDFAIdentificationSchema;
 import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSDictionary;
@@ -58,13 +51,57 @@ import org.apache.pdfbox.preflight.ValidationResult;
 import org.apache.pdfbox.preflight.exception.ValidationException;
 import org.apache.pdfbox.preflight.parser.PreflightParser;
 import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
+import org.apache.pdfbox.util.Version;
+import org.apache.xmpbox.XMPMetadata;
+import org.apache.xmpbox.schema.AdobePDFSchema;
+import org.apache.xmpbox.schema.DublinCoreSchema;
+import org.apache.xmpbox.schema.PDFAIdentificationSchema;
+import org.apache.xmpbox.schema.XMPBasicSchema;
 import org.apache.xmpbox.type.BadFieldValueException;
 import org.apache.xmpbox.xml.XmpSerializer;
-import org.mustangproject.ZUGFeRD.model.*;
+import org.mustangproject.ZUGFeRD.model.AmountType;
+import org.mustangproject.ZUGFeRD.model.CodeType;
+import org.mustangproject.ZUGFeRD.model.CountryIDType;
+import org.mustangproject.ZUGFeRD.model.CreditorFinancialAccountType;
+import org.mustangproject.ZUGFeRD.model.CreditorFinancialInstitutionType;
+import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
+import org.mustangproject.ZUGFeRD.model.DateTimeType;
+import org.mustangproject.ZUGFeRD.model.DocumentCodeType;
+import org.mustangproject.ZUGFeRD.model.DocumentContextParameterType;
+import org.mustangproject.ZUGFeRD.model.DocumentLineDocumentType;
+import org.mustangproject.ZUGFeRD.model.ExchangedDocumentContextType;
+import org.mustangproject.ZUGFeRD.model.ExchangedDocumentType;
+import org.mustangproject.ZUGFeRD.model.IDType;
+import org.mustangproject.ZUGFeRD.model.IndicatorType;
+import org.mustangproject.ZUGFeRD.model.LogisticsServiceChargeType;
+import org.mustangproject.ZUGFeRD.model.NoteType;
+import org.mustangproject.ZUGFeRD.model.ObjectFactory;
+import org.mustangproject.ZUGFeRD.model.PaymentMeansCodeType;
+import org.mustangproject.ZUGFeRD.model.PercentType;
+import org.mustangproject.ZUGFeRD.model.QuantityType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainEventType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeAgreementType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeDeliveryType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeLineItemType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeSettlementType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeTransactionType;
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeType;
+import org.mustangproject.ZUGFeRD.model.TaxRegistrationType;
+import org.mustangproject.ZUGFeRD.model.TaxTypeCodeType;
+import org.mustangproject.ZUGFeRD.model.TextType;
+import org.mustangproject.ZUGFeRD.model.TradeAddressType;
+import org.mustangproject.ZUGFeRD.model.TradeAllowanceChargeType;
+import org.mustangproject.ZUGFeRD.model.TradePartyType;
+import org.mustangproject.ZUGFeRD.model.TradePaymentTermsType;
+import org.mustangproject.ZUGFeRD.model.TradePriceType;
+import org.mustangproject.ZUGFeRD.model.TradeProductType;
+import org.mustangproject.ZUGFeRD.model.TradeSettlementMonetarySummationType;
+import org.mustangproject.ZUGFeRD.model.TradeSettlementPaymentMeansType;
+import org.mustangproject.ZUGFeRD.model.TradeTaxType;
 
 public class ZUGFeRDExporter implements Closeable {
 
-	
+
 	private void init() {
 		try {
 			jaxbContext = JAXBContext
@@ -75,7 +112,7 @@ public class ZUGFeRDExporter implements Closeable {
         } catch (JAXBException e) {
             throw new ZUGFeRDExportException("Could not initialize JAXB", e);
         }
-	
+
 	}
 	/**
 	 * * You will need Apache PDFBox. To use the ZUGFeRD exporter, implement
@@ -100,7 +137,7 @@ public class ZUGFeRDExporter implements Closeable {
 	public ZUGFeRDExporter(PDDocument doc2) {
 		init();
 		doc=doc2;
-		
+
 	}
 
 	private class LineCalc {
@@ -264,12 +301,12 @@ public class ZUGFeRDExporter implements Closeable {
 		 * DecimalFormatSymbols(); symbols.setDecimalSeparator(',');
 		 * symbols.setGroupingSeparator(' ');
 		 * df.setDecimalFormatSymbols(symbols);
-		 * 
+		 *
 		 * but that would not switch off grouping. Although I liked very much
 		 * the (incomplete) "BNF diagram" in
 		 * http://docs.oracle.com/javase/tutorial/i18n/format/decimalFormat.html
 		 * in the end I decided to calculate myself and take eur+sparator+cents
-		 * 
+		 *
 		 * This function will cut off, i.e. floor() subcent values Tests:
 		 * System.err.println(utils.currencyFormat(new BigDecimal(0),
 		 * ".")+"\n"+utils.currencyFormat(new BigDecimal("-1.10"),
@@ -278,7 +315,7 @@ public class ZUGFeRDExporter implements Closeable {
 		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3489"),
 		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3419"),
 		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("12"), ","));
-		 * 
+		 *
 		 * results 0.00 -1,10 -1,10 -1,01 20000123,34 20000123,34 12,00
 		 */
 		value = value.setScale(scale, BigDecimal.ROUND_HALF_UP); // first, round
@@ -384,13 +421,12 @@ public class ZUGFeRDExporter implements Closeable {
 			 * PreflightDocument (that inherits from PDDocument) This document
 			 * process the end of PDF/A validation.
 			 */
-			PreflightDocument document = parser.getPreflightDocument();
-			document.validate();
+			try (PreflightDocument document = parser.getPreflightDocument())	{
+				document.validate();
 
-			// Get validation result
-			result = document.getResult();
-			document.close();
-
+				// Get validation result
+				result = document.getResult();
+			}
 		} catch (ValidationException e) {
 			/*
 			 * the parse method can throw a SyntaxValidationException if the PDF
@@ -425,15 +461,25 @@ public class ZUGFeRDExporter implements Closeable {
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on
 	 * the metadata level, this will not e.g. convert graphics to JPG-2000)
+	 * @param filename
+	 * @param producer
+	 * @param creator
+	 * @param attachZugferdHeaders
+	 * @return
+	 * @throws IOException
+	 * @throws TransformerException
 	 *
 	 */
-	public PDDocumentCatalog PDFmakeA3compliant(String filename,
-			String producer, String creator, boolean attachZugferdHeaders)
+	public PDDocumentCatalog PDFmakeA3compliant(String filename, String producer, String creator, boolean attachZugferdHeaders)
 			throws IOException, TransformerException {
-		
-		if (!ignoreA1Errors && !isValidA1(new FileInputStream(filename))) {
-			throw new IOException("File is not a valid PDF/A-1 input file");
+
+		try (FileInputStream fis = new FileInputStream(filename))	{
+			boolean validA1 = isValidA1(fis);
+			if (!ignoreA1Errors && !validA1) {
+				throw new IOException("File is not a valid PDF/A-1 input file");
+			}
 		}
+
 		loadPDFA3(filename);
 
 		return makeDocPDFA3compliant(producer, creator, attachZugferdHeaders);
@@ -452,37 +498,39 @@ public class ZUGFeRDExporter implements Closeable {
 		    baos.write(buf, 0, n);
 		byte[] content = baos.toByteArray();
 
-		InputStream is1 = new ByteArrayInputStream(content);
-		if (!ignoreA1Errors && !isValidA1(is1)) {
-			throw new IOException("File is not a valid PDF/A-1 input file");
+		try (InputStream is1 = new ByteArrayInputStream(content))	{
+			if (!ignoreA1Errors && !isValidA1(is1)) {
+				throw new IOException("File is not a valid PDF/A-1 input file");
+			}
 		}
+
 		InputStream is2 = new ByteArrayInputStream(content);
 		loadPDFA3(is2);
 
 		return makeDocPDFA3compliant(producer, creator, attachZugferdHeaders);
-	}	
+	}
 	private PDDocumentCatalog makeDocPDFA3compliant(String producer,
 			String creator, boolean attachZugferdHeaders) throws IOException,
 			TransformerException {
 		String fullProducer = producer + " (via mustangproject.org "
-				+ Version.VERSION + ")";
+				+ Version.getVersion() + ")";
 
 		PDDocumentCatalog cat = doc.getDocumentCatalog();
 		PDMetadata metadata = new PDMetadata(doc);
 		cat.setMetadata(metadata);
 		XMPMetadata xmp = XMPMetadata.createXMPMetadata();
 
-                
+
 		PDFAIdentificationSchema pdfaid = new PDFAIdentificationSchema(xmp);
-                
+
 		xmp.addSchema(pdfaid);
 
 		DublinCoreSchema dc = xmp.createAndAddDublinCoreSchema();
-                
+
 		dc.addCreator(creator);
-                
+
 		XMPBasicSchema xsb = xmp.createAndAddXMPBasicSchema();
-                
+
 		xsb.setCreatorTool(creator);
 		xsb.setCreateDate(GregorianCalendar.getInstance());
 		// PDDocumentInformation pdi=doc.getDocumentInformation();
@@ -530,10 +578,11 @@ public class ZUGFeRDExporter implements Closeable {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 serializer.serialize(xmp, baos, false);
                 metadata.importXMPMetadata( baos.toByteArray() );
-                
+
 		return cat;
 	}
 
+	@Override
 	public void close() throws IOException {
 		if (doc != null) {
 			doc.close();
@@ -548,10 +597,10 @@ public class ZUGFeRDExporter implements Closeable {
 
 	private Totals totals;
 
-	private String createZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans) {
-		this.trans = trans;
+	private String createZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans1) {
+		this.trans = trans1;
 		this.totals = new Totals();
-		currency = trans.getCurrency();
+		currency = trans1.getCurrency();
 
 		CrossIndustryDocumentType invoice = xmlFactory
 				.createCrossIndustryDocumentType();
@@ -621,7 +670,7 @@ public class ZUGFeRDExporter implements Closeable {
 		TextType name = xmlFactory.createTextType();
 		name.setValue("RECHNUNG");
 		document.getName().add(name);
-                
+
 		if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
 			NoteType regularInfo = xmlFactory.createNoteType();
 			CodeType regularInfoSubjectCode = xmlFactory.createCodeType();
@@ -633,13 +682,13 @@ public class ZUGFeRDExporter implements Closeable {
 			regularInfo.getContent().add(regularInfoContent);
 			document.getIncludedNote().add(regularInfo);
 		}
-                
+
                 if (trans.getReferenceNumber() != null && !new String().equals(trans.getReferenceNumber())){
                     NoteType referenceInfo = xmlFactory.createNoteType();
                     TextType referenceInfoContent = xmlFactory.createTextType();
                     referenceInfoContent.setValue("Ursprungsbeleg: " + trans.getReferenceNumber());
                     referenceInfo.getContent().add(referenceInfoContent);
-                    document.getIncludedNote().add(referenceInfo);            
+                    document.getIncludedNote().add(referenceInfo);
                 }
 
 		return document;
@@ -1385,7 +1434,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 *            data should hav ebeen set via
 	 *            <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
 	 */
-	public void PDFattachZugferdFile(IZUGFeRDExportableTransaction trans)
+	public void PDFattachZugferdFile(IZUGFeRDExportableTransaction trans1)
 			throws IOException {
 
             if (zugferdData == null) // XML ZUGFeRD data not set externally, needs
@@ -1394,7 +1443,7 @@ public class ZUGFeRDExporter implements Closeable {
                     // create a dummy file stream, this would probably normally be a
                     // FileInputStream
 
-                    byte[] zugferdRaw = createZugferdXMLForTransaction(trans).getBytes(); //$NON-NLS-1$
+                    byte[] zugferdRaw = createZugferdXMLForTransaction(trans1).getBytes(); //$NON-NLS-1$
 
                     if ((zugferdRaw[0] == (byte) 0xEF)
                                     && (zugferdRaw[1] == (byte) 0xBB)
@@ -1437,12 +1486,12 @@ public class ZUGFeRDExporter implements Closeable {
 	 *            the binary data of the file/attachment
          * @throws java.io.IOException
 	 */
-	public void PDFAttachGenericFile(PDDocument doc, String filename,
+	public void PDFAttachGenericFile(PDDocument doc1, String filename,
 			String relationship, String description, String subType, byte[] data)
 			throws IOException {
 		PDComplexFileSpecification fs = new PDComplexFileSpecification();
 		fs.setFile(filename);
-                
+
 
 		COSDictionary dict = fs.getCOSObject();
 		dict.setName("AFRelationship", relationship);
@@ -1450,7 +1499,7 @@ public class ZUGFeRDExporter implements Closeable {
 		dict.setString("Desc", description);
 
 		ByteArrayInputStream fakeFile = new ByteArrayInputStream(data);
-		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
+		PDEmbeddedFile ef = new PDEmbeddedFile(doc1, fakeFile);
 		ef.setSubtype(subType);
 		ef.setSize(data.length);
 		ef.setCreationDate(new GregorianCalendar());
@@ -1468,7 +1517,7 @@ public class ZUGFeRDExporter implements Closeable {
 
 		// now add the entry to the embedded file tree and set in the document.
 		PDDocumentNameDictionary names = new PDDocumentNameDictionary(
-				doc.getDocumentCatalog());
+				doc1.getDocumentCatalog());
 		PDEmbeddedFilesNameTreeNode efTree = names.getEmbeddedFiles();
 		if (efTree == null) {
 			efTree = new PDEmbeddedFilesNameTreeNode();
@@ -1486,20 +1535,20 @@ public class ZUGFeRDExporter implements Closeable {
 		efTree.setNames(namesMap);
 
 		names.setEmbeddedFiles(efTree);
-		doc.getDocumentCatalog().setNames(names);
+		doc1.getDocumentCatalog().setNames(names);
 
 		// AF entry (Array) in catalog with the FileSpec
-		COSArray cosArray = (COSArray) doc.getDocumentCatalog()
+		COSArray cosArray = (COSArray) doc1.getDocumentCatalog()
 				.getCOSObject().getItem("AF");
 		if (cosArray == null) {
 			cosArray = new COSArray();
 		}
 		cosArray.add(fs);
-		COSDictionary dict2 = doc.getDocumentCatalog().getCOSObject();
+		COSDictionary dict2 = doc1.getDocumentCatalog().getCOSObject();
 		COSArray array = new COSArray();
 		array.add(fs.getCOSObject()); // see below
 	        dict2.setItem("AF",array);
-		doc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
+		doc1.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
 	}
 
 	/**
@@ -1532,7 +1581,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 *
 	 * @param zUGFeRDConformanceLevel
 	 *            the new conformance level
-	 *           
+	 *
 	 * @deprecated Use {@link #setConformanceLevel(PDFAConformanceLevel)} instead
 	 */
 	@Deprecated
@@ -1555,14 +1604,14 @@ public class ZUGFeRDExporter implements Closeable {
 		metadata.addSchema(zf);
 
 		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(metadata);
-                
+
 		metadata.addSchema(pdfaex);
 
 	}
 
 	/****
 	 * Returns the PDFBox PDF Document
-	 * 
+	 *
 	 * @return PDDocument
 	 */
 	public PDDocument getDoc() {

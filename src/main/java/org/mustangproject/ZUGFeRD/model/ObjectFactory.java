@@ -1,8 +1,8 @@
 //
-// Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.11 generiert 
-// Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
-// �nderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
-// Generiert: 2015.10.16 um 06:16:03 PM CEST 
+// Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.2.11 generiert
+// Siehe <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a>
+// �nderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren.
+// Generiert: 2015.10.16 um 06:16:03 PM CEST
 //
 
 
@@ -11,23 +11,22 @@ package org.mustangproject.ZUGFeRD.model;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the org.mustangproject.ZUGFeRD.model package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
+ * This object contains factory methods for each
+ * Java content interface and Java element interface
+ * generated in the org.mustangproject.ZUGFeRD.model package.
+ * <p>An ObjectFactory allows you to programatically
+ * construct new instances of the Java representation
+ * for XML content. The Java representation of XML
+ * content can consist of schema derived interfaces
+ * and classes representing the binding of schema
+ * type definitions, element declarations and model
+ * groups.  Factory methods for each of these are
  * provided in this class.
- * 
+ *
  */
 @XmlRegistry
 public class ObjectFactory {
@@ -36,14 +35,14 @@ public class ObjectFactory {
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.mustangproject.ZUGFeRD.model
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link DateTimeType }
-     * 
+     *
      */
     public DateTimeType createDateTimeType() {
         return new DateTimeType();
@@ -51,7 +50,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CrossIndustryDocumentType }
-     * 
+     *
      */
     public CrossIndustryDocumentType createCrossIndustryDocumentType() {
         return new CrossIndustryDocumentType();
@@ -59,7 +58,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AllowanceChargeReasonCodeType }
-     * 
+     *
      */
     public AllowanceChargeReasonCodeType createAllowanceChargeReasonCodeType() {
         return new AllowanceChargeReasonCodeType();
@@ -67,7 +66,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CountryIDType }
-     * 
+     *
      */
     public CountryIDType createCountryIDType() {
         return new CountryIDType();
@@ -75,7 +74,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DeliveryTermsCodeType }
-     * 
+     *
      */
     public DeliveryTermsCodeType createDeliveryTermsCodeType() {
         return new DeliveryTermsCodeType();
@@ -83,7 +82,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DocumentCodeType }
-     * 
+     *
      */
     public DocumentCodeType createDocumentCodeType() {
         return new DocumentCodeType();
@@ -91,7 +90,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PaymentMeansCodeType }
-     * 
+     *
      */
     public PaymentMeansCodeType createPaymentMeansCodeType() {
         return new PaymentMeansCodeType();
@@ -99,7 +98,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReferenceCodeType }
-     * 
+     *
      */
     public ReferenceCodeType createReferenceCodeType() {
         return new ReferenceCodeType();
@@ -107,7 +106,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TaxCategoryCodeType }
-     * 
+     *
      */
     public TaxCategoryCodeType createTaxCategoryCodeType() {
         return new TaxCategoryCodeType();
@@ -115,7 +114,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TaxTypeCodeType }
-     * 
+     *
      */
     public TaxTypeCodeType createTaxTypeCodeType() {
         return new TaxTypeCodeType();
@@ -123,7 +122,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link AmountType }
-     * 
+     *
      */
     public AmountType createAmountType() {
         return new AmountType();
@@ -131,7 +130,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CodeType }
-     * 
+     *
      */
     public CodeType createCodeType() {
         return new CodeType();
@@ -139,7 +138,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link IDType }
-     * 
+     *
      */
     public IDType createIDType() {
         return new IDType();
@@ -147,7 +146,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link IndicatorType }
-     * 
+     *
      */
     public IndicatorType createIndicatorType() {
         return new IndicatorType();
@@ -155,7 +154,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link MeasureType }
-     * 
+     *
      */
     public MeasureType createMeasureType() {
         return new MeasureType();
@@ -163,7 +162,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NumericType }
-     * 
+     *
      */
     public NumericType createNumericType() {
         return new NumericType();
@@ -171,7 +170,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link PercentType }
-     * 
+     *
      */
     public PercentType createPercentType() {
         return new PercentType();
@@ -179,7 +178,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link QuantityType }
-     * 
+     *
      */
     public QuantityType createQuantityType() {
         return new QuantityType();
@@ -187,7 +186,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TextType }
-     * 
+     *
      */
     public TextType createTextType() {
         return new TextType();
@@ -195,7 +194,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CreditorFinancialAccountType }
-     * 
+     *
      */
     public CreditorFinancialAccountType createCreditorFinancialAccountType() {
         return new CreditorFinancialAccountType();
@@ -203,7 +202,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link CreditorFinancialInstitutionType }
-     * 
+     *
      */
     public CreditorFinancialInstitutionType createCreditorFinancialInstitutionType() {
         return new CreditorFinancialInstitutionType();
@@ -211,7 +210,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DebtorFinancialAccountType }
-     * 
+     *
      */
     public DebtorFinancialAccountType createDebtorFinancialAccountType() {
         return new DebtorFinancialAccountType();
@@ -219,7 +218,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DebtorFinancialInstitutionType }
-     * 
+     *
      */
     public DebtorFinancialInstitutionType createDebtorFinancialInstitutionType() {
         return new DebtorFinancialInstitutionType();
@@ -227,7 +226,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DocumentContextParameterType }
-     * 
+     *
      */
     public DocumentContextParameterType createDocumentContextParameterType() {
         return new DocumentContextParameterType();
@@ -235,7 +234,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DocumentLineDocumentType }
-     * 
+     *
      */
     public DocumentLineDocumentType createDocumentLineDocumentType() {
         return new DocumentLineDocumentType();
@@ -243,7 +242,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExchangedDocumentContextType }
-     * 
+     *
      */
     public ExchangedDocumentContextType createExchangedDocumentContextType() {
         return new ExchangedDocumentContextType();
@@ -251,7 +250,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ExchangedDocumentType }
-     * 
+     *
      */
     public ExchangedDocumentType createExchangedDocumentType() {
         return new ExchangedDocumentType();
@@ -259,7 +258,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LogisticsServiceChargeType }
-     * 
+     *
      */
     public LogisticsServiceChargeType createLogisticsServiceChargeType() {
         return new LogisticsServiceChargeType();
@@ -267,7 +266,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link LogisticsTransportMovementType }
-     * 
+     *
      */
     public LogisticsTransportMovementType createLogisticsTransportMovementType() {
         return new LogisticsTransportMovementType();
@@ -275,7 +274,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link NoteType }
-     * 
+     *
      */
     public NoteType createNoteType() {
         return new NoteType();
@@ -283,7 +282,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ProductCharacteristicType }
-     * 
+     *
      */
     public ProductCharacteristicType createProductCharacteristicType() {
         return new ProductCharacteristicType();
@@ -291,7 +290,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ProductClassificationType }
-     * 
+     *
      */
     public ProductClassificationType createProductClassificationType() {
         return new ProductClassificationType();
@@ -299,7 +298,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReferencedDocumentType }
-     * 
+     *
      */
     public ReferencedDocumentType createReferencedDocumentType() {
         return new ReferencedDocumentType();
@@ -307,7 +306,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ReferencedProductType }
-     * 
+     *
      */
     public ReferencedProductType createReferencedProductType() {
         return new ReferencedProductType();
@@ -315,7 +314,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SpecifiedPeriodType }
-     * 
+     *
      */
     public SpecifiedPeriodType createSpecifiedPeriodType() {
         return new SpecifiedPeriodType();
@@ -323,7 +322,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SupplyChainConsignmentType }
-     * 
+     *
      */
     public SupplyChainConsignmentType createSupplyChainConsignmentType() {
         return new SupplyChainConsignmentType();
@@ -331,7 +330,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SupplyChainEventType }
-     * 
+     *
      */
     public SupplyChainEventType createSupplyChainEventType() {
         return new SupplyChainEventType();
@@ -339,7 +338,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SupplyChainTradeAgreementType }
-     * 
+     *
      */
     public SupplyChainTradeAgreementType createSupplyChainTradeAgreementType() {
         return new SupplyChainTradeAgreementType();
@@ -347,7 +346,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SupplyChainTradeDeliveryType }
-     * 
+     *
      */
     public SupplyChainTradeDeliveryType createSupplyChainTradeDeliveryType() {
         return new SupplyChainTradeDeliveryType();
@@ -355,7 +354,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SupplyChainTradeLineItemType }
-     * 
+     *
      */
     public SupplyChainTradeLineItemType createSupplyChainTradeLineItemType() {
         return new SupplyChainTradeLineItemType();
@@ -363,7 +362,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SupplyChainTradeSettlementType }
-     * 
+     *
      */
     public SupplyChainTradeSettlementType createSupplyChainTradeSettlementType() {
         return new SupplyChainTradeSettlementType();
@@ -371,7 +370,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link SupplyChainTradeTransactionType }
-     * 
+     *
      */
     public SupplyChainTradeTransactionType createSupplyChainTradeTransactionType() {
         return new SupplyChainTradeTransactionType();
@@ -379,7 +378,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TaxRegistrationType }
-     * 
+     *
      */
     public TaxRegistrationType createTaxRegistrationType() {
         return new TaxRegistrationType();
@@ -387,7 +386,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradeAccountingAccountType }
-     * 
+     *
      */
     public TradeAccountingAccountType createTradeAccountingAccountType() {
         return new TradeAccountingAccountType();
@@ -395,7 +394,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradeAddressType }
-     * 
+     *
      */
     public TradeAddressType createTradeAddressType() {
         return new TradeAddressType();
@@ -403,7 +402,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradeAllowanceChargeType }
-     * 
+     *
      */
     public TradeAllowanceChargeType createTradeAllowanceChargeType() {
         return new TradeAllowanceChargeType();
@@ -411,7 +410,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradeContactType }
-     * 
+     *
      */
     public TradeContactType createTradeContactType() {
         return new TradeContactType();
@@ -419,7 +418,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradeCountryType }
-     * 
+     *
      */
     public TradeCountryType createTradeCountryType() {
         return new TradeCountryType();
@@ -427,7 +426,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradeDeliveryTermsType }
-     * 
+     *
      */
     public TradeDeliveryTermsType createTradeDeliveryTermsType() {
         return new TradeDeliveryTermsType();
@@ -435,7 +434,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradePartyType }
-     * 
+     *
      */
     public TradePartyType createTradePartyType() {
         return new TradePartyType();
@@ -443,7 +442,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradePaymentDiscountTermsType }
-     * 
+     *
      */
     public TradePaymentDiscountTermsType createTradePaymentDiscountTermsType() {
         return new TradePaymentDiscountTermsType();
@@ -451,7 +450,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradePaymentPenaltyTermsType }
-     * 
+     *
      */
     public TradePaymentPenaltyTermsType createTradePaymentPenaltyTermsType() {
         return new TradePaymentPenaltyTermsType();
@@ -459,7 +458,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradePaymentTermsType }
-     * 
+     *
      */
     public TradePaymentTermsType createTradePaymentTermsType() {
         return new TradePaymentTermsType();
@@ -467,7 +466,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradePriceType }
-     * 
+     *
      */
     public TradePriceType createTradePriceType() {
         return new TradePriceType();
@@ -475,7 +474,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradeProductType }
-     * 
+     *
      */
     public TradeProductType createTradeProductType() {
         return new TradeProductType();
@@ -483,7 +482,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradeSettlementMonetarySummationType }
-     * 
+     *
      */
     public TradeSettlementMonetarySummationType createTradeSettlementMonetarySummationType() {
         return new TradeSettlementMonetarySummationType();
@@ -491,7 +490,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradeSettlementPaymentMeansType }
-     * 
+     *
      */
     public TradeSettlementPaymentMeansType createTradeSettlementPaymentMeansType() {
         return new TradeSettlementPaymentMeansType();
@@ -499,7 +498,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link TradeTaxType }
-     * 
+     *
      */
     public TradeTaxType createTradeTaxType() {
         return new TradeTaxType();
@@ -507,7 +506,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link UniversalCommunicationType }
-     * 
+     *
      */
     public UniversalCommunicationType createUniversalCommunicationType() {
         return new UniversalCommunicationType();
@@ -515,7 +514,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link DateTimeType.DateTimeString }
-     * 
+     *
      */
     public DateTimeType.DateTimeString createDateTimeTypeDateTimeString() {
         return new DateTimeType.DateTimeString();
@@ -523,7 +522,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CrossIndustryDocumentType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "urn:ferd:CrossIndustryDocument:invoice:1p0", name = "CrossIndustryDocument")
     public JAXBElement<CrossIndustryDocumentType> createCrossIndustryDocument(CrossIndustryDocumentType value) {

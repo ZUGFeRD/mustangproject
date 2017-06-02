@@ -401,27 +401,18 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   public void testZExport()
   {
 
-    final InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
-    final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505newEdge.pdf";
-    // the writing part
+  	final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505newEdge.pdf";
 
-    try
-    {
-      // automatically add Zugferd to all outgoing invoices
-      ZUGFeRDExporter ze = new ZUGFeRDExporter();
-      ze.PDFmakeA3compliant(SOURCE_PDF, "My Application", System.getProperty("user.name"), true);
-      ze.PDFattachZugferdFile(this);
-      ze.export(TARGET_PDF);
+	// the writing part
+    // automatically add Zugferd to all outgoing invoices
+	try (ZUGFeRDExporter ze = new ZUGFeRDExporter())	{
+		try(final InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf")){
+			ze.PDFmakeA3compliant(SOURCE_PDF, "My Application", System.getProperty("user.name"), true);
+		}
+        ze.PDFattachZugferdFile(this);
+        ze.export(TARGET_PDF);
     }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
-    catch (TransformerException e)
-    {
-      e.printStackTrace();
-    }
-    catch (Exception e)
+	catch (Exception e)
     {
       e.printStackTrace();
     }
