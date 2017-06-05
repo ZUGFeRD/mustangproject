@@ -133,6 +133,26 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jaxb2-maven-plugin</artifactId>
+        <version>2.3.1</version>
+        <executions>
+          <execution>
+            <id>xjc</id>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <target>2.1</target>
+          <packageName>org.mustangproject.ZUGFeRD.model</packageName>
+          <sources>
+            <source>src/main/schema/ZUGFeRD1p0.xsd</source>
+          </sources>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <mailingLists>

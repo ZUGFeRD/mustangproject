@@ -522,7 +522,7 @@ public class ZUGFeRDExporter implements Closeable {
 		DocumentContextParameterType contextParameter = xmlFactory
 				.createDocumentContextParameterType();
 		IDType idType = xmlFactory.createIDType();
-		idType.setValue(DocumentContextParameterType.EXTENDED);
+		idType.setValue(DocumentContextParameterTypeConstants.EXTENDED);
 		contextParameter.setID(idType);
 		context.getGuidelineSpecifiedDocumentContextParameter().add(
 				contextParameter);
@@ -546,14 +546,14 @@ public class ZUGFeRDExporter implements Closeable {
 		DateTimeType issueDateTime = xmlFactory.createDateTimeType();
 		DateTimeType.DateTimeString issueDateTimeString = xmlFactory
 				.createDateTimeTypeDateTimeString();
-		issueDateTimeString.setFormat(DateTimeType.DateTimeString.DATE);
+		issueDateTimeString.setFormat(DateTimeTypeConstants.DATE);
 		issueDateTimeString.setValue(zugferdDateFormat.format(trans
 				.getIssueDate()));
 		issueDateTime.setDateTimeString(issueDateTimeString);
 		document.setIssueDateTime(issueDateTime);
 
 		DocumentCodeType documentCodeType = xmlFactory.createDocumentCodeType();
-		documentCodeType.setValue(DocumentCodeType.INVOICE);
+		documentCodeType.setValue(DocumentCodeTypeConstants.INVOICE);
 		document.setTypeCode(documentCodeType);
 
 		TextType name = xmlFactory.createTextType();
@@ -563,7 +563,7 @@ public class ZUGFeRDExporter implements Closeable {
 		if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
 			NoteType regularInfo = xmlFactory.createNoteType();
 			CodeType regularInfoSubjectCode = xmlFactory.createCodeType();
-			regularInfoSubjectCode.setValue(NoteType.REGULARINFO);
+			regularInfoSubjectCode.setValue(NoteTypeConstants.REGULARINFO);
 			regularInfo.setSubjectCode(regularInfoSubjectCode);
 			TextType regularInfoContent = xmlFactory.createTextType();
 			regularInfoContent.setValue(trans
@@ -641,7 +641,7 @@ public class ZUGFeRDExporter implements Closeable {
 				.createTaxRegistrationType();
 		IDType buyerUstId = xmlFactory.createIDType();
 		buyerUstId.setValue(trans.getRecipient().getVATID());
-		buyerUstId.setSchemeID(TaxRegistrationType.USTID);
+		buyerUstId.setSchemeID(TaxRegistrationTypeConstants.USTID);
 		buyerTaxRegistration.setID(buyerUstId);
 		buyerTradeParty.getSpecifiedTaxRegistration().add(buyerTaxRegistration);
 
@@ -680,7 +680,7 @@ public class ZUGFeRDExporter implements Closeable {
 				.createTaxRegistrationType();
 		IDType sellerTaxId = xmlFactory.createIDType();
 		sellerTaxId.setValue(trans.getOwnTaxID());
-		sellerTaxId.setSchemeID(TaxRegistrationType.TAXID);
+		sellerTaxId.setSchemeID(TaxRegistrationTypeConstants.TAXID);
 		sellerTaxRegistration.setID(sellerTaxId);
 		sellerTradeParty.getSpecifiedTaxRegistration().add(
 				sellerTaxRegistration);
@@ -689,7 +689,7 @@ public class ZUGFeRDExporter implements Closeable {
 		sellerTaxRegistration = xmlFactory.createTaxRegistrationType();
 		IDType sellerUstId = xmlFactory.createIDType();
 		sellerUstId.setValue(trans.getOwnVATID());
-		sellerUstId.setSchemeID(TaxRegistrationType.USTID);
+		sellerUstId.setSchemeID(TaxRegistrationTypeConstants.USTID);
 		sellerTaxRegistration.setID(sellerUstId);
 		sellerTradeParty.getSpecifiedTaxRegistration().add(
 				sellerTaxRegistration);
@@ -706,7 +706,7 @@ public class ZUGFeRDExporter implements Closeable {
 		DateTimeType deliveryDate = xmlFactory.createDateTimeType();
 		DateTimeType.DateTimeString deliveryDateString = xmlFactory
 				.createDateTimeTypeDateTimeString();
-		deliveryDateString.setFormat(DateTimeType.DateTimeString.DATE);
+		deliveryDateString.setFormat(DateTimeTypeConstants.DATE);
 		deliveryDateString.setValue(zugferdDateFormat.format(trans
 				.getDeliveryDate()));
 		deliveryDate.setDateTimeString(deliveryDateString);
@@ -757,7 +757,7 @@ public class ZUGFeRDExporter implements Closeable {
 				.createTradeSettlementPaymentMeansType();
 		PaymentMeansCodeType paymentDataType = xmlFactory
 				.createPaymentMeansCodeType();
-		paymentDataType.setValue(PaymentMeansCodeType.BANKACCOUNT);
+		paymentDataType.setValue(PaymentMeansCodeTypeConstants.BANKACCOUNT);
 		paymentData.setTypeCode(paymentDataType);
 
 		TextType paymentInfo = xmlFactory.createTextType();
@@ -796,12 +796,12 @@ public class ZUGFeRDExporter implements Closeable {
 
 			TradeTaxType tradeTax = xmlFactory.createTradeTaxType();
 			TaxTypeCodeType taxTypeCode = xmlFactory.createTaxTypeCodeType();
-			taxTypeCode.setValue(TaxTypeCodeType.SALESTAX);
+			taxTypeCode.setValue(TaxTypeCodeTypeConstants.SALESTAX);
 			tradeTax.setTypeCode(taxTypeCode);
 
 			TaxCategoryCodeType taxCategoryCode = xmlFactory
 					.createTaxCategoryCodeType();
-			taxCategoryCode.setValue(TaxCategoryCodeType.STANDARDRATE);
+			taxCategoryCode.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
 			tradeTax.setCategoryCode(taxCategoryCode);
 
 			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
@@ -863,11 +863,11 @@ public class ZUGFeRDExporter implements Closeable {
 			 */
 			TaxCategoryCodeType taxType = xmlFactory
 					.createTaxCategoryCodeType();
-			taxType.setValue(TaxCategoryCodeType.STANDARDRATE);
+			taxType.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
 			tradeTax.setCategoryCode(taxType);
 
 			TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
-			taxCode.setValue(TaxTypeCodeType.SALESTAX);
+			taxCode.setValue(TaxTypeCodeTypeConstants.SALESTAX);
 			tradeTax.setTypeCode(taxCode);
 
 			allowance.getCategoryTradeTax().add(tradeTax);
@@ -914,11 +914,11 @@ public class ZUGFeRDExporter implements Closeable {
 			 */
 			TaxCategoryCodeType taxType = xmlFactory
 					.createTaxCategoryCodeType();
-			taxType.setValue(TaxCategoryCodeType.STANDARDRATE);
+			taxType.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
 			tradeTax.setCategoryCode(taxType);
 
 			TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
-			taxCode.setValue(TaxTypeCodeType.SALESTAX);
+			taxCode.setValue(TaxTypeCodeTypeConstants.SALESTAX);
 			tradeTax.setTypeCode(taxCode);
 
 			charge.getCategoryTradeTax().add(tradeTax);
@@ -963,11 +963,11 @@ public class ZUGFeRDExporter implements Closeable {
 			 */
 			TaxCategoryCodeType taxType = xmlFactory
 					.createTaxCategoryCodeType();
-			taxType.setValue(TaxCategoryCodeType.STANDARDRATE);
+			taxType.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
 			tradeTax.setCategoryCode(taxType);
 
 			TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
-			taxCode.setValue(TaxTypeCodeType.SALESTAX);
+			taxCode.setValue(TaxTypeCodeTypeConstants.SALESTAX);
 			tradeTax.setTypeCode(taxCode);
 
 			serviceCharge.getAppliedTradeTax().add(tradeTax);
@@ -986,7 +986,7 @@ public class ZUGFeRDExporter implements Closeable {
 		DateTimeType dueDate = xmlFactory.createDateTimeType();
 		DateTimeType.DateTimeString dueDateString = xmlFactory
 				.createDateTimeTypeDateTimeString();
-		dueDateString.setFormat(DateTimeType.DateTimeString.DATE);
+		dueDateString.setFormat(DateTimeTypeConstants.DATE);
 		dueDateString.setValue(zugferdDateFormat.format(trans.getDueDate()));
 		dueDate.setDateTimeString(dueDateString);
 		paymentTerm.setDueDateDateTime(dueDate);
@@ -1188,11 +1188,11 @@ public class ZUGFeRDExporter implements Closeable {
 
 			TaxCategoryCodeType taxCategoryCode = xmlFactory
 					.createTaxCategoryCodeType();
-			taxCategoryCode.setValue(TaxCategoryCodeType.STANDARDRATE);
+			taxCategoryCode.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
 			tradeTax.setCategoryCode(taxCategoryCode);
 
 			TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
-			taxCode.setValue(TaxTypeCodeType.SALESTAX);
+			taxCode.setValue(TaxTypeCodeTypeConstants.SALESTAX);
 			tradeTax.setTypeCode(taxCode);
 
 			PercentType taxPercent = xmlFactory.createPercentType();
