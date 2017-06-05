@@ -5,3 +5,4 @@ PDFA*.pdf
 target/
 pom.xml.*
 bin/
+/.gradle/
