@@ -44,11 +44,49 @@ import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
-import org.mustangproject.ZUGFeRD.model.*;
+import org.mustangproject.ZUGFeRD.model.AmountType;
+import org.mustangproject.ZUGFeRD.model.CodeType;
+import org.mustangproject.ZUGFeRD.model.CountryIDType;
+import org.mustangproject.ZUGFeRD.model.CreditorFinancialAccountType;
+import org.mustangproject.ZUGFeRD.model.CreditorFinancialInstitutionType;
+import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
+import org.mustangproject.ZUGFeRD.model.DateTimeType;
+import org.mustangproject.ZUGFeRD.model.DocumentCodeType;
+import org.mustangproject.ZUGFeRD.model.DocumentContextParameterType;
+import org.mustangproject.ZUGFeRD.model.DocumentLineDocumentType;
+import org.mustangproject.ZUGFeRD.model.ExchangedDocumentContextType;
+import org.mustangproject.ZUGFeRD.model.ExchangedDocumentType;
+import org.mustangproject.ZUGFeRD.model.IDType;
+import org.mustangproject.ZUGFeRD.model.IndicatorType;
+import org.mustangproject.ZUGFeRD.model.LogisticsServiceChargeType;
+import org.mustangproject.ZUGFeRD.model.NoteType;
+import org.mustangproject.ZUGFeRD.model.ObjectFactory;
+import org.mustangproject.ZUGFeRD.model.PaymentMeansCodeType;
+import org.mustangproject.ZUGFeRD.model.PercentType;
+import org.mustangproject.ZUGFeRD.model.QuantityType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainEventType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeAgreementType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeDeliveryType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeLineItemType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeSettlementType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeTransactionType;
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeType;
+import org.mustangproject.ZUGFeRD.model.TaxRegistrationType;
+import org.mustangproject.ZUGFeRD.model.TaxTypeCodeType;
+import org.mustangproject.ZUGFeRD.model.TextType;
+import org.mustangproject.ZUGFeRD.model.TradeAddressType;
+import org.mustangproject.ZUGFeRD.model.TradeAllowanceChargeType;
+import org.mustangproject.ZUGFeRD.model.TradePartyType;
+import org.mustangproject.ZUGFeRD.model.TradePaymentTermsType;
+import org.mustangproject.ZUGFeRD.model.TradePriceType;
+import org.mustangproject.ZUGFeRD.model.TradeProductType;
+import org.mustangproject.ZUGFeRD.model.TradeSettlementMonetarySummationType;
+import org.mustangproject.ZUGFeRD.model.TradeSettlementPaymentMeansType;
+import org.mustangproject.ZUGFeRD.model.TradeTaxType;
 
 public class ZUGFeRDExporter implements Closeable {
 
-	
+
 	private void init() {
 		try {
 			jaxbContext = JAXBContext
@@ -59,7 +97,7 @@ public class ZUGFeRDExporter implements Closeable {
         } catch (JAXBException e) {
             throw new ZUGFeRDExportException("Could not initialize JAXB", e);
         }
-	
+
 	}
 	/**
 	 * * You will need Apache PDFBox. To use the ZUGFeRD exporter, implement
@@ -86,7 +124,7 @@ public class ZUGFeRDExporter implements Closeable {
 	public ZUGFeRDExporter(PDDocument doc2) {
 		init();
 		doc=doc2;
-		
+
 	}
 
 	private class LineCalc {
@@ -253,12 +291,12 @@ public class ZUGFeRDExporter implements Closeable {
 		 * DecimalFormatSymbols(); symbols.setDecimalSeparator(',');
 		 * symbols.setGroupingSeparator(' ');
 		 * df.setDecimalFormatSymbols(symbols);
-		 * 
+		 *
 		 * but that would not switch off grouping. Although I liked very much
 		 * the (incomplete) "BNF diagram" in
 		 * http://docs.oracle.com/javase/tutorial/i18n/format/decimalFormat.html
 		 * in the end I decided to calculate myself and take eur+sparator+cents
-		 * 
+		 *
 		 * This function will cut off, i.e. floor() subcent values Tests:
 		 * System.err.println(utils.currencyFormat(new BigDecimal(0),
 		 * ".")+"\n"+utils.currencyFormat(new BigDecimal("-1.10"),
@@ -267,7 +305,7 @@ public class ZUGFeRDExporter implements Closeable {
 		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3489"),
 		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3419"),
 		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("12"), ","));
-		 * 
+		 *
 		 * results 0.00 -1,10 -1,10 -1,01 20000123,34 20000123,34 12,00
 		 */
 		value = value.setScale(scale, BigDecimal.ROUND_HALF_UP); // first, round
@@ -433,6 +471,7 @@ public class ZUGFeRDExporter implements Closeable {
 			.setConformanceLevel(conformanceLevel);
 	}
 
+	@Override
 	public void close() throws IOException {
 		if (doc != null) {
 			doc.close();
@@ -447,10 +486,10 @@ public class ZUGFeRDExporter implements Closeable {
 
 	private Totals totals;
 
-	private String createZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans) {
-		this.trans = trans;
+	private String createZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans1) {
+		this.trans = trans1;
 		this.totals = new Totals();
-		currency = trans.getCurrency();
+		currency = trans1.getCurrency();
 
 		CrossIndustryDocumentType invoice = xmlFactory
 				.createCrossIndustryDocumentType();
@@ -520,7 +559,7 @@ public class ZUGFeRDExporter implements Closeable {
 		TextType name = xmlFactory.createTextType();
 		name.setValue("RECHNUNG");
 		document.getName().add(name);
-                
+
 		if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
 			NoteType regularInfo = xmlFactory.createNoteType();
 			CodeType regularInfoSubjectCode = xmlFactory.createCodeType();
@@ -532,13 +571,13 @@ public class ZUGFeRDExporter implements Closeable {
 			regularInfo.getContent().add(regularInfoContent);
 			document.getIncludedNote().add(regularInfo);
 		}
-                
+
                 if (trans.getReferenceNumber() != null && !new String().equals(trans.getReferenceNumber())){
                     NoteType referenceInfo = xmlFactory.createNoteType();
                     TextType referenceInfoContent = xmlFactory.createTextType();
                     referenceInfoContent.setValue("Ursprungsbeleg: " + trans.getReferenceNumber());
                     referenceInfo.getContent().add(referenceInfoContent);
-                    document.getIncludedNote().add(referenceInfo);            
+                    document.getIncludedNote().add(referenceInfo);
                 }
 
 		return document;
@@ -1284,7 +1323,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 *            data should hav ebeen set via
 	 *            <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
 	 */
-	public void PDFattachZugferdFile(IZUGFeRDExportableTransaction trans)
+	public void PDFattachZugferdFile(IZUGFeRDExportableTransaction trans1)
 			throws IOException {
 
             if (zugferdData == null) // XML ZUGFeRD data not set externally, needs
@@ -1293,7 +1332,7 @@ public class ZUGFeRDExporter implements Closeable {
                     // create a dummy file stream, this would probably normally be a
                     // FileInputStream
 
-                    byte[] zugferdRaw = createZugferdXMLForTransaction(trans).getBytes(); //$NON-NLS-1$
+                    byte[] zugferdRaw = createZugferdXMLForTransaction(trans1).getBytes(); //$NON-NLS-1$
 
                     if ((zugferdRaw[0] == (byte) 0xEF)
                                     && (zugferdRaw[1] == (byte) 0xBB)
@@ -1336,12 +1375,12 @@ public class ZUGFeRDExporter implements Closeable {
 	 *            the binary data of the file/attachment
          * @throws java.io.IOException
 	 */
-	public void PDFAttachGenericFile(PDDocument doc, String filename,
+	public void PDFAttachGenericFile(PDDocument doc1, String filename,
 			String relationship, String description, String subType, byte[] data)
 			throws IOException {
 		PDComplexFileSpecification fs = new PDComplexFileSpecification();
 		fs.setFile(filename);
-                
+
 
 		COSDictionary dict = fs.getCOSObject();
 		dict.setName("AFRelationship", relationship);
@@ -1349,7 +1388,7 @@ public class ZUGFeRDExporter implements Closeable {
 		dict.setString("Desc", description);
 
 		ByteArrayInputStream fakeFile = new ByteArrayInputStream(data);
-		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
+		PDEmbeddedFile ef = new PDEmbeddedFile(doc1, fakeFile);
 		ef.setSubtype(subType);
 		ef.setSize(data.length);
 		ef.setCreationDate(new GregorianCalendar());
@@ -1367,7 +1406,7 @@ public class ZUGFeRDExporter implements Closeable {
 
 		// now add the entry to the embedded file tree and set in the document.
 		PDDocumentNameDictionary names = new PDDocumentNameDictionary(
-				doc.getDocumentCatalog());
+				doc1.getDocumentCatalog());
 		PDEmbeddedFilesNameTreeNode efTree = names.getEmbeddedFiles();
 		if (efTree == null) {
 			efTree = new PDEmbeddedFilesNameTreeNode();
@@ -1385,20 +1424,20 @@ public class ZUGFeRDExporter implements Closeable {
 		efTree.setNames(namesMap);
 
 		names.setEmbeddedFiles(efTree);
-		doc.getDocumentCatalog().setNames(names);
+		doc1.getDocumentCatalog().setNames(names);
 
 		// AF entry (Array) in catalog with the FileSpec
-		COSArray cosArray = (COSArray) doc.getDocumentCatalog()
+		COSArray cosArray = (COSArray) doc1.getDocumentCatalog()
 				.getCOSObject().getItem("AF");
 		if (cosArray == null) {
 			cosArray = new COSArray();
 		}
 		cosArray.add(fs);
-		COSDictionary dict2 = doc.getDocumentCatalog().getCOSObject();
+		COSDictionary dict2 = doc1.getDocumentCatalog().getCOSObject();
 		COSArray array = new COSArray();
 		array.add(fs.getCOSObject()); // see below
 	        dict2.setItem("AF",array);
-		doc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
+		doc1.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
 	}
 
 	/**
@@ -1434,7 +1473,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 *
 	 * @param zUGFeRDConformanceLevel
 	 *            the new conformance level
-	 *           
+	 *
 	 * @deprecated Use {@link #setConformanceLevel(PDFAConformanceLevel)} instead
 	 */
 	@Deprecated
@@ -1444,7 +1483,7 @@ public class ZUGFeRDExporter implements Closeable {
 
 	/****
 	 * Returns the PDFBox PDF Document
-	 * 
+	 *
 	 * @return PDDocument
 	 */
 	public PDDocument getDoc() {

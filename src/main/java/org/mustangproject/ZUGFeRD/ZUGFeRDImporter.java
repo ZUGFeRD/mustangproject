@@ -8,14 +8,13 @@ package org.mustangproject.ZUGFeRD;
  * @author jstaerk
  * */
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.util.Map;
 
-import javax.management.RuntimeErrorException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,7 +22,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
-import org.apache.pdfbox.pdmodel.common.COSObjectable;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.w3c.dom.Document;
@@ -62,13 +60,10 @@ public class ZUGFeRDImporter {
 	 * Extracts a ZUGFeRD invoice from a PDF document represented by a file name.
 	 * Errors are just logged to STDOUT.
 	 */
-	public void extract(String pdfFilename)
-	{
-		try
-		{
-			extractLowLevel(new BufferedInputStream(new FileInputStream(pdfFilename)));
-		} catch (IOException ioe)
-		{
+	public void extract(String pdfFilename) {
+		try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(pdfFilename))) {
+			extractLowLevel(bis);
+		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
 	}
@@ -78,18 +73,15 @@ public class ZUGFeRDImporter {
 	 * Errors are reported via exception handling.
 	 */
 	public void extractLowLevel(InputStream pdfStream) throws IOException  {
-		PDDocument doc = null;
-		try {
-			doc = PDDocument.load(pdfStream);
+		PDEmbeddedFilesNameTreeNode etn;
+		try (PDDocument doc = PDDocument.load(pdfStream)) {
 //			PDDocumentInformation info = doc.getDocumentInformation();
-			PDDocumentNameDictionary names = new PDDocumentNameDictionary(
-					doc.getDocumentCatalog());
-			PDEmbeddedFilesNameTreeNode etn;
+			PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
 			etn = names.getEmbeddedFiles();
-			if (etn==null)  {
-				doc.close();
+			if (etn == null)	{
 				return;
 			}
+
 			Map<String, PDComplexFileSpecification> efMap = etn.getNames();
 			// String filePath = "/tmp/";
 			for (String filename : efMap.keySet()) {
@@ -100,8 +92,7 @@ public class ZUGFeRDImporter {
 				if (filename.equals("ZUGFeRD-invoice.xml")) { //$NON-NLS-1$
 					containsMeta = true;
 
-					PDComplexFileSpecification fileSpec = (PDComplexFileSpecification) efMap
-							.get(filename);
+					PDComplexFileSpecification fileSpec = efMap.get(filename);
 					PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
 					// String embeddedFilename = filePath + filename;
 					// File file = new File(filePath + filename);
@@ -109,7 +100,7 @@ public class ZUGFeRDImporter {
 					// ByteArrayOutputStream fileBytes=new
 					// ByteArrayOutputStream();
 					// FileOutputStream fos = new FileOutputStream(file);
-                                        
+
 					rawXML = embeddedFile.toByteArray();
 					setMeta(new String(rawXML));
 					extracted=true;
@@ -117,18 +108,7 @@ public class ZUGFeRDImporter {
 					// fos.close();
 				}
 			}
-
-		} catch (IOException e1) {
-			throw e1;
 		}
-		finally {
-			try {
-				if(doc!=null) {
-					doc.close();
-				}
-			} catch (IOException e) {}
-		}
-
 	}
 
 	public void parse() {
@@ -421,9 +401,9 @@ public class ZUGFeRDImporter {
 	public String getMeta() {
 		if (rawXML==null){
 			return null;
-		} else {
-			return new String(rawXML);
 		}
+
+		return new String(rawXML);
 	}
 
 

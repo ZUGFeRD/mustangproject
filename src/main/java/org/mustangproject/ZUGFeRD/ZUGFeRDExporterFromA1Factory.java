@@ -9,6 +9,7 @@ import org.apache.pdfbox.preflight.PreflightDocument;
 import org.apache.pdfbox.preflight.exception.ValidationException;
 import org.apache.pdfbox.preflight.parser.PreflightParser;
 import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
+import org.apache.pdfbox.util.Version;
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.AdobePDFSchema;
 import org.apache.xmpbox.schema.DublinCoreSchema;
@@ -44,9 +45,13 @@ public class ZUGFeRDExporterFromA1Factory {
     public ZUGFeRDExporter loadFromPDFA1(String pdfFilename) throws IOException {
         ensurePDFIsValidA1(new FileDataSource(pdfFilename));
 
-        PDDocument doc = PDDocument.load(new File(pdfFilename));
-        makePDFA3compliant(doc);
-        return new ZUGFeRDExporter(doc);
+        ZUGFeRDExporter zugFeRDExporter = null;
+        try(PDDocument doc = PDDocument.load(new File(pdfFilename)))	{
+            makePDFA3compliant(doc);
+            zugFeRDExporter = new ZUGFeRDExporter(doc);
+        }
+
+		return zugFeRDExporter;
     }
 
     /**
@@ -55,12 +60,16 @@ public class ZUGFeRDExporterFromA1Factory {
      *
      * @param pdfBinary binary of a PDF/A1 compliant document
      */
-    public ZUGFeRDExporter loadFromPDFA1(byte[] pdfBinary) throws IOException, TransformerException {
+    public ZUGFeRDExporter loadFromPDFA1(byte[] pdfBinary) throws IOException {
         ensurePDFIsValidA1(new ByteArrayDataSource(new ByteArrayInputStream(pdfBinary)));
 
-        PDDocument doc = PDDocument.load(pdfBinary);
-        makePDFA3compliant(doc);
-        return new ZUGFeRDExporter(doc);
+        ZUGFeRDExporter zugFeRDExporter;
+        try (PDDocument doc = PDDocument.load(pdfBinary))	{
+            makePDFA3compliant(doc);
+            zugFeRDExporter = new ZUGFeRDExporter(doc);
+        }
+
+		return zugFeRDExporter;
     }
 
     /**
@@ -69,7 +78,7 @@ public class ZUGFeRDExporterFromA1Factory {
      *
      * @param pdfSource source to read a PDF/A1 compliant document from
      */
-    public ZUGFeRDExporter loadFromPDFA1(InputStream pdfSource) throws IOException, TransformerException {
+    public ZUGFeRDExporter loadFromPDFA1(InputStream pdfSource) throws IOException {
         return loadFromPDFA1(readAllBytes(pdfSource));
     }
 
@@ -86,7 +95,7 @@ public class ZUGFeRDExporterFromA1Factory {
     }
 
     private void makePDFA3compliant(PDDocument doc) throws IOException {
-        String fullProducer = producer + " (via mustangproject.org " + Version.VERSION + ")";
+        String fullProducer = producer + " (via mustangproject.org " + Version.getVersion() + ")";
 
         PDDocumentCatalog cat = doc.getDocumentCatalog();
         PDMetadata metadata = new PDMetadata(doc);
@@ -197,23 +206,22 @@ public class ZUGFeRDExporterFromA1Factory {
     }
 
     private static boolean getA1ParserValidationResult(PreflightParser parser) throws IOException {
-        PreflightDocument document = null;
-        try {
+		/*
+		 * Parse the PDF file with PreflightParser that inherits from the
+		 * NonSequentialParser. Some additional controls are present to
+		 * check a set of PDF/A requirements. (Stream length consistency,
+		 * EOL after some Keyword...)
+		 */
+        parser.parse();
 
-			/*
-			 * Parse the PDF file with PreflightParser that inherits from the
-			 * NonSequentialParser. Some additional controls are present to
-			 * check a set of PDF/A requirements. (Stream length consistency,
-			 * EOL after some Keyword...)
-			 */
-            parser.parse();
 
+        try ( PreflightDocument document = parser.getPreflightDocument()) {
 			/*
 			 * Once the syntax validation is done, the parser can provide a
 			 * PreflightDocument (that inherits from PDDocument) This document
 			 * process the end of PDF/A validation.
 			 */
-            document = parser.getPreflightDocument();
+
             document.validate();
 
             // Get validation result
@@ -225,10 +233,6 @@ public class ZUGFeRDExporterFromA1Factory {
 			 * instance of ValidationResult
 			 */
             return false;
-        } finally {
-            if (document != null) {
-                document.close();
-            }
         }
     }
 

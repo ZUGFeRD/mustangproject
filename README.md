@@ -1,8 +1,7 @@
-PDFA3
+Mustangproject
 =====
 
-Some samples how to create PDF/A3 files and PDF/A3 files with embedded files using Apache PDFBox and
-the source code for the [Mustang project](http://www.mustangproject.org/).
+Source code repository for the [Mustang project](http://www.mustangproject.org/) open source java PDF invoice metadata library in ZUGFeRD format.
 
 License
 -----
@@ -26,7 +25,7 @@ If you setup a Maven project, you can grab the artifacts from this maven reposit
 <repositories>
     <repository>
         <id>mustang-mvn-repo</id>
-        <url>https://raw.github.com/Rayman2200/PDFA3/mvn-repo/</url>
+        <url>https://raw.github.com/ZUGFeRD/mustangproject/mvn-repo/</url>
     </repository>
 </repositories>
 ```
@@ -37,7 +36,13 @@ As dependency use this
 <dependency>
   <groupId>org.mustangproject.ZUGFeRD</groupId>
   <artifactId>mustang</artifactId>
-  <version>1.3.0</version>
+  <version>1.4.0</version>
+</dependency>
+
+<dependency> 
+      <groupId>commons-logging</groupId> 
+      <artifactId>commons-logging</artifactId> 
+      <version>1.1.1</version> 
 </dependency>
 ```
 

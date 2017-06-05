@@ -401,9 +401,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   public void testZExport() throws Exception
   {
 
-    final InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
-    final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505newEdge.pdf";
-    // the writing part
+  	final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505newEdge.pdf";
 
     ZUGFeRDExporter ze = null;
     try {

@@ -10,13 +10,12 @@ import java.util.GregorianCalendar;
 
 import javax.xml.transform.TransformerException;
 
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExportableTransaction
@@ -326,7 +325,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 
     public void setVATPercent(BigDecimal VATPercent)
     {
-      VATPercent = VATPercent;
+    	this.VATPercent = VATPercent;
     }
 
   }
@@ -363,8 +362,10 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
   public void testAImport() throws IOException
   {
     ZUGFeRDImporter zi = new ZUGFeRDImporter();
-    InputStream inputStream = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
-    zi.extractLowLevel(inputStream);
+    try (InputStream inputStream = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf"))	{
+        zi.extractLowLevel(inputStream);
+    }
+
     // Reading ZUGFeRD
 
     String amount = null;
@@ -400,8 +401,8 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
    */
   public void testZExport() throws Exception
   {
-    final InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
-    final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505new.pdf";
+
+	final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505new.pdf";
 
     // the writing part
     ZUGFeRDExporter ze = null;

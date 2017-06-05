@@ -1,7 +1,12 @@
 package org.mustangproject.ZUGFeRD;
 
 public class ZUGFeRDExportException extends RuntimeException {
-    public ZUGFeRDExportException() {
+    /**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public ZUGFeRDExportException() {
     }
 
     public ZUGFeRDExportException(String message) {
