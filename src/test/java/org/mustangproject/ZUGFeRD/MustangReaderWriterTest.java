@@ -398,31 +398,26 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
    * It would not make sense to have it run before the less complex importer test (which is probably redundant)
    * --> as only Name Ascending is supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
    */
-  public void testZExport()
+  public void testZExport() throws Exception
   {
     final InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
     final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505new.pdf";
 
     // the writing part
-    try
-    {
+    ZUGFeRDExporter ze = null;
+    try {
       // automatically add Zugferd to all outgoing invoices
-      ZUGFeRDExporter ze = new ZUGFeRDExporter();
-      ze.PDFmakeA3compliant(SOURCE_PDF, "My Application", System.getProperty("user.name"), true);
+      ze = new ZUGFeRDExporterFromA1Factory()
+          .setProducer("My Application")
+          .setCreator(System.getProperty("user.name"))
+          .loadFromPDFA1(SOURCE_PDF);
+
       ze.PDFattachZugferdFile(this);
       ze.export(TARGET_PDF);
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
-    catch (TransformerException e)
-    {
-      e.printStackTrace();
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
+    } finally {
+      if (ze != null) {
+        ze.close();
+      }
     }
 
     // now check the contents (like MustangReaderTest)
