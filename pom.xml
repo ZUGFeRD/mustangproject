@@ -26,7 +26,9 @@
     <github.global.server>github</github.global.server>
     <additionalparam>-Xdoclint:none</additionalparam>
     <!-- Skip error check for javadoc -->
-    <maven.compiler.compilerVersion>1.6</maven.compiler.compilerVersion>
+    <maven.compiler.compilerVersion>1.7</maven.compiler.compilerVersion>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
   <dependencies>
     <dependency>
