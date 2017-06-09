@@ -7,8 +7,11 @@ import org.mustangproject.ZUGFeRD.model.CreditorFinancialAccountType;
 import org.mustangproject.ZUGFeRD.model.CreditorFinancialInstitutionType;
 import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
 import org.mustangproject.ZUGFeRD.model.DateTimeType;
+import org.mustangproject.ZUGFeRD.model.DateTimeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeType;
+import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.DocumentContextParameterType;
+import org.mustangproject.ZUGFeRD.model.DocumentContextParameterTypeConstants;
 import org.mustangproject.ZUGFeRD.model.DocumentLineDocumentType;
 import org.mustangproject.ZUGFeRD.model.ExchangedDocumentContextType;
 import org.mustangproject.ZUGFeRD.model.ExchangedDocumentType;
@@ -16,8 +19,10 @@ import org.mustangproject.ZUGFeRD.model.IDType;
 import org.mustangproject.ZUGFeRD.model.IndicatorType;
 import org.mustangproject.ZUGFeRD.model.LogisticsServiceChargeType;
 import org.mustangproject.ZUGFeRD.model.NoteType;
+import org.mustangproject.ZUGFeRD.model.NoteTypeConstants;
 import org.mustangproject.ZUGFeRD.model.ObjectFactory;
 import org.mustangproject.ZUGFeRD.model.PaymentMeansCodeType;
+import org.mustangproject.ZUGFeRD.model.PaymentMeansCodeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.PercentType;
 import org.mustangproject.ZUGFeRD.model.QuantityType;
 import org.mustangproject.ZUGFeRD.model.SupplyChainEventType;
@@ -27,8 +32,11 @@ import org.mustangproject.ZUGFeRD.model.SupplyChainTradeLineItemType;
 import org.mustangproject.ZUGFeRD.model.SupplyChainTradeSettlementType;
 import org.mustangproject.ZUGFeRD.model.SupplyChainTradeTransactionType;
 import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeType;
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.TaxRegistrationType;
+import org.mustangproject.ZUGFeRD.model.TaxRegistrationTypeConstants;
 import org.mustangproject.ZUGFeRD.model.TaxTypeCodeType;
+import org.mustangproject.ZUGFeRD.model.TaxTypeCodeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.TextType;
 import org.mustangproject.ZUGFeRD.model.TradeAddressType;
 import org.mustangproject.ZUGFeRD.model.TradeAllowanceChargeType;
@@ -86,7 +94,7 @@ class ZUGFeRDTransactionModelConverter {
         DocumentContextParameterType contextParameter = xmlFactory
             .createDocumentContextParameterType();
         IDType idType = xmlFactory.createIDType();
-        idType.setValue(DocumentContextParameterType.EXTENDED);
+        idType.setValue(DocumentContextParameterTypeConstants.EXTENDED);
         contextParameter.setID(idType);
         context.getGuidelineSpecifiedDocumentContextParameter().add(
             contextParameter);
@@ -110,14 +118,14 @@ class ZUGFeRDTransactionModelConverter {
         DateTimeType issueDateTime = xmlFactory.createDateTimeType();
         DateTimeType.DateTimeString issueDateTimeString = xmlFactory
             .createDateTimeTypeDateTimeString();
-        issueDateTimeString.setFormat(DateTimeType.DateTimeString.DATE);
+        issueDateTimeString.setFormat(DateTimeTypeConstants.DATE);
         issueDateTimeString.setValue(zugferdDateFormat.format(trans
             .getIssueDate()));
         issueDateTime.setDateTimeString(issueDateTimeString);
         document.setIssueDateTime(issueDateTime);
 
         DocumentCodeType documentCodeType = xmlFactory.createDocumentCodeType();
-        documentCodeType.setValue(DocumentCodeType.INVOICE);
+        documentCodeType.setValue(DocumentCodeTypeConstants.INVOICE);
         document.setTypeCode(documentCodeType);
 
         TextType name = xmlFactory.createTextType();
@@ -127,7 +135,7 @@ class ZUGFeRDTransactionModelConverter {
         if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
             NoteType regularInfo = xmlFactory.createNoteType();
             CodeType regularInfoSubjectCode = xmlFactory.createCodeType();
-            regularInfoSubjectCode.setValue(NoteType.REGULARINFO);
+            regularInfoSubjectCode.setValue(NoteTypeConstants.REGULARINFO);
             regularInfo.setSubjectCode(regularInfoSubjectCode);
             TextType regularInfoContent = xmlFactory.createTextType();
             regularInfoContent.setValue(trans
@@ -205,7 +213,7 @@ class ZUGFeRDTransactionModelConverter {
             .createTaxRegistrationType();
         IDType buyerUstId = xmlFactory.createIDType();
         buyerUstId.setValue(trans.getRecipient().getVATID());
-        buyerUstId.setSchemeID(TaxRegistrationType.USTID);
+        buyerUstId.setSchemeID(TaxRegistrationTypeConstants.USTID);
         buyerTaxRegistration.setID(buyerUstId);
         buyerTradeParty.getSpecifiedTaxRegistration().add(buyerTaxRegistration);
 
@@ -244,7 +252,7 @@ class ZUGFeRDTransactionModelConverter {
             .createTaxRegistrationType();
         IDType sellerTaxId = xmlFactory.createIDType();
         sellerTaxId.setValue(trans.getOwnTaxID());
-        sellerTaxId.setSchemeID(TaxRegistrationType.TAXID);
+        sellerTaxId.setSchemeID(TaxRegistrationTypeConstants.TAXID);
         sellerTaxRegistration.setID(sellerTaxId);
         sellerTradeParty.getSpecifiedTaxRegistration().add(
             sellerTaxRegistration);
@@ -253,7 +261,7 @@ class ZUGFeRDTransactionModelConverter {
         sellerTaxRegistration = xmlFactory.createTaxRegistrationType();
         IDType sellerUstId = xmlFactory.createIDType();
         sellerUstId.setValue(trans.getOwnVATID());
-        sellerUstId.setSchemeID(TaxRegistrationType.USTID);
+        sellerUstId.setSchemeID(TaxRegistrationTypeConstants.USTID);
         sellerTaxRegistration.setID(sellerUstId);
         sellerTradeParty.getSpecifiedTaxRegistration().add(
             sellerTaxRegistration);
@@ -270,7 +278,7 @@ class ZUGFeRDTransactionModelConverter {
         DateTimeType deliveryDate = xmlFactory.createDateTimeType();
         DateTimeType.DateTimeString deliveryDateString = xmlFactory
             .createDateTimeTypeDateTimeString();
-        deliveryDateString.setFormat(DateTimeType.DateTimeString.DATE);
+        deliveryDateString.setFormat(DateTimeTypeConstants.DATE);
         deliveryDateString.setValue(zugferdDateFormat.format(trans
             .getDeliveryDate()));
         deliveryDate.setDateTimeString(deliveryDateString);
@@ -321,7 +329,7 @@ class ZUGFeRDTransactionModelConverter {
             .createTradeSettlementPaymentMeansType();
         PaymentMeansCodeType paymentDataType = xmlFactory
             .createPaymentMeansCodeType();
-        paymentDataType.setValue(PaymentMeansCodeType.BANKACCOUNT);
+        paymentDataType.setValue(PaymentMeansCodeTypeConstants.BANKACCOUNT);
         paymentData.setTypeCode(paymentDataType);
 
         TextType paymentInfo = xmlFactory.createTextType();
@@ -360,12 +368,12 @@ class ZUGFeRDTransactionModelConverter {
 
             TradeTaxType tradeTax = xmlFactory.createTradeTaxType();
             TaxTypeCodeType taxTypeCode = xmlFactory.createTaxTypeCodeType();
-            taxTypeCode.setValue(TaxTypeCodeType.SALESTAX);
+            taxTypeCode.setValue(TaxTypeCodeTypeConstants.SALESTAX);
             tradeTax.setTypeCode(taxTypeCode);
 
             TaxCategoryCodeType taxCategoryCode = xmlFactory
                 .createTaxCategoryCodeType();
-            taxCategoryCode.setValue(TaxCategoryCodeType.STANDARDRATE);
+            taxCategoryCode.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
             tradeTax.setCategoryCode(taxCategoryCode);
 
             VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
@@ -427,11 +435,11 @@ class ZUGFeRDTransactionModelConverter {
 			 */
             TaxCategoryCodeType taxType = xmlFactory
                 .createTaxCategoryCodeType();
-            taxType.setValue(TaxCategoryCodeType.STANDARDRATE);
+            taxType.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
             tradeTax.setCategoryCode(taxType);
 
             TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
-            taxCode.setValue(TaxTypeCodeType.SALESTAX);
+            taxCode.setValue(TaxTypeCodeTypeConstants.SALESTAX);
             tradeTax.setTypeCode(taxCode);
 
             allowance.getCategoryTradeTax().add(tradeTax);
@@ -478,11 +486,11 @@ class ZUGFeRDTransactionModelConverter {
 			 */
             TaxCategoryCodeType taxType = xmlFactory
                 .createTaxCategoryCodeType();
-            taxType.setValue(TaxCategoryCodeType.STANDARDRATE);
+            taxType.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
             tradeTax.setCategoryCode(taxType);
 
             TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
-            taxCode.setValue(TaxTypeCodeType.SALESTAX);
+            taxCode.setValue(TaxTypeCodeTypeConstants.SALESTAX);
             tradeTax.setTypeCode(taxCode);
 
             charge.getCategoryTradeTax().add(tradeTax);
@@ -527,11 +535,11 @@ class ZUGFeRDTransactionModelConverter {
 			 */
             TaxCategoryCodeType taxType = xmlFactory
                 .createTaxCategoryCodeType();
-            taxType.setValue(TaxCategoryCodeType.STANDARDRATE);
+            taxType.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
             tradeTax.setCategoryCode(taxType);
 
             TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
-            taxCode.setValue(TaxTypeCodeType.SALESTAX);
+            taxCode.setValue(TaxTypeCodeTypeConstants.SALESTAX);
             tradeTax.setTypeCode(taxCode);
 
             serviceCharge.getAppliedTradeTax().add(tradeTax);
@@ -550,7 +558,7 @@ class ZUGFeRDTransactionModelConverter {
         DateTimeType dueDate = xmlFactory.createDateTimeType();
         DateTimeType.DateTimeString dueDateString = xmlFactory
             .createDateTimeTypeDateTimeString();
-        dueDateString.setFormat(DateTimeType.DateTimeString.DATE);
+        dueDateString.setFormat(DateTimeTypeConstants.DATE);
         dueDateString.setValue(zugferdDateFormat.format(trans.getDueDate()));
         dueDate.setDateTimeString(dueDateString);
         paymentTerm.setDueDateDateTime(dueDate);
@@ -752,11 +760,11 @@ class ZUGFeRDTransactionModelConverter {
 
             TaxCategoryCodeType taxCategoryCode = xmlFactory
                 .createTaxCategoryCodeType();
-            taxCategoryCode.setValue(TaxCategoryCodeType.STANDARDRATE);
+            taxCategoryCode.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
             tradeTax.setCategoryCode(taxCategoryCode);
 
             TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
-            taxCode.setValue(TaxTypeCodeType.SALESTAX);
+            taxCode.setValue(TaxTypeCodeTypeConstants.SALESTAX);
             tradeTax.setTypeCode(taxCode);
 
             PercentType taxPercent = xmlFactory.createPercentType();

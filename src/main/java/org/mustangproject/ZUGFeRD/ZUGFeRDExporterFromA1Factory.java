@@ -44,14 +44,9 @@ public class ZUGFeRDExporterFromA1Factory {
      */
     public ZUGFeRDExporter loadFromPDFA1(String pdfFilename) throws IOException {
         ensurePDFIsValidA1(new FileDataSource(pdfFilename));
-
-        ZUGFeRDExporter zugFeRDExporter = null;
-        try(PDDocument doc = PDDocument.load(new File(pdfFilename)))	{
-            makePDFA3compliant(doc);
-            zugFeRDExporter = new ZUGFeRDExporter(doc);
-        }
-
-		return zugFeRDExporter;
+        PDDocument doc = PDDocument.load(new File(pdfFilename));
+        makePDFA3compliant(doc);
+        return new ZUGFeRDExporter(doc);
     }
 
     /**
@@ -62,12 +57,10 @@ public class ZUGFeRDExporterFromA1Factory {
      */
     public ZUGFeRDExporter loadFromPDFA1(byte[] pdfBinary) throws IOException {
         ensurePDFIsValidA1(new ByteArrayDataSource(new ByteArrayInputStream(pdfBinary)));
-
         ZUGFeRDExporter zugFeRDExporter;
-        try (PDDocument doc = PDDocument.load(pdfBinary))	{
-            makePDFA3compliant(doc);
-            zugFeRDExporter = new ZUGFeRDExporter(doc);
-        }
+        PDDocument doc = PDDocument.load(pdfBinary);
+        makePDFA3compliant(doc);
+        zugFeRDExporter = new ZUGFeRDExporter(doc);
 
 		return zugFeRDExporter;
     }
