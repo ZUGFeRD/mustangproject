@@ -3,9 +3,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.mustangproject.ZUGFeRD</groupId>
   <artifactId>toecount</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.2.0-SNAPSHOT</version>
   <name>ZUGFeRD PDF checker</name>
-  <description>Shows statistics on how many PDFs in a directory are ZUGFeRD-Compliant</description>
+  <description>Shows statistics on how many PDFs in a directory are ZUGFeRD-compliant, allows to combine XML and PDF, extract XML from PDF and migrate XML from ZF1 to ZF2</description>
   <repositories>
     <repository>
       <id>mustang-mvn-repo</id>
