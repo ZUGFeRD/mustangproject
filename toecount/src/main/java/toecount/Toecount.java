@@ -170,49 +170,57 @@ public class Toecount {
 			try {
 				String xml=new String(Files.readAllBytes(Paths.get("./ZUGFeRD-invoice.xml")),StandardCharsets.UTF_8);
 				// todo: attributes may also be in single quotes, this one hardcodedly expects double ones
-				xml=xml.replaceAll(Pattern.quote("\"urn:ferd:CrossIndustryDocument:invoice:1p0"), "\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:13");
-				xml=xml.replaceAll(Pattern.quote("urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12"), "urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:20");
-				xml=xml.replaceAll(Pattern.quote("urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15"), "urn:un:unece:uncefact:data:standard:UnqualifiedDataType:20");
-				xml=xml.replaceAll(Pattern.quote("rsm:CrossIndustryDocument"), "rsm:CrossIndustryInvoice");
-				xml=xml.replaceAll(Pattern.quote("rsm:SpecifiedExchangedDocumentContext"), "rsm:CIExchangedDocumentContext");
-				xml=xml.replaceAll(Pattern.quote("rsm:HeaderExchangedDocument"), "rsm:CIIHExchangedDocument");
-				xml=xml.replaceAll(Pattern.quote("SpecifiedSupplyChainTradeTransaction"), "CIIHSupplyChainTradeTransaction");
-				xml=xml.replaceAll(Pattern.quote("ram:GuidelineSpecifiedDocumentContextParameter"), "ram:GuidelineSpecifiedDocumentCIContextParameter");
-				xml=xml.replaceAll(Pattern.quote("ram:IncludedNote"), "ram:IncludedCINote");
-				xml=xml.replaceAll(Pattern.quote("ram:ApplicableSupplyChainTradeAgreement"), "ram:ApplicableCIIHSupplyChainTradeAgreement");
-				xml=xml.replaceAll(Pattern.quote("ram:SellerTradeParty"), "ram:SellerCITradeParty");
-				xml=xml.replaceAll(Pattern.quote("ram:BuyerTradeParty"), "ram:BuyerCITradeParty");
-				xml=xml.replaceAll(Pattern.quote("ram:ApplicableSupplyChainTradeDelivery"), "ram:ApplicableCIIHSupplyChainTradeDelivery");
-				xml=xml.replaceAll(Pattern.quote("ram:ApplicableSupplyChainTradeSettlement"), "ram:ApplicableCIIHSupplyChainTradeSettlement");
-				xml=xml.replaceAll(Pattern.quote("ram:IncludedSupplyChainTradeLineItem"), "ram:IncludedCIILSupplyChainTradeLineItem");
-				xml=xml.replaceAll(Pattern.quote("ram:AssociatedDocumentLineDocument"), "ram:AssociatedCIILDocumentLineDocument");
-				xml=xml.replaceAll(Pattern.quote("ram:SpecifiedSupplyChainTradeDelivery"), "ram:SpecifiedCIILSupplyChainTradeDelivery");
-				xml=xml.replaceAll(Pattern.quote("ram:SpecifiedSupplyChainTradeSettlement"), "ram:SpecifiedCIILSupplyChainTradeSettlement");
-				xml=xml.replaceAll(Pattern.quote("ram:SpecifiedTradeSettlementMonetarySummation"), "ram:SpecifiedCIILTradeSettlementMonetarySummation");
-				xml=xml.replaceAll(Pattern.quote("ram:SpecifiedTradeProduct"), "ram:SpecifiedCITradeProduct");
-				xml=xml.replaceAll(Pattern.quote("ram:ActualDeliverySupplyChainEvent"), "ram:ActualDeliveryCISupplyChainEvent");
-				xml=xml.replaceAll(Pattern.quote("ram:SpecifiedTradeSettlementPaymentMeans"), "ram:SpecifiedCITradeSettlementPaymentMeans");
-				xml=xml.replaceAll(Pattern.quote("ram:PayeePartyCreditorFinancialAccount"), "ram:PayeePartyCICreditorFinancialAccount");
-				xml=xml.replaceAll(Pattern.quote("ram:PayeeSpecifiedCreditorFinancialInstitution"), "ram:PayeeSpecifiedCICreditorFinancialInstitution");
-				xml=xml.replaceAll(Pattern.quote("ram:ApplicableTradeTax"), "ram:ApplicableCITradeTax");
-				xml=xml.replaceAll(Pattern.quote("ram:ApplicablePercent"), "ram:RateApplicablePercent");
-				xml=xml.replaceAll(Pattern.quote("ram:PostalTradeAddress"), "ram:PostalCITradeAddress");
-				xml=xml.replaceAll(Pattern.quote("ram:SpecifiedTaxRegistration"), "ram:SpecifiedCITaxRegistration");
-				xml=xml.replaceAll(Pattern.quote("ram:PostalTradeAddress"), "ram:PostalCITradeAddress");
-				xml=xml.replaceAll(Pattern.quote("ram:SpecifiedTradeSettlementMonetarySummation"), "ram:SpecifiedCITradeSettlementMonetarySummation");
-				xml=xml.replaceAll(Pattern.quote("ram:SpecifiedTradePaymentTerms"), "ram:SpecifiedCITradePaymentTerms");
-				xml=xml.replaceAll(Pattern.quote("ram:SpecifiedSupplyChainTradeAgreement"), "ram:SpecifiedCIILSupplyChainTradeAgreement");
-				xml=xml.replaceAll(Pattern.quote("ram:GrossPriceProductTradePrice"), "ram:GrossPriceProductCITradePrice");
-				xml=xml.replaceAll(Pattern.quote("ram:NetPriceProductTradePrice"), "ram:NetPriceProductCITradePrice");
-		//		xml=xml.replaceAll("\\<ram:TestIndicator.*\\/ram:TestIndicator>", "");
+				xml=xml.replace("\"urn:ferd:CrossIndustryDocument:invoice:1p0", "\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:13");
+				xml=xml.replace("urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12", "urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:20");
+				xml=xml.replace("urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15", "urn:un:unece:uncefact:data:standard:UnqualifiedDataType:20");
+				xml=xml.replace("rsm:CrossIndustryDocument", "rsm:CrossIndustryInvoice");
+				xml=xml.replace("rsm:SpecifiedExchangedDocumentContext", "rsm:CIExchangedDocumentContext");
+				xml=xml.replace("rsm:HeaderExchangedDocument", "rsm:CIIHExchangedDocument");
+				xml=xml.replace("SpecifiedSupplyChainTradeTransaction", "CIIHSupplyChainTradeTransaction");
+				xml=xml.replace("ram:GuidelineSpecifiedDocumentContextParameter", "ram:GuidelineSpecifiedCIDocumentContextParameter");
+				xml=xml.replace("ram:IncludedNote", "ram:IncludedCINote");
+				xml=xml.replace("ram:ApplicableSupplyChainTradeAgreement", "ram:ApplicableCIIHSupplyChainTradeAgreement");
+				xml=xml.replace("ram:SellerTradeParty", "ram:SellerCITradeParty");
+				xml=xml.replace("ram:BuyerTradeParty", "ram:BuyerCITradeParty");
+				xml=xml.replace("ram:ApplicableSupplyChainTradeDelivery", "ram:ApplicableCIIHSupplyChainTradeDelivery");
+				xml=xml.replace("ram:ApplicableSupplyChainTradeSettlement", "ram:ApplicableCIIHSupplyChainTradeSettlement");
+				xml=xml.replace("ram:IncludedSupplyChainTradeLineItem", "ram:IncludedCIILSupplyChainTradeLineItem");
+				xml=xml.replace("ram:AssociatedDocumentLineDocument", "ram:AssociatedCIILDocumentLineDocument");
+				xml=xml.replace("ram:SpecifiedSupplyChainTradeDelivery", "ram:SpecifiedCIILSupplyChainTradeDelivery");
+				xml=xml.replace("ram:SpecifiedSupplyChainTradeSettlement", "ram:SpecifiedCIILSupplyChainTradeSettlement");
+				xml=xml.replace("ram:SpecifiedTradeProduct", "ram:SpecifiedCITradeProduct");
+				xml=xml.replace("ram:ActualDeliverySupplyChainEvent", "ram:ActualDeliveryCISupplyChainEvent");
+				xml=xml.replace("ram:SpecifiedTradeSettlementPaymentMeans", "ram:SpecifiedCITradeSettlementPaymentMeans");
+				xml=xml.replace("ram:PayeePartyCreditorFinancialAccount", "ram:PayeePartyCICreditorFinancialAccount");
+				xml=xml.replace("ram:PayeeSpecifiedCreditorFinancialInstitution", "ram:PayeeSpecifiedCICreditorFinancialInstitution");
+				xml=xml.replace("ram:ApplicableTradeTax", "ram:ApplicableCITradeTax");
+				xml=xml.replace("ram:ApplicablePercent", "ram:RateApplicablePercent");
+				xml=xml.replace("ram:PostalTradeAddress", "ram:PostalCITradeAddress");
+				xml=xml.replace("ram:SpecifiedTaxRegistration", "ram:SpecifiedCITaxRegistration");
+				xml=xml.replace("ram:PostalTradeAddress", "ram:PostalCITradeAddress");
+				xml=xml.replace("ram:SpecifiedTradePaymentTerms", "ram:SpecifiedCITradePaymentTerms");
+				xml=xml.replace("ram:SpecifiedSupplyChainTradeAgreement", "ram:SpecifiedCIILSupplyChainTradeAgreement");
+				xml=xml.replace("ram:GrossPriceProductTradePrice", "ram:GrossPriceProductCITradePrice");
+				xml=xml.replace("ram:NetPriceProductTradePrice", "ram:NetPriceProductCITradePrice");
+				xml=xml.replaceAll("(?s)\\<ram:TestIndicator.*\\/ram:TestIndicator>", "");
 		//remove manually for the time being:		xml=xml.replaceAll("ram:TestIndicator>(.*?)/ram:TestIndicator>", "");
 		// one ram:SpecifiedCIILTradeSettlementMonetarySummation will have to be ram:SpecifiedCIIHTradeSettlementMonetarySummation afterwards
-				 
-
-
-//						entfernen 		<ram:TestIndicator><udt:Indicator>true</udt:Indicator></ram:TestIndicator><!-- Im Echtbetrieb muss der TestIndicator entweder vollständig entfallen oder auf false stehen. -->
-//						xmlns:rsm="urn:ferd:CrossIndustryDocument:invoice:1p0"				
 				
+				String summationClose="</ram:SpecifiedTradeSettlementMonetarySummation>";
+				int posFirstSummation=xml.indexOf(summationClose)+summationClose.length();
+				String xmlAfterFirstSummation=xml.substring(posFirstSummation);
+				String xmlBeforeIncludingFirstSummation=xml.substring(0, posFirstSummation);
+				// replace only once the header
+				
+				xmlBeforeIncludingFirstSummation=xmlBeforeIncludingFirstSummation.replace  ("ram:SpecifiedTradeSettlementMonetarySummation", "ram:SpecifiedCIIHTradeSettlementMonetarySummation");
+				xml=xmlBeforeIncludingFirstSummation+xmlAfterFirstSummation;
+				
+				xml=xml.replace  ("ram:SpecifiedTradeSettlementMonetarySummation", "ram:SpecifiedCIILTradeSettlementMonetarySummation");
+				
+					// the rest of the ram:SpecifiedTradeSettlementMonetarySummation should be in ram:ApplicableSupplyChainTradeSettlement
+				//xml=xml.replaceAll(Pattern.quote("ram:SpecifiedTradeSettlementMonetarySummation"), "ram:SpecifiedCIILTradeSettlementMonetarySummation");
+
+
 				Files.write(Paths.get("./ZUGFeRD-2-invoice.xml"), xml.getBytes());
 			} catch (IOException e) {
 				e.printStackTrace();
