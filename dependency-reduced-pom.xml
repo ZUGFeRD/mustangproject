@@ -4,7 +4,7 @@
   <groupId>org.mustangproject.ZUGFeRD</groupId>
   <artifactId>mustang</artifactId>
   <name>Mustang</name>
-  <version>1.4.0</version>
+  <version>1.4.1-SNAPSHOT</version>
   <description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs</description>
   <url>http://www.mustangproject.org/</url>
   <mailingLists>
@@ -98,6 +98,39 @@
           <minimizeJar>true</minimizeJar>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>templating-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <executions>
+          <execution>
+            <id>filtering-java-templates</id>
+            <goals>
+              <goal>filter-sources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jaxb2-maven-plugin</artifactId>
+        <version>2.3.1</version>
+        <executions>
+          <execution>
+            <id>xjc</id>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <target>2.1</target>
+          <packageName>org.mustangproject.ZUGFeRD.model</packageName>
+          <sources>
+            <source>src/main/schema/ZUGFeRD1p0.xsd</source>
+          </sources>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
@@ -113,6 +146,30 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>com.helger</groupId>
+      <artifactId>ph-schematron</artifactId>
+      <version>4.3.1</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>ph-commons</artifactId>
+          <groupId>com.helger</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>ph-xml</artifactId>
+          <groupId>com.helger</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>ph-jaxb</artifactId>
+          <groupId>com.helger</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>Saxon-HE</artifactId>
+          <groupId>net.sf.saxon</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
   <distributionManagement>
     <repository>
@@ -122,10 +179,12 @@
     </repository>
   </distributionManagement>
   <properties>
-    <maven.compiler.compilerVersion>1.6</maven.compiler.compilerVersion>
+    <maven.compiler.compilerVersion>1.7</maven.compiler.compilerVersion>
     <github.global.server>github</github.global.server>
+    <maven.compiler.source>1.7</maven.compiler.source>
     <additionalparam>-Xdoclint:none</additionalparam>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
 </project>
 
