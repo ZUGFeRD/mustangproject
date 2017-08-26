@@ -389,8 +389,9 @@ public class ZUGFeRDExporter implements Closeable {
 	 * @param zugferdData
 	 *            XML data to be set as a byte array (XML file in raw form).
 	 */
-	public void setZUGFeRDXMLData(byte[] zugferdData) {
+	public void setZUGFeRDXMLData(byte[] zugferdData) throws IOException {
 		this.zugferdData = zugferdData;
+		PDFattachZugferdFile(null);
 	}
 
 	/**
