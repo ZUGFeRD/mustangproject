@@ -1,5 +1,6 @@
 package org.mustangproject.ZUGFeRD;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -50,7 +51,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 	 */
 	public void testZExport() throws Exception {
 
-		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505newEdge.pdf";
+		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505custom.pdf";
 		// the writing part
 
 		try {
@@ -58,7 +59,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
 			ZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1Factory().setProducer("My Application").setCreator("Test")
-					.loadFromPDFA1("./Source.pdf");
+					.loadFromPDFA1(SOURCE_PDF);
 			String ownZUGFeRDXML = "<rsm:CrossIndustryDocument xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12\" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15\" xmlns:rsm=\"urn:ferd:CrossIndustryDocument:invoice:1p0\">\n"
 					+ "<rsm:SpecifiedExchangedDocumentContext>\n" + "<ram:TestIndicator>\n"
 					+ "<udt:Indicator>false</udt:Indicator>\n" + "</ram:TestIndicator>\n"
@@ -191,7 +192,12 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			zea1.setZUGFeRDXMLData(ownZUGFeRDXML.getBytes());
 			zea1.PDFattachZugferdFile(null);
 
+			ByteArrayOutputStream baos=new ByteArrayOutputStream();
+
 			zea1.export(TARGET_PDF);
+			zea1.export(baos);
+			String pdfContent=baos.toString("UTF-8");
+			assertFalse(pdfContent.indexOf("(via mustangproject.org")==-1);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

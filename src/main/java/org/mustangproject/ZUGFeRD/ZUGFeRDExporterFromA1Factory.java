@@ -88,7 +88,7 @@ public class ZUGFeRDExporterFromA1Factory {
     }
 
     private void makePDFA3compliant(PDDocument doc) throws IOException {
-        String fullProducer = producer + " (via mustangproject.org " + Version.getVersion() + ")";
+        String fullProducer = producer + " (via mustangproject.org "+org.mustangproject.ZUGFeRD.Version.VERSION+")";
 
         PDDocumentCatalog cat = doc.getDocumentCatalog();
         PDMetadata metadata = new PDMetadata(doc);

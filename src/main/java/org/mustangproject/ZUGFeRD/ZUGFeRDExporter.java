@@ -33,6 +33,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -297,6 +298,10 @@ public class ZUGFeRDExporter implements Closeable {
 
 	public void export(String ZUGFeRDfilename) throws IOException {
 		doc.save(ZUGFeRDfilename);
+	}
+	
+	public void export(OutputStream output) throws IOException {
+		doc.save(output);
 	}
 
 	/**
