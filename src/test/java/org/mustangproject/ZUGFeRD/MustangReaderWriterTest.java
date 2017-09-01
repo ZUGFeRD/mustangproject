@@ -1,5 +1,6 @@
 package org.mustangproject.ZUGFeRD;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -409,12 +410,16 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
             this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
         
         ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory()
-          .setProducer("My Application")
-          .setCreator(System.getProperty("user.name"))
           .loadFromPDFA1(SOURCE_PDF)) {
 
       ze.PDFattachZugferdFile(this);
       ze.export(TARGET_PDF);
+
+		ByteArrayOutputStream baos=new ByteArrayOutputStream();
+		ze.export(baos);
+		String pdfContent=baos.toString("UTF-8");
+		assertFalse(pdfContent.indexOf("(via mustangproject.org")==-1);
+
     }
 
     // now check the contents (like MustangReaderTest)
@@ -445,5 +450,36 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
     assertEquals(ref, getNumber());
 
   }
+  
+  /**
+   * @Test(expected = IndexOutOfBoundsException.class)
+   * @throws Exception
+   */
+  public void testExceptionOnPDF14() throws Exception
+  {
+
+    final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505new.pdf";
+
+    boolean exceptionThrown=false;
+    // the writing part
+    try(InputStream SOURCE_PDF =
+            this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDF14.pdf");
+        
+        ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory()
+          .loadFromPDFA1(SOURCE_PDF)) {
+
+      ze.PDFattachZugferdFile(this);
+      ze.export(TARGET_PDF);
+
+		ByteArrayOutputStream baos=new ByteArrayOutputStream();
+		ze.export(baos);
+    } catch (IOException ex) {
+    	// should throw a java.io.IOException: File is not a valid PDF/A-1 input file
+    		exceptionThrown=true;
+    }
+    assertTrue(exceptionThrown);
+
+  }
+
 
 }
