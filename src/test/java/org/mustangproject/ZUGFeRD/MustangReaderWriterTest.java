@@ -410,7 +410,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
             this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
         
         ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory()
-          .loadFromPDFA1(SOURCE_PDF)) {
+          .load(SOURCE_PDF)) {
 
       ze.PDFattachZugferdFile(this);
       ze.export(TARGET_PDF);
@@ -466,7 +466,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
             this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDF14.pdf");
         
         ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory()
-          .loadFromPDFA1(SOURCE_PDF)) {
+          .load(SOURCE_PDF)) {
 
       ze.PDFattachZugferdFile(this);
       ze.export(TARGET_PDF);

@@ -8,8 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import javax.xml.transform.TransformerException;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -405,12 +403,13 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     // the writing part
 
     try(InputStream SOURCE_PDF =
-            this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
+            this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
         
-        ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory()
+        ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory()
           .setProducer("My Application")
           .setCreator(System.getProperty("user.name"))
-          .loadFromPDFA1(SOURCE_PDF)) {
+          .ignorePDFAErrors()
+          .load(SOURCE_PDF)) {
 
       ze.PDFattachZugferdFile(this);
       ze.export(TARGET_PDF);

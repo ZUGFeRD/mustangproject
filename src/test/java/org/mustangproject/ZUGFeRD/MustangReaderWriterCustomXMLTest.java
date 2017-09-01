@@ -59,7 +59,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
 			ZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1Factory().setProducer("My Application").setCreator("Test")
-					.loadFromPDFA1(SOURCE_PDF);
+					.load(SOURCE_PDF);
 			String ownZUGFeRDXML = "<rsm:CrossIndustryDocument xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12\" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15\" xmlns:rsm=\"urn:ferd:CrossIndustryDocument:invoice:1p0\">\n"
 					+ "<rsm:SpecifiedExchangedDocumentContext>\n" + "<ram:TestIndicator>\n"
 					+ "<udt:Indicator>false</udt:Indicator>\n" + "</ram:TestIndicator>\n"

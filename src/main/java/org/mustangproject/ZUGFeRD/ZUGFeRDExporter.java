@@ -194,8 +194,8 @@ public class ZUGFeRDExporter implements Closeable {
 		doc = createPDFA1Factory()
             .setProducer(producer)
             .setCreator(creator)
-            .setAttachZugferdHeaders(attachZugferdHeaders)
-			.loadFromPDFA1(filename)
+            .setAttachZUGFeRDHeaders(attachZugferdHeaders)
+			.load(filename)
 			.doc;
 
 		return doc.getDocumentCatalog();
@@ -211,20 +211,20 @@ public class ZUGFeRDExporter implements Closeable {
 		doc = createPDFA1Factory()
             .setProducer(producer)
             .setCreator(creator)
-            .setAttachZugferdHeaders(attachZugferdHeaders)
-			.loadFromPDFA1(file)
+            .setAttachZUGFeRDHeaders(attachZugferdHeaders)
+			.load(file)
 			.doc;
 
 		return doc.getDocumentCatalog();
 	}
 
-	private ZUGFeRDExporterFromA1Factory createPDFA1Factory() {
+	private IExporterFactory createPDFA1Factory() {
 		ZUGFeRDExporterFromA1Factory factory = new ZUGFeRDExporterFromA1Factory();
 		if (ignoreA1Errors) {
-			factory.ignoreA1Errors();
+			factory.ignorePDFAErrors();
 		}
 		return factory
-			.setZugferdConformanceLevel(zUGFeRDConformanceLevel)
+			.setZUGFeRDConformanceLevel(zUGFeRDConformanceLevel)
 			.setConformanceLevel(conformanceLevel);
 	}
 

@@ -14,6 +14,7 @@ import javax.xml.transform.TransformerException;
 
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1Factory;
+import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA3Factory;
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
 
 import com.sanityinc.jargs.CmdLineParser;
@@ -43,7 +44,6 @@ public class Toecount {
 				+ "\t--extract= extract invoice.zugferd.pdf to ZUGFeRD-invoice.xml\r\n"
 				+ "\t--upgrade= upgrade ZUGFeRD-invoice.pdf to ZUGFeRD-2-invoice.xml\r\n"
 				+ "\t--a3only= upgrade from PDF/A1 to A3 only \r\n"
-				
 
 		);
 	}
@@ -60,11 +60,6 @@ public class Toecount {
 		Option<Boolean> upgradeOption = parser.addBooleanOption('u', "upgrade");
 		Option<Boolean> a3onlyOption = parser.addBooleanOption('a', "a3only");
 
-		if (args.length == 0) {
-			printUsage();
-			System.exit(2);
-
-		}
 		try {
 			parser.parse(args);
 		} catch (CmdLineParser.OptionException e) {
@@ -93,7 +88,7 @@ public class Toecount {
 			printHelp();
 		}
 
-		if (((directoryName != null) && (directoryName.length() > 0)) || filesFromStdIn.booleanValue()) {
+		else if (((directoryName != null) && (directoryName.length() > 0)) || filesFromStdIn.booleanValue()) {
 
 			StatRun sr = new StatRun();
 			if (ignoreFileExt) {
@@ -147,19 +142,15 @@ public class Toecount {
 			 * .loadFromPDFA1("invoice.pdf");
 			 */
 			try {
-				ZUGFeRDExporter ze = new ZUGFeRDExporter();
-				ze.PDFmakeA3compliant("./invoice.pdf", "Toecount", System.getProperty("user.name"), true);
+				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("Toecount").setCreator(System.getProperty("user.name")).load("./invoice.pdf");
 				ze.setZUGFeRDXMLData(Files.readAllBytes(Paths.get("./ZUGFeRD-invoice.xml")));
-				ze.PDFattachZugferdFile(null);
+		
 				ze.export("invoice.ZUGFeRD.pdf");
 			} catch (IOException e) {
 				e.printStackTrace();
-		//	} catch (JAXBException e) {
-		//		e.printStackTrace();
-			} catch (TransformerException e) {
-				e.printStackTrace();
-			}
-
+				// } catch (JAXBException e) {
+				// e.printStackTrace();
+			} 
 			System.out.println("Written to invoice.ZUGFeRD.pdf");
 		} else if (extractRequested) {
 			ZUGFeRDImporter zi = new ZUGFeRDImporter();
@@ -178,7 +169,8 @@ public class Toecount {
 			 * .loadFromPDFA1("invoice.pdf");
 			 */
 			try {
-				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZugferdHeaders(false).loadFromPDFA1("./invoice.pdf");
+				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false)
+						.load("./invoice.pdf");
 
 				ze.export("invoice.a3.pdf");
 			} catch (IOException e) {
@@ -300,6 +292,11 @@ public class Toecount {
 				e.printStackTrace();
 			}
 			System.out.println("Written to ZUGFeRD-2-invoice.xml");
+
+		} else {
+			// no argument or argument unknown
+			printUsage();
+			System.exit(2);
 
 		}
 	}
