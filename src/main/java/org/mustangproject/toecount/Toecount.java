@@ -41,9 +41,9 @@ public class Toecount {
 				+ "\t\tIt will start once a blank line has been entered.\r\n"
 				+ "\t--ignorefileextension=if PDF files are counted check *.* instead of *.pdf files"
 				+ "Merge operations"
-				+ "\t--combine= combine ZUGFeRD-invoice.xml and invoice.pdf to invoice.zugferd.pdf\r\n"
-				+ "\t--extract= extract invoice.zugferd.pdf to ZUGFeRD-invoice.xml\r\n"
-				+ "\t--upgrade= upgrade ZUGFeRD-invoice.pdf to ZUGFeRD-2-invoice.xml\r\n"
+				+ "\t--combine= combine XML and PDF file to ZUGFeRD PDF file\r\n"
+				+ "\t--extract= extract ZUGFeRD PDF to XML file\r\n"
+				+ "\t--upgrade= upgrade ZUGFeRD XML to ZUGFeRD 2 XML\r\n"
 				+ "\t--a3only= upgrade from PDF/A1 to A3 only \r\n"
 
 		);
