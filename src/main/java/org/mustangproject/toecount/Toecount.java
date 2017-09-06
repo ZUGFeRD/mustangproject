@@ -1,6 +1,7 @@
 package org.mustangproject.toecount;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -46,6 +47,51 @@ public class Toecount {
 				+ "\t--a3only= upgrade from PDF/A1 to A3 only \r\n"
 
 		);
+	}
+
+	/***
+	 * Prompts the user for a input or output filename
+	 * @param prompt
+	 * @param defaultFilename
+	 * @param ensureFileExists
+	 * @return String
+	 */
+	protected static String getFilenameFromUser(String prompt, String defaultFilename, boolean ensureFileExists) {
+		boolean fileExists = false;
+		String selectedName = "";
+		do {
+			// for a more sophisticated dialogue maybe https://github.com/mabe02/lanterna/ could be taken into account
+			System.out.print(prompt + " (default: " + defaultFilename + "):");
+			BufferedReader buffer=new BufferedReader(new InputStreamReader(System.in));
+			try {
+				selectedName=buffer.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			if (selectedName.isEmpty()) {
+				// pressed return without entering anything
+				selectedName = defaultFilename;
+			}
+
+			if (ensureFileExists) {
+				File f = new File(selectedName);
+				if (f.exists()) {
+					fileExists = true;
+				} else {
+					System.out.println("File does not exist, try again or CTRL+C to cancel");
+					// discard the input, a scanner.reset is not sufficient
+				    
+				}
+				
+			} else {
+				fileExists=true;
+			}
+		} while (!fileExists);
+
+		return selectedName;
 	}
 
 	// /opt/local/bin/mvn clean compile assembly:single
@@ -141,26 +187,41 @@ public class Toecount {
 			 * .setProducer("toecount") .setCreator(System.getProperty("user.name"))
 			 * .loadFromPDFA1("invoice.pdf");
 			 */
+			String pdfName="";
+			String xmlName="";
+			String outName="";
+
 			try {
-				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("Toecount").setCreator(System.getProperty("user.name")).load("./invoice.pdf");
-				ze.setZUGFeRDXMLData(Files.readAllBytes(Paths.get("./ZUGFeRD-invoice.xml")));
-		
-				ze.export("invoice.ZUGFeRD.pdf");
+
+				
+				
+				pdfName=getFilenameFromUser("Source PDF", "invoice.pdf", true);
+				xmlName=getFilenameFromUser("ZUGFeRD XML", "ZUGFeRD-invoice.xml", true);
+				outName=getFilenameFromUser("Ouput PDF", "invoice.ZUGFeRD.pdf", false);
+
+				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("Toecount")
+						.setCreator(System.getProperty("user.name")).load(pdfName);
+				ze.setZUGFeRDXMLData(Files.readAllBytes(Paths.get(xmlName)));
+
+				ze.export(outName);
 			} catch (IOException e) {
 				e.printStackTrace();
 				// } catch (JAXBException e) {
 				// e.printStackTrace();
-			} 
-			System.out.println("Written to invoice.ZUGFeRD.pdf");
+			}
+			System.out.println("Written to "+outName);
 		} else if (extractRequested) {
 			ZUGFeRDImporter zi = new ZUGFeRDImporter();
-			zi.extract("invoice.zugferd.pdf");
+			String pdfName=getFilenameFromUser("Source PDF", "invoice.pdf", true);
+			String xmlName=getFilenameFromUser("ZUGFeRD XML", "ZUGFeRD-invoice.xml", false);
+
+			zi.extract(pdfName);
 			try {
-				Files.write(Paths.get("./ZUGFeRD-invoice.xml"), zi.getRawXML());
+				Files.write(Paths.get(xmlName), zi.getRawXML());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println("Written to ZUGFeRD-invoice.xml");
+			System.out.println("Written to "+xmlName);
 
 		} else if (a3only) {
 			/*
@@ -168,18 +229,29 @@ public class Toecount {
 			 * .setProducer("toecount") .setCreator(System.getProperty("user.name"))
 			 * .loadFromPDFA1("invoice.pdf");
 			 */
+			String pdfName="";
+			String outName="";
 			try {
+				pdfName=getFilenameFromUser("Source PDF", "invoice.pdf", true);
+				outName=getFilenameFromUser("Target PDF", "invoice.a3.pdf", false);
+				
 				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false)
-						.load("./invoice.pdf");
+						.load(pdfName);
 
-				ze.export("invoice.a3.pdf");
+				ze.export(outName);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println("Written to invoice.a3.pdf");
+			System.out.println("Written to "+outName);
 		} else if (upgradeRequested) {
+			String xmlName="";
+			String outName="";
+
 			try {
-				String xml = new String(Files.readAllBytes(Paths.get("./ZUGFeRD-invoice.xml")), StandardCharsets.UTF_8);
+				xmlName=getFilenameFromUser("ZUGFeRD 1.0 XML source", "ZUGFeRD-invoice.xml", true);
+				outName=getFilenameFromUser("ZUGFeRD 2.0 XML target", "ZUGFeRD-2-invoice.xml", false);
+
+				String xml = new String(Files.readAllBytes(Paths.get(xmlName)), StandardCharsets.UTF_8);
 				// todo: attributes may also be in single quotes, this one hardcodedly expects
 				// double ones
 				xml = xml.replace("\"urn:ferd:CrossIndustryDocument:invoice:1p0",
@@ -287,11 +359,11 @@ public class Toecount {
 				// xml=xml.replaceAll(Pattern.quote("ram:SpecifiedTradeSettlementMonetarySummation"),
 				// "ram:SpecifiedCIILTradeSettlementMonetarySummation");
 
-				Files.write(Paths.get("./ZUGFeRD-2-invoice.xml"), xml.getBytes());
+				Files.write(Paths.get(outName), xml.getBytes());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println("Written to ZUGFeRD-2-invoice.xml");
+			System.out.println("Written to "+outName);
 
 		} else {
 			// no argument or argument unknown
