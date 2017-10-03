@@ -20,15 +20,9 @@ import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
-import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.transform.TransformerException;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -40,17 +34,6 @@ import java.util.Map;
 
 public class ZUGFeRDExporter implements Closeable {
 
-
-	private void init() {
-		try {
-			marshaller = JAXBContext.newInstance("org.mustangproject.ZUGFeRD.model").createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-        } catch (JAXBException e) {
-            throw new ZUGFeRDExportException("Could not initialize JAXB", e);
-        }
-
-	}
 	/**
 	 * * You will need Apache PDFBox. To use the ZUGFeRD exporter, implement
 	 * IZUGFeRDExportableTransaction in yourTransaction (which will require you
@@ -68,13 +51,13 @@ public class ZUGFeRDExporter implements Closeable {
      *             the {@link ZUGFeRDExporterFromA1Factory} instead
 	 *
 	 */
-    @Deprecated
-	public ZUGFeRDExporter() {
-		init();
-	}
 
+	public ZUGFeRDExporter() {
+		ZUGFeRD1PullProvider z1p =new ZUGFeRD1PullProvider();
+		this.xmlProvider=z1p;
+
+	}
 	public ZUGFeRDExporter(PDDocument doc2) {
-		init();
 		doc=doc2;
 	}
 
@@ -92,8 +75,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 * necessary. By default it is null meaning the caller needs to pass a
 	 * IZUGFeRDExportableTransaction for the XML to be populated.
 	 */
-	byte[] zugferdData = null;
-	private boolean isTest;
+    IXMLProvider xmlProvider;
 	@Deprecated
 	private boolean ignoreA1Errors;
 	private PDDocument doc;
@@ -144,7 +126,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 *
 	 */
 	public void setTest() {
-		isTest = true;
+		xmlProvider.setTest();
 	}
 
     /**
@@ -235,26 +217,6 @@ public class ZUGFeRDExporter implements Closeable {
 		}
 	}
 
-	private Marshaller marshaller;
-
-	private String createZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans) {
-
-		JAXBElement<CrossIndustryDocumentType> jaxElement =
-			new ZUGFeRDTransactionModelConverter(trans).withTest(isTest).convertToModel();
-
-		try {
-			return marshalJaxToXMLString(jaxElement);
-		} catch (JAXBException e) {
-			throw new ZUGFeRDExportException("Could not marshal ZUGFeRD transaction to XML", e);
-		}
-	}
-
-	private String marshalJaxToXMLString(Object jaxElement) throws JAXBException {
-		ByteArrayOutputStream outputXml = new ByteArrayOutputStream();
-		marshaller.marshal(jaxElement, outputXml);
-		return outputXml.toString();
-	}
-
 
 	/**
 	 * Embeds the Zugferd XML structure in a file named ZUGFeRD-invoice.xml.
@@ -268,32 +230,14 @@ public class ZUGFeRDExporter implements Closeable {
 	public void PDFattachZugferdFile(IZUGFeRDExportableTransaction trans)
 			throws IOException {
 
-            if (zugferdData == null) // XML ZUGFeRD data not set externally, needs
-                                                                    // to be built
-            {
-                    // create a dummy file stream, this would probably normally be a
-                    // FileInputStream
-
-                    byte[] zugferdRaw = createZugferdXMLForTransaction(trans).getBytes(); //$NON-NLS-1$
-
-                    if ((zugferdRaw[0] == (byte) 0xEF)
-                                    && (zugferdRaw[1] == (byte) 0xBB)
-                                    && (zugferdRaw[2] == (byte) 0xBF)) {
-                            // I don't like BOMs, lets remove it
-                            zugferdData = new byte[zugferdRaw.length - 3];
-                            System.arraycopy(zugferdRaw, 3, zugferdData, 0,
-                                            zugferdRaw.length - 3);
-                    } else {
-                            zugferdData = zugferdRaw;
-                    }
-            }
-
+			xmlProvider.generateXML(trans);
+			
             PDFAttachGenericFile(
                             doc,
                             "ZUGFeRD-invoice.xml",
                             "Alternative",
                             "Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
-                            "text/xml", zugferdData);
+                            "text/xml", xmlProvider.getXML());
 	}
 
 	public void export(String ZUGFeRDfilename) throws IOException {
@@ -395,7 +339,9 @@ public class ZUGFeRDExporter implements Closeable {
 	 *            XML data to be set as a byte array (XML file in raw form).
 	 */
 	public void setZUGFeRDXMLData(byte[] zugferdData) throws IOException {
-		this.zugferdData = zugferdData;
+		CustomXMLProvider cus =new CustomXMLProvider();
+		cus.setXML(zugferdData);
+		this.xmlProvider=cus;
 		PDFattachZugferdFile(null);
 	}
 
