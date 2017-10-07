@@ -60,9 +60,19 @@ public class ZUGFeRDExporter implements Closeable {
 		init();
 	}
 
+	public void setVersion(int ver) {
+		if (ver==1) {
+			ZUGFeRD1PullProvider z1p =new ZUGFeRD1PullProvider();
+			this.xmlProvider=z1p;
+			
+		} else {
+			ZUGFeRD2PullProvider z2p =new ZUGFeRD2PullProvider();
+			this.xmlProvider=z2p;
+		}
+	}
+	
 	private void init() {
-		ZUGFeRD1PullProvider z1p =new ZUGFeRD1PullProvider();
-		this.xmlProvider=z1p;
+		setVersion(2);
 	}
 	// // MAIN CLASS
     @Deprecated

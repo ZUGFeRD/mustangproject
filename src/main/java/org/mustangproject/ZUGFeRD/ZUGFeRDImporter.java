@@ -182,8 +182,12 @@ public class ZUGFeRDImporter {
 				</ram:PayeeSpecifiedCreditorFinancialInstitution>
 
 */
-		ndList = document.getElementsByTagNameNS("*","PayeePartyCreditorFinancialAccount"); //$NON-NLS-1$
-
+		
+		ndList = document.getElementsByTagNameNS("*","PayeePartyCICreditorFinancialAccount"); //ZF2
+		if (ndList.getLength()==0) {
+			// try ZF1, it can not harm 	
+			ndList = document.getElementsByTagNameNS("*","PayeePartyCreditorFinancialAccount"); //$NON-NLS-1$
+		}
 		for (int bookingIndex = 0; bookingIndex < ndList
 				.getLength(); bookingIndex++) {
 
@@ -204,8 +208,11 @@ public class ZUGFeRDImporter {
 
 		}
 
-		ndList = document.getElementsByTagNameNS("*","PayeeSpecifiedCreditorFinancialInstitution"); //$NON-NLS-1$
-
+		ndList = document.getElementsByTagNameNS("*","PayeeSpecifiedCICreditorFinancialInstitution");//ZF2 //$NON-NLS-1$	
+		if (ndList.getLength()==0) {
+			// try ZF1, it can not harm 
+			ndList = document.getElementsByTagNameNS("*","PayeeSpecifiedCreditorFinancialInstitution");//ZF1 //$NON-NLS-1$
+		}
 		for (int bookingIndex = 0; bookingIndex < ndList
 				.getLength(); bookingIndex++) {
 			Node booking = ndList.item(bookingIndex);
@@ -225,8 +232,12 @@ public class ZUGFeRDImporter {
 
 		}
 
-		//
-		ndList = document.getElementsByTagNameNS("*","SellerTradeParty"); //$NON-NLS-1$
+		
+		ndList = document.getElementsByTagNameNS("*","SellerCITradeParty"); //ZF2
+		if (ndList.getLength()==0) {
+			// try ZF1, it can not harm 	
+			ndList = document.getElementsByTagNameNS("*","SellerTradeParty"); //$NON-NLS-1$
+		}
 
 		for (int bookingIndex = 0; bookingIndex < ndList
 				.getLength(); bookingIndex++) {
@@ -423,6 +434,6 @@ public class ZUGFeRDImporter {
 
 		//SpecifiedExchangedDocumentContext is in the schema, so a relatively good indication if zugferd is present - better than just invoice
 		String meta=getMeta();
-		return (meta!=null)&&( meta.length()>0)&&( meta.contains("SpecifiedExchangedDocumentContext")); //$NON-NLS-1$
+		return (meta!=null)&&( meta.length()>0)&&(( meta.contains("SpecifiedExchangedDocumentContext")/*ZF1*/||meta.contains("CIExchangedDocumentContext"))); //$NON-NLS-1$
 	}
 }

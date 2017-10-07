@@ -410,7 +410,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
           .setCreator(System.getProperty("user.name"))
           .ignorePDFAErrors()
           .load(SOURCE_PDF)) {
-
+    	  ze.setVersion(1);
       ze.PDFattachZugferdFile(this);
       ze.export(TARGET_PDF);
     }
