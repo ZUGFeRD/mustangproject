@@ -53,14 +53,17 @@ public class ZUGFeRDExporter implements Closeable {
 	 */
 
 	public ZUGFeRDExporter() {
-		ZUGFeRD1PullProvider z1p =new ZUGFeRD1PullProvider();
-		this.xmlProvider=z1p;
-
+		init();
 	}
 	public ZUGFeRDExporter(PDDocument doc2) {
 		doc=doc2;
+		init();
 	}
 
+	private void init() {
+		ZUGFeRD1PullProvider z1p =new ZUGFeRD1PullProvider();
+		this.xmlProvider=z1p;
+	}
 	// // MAIN CLASS
     @Deprecated
 	private PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;

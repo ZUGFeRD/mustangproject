@@ -106,13 +106,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 	@Override
 	public byte[] getXML() {
-		// TODO Auto-generated method stub
-		return null;
+		return zugferdData;
 	}
-
-	
-	
-
 
 	private BigDecimal getTotalGross() {
 		

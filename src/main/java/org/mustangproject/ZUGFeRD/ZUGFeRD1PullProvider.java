@@ -8,6 +8,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
+import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
+
 public class ZUGFeRD1PullProvider implements IXMLProvider {
 	
 
@@ -58,8 +60,7 @@ public class ZUGFeRD1PullProvider implements IXMLProvider {
 
 	@Override
 	public byte[] getXML() {
-		// TODO Auto-generated method stub
-		return null;
+		return zugferdData;
 	}
 
 
