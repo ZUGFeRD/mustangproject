@@ -89,7 +89,7 @@ public class ZUGFeRDImporter {
 				 * currently (in the release candidate of version 1) only one
 				 * attached file with the name ZUGFeRD-invoice.xml is allowed
 				 * */
-				if (filename.equals("ZUGFeRD-invoice.xml")) { //$NON-NLS-1$
+				if ((filename.equals("ZUGFeRD-invoice.xml")||filename.equals("factur-x.xml"))) { //$NON-NLS-1$
 					containsMeta = true;
 
 					PDComplexFileSpecification fileSpec = efMap.get(filename);
@@ -284,6 +284,11 @@ public class ZUGFeRDImporter {
 		}
 
 		ndList = document.getElementsByTagNameNS("*","SpecifiedTradePaymentTerms"); //$NON-NLS-1$
+		if (ndList.getLength()==0) {
+			// try ZF1, it can not harm 	
+			ndList = document.getElementsByTagNameNS("*","SpecifiedCITradePaymentTerms"); //$NON-NLS-1$
+		}
+
 
 		for (int bookingIndex = 0; bookingIndex < ndList
 				.getLength(); bookingIndex++) {

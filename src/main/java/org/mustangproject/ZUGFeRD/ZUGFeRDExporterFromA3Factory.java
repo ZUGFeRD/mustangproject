@@ -9,13 +9,11 @@ import org.apache.pdfbox.preflight.PreflightDocument;
 import org.apache.pdfbox.preflight.exception.ValidationException;
 import org.apache.pdfbox.preflight.parser.PreflightParser;
 import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
-import org.apache.pdfbox.util.Version;
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.AdobePDFSchema;
 import org.apache.xmpbox.schema.DublinCoreSchema;
 import org.apache.xmpbox.schema.PDFAIdentificationSchema;
 import org.apache.xmpbox.schema.XMPBasicSchema;
-import org.apache.xmpbox.type.BadFieldValueException;
 import org.apache.xmpbox.xml.XmpSerializer;
 
 import javax.activation.DataSource;
@@ -28,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.GregorianCalendar;
+import java.util.zip.ZipFile;
 
 public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	protected boolean ignorePDFAErrors = false;
@@ -41,6 +40,7 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	protected PDMetadata metadata = null;
 	protected PDFAIdentificationSchema pdfaid = null;
 	protected XMPMetadata xmp = null;
+	protected int ZFVersion=2;
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
 	 * metadata level, this will not e.g. convert graphics to JPG-2000)
@@ -56,6 +56,10 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	}
 	
 	
+	public void setZUGFeRDversion(int version) {
+		ZFVersion=version;
+	}
+
 	public void prepareDocument(PDDocument doc) throws IOException {
 		String fullProducer = producer + " (via mustangproject.org " + org.mustangproject.ZUGFeRD.Version.VERSION + ")";
 
@@ -102,7 +106,7 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 		PDDocument doc = PDDocument.load(pdfBinary);
 		prepareDocument(doc);
 		zugFeRDExporter = new ZUGFeRDExporter(doc);
-
+		zugFeRDExporter.setZUGFeRDVersion(ZFVersion);
 		return zugFeRDExporter;
 	}
 
@@ -164,7 +168,7 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	public void addXMP(XMPMetadata metadata) {
 
 		if (attachZugferdHeaders) {
-			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, zugferdConformanceLevel);
+			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, zugferdConformanceLevel, ZUGFeRDExporter.getNamespaceForVersion(ZFVersion), ZUGFeRDExporter.getPrefixForVersion(ZFVersion), ZUGFeRDExporter.getFilenameForVersion(ZFVersion) );
 
 			metadata.addSchema(zf);
 		}

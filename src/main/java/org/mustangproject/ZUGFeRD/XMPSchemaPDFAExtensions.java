@@ -39,6 +39,15 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 	public final String prefix_pdfaSchema = "pdfaSchema";
 	public final String xmlns_pdfaProperty = "http://www.aiim.org/pdfa/ns/property#";
 	public final String prefix_pdfaProperty = "pdfaProperty";
+	public String namespace = null;
+	public String prefix = null;
+	
+	
+	public void setZUGFeRDVersion(int ver) {
+		namespace=ZUGFeRDExporter.getNamespaceForVersion(ver);
+		prefix=ZUGFeRDExporter.getPrefixForVersion(ver);
+	}
+	
 
 	private DefinedStructuredType addProperty(ArrayProperty parent, String name, String type, String category,
 			String description) {
@@ -68,17 +77,15 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 	}
 
 	public XMPSchemaPDFAExtensions(XMPMetadata metadata) {
-
 		super(metadata);
+		setZUGFeRDVersion(2);
 		attachExtensions(metadata, true);
-
 	}
 	
 	public XMPSchemaPDFAExtensions(XMPMetadata metadata, boolean withZF) {
-
 		super(metadata);
+		setZUGFeRDVersion(2);
 		attachExtensions(metadata, withZF);
-
 	}
 
 	public void attachExtensions(XMPMetadata metadata, boolean withZF) {
@@ -98,10 +105,10 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 			li.addProperty(pdfa1);
 
 			pdfa1 = new TextType(metadata, xmlns_pdfaSchema, prefix_pdfaSchema, PDFASchemaType.NAMESPACE_URI,
-					"urn:ferd:pdfa:CrossIndustryDocument:invoice:1p0#");
+					namespace);
 			li.addProperty(pdfa1);
 
-			pdfa1 = new TextType(metadata, xmlns_pdfaSchema, prefix_pdfaSchema, PDFASchemaType.PREFIX, "zf");
+			pdfa1 = new TextType(metadata, xmlns_pdfaSchema, prefix_pdfaSchema, PDFASchemaType.PREFIX, prefix);
 			li.addProperty(pdfa1);
 
 			ArrayProperty newSeq = new ArrayProperty(metadata, xmlns_pdfaSchema, prefix_pdfaSchema,
@@ -112,7 +119,7 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 			addProperty(newSeq, "DocumentType", "Text", "external", "INVOICE");
 			addProperty(newSeq, "Version", "Text", "external", "The actual version of the ZUGFeRD XML schema");
 			addProperty(newSeq, "ConformanceLevel", "Text", "external",
-					"The conformance level of the embedded ZUGFeRD data");
+					"The selected ZUGFeRD profile completeness");
 		}
 	}
 }

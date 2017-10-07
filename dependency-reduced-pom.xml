@@ -4,7 +4,7 @@
   <groupId>org.mustangproject.ZUGFeRD</groupId>
   <artifactId>mustang</artifactId>
   <name>Mustang</name>
-  <version>1.4.1-SNAPSHOT</version>
+  <version>1.4.2-SNAPSHOT</version>
   <description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs</description>
   <url>http://www.mustangproject.org/</url>
   <mailingLists>
