@@ -190,7 +190,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "	<rsm:CIExchangedDocumentContext>\n" //$NON-NLS-1$
 				+ "		\n" //$NON-NLS-1$
 				+ "		<ram:GuidelineSpecifiedCIDocumentContextParameter>\n" //$NON-NLS-1$
-				+ "			<ram:ID>urn:ferd:CrossIndustryDocument:invoice:1p0:comfort</ram:ID>\n" //$NON-NLS-1$
+				+ "			<ram:ID>urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:extended</ram:ID>\n" //$NON-NLS-1$
 				+ "		</ram:GuidelineSpecifiedCIDocumentContextParameter>\n" //$NON-NLS-1$
 				+ "	</rsm:CIExchangedDocumentContext>\n" //$NON-NLS-1$
 				+ "	<rsm:CIIHExchangedDocument>\n" //$NON-NLS-1$

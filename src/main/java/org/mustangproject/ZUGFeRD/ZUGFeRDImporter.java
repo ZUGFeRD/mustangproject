@@ -121,7 +121,7 @@ public class ZUGFeRDImporter {
 		}
 
 		factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true); //otherwise we can not act namespace independend, i.e. use document.getElementsByTagNameNS("*",...
+		factory.setNamespaceAware(true); //otherwise we can not act namespace independently, i.e. use document.getElementsByTagNameNS("*",...
 		try {
 			builder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException ex3) {
