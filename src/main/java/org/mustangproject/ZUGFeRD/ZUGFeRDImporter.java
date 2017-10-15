@@ -33,28 +33,26 @@ import org.xml.sax.SAXException;
 
 public class ZUGFeRDImporter {
 	/*
-	call extract(importFilename).
-	containsMeta() will return if ZUGFeRD data has been found,
-	afterwards you can call getBIC(), getIBAN() etc.
+	 * call extract(importFilename). containsMeta() will return if ZUGFeRD data has
+	 * been found, afterwards you can call getBIC(), getIBAN() etc.
+	 * 
+	 */
 
-*/
-
-	/**@var if metadata has been found	 */
-	private boolean containsMeta=false;
-	/**@var the reference (i.e. invoice number) of the sender */
+	/** @var if metadata has been found */
+	private boolean containsMeta = false;
+	/** @var the reference (i.e. invoice number) of the sender */
 	private String foreignReference;
 	private String BIC;
 	private String IBAN;
 	private String holder;
 	private String amount;
-        private String dueDate;
+	private String dueDate;
 	/** Raw XML form of the extracted data - may be directly obtained. */
-	private byte[] rawXML=null;
+	private byte[] rawXML = null;
 	private String bankName;
 	private boolean amountFound;
-	private boolean extracted=false;
-	private boolean parsed=false;
-
+	private boolean extracted = false;
+	private boolean parsed = false;
 
 	/**
 	 * Extracts a ZUGFeRD invoice from a PDF document represented by a file name.
@@ -69,16 +67,16 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
-	 * Extracts a ZUGFeRD invoice from a PDF document represented by an input stream.
-	 * Errors are reported via exception handling.
+	 * Extracts a ZUGFeRD invoice from a PDF document represented by an input
+	 * stream. Errors are reported via exception handling.
 	 */
-	public void extractLowLevel(InputStream pdfStream) throws IOException  {
+	public void extractLowLevel(InputStream pdfStream) throws IOException {
 		PDEmbeddedFilesNameTreeNode etn;
 		try (PDDocument doc = PDDocument.load(pdfStream)) {
-//			PDDocumentInformation info = doc.getDocumentInformation();
+			// PDDocumentInformation info = doc.getDocumentInformation();
 			PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
 			etn = names.getEmbeddedFiles();
-			if (etn == null)	{
+			if (etn == null) {
 				return;
 			}
 
@@ -86,10 +84,10 @@ public class ZUGFeRDImporter {
 			// String filePath = "/tmp/";
 			for (String filename : efMap.keySet()) {
 				/**
-				 * currently (in the release candidate of version 1) only one
-				 * attached file with the name ZUGFeRD-invoice.xml is allowed
-				 * */
-				if ((filename.equals("ZUGFeRD-invoice.xml")||filename.equals("factur-x.xml"))) { //$NON-NLS-1$
+				 * currently (in the release candidate of version 1) only one attached file with
+				 * the name ZUGFeRD-invoice.xml is allowed
+				 */
+				if ((filename.equals("ZUGFeRD-invoice.xml") || filename.equals("factur-x.xml"))) { //$NON-NLS-1$
 					containsMeta = true;
 
 					PDComplexFileSpecification fileSpec = efMap.get(filename);
@@ -103,7 +101,7 @@ public class ZUGFeRDImporter {
 
 					rawXML = embeddedFile.toByteArray();
 					setMeta(new String(rawXML));
-					extracted=true;
+					extracted = true;
 					// fos.write(embeddedFile.getByteArray());
 					// fos.close();
 				}
@@ -121,7 +119,8 @@ public class ZUGFeRDImporter {
 		}
 
 		factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true); //otherwise we can not act namespace independently, i.e. use document.getElementsByTagNameNS("*",...
+		factory.setNamespaceAware(true); // otherwise we can not act namespace independently, i.e. use
+											// document.getElementsByTagNameNS("*",...
 		try {
 			builder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException ex3) {
@@ -137,178 +136,138 @@ public class ZUGFeRDImporter {
 		} catch (IOException ex2) {
 			ex2.printStackTrace();
 		}
-		NodeList ndList ;
+		NodeList ndList;
 
 		// rootNode = document.getDocumentElement();
 		// ApplicableSupplyChainTradeSettlement
-		 ndList =  document.getDocumentElement()
-				.getElementsByTagNameNS("*","PaymentReference"); //$NON-NLS-1$
+		ndList = document.getDocumentElement().getElementsByTagNameNS("*", "PaymentReference"); //$NON-NLS-1$
 
-		for (int bookingIndex = 0; bookingIndex < ndList
-				.getLength(); bookingIndex++) {
+		for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
 			Node booking = ndList.item(bookingIndex);
 			// if there is a attribute in the tag number:value
 
 			setForeignReference(booking.getTextContent());
 
 		}
-/*
-		ndList = document
-				.getElementsByTagName("GermanBankleitzahlID"); //$NON-NLS-1$
+		/*
+		 * ndList = document .getElementsByTagName("GermanBankleitzahlID");
+		 * //$NON-NLS-1$
+		 * 
+		 * for (int bookingIndex = 0; bookingIndex < ndList .getLength();
+		 * bookingIndex++) { Node booking = ndList.item(bookingIndex); // if there is a
+		 * attribute in the tag number:value setBIC(booking.getTextContent());
+		 * 
+		 * }
+		 * 
+		 * ndList = document.getElementsByTagName("ProprietaryID"); //$NON-NLS-1$
+		 * 
+		 * for (int bookingIndex = 0; bookingIndex < ndList .getLength();
+		 * bookingIndex++) { Node booking = ndList.item(bookingIndex); // if there is a
+		 * attribute in the tag number:value setIBAN(booking.getTextContent());
+		 * 
+		 * } <ram:PayeePartyCreditorFinancialAccount> <ram:IBANID>DE1234</ram:IBANID>
+		 * </ram:PayeePartyCreditorFinancialAccount>
+		 * <ram:PayeeSpecifiedCreditorFinancialInstitution>
+		 * <ram:BICID>DE5656565</ram:BICID> <ram:Name>Commerzbank</ram:Name>
+		 * </ram:PayeeSpecifiedCreditorFinancialInstitution>
+		 * 
+		 */
 
-		for (int bookingIndex = 0; bookingIndex < ndList
-				.getLength(); bookingIndex++) {
-			Node booking = ndList.item(bookingIndex);
-			// if there is a attribute in the tag number:value
-			setBIC(booking.getTextContent());
-
-		}
-
-		ndList = document.getElementsByTagName("ProprietaryID"); //$NON-NLS-1$
-
-		for (int bookingIndex = 0; bookingIndex < ndList
-				.getLength(); bookingIndex++) {
-			Node booking = ndList.item(bookingIndex);
-			// if there is a attribute in the tag number:value
-			setIBAN(booking.getTextContent());
-
-		}
-			<ram:PayeePartyCreditorFinancialAccount>
-					<ram:IBANID>DE1234</ram:IBANID>
-				</ram:PayeePartyCreditorFinancialAccount>
-				<ram:PayeeSpecifiedCreditorFinancialInstitution>
-					<ram:BICID>DE5656565</ram:BICID>
-					<ram:Name>Commerzbank</ram:Name>
-				</ram:PayeeSpecifiedCreditorFinancialInstitution>
-
-*/
-		
-		ndList = document.getElementsByTagNameNS("*","PayeePartyCICreditorFinancialAccount"); //ZF2
-		if (ndList.getLength()==0) {
-			// try ZF1, it can not harm 	
-			ndList = document.getElementsByTagNameNS("*","PayeePartyCreditorFinancialAccount"); //$NON-NLS-1$
-		}
-		for (int bookingIndex = 0; bookingIndex < ndList
-				.getLength(); bookingIndex++) {
+		ndList = document.getElementsByTagNameNS("*", "PayeePartyCreditorFinancialAccount"); //$NON-NLS-1$
+		for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
 
 			Node booking = ndList.item(bookingIndex);
 			// there are many "name" elements, so get the one below
 			// SellerTradeParty
 			NodeList bookingDetails = booking.getChildNodes();
 
-
-			for (int detailIndex = 0; detailIndex < bookingDetails
-					.getLength(); detailIndex++) {
+			for (int detailIndex = 0; detailIndex < bookingDetails.getLength(); detailIndex++) {
 				Node detail = bookingDetails.item(detailIndex);
-				if ((detail.getLocalName()!=null)&&(detail.getLocalName().equals("IBANID"))) { //$NON-NLS-1$
+				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("IBANID"))) { //$NON-NLS-1$
 					setIBAN(detail.getTextContent());
 
 				}
 			}
 
 		}
-
-		ndList = document.getElementsByTagNameNS("*","PayeeSpecifiedCICreditorFinancialInstitution");//ZF2 //$NON-NLS-1$	
-		if (ndList.getLength()==0) {
-			// try ZF1, it can not harm 
-			ndList = document.getElementsByTagNameNS("*","PayeeSpecifiedCreditorFinancialInstitution");//ZF1 //$NON-NLS-1$
-		}
-		for (int bookingIndex = 0; bookingIndex < ndList
-				.getLength(); bookingIndex++) {
+		ndList = document.getElementsByTagNameNS("*", "PayeeSpecifiedCreditorFinancialInstitution");// ZF1 //$NON-NLS-1$
+		for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
 			Node booking = ndList.item(bookingIndex);
 			// there are many "name" elements, so get the one below
 			// SellerTradeParty
 			NodeList bookingDetails = booking.getChildNodes();
-			for (int detailIndex = 0; detailIndex < bookingDetails
-					.getLength(); detailIndex++) {
+			for (int detailIndex = 0; detailIndex < bookingDetails.getLength(); detailIndex++) {
 				Node detail = bookingDetails.item(detailIndex);
-				if ((detail.getLocalName()!=null)&&(detail.getLocalName().equals("BICID"))) { //$NON-NLS-1$
+				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("BICID"))) { //$NON-NLS-1$
 					setBIC(detail.getTextContent());
 				}
-				if ((detail.getLocalName()!=null)&&(detail.getLocalName().equals("Name"))) { //$NON-NLS-1$
+				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("Name"))) { //$NON-NLS-1$
 					setBankName(detail.getTextContent());
 				}
 			}
 
 		}
 
-		
-		ndList = document.getElementsByTagNameNS("*","SellerCITradeParty"); //ZF2
-		if (ndList.getLength()==0) {
-			// try ZF1, it can not harm 	
-			ndList = document.getElementsByTagNameNS("*","SellerTradeParty"); //$NON-NLS-1$
-		}
+		ndList = document.getElementsByTagNameNS("*", "SellerTradeParty"); //$NON-NLS-1$
 
-		for (int bookingIndex = 0; bookingIndex < ndList
-				.getLength(); bookingIndex++) {
+		for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
 			Node booking = ndList.item(bookingIndex);
 			// there are many "name" elements, so get the one below
 			// SellerTradeParty
 			NodeList bookingDetails = booking.getChildNodes();
-			for (int detailIndex = 0; detailIndex < bookingDetails
-					.getLength(); detailIndex++) {
+			for (int detailIndex = 0; detailIndex < bookingDetails.getLength(); detailIndex++) {
 				Node detail = bookingDetails.item(detailIndex);
-				if ((detail.getLocalName()!=null)&&(detail.getLocalName().equals("Name"))) { //$NON-NLS-1$
+				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("Name"))) { //$NON-NLS-1$
 					setHolder(detail.getTextContent());
 				}
 			}
 
 		}
 
-		ndList = document.getElementsByTagNameNS("*","DuePayableAmount"); //$NON-NLS-1$
+		ndList = document.getElementsByTagNameNS("*", "DuePayableAmount"); //$NON-NLS-1$
 
-		for (int bookingIndex = 0; bookingIndex < ndList
-				.getLength(); bookingIndex++) {
+		for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
 			Node booking = ndList.item(bookingIndex);
 			// if there is a attribute in the tag number:value
-			amountFound=true;
+			amountFound = true;
 			setAmount(booking.getTextContent());
 
 		}
 
-
-		if  (!amountFound) {
-			/* there is apparently no requirement to mention DuePayableAmount,,
-			 * if it's not there, check for GrandTotalAmount
+		if (!amountFound) {
+			/*
+			 * there is apparently no requirement to mention DuePayableAmount,, if it's not
+			 * there, check for GrandTotalAmount
 			 */
-			ndList = document.getElementsByTagNameNS("*","GrandTotalAmount"); //$NON-NLS-1$
-			for (int bookingIndex = 0; bookingIndex < ndList
-					.getLength(); bookingIndex++) {
+			ndList = document.getElementsByTagNameNS("*", "GrandTotalAmount"); //$NON-NLS-1$
+			for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
 				Node booking = ndList.item(bookingIndex);
 				// if there is a attribute in the tag number:value
-				amountFound=true;
+				amountFound = true;
 				setAmount(booking.getTextContent());
 
 			}
 
 		}
 
-		ndList = document.getElementsByTagNameNS("*","SpecifiedTradePaymentTerms"); //$NON-NLS-1$
-		if (ndList.getLength()==0) {
-			// try ZF1, it can not harm 	
-			ndList = document.getElementsByTagNameNS("*","SpecifiedCITradePaymentTerms"); //$NON-NLS-1$
-		}
+		ndList = document.getElementsByTagNameNS("*", "SpecifiedTradePaymentTerms"); //$NON-NLS-1$
 
-
-		for (int bookingIndex = 0; bookingIndex < ndList
-				.getLength(); bookingIndex++) {
+		for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
 			Node booking = ndList.item(bookingIndex);
 			// there are many "name" elements, so get the one below
 			// SellerTradeParty
 			NodeList bookingDetails = booking.getChildNodes();
-			for (int detailIndex = 0; detailIndex < bookingDetails
-					.getLength(); detailIndex++) {
+			for (int detailIndex = 0; detailIndex < bookingDetails.getLength(); detailIndex++) {
 				Node detail = bookingDetails.item(detailIndex);
-				if ((detail.getLocalName()!=null)&&(detail.getLocalName().equals("DueDateDateTime"))) { //$NON-NLS-1$
+				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("DueDateDateTime"))) { //$NON-NLS-1$
 					setDueDate(detail.getTextContent().trim());
 				}
 			}
 
 		}
 
-		parsed=true;
+		parsed = true;
 	}
-
 
 	public boolean containsMeta() {
 		return containsMeta;
@@ -321,13 +280,9 @@ public class ZUGFeRDImporter {
 		return foreignReference;
 	}
 
-
-
 	private void setForeignReference(String foreignReference) {
 		this.foreignReference = foreignReference;
 	}
-
-
 
 	public String getBIC() {
 		if (!parsed) {
@@ -336,23 +291,17 @@ public class ZUGFeRDImporter {
 		return BIC;
 	}
 
-
-
 	private void setBIC(String bic) {
 		this.BIC = bic;
 	}
-
 
 	private void setDueDate(String dueDate) {
 		this.dueDate = dueDate;
 	}
 
-
 	private void setBankName(String bankname) {
 		this.bankName = bankname;
 	}
-
-
 
 	public String getIBAN() {
 		if (!parsed) {
@@ -361,7 +310,6 @@ public class ZUGFeRDImporter {
 		return IBAN;
 	}
 
-
 	public String getBankName() {
 		if (!parsed) {
 			throw new RuntimeException("use parse() before requesting a value");
@@ -369,38 +317,30 @@ public class ZUGFeRDImporter {
 		return bankName;
 	}
 
-
-
 	private void setIBAN(String IBAN) {
 		this.IBAN = IBAN;
 	}
 
-
-
 	public String getHolder() {
-		if (rawXML==null) {
+		if (rawXML == null) {
 			throw new RuntimeException("use parse() before requesting a value");
 		}
 		return holder;
 	}
 
-
-
 	private void setHolder(String holder) {
 		this.holder = holder;
 	}
 
-
-
 	public String getAmount() {
-		if (rawXML==null) {
+		if (rawXML == null) {
 			throw new RuntimeException("use parse() before requesting a value");
 		}
 		return amount;
 	}
 
 	public String getDueDate() {
-		if (rawXML==null) {
+		if (rawXML == null) {
 			throw new RuntimeException("use parse() before requesting a value");
 		}
 		return dueDate;
@@ -411,34 +351,34 @@ public class ZUGFeRDImporter {
 	}
 
 	public void setMeta(String meta) {
-		this.rawXML=meta.getBytes();
+		this.rawXML = meta.getBytes();
 	}
 
 	public String getMeta() {
-		if (rawXML==null){
+		if (rawXML == null) {
 			return null;
 		}
 
 		return new String(rawXML);
 	}
 
-
 	/**
 	 * Returns the raw XML data as extracted from the ZUGFeRD PDF file.
 	 */
-	public byte[] getRawXML()
-	{
+	public byte[] getRawXML() {
 		return rawXML;
 	}
 
 	/**
-	 * will return true if the metadata (just extract-ed or set with setMeta) contains ZUGFeRD XML
-	 * */
+	 * will return true if the metadata (just extract-ed or set with setMeta)
+	 * contains ZUGFeRD XML
+	 */
 	public boolean canParse() {
 
-
-		//SpecifiedExchangedDocumentContext is in the schema, so a relatively good indication if zugferd is present - better than just invoice
-		String meta=getMeta();
-		return (meta!=null)&&( meta.length()>0)&&(( meta.contains("SpecifiedExchangedDocumentContext")/*ZF1*/||meta.contains("CIExchangedDocumentContext"))); //$NON-NLS-1$
+		// SpecifiedExchangedDocumentContext is in the schema, so a relatively good
+		// indication if zugferd is present - better than just invoice
+		String meta = getMeta();
+		return (meta != null) && (meta.length() > 0) && ((meta.contains("SpecifiedExchangedDocumentContext") //$NON-NLS-1$
+				/* ZF1 */ || meta.contains("ExchangedDocumentContext") /*ZF2*/));
 	}
 }

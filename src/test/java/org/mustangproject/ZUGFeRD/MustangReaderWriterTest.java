@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import javax.xml.transform.TransformerException;
 
@@ -432,7 +434,6 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
     String iban = null;
     String holder = null;
     String ref = null;
-
     if (zi.canParse())
     {
       zi.parse();

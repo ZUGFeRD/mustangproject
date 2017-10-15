@@ -81,7 +81,7 @@ public class Toecount {
 			}
 			
 			if (!selectedName.toLowerCase().endsWith(expectedExtension.toLowerCase())) {
-				System.err.println("Expected "+expectedExtension+" extension, this may corrupt your file. Do you still want to continue?");
+				System.err.println("Expected "+expectedExtension+" extension, this may corrupt your file. Do you still want to continue?(Y|N)");
 				String selectedAnswer="";
 				try {
 					selectedAnswer=buffer.readLine();
