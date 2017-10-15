@@ -4,21 +4,9 @@ public class ZUGFeRDMigrator {
 
 	public String migrateFromV1ToV2(String xml) {
 /***
- 
-
-<rsm:CrossIndustryDocument xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rsm="urn:ferd:CrossIndustryDocument:invoice:1p0" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15">
-->
-<rsm:CrossIndustryInvoice xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
-
-
-
-
-ram:SpecifiedTradeSettlementMonetarySummation->ram:SpecifiedTradeSettlementHeaderMonetarySummation
-ram:IncludedSupplyChainTradeLineItem->
-->
-->
-->
-ram:SpecifiedTradeProduct->
+ * http://www.unece.org/fileadmin/DAM/cefact/xml/XML-Naming-And-Design-Rules-V2_1.pdf
+ * http://www.ferd-net.de/upload/Dokumente/FACTUR-X_ZUGFeRD_2p0_Teil1_Profil_EN16931_1p03.pdf
+http://countwordsfree.com/xmlviewer
  */
 		// todo: attributes may also be in single quotes, this one hardcodedly expects
 		// double ones
@@ -40,13 +28,16 @@ ram:SpecifiedTradeProduct->
 		xml = xml.replace("ram:SpecifiedSupplyChainTradeDelivery", "ram:SpecifiedLineTradeDelivery");
 		xml = xml.replace("ram:SpecifiedSupplyChainTradeSettlement", "ram:SpecifiedLineTradeSettlement");
 		xml = xml.replace("ram:SpecifiedTradeSettlementMonetarySummation", "ram:SpecifiedTradeSettlementLineMonetarySummation");
-		xml = xml.replace("ram:SpecifiedTradeSettlementLineMonetarySummation", "ram:SpecifiedTradeSettlementHeaderMonetarySummation");
-		xml = xml.replace("ram:IssueDateTime","ram:FormattedIssueDateTime");
+		//xml = xml.replace("ram:SpecifiedTradeSettlementLineMonetarySummation", "ram:SpecifiedTradeSettlementHeaderMonetarySummation");
+		//ram:SpecifiedTradeSettlementLineMonetarySummation bleibt unterhalb von ram:SpecifiedLineTradeSettlement
+		//xml = xml.replace("ram:IssueDateTime","ram:FormattedIssueDateTime");
 		xml = xml.replace("ram:SpecifiedTradeAccountingAccount","ram:SalesSpecifiedTradeAccountingAccount");
 		xml = xml.replace("ram:SpecifiedSupplyChainTradeAgreement","ram:SpecifiedLineTradeAgreement");
-		xml = xml.replace("ram:ID","ram:GlobalID");
+		//xml = xml.replace("ram:ID","ram:GlobalID");
 		
+		//ram:ID unterhalb von ram:ContractReferencedDocument zu ram:IssuerAssignedID
 		
+		//http://www.unece.org/fileadmin/DAM/cefact/xml/XML-Naming-And-Design-Rules-V2_1.pdf
 		/*
 		xml = xml.replace("rsm:SpecifiedExchangedDocumentContext", "rsm:CIExchangedDocumentContext");
 		xml = xml.replace("rsm:HeaderExchangedDocument", "rsm:CIIHExchangedDocument");
