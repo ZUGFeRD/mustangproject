@@ -3,16 +3,51 @@ package org.mustangproject.ZUGFeRD;
 public class ZUGFeRDMigrator {
 
 	public String migrateFromV1ToV2(String xml) {
+/***
+ 
 
+<rsm:CrossIndustryDocument xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rsm="urn:ferd:CrossIndustryDocument:invoice:1p0" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15">
+->
+<rsm:CrossIndustryInvoice xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
+
+
+
+
+ram:SpecifiedTradeSettlementMonetarySummation->ram:SpecifiedTradeSettlementHeaderMonetarySummation
+ram:IncludedSupplyChainTradeLineItem->
+->
+->
+->
+ram:SpecifiedTradeProduct->
+ */
 		// todo: attributes may also be in single quotes, this one hardcodedly expects
 		// double ones
 		xml = xml.replace("\"urn:ferd:CrossIndustryDocument:invoice:1p0",
-				"\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:13");
+				"\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100");
 		xml = xml.replace("urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12",
-				"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:20");
+				"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100");
 		xml = xml.replace("urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15",
-				"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:20");
+				"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100");
 		xml = xml.replace("rsm:CrossIndustryDocument", "rsm:CrossIndustryInvoice");
+		
+		xml = xml.replace("rsm:SpecifiedExchangedDocumentContext", "rsm:ExchangedDocumentContext");
+		xml = xml.replace("rsm:HeaderExchangedDocument", "rsm:ExchangedDocument");
+		xml = xml.replace("rsm:SpecifiedSupplyChainTradeTransaction", "rsm:SupplyChainTradeTransaction");
+		xml = xml.replace("ram:ApplicableSupplyChainTradeAgreement", "ram:ApplicableHeaderTradeAgreement");
+		xml = xml.replace("ram:ApplicableSupplyChainTradeDelivery", "ram:ApplicableHeaderTradeDelivery");
+		xml = xml.replace("ram:ApplicableSupplyChainTradeSettlement", "ram:ApplicableHeaderTradeSettlement");
+		xml = xml.replace("ram:ApplicablePercent", "ram:RateApplicablePercent");
+		xml = xml.replace("ram:SpecifiedSupplyChainTradeDelivery", "ram:SpecifiedLineTradeDelivery");
+		xml = xml.replace("ram:SpecifiedSupplyChainTradeSettlement", "ram:SpecifiedLineTradeSettlement");
+		xml = xml.replace("ram:SpecifiedTradeSettlementMonetarySummation", "ram:SpecifiedTradeSettlementLineMonetarySummation");
+		xml = xml.replace("ram:SpecifiedTradeSettlementLineMonetarySummation", "ram:SpecifiedTradeSettlementHeaderMonetarySummation");
+		xml = xml.replace("ram:IssueDateTime","ram:FormattedIssueDateTime");
+		xml = xml.replace("ram:SpecifiedTradeAccountingAccount","ram:SalesSpecifiedTradeAccountingAccount");
+		xml = xml.replace("ram:SpecifiedSupplyChainTradeAgreement","ram:SpecifiedLineTradeAgreement");
+		xml = xml.replace("ram:ID","ram:GlobalID");
+		
+		
+		/*
 		xml = xml.replace("rsm:SpecifiedExchangedDocumentContext", "rsm:CIExchangedDocumentContext");
 		xml = xml.replace("rsm:HeaderExchangedDocument", "rsm:CIIHExchangedDocument");
 		xml = xml.replace("SpecifiedSupplyChainTradeTransaction", "CIIHSupplyChainTradeTransaction");
@@ -102,6 +137,8 @@ public class ZUGFeRDMigrator {
 		// ram:ApplicableSupplyChainTradeSettlement
 		// xml=xml.replaceAll(Pattern.quote("ram:SpecifiedTradeSettlementMonetarySummation"),
 		// "ram:SpecifiedCIILTradeSettlementMonetarySummation");
+		 * 
+		 */
 		return xml;
 	}
 

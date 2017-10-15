@@ -29,12 +29,12 @@ public class Toecount {
 	}
 
 	private static String getUsage() {
-		return "Usage: Toecount [-d,--directory] [-l,--listfromstdin] [-i,--ignorefileextension] | [-c,--combine] | [-e,--extract] | [-u,--upgrade] | [-a,--a3only] | [-h,--help]\r\n";
+		return "Usage: [-d,--directory] [-l,--listfromstdin] [-i,--ignorefileextension] | [-c,--combine] | [-e,--extract] | [-u,--upgrade] | [-a,--a3only] | [-h,--help]\r\n";
 	}
 
 	private static void printHelp() {
-		System.out.println("Mustangproject.org's Toecount 0.2.0 \r\n"
-				+ "A Apache Public License command line tool for statistics on PDF invoices with\r\n"
+		System.out.println("Mustangproject.org "+ org.mustangproject.ZUGFeRD.Version.VERSION + " \r\n"
+				+ "A Apache Public License library and command line tool for statistics on PDF invoices with\r\n"
 				+ "ZUGFeRD Metadata (http://www.zugferd.org)\r\n" + "\r\n" + getUsage() + "Count operations"
 				+ "\t--directory= count ZUGFeRD files in directory to be scanned\r\n"
 				+ "\t\tIf it is a directory, it will recurse.\r\n"
@@ -54,11 +54,14 @@ public class Toecount {
 	 * Prompts the user for a input or output filename
 	 * @param prompt
 	 * @param defaultFilename
-	 * @param ensureFileExists
+	 * @param expectedExtension will warn if filename does not match expected file extension 
+	 * @param ensureFileExists will warn if file does NOT exist (for input files)
+	 * @param ensureFileNotExists will warn if file DOES exist (for output files)
+	 * 
 	 * @return String
 	 */
-	protected static String getFilenameFromUser(String prompt, String defaultFilename, boolean ensureFileExists) {
-		boolean fileExists = false;
+	protected static String getFilenameFromUser(String prompt, String defaultFilename, String expectedExtension, boolean ensureFileExists, boolean ensureFileNotExists) {
+		boolean fileExistenceOK = false;
 		String selectedName = "";
 		do {
 			// for a more sophisticated dialogue maybe https://github.com/mabe02/lanterna/ could be taken into account
@@ -76,21 +79,49 @@ public class Toecount {
 				// pressed return without entering anything
 				selectedName = defaultFilename;
 			}
+			
+			if (!selectedName.toLowerCase().endsWith(expectedExtension.toLowerCase())) {
+				System.err.println("Expected "+expectedExtension+" extension, this may corrupt your file. Do you still want to continue?");
+				String selectedAnswer="";
+				try {
+					selectedAnswer=buffer.readLine();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (!selectedAnswer.equals("Y")&&!selectedAnswer.equals("y")) {
+					System.err.println("Aborted by user");
+					System.exit(-1);
+				}
+			
+			}
 
 			if (ensureFileExists) {
 				File f = new File(selectedName);
 				if (f.exists()) {
-					fileExists = true;
+					fileExistenceOK = true;
 				} else {
 					System.out.println("File does not exist, try again or CTRL+C to cancel");
 					// discard the input, a scanner.reset is not sufficient
 				    
-				}
-				
+				}			
 			} else {
-				fileExists=true;
+				fileExistenceOK=true;
 			}
-		} while (!fileExists);
+			if (ensureFileNotExists) {
+				File f = new File(selectedName);
+				if (f.exists()) {
+					fileExistenceOK = false;
+					System.out.println("Output file already exists, try again or CTRL+C to cancel");
+					// discard the input, a scanner.reset is not sufficient
+				    
+				}			
+			} else {
+				fileExistenceOK=true;
+			}
+			
+			
+		} while (!fileExistenceOK);
 
 		return selectedName;
 	}
@@ -194,9 +225,9 @@ public class Toecount {
 
 			try {
 				
-				pdfName=getFilenameFromUser("Source PDF", "invoice.pdf", true);
-				xmlName=getFilenameFromUser("ZUGFeRD XML", "ZUGFeRD-invoice.xml", true);
-				outName=getFilenameFromUser("Ouput PDF", "invoice.ZUGFeRD.pdf", false);
+				pdfName=getFilenameFromUser("Source PDF", "invoice.pdf", "pdf", true, false);
+				xmlName=getFilenameFromUser("ZUGFeRD XML", "ZUGFeRD-invoice.xml", "xml", true, false);
+				outName=getFilenameFromUser("Ouput PDF", "invoice.ZUGFeRD.pdf", "pdf", false, true);
 
 				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("Toecount")
 						.setCreator(System.getProperty("user.name")).load(pdfName);
@@ -211,8 +242,8 @@ public class Toecount {
 			System.out.println("Written to "+outName);
 		} else if (extractRequested) {
 			ZUGFeRDImporter zi = new ZUGFeRDImporter();
-			String pdfName=getFilenameFromUser("Source PDF", "invoice.pdf", true);
-			String xmlName=getFilenameFromUser("ZUGFeRD XML", "ZUGFeRD-invoice.xml", false);
+			String pdfName=getFilenameFromUser("Source PDF", "invoice.pdf", "pdf", true, false);
+			String xmlName=getFilenameFromUser("ZUGFeRD XML", "ZUGFeRD-invoice.xml", "xml", false, true);
 
 			zi.extract(pdfName);
 			try {
@@ -231,8 +262,8 @@ public class Toecount {
 			String pdfName="";
 			String outName="";
 			try {
-				pdfName=getFilenameFromUser("Source PDF", "invoice.pdf", true);
-				outName=getFilenameFromUser("Target PDF", "invoice.a3.pdf", false);
+				pdfName=getFilenameFromUser("Source PDF", "invoice.pdf", "pdf", true, false);
+				outName=getFilenameFromUser("Target PDF", "invoice.a3.pdf", "pdf", false, true);
 				
 				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false)
 						.load(pdfName);
@@ -247,8 +278,8 @@ public class Toecount {
 			String outName="";
 
 			try {
-				xmlName=getFilenameFromUser("ZUGFeRD 1.0 XML source", "ZUGFeRD-invoice.xml", true);
-				outName=getFilenameFromUser("ZUGFeRD 2.0 XML target", "ZUGFeRD-2-invoice.xml", false);
+				xmlName=getFilenameFromUser("ZUGFeRD 1.0 XML source", "ZUGFeRD-invoice.xml", "xml", true, false);
+				outName=getFilenameFromUser("ZUGFeRD 2.0 XML target", "ZUGFeRD-2-invoice.xml", "xml", false, true);
 
 				String xml = new String(Files.readAllBytes(Paths.get(xmlName)), StandardCharsets.UTF_8);
 				ZUGFeRDMigrator zmi=new ZUGFeRDMigrator();
