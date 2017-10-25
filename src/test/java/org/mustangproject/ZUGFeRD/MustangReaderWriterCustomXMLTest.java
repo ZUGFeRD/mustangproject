@@ -3,13 +3,6 @@ package org.mustangproject.ZUGFeRD;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import javax.xml.transform.TransformerException;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
