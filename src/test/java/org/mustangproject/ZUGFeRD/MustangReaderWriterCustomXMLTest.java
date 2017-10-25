@@ -189,7 +189,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					+ "<ram:Name>Heiße Luft pro Liter</ram:Name>\n" + "<ram:Description/>\n"
 					+ "</ram:SpecifiedTradeProduct>\n" + "</ram:IncludedSupplyChainTradeLineItem>\n"
 					+ "</rsm:SpecifiedSupplyChainTradeTransaction>\n" + "</rsm:CrossIndustryDocument>";
-			zea1.setZUGFeRDXMLData(ownZUGFeRDXML.getBytes());
+			zea1.setZUGFeRDXMLData(ownZUGFeRDXML.getBytes("UTF-8"));
 			zea1.PDFattachZugferdFile(null);
 
 			ByteArrayOutputStream baos=new ByteArrayOutputStream();
