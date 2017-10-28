@@ -10,6 +10,11 @@ public class CustomXMLProvider implements IXMLProvider {
 	}
 
 	public void setXML(byte[] newData) {
+		String zf=new String(newData);
+		if (!zf.contains("<rsm:CrossIndustry")) {
+			throw new RuntimeException("ZUGFeRD XML does not contain <rsm:CrossIndustry and can thus not be valid");
+		}
+		
 		zugferdData=newData;
 	}
 
