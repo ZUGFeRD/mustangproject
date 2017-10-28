@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mustangproject.ZUGFeRD</groupId>
 	<artifactId>mustang</artifactId>
-	<version>1.4.2-SNAPSHOT</version>
+	<version>1.4.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Mustang</name>
 	<description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs</description>
@@ -44,6 +44,17 @@
 		<maven.compiler.target>1.7</maven.compiler.target>
 	</properties>
 	<dependencies>
+
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.2.11</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-core</artifactId>
+			<version>2.2.11</version>
+		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>
@@ -77,6 +88,12 @@
 			<artifactId>jargs</artifactId>
 			<version>2.0-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>net.sf.saxon</groupId>
+			<artifactId>Saxon-HE</artifactId>
+			<version>9.5.1-8</version>
+		</dependency>
+
 
 	</dependencies>
 	<build>
@@ -206,7 +223,7 @@
 					<target>2.1</target>
 					<packageName>org.mustangproject.ZUGFeRD.model</packageName>
 					<sources>
-						<source>src/main/schema/ZUGFeRD1p0.xsd</source>
+						<source>src/main/resources/schema/ZUGFeRD1p0.xsd</source>
 					</sources>
 				</configuration>
 			</plugin>

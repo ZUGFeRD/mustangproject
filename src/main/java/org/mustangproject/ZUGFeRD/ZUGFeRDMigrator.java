@@ -22,11 +22,12 @@ import javax.xml.transform.stream.StreamSource;
 
 public class ZUGFeRDMigrator {
 	static final ClassLoader cl = ZUGFeRDMigrator.class.getClassLoader();
-	private static final TransformerFactory factory = getTransformerFactory();
+	private static TransformerFactory factory = null;
 	private static final String resourcePath = ""; //$NON-NLS-1$
 
 	private static TransformerFactory getTransformerFactory() {
-		TransformerFactory fact = TransformerFactory.newInstance();
+		TransformerFactory fact = new net.sf.saxon.TransformerFactoryImpl();
+//TransformerFactory.newInstance();
 		fact.setURIResolver(new ClasspathResourceURIResolver());
 		return fact;
 	}
@@ -80,6 +81,7 @@ http://countwordsfree.com/xmlviewer
 	
 	public static void applySchematronXsl(final InputStream xmlFile,
 			final OutputStream EN16931Outstream) throws TransformerException {
+		factory=getTransformerFactory();
 		Transformer transformer = factory.newTransformer(new StreamSource(cl.getResourceAsStream(resourcePath+"COMFORTtoEN16931.xsl")));
 		transformer.transform(new StreamSource(xmlFile), new StreamResult(EN16931Outstream));
 	}
