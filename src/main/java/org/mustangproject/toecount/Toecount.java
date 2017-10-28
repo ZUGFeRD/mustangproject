@@ -281,9 +281,8 @@ public class Toecount {
 				xmlName=getFilenameFromUser("ZUGFeRD 1.0 XML source", "ZUGFeRD-invoice.xml", "xml", true, false);
 				outName=getFilenameFromUser("ZUGFeRD 2.0 XML target", "ZUGFeRD-2-invoice.xml", "xml", false, true);
 
-				String xml = new String(Files.readAllBytes(Paths.get(xmlName)), StandardCharsets.UTF_8);
 				ZUGFeRDMigrator zmi=new ZUGFeRDMigrator();
-				xml=zmi.migrateFromV1ToV2(xml);
+				String xml=zmi.migrateFromV1ToV2(xmlName);
 				Files.write(Paths.get(outName), xml.getBytes());
 			} catch (IOException e) {
 				e.printStackTrace();

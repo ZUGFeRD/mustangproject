@@ -122,6 +122,10 @@ public class ZUGFeRDExporter implements Closeable {
 		}
 		ZFVersion = ver;
 	}
+	
+	public IXMLProvider getProvider() {
+		return xmlProvider;
+	}
 
 	private void init() {
 		setZUGFeRDVersion(2);
