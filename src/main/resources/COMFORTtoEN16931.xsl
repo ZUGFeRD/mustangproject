@@ -138,7 +138,7 @@ Migrated by Mustangproject XSLT
 	<!-- rename and add -->
  
 	<xsl:template match="//*[local-name() != 'HeaderExchangedDocument']/*[local-name() = 'IssueDateTime']">
-		<ram:FormattedIssueDateTime">
+		<ram:FormattedIssueDateTime>
 			<qdt:DateTimeString>
 				<xsl:apply-templates select="@*|node()" />
 			</qdt:DateTimeString>
