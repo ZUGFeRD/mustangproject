@@ -174,7 +174,7 @@
 							<mainClass>org.mustangproject.toecount.Toecount</mainClass>
 						</transformer>
 					</transformers>
-					<minimizeJar>true</minimizeJar>
+					<minimizeJar>false</minimizeJar><!-- Would reduce >50% but fails with classnotfoundexception for logger in "java -jar mustang.jar -e" -->
 				</configuration>
 				<executions>
 					<execution>
