@@ -88,12 +88,6 @@
 			<artifactId>jargs</artifactId>
 			<version>2.0-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>net.sf.saxon</groupId>
-			<artifactId>Saxon-HE</artifactId>
-			<version>9.5.1-8</version>
-		</dependency>
-
 
 	</dependencies>
 	<build>
@@ -174,7 +168,21 @@
 							<mainClass>org.mustangproject.toecount.Toecount</mainClass>
 						</transformer>
 					</transformers>
-					<minimizeJar>false</minimizeJar><!-- Would reduce >50% but fails with classnotfoundexception for logger in "java -jar mustang.jar -e" -->
+					<minimizeJar>true</minimizeJar>
+					<filters>
+					 <filter>
+                       <artifact>log4j:log4j</artifact>
+                       <includes>
+                           <include>**</include>
+                       </includes>
+                    </filter> 
+                    <filter>
+                       <artifact>commons-logging:commons-logging</artifact>
+                       <includes>
+                           <include>**</include>
+                       </includes>
+                    </filter>       
+                    </filters>
 				</configuration>
 				<executions>
 					<execution>
