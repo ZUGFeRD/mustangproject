@@ -185,6 +185,19 @@ Migrated by Mustangproject XSLT
 
 		</rsm:SupplyChainTradeTransaction>
 	</xsl:template>
+	
+	<xsl:template
+		match="//*[local-name() = 'BuyerOrderReferencedDocument' or local-name() = 'DeliveryNoteReferencedDocument' or local-name() = 'AdditionalReferencedDocument' or local-name() = 'ContractReferencedDocument']">
+		<xsl:element name="{name()}">
+
+			<xsl:apply-templates
+				select="./*[local-name() = 'ID']" />
+			<xsl:apply-templates
+				select="./*[local-name() = 'TypeCode']" />
+			<xsl:apply-templates
+				select="./*[not(local-name() = 'ID' or local-name() = 'TypeCode')]" />
+		</xsl:element>
+	</xsl:template>
 
 	<!-- innerhalb IncludedSupplyChainTradeLineItem zuerst AssociatedDocumentLineDocument 
 		dann SpecifiedTradeProduct -->
@@ -203,31 +216,37 @@ Migrated by Mustangproject XSLT
 	</xsl:template>
 
 	<xsl:template
-		match="//*[local-name() = 'BuyerOrderReferencedDocument']">
-		<ram:BuyerOrderReferencedDocument><!-- no rename of the top level element, rename  of ID below will be performed later-->
-			<xsl:apply-templates
-				select="./*[local-name() = 'ID']" />
-			<!-- now copy any other children that we haven't explicitly reordered; 
-				again, possibly this is not what you want -->
-			<xsl:apply-templates
-				select="./*[not(local-name() = 'ID')]" />
+		match="//*[local-name() = 'SpecifiedLineTradeSettlement']">
+		<ram:SpecifiedLineTradeSettlement>
 
-		</ram:BuyerOrderReferencedDocument>
+			<xsl:apply-templates
+				select="./*[not(local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation' or local-name() = 'SpecifiedTradeSettlementLineMonetarySummation' or local-name() = 'SpecifiedTradeAccountingAccount')]" />
+			<xsl:apply-templates
+				select="./*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']" />
+			<xsl:apply-templates
+				select="./*[local-name() = 'SpecifiedTradeSettlementLineMonetarySummation']" />
+			<xsl:apply-templates
+				select="./*[local-name() = 'SpecifiedTradeAccountingAccount']" />
+
+		</ram:SpecifiedLineTradeSettlement>
 	</xsl:template>
-
 	<xsl:template
-		match="//*[local-name() = 'DeliveryNoteReferencedDocument']">
-		<ram:DeliveryNoteReferencedDocument><!-- no rename of the top level element, rename  of ID below will be performed later-->
+		match="//*[local-name() = 'ApplicableHeaderTradeSettlement' or local-name() = 'SpecifiedLineTradeSettlement']">
+ 		<xsl:element name="{name()}">
+  
 			<xsl:apply-templates
-				select="./*[local-name() = 'ID']" />
-			<!-- now copy any other children that we haven't explicitly reordered; 
-				again, possibly this is not what you want -->
+				select="./*[not(local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation' or local-name() = 'SpecifiedTradeSettlementMonetarySummation' or local-name() = 'SpecifiedTradeAccountingAccount')]" />
+			<!--  xsl:apply-templates
+				select="./*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']" /-->
 			<xsl:apply-templates
-				select="./*[not(local-name() = 'ID')]" />
+				select="./*[local-name() = 'SpecifiedTradeSettlementMonetarySummation']" />
+			<xsl:apply-templates
+				select="./*[local-name() = 'SpecifiedTradeAccountingAccount']" />
 
-		</ram:DeliveryNoteReferencedDocument>
-	</xsl:template>
-
+		</xsl:element>
+  	</xsl:template>
+	
+		 	
 	<!-- unterhalb von SupplyChainTradeTransaction muss zuerst die IncludedSupplyChainTradeLineItem 
 		kommen -->
 	<!-- rest -->
