@@ -26,8 +26,8 @@ public class ZUGFeRDMigrator {
 	private static final String resourcePath = ""; //$NON-NLS-1$
 
 	private static TransformerFactory getTransformerFactory() {
-		TransformerFactory fact = new net.sf.saxon.TransformerFactoryImpl();
-//TransformerFactory.newInstance();
+		//TransformerFactory fact = new net.sf.saxon.TransformerFactoryImpl();
+		TransformerFactory fact = TransformerFactory.newInstance();
 		fact.setURIResolver(new ClasspathResourceURIResolver());
 		return fact;
 	}
