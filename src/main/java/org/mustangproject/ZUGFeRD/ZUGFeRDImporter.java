@@ -61,9 +61,10 @@ public class ZUGFeRDImporter {
 	public void extract(String pdfFilename) {
 		try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(pdfFilename))) {
 			extractLowLevel(bis);
+			bis.close();
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
-		}
+		} 
 	}
 
 	/**
