@@ -186,9 +186,10 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			zea1.PDFattachZugferdFile(null);
 
 			ByteArrayOutputStream baos=new ByteArrayOutputStream();
-
+			zea1.disableAutoClose(true);
 			zea1.export(TARGET_PDF);
 			zea1.export(baos);
+			zea1.close();
 			String pdfContent=baos.toString("UTF-8");
 			assertFalse(pdfContent.indexOf("(via mustangproject.org")==-1);
 		} catch (IOException e) {

@@ -73,6 +73,8 @@ public class ZUGFeRDExporter implements Closeable {
 	private PDDocument doc;
 	int ZFVersion;
 
+	private boolean disableAutoClose;
+
 	public ZUGFeRDExporter() {
 		init();
 	}
@@ -282,12 +284,19 @@ public class ZUGFeRDExporter implements Closeable {
 
 	public void export(String ZUGFeRDfilename) throws IOException {
 		doc.save(ZUGFeRDfilename);
+		if (!disableAutoClose) {
+			close();
+		}
 	}
 
 	public void export(OutputStream output) throws IOException {
 		doc.save(output);
+		if (!disableAutoClose) {
+			close();
+		}
 	}
-
+	
+	
 	/**
 	 * Embeds an external file (generic - any type allowed) in the PDF.
 	 *
@@ -416,6 +425,14 @@ public class ZUGFeRDExporter implements Closeable {
 	 */
 	public PDDocument getDoc() {
 		return doc;
+	}
+
+	public boolean isAutoCloseDisabled() {
+		return disableAutoClose;
+	}
+
+	public void disableAutoClose(boolean disableAutoClose) {
+		this.disableAutoClose = disableAutoClose;
 	}
 
 }

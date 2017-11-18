@@ -370,10 +370,12 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 			ze.setZUGFeRDVersion(2);
 
 			ze.PDFattachZugferdFile(this);
+			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF);
 
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ze.export(baos);
+			ze.close();
 			String pdfContent = baos.toString("UTF-8");
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
 
