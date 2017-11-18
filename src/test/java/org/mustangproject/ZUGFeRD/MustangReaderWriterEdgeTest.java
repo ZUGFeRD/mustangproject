@@ -396,8 +396,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
    * It would not make sense to have it run before the less complex importer test (which is probably redundant)
    * --> as only Name Ascending is supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
    */
-  public void testZExport() throws Exception
-  {
+	public void testEdgeExport() throws Exception  {
 
     final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505newEdge.pdf";
     // the writing part

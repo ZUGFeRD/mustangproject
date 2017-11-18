@@ -78,13 +78,13 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 
 	public XMPSchemaPDFAExtensions(XMPMetadata metadata) {
 		super(metadata);
-		setZUGFeRDVersion(2);
+		setZUGFeRDVersion(ZUGFeRDExporter.DefaultZUGFeRDVersion);
 		attachExtensions(metadata, true);
 	}
 	
 	public XMPSchemaPDFAExtensions(XMPMetadata metadata, boolean withZF) {
 		super(metadata);
-		setZUGFeRDVersion(2);
+		setZUGFeRDVersion(ZUGFeRDExporter.DefaultZUGFeRDVersion);
 		attachExtensions(metadata, withZF);
 	}
 

@@ -40,7 +40,7 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	protected PDMetadata metadata = null;
 	protected PDFAIdentificationSchema pdfaid = null;
 	protected XMPMetadata xmp = null;
-	protected int ZFVersion=2;
+	protected int ZFVersion=ZUGFeRDExporter.DefaultZUGFeRDVersion;
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
 	 * metadata level, this will not e.g. convert graphics to JPG-2000)

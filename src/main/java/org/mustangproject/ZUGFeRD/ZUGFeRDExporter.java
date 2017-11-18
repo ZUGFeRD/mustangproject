@@ -34,6 +34,8 @@ import java.util.Map;
 
 public class ZUGFeRDExporter implements Closeable {
 
+	public static final int DefaultZUGFeRDVersion = 1;
+
 	/**
 	 * To use the ZUGFeRD exporter, implement IZUGFeRDExportableTransaction in
 	 * yourTransaction (which will require you to implement Product, Item and
@@ -128,7 +130,7 @@ public class ZUGFeRDExporter implements Closeable {
 	}
 
 	private void init() {
-		setZUGFeRDVersion(2);
+		setZUGFeRDVersion(DefaultZUGFeRDVersion);
 	}
 
 	/**

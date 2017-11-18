@@ -42,7 +42,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 	 * importer test (which is probably redundant) --> as only Name Ascending is
 	 * supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
 	 */
-	public void testZExport() throws Exception {
+	public void testCustomExport() throws Exception {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505custom.pdf";
 		// the writing part
@@ -221,7 +221,6 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		assertEquals(iban, "DE88 2008 0000 0970 3757 00");
 		assertEquals(holder, "Bei Spiel GmbH");
 		assertEquals(ref, "RE-20170509/505");
-
 	}
 
 }
