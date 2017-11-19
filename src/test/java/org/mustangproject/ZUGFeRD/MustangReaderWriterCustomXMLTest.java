@@ -183,8 +183,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					+ "</ram:SpecifiedTradeProduct>\n" + "</ram:IncludedSupplyChainTradeLineItem>\n"
 					+ "</rsm:SpecifiedSupplyChainTradeTransaction>\n" + "</rsm:CrossIndustryDocument>";
 			zea1.setZUGFeRDXMLData(ownZUGFeRDXML.getBytes("UTF-8"));
-			zea1.PDFattachZugferdFile(null);
-
+			
 			ByteArrayOutputStream baos=new ByteArrayOutputStream();
 			zea1.disableAutoClose(true);
 			zea1.export(TARGET_PDF);

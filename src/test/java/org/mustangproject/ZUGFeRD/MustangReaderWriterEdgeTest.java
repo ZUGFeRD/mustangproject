@@ -412,7 +412,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
     	  ze.setZUGFeRDVersion(1);
       ze.PDFattachZugferdFile(this);
       String theXML=new String(ze.getProvider().getXML());
-      //assertTrue(theXML.contains("<rsm:CrossIndustryDocument"));
+      assertTrue(theXML.contains("<rsm:CrossIndustryDocument"));
       ze.export(TARGET_PDF);
     }
 

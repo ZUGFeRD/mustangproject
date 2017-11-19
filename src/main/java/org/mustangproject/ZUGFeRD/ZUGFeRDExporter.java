@@ -75,6 +75,8 @@ public class ZUGFeRDExporter implements Closeable {
 
 	private boolean disableAutoClose;
 
+	private boolean fileAttached=false;
+
 	public ZUGFeRDExporter() {
 		init();
 	}
@@ -274,7 +276,6 @@ public class ZUGFeRDExporter implements Closeable {
 	 *            <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
 	 */
 	public void PDFattachZugferdFile(IZUGFeRDExportableTransaction trans) throws IOException {
-
 		xmlProvider.generateXML(trans);
 		String filename = getFilenameForVersion(ZFVersion);
 		PDFAttachGenericFile(doc, filename, "Alternative",
@@ -283,6 +284,9 @@ public class ZUGFeRDExporter implements Closeable {
 	}
 
 	public void export(String ZUGFeRDfilename) throws IOException {
+		if (!fileAttached) {
+			throw new IOException("File must be attached (usually with PDFattachZugferdFile) before perfoming this operation");
+		}
 		doc.save(ZUGFeRDfilename);
 		if (!disableAutoClose) {
 			close();
@@ -290,6 +294,9 @@ public class ZUGFeRDExporter implements Closeable {
 	}
 
 	public void export(OutputStream output) throws IOException {
+		if (!fileAttached) {
+			throw new IOException("File must be attached (usually with PDFattachZugferdFile) before perfoming this operation");
+		}
 		doc.save(output);
 		if (!disableAutoClose) {
 			close();
@@ -316,6 +323,8 @@ public class ZUGFeRDExporter implements Closeable {
 	 */
 	public void PDFAttachGenericFile(PDDocument doc, String filename, String relationship, String description,
 			String subType, byte[] data) throws IOException {
+		fileAttached=true;
+
 		PDComplexFileSpecification fs = new PDComplexFileSpecification();
 		fs.setFile(filename);
 
