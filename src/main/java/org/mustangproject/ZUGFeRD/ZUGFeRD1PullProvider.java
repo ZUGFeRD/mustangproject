@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
+import org.mustangproject.ZUGFeRD.model.ZFNamespacePrefixMapper;
 
 public class ZUGFeRD1PullProvider implements IXMLProvider {
 	
@@ -33,6 +34,7 @@ public class ZUGFeRD1PullProvider implements IXMLProvider {
 			marshaller = JAXBContext.newInstance("org.mustangproject.ZUGFeRD.model").createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+			marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new ZFNamespacePrefixMapper());
         } catch (JAXBException e) {
             throw new ZUGFeRDExportException("Could not initialize JAXB", e);
         }
