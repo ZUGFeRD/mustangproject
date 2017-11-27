@@ -181,6 +181,18 @@
                        <includes>
                            <include>**</include>
                        </includes>
+                    </filter>        
+                    <filter>
+                       <artifact>com.sun.xml.bind:jaxb-impl</artifact>
+                       <includes>
+                           <include>**</include>
+                       </includes>
+                    </filter>       
+                    <filter>
+                       <artifact>com.sun.xml.bind:jaxb-core</artifact>
+                       <includes>
+                           <include>**</include>
+                       </includes>
                     </filter>       
                     </filters>
 				</configuration>
