@@ -49,10 +49,16 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	 *            filename of an PDF/A1 compliant document
 	 */
 	public ZUGFeRDExporter load(String pdfFilename) throws IOException {
+		
 		ensurePDFIsValidPDFA(new FileDataSource(pdfFilename));
+		ZUGFeRDExporter zugFeRDExporter;
 		PDDocument doc = PDDocument.load(new File(pdfFilename));
 		prepareDocument(doc);
-		return new ZUGFeRDExporter(doc);
+		zugFeRDExporter = new ZUGFeRDExporter(doc);
+		zugFeRDExporter.setZUGFeRDVersion(ZFVersion);
+		zugFeRDExporter.setZUGFeRDConformanceLevel(zugferdConformanceLevel);
+		return zugFeRDExporter;
+
 	}
 	
 	
@@ -107,6 +113,7 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 		prepareDocument(doc);
 		zugFeRDExporter = new ZUGFeRDExporter(doc);
 		zugFeRDExporter.setZUGFeRDVersion(ZFVersion);
+		zugFeRDExporter.setZUGFeRDConformanceLevel(zugferdConformanceLevel);
 		return zugFeRDExporter;
 	}
 

@@ -378,7 +378,8 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 			ze.close();
 			String pdfContent = baos.toString("UTF-8");
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
-
+			// check for pdf-a schema extension
+			assertFalse(pdfContent.indexOf("<fx:DocumentFileName>factur-x.xml</fx:DocumentFileName>")==-1);
 			assertFalse(pdfContent.indexOf("urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:extended")==-1);
 		}
 
