@@ -51,13 +51,14 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			InputStream SOURCE_PDF = this.getClass()
 					.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
-			ZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1Factory().setProducer("My Application").setCreator("Test")
+			ZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1Factory().setProducer("My Application").setCreator("Test").setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.BASIC)
 					.load(SOURCE_PDF);
+			/* we have much more information than just in the basic profile (comfort or extended) but it's perfectly valid to provide more information, just not less. */
 			String ownZUGFeRDXML = "<rsm:CrossIndustryDocument xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12\" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15\" xmlns:rsm=\"urn:ferd:CrossIndustryDocument:invoice:1p0\">\n"
 					+ "<rsm:SpecifiedExchangedDocumentContext>\n" + "<ram:TestIndicator>\n"
 					+ "<udt:Indicator>false</udt:Indicator>\n" + "</ram:TestIndicator>\n"
 					+ "<ram:GuidelineSpecifiedDocumentContextParameter>\n" + "<ram:ID>\n"
-					+ "urn:ferd:CrossIndustryDocument:invoice:1p0:extended\n" + "</ram:ID>\n"
+					+ "urn:ferd:CrossIndustryDocument:invoice:1p0:basic\n" + "</ram:ID>\n"
 					+ "</ram:GuidelineSpecifiedDocumentContextParameter>\n"
 					+ "</rsm:SpecifiedExchangedDocumentContext>\n" + "<rsm:HeaderExchangedDocument>\n"
 					+ "<ram:ID>RE-20170509/505</ram:ID>\n" + "<ram:Name>RECHNUNG</ram:Name>\n"

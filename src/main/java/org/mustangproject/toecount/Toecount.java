@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.mustangproject.ZUGFeRD.ZUGFeRDConformanceLevel;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1Factory;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA3Factory;
@@ -273,18 +274,62 @@ public class Toecount {
 					outName = getFilenameFromUser("Ouput PDF", "invoice.ZUGFeRD.pdf", "pdf", false, true);
 					String versionInput = "";
 					try {
-						versionInput = getStringFromUser("ZUGFeRD version", "1", "1|2");
+						versionInput = getStringFromUser("ZUGFeRD version (1 or 2)", "1", "1|2");
 						
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					// get version
-					// get profile
+					
+					String profileInput = "";
+					int zfIntVersion=Integer.valueOf(versionInput);
 
+					ZUGFeRDConformanceLevel profile=ZUGFeRDConformanceLevel.EXTENDED;
+					if (zfIntVersion==1) {
+						try {
+							profileInput = getStringFromUser("ZUGFeRD profile b)asic, c)omfort or e)xtended", "e", "B|b|C|c|E|e").toLowerCase();
+							
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						if (profileInput.equals("b")) {
+							profile=ZUGFeRDConformanceLevel.BASIC;
+						} else if (profileInput.equals("c")) {
+							profile=ZUGFeRDConformanceLevel.COMFORT;						
+						} else if (profileInput.equals("e")) {
+							profile=ZUGFeRDConformanceLevel.EXTENDED;
+							
+						}
+						
+					} else if (zfIntVersion==2) {
+						try {
+							profileInput = getStringFromUser("ZUGFeRD profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" + 
+									"[C]IUS, [E]N16931, E[X]TENDED", "E", "M|m|W|w|B|b|C|c|E|e|X|x|").toLowerCase();
+							
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						if (profileInput.equals("m")) {
+							profile=ZUGFeRDConformanceLevel.MINIMUM;
+						} else if (profileInput.equals("w")) {
+							profile=ZUGFeRDConformanceLevel.BASICWL;						
+						} else if (profileInput.equals("b")) {
+							profile=ZUGFeRDConformanceLevel.BASIC;
+						} else if (profileInput.equals("c")) {
+							profile=ZUGFeRDConformanceLevel.CIUS;
+						} else if (profileInput.equals("e")) {
+							profile=ZUGFeRDConformanceLevel.EN16931;
+						} else if (profileInput.equals("x")) {
+							profile=ZUGFeRDConformanceLevel.EXTENDED;
+						}
+						
+					}
+					
 					ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("Toecount")
-							.setCreator(System.getProperty("user.name")).load(pdfName);
-					ze.setZUGFeRDVersion(Integer.valueOf(versionInput));
+							.setCreator(System.getProperty("user.name")).setZUGFeRDConformanceLevel(profile).load(pdfName);
+					ze.setZUGFeRDVersion(zfIntVersion);
 				
 					ze.setZUGFeRDXMLData(Files.readAllBytes(Paths.get(xmlName)));
 

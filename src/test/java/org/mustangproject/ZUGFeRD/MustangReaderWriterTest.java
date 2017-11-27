@@ -366,7 +366,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
 
-				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().load(SOURCE_PDF)) {
+			ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().load(SOURCE_PDF)) {
 			ze.setZUGFeRDVersion(2);
 
 			ze.PDFattachZugferdFile(this);
@@ -379,6 +379,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 			String pdfContent = baos.toString("UTF-8");
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
 
+			assertFalse(pdfContent.indexOf("urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:extended")==-1);
 		}
 
 		// now check the contents (like MustangReaderTest)

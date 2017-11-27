@@ -20,7 +20,11 @@ public class XMPSchemaZugferd extends XMPSchema {
 
         setAboutAsSimple("");
 
-        setTextPropertyValue("ConformanceLevel", conformanceLevel.name());
+        String conformanceLevelValue=conformanceLevel.name();
+        if (conformanceLevelValue.equals("BASICWL")) {
+        		conformanceLevelValue="BASIC WL";
+        }
+        setTextPropertyValue("ConformanceLevel", conformanceLevelValue);
         setTextPropertyValue("DocumentType", "INVOICE");
         setTextPropertyValue("DocumentFileName", filename);
         setTextPropertyValue("Version", "1.0");
