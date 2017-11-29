@@ -176,8 +176,8 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 			metadata.addSchema(zf);
 		}
 
-		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(metadata, attachZugferdHeaders);
-
+		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(metadata, ZFVersion, attachZugferdHeaders);
+		pdfaex.setZUGFeRDVersion(ZFVersion);
 		metadata.addSchema(pdfaex);
 
 	}

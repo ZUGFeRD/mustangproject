@@ -379,6 +379,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
 			// check for pdf-a schema extension
 			assertFalse(pdfContent.indexOf("<fx:ConformanceLevel>EXTENDED</fx:ConformanceLevel>") == -1);
+			assertFalse(pdfContent.indexOf("<pdfaSchema:prefix>fx</pdfaSchema:prefix>") == -1);
 			assertFalse(pdfContent.indexOf("urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:extended") == -1);
 		}
 

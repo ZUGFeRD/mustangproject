@@ -116,6 +116,7 @@ public class ZUGFeRDExporter implements Closeable {
 		}
 	}
 
+@Deprecated	
 	public void setZUGFeRDVersion(int ver) {
 		if (ver == 1) {
 			ZUGFeRD1PullProvider z1p = new ZUGFeRD1PullProvider();
