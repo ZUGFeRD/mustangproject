@@ -1,11 +1,24 @@
 1.5.0
 =====
 <date>
-Now using factory. Export now also possible on OutputStream.
-Further dev improvements: no more need to call PDFattachZugferdFile(null);
+Now using factory. Export is now also possible on OutputStream.
+Further dev improvements: no more need to call PDFattachZugferdFile(null) or exporter close();
 toecount now has options to combine documents and upgrade xml file from ZF1 to ZF2
-More unit tests, e.g. for custom xml export.
+More unit tests, e.g. for custom xml export, PDF/A Schema extensions.
+Toecount is now integrated and the main class so "java -jar mustang-1.5.0.jar" should suffice
 
+
+Further changes: 
+
+be able to specify profile #50
+close pdf files automatically after export #49 
+ZUGFeRDimporter does not close #48 
+command line option -e does not work on all-in-one jar #47 
+invoices have wrong namespaces #45 
+invalid a3 #44
+warn on export #39
+
+ 
 1.4.0
 =====
 2017-05-11

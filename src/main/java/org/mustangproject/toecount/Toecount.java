@@ -378,7 +378,7 @@ public class Toecount {
 
 				try {
 					xmlName = getFilenameFromUser("ZUGFeRD 1.0 XML source", "ZUGFeRD-invoice.xml", "xml", true, false);
-					outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "ZUGFeRD-2-invoice.xml", "xml", false, true);
+					outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "factur-x.xml", "xml", false, true);
 
 					ZUGFeRDMigrator zmi = new ZUGFeRDMigrator();
 					String xml = zmi.migrateFromV1ToV2(xmlName);

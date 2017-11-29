@@ -17,7 +17,9 @@ public class FileChecker {
 			if (extIndex >= 0) {
 				extension = filename.substring(extIndex).toLowerCase();
 				isPDF=extension.equals(".pdf");// alternative check for PDF: File starts with %PDF-
-				thisRun.incPDFCount();
+				if (isPDF) {
+					thisRun.incPDFCount();
+				}
 			}
 			
 		} else {
