@@ -1,5 +1,6 @@
-1.4.1
+1.5.0
 =====
+<date>
 Now using factory. Export now also possible on OutputStream.
 Further dev improvements: no more need to call PDFattachZugferdFile(null);
 toecount now has options to combine documents and upgrade xml file from ZF1 to ZF2

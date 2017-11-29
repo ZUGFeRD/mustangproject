@@ -192,6 +192,8 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			zea1.close();
 			String pdfContent=baos.toString("UTF-8");
 			assertFalse(pdfContent.indexOf("(via mustangproject.org")==-1);
+			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>BASIC</zf:ConformanceLevel>") == -1);
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

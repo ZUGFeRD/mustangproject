@@ -62,10 +62,6 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	}
 	
 	
-	public void setZUGFeRDversion(int version) {
-		ZFVersion=version;
-	}
-
 	public void prepareDocument(PDDocument doc) throws IOException {
 		String fullProducer = producer + " (via mustangproject.org " + org.mustangproject.ZUGFeRD.Version.VERSION + ")";
 
@@ -262,6 +258,13 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 
 	public IExporterFactory setProducer(String producer) {
 		this.producer = producer;
+		return this;
+	}
+
+
+	@Override
+	public IExporterFactory setZUGFeRDVersion(int version) {
+		this.ZFVersion=version;
 		return this;
 	}
 }

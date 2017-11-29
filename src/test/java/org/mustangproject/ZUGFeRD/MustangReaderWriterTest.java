@@ -341,7 +341,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 			holder = zi.getHolder();
 			ref = zi.getForeignReference();
 		}
-// this resembles the data written in MustangReaderWriterCustomXMLTest
+		// this resembles the data written in MustangReaderWriterCustomXMLTest
 		assertEquals(amount, "571.04");
 		assertEquals(bic, "COBADEFFXXX");
 		assertEquals(iban, "DE88 2008 0000 0970 3757 00");
@@ -366,9 +366,8 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
 
-			ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().load(SOURCE_PDF)) {
-			ze.setZUGFeRDVersion(2);
-
+				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).load(SOURCE_PDF)) {
+		
 			ze.PDFattachZugferdFile(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF);
@@ -379,8 +378,8 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 			String pdfContent = baos.toString("UTF-8");
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
 			// check for pdf-a schema extension
-			assertFalse(pdfContent.indexOf("<fx:DocumentFileName>factur-x.xml</fx:DocumentFileName>")==-1);
-			assertFalse(pdfContent.indexOf("urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:extended")==-1);
+			assertFalse(pdfContent.indexOf("<fx:ConformanceLevel>EXTENDED</fx:ConformanceLevel>") == -1);
+			assertFalse(pdfContent.indexOf("urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:extended") == -1);
 		}
 
 		// now check the contents (like MustangReaderTest)

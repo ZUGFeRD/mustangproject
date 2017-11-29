@@ -31,6 +31,7 @@ public interface IExporterFactory {
 	public IExporterFactory setCreator(String creator);
 	public IExporterFactory setConformanceLevel(PDFAConformanceLevel newLevel);
 	public IExporterFactory setProducer(String producer) ;
+	public IExporterFactory setZUGFeRDVersion(int version);
 	public IExporterFactory ignorePDFAErrors();
 	public IExporterFactory setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel zugferdConformanceLevel);
 	public IExporterFactory setAttachZUGFeRDHeaders(final boolean attachZugferdHeaders);
