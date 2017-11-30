@@ -2,31 +2,19 @@ package org.mustangproject.ZUGFeRD;
 
 import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
-import org.apache.pdfbox.pdmodel.PDDocumentInformation;
-import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.preflight.PreflightDocument;
 import org.apache.pdfbox.preflight.exception.ValidationException;
 import org.apache.pdfbox.preflight.parser.PreflightParser;
 import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
-import org.apache.xmpbox.XMPMetadata;
-import org.apache.xmpbox.schema.AdobePDFSchema;
-import org.apache.xmpbox.schema.DublinCoreSchema;
-import org.apache.xmpbox.schema.PDFAIdentificationSchema;
-import org.apache.xmpbox.schema.XMPBasicSchema;
-import org.apache.xmpbox.xml.XmpSerializer;
+
 
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
-import javax.xml.transform.TransformerException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.GregorianCalendar;
-import java.util.zip.ZipFile;
 
 public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	protected boolean ignorePDFAErrors = false;
@@ -34,13 +22,10 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	protected PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
 	protected String producer = "mustangproject";
 	protected String creator = "mustangproject";
-	protected boolean attachZugferdHeaders = true;
 	
-
-	protected PDMetadata metadata = null;
-	protected PDFAIdentificationSchema pdfaid = null;
-	protected XMPMetadata xmp = null;
 	protected int ZFVersion=ZUGFeRDExporter.DefaultZUGFeRDVersion;
+	protected boolean ensurePDFisUpgraded=false;
+	private boolean attachZUGFeRDHeaders=true;
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
 	 * metadata level, this will not e.g. convert graphics to JPG-2000)
@@ -53,46 +38,18 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 		ensurePDFIsValidPDFA(new FileDataSource(pdfFilename));
 		ZUGFeRDExporter zugFeRDExporter;
 		PDDocument doc = PDDocument.load(new File(pdfFilename));
-		prepareDocument(doc);
 		zugFeRDExporter = new ZUGFeRDExporter(doc);
 		zugFeRDExporter.setZUGFeRDVersion(ZFVersion);
 		zugFeRDExporter.setZUGFeRDConformanceLevel(zugferdConformanceLevel);
+		zugFeRDExporter.setCreator(creator);
+		zugFeRDExporter.setProducer(producer);
+		zugFeRDExporter.setAttachZUGFeRDHeaders(attachZUGFeRDHeaders);
+		zugFeRDExporter.setPDFA3(ensurePDFisUpgraded);
+		
 		return zugFeRDExporter;
 
 	}
 	
-	
-	public void prepareDocument(PDDocument doc) throws IOException {
-		String fullProducer = producer + " (via mustangproject.org " + org.mustangproject.ZUGFeRD.Version.VERSION + ")";
-
-		PDDocumentCatalog cat = doc.getDocumentCatalog();
-		metadata = new PDMetadata(doc);
-		cat.setMetadata(metadata);
-		
-		xmp = XMPMetadata.createXMPMetadata();
-
-		pdfaid = new PDFAIdentificationSchema(xmp);
-
-		xmp.addSchema(pdfaid);
-
-		DublinCoreSchema dc = xmp.createAndAddDublinCoreSchema();
-
-		dc.addCreator(creator);
-
-		XMPBasicSchema xsb = xmp.createAndAddXMPBasicSchema();
-
-		xsb.setCreatorTool(creator);
-		xsb.setCreateDate(GregorianCalendar.getInstance());
-		// PDDocumentInformation pdi=doc.getDocumentInformation();
-		PDDocumentInformation pdi = new PDDocumentInformation();
-		pdi.setProducer(fullProducer);
-		pdi.setAuthor(creator);
-		doc.setDocumentInformation(pdi);
-
-		AdobePDFSchema pdf = xmp.createAndAddAdobePDFSchema();
-		pdf.setProducer(fullProducer);
-
-	}
 		
 
 	/**
@@ -106,11 +63,20 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 		ensurePDFIsValidPDFA(new ByteArrayDataSource(new ByteArrayInputStream(pdfBinary)));
 		ZUGFeRDExporter zugFeRDExporter;
 		PDDocument doc = PDDocument.load(pdfBinary);
-		prepareDocument(doc);
 		zugFeRDExporter = new ZUGFeRDExporter(doc);
 		zugFeRDExporter.setZUGFeRDVersion(ZFVersion);
 		zugFeRDExporter.setZUGFeRDConformanceLevel(zugferdConformanceLevel);
+		zugFeRDExporter.setCreator(creator);
+		zugFeRDExporter.setProducer(producer);
+		zugFeRDExporter.setAttachZUGFeRDHeaders(attachZUGFeRDHeaders);
+		zugFeRDExporter.setPDFA3(ensurePDFisUpgraded);
+		
 		return zugFeRDExporter;
+	}
+	
+	public ZUGFeRDExporterFromA3Factory () {
+
+		ensurePDFisUpgraded=false;
 	}
 
 	/**
@@ -135,51 +101,8 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 		IOUtils.copy(in, buffer);
 		return buffer.toByteArray();
 	}
-
-	public byte[] serializeXmpMetadata(XMPMetadata xmpMetadata) throws TransformerException {
-		XmpSerializer serializer = new XmpSerializer();
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-		String prefix="<?xpacket begin=\"\uFEFF\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>";
-		String suffix="<?xpacket end=\"w\"?>";
-		
-		try {
-			buffer.write(prefix.getBytes("UTF-8")); // see https://github.com/ZUGFeRD/mustangproject/issues/44 
-			serializer.serialize(xmpMetadata, buffer, false);
-			buffer.write(suffix.getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return buffer.toByteArray();
-	}
-
-	private static boolean isValidA1(DataSource dataSource) throws IOException {
+		private static boolean isValidA1(DataSource dataSource) throws IOException {
 		return getPDFAParserValidationResult(new PreflightParser(dataSource));
-	}
-
-	/**
-	 * This will add both the RDF-indication which embedded file is Zugferd and the
-	 * neccessary PDF/A schema extension description to be able to add this
-	 * information to RDF
-	 *
-	 * @param metadata
-	 */
-	public void addXMP(XMPMetadata metadata) {
-
-		if (attachZugferdHeaders) {
-			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, zugferdConformanceLevel, ZUGFeRDExporter.getNamespaceForVersion(ZFVersion), ZUGFeRDExporter.getPrefixForVersion(ZFVersion), ZUGFeRDExporter.getFilenameForVersion(ZFVersion) );
-
-			metadata.addSchema(zf);
-		}
-
-		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(metadata, ZFVersion, attachZugferdHeaders);
-		pdfaex.setZUGFeRDVersion(ZFVersion);
-		metadata.addSchema(pdfaex);
-
 	}
 
 	/**
@@ -246,10 +169,6 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 		return this;
 	}
 
-	public IExporterFactory setAttachZUGFeRDHeaders(final boolean attachZugferdHeaders) {
-		this.attachZugferdHeaders = attachZugferdHeaders;
-		return this;
-	}
 
 	public IExporterFactory setCreator(String creator) {
 		this.creator = creator;
@@ -258,6 +177,10 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 
 	public IExporterFactory setProducer(String producer) {
 		this.producer = producer;
+		return this;
+	}
+	public IExporterFactory setAttachZUGFeRDHeaders(boolean attachHeaders) {
+		this.attachZUGFeRDHeaders = attachHeaders;
 		return this;
 	}
 

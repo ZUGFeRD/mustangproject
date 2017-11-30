@@ -1,22 +1,26 @@
 1.5.0
 =====
-<date>
-Now using factory. Export is now also possible on OutputStream.
-Further dev improvements: no more need to call PDFattachZugferdFile(null) or exporter close();
-toecount now has options to combine documents and upgrade xml file from ZF1 to ZF2
-More unit tests, e.g. for custom xml export, PDF/A Schema extensions.
-Toecount is now integrated and the main class so "java -jar mustang-1.5.0.jar" should suffice
+2017-11-30
 
+Support for ZUGFeRD 2.0 "public review" part 1.
+Now using factories to create/configure ZUGFeRDExporter.
+Export is now also possible on OutputStream.
+Removed need to call PDFattachZugferdFile(null) or exporter close();
+More unit tests, e.g. for custom xml export, PDF/A Schema extensions.
+The command line utility "toecount" is now integrated and the main class so "java -jar mustang-1.5.0.jar" should suffice.
+It now also features options to combine PDF with XML and upgrade XML files from ZF1 to ZF2.
+
+First attempts be able to start with a PDF/A-3 in the first place and better error messages for non-PDF/A-conformance.
 
 Further changes: 
 
-be able to specify profile #50
-close pdf files automatically after export #49 
-ZUGFeRDimporter does not close #48 
-command line option -e does not work on all-in-one jar #47 
-invoices have wrong namespaces #45 
-invalid a3 #44
-warn on export #39
+* be able to specify profile #50
+* close pdf files automatically after export #49 
+* ZUGFeRDimporter does not close #48 
+* command line option -e does not work on all-in-one jar #47 
+* invoices have wrong namespaces #45 
+* invalid a3 #44
+* warn on export #39
 
  
 1.4.0

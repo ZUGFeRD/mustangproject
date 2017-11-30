@@ -3,7 +3,6 @@ package org.mustangproject.ZUGFeRD;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.xmpbox.XMPMetadata;
 
 public interface IExporterFactory {
@@ -25,8 +24,6 @@ public interface IExporterFactory {
 	 * @throws IOException 
 	 */
 	public ZUGFeRDExporter load(InputStream pdfSource) throws IOException;
-	public void prepareDocument(PDDocument doc) throws IOException;
-	public void addXMP(XMPMetadata metadata);
 	
 	public IExporterFactory setCreator(String creator);
 	public IExporterFactory setConformanceLevel(PDFAConformanceLevel newLevel);
@@ -34,6 +31,5 @@ public interface IExporterFactory {
 	public IExporterFactory setZUGFeRDVersion(int version);
 	public IExporterFactory ignorePDFAErrors();
 	public IExporterFactory setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel zugferdConformanceLevel);
-	public IExporterFactory setAttachZUGFeRDHeaders(final boolean attachZugferdHeaders);
 				
 }
