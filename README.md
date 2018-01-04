@@ -13,7 +13,8 @@ Running
 
 This project requires Maven to run. Build project with "mvn clean install". This will build the project, test it and install the artifacts to local cache. After that the mustang jar can be used.
 
-More informations in [the mustang documentation](https://github.com/ZUGFeRD/mustangproject/blob/master/mustang/doc/ZugferdDev.en.pdf?raw=true)).
+More informations in [the mustang documentation]
+(https://github.com/ZUGFeRD/mustangproject/blob/master/doc/ZugferdDev.en.pdf?raw=true).
 
 Usage
 -----
