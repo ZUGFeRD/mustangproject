@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mustangproject.ZUGFeRD</groupId>
 	<artifactId>mustang</artifactId>
@@ -90,7 +91,19 @@
 
 	</dependencies>
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin><!-- mvn help:effective-pom will otherwise tell it just defaults 
+						to 2.3.2 - which does not release in the maven repo, and neither shows any 
+						error message :-( -->
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.3</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
+
 			<!-- toecount -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -162,37 +175,38 @@
 				<version>2.4.3</version>
 				<configuration>
 					<transformers>
-						<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+						<transformer
+							implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 							<mainClass>org.mustangproject.toecount.Toecount</mainClass>
 						</transformer>
 					</transformers>
 					<minimizeJar>true</minimizeJar>
 					<filters>
-					 <filter>
-                       <artifact>log4j:log4j</artifact>
-                       <includes>
-                           <include>**</include>
-                       </includes>
-                    </filter> 
-                    <filter>
-                       <artifact>commons-logging:commons-logging</artifact>
-                       <includes>
-                           <include>**</include>
-                       </includes>
-                    </filter>        
-                    <filter>
-                       <artifact>com.sun.xml.bind:jaxb-impl</artifact>
-                       <includes>
-                           <include>**</include>
-                       </includes>
-                    </filter>       
-                    <filter>
-                       <artifact>com.sun.xml.bind:jaxb-core</artifact>
-                       <includes>
-                           <include>**</include>
-                       </includes>
-                    </filter>       
-                    </filters>
+						<filter>
+							<artifact>log4j:log4j</artifact>
+							<includes>
+								<include>**</include>
+							</includes>
+						</filter>
+						<filter>
+							<artifact>commons-logging:commons-logging</artifact>
+							<includes>
+								<include>**</include>
+							</includes>
+						</filter>
+						<filter>
+							<artifact>com.sun.xml.bind:jaxb-impl</artifact>
+							<includes>
+								<include>**</include>
+							</includes>
+						</filter>
+						<filter>
+							<artifact>com.sun.xml.bind:jaxb-core</artifact>
+							<includes>
+								<include>**</include>
+							</includes>
+						</filter>
+					</filters>
 				</configuration>
 				<executions>
 					<execution>
