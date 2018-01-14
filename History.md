@@ -1,3 +1,9 @@
+1.5.1
+=====
+2018-01-13
+
+Fixed a major issue with the Maven repository (thanks to Markus Plangg, https://github.com/ZUGFeRD/mustangproject/issues/52)
+
 1.5.0
 =====
 2017-11-30
