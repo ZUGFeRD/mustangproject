@@ -4,7 +4,7 @@
   <groupId>org.mustangproject.ZUGFeRD</groupId>
   <artifactId>mustang</artifactId>
   <name>Mustang</name>
-  <version>1.4.2-SNAPSHOT</version>
+  <version>1.5.2-SNAPSHOT</version>
   <description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs</description>
   <url>http://www.mustangproject.org/</url>
   <mailingLists>
@@ -41,24 +41,19 @@
   <scm>
     <connection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</connection>
     <developerConnection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</developerConnection>
-    <tag>v1.4.0</tag>
+    <tag>mustang-1.5.0</tag>
     <url>https://github.com/ZUGFeRD/mustangproject</url>
   </scm>
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5.3</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <mainClass>org.mustangproject.toecount.Toecount</mainClass>
-            </manifest>
-          </archive>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-        </configuration>
-      </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.3.2</version>
@@ -86,7 +81,7 @@
       <plugin>
         <groupId>com.github.github</groupId>
         <artifactId>site-maven-plugin</artifactId>
-        <version>0.11</version>
+        <version>0.12</version>
         <executions>
           <execution>
             <phase>deploy</phase>
@@ -125,7 +120,38 @@
           </execution>
         </executions>
         <configuration>
+          <transformers>
+            <transformer>
+              <mainClass>org.mustangproject.toecount.Toecount</mainClass>
+            </transformer>
+          </transformers>
           <minimizeJar>true</minimizeJar>
+          <filters>
+            <filter>
+              <artifact>log4j:log4j</artifact>
+              <includes>
+                <include>**</include>
+              </includes>
+            </filter>
+            <filter>
+              <artifact>commons-logging:commons-logging</artifact>
+              <includes>
+                <include>**</include>
+              </includes>
+            </filter>
+            <filter>
+              <artifact>com.sun.xml.bind:jaxb-impl</artifact>
+              <includes>
+                <include>**</include>
+              </includes>
+            </filter>
+            <filter>
+              <artifact>com.sun.xml.bind:jaxb-core</artifact>
+              <includes>
+                <include>**</include>
+              </includes>
+            </filter>
+          </filters>
         </configuration>
       </plugin>
       <plugin>
@@ -157,7 +183,7 @@
           <target>2.1</target>
           <packageName>org.mustangproject.ZUGFeRD.model</packageName>
           <sources>
-            <source>src/main/schema/ZUGFeRD1p0.xsd</source>
+            <source>src/main/resources/schema/ZUGFeRD1p0.xsd</source>
           </sources>
         </configuration>
       </plugin>
