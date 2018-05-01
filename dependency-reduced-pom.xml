@@ -56,7 +56,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>3.6.1</version>
         <configuration>
           <archive>
             <manifest>
@@ -201,7 +201,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <version>4.12</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -227,10 +227,6 @@
         <exclusion>
           <artifactId>ph-jaxb</artifactId>
           <groupId>com.helger</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>Saxon-HE</artifactId>
-          <groupId>net.sf.saxon</groupId>
         </exclusion>
       </exclusions>
     </dependency>
