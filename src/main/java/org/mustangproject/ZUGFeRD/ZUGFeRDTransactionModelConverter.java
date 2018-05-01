@@ -1,5 +1,33 @@
+/** **********************************************************************
+ *
+ * Copyright 2018 Jochen Staerk
+ *
+ * Use is subject to license terms.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import javax.xml.bind.JAXBElement;
 import org.mustangproject.ZUGFeRD.model.AmountType;
 import org.mustangproject.ZUGFeRD.model.CodeType;
 import org.mustangproject.ZUGFeRD.model.CountryIDType;
@@ -47,17 +75,6 @@ import org.mustangproject.ZUGFeRD.model.TradeProductType;
 import org.mustangproject.ZUGFeRD.model.TradeSettlementMonetarySummationType;
 import org.mustangproject.ZUGFeRD.model.TradeSettlementPaymentMeansType;
 import org.mustangproject.ZUGFeRD.model.TradeTaxType;
-
-import javax.xml.bind.JAXBElement;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 
 class ZUGFeRDTransactionModelConverter {
     private static final SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -827,12 +844,12 @@ class ZUGFeRDTransactionModelConverter {
 		 * DecimalFormatSymbols(); symbols.setDecimalSeparator(',');
 		 * symbols.setGroupingSeparator(' ');
 		 * df.setDecimalFormatSymbols(symbols);
-		 * 
+		 *
 		 * but that would not switch off grouping. Although I liked very much
 		 * the (incomplete) "BNF diagram" in
 		 * http://docs.oracle.com/javase/tutorial/i18n/format/decimalFormat.html
 		 * in the end I decided to calculate myself and take eur+sparator+cents
-		 * 
+		 *
 		 * This function will cut off, i.e. floor() subcent values Tests:
 		 * System.err.println(utils.currencyFormat(new BigDecimal(0),
 		 * ".")+"\n"+utils.currencyFormat(new BigDecimal("-1.10"),
@@ -841,7 +858,7 @@ class ZUGFeRDTransactionModelConverter {
 		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3489"),
 		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3419"),
 		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("12"), ","));
-		 * 
+		 *
 		 * results 0.00 -1,10 -1,10 -1,01 20000123,34 20000123,34 12,00
 		 */
         value = value.setScale(scale, BigDecimal.ROUND_HALF_UP); // first, round
@@ -944,7 +961,7 @@ class ZUGFeRDTransactionModelConverter {
 
         return hm;
     }
-    
+
     ZUGFeRDTransactionModelConverter withTest(boolean isTest) {
         this.isTest = isTest;
         return this;
