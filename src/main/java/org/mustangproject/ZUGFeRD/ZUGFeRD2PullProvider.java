@@ -1,3 +1,21 @@
+/** **********************************************************************
+ *
+ * Copyright 2018 Jochen Staerk
+ *
+ * Use is subject to license terms.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
 import java.io.UnsupportedEncodingException;
@@ -15,7 +33,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		private BigDecimal totalGross;
 		private BigDecimal itemTotalNetAmount;
 		private BigDecimal itemTotalVATAmount;
-		
+
 		public LineCalc(IZUGFeRDExportableItem currentItem) {
 			this.currentItem=currentItem;
 			BigDecimal multiplicator=currentItem.getProduct().getVATPercent().divide(new BigDecimal(100)).add(new BigDecimal(1));
@@ -50,7 +68,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	public void setTest() {
 		isTest = true;
 	}
-	
+
 	private String nDigitFormat(BigDecimal value, int scale) {
 		/*
 		 * I needed 123,45, locale independent.I tried
@@ -81,12 +99,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		value=value.setScale( scale, BigDecimal.ROUND_HALF_UP ); // first, round so that e.g. 1.189999999999999946709294817992486059665679931640625 becomes 1.19
 		char[] repeat = new char[scale];
 		Arrays.fill(repeat, '0');
-		
+
 		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
 		otherSymbols.setDecimalSeparator('.');
 		DecimalFormat dec = new DecimalFormat("0."+new String(repeat), otherSymbols);
 		return dec.format(value);
-		
+
 	}
 
 	private String vatFormat(BigDecimal value) {
@@ -110,15 +128,15 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	}
 
 	private BigDecimal getTotalGross() {
-		
+
 		BigDecimal res=getTotal();
 		HashMap<BigDecimal, VATAmount> VATPercentAmountMap=getVATPercentAmountMap();
 		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
 			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
-			res=res.add(amount.getCalculated()); 
+			res=res.add(amount.getCalculated());
 		}
 
-			
+
 		return res;
 	}
 
@@ -135,13 +153,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	 * which taxes have been used with which amounts in this transaction,
 	 * empty for no taxes, or e.g. 19=>190 and 7=>14 if 1000 Eur were applicable
 	 * to 19% VAT (=>190 EUR VAT) and 200 EUR were applicable to 7% (=>14 EUR VAT)
-	 * 190 Eur  
+	 * 190 Eur
 	 * @return
 	 *
 	*/
 	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap() {
 		HashMap<BigDecimal, VATAmount> hm=new HashMap<BigDecimal, VATAmount> ();
-		
+
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			BigDecimal percent=currentItem.getProduct().getVATPercent();
 			LineCalc lc=new LineCalc(currentItem);
@@ -151,14 +169,14 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				hm.put(percent, itemVATAmount);
 			} else {
 				hm.put(percent, current.add(itemVATAmount));
-				
+
 			}
 		}
 
 		return hm;
 	}
 
-	
+
 	@Override
 	public void generateXML(IZUGFeRDExportableTransaction trans) {
 
@@ -168,7 +186,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		String testBooleanStr="false";
 		if (isTest) {
 			testBooleanStr="true";
-			
+
 		}
 		String senderReg="";
 		if (trans.getOwnOrganisationFullPlaintextInfo()!=null) {
@@ -179,11 +197,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "		</ram:Content>\n"
 					+ "<ram:SubjectCode>REG</ram:SubjectCode>\n"
 					+ "</ram:IncludedCINote>\n";
-			
+
 		}
-        
-        
-		
+
+
+
 				String xml= "﻿<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //$NON-NLS-1$
 
 					+ "<rsm:CrossIndustryInvoice xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\""
@@ -334,7 +352,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "			</ram:SpecifiedTradeSettlementPaymentMeans>\n"; //$NON-NLS-1$
 
 
-			
+
 			HashMap<BigDecimal, VATAmount> VATPercentAmountMap=getVATPercentAmountMap();
 			for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
 				VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
@@ -414,7 +432,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 					xml=xml	+ "	</rsm:SupplyChainTradeTransaction>\n" //$NON-NLS-1$
 					+ "</rsm:CrossIndustryInvoice>"; //$NON-NLS-1$
-					
+
 				byte[] zugferdRaw;
 				try {
 					zugferdRaw = xml.getBytes("UTF-8");
