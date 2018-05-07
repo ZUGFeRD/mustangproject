@@ -1,3 +1,21 @@
+/** **********************************************************************
+ *
+ * Copyright 2018 Jochen Staerk
+ *
+ * Use is subject to license terms.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 /**
  * Mustangproject's ZUGFeRD implementation
@@ -14,7 +32,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -39,7 +56,7 @@ public class ZUGFeRDImporter {
 	/*
 	 * call extract(importFilename). containsMeta() will return if ZUGFeRD data has
 	 * been found, afterwards you can call getBIC(), getIBAN() etc.
-	 * 
+	 *
 	 */
 
 	/** @var if metadata has been found */
@@ -68,7 +85,7 @@ public class ZUGFeRDImporter {
 			bis.close();
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
-		} 
+		}
 	}
 
 	/**
@@ -157,25 +174,25 @@ public class ZUGFeRDImporter {
 		/*
 		 * ndList = document .getElementsByTagName("GermanBankleitzahlID");
 		 * //$NON-NLS-1$
-		 * 
+		 *
 		 * for (int bookingIndex = 0; bookingIndex < ndList .getLength();
 		 * bookingIndex++) { Node booking = ndList.item(bookingIndex); // if there is a
 		 * attribute in the tag number:value setBIC(booking.getTextContent());
-		 * 
+		 *
 		 * }
-		 * 
+		 *
 		 * ndList = document.getElementsByTagName("ProprietaryID"); //$NON-NLS-1$
-		 * 
+		 *
 		 * for (int bookingIndex = 0; bookingIndex < ndList .getLength();
 		 * bookingIndex++) { Node booking = ndList.item(bookingIndex); // if there is a
 		 * attribute in the tag number:value setIBAN(booking.getTextContent());
-		 * 
+		 *
 		 * } <ram:PayeePartyCreditorFinancialAccount> <ram:IBANID>DE1234</ram:IBANID>
 		 * </ram:PayeePartyCreditorFinancialAccount>
 		 * <ram:PayeeSpecifiedCreditorFinancialInstitution>
 		 * <ram:BICID>DE5656565</ram:BICID> <ram:Name>Commerzbank</ram:Name>
 		 * </ram:PayeeSpecifiedCreditorFinancialInstitution>
-		 * 
+		 *
 		 */
 		
 		/***

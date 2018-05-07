@@ -1,27 +1,48 @@
+/** **********************************************************************
+ *
+ * Copyright 2018 Jochen Staerk
+ *
+ * Use is subject to license terms.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ *********************************************************************** */
 package org.mustangproject.toecount;
 
 /***
  * This is the command line interface to mustangproject
- * 
+ *
  */
 
+import com.sanityinc.jargs.CmdLineParser;
+import com.sanityinc.jargs.CmdLineParser.Option;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.transform.TransformerException;
 import org.mustangproject.ZUGFeRD.ZUGFeRDConformanceLevel;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1Factory;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA3Factory;
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
 import org.mustangproject.ZUGFeRD.ZUGFeRDMigrator;
-
-import com.sanityinc.jargs.CmdLineParser;
-import com.sanityinc.jargs.CmdLineParser.Option;
 
 public class Toecount {
 	// build with: /opt/local/bin/mvn clean compile assembly:single
@@ -53,7 +74,7 @@ public class Toecount {
 	/***
 	 * Asks the user for a String (offering a defaultValue) conforming to a Regex
 	 * pattern
-	 * 
+	 *
 	 * @param prompt
 	 * @param defaultValue
 	 * @param pattern
@@ -98,10 +119,10 @@ public class Toecount {
 	 * Prompts the user for a input or output filename
 	 * @param prompt
 	 * @param defaultFilename
-	 * @param expectedExtension will warn if filename does not match expected file extension 
+	 * @param expectedExtension will warn if filename does not match expected file extension
 	 * @param ensureFileExists will warn if file does NOT exist (for input files)
 	 * @param ensureFileNotExists will warn if file DOES exist (for output files)
-	 * 
+	 *
 	 * @return String
 	 */
 	protected static String getFilenameFromUser(String prompt, String defaultFilename, String expectedExtension, boolean ensureFileExists, boolean ensureFileNotExists) {
@@ -147,7 +168,7 @@ public class Toecount {
 					System.out.println("File does not exist, try again or CTRL+C to cancel");
 					// discard the input, a scanner.reset is not sufficient
 					fileExistenceOK = false;
-				}			
+				}
 			} else {
 				fileExistenceOK=true;
 
@@ -158,7 +179,7 @@ public class Toecount {
 						System.out.println("Output file already exists, try again or CTRL+C to cancel");
 						// discard the input, a scanner.reset is not sufficient
 
-					}			
+					}
 				} else {
 					fileExistenceOK=true;
 				}
@@ -275,12 +296,12 @@ public class Toecount {
 					String versionInput = "";
 					try {
 						versionInput = getStringFromUser("ZUGFeRD version (1 or 2)", "1", "1|2");
-						
+
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
+
 					String profileInput = "";
 					int zfIntVersion=Integer.valueOf(versionInput);
 
@@ -288,7 +309,7 @@ public class Toecount {
 					if (zfIntVersion==1) {
 						try {
 							profileInput = getStringFromUser("ZUGFeRD profile b)asic, c)omfort or e)xtended", "e", "B|b|C|c|E|e").toLowerCase();
-							
+
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -296,17 +317,17 @@ public class Toecount {
 						if (profileInput.equals("b")) {
 							profile=ZUGFeRDConformanceLevel.BASIC;
 						} else if (profileInput.equals("c")) {
-							profile=ZUGFeRDConformanceLevel.COMFORT;						
+							profile=ZUGFeRDConformanceLevel.COMFORT;
 						} else if (profileInput.equals("e")) {
 							profile=ZUGFeRDConformanceLevel.EXTENDED;
-							
+
 						}
-						
+
 					} else if (zfIntVersion==2) {
 						try {
-							profileInput = getStringFromUser("ZUGFeRD profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" + 
+							profileInput = getStringFromUser("ZUGFeRD profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" +
 									"[C]IUS, [E]N16931, E[X]TENDED", "E", "M|m|W|w|B|b|C|c|E|e|X|x|").toLowerCase();
-							
+
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -314,7 +335,7 @@ public class Toecount {
 						if (profileInput.equals("m")) {
 							profile=ZUGFeRDConformanceLevel.MINIMUM;
 						} else if (profileInput.equals("w")) {
-							profile=ZUGFeRDConformanceLevel.BASICWL;						
+							profile=ZUGFeRDConformanceLevel.BASICWL;
 						} else if (profileInput.equals("b")) {
 							profile=ZUGFeRDConformanceLevel.BASIC;
 						} else if (profileInput.equals("c")) {
@@ -324,13 +345,13 @@ public class Toecount {
 						} else if (profileInput.equals("x")) {
 							profile=ZUGFeRDConformanceLevel.EXTENDED;
 						}
-						
+
 					}
-					
+
 					ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("Toecount")
 							.setCreator(System.getProperty("user.name")).setZUGFeRDConformanceLevel(profile).load(pdfName);
 					ze.setZUGFeRDVersion(zfIntVersion);
-				
+
 					ze.setZUGFeRDXMLData(Files.readAllBytes(Paths.get(xmlName)));
 
 					ze.export(outName);
@@ -373,21 +394,25 @@ public class Toecount {
 				}
 				System.out.println("Written to " + outName);
 			} else if (upgradeRequested) {
-				String xmlName = "";
-				String outName = "";
+                try {
+                    String xmlName = "";
+                    String outName = "";
 
-				try {
-					xmlName = getFilenameFromUser("ZUGFeRD 1.0 XML source", "ZUGFeRD-invoice.xml", "xml", true, false);
-					outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "factur-x.xml", "xml", false, true);
+                    xmlName = getFilenameFromUser("ZUGFeRD 1.0 XML source", "ZUGFeRD-invoice.xml", "xml", true, false);
+                    outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "factur-x.xml", "xml", false, true);
 
-					ZUGFeRDMigrator zmi = new ZUGFeRDMigrator();
-					String xml = zmi.migrateFromV1ToV2(xmlName);
-					Files.write(Paths.get(outName), xml.getBytes());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				System.out.println("Written to " + outName);
-
+                    ZUGFeRDMigrator zmi = new ZUGFeRDMigrator();
+                    String xml = null;
+                    xml = zmi.migrateFromV1ToV2(xmlName);
+                    Files.write(Paths.get(outName), xml.getBytes());
+                    System.out.println("Written to " + outName);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (TransformerException | UnsupportedEncodingException ex) {
+                    Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, ex);
+                }
 			} else {
 				// no argument or argument unknown
 				printUsage();
