@@ -301,6 +301,17 @@ public class ZUGFeRDExporter implements Closeable {
 		PDFAttachGenericFile(doc, filename, "Alternative",
 				"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
 				"text/xml", xmlProvider.getXML());
+
+		if (ZFVersion>1) {
+			// Also attach a ZF1 file for backward compatibility
+			setZUGFeRDVersion(1);
+			xmlProvider.generateXML(trans);
+			filename = getFilenameForVersion(ZFVersion);
+			PDFAttachGenericFile(doc, filename, "Alternative",
+					"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
+					"text/xml", xmlProvider.getXML());
+			
+		}
 	}
 
 	public void export(String ZUGFeRDfilename) throws IOException {

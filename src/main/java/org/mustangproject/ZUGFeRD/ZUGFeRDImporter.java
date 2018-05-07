@@ -18,6 +18,10 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
@@ -172,6 +176,20 @@ public class ZUGFeRDImporter {
 		 * <ram:BICID>DE5656565</ram:BICID> <ram:Name>Commerzbank</ram:Name>
 		 * </ram:PayeeSpecifiedCreditorFinancialInstitution>
 		 * 
+		 */
+		
+		/***
+		 * we should switch to xpath like this 	
+			 // Create XPathFactory object
+            XPathFactory xpathFactory = XPathFactory.newInstance();
+
+            // Create XPath object
+            XPath xpath = xpathFactory.newXPath();
+            XPathExpression expr =
+                    xpath.compile("//*[local-name()=\"GuidelineSpecifiedDocumentContextParameter\"]/[local-name()=\"ID\"]");
+                //evaluate expression result on XML document
+                 ndList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+    
 		 */
 
 		ndList = document.getElementsByTagNameNS("*", "PayeePartyCreditorFinancialAccount"); //$NON-NLS-1$
