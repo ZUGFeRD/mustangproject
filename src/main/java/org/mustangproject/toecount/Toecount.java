@@ -348,7 +348,7 @@ public class Toecount {
 
 					}
 
-					ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("Toecount")
+					ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setProducer("Toecount")
 							.setCreator(System.getProperty("user.name")).setZUGFeRDConformanceLevel(profile).load(pdfName);
 					ze.setZUGFeRDVersion(zfIntVersion);
 

@@ -83,7 +83,7 @@
         <dependency>
             <groupId>com.helger</groupId>
             <artifactId>ph-schematron</artifactId>
-            <version>4.3.1</version>
+            <version>5.0.4</version>
             <scope>test</scope>
         </dependency>
         <!-- For Toecount -->
@@ -185,7 +185,16 @@
                     </transformers>
                     <minimizeJar>true</minimizeJar>
                     <filters>
-                        <filter>
+                    
+		              <filter>
+		                <artifact>*:*</artifact>
+		                <excludes>
+		                  <exclude>META-INF/*.SF</exclude>
+		                  <exclude>META-INF/*.DSA</exclude>
+		                  <exclude>META-INF/*.RSA</exclude>
+		                </excludes>
+		              </filter>
+		              <filter>
                             <artifact>log4j:log4j</artifact>
                             <includes>
                                 <include>**</include>
