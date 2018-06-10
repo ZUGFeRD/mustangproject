@@ -18,6 +18,7 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import com.helger.commons.state.EValidity;
 import com.helger.schematron.ISchematronResource;
 import com.helger.schematron.pure.SchematronResourcePure;
 import javax.xml.bind.JAXBContext;
@@ -36,7 +37,7 @@ public class ZUGFeRDXMLAssert {
     }
 
     public static void assertValidZugferd(Node xml) throws Exception {
-    	//        Assert.assertTrue("schema valid", SCHEMATRON.getSchematronValidity(xml).isValid());
+    	        Assert.assertTrue("schema valid", SCHEMATRON.getSchematronValidity(xml, null).isValid());
     }
 
     private static Document toDocument(Object jaxbElement) throws Exception {
