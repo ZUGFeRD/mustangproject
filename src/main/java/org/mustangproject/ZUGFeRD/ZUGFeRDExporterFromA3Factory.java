@@ -138,7 +138,7 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 		 * NonSequentialParser. Some additional controls are present to check a set of
 		 * PDF/A requirements. (Stream length consistency, EOL after some Keyword...)
 		 */
-		parser.parse();
+		parser.parse();// might add a Format.PDF_A1A as parameter and iterate through A1 and A3
 
 		try (PreflightDocument document = parser.getPreflightDocument()) {
 			/*

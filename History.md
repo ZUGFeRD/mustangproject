@@ -1,3 +1,9 @@
+1.5.2
+=====
+2018-06-10
+
+Fixed #57 commandline not converting PDF from A1 to A3 when adding XML to PDF (-c) 
+
 1.5.1
 =====
 2018-01-13
