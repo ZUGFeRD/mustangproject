@@ -66,7 +66,7 @@ public class StatRun {
 
 	/***
 	 * returns final statistics
-	 * @return
+	 * @return english string with linefeeds detailling number of files, directories, number of pdfs and of zugferd files
 	 */
 	public String getSummaryLine() {
 
@@ -77,7 +77,7 @@ public class StatRun {
 	}
 	/***
 	 * show that something is happening
-	 * @return String
+	 * @return String, usually a dot
 	 */
 	public String getOutputLine() {
 		return ".";

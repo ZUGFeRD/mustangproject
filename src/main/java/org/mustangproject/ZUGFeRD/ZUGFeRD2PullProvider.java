@@ -154,7 +154,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	 * empty for no taxes, or e.g. 19=>190 and 7=>14 if 1000 Eur were applicable
 	 * to 19% VAT (=>190 EUR VAT) and 200 EUR were applicable to 7% (=>14 EUR VAT)
 	 * 190 Eur
-	 * @return
+	 * @return which taxes have been used with which amounts in this invoice
 	 *
 	*/
 	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap() {

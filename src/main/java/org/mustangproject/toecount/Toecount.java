@@ -72,14 +72,14 @@ public class Toecount {
 	}
 
 	/***
-	 * Asks the user for a String (offering a defaultValue) conforming to a Regex
+	 * Asks the user (repeatedly, if neccessary) on the command line for a String (offering a defaultValue) conforming to a Regex
 	 * pattern
 	 *
-	 * @param prompt
-	 * @param defaultValue
-	 * @param pattern
-	 * @return
-	 * @throws Exception
+	 * @param prompt the question to be asked to the user
+	 * @param defaultValue the default return value if user hits enter
+	 * @param pattern a regex of acceptable values
+	 * @return the user answer conforming to pattern
+	 * @throws Exception if pattern not compielable or IOexception on input
 	 */
 	protected static String getStringFromUser(String prompt, String defaultValue, String pattern) throws Exception {
 		String input = "";
@@ -117,8 +117,8 @@ public class Toecount {
 
 	/***
 	 * Prompts the user for a input or output filename
-	 * @param prompt
-	 * @param defaultFilename
+	 * @param the text the user is asked
+	 * @param a default Filename
 	 * @param expectedExtension will warn if filename does not match expected file extension
 	 * @param ensureFileExists will warn if file does NOT exist (for input files)
 	 * @param ensureFileNotExists will warn if file DOES exist (for output files)

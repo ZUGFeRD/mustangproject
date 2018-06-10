@@ -884,7 +884,7 @@ class ZUGFeRDTransactionModelConverter {
      * 19% VAT (=>190 EUR VAT) and 200 EUR were applicable to 7% (=>14 EUR VAT)
      * 190 Eur
      *
-     * @return HashMap<BigDecimal, VATAmount>
+     * @return HashMap<BigDecimal, VATAmount> which taxes have been used with which amounts
      *
      */
     private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap() {

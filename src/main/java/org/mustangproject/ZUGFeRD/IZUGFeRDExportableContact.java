@@ -31,36 +31,37 @@ public interface IZUGFeRDExportableContact {
 
 	/**
 	 * First and last name of the recipient
-	 * @return
+	 * @return First and last name of the recipient
 	 */
 	String getName();
 
 	/**
 	 * Postal code of the recipient
-	 * @return
+	 * @return Postal code of the recipient
 	 */
 	String getZIP();
 
 	/**
 	 * VAT ID (Umsatzsteueridentifikationsnummer) of the contact
-	 * @return
+	 * @return VAT ID (Umsatzsteueridentifikationsnummer) of the contact
 	 */
 	String getVATID();
 
 	/**
 	 * two-letter country code of the contact
-	 * @return
+	 * @return two-letter iso country code of the contact
 	 */
 	String getCountry();
 
 	/***
 	 * Returns the city of the contact
-	 * @return
+	 * @return Returns the city of the recipient
 	 */
 	String getLocation();
 
 	/***
 	 * Returns the street address (street+number) of the contact
+	 * @return street address (street+number) of the contact
 	 */
 	String getStreet();
 

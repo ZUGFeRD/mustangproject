@@ -37,13 +37,13 @@ public interface IZUGFeRDExportableItem {
 
 	/**
 	 * The price of one item excl. taxes
-	 * @return
+	 * @return The price of one item excl. taxes
 	 */
 	BigDecimal getPrice();
 
 	/***
 	 * how many
-	 * @return
+	 * @return the quantity of the item
 	 */
 	BigDecimal getQuantity();
 

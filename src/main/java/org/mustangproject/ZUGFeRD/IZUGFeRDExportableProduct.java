@@ -54,25 +54,25 @@ public interface IZUGFeRDExportableProduct {
 			TNE	tonne (metric ton)
 			WEE	week
 
-	 * @return
+	 * @return a UN/ECE rec 20 unit code see https://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_rev3_Annex2e.pdf
 	 */
 	String getUnit();
 
 	/**
 	 * Short name of the product
-	 * @return
+	 * @return Short name of the product
 	 */
 	String getName();
 
 	/**
 	 * long description of the product
-	 * @return
+	 * @return long description of the product
 	 */
 	String getDescription();
 
 	/**
 	 * VAT percent of the product (e.g. 19, or 5.1 if you like)
-	 * @return
+	 * @return VAT percent of the product
 	 */
 	BigDecimal getVATPercent();
 

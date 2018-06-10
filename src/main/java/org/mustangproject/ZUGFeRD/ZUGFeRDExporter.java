@@ -480,7 +480,7 @@ public class ZUGFeRDExporter implements Closeable {
 	/****
 	 * Returns the PDFBox PDF Document
 	 *
-	 * @return PDDocument
+	 * @return PDDocument the PDFBox PDF
 	 */
 	public PDDocument getDoc() {
 		return doc;
