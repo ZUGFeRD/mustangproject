@@ -78,6 +78,7 @@ public class ZUGFeRDImporter {
 	/**
 	 * Extracts a ZUGFeRD invoice from a PDF document represented by a file name.
 	 * Errors are just logged to STDOUT.
+	 * @param pdfFilename the filename of the pdf
 	 */
 	public void extract(String pdfFilename) {
 		try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(pdfFilename))) {
@@ -91,6 +92,8 @@ public class ZUGFeRDImporter {
 	/**
 	 * Extracts a ZUGFeRD invoice from a PDF document represented by an input
 	 * stream. Errors are reported via exception handling.
+	 * 
+	 * @param  pdfStream a inputstream of a pdf file
 	 */
 	public void extractLowLevel(InputStream pdfStream) throws IOException {
 		PDEmbeddedFilesNameTreeNode etn;
@@ -131,6 +134,9 @@ public class ZUGFeRDImporter {
 		}
 	}
 
+	/**
+	 * needs to be called to be able to call the getters
+	 */
 	public void parse() {
 		DocumentBuilderFactory factory = null;
 		DocumentBuilder builder = null;
@@ -305,10 +311,18 @@ public class ZUGFeRDImporter {
 		parsed = true;
 	}
 
+	/**
+	 * 
+	 * @return if export found parseable ZUGFeRD data
+	 */
 	public boolean containsMeta() {
 		return containsMeta;
 	}
 
+	/**
+	 * 
+	 * @return the reference (purpose) the sender specified for this invoice
+	 */
 	public String getForeignReference() {
 		if (!parsed) {
 			throw new RuntimeException("use parse() before requesting a value");
@@ -319,7 +333,11 @@ public class ZUGFeRDImporter {
 	private void setForeignReference(String foreignReference) {
 		this.foreignReference = foreignReference;
 	}
-
+	
+	/**
+	 * 
+	 * @return the sender's bank's BIC code 
+	 */
 	public String getBIC() {
 		if (!parsed) {
 			throw new RuntimeException("use parse() before requesting a value");
@@ -339,6 +357,10 @@ public class ZUGFeRDImporter {
 		this.bankName = bankname;
 	}
 
+	/**
+	 * 
+	 * @return the sender's IBAN
+	 */
 	public String getIBAN() {
 		if (!parsed) {
 			throw new RuntimeException("use parse() before requesting a value");
@@ -346,6 +368,10 @@ public class ZUGFeRDImporter {
 		return IBAN;
 	}
 
+	/**
+	 * 
+	 * @return the sender's bank name
+	 */
 	public String getBankName() {
 		if (!parsed) {
 			throw new RuntimeException("use parse() before requesting a value");
@@ -353,10 +379,15 @@ public class ZUGFeRDImporter {
 		return bankName;
 	}
 
+	
 	private void setIBAN(String IBAN) {
 		this.IBAN = IBAN;
 	}
 
+	/**
+	 * 
+	 * @return the name of the owner of the sender's bank account
+	 */
 	public String getHolder() {
 		if (rawXML == null) {
 			throw new RuntimeException("use parse() before requesting a value");
@@ -368,6 +399,10 @@ public class ZUGFeRDImporter {
 		this.holder = holder;
 	}
 
+	/**
+	 * 
+	 * @return the total payable amount
+	 */
 	public String getAmount() {
 		if (rawXML == null) {
 			throw new RuntimeException("use parse() before requesting a value");
@@ -375,6 +410,10 @@ public class ZUGFeRDImporter {
 		return amount;
 	}
 
+	/**
+	 * 
+	 * @return when the payment is due
+	 */
 	public String getDueDate() {
 		if (rawXML == null) {
 			throw new RuntimeException("use parse() before requesting a value");
@@ -386,10 +425,18 @@ public class ZUGFeRDImporter {
 		this.amount = amount;
 	}
 
+	/**
+	 * 
+	 * @param meta raw XML to be set
+	 */
 	public void setMeta(String meta) {
 		this.rawXML = meta.getBytes();
 	}
-
+	
+	/**
+	 * 
+	 * @return raw XML of the invoice
+	 */
 	public String getMeta() {
 		if (rawXML == null) {
 			return null;
@@ -408,6 +455,7 @@ public class ZUGFeRDImporter {
 	/**
 	 * will return true if the metadata (just extract-ed or set with setMeta)
 	 * contains ZUGFeRD XML
+	 * @return true if the invoice contains ZUGFeRD XML
 	 */
 	public boolean canParse() {
 
