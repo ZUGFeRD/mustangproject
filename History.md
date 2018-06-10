@@ -3,6 +3,7 @@
 2018-06-10
 
 Fixed #57 commandline not converting PDF from A1 to A3 when adding XML to PDF (-c) 
+Completed javadoc
 
 1.5.1
 =====
