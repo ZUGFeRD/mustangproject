@@ -4,7 +4,7 @@
   <groupId>org.mustangproject.ZUGFeRD</groupId>
   <artifactId>mustang</artifactId>
   <name>Mustang</name>
-  <version>1.5.2-SNAPSHOT</version>
+  <version>1.5.2</version>
   <description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs</description>
   <url>http://www.mustangproject.org/</url>
   <mailingLists>
@@ -41,7 +41,7 @@
   <scm>
     <connection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</connection>
     <developerConnection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</developerConnection>
-    <tag>mustang-1.5.0</tag>
+    <tag>mustang-1.5.2</tag>
     <url>https://github.com/ZUGFeRD/mustangproject</url>
   </scm>
   <build>
@@ -128,6 +128,14 @@
           <minimizeJar>true</minimizeJar>
           <filters>
             <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/*.SF</exclude>
+                <exclude>META-INF/*.DSA</exclude>
+                <exclude>META-INF/*.RSA</exclude>
+              </excludes>
+            </filter>
+            <filter>
               <artifact>log4j:log4j</artifact>
               <includes>
                 <include>**</include>
@@ -213,7 +221,7 @@
     <dependency>
       <groupId>com.helger</groupId>
       <artifactId>ph-schematron</artifactId>
-      <version>4.3.1</version>
+      <version>5.0.4</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
