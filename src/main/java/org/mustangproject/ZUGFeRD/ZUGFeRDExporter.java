@@ -333,7 +333,7 @@ public class ZUGFeRDExporter implements Closeable {
 	}
 
 	public void export(String ZUGFeRDfilename) throws IOException {
-		if (!fileAttached) {
+		if ((!fileAttached)&&(attachZUGFeRDHeaders)) {
 			throw new IOException(
 					"File must be attached (usually with PDFattachZugferdFile) before perfoming this operation");
 		}
@@ -587,28 +587,52 @@ public class ZUGFeRDExporter implements Closeable {
 		}
 	}
 
+	/**
+	 * 
+	 * @return if pdf file will be automatically closed after adding ZF
+	 */
 	public boolean isAutoCloseDisabled() {
 		return disableAutoClose;
 	}
-
+	
+	/**
+	 * 
+	 * @param disableAutoClose prevent PDF file from being closed after adding ZF
+	 */
 	public void disableAutoClose(boolean disableAutoClose) {
 		this.disableAutoClose = disableAutoClose;
 	}
 
+	/**
+	 * the human author (use factory method instead) 
+	 * @param creator
+	 */
 	@Deprecated
 	public void setCreator(String creator) {
 		this.creator = creator;
 	}
-
+	
+	/**
+	 * the authoring software (use factory method instead) 
+	 * @param producer
+	 */
 	@Deprecated
 	public void setProducer(String producer) {
 		this.producer = producer;
 	}
 
+	/**
+	 * 
+	 * @param ensurePDFisUpgraded if not set the PDF/A won't be relabelled A/3, e.g. if it already is one
+	 */
 	public void setPDFA3(boolean ensurePDFisUpgraded) {
 		this.ensurePDFisUpgraded = ensurePDFisUpgraded;
 	}
-
+	
+	/**
+	 * 
+	 * @param attachZUGFeRDHeaders if false the ZUGFeRD XMP metadata won't be added, e.g. if it's not the first file
+	 */
 	public void setAttachZUGFeRDHeaders(boolean attachZUGFeRDHeaders) {
 		this.attachZUGFeRDHeaders=attachZUGFeRDHeaders;
 	}
