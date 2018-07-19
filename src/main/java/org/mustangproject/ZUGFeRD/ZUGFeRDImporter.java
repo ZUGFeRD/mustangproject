@@ -31,7 +31,11 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -43,6 +47,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
+import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.w3c.dom.Document;
@@ -74,14 +79,19 @@ public class ZUGFeRDImporter {
 	private boolean amountFound;
 	private boolean extracted = false;
 	private boolean parsed = false;
+	private static final Logger LOG = Logger.getLogger(ZUGFeRDImporter.class.getName());
 
 	/**
 	 * Extracts a ZUGFeRD invoice from a PDF document represented by a file name.
 	 * Errors are just logged to STDOUT.
-	 * @param pdfFilename the filename of the pdf
+	 * 
+	 * @param pdfFilename
+	 *            the filename of the pdf
 	 */
 	public void extract(String pdfFilename) {
-		try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(pdfFilename))) {
+		try {
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(pdfFilename));
+
 			extractLowLevel(bis);
 			bis.close();
 		} catch (IOException ioe) {
@@ -93,10 +103,12 @@ public class ZUGFeRDImporter {
 	 * Extracts a ZUGFeRD invoice from a PDF document represented by an input
 	 * stream. Errors are reported via exception handling.
 	 * 
-	 * @param  pdfStream a inputstream of a pdf file
+	 * @param pdfStream
+	 *            a inputstream of a pdf file
 	 */
 	public void extractLowLevel(InputStream pdfStream) throws IOException {
 		PDEmbeddedFilesNameTreeNode etn;
+
 		try (PDDocument doc = PDDocument.load(pdfStream)) {
 			// PDDocumentInformation info = doc.getDocumentInformation();
 			PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
@@ -107,29 +119,44 @@ public class ZUGFeRDImporter {
 
 			Map<String, PDComplexFileSpecification> efMap = etn.getNames();
 			// String filePath = "/tmp/";
-			for (String filename : efMap.keySet()) {
-				/**
-				 * currently (in the release candidate of version 1) only one attached file with
-				 * the name ZUGFeRD-invoice.xml is allowed
-				 */
-				if ((filename.equals("ZUGFeRD-invoice.xml") || filename.equals("factur-x.xml"))) { //$NON-NLS-1$
-					containsMeta = true;
 
-					PDComplexFileSpecification fileSpec = efMap.get(filename);
-					PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
-					// String embeddedFilename = filePath + filename;
-					// File file = new File(filePath + filename);
-					// System.out.println("Writing " + embeddedFilename);
-					// ByteArrayOutputStream fileBytes=new
-					// ByteArrayOutputStream();
-					// FileOutputStream fos = new FileOutputStream(file);
+			if (efMap!=null) {
+				extractFiles(efMap); // see https://memorynotfound.com/apache-pdfbox-extract-embedded-file-pdf-document/
+			} else {
 
-					rawXML = embeddedFile.toByteArray();
-					setMeta(new String(rawXML));
-					extracted = true;
-					// fos.write(embeddedFile.getByteArray());
-					// fos.close();
-				}
+                List<PDNameTreeNode<PDComplexFileSpecification>> kids = etn.getKids();
+                for (PDNameTreeNode<PDComplexFileSpecification> node : kids) {
+                    Map<String, PDComplexFileSpecification> namesL = node.getNames();
+                    extractFiles(namesL);
+                }
+			}
+		}
+	}
+
+	private void extractFiles(Map<String, PDComplexFileSpecification> names) throws IOException {
+		for (String filename : names.keySet()) {
+
+			/**
+			 * currently (in the release candidate of version 1) only one attached file with
+			 * the name ZUGFeRD-invoice.xml is allowed
+			 */
+			if ((filename.equals("ZUGFeRD-invoice.xml") || filename.equals("factur-x.xml"))) { //$NON-NLS-1$
+				containsMeta = true;
+
+				PDComplexFileSpecification fileSpec = names.get(filename);
+				PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
+				// String embeddedFilename = filePath + filename;
+				// File file = new File(filePath + filename);
+				// System.out.println("Writing " + embeddedFilename);
+				// ByteArrayOutputStream fileBytes=new
+				// ByteArrayOutputStream();
+				// FileOutputStream fos = new FileOutputStream(file);
+
+				rawXML = embeddedFile.toByteArray();
+				setMeta(new String(rawXML));
+				extracted = true;
+				// fos.write(embeddedFile.getByteArray());
+				// fos.close();
 			}
 		}
 	}
@@ -200,19 +227,17 @@ public class ZUGFeRDImporter {
 		 * </ram:PayeeSpecifiedCreditorFinancialInstitution>
 		 *
 		 */
-		
-		/***
-		 * we should switch to xpath like this 	
-			 // Create XPathFactory object
-            XPathFactory xpathFactory = XPathFactory.newInstance();
 
-            // Create XPath object
-            XPath xpath = xpathFactory.newXPath();
-            XPathExpression expr =
-                    xpath.compile("//*[local-name()=\"GuidelineSpecifiedDocumentContextParameter\"]/[local-name()=\"ID\"]");
-                //evaluate expression result on XML document
-                 ndList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-    
+		/***
+		 * we should switch to xpath like this // Create XPathFactory object
+		 * XPathFactory xpathFactory = XPathFactory.newInstance();
+		 * 
+		 * // Create XPath object XPath xpath = xpathFactory.newXPath(); XPathExpression
+		 * expr =
+		 * xpath.compile("//*[local-name()=\"GuidelineSpecifiedDocumentContextParameter\"]/[local-name()=\"ID\"]");
+		 * //evaluate expression result on XML document ndList = (NodeList)
+		 * expr.evaluate(doc, XPathConstants.NODESET);
+		 * 
 		 */
 
 		ndList = document.getElementsByTagNameNS("*", "PayeePartyCreditorFinancialAccount"); //$NON-NLS-1$
@@ -333,10 +358,10 @@ public class ZUGFeRDImporter {
 	private void setForeignReference(String foreignReference) {
 		this.foreignReference = foreignReference;
 	}
-	
+
 	/**
 	 * 
-	 * @return the sender's bank's BIC code 
+	 * @return the sender's bank's BIC code
 	 */
 	public String getBIC() {
 		if (!parsed) {
@@ -379,7 +404,6 @@ public class ZUGFeRDImporter {
 		return bankName;
 	}
 
-	
 	private void setIBAN(String IBAN) {
 		this.IBAN = IBAN;
 	}
@@ -427,12 +451,13 @@ public class ZUGFeRDImporter {
 
 	/**
 	 * 
-	 * @param meta raw XML to be set
+	 * @param meta
+	 *            raw XML to be set
 	 */
 	public void setMeta(String meta) {
 		this.rawXML = meta.getBytes();
 	}
-	
+
 	/**
 	 * 
 	 * @return raw XML of the invoice
@@ -455,6 +480,7 @@ public class ZUGFeRDImporter {
 	/**
 	 * will return true if the metadata (just extract-ed or set with setMeta)
 	 * contains ZUGFeRD XML
+	 * 
 	 * @return true if the invoice contains ZUGFeRD XML
 	 */
 	public boolean canParse() {
@@ -463,6 +489,6 @@ public class ZUGFeRDImporter {
 		// indication if zugferd is present - better than just invoice
 		String meta = getMeta();
 		return (meta != null) && (meta.length() > 0) && ((meta.contains("SpecifiedExchangedDocumentContext") //$NON-NLS-1$
-				/* ZF1 */ || meta.contains("ExchangedDocumentContext") /*ZF2*/));
+				/* ZF1 */ || meta.contains("ExchangedDocumentContext") /* ZF2 */));
 	}
 }
