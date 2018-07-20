@@ -19,6 +19,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -364,6 +365,37 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		assertEquals(holder, "Bei Spiel GmbH");
 		assertEquals(ref, "RE-20170509/505");
 
+	}
+
+	public void testForeignImport() throws IOException {
+		ZUGFeRDImporter zi = new ZUGFeRDImporter();
+		
+		try (InputStream inputStream = this.getClass()
+				.getResourceAsStream("/zugferd_invoice.pdf")) {
+			zi.extractLowLevel(inputStream);
+		}
+		// Reading ZUGFeRD
+
+		String	amount = zi.getAmount();
+		
+		// this resembles the data written in MustangReaderWriterCustomXMLTest
+		assertEquals(amount, "1005.55");
+
+	}
+	
+
+
+	public void testMigratePDFA1ToA3() throws IOException {
+// just make sure there is no Exception
+		InputStream SOURCE_PDF = this.getClass()
+				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
+
+
+		ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false).load(SOURCE_PDF);
+
+		File tempFile = File.createTempFile("ZUGFeRD-", "-test");
+		ze.export(tempFile.getName());
+		tempFile.deleteOnExit();
 	}
 
 	/**

@@ -1,9 +1,19 @@
+
+1.5.3
+=====
+2018-07-20
+
+Fixed #60 nullpointerexception in ZUGFeRDimporter on some input files 
+and #61 missing in maven repo 
+Now possible to skip parse() and go from zi.extract to e.g. zi.getAmount()
+
+
+
 1.5.2
 =====
 2018-06-10
 
 Fixed #57 commandline not converting PDF from A1 to A3 when adding XML to PDF (-c) 
-Completed javadoc
 
 1.5.1
 =====

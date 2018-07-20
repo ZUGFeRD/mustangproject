@@ -77,7 +77,7 @@ public class ZUGFeRDImporter {
 	private byte[] rawXML = null;
 	private String bankName;
 	private boolean amountFound;
-	private boolean extracted = false;
+	private boolean extractAttempt = false;
 	private boolean parsed = false;
 	private static final Logger LOG = Logger.getLogger(ZUGFeRDImporter.class.getName());
 
@@ -108,7 +108,7 @@ public class ZUGFeRDImporter {
 	 */
 	public void extractLowLevel(InputStream pdfStream) throws IOException {
 		PDEmbeddedFilesNameTreeNode etn;
-
+		extractAttempt = true;
 		try (PDDocument doc = PDDocument.load(pdfStream)) {
 			// PDDocumentInformation info = doc.getDocumentInformation();
 			PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
@@ -120,15 +120,16 @@ public class ZUGFeRDImporter {
 			Map<String, PDComplexFileSpecification> efMap = etn.getNames();
 			// String filePath = "/tmp/";
 
-			if (efMap!=null) {
-				extractFiles(efMap); // see https://memorynotfound.com/apache-pdfbox-extract-embedded-file-pdf-document/
+			if (efMap != null) {
+				extractFiles(efMap); // see
+										// https://memorynotfound.com/apache-pdfbox-extract-embedded-file-pdf-document/
 			} else {
 
-                List<PDNameTreeNode<PDComplexFileSpecification>> kids = etn.getKids();
-                for (PDNameTreeNode<PDComplexFileSpecification> node : kids) {
-                    Map<String, PDComplexFileSpecification> namesL = node.getNames();
-                    extractFiles(namesL);
-                }
+				List<PDNameTreeNode<PDComplexFileSpecification>> kids = etn.getKids();
+				for (PDNameTreeNode<PDComplexFileSpecification> node : kids) {
+					Map<String, PDComplexFileSpecification> namesL = node.getNames();
+					extractFiles(namesL);
+				}
 			}
 		}
 	}
@@ -154,7 +155,7 @@ public class ZUGFeRDImporter {
 
 				rawXML = embeddedFile.toByteArray();
 				setMeta(new String(rawXML));
-				extracted = true;
+
 				// fos.write(embeddedFile.getByteArray());
 				// fos.close();
 			}
@@ -169,8 +170,11 @@ public class ZUGFeRDImporter {
 		DocumentBuilder builder = null;
 		Document document = null;
 
-		if (!extracted) {
+		if (!extractAttempt) {
 			throw new RuntimeException("extract() or extractLowLevel() must be used before parsing.");
+		}
+		if (!containsMeta) {
+			throw new RuntimeException("No suitable data/ZUGFeRD file could be found.");
 		}
 
 		factory = DocumentBuilderFactory.newInstance();
@@ -350,7 +354,10 @@ public class ZUGFeRDImporter {
 	 */
 	public String getForeignReference() {
 		if (!parsed) {
-			throw new RuntimeException("use parse() before requesting a value");
+			throw new RuntimeException("use extract() before requesting a value");
+		}
+		if (foreignReference==null) {
+			parse();
 		}
 		return foreignReference;
 	}
@@ -365,7 +372,10 @@ public class ZUGFeRDImporter {
 	 */
 	public String getBIC() {
 		if (!parsed) {
-			throw new RuntimeException("use parse() before requesting a value");
+			throw new RuntimeException("use extract() before requesting a value");
+		}
+		if (BIC==null) {
+			parse();
 		}
 		return BIC;
 	}
@@ -388,7 +398,10 @@ public class ZUGFeRDImporter {
 	 */
 	public String getIBAN() {
 		if (!parsed) {
-			throw new RuntimeException("use parse() before requesting a value");
+			throw new RuntimeException("use extract() before requesting a value");
+		}
+		if (IBAN==null) {
+			parse();
 		}
 		return IBAN;
 	}
@@ -399,7 +412,10 @@ public class ZUGFeRDImporter {
 	 */
 	public String getBankName() {
 		if (!parsed) {
-			throw new RuntimeException("use parse() before requesting a value");
+			throw new RuntimeException("use extract() before requesting a value");
+		}
+		if (bankName==null) {
+			parse();
 		}
 		return bankName;
 	}
@@ -414,7 +430,10 @@ public class ZUGFeRDImporter {
 	 */
 	public String getHolder() {
 		if (rawXML == null) {
-			throw new RuntimeException("use parse() before requesting a value");
+			throw new RuntimeException("use extract() before requesting a value");
+		}
+		if (holder==null) {
+			parse();
 		}
 		return holder;
 	}
@@ -429,7 +448,10 @@ public class ZUGFeRDImporter {
 	 */
 	public String getAmount() {
 		if (rawXML == null) {
-			throw new RuntimeException("use parse() before requesting a value");
+			throw new RuntimeException("use extract() before requesting a value");
+		}
+		if (amount==null) {
+			parse();
 		}
 		return amount;
 	}
@@ -440,7 +462,10 @@ public class ZUGFeRDImporter {
 	 */
 	public String getDueDate() {
 		if (rawXML == null) {
-			throw new RuntimeException("use parse() before requesting a value");
+			throw new RuntimeException("use extract() before requesting a value");
+		}
+		if (dueDate==null) {
+			parse();
 		}
 		return dueDate;
 	}
