@@ -368,11 +368,17 @@ public class Toecount {
 
 				zi.extract(pdfName);
 				try {
-					Files.write(Paths.get(xmlName), zi.getRawXML());
+					byte[] XMLContent=zi.getRawXML();
+					if (XMLContent==null) {
+						System.err.println("No ZUGFeRD XML found in PDF file");
+						
+					} else {
+						Files.write(Paths.get(xmlName), XMLContent);
+						System.out.println("Written to " + xmlName);
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				System.out.println("Written to " + xmlName);
 
 			} else if (a3only) {
 				/*

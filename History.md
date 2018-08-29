@@ -1,3 +1,9 @@
+1.5.4
+=====
+2018-08-29
+
+Fixed #62 fail gracefully on commandline extraction of XML if none is present.
+New public function: ZUGFeRDImporter.getUTF8 returns raw XML without Byte Order Mark, if one had been used.
 
 1.5.3
 =====

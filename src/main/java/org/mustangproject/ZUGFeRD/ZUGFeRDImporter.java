@@ -495,7 +495,37 @@ public class ZUGFeRDImporter {
 		return new String(rawXML);
 	}
 
+	
 	/**
+	 * 
+	 * @return return UTF8 XML (without BOM) of the invoice
+	 */
+	public String getUTF8() {
+		if (rawXML == null) {
+			return null;
+		}
+		if (rawXML.length<3) {
+			return new String(rawXML);
+		}
+
+
+		byte[] bomlessData;
+		
+	    if ((rawXML[0] == (byte) 0xEF)
+	                    && (rawXML[1] == (byte) 0xBB)
+	                    && (rawXML[2] == (byte) 0xBF)) {
+	            // I don't like BOMs, lets remove it
+	            bomlessData = new byte[rawXML.length - 3];
+	            System.arraycopy(rawXML, 3, bomlessData, 0,
+	            		rawXML.length - 3);
+	    } else {
+	    		bomlessData = rawXML;
+	    }
+		
+		return new String(bomlessData);
+	}
+
+   /**
 	 * Returns the raw XML data as extracted from the ZUGFeRD PDF file.
 	 */
 	public byte[] getRawXML() {
