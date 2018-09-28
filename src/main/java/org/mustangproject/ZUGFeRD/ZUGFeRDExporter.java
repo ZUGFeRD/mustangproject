@@ -114,6 +114,8 @@ public class ZUGFeRDExporter implements Closeable {
 	private boolean fileAttached = false;
 	protected boolean attachZUGFeRDHeaders = true;
 
+	private boolean documentPrepared=false;
+
 	public ZUGFeRDExporter() {
 		init();
 	}
@@ -312,7 +314,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 *            <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
 	 */
 	public void PDFattachZugferdFile(IZUGFeRDExportableTransaction trans) throws IOException {
-		prepareDocument(doc);
+		prepareDocument();
 
 		xmlProvider.generateXML(trans);
 		String filename = getFilenameForVersion(ZFVersion);
@@ -333,6 +335,9 @@ public class ZUGFeRDExporter implements Closeable {
 	}
 
 	public void export(String ZUGFeRDfilename) throws IOException {
+		if (!documentPrepared) {
+			prepareDocument();
+		}
 		if ((!fileAttached)&&(attachZUGFeRDHeaders)) {
 			throw new IOException(
 					"File must be attached (usually with PDFattachZugferdFile) before perfoming this operation");
@@ -530,7 +535,7 @@ public class ZUGFeRDExporter implements Closeable {
 		return buffer.toByteArray();
 	}
 
-	protected void prepareDocument(PDDocument doc) throws IOException {
+	protected void prepareDocument() throws IOException {
 		String fullProducer = producer + " (via mustangproject.org " + org.mustangproject.ZUGFeRD.Version.VERSION + ")";
 
 		PDDocumentCatalog cat = doc.getDocumentCatalog();
@@ -571,20 +576,19 @@ public class ZUGFeRDExporter implements Closeable {
 
 			pdfaid.setPart(3);
 		}
-		if (attachZUGFeRDHeaders) {
-			addXMP(xmp); /*
+		addXMP(xmp); /*
 							 * this is the only line where we do something Zugferd-specific, i.e. add PDF
 							 * metadata specifically for Zugferd, not generically for a embedded file
 							 */
 
-		}
-
+	
 		try {
 			metadata.importXMPMetadata(serializeXmpMetadata(xmp));
 
 		} catch (TransformerException e) {
 			throw new ZUGFeRDExportException("Could not export XmpMetadata", e);
 		}
+		documentPrepared=true;
 	}
 
 	/**
