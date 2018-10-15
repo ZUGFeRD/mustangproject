@@ -88,6 +88,7 @@ class ZUGFeRDTransactionModelConverter {
     ZUGFeRDTransactionModelConverter(IZUGFeRDExportableTransaction trans) {
         this.trans = trans;
         totals = new Totals();
+        this.currency = trans.getCurrency() != null ? trans.getCurrency(): currency;
     }
 
 
