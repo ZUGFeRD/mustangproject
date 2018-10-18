@@ -322,14 +322,18 @@ public class ZUGFeRDExporter implements Closeable {
 				"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
 				"text/xml", xmlProvider.getXML());
 
-		if (ZFVersion>1) {
-			// Also attach a ZF1 file for backward compatibility
+		if ((ZFVersion>1)&&(trans!=null)) {
+			/*
+			 *  Also attach a ZF1 file for backward compatibility, but only in case
+			 *  if we do not e.g. embed custom XML (in which case, if its v2, the v1 provider won't be able to deliver data)
+			 */
 			setZUGFeRDVersion(1);
 			xmlProvider.generateXML(trans);
 			filename = getFilenameForVersion(ZFVersion);
 			PDFAttachGenericFile(doc, filename, "Alternative",
 					"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
 					"text/xml", xmlProvider.getXML());
+			
 			
 		}
 	}
