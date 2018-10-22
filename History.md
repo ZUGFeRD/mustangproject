@@ -1,3 +1,10 @@
+1.5.5
+=====
+2018-10-22
+
+Fixes by Indigo744: Issues #66 Commandline: provide a way to set input parameters and #68 Combine with ZUGFeRD v2: NullPointerException
+Fixes #63 PDF/A3 conversion not valid.
+
 1.5.4
 =====
 2018-08-29
