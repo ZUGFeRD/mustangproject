@@ -51,39 +51,59 @@ public class Toecount {
 	}
 
 	private static String getUsage() {
-		return "Usage: [-d,--directory] [-l,--listfromstdin] [-i,--ignorefileextension] | [-c,--combine] | [-e,--extract] | [-u,--upgrade] | [-a,--a3only] | [-h,--help]\r\n";
+		return "Usage: [-d,--directory] [-l,--listfromstdin] [-i,--ignorefileextension] | [-c,--combine] | [-e,--extract] | [-u,--upgrade] | [-a,--a3only] | [-h,--help] \r\n"
+				+ "* Count operations\n" + "        -d, --directory count ZUGFeRD files in directory to be scanned\n"
+				+ "                If it is a directory, it will recurse.\n"
+				+ "        -l, --listfromstdin     count ZUGFeRD files from a list of linefeed separated files on runtime.\n"
+				+ "                It will start once a blank line has been entered.\n" + "\n"
+				+ "        Additional parameter for both count operations\n"
+				+ "        [-i, --ignorefileextension]     Check for all files (*.*) instead of PDF files only (*.pdf)\n"
+				+ "\n" + "* Merge operations\n" + "        -e, --extract   extract ZUGFeRD PDF to XML file\n"
+				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
+				+ "                [--source <filename>]: set input PDF file\n"
+				+ "                [--out <filename>]: set output XML file\n"
+				+ "        -u, --upgrade   upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
+				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
+				+ "                [--source <filename>]: set input XML ZUGFeRD 1 file\n"
+				+ "                [--out <filename>]: set output XML ZUGFeRD 2 file\n"
+				+ "        -a, --a3only    upgrade from PDF/A1 to A3 only (no ZUGFeRD data attached)\n"
+				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
+				+ "                [--source <filename>]: set input PDF file\n"
+				+ "                [--out <filename>]: set output PDF file\n"
+				+ "        -c, --combine   combine XML and PDF file to ZUGFeRD PDF file\n"
+				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
+				+ "                [--source <filename>]: set input PDF file\n"
+				+ "                [--source-xml <filename>]: set input XML file\n"
+				+ "                [--out <filename>]: set output PDF file\n"
+				+ "                [--zugferd-version <1|2>]: set ZUGFeRD version\n"
+				+ "                [--zugferd-profile <...>]: set ZUGFeRD profile\n"
+				+ "                        For ZUGFeRD v1: <B>ASIC, <C>OMFORT or <E>XTENDED\n"
+				+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, E<X>TENDED ";
 	}
 
 	private static void printHelp() {
 		System.out.println("Mustangproject.org " + org.mustangproject.ZUGFeRD.Version.VERSION + " \r\n"
-			+ "A Apache Public License library and command line tool for statistics on PDF invoices with\r\n"
-			+ "ZUGFeRD Metadata (http://www.zugferd.org)\r\n" 
-			+ "\r\n" 
-			+ getUsage() 
-			+ "\r\n" 
-			+ "* Count operations\r\n"
-			+ "\t-d, --directory\tcount ZUGFeRD files in directory to be scanned\r\n"
+				+ "A Apache Public License library and command line tool for statistics on PDF invoices with\r\n"
+				+ "ZUGFeRD Metadata (http://www.zugferd.org)\r\n" + "\r\n" + getUsage() + "\r\n"
+				+ "* Count operations\r\n" + "\t-d, --directory\tcount ZUGFeRD files in directory to be scanned\r\n"
 				+ "\t\tIf it is a directory, it will recurse.\r\n"
-			+ "\t-l, --listfromstdin\tcount ZUGFeRD files from a list of linefeed separated files on runtime.\r\n"
-				+ "\t\tIt will start once a blank line has been entered.\r\n"
-			+ "\r\n" 
-			+ "\tAdditional parameter for both count operations\r\n"
-			+ "\t[-i, --ignorefileextension]\tCheck for all files (*.*) instead of PDF files only (*.pdf)\r\n"
-			+ "\r\n" 
-			+ "* Merge operations\r\n" 
-			+ "\t-e, --extract\textract ZUGFeRD PDF to XML file\r\n"
+				+ "\t-l, --listfromstdin\tcount ZUGFeRD files from a list of linefeed separated files on runtime.\r\n"
+				+ "\t\tIt will start once a blank line has been entered.\r\n" + "\r\n"
+				+ "\tAdditional parameter for both count operations\r\n"
+				+ "\t[-i, --ignorefileextension]\tCheck for all files (*.*) instead of PDF files only (*.pdf)\r\n"
+				+ "\r\n" + "* Merge operations\r\n" + "\t-e, --extract\textract ZUGFeRD PDF to XML file\r\n"
 				+ "\t\tAdditional parameters (optional - user will be prompted if not defined)\r\n"
 				+ "\t\t[--source <filename>]: set input PDF file\r\n"
 				+ "\t\t[--out <filename>]: set output XML file\r\n"
-			+ "\t-u, --upgrade\tupgrade ZUGFeRD XML to ZUGFeRD 2 XML\r\n"
+				+ "\t-u, --upgrade\tupgrade ZUGFeRD XML to ZUGFeRD 2 XML\r\n"
 				+ "\t\tAdditional parameters (optional - user will be prompted if not defined)\r\n"
 				+ "\t\t[--source <filename>]: set input XML ZUGFeRD 1 file\r\n"
 				+ "\t\t[--out <filename>]: set output XML ZUGFeRD 2 file\r\n"
-			+ "\t-a, --a3only\tupgrade from PDF/A1 to A3 only (no ZUGFeRD data attached) \r\n"
+				+ "\t-a, --a3only\tupgrade from PDF/A1 to A3 only (no ZUGFeRD data attached) \r\n"
 				+ "\t\tAdditional parameters (optional - user will be prompted if not defined)\r\n"
 				+ "\t\t[--source <filename>]: set input PDF file\r\n"
 				+ "\t\t[--out <filename>]: set output PDF file\r\n"
-			+ "\t-c, --combine\tcombine XML and PDF file to ZUGFeRD PDF file\r\n"
+				+ "\t-c, --combine\tcombine XML and PDF file to ZUGFeRD PDF file\r\n"
 				+ "\t\tAdditional parameters (optional - user will be prompted if not defined)\r\n"
 				+ "\t\t[--source <filename>]: set input PDF file\r\n"
 				+ "\t\t[--source-xml <filename>]: set input XML file\r\n"
@@ -91,19 +111,22 @@ public class Toecount {
 				+ "\t\t[--zugferd-version <1|2>]: set ZUGFeRD version\r\n"
 				+ "\t\t[--zugferd-profile <...>]: set ZUGFeRD profile\r\n"
 				+ "\t\t\tFor ZUGFeRD v1: <B>ASIC, <C>OMFORT or <E>XTENDED\r\n"
-				+ "\t\t\tFor ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, E<X>TENDED\r\n"
-		);
+				+ "\t\t\tFor ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, E<X>TENDED\r\n");
 	}
 
 	/***
-	 * Asks the user (repeatedly, if neccessary) on the command line for a String (offering a defaultValue) conforming to a Regex
-	 * pattern
+	 * Asks the user (repeatedly, if neccessary) on the command line for a String
+	 * (offering a defaultValue) conforming to a Regex pattern
 	 *
-	 * @param prompt the question to be asked to the user
-	 * @param defaultValue the default return value if user hits enter
-	 * @param pattern a regex of acceptable values
+	 * @param prompt
+	 *            the question to be asked to the user
+	 * @param defaultValue
+	 *            the default return value if user hits enter
+	 * @param pattern
+	 *            a regex of acceptable values
 	 * @return the user answer conforming to pattern
-	 * @throws Exception if pattern not compielable or IOexception on input
+	 * @throws Exception
+	 *             if pattern not compielable or IOexception on input
 	 */
 	protected static String getStringFromUser(String prompt, String defaultValue, String pattern) throws Exception {
 		String input = "";
@@ -141,28 +164,35 @@ public class Toecount {
 
 	/***
 	 * Prompts the user for a input or output filename
-	 * @param the text the user is asked
-	 * @param a default Filename
-	 * @param expectedExtension will warn if filename does not match expected file extension
-	 * @param ensureFileExists will warn if file does NOT exist (for input files)
-	 * @param ensureFileNotExists will warn if file DOES exist (for output files)
+	 * 
+	 * @param the
+	 *            text the user is asked
+	 * @param a
+	 *            default Filename
+	 * @param expectedExtension
+	 *            will warn if filename does not match expected file extension
+	 * @param ensureFileExists
+	 *            will warn if file does NOT exist (for input files)
+	 * @param ensureFileNotExists
+	 *            will warn if file DOES exist (for output files)
 	 *
 	 * @return String
 	 */
-	protected static String getFilenameFromUser(String prompt, String defaultFilename, String expectedExtension, boolean ensureFileExists, boolean ensureFileNotExists) {
+	protected static String getFilenameFromUser(String prompt, String defaultFilename, String expectedExtension,
+			boolean ensureFileExists, boolean ensureFileNotExists) {
 		boolean fileExistenceOK = false;
 		String selectedName = "";
 		do {
-			// for a more sophisticated dialogue maybe https://github.com/mabe02/lanterna/ could be taken into account
+			// for a more sophisticated dialogue maybe https://github.com/mabe02/lanterna/
+			// could be taken into account
 			System.out.print(prompt + " (default: " + defaultFilename + "):");
-			BufferedReader buffer=new BufferedReader(new InputStreamReader(System.in));
+			BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
 			try {
-				selectedName=buffer.readLine();
+				selectedName = buffer.readLine();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 
 			if (selectedName.isEmpty()) {
 				// pressed return without entering anything
@@ -171,15 +201,16 @@ public class Toecount {
 
 			// error cases
 			if (!selectedName.toLowerCase().endsWith(expectedExtension.toLowerCase())) {
-				System.err.println("Expected "+expectedExtension+" extension, this may corrupt your file. Do you still want to continue?(Y|N)");
-				String selectedAnswer="";
+				System.err.println("Expected " + expectedExtension
+						+ " extension, this may corrupt your file. Do you still want to continue?(Y|N)");
+				String selectedAnswer = "";
 				try {
-					selectedAnswer=buffer.readLine();
+					selectedAnswer = buffer.readLine();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				if (!selectedAnswer.equals("Y")&&!selectedAnswer.equals("y")) {
+				if (!selectedAnswer.equals("Y") && !selectedAnswer.equals("y")) {
 					System.err.println("Aborted by user");
 					System.exit(-1);
 				}
@@ -193,7 +224,7 @@ public class Toecount {
 					fileExistenceOK = false;
 				}
 			} else {
-				fileExistenceOK=true;
+				fileExistenceOK = true;
 
 				if (ensureFileNotExists) {
 					if (fileExists(selectedName)) {
@@ -202,10 +233,9 @@ public class Toecount {
 						// discard the input, a scanner.reset is not sufficient
 					}
 				} else {
-					fileExistenceOK=true;
+					fileExistenceOK = true;
 				}
 			}
-
 
 		} while (!fileExistenceOK);
 
@@ -214,202 +244,200 @@ public class Toecount {
 
 	// /opt/local/bin/mvn clean compile assembly:single
 	public static void main(String[] args) {
-		CmdLineParser parser = new CmdLineParser();
-		
-		// Option: Help
-		Option<Boolean> helpOption = parser.addBooleanOption('h', "help");
-		
-		// Generic options available for multiple command
-		// --source: input file
-		Option<String> sourceOption = parser.addStringOption("source");
-		// --out: output file
-		Option<String> outOption = parser.addStringOption("out");
-		
-		// Command: Extract XML
-		//		--extract
-		//		(--source: input PDF file)
-		//		(--out: output XML file)
-		Option<Boolean> extractOption = parser.addBooleanOption('e', "extract");
-
-		// Command: Migrating ZUGFeRD 1 to 2
-		//		--upgrade
-		//		(--source: input XML ZUGFeRD 1 file)
-		//		(--out: output XML ZUGFeRD 2 file)
-		Option<Boolean> upgradeOption = parser.addBooleanOption('u', "upgrade");
-
-		// Command: Convert PDF/A-1 to PDF/A-3
-		//		--a3only
-		//		(--source: input PDF file)
-		//		(--out: output PDF file)
-		Option<Boolean> a3onlyOption = parser.addBooleanOption('a', "a3only");
-
-		// Command: Combining PDF and XML
-		//		--combine
-		//		(--source: input PDF file)
-		//		(--source-xml: input XML file)
-		//		(--out: output PDF file)
-		//		(--zugferd-version: ZUGFeRD version)
-		//		(--zugferd-profile: ZUGFeRD profile)
-		Option<Boolean> combineOption = parser.addBooleanOption('c', "combine");
-		Option<String> sourceXmlOption = parser.addStringOption("source-xml");
-		Option<String> zugferdVersionOption = parser.addStringOption("zugferd-version");
-		Option<String> zugferdProfileOption = parser.addStringOption("zugferd-profile");
-
-		// Command: Show metrics in dir
-		//		--directory
-		//		(--ignorefileextension)
-		Option<String> dirnameOption = parser.addStringOption('d', "directory");
-		Option<Boolean> ignoreFileExtOption = parser.addBooleanOption('i', "ignorefileextension");
-
-		// Command: Show metrics from list from stdin
-		//		--listfromstdin
-		Option<Boolean> filesFromStdInOption = parser.addBooleanOption('l', "listfromstdin");
-		
 		try {
-			parser.parse(args);
-		} catch (CmdLineParser.OptionException e) {
-			System.err.println(e.getMessage());
-			printUsage();
-			System.exit(2);
+
+			CmdLineParser parser = new CmdLineParser();
+
+			// Option: Help
+			Option<Boolean> helpOption = parser.addBooleanOption('h', "help");
+
+			// Generic options available for multiple command
+			// --source: input file
+			Option<String> sourceOption = parser.addStringOption("source");
+			// --out: output file
+			Option<String> outOption = parser.addStringOption("out");
+
+			// Command: Extract XML
+			// --extract
+			// (--source: input PDF file)
+			// (--out: output XML file)
+			Option<Boolean> extractOption = parser.addBooleanOption('e', "extract");
+
+			// Command: Migrating ZUGFeRD 1 to 2
+			// --upgrade
+			// (--source: input XML ZUGFeRD 1 file)
+			// (--out: output XML ZUGFeRD 2 file)
+			Option<Boolean> upgradeOption = parser.addBooleanOption('u', "upgrade");
+
+			// Command: Convert PDF/A-1 to PDF/A-3
+			// --a3only
+			// (--source: input PDF file)
+			// (--out: output PDF file)
+			Option<Boolean> a3onlyOption = parser.addBooleanOption('a', "a3only");
+
+			// Command: Combining PDF and XML
+			// --combine
+			// (--source: input PDF file)
+			// (--source-xml: input XML file)
+			// (--out: output PDF file)
+			// (--zugferd-version: ZUGFeRD version)
+			// (--zugferd-profile: ZUGFeRD profile)
+			Option<Boolean> combineOption = parser.addBooleanOption('c', "combine");
+			Option<String> sourceXmlOption = parser.addStringOption("source-xml");
+			Option<String> zugferdVersionOption = parser.addStringOption("zugferd-version");
+			Option<String> zugferdProfileOption = parser.addStringOption("zugferd-profile");
+
+			// Command: Show metrics in dir
+			// --directory
+			// (--ignorefileextension)
+			Option<String> dirnameOption = parser.addStringOption('d', "directory");
+			Option<Boolean> ignoreFileExtOption = parser.addBooleanOption('i', "ignorefileextension");
+
+			// Command: Show metrics from list from stdin
+			// --listfromstdin
+			Option<Boolean> filesFromStdInOption = parser.addBooleanOption('l', "listfromstdin");
+
+			try {
+				parser.parse(args);
+			} catch (CmdLineParser.OptionException e) {
+				System.err.println(e.getMessage());
+				printUsage();
+				System.exit(2);
+			}
+
+			// Retrieve all options
+			String directoryName = parser.getOptionValue(dirnameOption);
+			Boolean filesFromStdIn = parser.getOptionValue(filesFromStdInOption, Boolean.FALSE);
+			Boolean combineRequested = parser.getOptionValue(combineOption, Boolean.FALSE);
+			Boolean extractRequested = parser.getOptionValue(extractOption, Boolean.FALSE);
+			Boolean helpRequested = parser.getOptionValue(helpOption, Boolean.FALSE);
+			Boolean upgradeRequested = parser.getOptionValue(upgradeOption, Boolean.FALSE);
+			Boolean ignoreFileExt = parser.getOptionValue(ignoreFileExtOption, Boolean.FALSE);
+			Boolean a3only = parser.getOptionValue(a3onlyOption, Boolean.FALSE);
+			String sourceName = parser.getOptionValue(sourceOption);
+			String sourceXMLName = parser.getOptionValue(sourceXmlOption);
+			String outName = parser.getOptionValue(outOption);
+			String zugferdVersion = parser.getOptionValue(zugferdVersionOption);
+			String zugferdProfile = parser.getOptionValue(zugferdProfileOption);
+
+			if (helpRequested) {
+				printHelp();
+			}
+
+			else if (((directoryName != null) && (directoryName.length() > 0)) || filesFromStdIn.booleanValue()) {
+				performMetrics(directoryName, filesFromStdIn, ignoreFileExt);
+			} else if (combineRequested) {
+				performCombine(sourceName, sourceXMLName, outName, zugferdVersion, zugferdProfile);
+			} else if (extractRequested) {
+				performExtract(sourceName, outName);
+			} else if (a3only) {
+				performConvert(sourceName, outName);
+			} else if (upgradeRequested) {
+				performUpgrade(sourceName, outName);
+			} else {
+				// no argument or argument unknown
+				printUsage();
+				System.exit(2);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+			System.exit(-1);
 		}
 
-		// Retrieve all options
-		String directoryName = parser.getOptionValue(dirnameOption);
-		Boolean filesFromStdIn = parser.getOptionValue(filesFromStdInOption, Boolean.FALSE);
-		Boolean combineRequested = parser.getOptionValue(combineOption, Boolean.FALSE);
-		Boolean extractRequested = parser.getOptionValue(extractOption, Boolean.FALSE);
-		Boolean helpRequested = parser.getOptionValue(helpOption, Boolean.FALSE);
-		Boolean upgradeRequested = parser.getOptionValue(upgradeOption, Boolean.FALSE);
-		Boolean ignoreFileExt = parser.getOptionValue(ignoreFileExtOption, Boolean.FALSE);
-		Boolean a3only = parser.getOptionValue(a3onlyOption, Boolean.FALSE);
-		String sourceName = parser.getOptionValue(sourceOption);
-		String sourceXMLName = parser.getOptionValue(sourceXmlOption);
-		String outName = parser.getOptionValue(outOption);
-		String zugferdVersion = parser.getOptionValue(zugferdVersionOption);
-		String zugferdProfile = parser.getOptionValue(zugferdProfileOption);
+	}
 
-		if (helpRequested) {
-			printHelp();
-		}
+	private static void performUpgrade(String xmlName, String outName) throws IOException, TransformerException {
 
-		else if (((directoryName != null) && (directoryName.length() > 0)) || filesFromStdIn.booleanValue()) {
-			performMetrics(directoryName, filesFromStdIn, ignoreFileExt);
-		} else if (combineRequested) {
-			performCombine(sourceName, sourceXMLName, outName, zugferdVersion, zugferdProfile);
-		} else if (extractRequested) {
-			performExtract(sourceName, outName);
-		} else if (a3only) {
-			performConvert(sourceName, outName);
-		} else if (upgradeRequested) {
-			performUpgrade(sourceName, outName);
+		// Get params from user if not already defined
+		if (xmlName == null) {
+			xmlName = getFilenameFromUser("ZUGFeRD 1.0 XML source", "ZUGFeRD-invoice.xml", "xml", true, false);
 		} else {
-			// no argument or argument unknown
-			printUsage();
-			System.exit(2);
+			System.out.println("ZUGFeRD 1.0 XML source set to " + xmlName);
 		}
+		if (outName == null) {
+			outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "factur-x.xml", "xml", false, true);
+		} else {
+			System.out.println("ZUGFeRD 1.0 XML source set to " + outName);
+		}
+
+		// Verify params
+		ensureFileExists(xmlName);
+		ensureFileNotExists(outName);
+
+		// All params are good! continue...
+		ZUGFeRDMigrator zmi = new ZUGFeRDMigrator();
+		String xml = null;
+		xml = zmi.migrateFromV1ToV2(xmlName);
+		Files.write(Paths.get(outName), xml.getBytes());
+		System.out.println("Written to " + outName);
+		/*
+		 * } catch (FileNotFoundException ex) {
+		 * Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, ex);
+		 */
 	}
 
-	private static void performUpgrade(String xmlName, String outName) {
-		try {
-			// Get params from user if not already defined
-			if (xmlName == null) {
-				xmlName = getFilenameFromUser("ZUGFeRD 1.0 XML source", "ZUGFeRD-invoice.xml", "xml", true, false);
-			} else {
-				System.out.println("ZUGFeRD 1.0 XML source set to " + xmlName);
-			}
-			if (outName == null) {
-				outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "factur-x.xml", "xml", false, true);
-			} else {
-				System.out.println("ZUGFeRD 1.0 XML source set to " + outName);
-			}
-
-			// Verify params
-			ensureFileExists(xmlName);
-			ensureFileNotExists(outName);
-
-			// All params are good! continue...
-			ZUGFeRDMigrator zmi = new ZUGFeRDMigrator();
-			String xml = null;
-			xml = zmi.migrateFromV1ToV2(xmlName);
-			Files.write(Paths.get(outName), xml.getBytes());
-			System.out.println("Written to " + outName);
-		} catch (FileNotFoundException ex) {
-			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (TransformerException | UnsupportedEncodingException ex) {
-			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (IOException ex) {
-			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	}
-
-	private static void performConvert(String pdfName, String outName) {
+	private static void performConvert(String pdfName, String outName) throws IOException {
 		/*
 		 * ZUGFeRDExporter ze= new ZUGFeRDExporterFromA1Factory()
 		 * .setProducer("toecount") .setCreator(System.getProperty("user.name"))
 		 * .loadFromPDFA1("invoice.pdf");
 		 */
-		try {
-			// Get params from user if not already defined
-			if (pdfName == null) {
-				pdfName = getFilenameFromUser("Source PDF", "invoice.pdf", "pdf", true, false);
-			} else {
-				System.out.println("Source PDF set to " + pdfName);
-			}
-			if (outName == null) {
-				outName = getFilenameFromUser("Target PDF", "invoice.a3.pdf", "pdf", false, true);
-			} else {
-				System.out.println("Target PDF set to " + outName);
-			}
-
-			// Verify params
-			ensureFileExists(pdfName);
-			ensureFileNotExists(outName);
-
-			// All params are good! continue...
-			ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false).load(pdfName);
-
-			ze.export(outName);
-		} catch (IOException e) {
-			e.printStackTrace();
+		// Get params from user if not already defined
+		if (pdfName == null) {
+			pdfName = getFilenameFromUser("Source PDF", "invoice.pdf", "pdf", true, false);
+		} else {
+			System.out.println("Source PDF set to " + pdfName);
 		}
+		if (outName == null) {
+			outName = getFilenameFromUser("Target PDF", "invoice.a3.pdf", "pdf", false, true);
+		} else {
+			System.out.println("Target PDF set to " + outName);
+		}
+
+		// Verify params
+		ensureFileExists(pdfName);
+		ensureFileNotExists(outName);
+
+		// All params are good! continue...
+		ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false).load(pdfName);
+
+		ze.export(outName);
 		System.out.println("Written to " + outName);
 	}
 
-	private static void performExtract(String pdfName, String xmlName) {
-		try {
-			// Get params from user if not already defined
-			if (pdfName == null) {
-				pdfName = getFilenameFromUser("Source PDF", "invoice.pdf", "pdf", true, false);
-			} else {
-				System.out.println("Source PDF set to " + pdfName);
-			}
-			if (xmlName == null) {
-				xmlName = getFilenameFromUser("ZUGFeRD XML", "ZUGFeRD-invoice.xml", "xml", false, true);
-			} else {
-				System.out.println("ZUGFeRD XML set to " + pdfName);
-			}
+	private static void performExtract(String pdfName, String xmlName) throws IOException {
+		// Get params from user if not already defined
+		if (pdfName == null) {
+			pdfName = getFilenameFromUser("Source PDF", "invoice.pdf", "pdf", true, false);
+		} else {
+			System.out.println("Source PDF set to " + pdfName);
+		}
+		if (xmlName == null) {
+			xmlName = getFilenameFromUser("ZUGFeRD XML", "ZUGFeRD-invoice.xml", "xml", false, true);
+		} else {
+			System.out.println("ZUGFeRD XML set to " + pdfName);
+		}
 
-			// Verify params
-			ensureFileExists(pdfName);
-			ensureFileNotExists(xmlName);
+		// Verify params
+		ensureFileExists(pdfName);
+		ensureFileNotExists(xmlName);
 
-			// All params are good! continue...
-			ZUGFeRDImporter zi = new ZUGFeRDImporter();
-			zi.extract(pdfName);
-			byte[] XMLContent=zi.getRawXML();
-			if (XMLContent==null) {
-				System.err.println("No ZUGFeRD XML found in PDF file");
-				
-			} else {
-				Files.write(Paths.get(xmlName), XMLContent);
-				System.out.println("Written to " + xmlName);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+		// All params are good! continue...
+		ZUGFeRDImporter zi = new ZUGFeRDImporter();
+		zi.extract(pdfName);
+		byte[] XMLContent = zi.getRawXML();
+		if (XMLContent == null) {
+			System.err.println("No ZUGFeRD XML found in PDF file");
+
+		} else {
+			Files.write(Paths.get(xmlName), XMLContent);
+			System.out.println("Written to " + xmlName);
 		}
 	}
 
-	private static void performCombine(String pdfName, String xmlName, String outName, String zfVersion, String zfProfile) {
+	private static void performCombine(String pdfName, String xmlName, String outName, String zfVersion,
+			String zfProfile) throws Exception {
 		/*
 		 * ZUGFeRDExporter ze= new ZUGFeRDExporterFromA1Factory()
 		 * .setProducer("toecount") .setCreator(System.getProperty("user.name"))
@@ -448,15 +476,17 @@ public class Toecount {
 				System.out.println("ZUGFeRD version set to " + zfVersion);
 			}
 
-			zfIntVersion=Integer.valueOf(zfVersion);
+			zfIntVersion = Integer.valueOf(zfVersion);
 
 			if (zfProfile == null) {
 				try {
 					if (zfIntVersion == 1) {
-						zfProfile = getStringFromUser("ZUGFeRD profile b)asic, c)omfort or e)xtended", "e", "B|b|C|c|E|e");
+						zfProfile = getStringFromUser("ZUGFeRD profile b)asic, c)omfort or e)xtended", "e",
+								"B|b|C|c|E|e");
 					} else {
-						zfProfile = getStringFromUser("ZUGFeRD profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" +
-														"[C]IUS, [E]N16931, E[X]TENDED", "E", "M|m|W|w|B|b|C|c|E|e|X|x|");
+						zfProfile = getStringFromUser(
+								"ZUGFeRD profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" + "[C]IUS, [E]N16931, E[X]TENDED",
+								"E", "M|m|W|w|B|b|C|c|E|e|X|x|");
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -472,7 +502,7 @@ public class Toecount {
 			ensureFileExists(xmlName);
 			ensureFileNotExists(outName);
 
-			if (zfIntVersion==1) {
+			if (zfIntVersion == 1) {
 				if (zfProfile.equals("b")) {
 					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.BASIC;
 				} else if (zfProfile.equals("c")) {
@@ -482,7 +512,7 @@ public class Toecount {
 				} else {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}
-			} else if (zfIntVersion==2) {
+			} else if (zfIntVersion == 2) {
 				if (zfProfile.equals("m")) {
 					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.MINIMUM;
 				} else if (zfProfile.equals("w")) {
@@ -504,26 +534,26 @@ public class Toecount {
 
 			// All params are good! continue...
 			ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setProducer("Toecount")
-					.setCreator(System.getProperty("user.name")).setZUGFeRDConformanceLevel(zfConformanceLevelProfile).load(pdfName);
+					.setCreator(System.getProperty("user.name")).setZUGFeRDConformanceLevel(zfConformanceLevelProfile)
+					.load(pdfName);
 
 			ze.setZUGFeRDVersion(zfIntVersion);
 
 			ze.setZUGFeRDXMLData(Files.readAllBytes(Paths.get(xmlName)));
 
 			ze.export(outName);
-			
+
 			System.out.println("Written to " + outName);
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 			// } catch (JAXBException e) {
 			// e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
-	private static void performMetrics(String directoryName, Boolean filesFromStdIn, Boolean ignoreFileExt) {
+	private static void performMetrics(String directoryName, Boolean filesFromStdIn, Boolean ignoreFileExt)
+			throws IOException {
 
 		StatRun sr = new StatRun();
 		if (ignoreFileExt) {
@@ -541,53 +571,42 @@ public class Toecount {
 
 			} else if (Files.isDirectory(startingDir)) {
 				FileTraverser pf = new FileTraverser(sr);
-				try {
-					Files.walkFileTree(startingDir, pf);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				Files.walkFileTree(startingDir, pf);
 			}
 		}
 
 		if (filesFromStdIn) {
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 			String s;
-			try {
-				while ((s = in.readLine()) != null && s.length() != 0) {
-					FileChecker fc = new FileChecker(s, sr);
+			while ((s = in.readLine()) != null && s.length() != 0) {
+				FileChecker fc = new FileChecker(s, sr);
 
-					fc.checkForZUGFeRD();
-					System.out.print(fc.getOutputLine());
+				fc.checkForZUGFeRD();
+				System.out.print(fc.getOutputLine());
 
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
+
 		}
 		System.out.println(sr.getSummaryLine());
 	}
 
-	private static void ensureFileExists(String fileName) throws IOException
-	{
+	private static void ensureFileExists(String fileName) throws IOException {
 		if (!fileExists(fileName)) {
 			throw new IOException(String.format("File %s does not exists", fileName));
 		}
 	}
 
-	private static void ensureFileNotExists(String fileName) throws IOException
-	{
+	private static void ensureFileNotExists(String fileName) throws IOException {
 		if (fileExists(fileName)) {
 			throw new IOException(String.format("File %s does not exists", fileName));
 		}
 	}
 
-	private static Boolean fileExists(String fileName)
-	{
-		if (fileName == null) return false;
+	private static Boolean fileExists(String fileName) {
+		if (fileName == null)
+			return false;
 		File f = new File(fileName);
 		return f.exists();
 	}
-	
+
 }
