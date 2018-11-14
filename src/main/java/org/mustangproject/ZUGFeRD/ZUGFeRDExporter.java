@@ -100,8 +100,12 @@ public class ZUGFeRDExporter implements Closeable {
 	protected PDMetadata metadata = null;
 	protected PDFAIdentificationSchema pdfaid = null;
 	protected XMPMetadata xmp = null;
+	/** Producer attribute for PDF */
 	protected String producer = "mustangproject";
+	/** Author/Creator attribute for PDF for PDF */
 	protected String creator = "mustangproject";
+	/** CreatorTool */
+	protected String creatorTool = "mustangproject";
 
 	@Deprecated
 	private boolean ignoreA1Errors;
@@ -558,7 +562,7 @@ public class ZUGFeRDExporter implements Closeable {
 
 		XMPBasicSchema xsb = xmp.createAndAddXMPBasicSchema();
 
-		xsb.setCreatorTool(creator);
+		xsb.setCreatorTool(creatorTool);
 		xsb.setCreateDate(GregorianCalendar.getInstance());
 		// PDDocumentInformation pdi=doc.getDocumentInformation();
 		PDDocumentInformation pdi = new PDDocumentInformation();
@@ -618,6 +622,13 @@ public class ZUGFeRDExporter implements Closeable {
 	@Deprecated
 	public void setCreator(String creator) {
 		this.creator = creator;
+	}
+	/**
+	 * the CreatorTool attribute for the PDF
+	 * @param creator
+	 */
+	protected void setCreatorTool(String creatorTool) {
+		this.creatorTool = creatorTool;
 	}
 	
 	/**
