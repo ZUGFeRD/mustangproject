@@ -49,7 +49,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 
 	// //////// TESTS
 	// //////////////////////////////////////////////////////////////////////////////////////////
-	public void testCustomZF2Export() throws Exception {
+	 public void testCustomZF2Export() throws Exception {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506custom.pdf";
 		// the writing part
@@ -253,7 +253,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					"		</ram:ApplicableHeaderTradeSettlement>\n" + 
 					"	</rsm:SupplyChainTradeTransaction>\n" + 
 					"</rsm:CrossIndustryInvoice>";
-			zea1.setZUGFeRDXMLData(ownZUGFeRDXML.getBytes("UTF-8"));
+			 zea1.setZUGFeRDXMLData(ownZUGFeRDXML.getBytes("UTF-8"));
 
 			ByteArrayOutputStream baos=new ByteArrayOutputStream();
 			zea1.disableAutoClose(true);
@@ -262,7 +262,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			zea1.close();
 			String pdfContent=baos.toString("UTF-8");
 			assertFalse(pdfContent.indexOf("(via mustangproject.org")==-1);
-			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN16931</zf:ConformanceLevel>") == -1);
+			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

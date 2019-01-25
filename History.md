@@ -1,7 +1,8 @@
 1.5.6
 =====
 
-closes #69
+closes #69.
+Corrected EN 16931 XMP Schema Extension header
 
 1.5.5
 =====

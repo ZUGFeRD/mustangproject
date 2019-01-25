@@ -40,8 +40,10 @@ public class XMPSchemaZugferd extends XMPSchema {
 
         String conformanceLevelValue=conformanceLevel.name();
         if (conformanceLevelValue.equals("BASICWL")) {
-        		conformanceLevelValue="BASIC WL";
-        }
+    			conformanceLevelValue="BASIC WL";
+        } else if (conformanceLevelValue.equals("EN16931")) {
+        		conformanceLevelValue="EN 16931";
+        	}
         setTextPropertyValue("ConformanceLevel", conformanceLevelValue);
         setTextPropertyValue("DocumentType", "INVOICE");
         setTextPropertyValue("DocumentFileName", filename);
