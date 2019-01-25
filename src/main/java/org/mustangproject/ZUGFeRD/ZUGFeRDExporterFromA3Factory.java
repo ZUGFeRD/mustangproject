@@ -36,8 +36,12 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	protected boolean ignorePDFAErrors = false;
 	protected ZUGFeRDConformanceLevel zugferdConformanceLevel = ZUGFeRDConformanceLevel.EXTENDED;
 	protected PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
+	/** Producer (attribute for PDF */
 	protected String producer = "mustangproject";
+	/** Human creator (attribute for PDF) */
 	protected String creator = "mustangproject";
+	/** Creator tool (attribute for PDF) */
+	protected String creatorTool = null;
 
 	protected int ZFVersion=ZUGFeRDExporter.DefaultZUGFeRDVersion;
 	protected boolean ensurePDFisUpgraded=false;
@@ -58,6 +62,8 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 		zugFeRDExporter.setZUGFeRDVersion(ZFVersion);
 		zugFeRDExporter.setZUGFeRDConformanceLevel(zugferdConformanceLevel);
 		zugFeRDExporter.setCreator(creator);
+		// Use creator as default for compatibility
+		zugFeRDExporter.setCreatorTool(creatorTool != null ? creatorTool : creator);
 		zugFeRDExporter.setProducer(producer);
 		zugFeRDExporter.setAttachZUGFeRDHeaders(attachZUGFeRDHeaders);
 		zugFeRDExporter.setPDFA3(ensurePDFisUpgraded);
@@ -188,6 +194,11 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 
 	public IExporterFactory setCreator(String creator) {
 		this.creator = creator;
+		return this;
+	}
+	
+	public IExporterFactory setCreatorTool(String creatorTool) {
+		this.creatorTool = creatorTool;
 		return this;
 	}
 
