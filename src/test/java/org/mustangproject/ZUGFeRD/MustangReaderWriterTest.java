@@ -414,7 +414,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
 
-				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).load(SOURCE_PDF)) {
+				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
 
 			ze.PDFattachZugferdFile(this);
 			ze.disableAutoClose(true);
@@ -426,9 +426,9 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 			String pdfContent = baos.toString("UTF-8");
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
 			// check for pdf-a schema extension
-			assertFalse(pdfContent.indexOf("<fx:ConformanceLevel>EXTENDED</fx:ConformanceLevel>") == -1);
+			assertFalse(pdfContent.indexOf("<fx:ConformanceLevel>EN 16931</fx:ConformanceLevel>") == -1);
 			assertFalse(pdfContent.indexOf("<pdfaSchema:prefix>fx</pdfaSchema:prefix>") == -1);
-			assertFalse(pdfContent.indexOf("urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:extended") == -1);
+			assertFalse(pdfContent.indexOf("urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:en16931") == -1);
 		}
 
 		// now check the contents (like MustangReaderTest)

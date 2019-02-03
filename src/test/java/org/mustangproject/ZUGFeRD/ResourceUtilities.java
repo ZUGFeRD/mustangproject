@@ -90,7 +90,9 @@ public class ResourceUtilities {
 	 * @throws IOException if no absolute Path could be created.
 	 */
 	public static String getTestOutput(String relativeFilePath) throws IOException {
-		return File.createTempFile(relativeFilePath, null).getAbsolutePath();
+		File tempFile=File.createTempFile(relativeFilePath, null);
+		tempFile.deleteOnExit();
+		return tempFile.getAbsolutePath();
 	}
 
 	/** The Input of the test file will be resolved and the absolute will be returned

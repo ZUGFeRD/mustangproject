@@ -209,14 +209,14 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ " xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100\""
 					+ " xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100\">\n" //$NON-NLS-1$
 					+ "	<rsm:ExchangedDocumentContext>\n" //$NON-NLS-1$
-					+ "		<ram:TestIndicator><udt:Indicator>"+testBooleanStr+"</udt:Indicator></ram:TestIndicator>\n" //$NON-NLS-1$
+//					+ "		<ram:TestIndicator><udt:Indicator>"+testBooleanStr+"</udt:Indicator></ram:TestIndicator>\n" //$NON-NLS-1$
 					+ "		<ram:GuidelineSpecifiedDocumentContextParameter>\n" //$NON-NLS-1$
-					+ "			<ram:ID>urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:extended</ram:ID>\n" //$NON-NLS-1$
+					+ "			<ram:ID>urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:en16931</ram:ID>\n" //$NON-NLS-1$
 					+ "		</ram:GuidelineSpecifiedDocumentContextParameter>\n" //$NON-NLS-1$
 					+ "	</rsm:ExchangedDocumentContext>\n" //$NON-NLS-1$
 					+ "	<rsm:ExchangedDocument>\n" //$NON-NLS-1$
 					+ "		<ram:ID>"+trans.getNumber()+"</ram:ID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-					+ "		<ram:Name>RECHNUNG</ram:Name>\n" //$NON-NLS-1$
+//					+ "		<ram:Name>RECHNUNG</ram:Name>\n" //$NON-NLS-1$
 					+ "		<ram:TypeCode>380</ram:TypeCode>\n" //$NON-NLS-1$
 					+ "		<ram:IssueDateTime><udt:DateTimeString format=\"102\">"+zugferdDateFormat.format(trans.getIssueDate())+"</udt:DateTimeString></ram:IssueDateTime>\n" //date format was 20130605 //$NON-NLS-1$ //$NON-NLS-2$
 					+ senderReg
@@ -253,7 +253,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 								+ "			<ram:SpecifiedLineTradeAgreement>\n" //$NON-NLS-1$
 								+ "				<ram:GrossPriceProductTradePrice>\n" //$NON-NLS-1$
-								+ "					<ram:ChargeAmount currencyID=\"EUR\">"+priceFormat(currentItem.getPrice())+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+								+ "					<ram:ChargeAmount>"+priceFormat(currentItem.getPrice())+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$ //currencyID=\"EUR\"
 								+ "					<ram:BasisQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">1.0000</ram:BasisQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$
 //								+ "					<AppliedTradeAllowanceCharge>\n"
 //								+ "						<ChargeIndicator>false</ChargeIndicator>\n"
@@ -262,7 +262,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 //								+ "					</AppliedTradeAllowanceCharge>\n"
 								+ "				</ram:GrossPriceProductTradePrice>\n" //$NON-NLS-1$
 								+ "				<ram:NetPriceProductTradePrice>\n" //$NON-NLS-1$
-								+ "					<ram:ChargeAmount currencyID=\"EUR\">"+priceFormat(currentItem.getPrice())+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+								+ "					<ram:ChargeAmount>"+priceFormat(currentItem.getPrice())+"</ram:ChargeAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$ // currencyID=\"EUR\"
 								+ "					<ram:BasisQuantity unitCode=\""+currentItem.getProduct().getUnit()+"\">1.0000</ram:BasisQuantity>\n" //$NON-NLS-1$ //$NON-NLS-2$
 								+ "				</ram:NetPriceProductTradePrice>\n" //$NON-NLS-1$
 								+ "			</ram:SpecifiedLineTradeAgreement>\n" //$NON-NLS-1$
@@ -277,7 +277,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 								+ "					<ram:RateApplicablePercent>"+vatFormat(currentItem.getProduct().getVATPercent())+"</ram:RateApplicablePercent>\n" //$NON-NLS-1$ //$NON-NLS-2$
 								+ "				</ram:ApplicableTradeTax>\n" //$NON-NLS-1$
 								+ "				<ram:SpecifiedTradeSettlementLineMonetarySummation>\n" //$NON-NLS-1$
-								+ "					<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(lc.getItemTotalNetAmount())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+								+ "					<ram:LineTotalAmount>"+currencyFormat(lc.getItemTotalNetAmount())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$  // currencyID=\"EUR\"
 								+ "				</ram:SpecifiedTradeSettlementLineMonetarySummation>\n" //$NON-NLS-1$
 								+ "			</ram:SpecifiedLineTradeSettlement>\n" //$NON-NLS-1$
 								+ "		</ram:IncludedSupplyChainTradeLineItem>\n"; //$NON-NLS-1$
@@ -347,7 +347,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "				</ram:PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
 					+ "				<ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
 					+ "					<ram:BICID>"+trans.getOwnBIC()+"</ram:BICID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-					+ "					<ram:Name>"+trans.getOwnBankName()+"</ram:Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
+//					+ "					<ram:Name>"+trans.getOwnBankName()+"</ram:Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
 					+ "				</ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
 					+ "			</ram:SpecifiedTradeSettlementPaymentMeans>\n"; //$NON-NLS-1$
 
@@ -358,9 +358,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 				if (amount != null) {
 					xml += "			<ram:ApplicableTradeTax>\n" //$NON-NLS-1$
-									+ "				<ram:CalculatedAmount currencyID=\"EUR\">"+currencyFormat(amount.getCalculated())+"</ram:CalculatedAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+									+ "				<ram:CalculatedAmount>"+currencyFormat(amount.getCalculated())+"</ram:CalculatedAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$ //currencyID=\"EUR\"
 									+ "				<ram:TypeCode>VAT</ram:TypeCode>\n" //$NON-NLS-1$
-									+ "				<ram:BasisAmount currencyID=\"EUR\">"+currencyFormat(amount.getBasis())+"</ram:BasisAmount>\n"
+									+ "				<ram:BasisAmount>"+currencyFormat(amount.getBasis())+"</ram:BasisAmount>\n" // currencyID=\"EUR\"
 									+ "				<ram:CategoryCode>S</ram:CategoryCode>\n" //$NON-NLS-1$
 									+ "				<ram:RateApplicablePercent>"+vatFormat(currentTaxPercent)+"</ram:RateApplicablePercent>\n" //$NON-NLS-1$
 									+ "			</ram:ApplicableTradeTax>\n"; //$NON-NLS-1$
@@ -407,16 +407,16 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "				<ram:DueDateDateTime><udt:DateTimeString format=\"102\">"+zugferdDateFormat.format(trans.getDueDate())+"</udt:DateTimeString></ram:DueDateDateTime>\n"//20130704 //$NON-NLS-1$ //$NON-NLS-2$
 					+ "			</ram:SpecifiedTradePaymentTerms>\n" //$NON-NLS-1$
 					+ "			<ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n" //$NON-NLS-1$
-					+ "				<ram:LineTotalAmount currencyID=\"EUR\">"+currencyFormat(getTotal())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-					+ "				<ram:ChargeTotalAmount currencyID=\"EUR\">0.00</ram:ChargeTotalAmount>\n" //$NON-NLS-1$
-					+ "				<ram:AllowanceTotalAmount currencyID=\"EUR\">0.00</ram:AllowanceTotalAmount>\n" //$NON-NLS-1$
+					+ "				<ram:LineTotalAmount>"+currencyFormat(getTotal())+"</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$  currencyID=\"EUR\"
+					+ "				<ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>\n" //$NON-NLS-1$  currencyID=\"EUR\"
+					+ "				<ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>\n" //$NON-NLS-1$ // currencyID=\"EUR\"
 //					+ "				<ChargeTotalAmount currencyID=\"EUR\">5.80</ChargeTotalAmount>\n"
 //					+ "				<AllowanceTotalAmount currencyID=\"EUR\">14.73</AllowanceTotalAmount>\n"
-					+ "				<ram:TaxBasisTotalAmount currencyID=\"EUR\">"+currencyFormat(getTotal())+"</ram:TaxBasisTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+					+ "				<ram:TaxBasisTotalAmount>"+currencyFormat(getTotal())+"</ram:TaxBasisTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$ // currencyID=\"EUR\"
 					+ "				<ram:TaxTotalAmount currencyID=\"EUR\">"+currencyFormat(getTotalGross().subtract(getTotal()))+"</ram:TaxTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
-					+ "				<ram:GrandTotalAmount currencyID=\"EUR\">"+currencyFormat(getTotalGross())+"</ram:GrandTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+					+ "				<ram:GrandTotalAmount>"+currencyFormat(getTotalGross())+"</ram:GrandTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$ // currencyID=\"EUR\"
 //					+ "				<TotalPrepaidAmount currencyID=\"EUR\">0.00</TotalPrepaidAmount>\n"
-					+ "				<ram:DuePayableAmount currencyID=\"EUR\">"+currencyFormat(getTotalGross())+"</ram:DuePayableAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+					+ "				<ram:DuePayableAmount>"+currencyFormat(getTotalGross())+"</ram:DuePayableAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$ // currencyID=\"EUR\"
 					+ "			</ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n" //$NON-NLS-1$
 					+ "		</ram:ApplicableHeaderTradeSettlement>\n"; //$NON-NLS-1$
 //					+ "		<IncludedSupplyChainTradeLineItem>\n"
