@@ -33,17 +33,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
@@ -79,6 +73,7 @@ public class ZUGFeRDImporter {
 	private boolean amountFound;
 	private boolean extractAttempt = false;
 	private boolean parsed = false;
+	private String xmpString = null; // XMP metadata
 	private static final Logger LOG = Logger.getLogger(ZUGFeRDImporter.class.getName());
 
 	/**
@@ -98,6 +93,21 @@ public class ZUGFeRDImporter {
 			ioe.printStackTrace();
 		}
 	}
+	
+	static String convertStreamToString(java.io.InputStream is) {
+		// source https://stackoverflow.com/questions/309424/how-do-i-read-convert-an-inputstream-into-a-string-in-java referring to
+		// https://community.oracle.com/blogs/pat/2004/10/23/stupid-scanner-tricks
+	    java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+	    return s.hasNext() ? s.next() : "";
+	}
+	
+	/***
+	 * get xmp metadata of the PDF, null if not available
+	 * @return string
+	 */
+	public String getXMP() {
+		return xmpString;
+	}
 
 	/**
 	 * Extracts a ZUGFeRD invoice from a PDF document represented by an input
@@ -112,6 +122,10 @@ public class ZUGFeRDImporter {
 		try (PDDocument doc = PDDocument.load(pdfStream)) {
 			// PDDocumentInformation info = doc.getDocumentInformation();
 			PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
+			//start
+			InputStream XMP=doc.getDocumentCatalog().getMetadata().exportXMPMetadata();
+			
+			xmpString=convertStreamToString(XMP);		    
 			etn = names.getEmbeddedFiles();
 			if (etn == null) {
 				return;
@@ -134,6 +148,7 @@ public class ZUGFeRDImporter {
 		}
 	}
 
+	
 	private void extractFiles(Map<String, PDComplexFileSpecification> names) throws IOException {
 		for (String filename : names.keySet()) {
 

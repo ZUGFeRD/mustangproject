@@ -1,8 +1,12 @@
-1.5.6
+1.6.0
 =====
+2019-02-03
 
-closes #69.
+Closes #69.
 Corrected EN 16931 XMP Schema Extension header
+Can now read xmp metadata via ZUGFeRDImporter getXMP
+Exporting valid EN16931 Factur-X when version/profile set to 2/EN16931 mode
+
 
 1.5.5
 =====
