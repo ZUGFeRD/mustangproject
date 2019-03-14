@@ -31,6 +31,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -67,6 +68,7 @@ public class ZUGFeRDImporter {
 	private String holder;
 	private String amount;
 	private String dueDate;
+	private HashMap<String,byte[]> additionalXMLs=new HashMap<String,byte[]>();
 	/** Raw XML form of the extracted data - may be directly obtained. */
 	private byte[] rawXML = null;
 	private String bankName;
@@ -151,7 +153,6 @@ public class ZUGFeRDImporter {
 	
 	private void extractFiles(Map<String, PDComplexFileSpecification> names) throws IOException {
 		for (String filename : names.keySet()) {
-
 			/**
 			 * currently (in the release candidate of version 1) only one attached file with
 			 * the name ZUGFeRD-invoice.xml is allowed
@@ -174,7 +175,18 @@ public class ZUGFeRDImporter {
 				// fos.write(embeddedFile.getByteArray());
 				// fos.close();
 			}
+			if (filename.startsWith("additional_data")) {
+
+				PDComplexFileSpecification fileSpec = names.get(filename);
+				PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
+				additionalXMLs.put(filename, embeddedFile.toByteArray());
+
+			}
 		}
+	}
+	
+	public HashMap<String, byte[]> getAdditionalData() {
+		return additionalXMLs;
 	}
 
 	/**

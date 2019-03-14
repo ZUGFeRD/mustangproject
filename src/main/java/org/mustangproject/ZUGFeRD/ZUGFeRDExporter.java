@@ -112,6 +112,9 @@ public class ZUGFeRDExporter implements Closeable {
 	protected boolean ensurePDFisUpgraded = true;
 	private PDDocument doc;
 	int ZFVersion;
+	
+	private HashMap<String,byte[]> additionalXMLs=new HashMap<String,byte[]>();
+
 
 	private boolean disableAutoClose;
 
@@ -127,6 +130,10 @@ public class ZUGFeRDExporter implements Closeable {
 	public ZUGFeRDExporter(PDDocument doc2) {
 		doc = doc2;
 		init();
+	}
+	
+	public void addAdditonalXML(String filename, byte[] xml) {
+		additionalXMLs.put(filename, xml);
 	}
 
 	public static String getNamespaceForVersion(int ver) {
@@ -340,6 +347,9 @@ public class ZUGFeRDExporter implements Closeable {
 			
 			
 		}
+		for (String filenameAdditional : additionalXMLs.keySet()) {
+			PDFAttachGenericFile(doc, filenameAdditional, "Supplement", "ZUGFeRD extension/additional data", "text/xml", additionalXMLs.get(filenameAdditional));
+		}
 	}
 
 	public void export(String ZUGFeRDfilename) throws IOException {
@@ -459,6 +469,7 @@ public class ZUGFeRDExporter implements Closeable {
 		cus.setXML(zugferdData);
 		this.xmlProvider = cus;
 		PDFattachZugferdFile(null);
+		
 	}
 
 	/**

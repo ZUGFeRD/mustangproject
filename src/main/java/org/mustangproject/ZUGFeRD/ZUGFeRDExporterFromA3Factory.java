@@ -23,6 +23,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import org.apache.pdfbox.io.IOUtils;
@@ -42,7 +44,10 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	protected String creator = "mustangproject";
 	/** Creator tool (attribute for PDF) */
 	protected String creatorTool = null;
+	
+	private HashMap<String,byte[]> additionalXMLs=new HashMap<String,byte[]>();
 
+	
 	protected int ZFVersion=ZUGFeRDExporter.DefaultZUGFeRDVersion;
 	protected boolean ensurePDFisUpgraded=false;
 	private boolean attachZUGFeRDHeaders=true;
@@ -123,7 +128,7 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 		IOUtils.copy(in, buffer);
 		return buffer.toByteArray();
 	}
-		private static boolean isValidA1(DataSource dataSource) throws IOException {
+	private static boolean isValidA1(DataSource dataSource) throws IOException {
 		return getPDFAParserValidationResult(new PreflightParser(dataSource));
 	}
 
