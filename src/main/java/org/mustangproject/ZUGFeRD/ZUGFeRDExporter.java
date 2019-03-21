@@ -65,6 +65,8 @@ public class ZUGFeRDExporter implements Closeable {
 
 	public static final int DefaultZUGFeRDVersion = 1;
 
+	private static boolean isFacturX=false;
+
 	/**
 	 * To use the ZUGFeRD exporter, implement IZUGFeRDExportableTransaction in
 	 * yourTransaction (which will require you to implement Product, Item and
@@ -159,7 +161,7 @@ public class ZUGFeRDExporter implements Closeable {
 	public static String getFilenameForVersion(int ver) {
 		if (ver == 1) {
 			return "ZUGFeRD-invoice.xml";
-		} else if (ver == 2) {
+		} else if (ver == 2)&&(isFacturX) {
 			return "factur-x.xml";
 		} else {
 			throw new IllegalArgumentException("Version not supported");
@@ -188,6 +190,11 @@ public class ZUGFeRDExporter implements Closeable {
 		setZUGFeRDVersion(DefaultZUGFeRDVersion);
 	}
 
+	public void setFacturX() {
+		setZUGFeRDVersion(2);
+		isFacturX=true;
+	}
+	
 	/**
 	 * All files are PDF/A-3, setConformance refers to the level conformance.
 	 *
@@ -332,21 +339,6 @@ public class ZUGFeRDExporter implements Closeable {
 		PDFAttachGenericFile(doc, filename, "Alternative",
 				"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
 				"text/xml", xmlProvider.getXML());
-
-		if ((ZFVersion>1)&&(trans!=null)) {
-			/*
-			 *  Also attach a ZF1 file for backward compatibility, but only in case
-			 *  if we do not e.g. embed custom XML (in which case, if its v2, the v1 provider won't be able to deliver data)
-			 */
-			setZUGFeRDVersion(1);
-			xmlProvider.generateXML(trans);
-			filename = getFilenameForVersion(ZFVersion);
-			PDFAttachGenericFile(doc, filename, "Alternative",
-					"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
-					"text/xml", xmlProvider.getXML());
-			
-			
-		}
 		for (String filenameAdditional : additionalXMLs.keySet()) {
 			PDFAttachGenericFile(doc, filenameAdditional, "Supplement", "ZUGFeRD extension/additional data", "text/xml", additionalXMLs.get(filenameAdditional));
 		}
