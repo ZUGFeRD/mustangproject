@@ -6,3 +6,7 @@ target/
 pom.xml.*
 bin/
 /.gradle/
+
+# ignore intelliJ foobar
+*.iml
+.idea
