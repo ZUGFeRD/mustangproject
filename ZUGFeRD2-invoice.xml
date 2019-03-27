@@ -26,7 +26,7 @@ Migrated by Mustangproject XSLT
                 <ram:LineID>1</ram:LineID>
             </ram:AssociatedDocumentLineDocument>
          <ram:SpecifiedTradeProduct>
-                <ram:Name>Künstlerische Gestaltung (Stunde): Einer Beispielrechnung</ram:Name>
+                <ram:Name>KÃ¼nstlerische Gestaltung (Stunde): Einer Beispielrechnung</ram:Name>
                 <ram:Description/>
             </ram:SpecifiedTradeProduct>
          <ram:SpecifiedLineTradeAgreement>
@@ -90,7 +90,7 @@ Migrated by Mustangproject XSLT
                 <ram:LineID>3</ram:LineID>
             </ram:AssociatedDocumentLineDocument>
          <ram:SpecifiedTradeProduct>
-                <ram:Name>Heiße Luft pro Liter</ram:Name>
+                <ram:Name>HeiÃŸe Luft pro Liter</ram:Name>
                 <ram:Description/>
             </ram:SpecifiedTradeProduct>
          <ram:SpecifiedLineTradeAgreement>
@@ -158,12 +158,13 @@ Migrated by Mustangproject XSLT
             <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
             <ram:SpecifiedTradeSettlementPaymentMeans>
                 <ram:TypeCode>42</ram:TypeCode>
-                <ram:Information>Überweisung</ram:Information>
+                <ram:Information>Ãœberweisung</ram:Information>
                 <ram:PayeePartyCreditorFinancialAccount>
                     <ram:IBANID>DE88 2008 0000 0970 3757 00</ram:IBANID>
                 </ram:PayeePartyCreditorFinancialAccount>
                 <ram:PayeeSpecifiedCreditorFinancialInstitution>
                     <ram:BICID>COBADEFFXXX</ram:BICID>
+                    <ram:GermanBankleitzahlID>41441604</ram:GermanBankleitzahlID>
                     <ram:Name>Commerzbank</ram:Name>
                 </ram:PayeeSpecifiedCreditorFinancialInstitution>
             </ram:SpecifiedTradeSettlementPaymentMeans>

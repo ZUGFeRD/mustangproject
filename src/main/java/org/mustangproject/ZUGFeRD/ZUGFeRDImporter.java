@@ -63,6 +63,7 @@ public class ZUGFeRDImporter {
 	private boolean containsMeta = false;
 	/** @var the reference (i.e. invoice number) of the sender */
 	private String foreignReference;
+    private String BLZ;
 	private String BIC;
 	private String IBAN;
 	private String holder;
@@ -127,7 +128,7 @@ public class ZUGFeRDImporter {
 			//start
 			InputStream XMP=doc.getDocumentCatalog().getMetadata().exportXMPMetadata();
 			
-			xmpString=convertStreamToString(XMP);		    
+			xmpString=convertStreamToString(XMP);
 			etn = names.getEmbeddedFiles();
 			if (etn == null) {
 				return;
@@ -299,6 +300,9 @@ public class ZUGFeRDImporter {
 				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("BICID"))) { //$NON-NLS-1$
 					setBIC(detail.getTextContent());
 				}
+                if ((detail.getLocalName() != null) && (detail.getLocalName().equals("GermanBankleitzahlID"))) { //$NON-NLS-1$
+                    setBLZ(detail.getTextContent());
+                }
 				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("Name"))) { //$NON-NLS-1$
 					setBankName(detail.getTextContent());
 				}
@@ -392,6 +396,24 @@ public class ZUGFeRDImporter {
 	private void setForeignReference(String foreignReference) {
 		this.foreignReference = foreignReference;
 	}
+
+    /**
+     *
+     * @return the sender's bank's BLZ code
+     */
+    public String getBLZ() {
+        if (!parsed) {
+            throw new RuntimeException("use extract() before requesting a value");
+        }
+        if (BLZ==null) {
+            parse();
+        }
+        return BLZ;
+    }
+
+    private void setBLZ(String blz) {
+        this.BLZ = blz;
+    }
 
 	/**
 	 * 

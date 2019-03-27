@@ -60,6 +60,12 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   }
 
   @Override
+  public String getOwnBLZ()
+    {
+        return "41441604";
+    }
+
+  @Override
   public String getOwnBIC()
   {
     return "COBADEFFXXX";
@@ -379,6 +385,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
     String amount = null;
     String bic = null;
+    String blz = null;
     String iban = null;
     String holder = null;
     String ref = null;
@@ -389,6 +396,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
       zi.parse();
       amount = zi.getAmount();
       bic = zi.getBIC();
+      blz = zi.getBLZ();
       iban = zi.getIBAN();
       holder = zi.getHolder();
       dueDate = zi.getDueDate();
@@ -397,6 +405,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
     assertEquals(amount, "571.04");
     assertEquals(bic, getOwnBIC());
+    assertEquals(blz, getOwnBLZ());
     assertEquals(iban, getOwnIBAN());
     assertEquals(holder, getOwnOrganisationName());
 
@@ -439,6 +448,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
     String amount = null;
     String bic = null;
+    String blz = null;
     String iban = null;
     String holder = null;
     String ref = null;
@@ -448,6 +458,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
       zi.parse();
       amount = zi.getAmount();
       bic = zi.getBIC();
+      blz = zi.getBLZ();
       iban = zi.getIBAN();
       holder = zi.getHolder();
       ref = zi.getForeignReference();
@@ -455,6 +466,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
     assertEquals(amount, "571.04");
     assertEquals(bic, getOwnBIC());
+    assertEquals(blz, getOwnBLZ());
     assertEquals(iban, getOwnIBAN());
     assertEquals(holder, getOwnOrganisationName());
     assertEquals(ref, getNumber());

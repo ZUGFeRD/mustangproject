@@ -373,6 +373,10 @@ class ZUGFeRDTransactionModelConverter {
         TextType bankName = xmlFactory.createTextType();
         bankName.setValue(trans.getOwnBankName());
         bankData.setName(bankName);
+        IDType blz = xmlFactory.createIDType();
+        blz.setValue(trans.getOwnBLZ());
+        bankData.setGermanBankleitzahlID(blz);
+
         paymentData.setPayeeSpecifiedCreditorFinancialInstitution(bankData);
         return paymentData;
     }

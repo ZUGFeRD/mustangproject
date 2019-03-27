@@ -56,7 +56,12 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		return "RE-20171118/506";
 	}
 
-	@Override
+    @Override
+    public String getOwnBLZ() {
+        return "41441604";
+    }
+
+    @Override
 	public String getOwnBIC() {
 		return "COBADEFFXXX";
 	}
@@ -345,6 +350,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		// Reading ZUGFeRD
 
 		String amount = null;
+        String blz = null;
 		String bic = null;
 		String iban = null;
 		String holder = null;
@@ -353,6 +359,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		if (zi.canParse()) {
 			zi.parse();
 			amount = zi.getAmount();
+            blz = zi.getBLZ();
 			bic = zi.getBIC();
 			iban = zi.getIBAN();
 			holder = zi.getHolder();
@@ -360,7 +367,8 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		}
 		// this resembles the data written in MustangReaderWriterCustomXMLTest
 		assertEquals(amount, "571.04");
-		assertEquals(bic, "COBADEFFXXX");
+		assertEquals(blz, "41441604");
+        assertEquals(bic, "COBADEFFXXX");
 		assertEquals(iban, "DE88 2008 0000 0970 3757 00");
 		assertEquals(holder, "Bei Spiel GmbH");
 		assertEquals(ref, "RE-20170509/505");

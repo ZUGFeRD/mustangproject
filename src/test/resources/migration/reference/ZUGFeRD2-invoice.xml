@@ -180,6 +180,7 @@ Migrated by Mustangproject XSLT
                 </ram:PayeePartyCreditorFinancialAccount>
                 <ram:PayeeSpecifiedCreditorFinancialInstitution>
                     <ram:BICID>COBADEFFXXX</ram:BICID>
+                    <ram:GermanBankleitzahlID>41441604</ram:GermanBankleitzahlID>
                     <ram:Name>Commerzbank</ram:Name>
                 </ram:PayeeSpecifiedCreditorFinancialInstitution>
             </ram:SpecifiedTradeSettlementPaymentMeans>

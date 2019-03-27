@@ -219,7 +219,8 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					"					<ram:IBANID>DE88 2008 0000 0970 3757 00</ram:IBANID>\n" + 
 					"				</ram:PayeePartyCreditorFinancialAccount>\n" + 
 					"				<ram:PayeeSpecifiedCreditorFinancialInstitution>\n" + 
-					"					<ram:BICID>COBADEFFXXX</ram:BICID>\n" + 
+					"					<ram:BICID>COBADEFFXXX</ram:BICID>\n" +
+                    "					<ram:GermanBankleitzahlID>41441604</ram:GermanBankleitzahlID>\n" +
 					"					<ram:Name>Commerzbank</ram:Name>\n" + 
 					"				</ram:PayeeSpecifiedCreditorFinancialInstitution>\n" + 
 					"			</ram:SpecifiedTradeSettlementPaymentMeans>\n" + 
@@ -276,6 +277,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 
 		String amount = null;
 		String bic = null;
+        String blz = null;
 		String iban = null;
 		String holder = null;
 		String ref = null;
@@ -283,6 +285,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		if (zi.canParse()) {
 			zi.parse();
 			amount = zi.getAmount();
+            blz = zi.getBLZ();
 			bic = zi.getBIC();
 			iban = zi.getIBAN();
 			holder = zi.getHolder();
@@ -290,6 +293,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		}
 
 		assertEquals(amount, "571.04");
+        assertEquals(blz, "41441604");
 		assertEquals(bic, "COBADEFFXXX");
 		assertEquals(iban, "DE88 2008 0000 0970 3757 00");
 		assertEquals(holder, "Bei Spiel GmbH");
@@ -351,8 +355,11 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					+ "<ram:Information>Überweisung</ram:Information>\n" + "<ram:PayeePartyCreditorFinancialAccount>\n"
 					+ "<ram:IBANID>DE88 2008 0000 0970 3757 00</ram:IBANID>\n"
 					+ "</ram:PayeePartyCreditorFinancialAccount>\n"
-					+ "<ram:PayeeSpecifiedCreditorFinancialInstitution>\n" + "<ram:BICID>COBADEFFXXX</ram:BICID>\n"
-					+ "<ram:Name>Commerzbank</ram:Name>\n" + "</ram:PayeeSpecifiedCreditorFinancialInstitution>\n"
+					+ "<ram:PayeeSpecifiedCreditorFinancialInstitution>\n"
+                    + "<ram:BICID>COBADEFFXXX</ram:BICID>\n"
+                    + "<ram:GermanBankleitzahlID>41441604</ram:GermanBankleitzahlID>\n"
+					+ "<ram:Name>Commerzbank</ram:Name>\n"
+                    + "</ram:PayeeSpecifiedCreditorFinancialInstitution>\n"
 					+ "</ram:SpecifiedTradeSettlementPaymentMeans>\n" + "<ram:ApplicableTradeTax>\n"
 					+ "<ram:CalculatedAmount currencyID=\"EUR\">11.20</ram:CalculatedAmount>\n"
 					+ "<ram:TypeCode>VAT</ram:TypeCode>\n"
@@ -467,6 +474,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 
 		String amount = null;
 		String bic = null;
+        String blz = null;
 		String iban = null;
 		String holder = null;
 		String ref = null;
@@ -475,6 +483,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			zi.parse();
 			amount = zi.getAmount();
 			bic = zi.getBIC();
+            blz = zi.getBLZ();
 			iban = zi.getIBAN();
 			holder = zi.getHolder();
 			ref = zi.getForeignReference();
@@ -482,6 +491,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 
 		assertEquals(amount, "571.04");
 		assertEquals(bic, "COBADEFFXXX");
+        assertEquals(blz, "41441604");
 		assertEquals(iban, "DE88 2008 0000 0970 3757 00");
 		assertEquals(holder, "Bei Spiel GmbH");
 		assertEquals(ref, "RE-20170509/505");

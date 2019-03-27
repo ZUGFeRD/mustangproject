@@ -30,6 +30,7 @@ public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTran
     private IZUGFeRDAllowanceCharge[] zFLogisticsServiceCharges;
     private IZUGFeRDExportableItem[] zFItems;
     private IZUGFeRDExportableContact recipient;
+    private String ownBLZ;
     private String ownBIC;
     private String ownBankName;
     private String ownIBAN;
@@ -89,6 +90,11 @@ public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTran
     @Override
     public IZUGFeRDExportableContact getRecipient() {
         return recipient;
+    }
+
+    @Override
+    public String getOwnBLZ() {
+        return ownBLZ;
     }
 
     @Override
@@ -208,6 +214,11 @@ public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTran
 
     public IZUGFeRDExportableTransactionImpl setRecipient(IZUGFeRDExportableContact recipient) {
         this.recipient = recipient;
+        return this;
+    }
+
+    public IZUGFeRDExportableTransactionImpl setOwnBLZ(String ownBLZ) {
+        this.ownBLZ = ownBLZ;
         return this;
     }
 

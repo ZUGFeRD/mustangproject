@@ -83,7 +83,13 @@ public interface IZUGFeRDExportableTransaction {
 	 */
 	String getOwnBIC();
 
-	/***
+    /***
+     * BLZ of the sender
+     * @return the BLZ code of the recipient sender's bank
+     */
+    String getOwnBLZ();
+
+    /***
 	 * Bank name of the sender
 	 * @return the name of the sender's bank
 	 */
