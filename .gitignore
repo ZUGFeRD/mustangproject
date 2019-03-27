@@ -10,3 +10,6 @@ bin/
 # ignore intelliJ foobar
 *.iml
 .idea
+
+# ignore test files
+ZUGFeRD-*-test
