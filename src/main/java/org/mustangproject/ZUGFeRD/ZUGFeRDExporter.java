@@ -161,7 +161,7 @@ public class ZUGFeRDExporter implements Closeable {
 	public static String getFilenameForVersion(int ver) {
 		if (ver == 1) {
 			return "ZUGFeRD-invoice.xml";
-		} else if (ver == 2)&&(isFacturX) {
+		} else if ((ver == 2) || (isFacturX)) {
 			return "factur-x.xml";
 		} else {
 			throw new IllegalArgumentException("Version not supported");
