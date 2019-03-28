@@ -13,3 +13,5 @@ bin/
 
 # ignore test files
 ZUGFeRD-*-test
+
+dependency-reduced-pom.xml
