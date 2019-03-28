@@ -363,6 +363,9 @@ class ZUGFeRDTransactionModelConverter {
         IDType iban = xmlFactory.createIDType();
         iban.setValue(trans.getOwnIBAN());
         bankAccount.setIBANID(iban);
+        IDType kto = xmlFactory.createIDType();
+        kto.setValue(trans.getOwnKto());
+        bankAccount.setProprietaryID(kto);
         paymentData.setPayeePartyCreditorFinancialAccount(bankAccount);
 
         CreditorFinancialInstitutionType bankData = xmlFactory

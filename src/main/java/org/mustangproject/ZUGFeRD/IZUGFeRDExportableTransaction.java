@@ -101,7 +101,13 @@ public interface IZUGFeRDExportableTransaction {
 	 */
 	String getOwnIBAN();
 
-	/**
+    /**
+     * IBAN of the sender
+     * @return  the Account Number of the invoice sender's bank account
+     */
+    String getOwnKto();
+
+    /**
 	 * Tax ID (not VAT ID) of the sender
 	 * @return  Tax ID (not VAT ID) of the sender
 	 */

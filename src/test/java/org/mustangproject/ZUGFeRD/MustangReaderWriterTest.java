@@ -57,6 +57,11 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 	}
 
     @Override
+    public String getOwnKto() {
+        return "44421800";
+    }
+
+    @Override
     public String getOwnBLZ() {
         return "41441604";
     }
@@ -353,6 +358,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
         String blz = null;
 		String bic = null;
 		String iban = null;
+		String kto = null;
 		String holder = null;
 		String ref = null;
 
@@ -362,6 +368,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
             blz = zi.getBLZ();
 			bic = zi.getBIC();
 			iban = zi.getIBAN();
+			kto = zi.getKTO();
 			holder = zi.getHolder();
 			ref = zi.getForeignReference();
 		}
@@ -370,6 +377,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		assertEquals(blz, "41441604");
         assertEquals(bic, "COBADEFFXXX");
 		assertEquals(iban, "DE88 2008 0000 0970 3757 00");
+		assertEquals(kto, "44421800");
 		assertEquals(holder, "Bei Spiel GmbH");
 		assertEquals(ref, "RE-20170509/505");
 
@@ -522,6 +530,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		String amount = null;
 		String bic = null;
 		String iban = null;
+		String kto = null;
 		String holder = null;
 		String ref = null;
 		if (zi.canParse()) {
@@ -529,6 +538,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 			amount = zi.getAmount();
 			bic = zi.getBIC();
 			iban = zi.getIBAN();
+			kto = zi.getKTO();
 			holder = zi.getHolder();
 			ref = zi.getForeignReference();
 		}
@@ -536,6 +546,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		assertEquals(amount, "571.04");
 		assertEquals(bic, getOwnBIC());
 		assertEquals(iban, getOwnIBAN());
+		assertEquals(kto, getOwnKto());
 		assertEquals(holder, getOwnOrganisationName());
 		assertEquals(ref, getNumber());
 

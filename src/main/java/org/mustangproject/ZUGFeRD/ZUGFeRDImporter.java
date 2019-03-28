@@ -66,6 +66,7 @@ public class ZUGFeRDImporter {
     private String BLZ;
 	private String BIC;
 	private String IBAN;
+	private String KTO;
 	private String holder;
 	private String amount;
 	private String dueDate;
@@ -284,9 +285,12 @@ public class ZUGFeRDImporter {
 				Node detail = bookingDetails.item(detailIndex);
 				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("IBANID"))) { //$NON-NLS-1$
 					setIBAN(detail.getTextContent());
-
 				}
-			}
+                if ((detail.getLocalName() != null) && (detail.getLocalName().equals("ProprietaryID"))) { //$NON-NLS-1$
+                    setKTO(detail.getTextContent());
+
+                }
+            }
 
 		}
 		ndList = document.getElementsByTagNameNS("*", "PayeeSpecifiedCreditorFinancialInstitution");// ZF1 //$NON-NLS-1$
@@ -455,7 +459,21 @@ public class ZUGFeRDImporter {
 		return IBAN;
 	}
 
-	/**
+    /**
+     *
+     * @return the sender's KTO
+     */
+    public String getKTO() {
+        if (!parsed) {
+            throw new RuntimeException("use extract() before requesting a value");
+        }
+        if (KTO==null) {
+            parse();
+        }
+        return KTO;
+    }
+
+    /**
 	 * 
 	 * @return the sender's bank name
 	 */
@@ -473,7 +491,11 @@ public class ZUGFeRDImporter {
 		this.IBAN = IBAN;
 	}
 
-	/**
+    private void setKTO(String KTO) {
+        this.KTO = KTO;
+    }
+
+    /**
 	 * 
 	 * @return the name of the owner of the sender's bank account
 	 */

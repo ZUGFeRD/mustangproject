@@ -344,9 +344,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "				<ram:Information>Überweisung</ram:Information>\n" //$NON-NLS-1$
 					+ "				<ram:PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
 					+ "					<ram:IBANID>"+trans.getOwnIBAN()+"</ram:IBANID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+					+ "					<ram:ProprietaryID>"+trans.getOwnKto()+"</ram:ProprietaryID>\n" //$NON-NLS-1$ //$NON-NLS-2$
 					+ "				</ram:PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
 					+ "				<ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
 					+ "					<ram:BICID>"+trans.getOwnBIC()+"</ram:BICID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+					+ "					<ram:GermanBankleitzahlID>"+ trans.getOwnBLZ()+"</ram:GermanBankleitzahlID>\n" //$NON-NLS-1$ //$NON-NLS-2$
 //					+ "					<ram:Name>"+trans.getOwnBankName()+"</ram:Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
 					+ "				</ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
 					+ "			</ram:SpecifiedTradeSettlementPaymentMeans>\n"; //$NON-NLS-1$

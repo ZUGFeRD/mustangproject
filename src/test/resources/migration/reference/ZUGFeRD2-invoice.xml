@@ -177,6 +177,7 @@ Migrated by Mustangproject XSLT
                 <ram:Information>Überweisung</ram:Information>
                 <ram:PayeePartyCreditorFinancialAccount>
                     <ram:IBANID>DE88 2008 0000 0970 3757 00</ram:IBANID>
+                    <ram:ProprietaryID>44421800</ram:ProprietaryID>
                 </ram:PayeePartyCreditorFinancialAccount>
                 <ram:PayeeSpecifiedCreditorFinancialInstitution>
                     <ram:BICID>COBADEFFXXX</ram:BICID>
