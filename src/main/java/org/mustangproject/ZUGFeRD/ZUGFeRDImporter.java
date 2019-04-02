@@ -63,8 +63,10 @@ public class ZUGFeRDImporter {
 	private boolean containsMeta = false;
 	/** @var the reference (i.e. invoice number) of the sender */
 	private String foreignReference;
+    private String BLZ;
 	private String BIC;
 	private String IBAN;
+	private String KTO;
 	private String holder;
 	private String amount;
 	private String dueDate;
@@ -127,7 +129,7 @@ public class ZUGFeRDImporter {
 			//start
 			InputStream XMP=doc.getDocumentCatalog().getMetadata().exportXMPMetadata();
 			
-			xmpString=convertStreamToString(XMP);		    
+			xmpString=convertStreamToString(XMP);
 			etn = names.getEmbeddedFiles();
 			if (etn == null) {
 				return;
@@ -283,9 +285,12 @@ public class ZUGFeRDImporter {
 				Node detail = bookingDetails.item(detailIndex);
 				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("IBANID"))) { //$NON-NLS-1$
 					setIBAN(detail.getTextContent());
-
 				}
-			}
+                if ((detail.getLocalName() != null) && (detail.getLocalName().equals("ProprietaryID"))) { //$NON-NLS-1$
+                    setKTO(detail.getTextContent());
+
+                }
+            }
 
 		}
 		ndList = document.getElementsByTagNameNS("*", "PayeeSpecifiedCreditorFinancialInstitution");// ZF1 //$NON-NLS-1$
@@ -299,6 +304,9 @@ public class ZUGFeRDImporter {
 				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("BICID"))) { //$NON-NLS-1$
 					setBIC(detail.getTextContent());
 				}
+                if ((detail.getLocalName() != null) && (detail.getLocalName().equals("GermanBankleitzahlID"))) { //$NON-NLS-1$
+                    setBLZ(detail.getTextContent());
+                }
 				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("Name"))) { //$NON-NLS-1$
 					setBankName(detail.getTextContent());
 				}
@@ -393,6 +401,24 @@ public class ZUGFeRDImporter {
 		this.foreignReference = foreignReference;
 	}
 
+    /**
+     *
+     * @return the sender's bank's BLZ code
+     */
+    public String getBLZ() {
+        if (!parsed) {
+            throw new RuntimeException("use extract() before requesting a value");
+        }
+        if (BLZ==null) {
+            parse();
+        }
+        return BLZ;
+    }
+
+    private void setBLZ(String blz) {
+        this.BLZ = blz;
+    }
+
 	/**
 	 * 
 	 * @return the sender's bank's BIC code
@@ -433,7 +459,21 @@ public class ZUGFeRDImporter {
 		return IBAN;
 	}
 
-	/**
+    /**
+     *
+     * @return the sender's KTO
+     */
+    public String getKTO() {
+        if (!parsed) {
+            throw new RuntimeException("use extract() before requesting a value");
+        }
+        if (KTO==null) {
+            parse();
+        }
+        return KTO;
+    }
+
+    /**
 	 * 
 	 * @return the sender's bank name
 	 */
@@ -451,7 +491,11 @@ public class ZUGFeRDImporter {
 		this.IBAN = IBAN;
 	}
 
-	/**
+    private void setKTO(String KTO) {
+        this.KTO = KTO;
+    }
+
+    /**
 	 * 
 	 * @return the name of the owner of the sender's bank account
 	 */

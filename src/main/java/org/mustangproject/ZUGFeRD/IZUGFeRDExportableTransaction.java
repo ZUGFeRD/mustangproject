@@ -83,7 +83,13 @@ public interface IZUGFeRDExportableTransaction {
 	 */
 	String getOwnBIC();
 
-	/***
+    /***
+     * BLZ of the sender
+     * @return the BLZ code of the recipient sender's bank
+     */
+    String getOwnBLZ();
+
+    /***
 	 * Bank name of the sender
 	 * @return the name of the sender's bank
 	 */
@@ -95,7 +101,13 @@ public interface IZUGFeRDExportableTransaction {
 	 */
 	String getOwnIBAN();
 
-	/**
+    /**
+     * IBAN of the sender
+     * @return  the Account Number of the invoice sender's bank account
+     */
+    String getOwnKto();
+
+    /**
 	 * Tax ID (not VAT ID) of the sender
 	 * @return  Tax ID (not VAT ID) of the sender
 	 */

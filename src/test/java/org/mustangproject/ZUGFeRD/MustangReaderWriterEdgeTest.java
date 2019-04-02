@@ -60,6 +60,18 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   }
 
   @Override
+  public String getOwnKto()
+    {
+        return "44421800";
+    }
+
+  @Override
+  public String getOwnBLZ()
+    {
+        return "41441604";
+    }
+
+  @Override
   public String getOwnBIC()
   {
     return "COBADEFFXXX";
@@ -364,7 +376,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
   // //////// TESTS //////////////////////////////////////////////////////////////////////////////////////////
 
   /**
-   * The importer test imports from ./src/test/MustangGnuaccountingBeispielRE-20151008_504.pdf to check the values.
+   * The importer test imports from ./src/test/MustangGnuaccountingBeispielRE-20170509_505.pdf to check the values.
    * --> as only Name Ascending is supported for Test Unit sequence, I renamed the this test-A-Export to run before
    * testZExport
    *
@@ -379,7 +391,9 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
     String amount = null;
     String bic = null;
+    String blz = null;
     String iban = null;
+    String kto = null;
     String holder = null;
     String ref = null;
     String dueDate = null;
@@ -389,7 +403,9 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
       zi.parse();
       amount = zi.getAmount();
       bic = zi.getBIC();
+      blz = zi.getBLZ();
       iban = zi.getIBAN();
+      kto = zi.getKTO();
       holder = zi.getHolder();
       dueDate = zi.getDueDate();
       ref = zi.getForeignReference();
@@ -397,7 +413,9 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
     assertEquals(amount, "571.04");
     assertEquals(bic, getOwnBIC());
+    assertEquals(blz, getOwnBLZ());
     assertEquals(iban, getOwnIBAN());
+    assertEquals(kto, getOwnKto());
     assertEquals(holder, getOwnOrganisationName());
 
     assertEquals(dueDate, "20170530");
@@ -439,7 +457,9 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
     String amount = null;
     String bic = null;
+    String blz = null;
     String iban = null;
+    String kto = null;
     String holder = null;
     String ref = null;
 
@@ -448,14 +468,18 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
       zi.parse();
       amount = zi.getAmount();
       bic = zi.getBIC();
+      blz = zi.getBLZ();
       iban = zi.getIBAN();
+      kto = zi.getKTO();
       holder = zi.getHolder();
       ref = zi.getForeignReference();
     }
 
     assertEquals(amount, "571.04");
     assertEquals(bic, getOwnBIC());
+    assertEquals(blz, getOwnBLZ());
     assertEquals(iban, getOwnIBAN());
+    assertEquals(kto, getOwnKto());
     assertEquals(holder, getOwnOrganisationName());
     assertEquals(ref, getNumber());
 
