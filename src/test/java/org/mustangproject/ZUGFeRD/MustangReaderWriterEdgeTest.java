@@ -65,7 +65,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
         return "44421800";
     }
 
-    @Override
+  @Override
   public String getOwnBLZ()
     {
         return "41441604";
