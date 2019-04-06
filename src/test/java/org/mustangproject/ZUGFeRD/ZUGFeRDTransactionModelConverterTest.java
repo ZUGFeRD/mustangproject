@@ -18,12 +18,13 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import org.junit.Test;
+import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
+
+import javax.xml.bind.JAXBElement;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import javax.xml.bind.JAXBElement;
-import org.junit.Test;
-import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
 
 public class ZUGFeRDTransactionModelConverterTest {
     @Test

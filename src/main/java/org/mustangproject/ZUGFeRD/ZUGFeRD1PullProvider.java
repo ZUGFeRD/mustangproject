@@ -18,13 +18,14 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import java.io.ByteArrayOutputStream;
+import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
+import org.mustangproject.ZUGFeRD.model.ZFNamespacePrefixMapper;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
-import org.mustangproject.ZUGFeRD.model.ZFNamespacePrefixMapper;
+import java.io.ByteArrayOutputStream;
 
 public class ZUGFeRD1PullProvider implements IXMLProvider {
 

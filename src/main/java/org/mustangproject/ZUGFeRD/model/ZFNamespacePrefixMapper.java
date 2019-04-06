@@ -19,6 +19,7 @@
 package org.mustangproject.ZUGFeRD.model;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
+
 import java.util.HashMap;
 import java.util.Map;
 

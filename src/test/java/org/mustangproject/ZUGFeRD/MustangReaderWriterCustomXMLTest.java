@@ -18,14 +18,15 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MustangReaderWriterCustomXMLTest extends TestCase {

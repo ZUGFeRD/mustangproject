@@ -18,16 +18,16 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import com.helger.commons.state.EValidity;
 import com.helger.schematron.ISchematronResource;
 import com.helger.schematron.pure.SchematronResourcePure;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.junit.Assert;
 import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 public class ZUGFeRDXMLAssert {
     private static final ISchematronResource SCHEMATRON = loadSchematron();

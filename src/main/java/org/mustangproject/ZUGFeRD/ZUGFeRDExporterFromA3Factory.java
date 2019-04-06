@@ -18,21 +18,17 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.preflight.PreflightDocument;
 import org.apache.pdfbox.preflight.exception.ValidationException;
 import org.apache.pdfbox.preflight.parser.PreflightParser;
 import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
+
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import java.io.*;
+import java.util.HashMap;
 
 public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	protected boolean ignorePDFAErrors = false;
