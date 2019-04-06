@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actions>
-        <action>
-            <actionName>CUSTOM-Generate mvn-repo</actionName>
-            <displayName>Generate mvn-repo</displayName>
-            <goals>
-                <goal>site:deploy</goal>
-            </goals>
-        </action>
-        <action>
-            <actionName>CUSTOM-mvn-repo</actionName>
-            <displayName>mvn-repo</displayName>
-            <goals>
-                <goal>site</goal>
-            </goals>
-        </action>
-        <action>
-            <actionName>CUSTOM-deploy</actionName>
-            <displayName>deploy</displayName>
-            <goals>
-                <goal>deploy</goal>
-            </goals>
-        </action>
-    </actions>
+    <action>
+        <actionName>CUSTOM-Generate mvn-repo</actionName>
+        <displayName>Generate mvn-repo</displayName>
+        <goals>
+            <goal>site:deploy</goal>
+        </goals>
+    </action>
+    <action>
+        <actionName>CUSTOM-mvn-repo</actionName>
+        <displayName>mvn-repo</displayName>
+        <goals>
+            <goal>site</goal>
+        </goals>
+    </action>
+    <action>
+        <actionName>CUSTOM-deploy</actionName>
+        <displayName>deploy</displayName>
+        <goals>
+            <goal>deploy</goal>
+        </goals>
+    </action>
+</actions>
