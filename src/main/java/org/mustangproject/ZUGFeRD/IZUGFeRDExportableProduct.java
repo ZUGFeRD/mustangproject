@@ -17,61 +17,67 @@
  *
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
+
 import java.math.BigDecimal;
+
 /**
  * Mustangproject's ZUGFeRD implementation
  * Necessary interface for ZUGFeRD exporter
  * Licensed under the APLv2
- * @date 2014-05-10
- * @version 1.2.0
+ *
  * @author jstaerk
- * */
+ * @version 1.2.0
+ * @date 2014-05-10
+ */
 
 public interface IZUGFeRDExportableProduct {
 
 	/**
 	 * Unit code of the product
 	 * Most common ones are
-			C62	one (piece)
-			DAY	day
-			HAR	hectare
-			HUR	hour
-			KGM	kilogram
-			KTM	kilometre
-			KWH	kilowatt hour
-			LS	lump sum
-			LTR	litre
-			MIN	minute
-			MMK	square millimetre
-			MMT	millimetre
-			MTK	square metre
-			MTQ	cubic metre
-			MTR	metre
-			NAR	number of articles
-			NPR	number of pairs
-			P1	percent
-			SET	set
-			TNE	tonne (metric ton)
-			WEE	week
-
+	 * C62	one (piece)
+	 * DAY	day
+	 * HAR	hectare
+	 * HUR	hour
+	 * KGM	kilogram
+	 * KTM	kilometre
+	 * KWH	kilowatt hour
+	 * LS	lump sum
+	 * LTR	litre
+	 * MIN	minute
+	 * MMK	square millimetre
+	 * MMT	millimetre
+	 * MTK	square metre
+	 * MTQ	cubic metre
+	 * MTR	metre
+	 * NAR	number of articles
+	 * NPR	number of pairs
+	 * P1	percent
+	 * SET	set
+	 * TNE	tonne (metric ton)
+	 * WEE	week
+	 *
 	 * @return a UN/ECE rec 20 unit code see https://www.unece.org/fileadmin/DAM/cefact/recommendations/rec20/rec20_rev3_Annex2e.pdf
 	 */
 	String getUnit();
 
 	/**
 	 * Short name of the product
+	 *
 	 * @return Short name of the product
 	 */
 	String getName();
 
 	/**
 	 * long description of the product
+	 *
 	 * @return long description of the product
 	 */
 	String getDescription();
 
 	/**
 	 * VAT percent of the product (e.g. 19, or 5.1 if you like)
+	 *
 	 * @return VAT percent of the product
 	 */
 	BigDecimal getVATPercent();

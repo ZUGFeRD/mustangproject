@@ -30,27 +30,27 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 public class ZUGFeRDXMLAssert {
-    private static final ISchematronResource SCHEMATRON = loadSchematron();
+	private static final ISchematronResource SCHEMATRON = loadSchematron();
 
-    public static void assertValidZugferd(JAXBElement<CrossIndustryDocumentType> xml) throws Exception {
-        assertValidZugferd(toDocument(xml));
-    }
+	public static void assertValidZugferd(JAXBElement<CrossIndustryDocumentType> xml) throws Exception {
+		assertValidZugferd(toDocument(xml));
+	}
 
-    public static void assertValidZugferd(Node xml) throws Exception {
-    	        Assert.assertTrue("schema valid", SCHEMATRON.getSchematronValidity(xml, null).isValid());
-    }
+	public static void assertValidZugferd(Node xml) throws Exception {
+		Assert.assertTrue("schema valid", SCHEMATRON.getSchematronValidity(xml, null).isValid());
+	}
 
-    private static Document toDocument(Object jaxbElement) throws Exception {
-        final Document result = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-        JAXBContext.newInstance("org.mustangproject.ZUGFeRD.model").createMarshaller().marshal(jaxbElement, result);
-        return result;
-    }
+	private static Document toDocument(Object jaxbElement) throws Exception {
+		final Document result = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+		JAXBContext.newInstance("org.mustangproject.ZUGFeRD.model").createMarshaller().marshal(jaxbElement, result);
+		return result;
+	}
 
-    private static SchematronResourcePure loadSchematron() {
-        final SchematronResourcePure result = SchematronResourcePure.fromClassPath("/ZUGFeRD_1p0.scmt");
-        if (!result.isValidSchematron ()) {
-            throw new IllegalArgumentException("Invalid Schematron!");
-        }
-        return result;
-    }
+	private static SchematronResourcePure loadSchematron() {
+		final SchematronResourcePure result = SchematronResourcePure.fromClassPath("/ZUGFeRD_1p0.scmt");
+		if (!result.isValidSchematron()) {
+			throw new IllegalArgumentException("Invalid Schematron!");
+		}
+		return result;
+	}
 }

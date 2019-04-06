@@ -55,13 +55,13 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 
 
 	protected void setZUGFeRDVersion(int ver) {
-		namespace=ZUGFeRDExporter.getNamespaceForVersion(ver);
-		prefix=ZUGFeRDExporter.getPrefixForVersion(ver);
+		namespace = ZUGFeRDExporter.getNamespaceForVersion(ver);
+		prefix = ZUGFeRDExporter.getPrefixForVersion(ver);
 	}
 
 
 	private DefinedStructuredType addProperty(ArrayProperty parent, String name, String type, String category,
-			String description) {
+											  String description) {
 		XMPMetadata metadata = getMetadata();
 
 		DefinedStructuredType li = new DefinedStructuredType(metadata, getNamespace(), getPrefix(),

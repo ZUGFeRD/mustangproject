@@ -26,28 +26,35 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-
-/** This test utility class is providing usability functions for test file resources */
+/**
+ * This test utility class is providing usability functions for test file resources
+ */
 public class ResourceUtilities {
-    private static final Logger LOG = Logger.getLogger(ResourceUtilities.class.getName());
+	private static final Logger LOG = Logger.getLogger(ResourceUtilities.class.getName());
 
-    /** Loading a File into a String using a certain encoding and file path */
-    public static String readFile(Charset encoding, String path) throws IOException {
-        byte[] content = Files.readAllBytes(Paths.get(path));
-        return new String(content, encoding);
-    }
+	/**
+	 * Loading a File into a String using a certain encoding and file path
+	 */
+	public static String readFile(Charset encoding, String path) throws IOException {
+		byte[] content = Files.readAllBytes(Paths.get(path));
+		return new String(content, encoding);
+	}
 
-    /** Saving a String as a file to a certain file path */
-    public static void saveFile(Charset encoding, String path, String content) throws FileNotFoundException {
+	/**
+	 * Saving a String as a file to a certain file path
+	 */
+	public static void saveFile(Charset encoding, String path, String content) throws FileNotFoundException {
 
-        // resources will be released automatically
-        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(path)), encoding), true)) {
-            out.println(content);
-        }
-    }
+		// resources will be released automatically
+		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(path)), encoding), true)) {
+			out.println(content);
+		}
+	}
 
 
-	/** The relative path of the test file will be resolved and the absolute will be returned
+	/**
+	 * The relative path of the test file will be resolved and the absolute will be returned
+	 *
 	 * @param relativeFilePath Path of the test resource relative to <code>src/test/resource/</code>.
 	 * @return the absolute path of the test file
 	 * @throws FileNotFoundException If the file could not be found
@@ -66,7 +73,9 @@ public class ResourceUtilities {
 		return uri.getPath();
 	}
 
-	/** The relative path of the test file will be resolved and the absolute will be returned
+	/**
+	 * The relative path of the test file will be resolved and the absolute will be returned
+	 *
 	 * @param relativeFilePath Path of the test resource relative to <code>src/test/resource/</code>.
 	 * @return the URI created based on the relativeFilePath
 	 * @throws URISyntaxException if no URI could be created from the given relative path
@@ -77,19 +86,23 @@ public class ResourceUtilities {
 		return new URI(filePath);
 	}
 
-	/** The relative path of the test file will be used to determine an absolute
-	 *  path to a temporary directory in the output directory.
+	/**
+	 * The relative path of the test file will be used to determine an absolute
+	 * path to a temporary directory in the output directory.
+	 *
 	 * @param relativeFilePath Path of the test resource relative to <code>src/test/resource/</code>.
 	 * @return absolute path to a test output
 	 * @throws IOException if no absolute Path could be created.
 	 */
 	public static String getTestOutput(String relativeFilePath) throws IOException {
-		File tempFile=File.createTempFile(relativeFilePath, null);
+		File tempFile = File.createTempFile(relativeFilePath, null);
 		tempFile.deleteOnExit();
 		return tempFile.getAbsolutePath();
 	}
 
-	/** The Input of the test file will be resolved and the absolute will be returned
+	/**
+	 * The Input of the test file will be resolved and the absolute will be returned
+	 *
 	 * @param relativeFilePath Path of the test resource relative to <code>src/test/resource/</code>.
 	 * @return the absolute path of the test file
 	 */
@@ -97,7 +110,9 @@ public class ResourceUtilities {
 		return ResourceUtilities.class.getClassLoader().getResourceAsStream(relativeFilePath);
 	}
 
-	/** Relative to the test output directory a test file will be returned dependent on the relativeFilePath provided.
+	/**
+	 * Relative to the test output directory a test file will be returned dependent on the relativeFilePath provided.
+	 *
 	 * @param relativeFilePath Path of the test output resource relative to <code>target/test-classes/</code>.
 	 * @return the empty <code>File</code> of the test output (to be filled)
 	 */
@@ -127,17 +142,17 @@ public class ResourceUtilities {
 	public static File getTempTestDirectory() {
 		File tempDir = new File(ResourceUtilities.getTestOutputFolder() + "temp");
 		tempDir.mkdir(); //if it already exist no problem
- 		return tempDir;
+		return tempDir;
 	}
 
-/**
+	/**
 	 * To fix the 3 slashes bug for File URI: For example:
 	 * file:/C:/work/test.txt -> file:///C:/work/test.txt
 	 *
 	 * @param u - the File URI
 	 * @return the String of the URI
 	 */
-	public static String toExternalForm(URI u)  {
+	public static String toExternalForm(URI u) {
 		StringBuilder sb = new StringBuilder();
 		if (u.getScheme() != null) {
 			sb.append(u.getScheme());
@@ -180,13 +195,14 @@ public class ResourceUtilities {
 			sb.append(u.getFragment());
 		}
 		String ret = null;
-        try {
-            ret = new URI(sb.toString()).toASCIIString();
-        } catch (URISyntaxException ex) {
-            LOG.log(Level.SEVERE, null, ex);
-        }
+		try {
+			ret = new URI(sb.toString()).toASCIIString();
+		} catch (URISyntaxException ex) {
+			LOG.log(Level.SEVERE, null, ex);
+		}
 		return ret;
 	}
-    private ResourceUtilities() {
-    }
+
+	private ResourceUtilities() {
+	}
 }

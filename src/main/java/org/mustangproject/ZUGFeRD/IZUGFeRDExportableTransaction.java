@@ -27,19 +27,20 @@ package org.mustangproject.ZUGFeRD;
  * */
 
 
-
 import java.util.Date;
 
 public interface IZUGFeRDExportableTransaction {
 
 	/**
 	 * Number, typically invoice number of the invoice
+	 *
 	 * @return invoice number
 	 */
 	String getNumber();
 
 	/**
 	 * the date when the invoice was created
+	 *
 	 * @return when the invoice was created
 	 */
 	Date getIssueDate();
@@ -48,138 +49,160 @@ public interface IZUGFeRDExportableTransaction {
 	 * this should be the full sender institution name, details, manager and tax registration.
 	 * It is one of the few functions which may return null.
 	 * e.g.
+	 * <p/>
+	 * Lieferant GmbH
+	 * Lieferantenstraße 20
+	 * 80333 München
+	 * Deutschland
+	 * Geschäftsführer: Hans Muster
+	 * Handelsregisternummer: H A 123
 	 *
-	 Lieferant GmbH
-	 Lieferantenstraße 20
-	 80333 München
-	 Deutschland
-     Geschäftsführer: Hans Muster
-	 Handelsregisternummer: H A 123
 	 * @return null or full sender institution name, details, manager and tax registration
 	 */
 	String getOwnOrganisationFullPlaintextInfo();
 
 	/**
 	 * when the invoice is to be paid
+	 *
 	 * @return when the invoice is to be paid
 	 */
 	Date getDueDate();
 
-        IZUGFeRDAllowanceCharge[] getZFAllowances();
-        IZUGFeRDAllowanceCharge[] getZFCharges();
-        IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges();
+	IZUGFeRDAllowanceCharge[] getZFAllowances();
+
+	IZUGFeRDAllowanceCharge[] getZFCharges();
+
+	IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges();
 
 	IZUGFeRDExportableItem[] getZFItems();
 
-	/***
+	/**
 	 * the recipient
+	 *
 	 * @return the recipient of the invoice
 	 */
 	IZUGFeRDExportableContact getRecipient();
 
-	/***
+	/**
 	 * BIC of the sender
+	 *
 	 * @return the BIC code of the recipient sender's bank
 	 */
 	String getOwnBIC();
 
-    /***
-     * BLZ of the sender
-     * @return the BLZ code of the recipient sender's bank
-     */
-    String getOwnBLZ();
+	/**
+	 * BLZ of the sender
+	 *
+	 * @return the BLZ code of the recipient sender's bank
+	 */
+	String getOwnBLZ();
 
-    /***
+	/**
 	 * Bank name of the sender
+	 *
 	 * @return the name of the sender's bank
 	 */
 	String getOwnBankName();
 
 	/**
 	 * IBAN of the sender
-	 * @return  the IBAN of the invoice sender's bank account
+	 *
+	 * @return the IBAN of the invoice sender's bank account
 	 */
 	String getOwnIBAN();
 
-    /**
-     * IBAN of the sender
-     * @return  the Account Number of the invoice sender's bank account
-     */
-    String getOwnKto();
+	/**
+	 * IBAN of the sender
+	 *
+	 * @return the Account Number of the invoice sender's bank account
+	 */
+	String getOwnKto();
 
-    /**
+	/**
 	 * Tax ID (not VAT ID) of the sender
-	 * @return  Tax ID (not VAT ID) of the sender
+	 *
+	 * @return Tax ID (not VAT ID) of the sender
 	 */
 	String getOwnTaxID();
 
 	/**
 	 * VAT ID (Umsatzsteueridentifikationsnummer) of the sender
+	 *
 	 * @return VAT ID (Umsatzsteueridentifikationsnummer) of the sender
 	 */
 	String getOwnVATID();
 
 	/**
 	 * own name
+	 *
 	 * @return the sender's organisation name
 	 */
 	String getOwnOrganisationName();
 
 	/**
 	 * own street address
+	 *
 	 * @return sender street address
 	 */
 	String getOwnStreet();
 
 	/**
 	 * own street postal code
+	 *
 	 * @return sender postal code
 	 */
 	String getOwnZIP();
 
 	/**
 	 * own city
+	 *
 	 * @return the invoice sender's city
 	 */
 	String getOwnLocation();
 
 	/**
 	 * own two digit country code
+	 *
 	 * @return the invoice senders two character country iso code
 	 */
 	String getOwnCountry();
 
 	/**
 	 * get delivery date
+	 *
 	 * @return the day the goods have been delivered
 	 */
 	Date getDeliveryDate();
 
-        /**
+	/**
 	 * get main invoice currency used on the invoice
+	 *
 	 * @return three character currency of this invoice
 	 */
-     String getCurrency();
+	String getCurrency();
 
-        /**
+	/**
 	 * get payment information text. e.g. Bank transfer
+	 *
 	 * @return payment information text
 	 */
-        String getOwnPaymentInfoText();
+	String getOwnPaymentInfoText();
 
-        /**
+	/**
 	 * get payment term descriptional text
-         * e.g. Bis zum 22.10.2015 ohne Abzug
+	 * e.g. Bis zum 22.10.2015 ohne Abzug
+	 *
 	 * @return get payment terms
 	 */
-        String getPaymentTermDescription();
+	String getPaymentTermDescription();
 
-        /**
-         * get reference document number
-         * typically used for Invoice Corrections
-         * Will be added as IncludedNote in comfort profile
-         * @return the ID of the document this document refers to
-         */
-        String getReferenceNumber();
+	/**
+	 * get reference document number
+	 * typically used for Invoice Corrections
+	 * Will be added as IncludedNote in comfort profile
+	 *
+	 * @return the ID of the document this document refers to
+	 */
+	String getReferenceNumber();
 
 }

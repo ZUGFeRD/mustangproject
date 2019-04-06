@@ -30,11 +30,12 @@ public class FileTraverser extends SimpleFileVisitor<Path> {
 
 
 	private StatRun thisRun;
+
 	public FileTraverser(StatRun statistics) {
-		this.thisRun=statistics;
+		this.thisRun = statistics;
 	}
 
-	/***
+	/**
 	 * check each file
 	 */
 	@Override
@@ -51,7 +52,7 @@ public class FileTraverser extends SimpleFileVisitor<Path> {
 		return CONTINUE;
 	}
 
-	/***
+	/**
 	 * for each directory
 	 */
 	@Override
@@ -62,7 +63,7 @@ public class FileTraverser extends SimpleFileVisitor<Path> {
 	}
 
 
-	/***
+	/**
 	 * show errors like file permission stacktraces
 	 */
 	@Override
