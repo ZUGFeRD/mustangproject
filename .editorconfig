@@ -12,12 +12,8 @@ insert_final_newline = true
 [*.java]
 indent_style = tab
 
-# 2 space indentation
+# 2 all x** Files
 [*.xsd,*.xsl,*.xml]
 indent_style = space
 indent_size = 2
 
-# all x** Files
-[{package.json,.travis.yml}]
-indent_style = space
-indent_size = 2
