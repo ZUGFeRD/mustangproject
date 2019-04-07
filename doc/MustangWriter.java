@@ -17,15 +17,15 @@ import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1Factory;
 public class MustangWriter implements IZUGFeRDExportableTransaction {
 
 	public static void main(String[] args) {
-		MustangWriter m1=new MustangWriter();
+		MustangWriter m1 = new MustangWriter();
 		m1.apply();
 	}
 
 	private void apply() {
 		try {
 			System.out.println("Reading Blanko-PDF");
-			ZUGFeRDExporter ze=
-			new ZUGFeRDExporterFromA1Factory().setProducer("My Application").setCreator(System.getProperty("user.name")).load("./MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
+			ZUGFeRDExporter ze =
+					new ZUGFeRDExporterFromA1Factory().setProducer("My Application").setCreator(System.getProperty("user.name")).load("./MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
 			System.out.println("Generating and attaching ZUGFeRD-Data");
 			ze.PDFattachZugferdFile(this);
 			System.out.println("Writing ZUGFeRD-PDF");
@@ -36,6 +36,7 @@ public class MustangWriter implements IZUGFeRDExportableTransaction {
 			e.printStackTrace();
 		}
 	}
+
 	@Override
 	public String getCurrency() {
 		// TODO Auto-generated method stub
@@ -44,18 +45,18 @@ public class MustangWriter implements IZUGFeRDExportableTransaction {
 
 	@Override
 	public Date getDeliveryDate() {
-		return new GregorianCalendar(2017,Calendar.NOVEMBER,17).getTime();
+		return new GregorianCalendar(2017, Calendar.NOVEMBER, 17).getTime();
 	}
 
 	@Override
 	public Date getDueDate() {
 
-		return new GregorianCalendar(2017,Calendar.DECEMBER,9).getTime();
+		return new GregorianCalendar(2017, Calendar.DECEMBER, 9).getTime();
 	}
 
 	@Override
 	public Date getIssueDate() {
-		return new GregorianCalendar(2017,Calendar.NOVEMBER,18).getTime();
+		return new GregorianCalendar(2017, Calendar.NOVEMBER, 18).getTime();
 	}
 
 	@Override
@@ -90,10 +91,10 @@ public class MustangWriter implements IZUGFeRDExportableTransaction {
 
 	@Override
 	public String getOwnOrganisationFullPlaintextInfo() {
-		return          "Bei Spiel GmbH\n"+
-		           "Ecke 12\n"+
-		           "12345 Stadthausen\n"+
-		           "Geschäftsführer: Max Mustermann";
+		return "Bei Spiel GmbH\n" +
+				"Ecke 12\n" +
+				"12345 Stadthausen\n" +
+				"Geschäftsführer: Max Mustermann";
 	}
 
 	@Override
@@ -160,15 +161,15 @@ public class MustangWriter implements IZUGFeRDExportableTransaction {
 
 	@Override
 	public IZUGFeRDExportableItem[] getZFItems() {
-	       Item[] allItems=new Item[3];
-			Product designProduct=new Product("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR", new BigDecimal("7.000000"));
-			Product balloonProduct=new Product("", "Luftballon: Bunt, ca. 500ml", "C62", new BigDecimal("19.000000"));
-			Product airProduct=new Product("", "Heiße Luft pro Liter", "LTR", new BigDecimal("19.000000"));
+		Item[] allItems = new Item[3];
+		Product designProduct = new Product("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR", new BigDecimal("7.000000"));
+		Product balloonProduct = new Product("", "Luftballon: Bunt, ca. 500ml", "C62", new BigDecimal("19.000000"));
+		Product airProduct = new Product("", "Heiße Luft pro Liter", "LTR", new BigDecimal("19.000000"));
 
-			allItems[0]=new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
-			allItems[1]=new Item(new BigDecimal("0.79"), new BigDecimal("400"), balloonProduct);
-			allItems[2]=new Item(new BigDecimal("0.10"), new BigDecimal("200"), airProduct);
-			return allItems;
+		allItems[0] = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
+		allItems[1] = new Item(new BigDecimal("0.79"), new BigDecimal("400"), balloonProduct);
+		allItems[2] = new Item(new BigDecimal("0.10"), new BigDecimal("200"), airProduct);
+		return allItems;
 	}
 
 	@Override
