@@ -21,6 +21,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.diff.Diff;
 
 import javax.xml.transform.TransformerException;
 import java.io.File;
@@ -28,9 +30,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static org.junit.Assert.assertFalse;
 
 
 /**
@@ -69,9 +72,8 @@ public class VersionMigrationTest {
 	}
 
 	private static void addFilesFromFolder(final File folder, Collection<Object[]> testSuiteData) {
-		String filePath = null;
 		for (final File fileEntry : folder.listFiles()) {
-			filePath = fileEntry.getAbsolutePath();
+			String filePath = fileEntry.getAbsolutePath();
 			if (fileEntry.isDirectory()) {
 				LOG.log(Level.INFO, "*** testDirectory:{0}", filePath);
 				addFilesFromFolder(fileEntry, testSuiteData);
@@ -100,20 +102,8 @@ public class VersionMigrationTest {
 				// we need to save the string and reload it otherwise two bytes are missing (likely EOF related)
 				String outXML = ResourceUtilities.readFile(StandardCharsets.UTF_8, OUTPUT_DIR + newName);
 				String refXML = ResourceUtilities.readFile(StandardCharsets.UTF_8, REFERENCE_DIR + newName);
-				int t = outXML.length();
-				int r = refXML.length();
-				if (t != r || !(outXML.equals(refXML))) {
-					LOG.info("There are differences between:"
-							+ "\nZUGFeRD 2.0 Test Output @ " + OUTPUT_DIR + newName
-							+ "\nZUGFeRD 2.0 Test Reference @ " + REFERENCE_DIR + newName);
-					LOG.info("\n\nFile sizes:\n "
-							+ "\nZUGFeRD 2.0 Test Output character count: " + t
-							+ "\nZUGFeRD 2.0 Test Refer. character count: " + r);
-					findLineDiffs(outXML, refXML);
-					Assert.fail("Version update failed, as test result and reference are different!");
-				} else {
-					LOG.log(Level.INFO, "\n*** Tested successfull migration from ZUGFeRD 1.0 to 2.0: '" + newName + "'' ***\n", OUTPUT_DIR);
-				}
+				Diff myDiff = DiffBuilder.compare(refXML).withTest(outXML).checkForSimilar().ignoreComments().ignoreWhitespace().build();
+				assertFalse(myDiff.toString(), myDiff.hasDifferences());
 			} else {
 				LOG.log(Level.INFO, "\n*** Migrated from ZUGFeRD 1.0 to 2.0 invoice: '" + newName + "'' ***\n", OUTPUT_DIR);
 			}
@@ -123,22 +113,4 @@ public class VersionMigrationTest {
 		}
 	}
 
-
-	private static void findLineDiffs(String outXML, String refXML) {
-		Scanner outScanner = new Scanner(outXML);
-		Scanner refScanner = new Scanner(refXML);
-		String outLine = null;
-		String refLine = null;
-		while (outScanner.hasNextLine() && refScanner.hasNextLine()) {
-			outLine = outScanner.nextLine();
-			refLine = refScanner.nextLine();
-			if (!outLine.equals(refLine)) {
-				LOG.info("First line difference between reference and output file:" +
-						"\nRefLine: " + refLine +
-						"\nOutLine: " + outLine + "\n");
-			}
-		}
-		refScanner.close();
-		outScanner.close();
-	}
 }
