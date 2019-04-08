@@ -134,32 +134,31 @@ public class ZUGFeRDExporter implements Closeable {
 	}
 
 	public static String getNamespaceForVersion(int ver) {
-		if (ver == 1) {
+		if (isFacturX) {
+			return "urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#";	
+		} else if (ver == 1) {
 			return "urn:ferd:pdfa:CrossIndustryDocument:invoice:1p0#";
 		} else if (ver == 2) {
-			return "urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#";
+			return "urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#";
+			
 		} else {
 			throw new IllegalArgumentException("Version not supported");
 		}
 	}
 
 	public static String getPrefixForVersion(int ver) {
-		if (ver == 1) {
-			return "zf";
-		} else if (ver == 2) {
+		if (isFacturX) {
 			return "fx";
 		} else {
-			throw new IllegalArgumentException("Version not supported");
+			return "zf";
 		}
 	}
 
 	public static String getFilenameForVersion(int ver) {
-		if (ver == 1) {
-			return "ZUGFeRD-invoice.xml";
-		} else if ((ver == 2) || (isFacturX)) {
+		if (isFacturX) {
 			return "factur-x.xml";
 		} else {
-			throw new IllegalArgumentException("Version not supported");
+			return "ZUGFeRD-invoice.xml";		
 		}
 	}
 
