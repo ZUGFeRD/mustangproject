@@ -18,15 +18,6 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
 import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.preflight.PreflightDocument;
@@ -34,29 +25,40 @@ import org.apache.pdfbox.preflight.exception.ValidationException;
 import org.apache.pdfbox.preflight.parser.PreflightParser;
 import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
 
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import java.io.*;
+import java.util.HashMap;
+
 public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	protected boolean ignorePDFAErrors = false;
 	protected ZUGFeRDConformanceLevel zugferdConformanceLevel = ZUGFeRDConformanceLevel.EXTENDED;
 	protected PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
-	/** Producer (attribute for PDF */
+	/**
+	 * Producer (attribute for PDF
+	 */
 	protected String producer = "mustangproject";
-	/** Human creator (attribute for PDF) */
+	/**
+	 * Human creator (attribute for PDF)
+	 */
 	protected String creator = "mustangproject";
-	/** Creator tool (attribute for PDF) */
+	/**
+	 * Creator tool (attribute for PDF)
+	 */
 	protected String creatorTool = null;
-	
-	private HashMap<String,byte[]> additionalXMLs=new HashMap<String,byte[]>();
 
-	
-	protected int ZFVersion=ZUGFeRDExporter.DefaultZUGFeRDVersion;
-	protected boolean ensurePDFisUpgraded=false;
-	private boolean attachZUGFeRDHeaders=true;
+	private HashMap<String, byte[]> additionalXMLs = new HashMap<String, byte[]>();
+
+
+	protected int ZFVersion = ZUGFeRDExporter.DefaultZUGFeRDVersion;
+	protected boolean ensurePDFisUpgraded = false;
+	private boolean attachZUGFeRDHeaders = true;
+
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
 	 * metadata level, this will not e.g. convert graphics to JPG-2000)
 	 *
-	 * @param pdfFilename
-	 *            filename of an PDF/A1 compliant document
+	 * @param pdfFilename filename of an PDF/A1 compliant document
 	 */
 	public ZUGFeRDExporter load(String pdfFilename) throws IOException {
 
@@ -78,13 +80,11 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	}
 
 
-
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
 	 * metadata level, this will not e.g. convert graphics to JPG-2000)
 	 *
-	 * @param pdfBinary
-	 *            binary of a PDF/A1 compliant document
+	 * @param pdfBinary binary of a PDF/A1 compliant document
 	 */
 	public ZUGFeRDExporter load(byte[] pdfBinary) throws IOException {
 		ensurePDFIsValidPDFA(new ByteArrayDataSource(new ByteArrayInputStream(pdfBinary)));
@@ -101,17 +101,16 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 		return zugFeRDExporter;
 	}
 
-	public ZUGFeRDExporterFromA3Factory () {
+	public ZUGFeRDExporterFromA3Factory() {
 
-		ensurePDFisUpgraded=false;
+		ensurePDFisUpgraded = false;
 	}
 
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
 	 * metadata level, this will not e.g. convert graphics to JPG-2000)
 	 *
-	 * @param pdfSource
-	 *            source to read a PDF/A1 compliant document from
+	 * @param pdfSource source to read a PDF/A1 compliant document from
 	 */
 	public ZUGFeRDExporter load(InputStream pdfSource) throws IOException {
 		return load(readAllBytes(pdfSource));
@@ -128,6 +127,7 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 		IOUtils.copy(in, buffer);
 		return buffer.toByteArray();
 	}
+
 	private static boolean isValidA1(DataSource dataSource) throws IOException {
 		return getPDFAParserValidationResult(new PreflightParser(dataSource));
 	}
@@ -135,8 +135,7 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	/**
 	 * Sets the ZUGFeRD conformance level (override).
 	 *
-	 * @param zugferdConformanceLevel
-	 *            the new conformance level
+	 * @param zugferdConformanceLevel the new conformance level
 	 */
 	public IExporterFactory setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel zugferdConformanceLevel) {
 		this.zugferdConformanceLevel = zugferdConformanceLevel;
@@ -174,17 +173,15 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 
 	/**
 	 * All files are PDF/A-3, setConformance refers to the level conformance.
-	 *
+	 * <p/>
 	 * PDF/A-3 has three coformance levels, called "A", "U" and "B".
-	 *
+	 * <p/>
 	 * PDF/A-3-B where B means only visually preservable, U -standard for Mustang-
 	 * means visually and unicode preservable and A means full compliance, i.e.
 	 * visually, unicode and structurally preservable and tagged PDF, i.e. useful
 	 * metainformation for blind people.
-	 *
+	 * <p/>
 	 * Feel free to pass "A" as new level if you know what you are doing :-)
-	 *
-	 *
 	 */
 	public IExporterFactory setConformanceLevel(PDFAConformanceLevel newLevel) {
 		conformanceLevel = newLevel;
@@ -201,7 +198,7 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 		this.creator = creator;
 		return this;
 	}
-	
+
 	public IExporterFactory setCreatorTool(String creatorTool) {
 		this.creatorTool = creatorTool;
 		return this;
@@ -211,6 +208,7 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 		this.producer = producer;
 		return this;
 	}
+
 	public IExporterFactory setAttachZUGFeRDHeaders(boolean attachHeaders) {
 		this.attachZUGFeRDHeaders = attachHeaders;
 		return this;
@@ -219,7 +217,7 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 
 	@Override
 	public IExporterFactory setZUGFeRDVersion(int version) {
-		this.ZFVersion=version;
+		this.ZFVersion = version;
 		return this;
 	}
 }

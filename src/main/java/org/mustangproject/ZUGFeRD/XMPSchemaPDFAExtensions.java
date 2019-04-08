@@ -26,18 +26,11 @@ package org.mustangproject.ZUGFeRD;
  * @version 1.2.0
  * @author jstaerk
  * */
+
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.XmpConstants;
 import org.apache.xmpbox.schema.PDFAExtensionSchema;
-import org.apache.xmpbox.type.ArrayProperty;
-import org.apache.xmpbox.type.Attribute;
-import org.apache.xmpbox.type.Cardinality;
-import org.apache.xmpbox.type.ChoiceType;
-import org.apache.xmpbox.type.DefinedStructuredType;
-import org.apache.xmpbox.type.PDFAPropertyType;
-import org.apache.xmpbox.type.PDFASchemaType;
-import org.apache.xmpbox.type.StructuredType;
-import org.apache.xmpbox.type.TextType;
+import org.apache.xmpbox.type.*;
 
 /**
  * Additionally to adding a RDF namespace with a indication which file
@@ -62,13 +55,13 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 
 
 	protected void setZUGFeRDVersion(int ver) {
-		namespace=ZUGFeRDExporter.getNamespaceForVersion(ver);
-		prefix=ZUGFeRDExporter.getPrefixForVersion(ver);
+		namespace = ZUGFeRDExporter.getNamespaceForVersion(ver);
+		prefix = ZUGFeRDExporter.getPrefixForVersion(ver);
 	}
 
 
 	private DefinedStructuredType addProperty(ArrayProperty parent, String name, String type, String category,
-			String description) {
+											  String description) {
 		XMPMetadata metadata = getMetadata();
 
 		DefinedStructuredType li = new DefinedStructuredType(metadata, getNamespace(), getPrefix(),

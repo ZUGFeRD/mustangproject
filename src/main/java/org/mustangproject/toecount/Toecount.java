@@ -25,24 +25,18 @@ package org.mustangproject.toecount;
 
 import com.sanityinc.jargs.CmdLineParser;
 import com.sanityinc.jargs.CmdLineParser.Option;
+import org.mustangproject.ZUGFeRD.*;
+
+import javax.xml.transform.TransformerException;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.transform.TransformerException;
-import org.mustangproject.ZUGFeRD.ZUGFeRDConformanceLevel;
-import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
-import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1Factory;
-import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA3Factory;
-import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
-import org.mustangproject.ZUGFeRD.ZUGFeRDMigrator;
 
 public class Toecount {
 	// build with: /opt/local/bin/mvn clean compile assembly:single
@@ -114,19 +108,15 @@ public class Toecount {
 				+ "\t\t\tFor ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, E<X>TENDED\r\n");
 	}
 
-	/***
+	/**
 	 * Asks the user (repeatedly, if neccessary) on the command line for a String
 	 * (offering a defaultValue) conforming to a Regex pattern
 	 *
-	 * @param prompt
-	 *            the question to be asked to the user
-	 * @param defaultValue
-	 *            the default return value if user hits enter
-	 * @param pattern
-	 *            a regex of acceptable values
+	 * @param prompt       the question to be asked to the user
+	 * @param defaultValue the default return value if user hits enter
+	 * @param pattern      a regex of acceptable values
 	 * @return the user answer conforming to pattern
-	 * @throws Exception
-	 *             if pattern not compielable or IOexception on input
+	 * @throws Exception if pattern not compielable or IOexception on input
 	 */
 	protected static String getStringFromUser(String prompt, String defaultValue, String pattern) throws Exception {
 		String input = "";
@@ -162,24 +152,18 @@ public class Toecount {
 		return input;
 	}
 
-	/***
+	/**
 	 * Prompts the user for a input or output filename
-	 * 
-	 * @param the
-	 *            text the user is asked
-	 * @param a
-	 *            default Filename
-	 * @param expectedExtension
-	 *            will warn if filename does not match expected file extension
-	 * @param ensureFileExists
-	 *            will warn if file does NOT exist (for input files)
-	 * @param ensureFileNotExists
-	 *            will warn if file DOES exist (for output files)
 	 *
+	 * @param the                 text the user is asked
+	 * @param a                   default Filename
+	 * @param expectedExtension   will warn if filename does not match expected file extension
+	 * @param ensureFileExists    will warn if file does NOT exist (for input files)
+	 * @param ensureFileNotExists will warn if file DOES exist (for output files)
 	 * @return String
 	 */
 	protected static String getFilenameFromUser(String prompt, String defaultFilename, String expectedExtension,
-			boolean ensureFileExists, boolean ensureFileNotExists) {
+												boolean ensureFileExists, boolean ensureFileNotExists) {
 		boolean fileExistenceOK = false;
 		String selectedName = "";
 		do {
@@ -322,9 +306,7 @@ public class Toecount {
 
 			if (helpRequested) {
 				printHelp();
-			}
-
-			else if (((directoryName != null) && (directoryName.length() > 0)) || filesFromStdIn.booleanValue()) {
+			} else if (((directoryName != null) && (directoryName.length() > 0)) || filesFromStdIn.booleanValue()) {
 				performMetrics(directoryName, filesFromStdIn, ignoreFileExt);
 			} else if (combineRequested) {
 				performCombine(sourceName, sourceXMLName, outName, zugferdVersion, zugferdProfile);
@@ -437,7 +419,7 @@ public class Toecount {
 	}
 
 	private static void performCombine(String pdfName, String xmlName, String outName, String zfVersion,
-			String zfProfile) throws Exception {
+									   String zfProfile) throws Exception {
 		/*
 		 * ZUGFeRDExporter ze= new ZUGFeRDExporterFromA1Factory()
 		 * .setProducer("toecount") .setCreator(System.getProperty("user.name"))

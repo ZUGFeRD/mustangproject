@@ -1,0 +1,19 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# Tab indentation (no size specified)
+[*.java]
+indent_style = tab
+
+# 2 all x** Files
+[*.xsd,*.xsl,*.xml]
+indent_style = space
+indent_size = 2
+

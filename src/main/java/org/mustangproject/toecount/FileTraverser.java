@@ -20,20 +20,22 @@ package org.mustangproject.toecount;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
-import static java.nio.file.FileVisitResult.CONTINUE;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+
+import static java.nio.file.FileVisitResult.CONTINUE;
 
 public class FileTraverser extends SimpleFileVisitor<Path> {
 
 
 	private StatRun thisRun;
+
 	public FileTraverser(StatRun statistics) {
-		this.thisRun=statistics;
+		this.thisRun = statistics;
 	}
 
-	/***
+	/**
 	 * check each file
 	 */
 	@Override
@@ -50,7 +52,7 @@ public class FileTraverser extends SimpleFileVisitor<Path> {
 		return CONTINUE;
 	}
 
-	/***
+	/**
 	 * for each directory
 	 */
 	@Override
@@ -61,7 +63,7 @@ public class FileTraverser extends SimpleFileVisitor<Path> {
 	}
 
 
-	/***
+	/**
 	 * show errors like file permission stacktraces
 	 */
 	@Override

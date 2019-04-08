@@ -26,19 +26,6 @@ package org.mustangproject.ZUGFeRD;
  * @author jstaerk
  * */
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
@@ -50,6 +37,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
 //root.setNamespace(Namespace.getNamespace("http://www.energystar.gov/manageBldgs/req"));
 
 public class ZUGFeRDImporter {
@@ -59,19 +55,25 @@ public class ZUGFeRDImporter {
 	 *
 	 */
 
-	/** @var if metadata has been found */
+	/**
+	 * @var if metadata has been found
+	 */
 	private boolean containsMeta = false;
-	/** @var the reference (i.e. invoice number) of the sender */
+	/**
+	 * @var the reference (i.e. invoice number) of the sender
+	 */
 	private String foreignReference;
-    private String BLZ;
+	private String BLZ;
 	private String BIC;
 	private String IBAN;
 	private String KTO;
 	private String holder;
 	private String amount;
 	private String dueDate;
-	private HashMap<String,byte[]> additionalXMLs=new HashMap<String,byte[]>();
-	/** Raw XML form of the extracted data - may be directly obtained. */
+	private HashMap<String, byte[]> additionalXMLs = new HashMap<String, byte[]>();
+	/**
+	 * Raw XML form of the extracted data - may be directly obtained.
+	 */
 	private byte[] rawXML = null;
 	private String bankName;
 	private boolean amountFound;
@@ -83,9 +85,8 @@ public class ZUGFeRDImporter {
 	/**
 	 * Extracts a ZUGFeRD invoice from a PDF document represented by a file name.
 	 * Errors are just logged to STDOUT.
-	 * 
-	 * @param pdfFilename
-	 *            the filename of the pdf
+	 *
+	 * @param pdfFilename the filename of the pdf
 	 */
 	public void extract(String pdfFilename) {
 		try {
@@ -97,16 +98,17 @@ public class ZUGFeRDImporter {
 			ioe.printStackTrace();
 		}
 	}
-	
+
 	static String convertStreamToString(java.io.InputStream is) {
 		// source https://stackoverflow.com/questions/309424/how-do-i-read-convert-an-inputstream-into-a-string-in-java referring to
 		// https://community.oracle.com/blogs/pat/2004/10/23/stupid-scanner-tricks
-	    java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
-	    return s.hasNext() ? s.next() : "";
+		java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+		return s.hasNext() ? s.next() : "";
 	}
-	
-	/***
+
+	/**
 	 * get xmp metadata of the PDF, null if not available
+	 *
 	 * @return string
 	 */
 	public String getXMP() {
@@ -116,9 +118,8 @@ public class ZUGFeRDImporter {
 	/**
 	 * Extracts a ZUGFeRD invoice from a PDF document represented by an input
 	 * stream. Errors are reported via exception handling.
-	 * 
-	 * @param pdfStream
-	 *            a inputstream of a pdf file
+	 *
+	 * @param pdfStream a inputstream of a pdf file
 	 */
 	public void extractLowLevel(InputStream pdfStream) throws IOException {
 		PDEmbeddedFilesNameTreeNode etn;
@@ -127,9 +128,9 @@ public class ZUGFeRDImporter {
 			// PDDocumentInformation info = doc.getDocumentInformation();
 			PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
 			//start
-			InputStream XMP=doc.getDocumentCatalog().getMetadata().exportXMPMetadata();
-			
-			xmpString=convertStreamToString(XMP);
+			InputStream XMP = doc.getDocumentCatalog().getMetadata().exportXMPMetadata();
+
+			xmpString = convertStreamToString(XMP);
 			etn = names.getEmbeddedFiles();
 			if (etn == null) {
 				return;
@@ -140,7 +141,7 @@ public class ZUGFeRDImporter {
 
 			if (efMap != null) {
 				extractFiles(efMap); // see
-										// https://memorynotfound.com/apache-pdfbox-extract-embedded-file-pdf-document/
+				// https://memorynotfound.com/apache-pdfbox-extract-embedded-file-pdf-document/
 			} else {
 
 				List<PDNameTreeNode<PDComplexFileSpecification>> kids = etn.getKids();
@@ -152,7 +153,7 @@ public class ZUGFeRDImporter {
 		}
 	}
 
-	
+
 	private void extractFiles(Map<String, PDComplexFileSpecification> names) throws IOException {
 		for (String filename : names.keySet()) {
 			/**
@@ -186,7 +187,7 @@ public class ZUGFeRDImporter {
 			}
 		}
 	}
-	
+
 	public HashMap<String, byte[]> getAdditionalData() {
 		return additionalXMLs;
 	}
@@ -208,7 +209,7 @@ public class ZUGFeRDImporter {
 
 		factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true); // otherwise we can not act namespace independently, i.e. use
-											// document.getElementsByTagNameNS("*",...
+		// document.getElementsByTagNameNS("*",...
 		try {
 			builder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException ex3) {
@@ -264,13 +265,13 @@ public class ZUGFeRDImporter {
 		/***
 		 * we should switch to xpath like this // Create XPathFactory object
 		 * XPathFactory xpathFactory = XPathFactory.newInstance();
-		 * 
+		 *
 		 * // Create XPath object XPath xpath = xpathFactory.newXPath(); XPathExpression
 		 * expr =
 		 * xpath.compile("//*[local-name()=\"GuidelineSpecifiedDocumentContextParameter\"]/[local-name()=\"ID\"]");
 		 * //evaluate expression result on XML document ndList = (NodeList)
 		 * expr.evaluate(doc, XPathConstants.NODESET);
-		 * 
+		 *
 		 */
 
 		ndList = document.getElementsByTagNameNS("*", "PayeePartyCreditorFinancialAccount"); //$NON-NLS-1$
@@ -286,11 +287,11 @@ public class ZUGFeRDImporter {
 				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("IBANID"))) { //$NON-NLS-1$
 					setIBAN(detail.getTextContent());
 				}
-                if ((detail.getLocalName() != null) && (detail.getLocalName().equals("ProprietaryID"))) { //$NON-NLS-1$
-                    setKTO(detail.getTextContent());
+				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("ProprietaryID"))) { //$NON-NLS-1$
+					setKTO(detail.getTextContent());
 
-                }
-            }
+				}
+			}
 
 		}
 		ndList = document.getElementsByTagNameNS("*", "PayeeSpecifiedCreditorFinancialInstitution");// ZF1 //$NON-NLS-1$
@@ -304,9 +305,9 @@ public class ZUGFeRDImporter {
 				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("BICID"))) { //$NON-NLS-1$
 					setBIC(detail.getTextContent());
 				}
-                if ((detail.getLocalName() != null) && (detail.getLocalName().equals("GermanBankleitzahlID"))) { //$NON-NLS-1$
-                    setBLZ(detail.getTextContent());
-                }
+				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("GermanBankleitzahlID"))) { //$NON-NLS-1$
+					setBLZ(detail.getTextContent());
+				}
 				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("Name"))) { //$NON-NLS-1$
 					setBankName(detail.getTextContent());
 				}
@@ -376,7 +377,6 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
-	 * 
 	 * @return if export found parseable ZUGFeRD data
 	 */
 	public boolean containsMeta() {
@@ -384,14 +384,13 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
-	 * 
 	 * @return the reference (purpose) the sender specified for this invoice
 	 */
 	public String getForeignReference() {
 		if (!parsed) {
 			throw new RuntimeException("use extract() before requesting a value");
 		}
-		if (foreignReference==null) {
+		if (foreignReference == null) {
 			parse();
 		}
 		return foreignReference;
@@ -401,33 +400,31 @@ public class ZUGFeRDImporter {
 		this.foreignReference = foreignReference;
 	}
 
-    /**
-     *
-     * @return the sender's bank's BLZ code
-     */
-    public String getBLZ() {
-        if (!parsed) {
-            throw new RuntimeException("use extract() before requesting a value");
-        }
-        if (BLZ==null) {
-            parse();
-        }
-        return BLZ;
-    }
+	/**
+	 * @return the sender's bank's BLZ code
+	 */
+	public String getBLZ() {
+		if (!parsed) {
+			throw new RuntimeException("use extract() before requesting a value");
+		}
+		if (BLZ == null) {
+			parse();
+		}
+		return BLZ;
+	}
 
-    private void setBLZ(String blz) {
-        this.BLZ = blz;
-    }
+	private void setBLZ(String blz) {
+		this.BLZ = blz;
+	}
 
 	/**
-	 * 
 	 * @return the sender's bank's BIC code
 	 */
 	public String getBIC() {
 		if (!parsed) {
 			throw new RuntimeException("use extract() before requesting a value");
 		}
-		if (BIC==null) {
+		if (BIC == null) {
 			parse();
 		}
 		return BIC;
@@ -446,42 +443,39 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
-	 * 
 	 * @return the sender's IBAN
 	 */
 	public String getIBAN() {
 		if (!parsed) {
 			throw new RuntimeException("use extract() before requesting a value");
 		}
-		if (IBAN==null) {
+		if (IBAN == null) {
 			parse();
 		}
 		return IBAN;
 	}
 
-    /**
-     *
-     * @return the sender's KTO
-     */
-    public String getKTO() {
-        if (!parsed) {
-            throw new RuntimeException("use extract() before requesting a value");
-        }
-        if (KTO==null) {
-            parse();
-        }
-        return KTO;
-    }
+	/**
+	 * @return the sender's KTO
+	 */
+	public String getKTO() {
+		if (!parsed) {
+			throw new RuntimeException("use extract() before requesting a value");
+		}
+		if (KTO == null) {
+			parse();
+		}
+		return KTO;
+	}
 
-    /**
-	 * 
+	/**
 	 * @return the sender's bank name
 	 */
 	public String getBankName() {
 		if (!parsed) {
 			throw new RuntimeException("use extract() before requesting a value");
 		}
-		if (bankName==null) {
+		if (bankName == null) {
 			parse();
 		}
 		return bankName;
@@ -491,19 +485,18 @@ public class ZUGFeRDImporter {
 		this.IBAN = IBAN;
 	}
 
-    private void setKTO(String KTO) {
-        this.KTO = KTO;
-    }
+	private void setKTO(String KTO) {
+		this.KTO = KTO;
+	}
 
-    /**
-	 * 
+	/**
 	 * @return the name of the owner of the sender's bank account
 	 */
 	public String getHolder() {
 		if (rawXML == null) {
 			throw new RuntimeException("use extract() before requesting a value");
 		}
-		if (holder==null) {
+		if (holder == null) {
 			parse();
 		}
 		return holder;
@@ -514,28 +507,26 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
-	 * 
 	 * @return the total payable amount
 	 */
 	public String getAmount() {
 		if (rawXML == null) {
 			throw new RuntimeException("use extract() before requesting a value");
 		}
-		if (amount==null) {
+		if (amount == null) {
 			parse();
 		}
 		return amount;
 	}
 
 	/**
-	 * 
 	 * @return when the payment is due
 	 */
 	public String getDueDate() {
 		if (rawXML == null) {
 			throw new RuntimeException("use extract() before requesting a value");
 		}
-		if (dueDate==null) {
+		if (dueDate == null) {
 			parse();
 		}
 		return dueDate;
@@ -546,16 +537,13 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
-	 * 
-	 * @param meta
-	 *            raw XML to be set
+	 * @param meta raw XML to be set
 	 */
 	public void setMeta(String meta) {
 		this.rawXML = meta.getBytes();
 	}
 
 	/**
-	 * 
 	 * @return raw XML of the invoice
 	 */
 	public String getMeta() {
@@ -566,37 +554,36 @@ public class ZUGFeRDImporter {
 		return new String(rawXML);
 	}
 
-	
+
 	/**
-	 * 
 	 * @return return UTF8 XML (without BOM) of the invoice
 	 */
 	public String getUTF8() {
 		if (rawXML == null) {
 			return null;
 		}
-		if (rawXML.length<3) {
+		if (rawXML.length < 3) {
 			return new String(rawXML);
 		}
 
 
 		byte[] bomlessData;
-		
-	    if ((rawXML[0] == (byte) 0xEF)
-	                    && (rawXML[1] == (byte) 0xBB)
-	                    && (rawXML[2] == (byte) 0xBF)) {
-	            // I don't like BOMs, lets remove it
-	            bomlessData = new byte[rawXML.length - 3];
-	            System.arraycopy(rawXML, 3, bomlessData, 0,
-	            		rawXML.length - 3);
-	    } else {
-	    		bomlessData = rawXML;
-	    }
-		
+
+		if ((rawXML[0] == (byte) 0xEF)
+				&& (rawXML[1] == (byte) 0xBB)
+				&& (rawXML[2] == (byte) 0xBF)) {
+			// I don't like BOMs, lets remove it
+			bomlessData = new byte[rawXML.length - 3];
+			System.arraycopy(rawXML, 3, bomlessData, 0,
+					rawXML.length - 3);
+		} else {
+			bomlessData = rawXML;
+		}
+
 		return new String(bomlessData);
 	}
 
-   /**
+	/**
 	 * Returns the raw XML data as extracted from the ZUGFeRD PDF file.
 	 */
 	public byte[] getRawXML() {
@@ -606,7 +593,7 @@ public class ZUGFeRDImporter {
 	/**
 	 * will return true if the metadata (just extract-ed or set with setMeta)
 	 * contains ZUGFeRD XML
-	 * 
+	 *
 	 * @return true if the invoice contains ZUGFeRD XML
 	 */
 	public boolean canParse() {

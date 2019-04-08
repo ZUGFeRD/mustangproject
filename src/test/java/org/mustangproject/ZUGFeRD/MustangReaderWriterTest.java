@@ -18,6 +18,12 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -27,11 +33,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExportableTransaction {
@@ -56,17 +57,17 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		return "RE-20171118/506";
 	}
 
-    @Override
-    public String getOwnKto() {
-        return "44421800";
-    }
+	@Override
+	public String getOwnKto() {
+		return "44421800";
+	}
 
-    @Override
-    public String getOwnBLZ() {
-        return "41441604";
-    }
+	@Override
+	public String getOwnBLZ() {
+		return "41441604";
+	}
 
-    @Override
+	@Override
 	public String getOwnBIC() {
 		return "COBADEFFXXX";
 	}
@@ -319,8 +320,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 	/**
 	 * Create the test case
 	 *
-	 * @param testName
-	 *            name of the test case
+	 * @param testName name of the test case
 	 */
 	public MustangReaderWriterTest(String testName) {
 		super(testName);
@@ -355,7 +355,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		// Reading ZUGFeRD
 
 		String amount = null;
-        String blz = null;
+		String blz = null;
 		String bic = null;
 		String iban = null;
 		String kto = null;
@@ -365,7 +365,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		if (zi.canParse()) {
 			zi.parse();
 			amount = zi.getAmount();
-            blz = zi.getBLZ();
+			blz = zi.getBLZ();
 			bic = zi.getBIC();
 			iban = zi.getIBAN();
 			kto = zi.getKTO();
@@ -375,7 +375,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		// this resembles the data written in MustangReaderWriterCustomXMLTest
 		assertEquals(amount, "571.04");
 		assertEquals(blz, "41441604");
-        assertEquals(bic, "COBADEFFXXX");
+		assertEquals(bic, "COBADEFFXXX");
 		assertEquals(iban, "DE88 2008 0000 0970 3757 00");
 		assertEquals(kto, "44421800");
 		assertEquals(holder, "Bei Spiel GmbH");
@@ -385,95 +385,94 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 
 	public void testForeignImport() throws IOException {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter();
-		
+
 		try (InputStream inputStream = this.getClass()
 				.getResourceAsStream("/zugferd_invoice.pdf")) {
 			zi.extractLowLevel(inputStream);
 		}
 		// Reading ZUGFeRD
 
-		String	amount = zi.getAmount();
-		
-		assertEquals("<?xpacket begin=\"﻿\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>\n" + 
-				"    <x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n" + 
-				"      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n" + 
-				"        <rdf:Description rdf:about=\"\" xmlns:xmpMM=\"http://ns.adobe.com/xap/1.0/mm/\">\n" + 
-				"          <xmpMM:InstanceID>uuid:6776DD95-DAF6-768E-DAE6-2697750D95C5</xmpMM:InstanceID>\n" + 
-				"          <xmpMM:DocumentID>uuid:47380404-5938-FE2C-8F0B-B505DCE43BF5</xmpMM:DocumentID>\n" + 
-				"        </rdf:Description>\n" + 
-				"        <rdf:Description rdf:about=\"\" xmlns:zf=\"urn:ferd:pdfa:CrossIndustryDocument:invoice:1p0#\">\n" + 
-				"          <zf:ConformanceLevel>BASIC</zf:ConformanceLevel>\n" + 
-				"          <zf:DocumentFileName>ZUGFeRD-invoice.xml</zf:DocumentFileName>\n" + 
-				"          <zf:DocumentType>INVOICE</zf:DocumentType>\n" + 
-				"          <zf:Version>1.0</zf:Version>\n" + 
-				"        </rdf:Description>\n" + 
-				"        <rdf:Description rdf:about=\"\" xmlns:pdfaExtension=\"http://www.aiim.org/pdfa/ns/extension/\" xmlns:pdfaSchema=\"http://www.aiim.org/pdfa/ns/schema#\" xmlns:pdfaProperty=\"http://www.aiim.org/pdfa/ns/property#\">\n" + 
-				"          <pdfaExtension:schemas>\n" + 
-				"            <rdf:Bag>\n" + 
-				"              <rdf:li rdf:parseType=\"Resource\">\n" + 
-				"                <pdfaSchema:schema>ZUGFeRD PDFA Extension Schema</pdfaSchema:schema>\n" + 
-				"                <pdfaSchema:namespaceURI>urn:ferd:pdfa:CrossIndustryDocument:invoice:1p0#</pdfaSchema:namespaceURI>\n" + 
-				"                <pdfaSchema:prefix>zf</pdfaSchema:prefix>\n" + 
-				"                <pdfaSchema:property>\n" + 
-				"                  <rdf:Seq>\n" + 
-				"                    <rdf:li rdf:parseType=\"Resource\">\n" + 
-				"                      <pdfaProperty:name>DocumentFileName</pdfaProperty:name>\n" + 
-				"                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>\n" + 
-				"                      <pdfaProperty:category>external</pdfaProperty:category>\n" + 
-				"                      <pdfaProperty:description>name of the embedded XML invoice file</pdfaProperty:description>\n" + 
-				"                    </rdf:li>\n" + 
-				"                    <rdf:li rdf:parseType=\"Resource\">\n" + 
-				"                      <pdfaProperty:name>DocumentType</pdfaProperty:name>\n" + 
-				"                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>\n" + 
-				"                      <pdfaProperty:category>external</pdfaProperty:category>\n" + 
-				"                      <pdfaProperty:description>INVOICE</pdfaProperty:description>\n" + 
-				"                    </rdf:li>\n" + 
-				"                    <rdf:li rdf:parseType=\"Resource\">\n" + 
-				"                      <pdfaProperty:name>Version</pdfaProperty:name>\n" + 
-				"                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>\n" + 
-				"                      <pdfaProperty:category>external</pdfaProperty:category>\n" + 
-				"                      <pdfaProperty:description>The actual version of the ZUGFeRD XML schema</pdfaProperty:description>\n" + 
-				"                    </rdf:li>\n" + 
-				"                    <rdf:li rdf:parseType=\"Resource\">\n" + 
-				"                      <pdfaProperty:name>ConformanceLevel</pdfaProperty:name>\n" + 
-				"                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>\n" + 
-				"                      <pdfaProperty:category>external</pdfaProperty:category>\n" + 
-				"                      <pdfaProperty:description>The conformance level of the embedded ZUGFeRD data</pdfaProperty:description>\n" + 
-				"                    </rdf:li>\n" + 
-				"                  </rdf:Seq>\n" + 
-				"                </pdfaSchema:property>\n" + 
-				"              </rdf:li>\n" + 
-				"            </rdf:Bag>\n" + 
-				"          </pdfaExtension:schemas>\n" + 
-				"        </rdf:Description>\n" + 
-				"        <rdf:Description rdf:about=\"\" xmlns:pdfaid=\"http://www.aiim.org/pdfa/ns/id/\">\n" + 
-				"          <pdfaid:part>3</pdfaid:part>\n" + 
-				"          <pdfaid:conformance>B</pdfaid:conformance>\n" + 
-				"        </rdf:Description>\n" + 
-				"        <rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\">\n" + 
-				"          <xmp:CreateDate>2014-07-11T13:39:46+02:00</xmp:CreateDate>\n" + 
-				"          <xmp:ModifyDate>2014-07-11T13:39:46+02:00</xmp:ModifyDate>\n" + 
-				"          <xmp:CreatorTool>zugferd_invoice.java</xmp:CreatorTool>\n" + 
-				"          <xmp:MetadataDate>2014-07-11T13:39:46+02:00</xmp:MetadataDate>\n" + 
-				"        </rdf:Description>\n" + 
-				"        <rdf:Description rdf:about=\"\" xmlns:pdf=\"http://ns.adobe.com/pdf/1.3/\">\n" + 
-				"          <pdf:Producer>PDFlib Personalization Server 9.0.3 (JDK 1.6/Mac OS X-10.6 64)</pdf:Producer>\n" + 
-				"        </rdf:Description>\n" + 
-				"        <rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n" + 
-				"          <dc:title>\n" + 
-				"            <rdf:Alt>\n" + 
-				"              <rdf:li xml:lang=\"x-default\">ZUGFeRD Rechnung $Revision: 1.13 $</rdf:li>\n" + 
-				"            </rdf:Alt>\n" + 
-				"          </dc:title>\n" + 
-				"        </rdf:Description>\n" + 
-				"      </rdf:RDF>\n" + 
-				"    </x:xmpmeta>\n" + 
+		String amount = zi.getAmount();
+
+		assertEquals("<?xpacket begin=\"﻿\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>\n" +
+				"    <x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n" +
+				"      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\">\n" +
+				"        <rdf:Description rdf:about=\"\" xmlns:xmpMM=\"http://ns.adobe.com/xap/1.0/mm/\">\n" +
+				"          <xmpMM:InstanceID>uuid:6776DD95-DAF6-768E-DAE6-2697750D95C5</xmpMM:InstanceID>\n" +
+				"          <xmpMM:DocumentID>uuid:47380404-5938-FE2C-8F0B-B505DCE43BF5</xmpMM:DocumentID>\n" +
+				"        </rdf:Description>\n" +
+				"        <rdf:Description rdf:about=\"\" xmlns:zf=\"urn:ferd:pdfa:CrossIndustryDocument:invoice:1p0#\">\n" +
+				"          <zf:ConformanceLevel>BASIC</zf:ConformanceLevel>\n" +
+				"          <zf:DocumentFileName>ZUGFeRD-invoice.xml</zf:DocumentFileName>\n" +
+				"          <zf:DocumentType>INVOICE</zf:DocumentType>\n" +
+				"          <zf:Version>1.0</zf:Version>\n" +
+				"        </rdf:Description>\n" +
+				"        <rdf:Description rdf:about=\"\" xmlns:pdfaExtension=\"http://www.aiim.org/pdfa/ns/extension/\" xmlns:pdfaSchema=\"http://www.aiim.org/pdfa/ns/schema#\" xmlns:pdfaProperty=\"http://www.aiim.org/pdfa/ns/property#\">\n" +
+				"          <pdfaExtension:schemas>\n" +
+				"            <rdf:Bag>\n" +
+				"              <rdf:li rdf:parseType=\"Resource\">\n" +
+				"                <pdfaSchema:schema>ZUGFeRD PDFA Extension Schema</pdfaSchema:schema>\n" +
+				"                <pdfaSchema:namespaceURI>urn:ferd:pdfa:CrossIndustryDocument:invoice:1p0#</pdfaSchema:namespaceURI>\n" +
+				"                <pdfaSchema:prefix>zf</pdfaSchema:prefix>\n" +
+				"                <pdfaSchema:property>\n" +
+				"                  <rdf:Seq>\n" +
+				"                    <rdf:li rdf:parseType=\"Resource\">\n" +
+				"                      <pdfaProperty:name>DocumentFileName</pdfaProperty:name>\n" +
+				"                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>\n" +
+				"                      <pdfaProperty:category>external</pdfaProperty:category>\n" +
+				"                      <pdfaProperty:description>name of the embedded XML invoice file</pdfaProperty:description>\n" +
+				"                    </rdf:li>\n" +
+				"                    <rdf:li rdf:parseType=\"Resource\">\n" +
+				"                      <pdfaProperty:name>DocumentType</pdfaProperty:name>\n" +
+				"                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>\n" +
+				"                      <pdfaProperty:category>external</pdfaProperty:category>\n" +
+				"                      <pdfaProperty:description>INVOICE</pdfaProperty:description>\n" +
+				"                    </rdf:li>\n" +
+				"                    <rdf:li rdf:parseType=\"Resource\">\n" +
+				"                      <pdfaProperty:name>Version</pdfaProperty:name>\n" +
+				"                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>\n" +
+				"                      <pdfaProperty:category>external</pdfaProperty:category>\n" +
+				"                      <pdfaProperty:description>The actual version of the ZUGFeRD XML schema</pdfaProperty:description>\n" +
+				"                    </rdf:li>\n" +
+				"                    <rdf:li rdf:parseType=\"Resource\">\n" +
+				"                      <pdfaProperty:name>ConformanceLevel</pdfaProperty:name>\n" +
+				"                      <pdfaProperty:valueType>Text</pdfaProperty:valueType>\n" +
+				"                      <pdfaProperty:category>external</pdfaProperty:category>\n" +
+				"                      <pdfaProperty:description>The conformance level of the embedded ZUGFeRD data</pdfaProperty:description>\n" +
+				"                    </rdf:li>\n" +
+				"                  </rdf:Seq>\n" +
+				"                </pdfaSchema:property>\n" +
+				"              </rdf:li>\n" +
+				"            </rdf:Bag>\n" +
+				"          </pdfaExtension:schemas>\n" +
+				"        </rdf:Description>\n" +
+				"        <rdf:Description rdf:about=\"\" xmlns:pdfaid=\"http://www.aiim.org/pdfa/ns/id/\">\n" +
+				"          <pdfaid:part>3</pdfaid:part>\n" +
+				"          <pdfaid:conformance>B</pdfaid:conformance>\n" +
+				"        </rdf:Description>\n" +
+				"        <rdf:Description rdf:about=\"\" xmlns:xmp=\"http://ns.adobe.com/xap/1.0/\">\n" +
+				"          <xmp:CreateDate>2014-07-11T13:39:46+02:00</xmp:CreateDate>\n" +
+				"          <xmp:ModifyDate>2014-07-11T13:39:46+02:00</xmp:ModifyDate>\n" +
+				"          <xmp:CreatorTool>zugferd_invoice.java</xmp:CreatorTool>\n" +
+				"          <xmp:MetadataDate>2014-07-11T13:39:46+02:00</xmp:MetadataDate>\n" +
+				"        </rdf:Description>\n" +
+				"        <rdf:Description rdf:about=\"\" xmlns:pdf=\"http://ns.adobe.com/pdf/1.3/\">\n" +
+				"          <pdf:Producer>PDFlib Personalization Server 9.0.3 (JDK 1.6/Mac OS X-10.6 64)</pdf:Producer>\n" +
+				"        </rdf:Description>\n" +
+				"        <rdf:Description rdf:about=\"\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n" +
+				"          <dc:title>\n" +
+				"            <rdf:Alt>\n" +
+				"              <rdf:li xml:lang=\"x-default\">ZUGFeRD Rechnung $Revision: 1.13 $</rdf:li>\n" +
+				"            </rdf:Alt>\n" +
+				"          </dc:title>\n" +
+				"        </rdf:Description>\n" +
+				"      </rdf:RDF>\n" +
+				"    </x:xmpmeta>\n" +
 				"<?xpacket end=\"r\"?>", zi.getXMP());
 		// this resembles the data written in MustangReaderWriterCustomXMLTest
 		assertEquals(amount, "1005.55");
 
 	}
-	
 
 
 	public void testMigratePDFA1ToA3() throws IOException {
@@ -505,7 +504,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
 
-				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
+			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
 
 			ze.PDFattachZugferdFile(this);
 			ze.disableAutoClose(true);
@@ -553,8 +552,8 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 	}
 
 	/**
-	 * @Test(expected = IndexOutOfBoundsException.class)
 	 * @throws Exception
+	 * @Test(expected = IndexOutOfBoundsException.class)
 	 */
 	public void testExceptionOnPDF14() throws Exception {
 
@@ -565,7 +564,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDF14.pdf");
 
-				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().load(SOURCE_PDF)) {
+			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().load(SOURCE_PDF)) {
 
 			ze.PDFattachZugferdFile(this);
 			ze.export(TARGET_PDF);

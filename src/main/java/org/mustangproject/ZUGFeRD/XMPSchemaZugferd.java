@@ -25,28 +25,29 @@ package org.mustangproject.ZUGFeRD;
  * @version 1.2.0s
  * @author jstaerk
  * */
+
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.XMPSchema;
 
 public class XMPSchemaZugferd extends XMPSchema {
 
-    /**
-     * This is what needs to be added to the RDF metadata - basically the name of the embedded Zugferd file
-     */
-    public XMPSchemaZugferd(XMPMetadata metadata, ZUGFeRDConformanceLevel conformanceLevel, String URN, String prefix, String filename) {
-        super(metadata, URN, prefix, "ZUGFeRD Schema");
+	/**
+	 * This is what needs to be added to the RDF metadata - basically the name of the embedded Zugferd file
+	 */
+	public XMPSchemaZugferd(XMPMetadata metadata, ZUGFeRDConformanceLevel conformanceLevel, String URN, String prefix, String filename) {
+		super(metadata, URN, prefix, "ZUGFeRD Schema");
 
-        setAboutAsSimple("");
+		setAboutAsSimple("");
 
-        String conformanceLevelValue=conformanceLevel.name();
-        if (conformanceLevelValue.equals("BASICWL")) {
-    			conformanceLevelValue="BASIC WL";
-        } else if (conformanceLevelValue.equals("EN16931")) {
-        		conformanceLevelValue="EN 16931";
-        	}
-        setTextPropertyValue("ConformanceLevel", conformanceLevelValue);
-        setTextPropertyValue("DocumentType", "INVOICE");
-        setTextPropertyValue("DocumentFileName", filename);
-        setTextPropertyValue("Version", "1.0");
-    }
+		String conformanceLevelValue = conformanceLevel.name();
+		if (conformanceLevelValue.equals("BASICWL")) {
+			conformanceLevelValue = "BASIC WL";
+		} else if (conformanceLevelValue.equals("EN16931")) {
+			conformanceLevelValue = "EN 16931";
+		}
+		setTextPropertyValue("ConformanceLevel", conformanceLevelValue);
+		setTextPropertyValue("DocumentType", "INVOICE");
+		setTextPropertyValue("DocumentFileName", filename);
+		setTextPropertyValue("Version", "1.0");
+	}
 }

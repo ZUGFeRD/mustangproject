@@ -18,13 +18,14 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import java.io.ByteArrayOutputStream;
+import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
+import org.mustangproject.ZUGFeRD.model.ZFNamespacePrefixMapper;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
-import org.mustangproject.ZUGFeRD.model.ZFNamespacePrefixMapper;
+import java.io.ByteArrayOutputStream;
 
 public class ZUGFeRD1PullProvider implements IXMLProvider {
 
@@ -35,14 +36,13 @@ public class ZUGFeRD1PullProvider implements IXMLProvider {
 	private boolean isTest;
 
 
-
 	/**
 	 * enables the flag to indicate a test invoice in the XML structure
-	 *
 	 */
 	public void setTest() {
 		isTest = true;
 	}
+
 	public ZUGFeRD1PullProvider() {
 		// TODO Auto-generated constructor stub
 		try {
@@ -50,16 +50,16 @@ public class ZUGFeRD1PullProvider implements IXMLProvider {
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 			marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new ZFNamespacePrefixMapper());
-        } catch (JAXBException e) {
-            throw new ZUGFeRDExportException("Could not initialize JAXB", e);
-        }
+		} catch (JAXBException e) {
+			throw new ZUGFeRDExportException("Could not initialize JAXB", e);
+		}
 
 	}
 
 	private String createZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans) {
 
 		JAXBElement<CrossIndustryDocumentType> jaxElement =
-			new ZUGFeRDTransactionModelConverter(trans).withTest(isTest).convertToModel();
+				new ZUGFeRDTransactionModelConverter(trans).withTest(isTest).convertToModel();
 
 		try {
 			return marshalJaxToXMLString(jaxElement);
@@ -83,23 +83,22 @@ public class ZUGFeRD1PullProvider implements IXMLProvider {
 
 	@Override
 	public void generateXML(IZUGFeRDExportableTransaction trans) {
-		  // create a dummy file stream, this would probably normally be a
-        // FileInputStream
+		// create a dummy file stream, this would probably normally be a
+		// FileInputStream
 
-        byte[] zugferdRaw = createZugferdXMLForTransaction(trans).getBytes(); //$NON-NLS-1$
+		byte[] zugferdRaw = createZugferdXMLForTransaction(trans).getBytes(); //$NON-NLS-1$
 
-        if ((zugferdRaw[0] == (byte) 0xEF)
-                        && (zugferdRaw[1] == (byte) 0xBB)
-                        && (zugferdRaw[2] == (byte) 0xBF)) {
-                // I don't like BOMs, lets remove it
-                zugferdData = new byte[zugferdRaw.length - 3];
-                System.arraycopy(zugferdRaw, 3, zugferdData, 0,
-                                zugferdRaw.length - 3);
-        } else {
-                zugferdData = zugferdRaw;
-        }
+		if ((zugferdRaw[0] == (byte) 0xEF)
+				&& (zugferdRaw[1] == (byte) 0xBB)
+				&& (zugferdRaw[2] == (byte) 0xBF)) {
+			// I don't like BOMs, lets remove it
+			zugferdData = new byte[zugferdRaw.length - 3];
+			System.arraycopy(zugferdRaw, 3, zugferdData, 0,
+					zugferdRaw.length - 3);
+		} else {
+			zugferdData = zugferdRaw;
+		}
 	}
-
 
 
 }

@@ -18,9 +18,9 @@
 <rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"
                           xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100"
                           xmlns:qdt="urn:un:unece:uncefact:data:Standard:QualifiedDataType:100"
-                          xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100"><!--
-Migrated by Mustangproject XSLT
---><rsm:ExchangedDocumentContext>
+                          xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
+    <!--Migrated by Mustangproject XSLT-->
+    <rsm:ExchangedDocumentContext>
         <ram:TestIndicator>
             <udt:Indicator>false</udt:Indicator>
         </ram:TestIndicator>
@@ -28,7 +28,7 @@ Migrated by Mustangproject XSLT
             <ram:ID>urn:ferd:CrossIndustryDocument:invoice:1p0:extended</ram:ID>
         </ram:GuidelineSpecifiedDocumentContextParameter>
     </rsm:ExchangedDocumentContext>
-   <rsm:ExchangedDocument xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100">
+    <rsm:ExchangedDocument xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100">
         <ram:ID>RE-20170509/505</ram:ID>
         <ram:Name>RECHNUNG</ram:Name>
         <ram:TypeCode>380</ram:TypeCode>
@@ -36,16 +36,16 @@ Migrated by Mustangproject XSLT
             <udt:DateTimeString format="102">20170509</udt:DateTimeString>
         </ram:IssueDateTime>
     </rsm:ExchangedDocument>
-   <rsm:SupplyChainTradeTransaction xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100">
-      <ram:IncludedSupplyChainTradeLineItem>
-         <ram:AssociatedDocumentLineDocument>
+    <rsm:SupplyChainTradeTransaction xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100">
+        <ram:IncludedSupplyChainTradeLineItem>
+            <ram:AssociatedDocumentLineDocument>
                 <ram:LineID>1</ram:LineID>
             </ram:AssociatedDocumentLineDocument>
-         <ram:SpecifiedTradeProduct>
+            <ram:SpecifiedTradeProduct>
                 <ram:Name>Künstlerische Gestaltung (Stunde): Einer Beispielrechnung</ram:Name>
                 <ram:Description/>
             </ram:SpecifiedTradeProduct>
-         <ram:SpecifiedLineTradeAgreement>
+            <ram:SpecifiedLineTradeAgreement>
                 <ram:GrossPriceProductTradePrice>
                     <ram:ChargeAmount currencyID="EUR">160.0000</ram:ChargeAmount>
                     <ram:BasisQuantity unitCode="HUR">1.0000</ram:BasisQuantity>
@@ -55,10 +55,10 @@ Migrated by Mustangproject XSLT
                     <ram:BasisQuantity unitCode="HUR">1.0000</ram:BasisQuantity>
                 </ram:NetPriceProductTradePrice>
             </ram:SpecifiedLineTradeAgreement>
-         <ram:SpecifiedLineTradeDelivery>
+            <ram:SpecifiedLineTradeDelivery>
                 <ram:BilledQuantity unitCode="HUR">1.0000</ram:BilledQuantity>
             </ram:SpecifiedLineTradeDelivery>
-         <ram:SpecifiedLineTradeSettlement>
+            <ram:SpecifiedLineTradeSettlement>
                 <ram:ApplicableTradeTax>
                     <ram:TypeCode>VAT</ram:TypeCode>
                     <ram:CategoryCode>S</ram:CategoryCode>
@@ -68,16 +68,16 @@ Migrated by Mustangproject XSLT
                     <ram:LineTotalAmount currencyID="EUR">160.00</ram:LineTotalAmount>
                 </ram:SpecifiedTradeSettlementLineMonetarySummation>
             </ram:SpecifiedLineTradeSettlement>
-      </ram:IncludedSupplyChainTradeLineItem>
-      <ram:IncludedSupplyChainTradeLineItem>
-         <ram:AssociatedDocumentLineDocument>
+        </ram:IncludedSupplyChainTradeLineItem>
+        <ram:IncludedSupplyChainTradeLineItem>
+            <ram:AssociatedDocumentLineDocument>
                 <ram:LineID>2</ram:LineID>
             </ram:AssociatedDocumentLineDocument>
-         <ram:SpecifiedTradeProduct>
+            <ram:SpecifiedTradeProduct>
                 <ram:Name>Luftballon: Bunt, ca. 500ml</ram:Name>
                 <ram:Description/>
             </ram:SpecifiedTradeProduct>
-         <ram:SpecifiedLineTradeAgreement>
+            <ram:SpecifiedLineTradeAgreement>
                 <ram:GrossPriceProductTradePrice>
                     <ram:ChargeAmount currencyID="EUR">0.7900</ram:ChargeAmount>
                     <ram:BasisQuantity unitCode="C62">1.0000</ram:BasisQuantity>
@@ -87,10 +87,10 @@ Migrated by Mustangproject XSLT
                     <ram:BasisQuantity unitCode="C62">1.0000</ram:BasisQuantity>
                 </ram:NetPriceProductTradePrice>
             </ram:SpecifiedLineTradeAgreement>
-         <ram:SpecifiedLineTradeDelivery>
+            <ram:SpecifiedLineTradeDelivery>
                 <ram:BilledQuantity unitCode="C62">400.0000</ram:BilledQuantity>
             </ram:SpecifiedLineTradeDelivery>
-         <ram:SpecifiedLineTradeSettlement>
+            <ram:SpecifiedLineTradeSettlement>
                 <ram:ApplicableTradeTax>
                     <ram:TypeCode>VAT</ram:TypeCode>
                     <ram:CategoryCode>S</ram:CategoryCode>
@@ -100,16 +100,16 @@ Migrated by Mustangproject XSLT
                     <ram:LineTotalAmount currencyID="EUR">316.00</ram:LineTotalAmount>
                 </ram:SpecifiedTradeSettlementLineMonetarySummation>
             </ram:SpecifiedLineTradeSettlement>
-      </ram:IncludedSupplyChainTradeLineItem>
-      <ram:IncludedSupplyChainTradeLineItem>
-         <ram:AssociatedDocumentLineDocument>
+        </ram:IncludedSupplyChainTradeLineItem>
+        <ram:IncludedSupplyChainTradeLineItem>
+            <ram:AssociatedDocumentLineDocument>
                 <ram:LineID>3</ram:LineID>
             </ram:AssociatedDocumentLineDocument>
-         <ram:SpecifiedTradeProduct>
+            <ram:SpecifiedTradeProduct>
                 <ram:Name>Heiße Luft pro Liter</ram:Name>
                 <ram:Description/>
             </ram:SpecifiedTradeProduct>
-         <ram:SpecifiedLineTradeAgreement>
+            <ram:SpecifiedLineTradeAgreement>
                 <ram:GrossPriceProductTradePrice>
                     <ram:ChargeAmount currencyID="EUR">0.1000</ram:ChargeAmount>
                     <ram:BasisQuantity unitCode="LTR">1.0000</ram:BasisQuantity>
@@ -119,10 +119,10 @@ Migrated by Mustangproject XSLT
                     <ram:BasisQuantity unitCode="LTR">1.0000</ram:BasisQuantity>
                 </ram:NetPriceProductTradePrice>
             </ram:SpecifiedLineTradeAgreement>
-         <ram:SpecifiedLineTradeDelivery>
+            <ram:SpecifiedLineTradeDelivery>
                 <ram:BilledQuantity unitCode="LTR">200.0000</ram:BilledQuantity>
             </ram:SpecifiedLineTradeDelivery>
-         <ram:SpecifiedLineTradeSettlement>
+            <ram:SpecifiedLineTradeSettlement>
                 <ram:ApplicableTradeTax>
                     <ram:TypeCode>VAT</ram:TypeCode>
                     <ram:CategoryCode>S</ram:CategoryCode>
@@ -132,8 +132,8 @@ Migrated by Mustangproject XSLT
                     <ram:LineTotalAmount currencyID="EUR">20.00</ram:LineTotalAmount>
                 </ram:SpecifiedTradeSettlementLineMonetarySummation>
             </ram:SpecifiedLineTradeSettlement>
-      </ram:IncludedSupplyChainTradeLineItem>
-      <ram:ApplicableHeaderTradeAgreement>
+        </ram:IncludedSupplyChainTradeLineItem>
+        <ram:ApplicableHeaderTradeAgreement>
             <ram:SellerTradeParty>
                 <ram:Name>Bei Spiel GmbH</ram:Name>
                 <ram:PostalTradeAddress>
@@ -162,14 +162,14 @@ Migrated by Mustangproject XSLT
                 </ram:SpecifiedTaxRegistration>
             </ram:BuyerTradeParty>
         </ram:ApplicableHeaderTradeAgreement>
-      <ram:ApplicableHeaderTradeDelivery>
+        <ram:ApplicableHeaderTradeDelivery>
             <ram:ActualDeliverySupplyChainEvent>
                 <ram:OccurrenceDateTime>
                     <udt:DateTimeString format="102">20170507</udt:DateTimeString>
                 </ram:OccurrenceDateTime>
             </ram:ActualDeliverySupplyChainEvent>
         </ram:ApplicableHeaderTradeDelivery>
-      <ram:ApplicableHeaderTradeSettlement>
+        <ram:ApplicableHeaderTradeSettlement>
             <ram:PaymentReference>RE-20170509/505</ram:PaymentReference>
             <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
             <ram:SpecifiedTradeSettlementPaymentMeans>
@@ -215,6 +215,6 @@ Migrated by Mustangproject XSLT
                 <ram:DuePayableAmount currencyID="EUR">571.04</ram:DuePayableAmount>
             </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
         </ram:ApplicableHeaderTradeSettlement>
-   </rsm:SupplyChainTradeTransaction>
+    </rsm:SupplyChainTradeTransaction>
 </rsm:CrossIndustryInvoice>
 
