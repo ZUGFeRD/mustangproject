@@ -195,7 +195,7 @@ public class ZUGFeRDImporter {
 	/**
 	 * needs to be called to be able to call the getters
 	 */
-	public void parse() {
+	protected void parse() {
 		DocumentBuilderFactory factory = null;
 		DocumentBuilder builder = null;
 		Document document = null;
