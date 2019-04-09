@@ -33,29 +33,21 @@ import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.logging.Logger;
-
-//root.setNamespace(Namespace.getNamespace("http://www.energystar.gov/manageBldgs/req"));
+import java.util.*;
 
 public class ZUGFeRDImporter {
-
-	/*
-	 * call extract(importFilename). containsMeta() will return if ZUGFeRD data has
-	 * been found, afterwards you can call getBIC(), getIBAN() etc.
-	 *
-	 */
 
 	/**
 	 * @var if metadata has been found
@@ -64,24 +56,12 @@ public class ZUGFeRDImporter {
 	/**
 	 * @var the reference (i.e. invoice number) of the sender
 	 */
-	private String foreignReference;
-	private String BLZ;
-	private String BIC;
-	private String IBAN;
-	private String KTO;
-	private String holder;
-	private String amount;
-	private String dueDate;
-	private HashMap<String, byte[]> additionalXMLs = new HashMap<String, byte[]>();
+	private HashMap<String, byte[]> additionalXMLs = new HashMap<>();
 	/**
 	 * Raw XML form of the extracted data - may be directly obtained.
 	 */
 	private byte[] rawXML = null;
-	private String bankName;
-	private boolean amountFound;
-	private boolean parsed = false;
 	private String xmpString = null; // XMP metadata
-	private static final Logger LOG = Logger.getLogger(ZUGFeRDImporter.class.getName());
 
 	public ZUGFeRDImporter(String pdfFilename) {
 		try {
@@ -175,189 +155,112 @@ public class ZUGFeRDImporter {
 		}
 	}
 
-	public HashMap<String, byte[]> getAdditionalData() {
-		return additionalXMLs;
+	private void prettyPrint(Document document) throws TransformerException {
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer = null;
+		try {
+			transformer = tf.newTransformer();
+		} catch (TransformerConfigurationException e) {
+			e.printStackTrace();
+		}
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		StringWriter writer = new StringWriter();
+		transformer.transform(new DOMSource(document), new StreamResult(writer));
+		String output = writer.getBuffer().toString();//.replaceAll("\n|\r", "");
+		System.err.println(output);
+	}
+
+	private Document getDocument() throws ParserConfigurationException, IOException, SAXException, TransformerException {
+		DocumentBuilderFactory xmlFact = DocumentBuilderFactory.newInstance();
+		xmlFact.setNamespaceAware(false);
+		DocumentBuilder builder = xmlFact.newDocumentBuilder();
+		Document doc = builder.parse(new ByteArrayInputStream(rawXML));
+		//prettyPrint(doc);
+		return doc;
+	}
+
+	private String extractString(String xpathStr) {
+		if (!containsMeta) {
+			throw new ZUGFeRDExportException("No suitable data/ZUGFeRD file could be found.");
+		}
+		String result;
+		try {
+			Document document = getDocument();
+			XPathFactory xpathFact = XPathFactory.newInstance();
+			XPath xpath = xpathFact.newXPath();
+			result = xpath.evaluate(xpathStr, document);
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+			throw new ZUGFeRDExportException(e);
+		} catch (IOException | SAXException | TransformerException | XPathExpressionException e) {
+			e.printStackTrace();
+			throw new ZUGFeRDExportException(e);
+		}
+		return result;
 	}
 
 	/**
-	 * needs to be called to be able to call the getters
+	 * @return the reference (purpose) the sender specified for this invoice
 	 */
-	protected void parse() {
-		DocumentBuilderFactory factory = null;
-		DocumentBuilder builder = null;
-		Document document = null;
+	public String getForeignReference() {
+		String result = extractString("//ApplicableHeaderTradeSettlement/PaymentReference");
+		if(result == null || result.isEmpty())
+			result = extractString("//ApplicableSupplyChainTradeSettlement/PaymentReference");
+		return result;
+	}
 
-		if (!containsMeta) {
-			throw new RuntimeException("No suitable data/ZUGFeRD file could be found.");
-		}
+	/**
+	 * @return the sender's bank's BLZ code
+	 */
+	public String getBLZ() {
+		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/GermanBankleitzahlID");
+	}
 
-		factory = DocumentBuilderFactory.newInstance();
-		factory.setNamespaceAware(true); // otherwise we can not act namespace independently, i.e. use
-		// document.getElementsByTagNameNS("*",...
-		try {
-			builder = factory.newDocumentBuilder();
-		} catch (ParserConfigurationException ex3) {
-			// TODO Auto-generated catch block
-			ex3.printStackTrace();
-		}
+	/**
+	 * @return the sender's bank's BIC code
+	 */
+	public String getBIC() {
+		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/BICID");
+	}
 
-		try {
-			InputStream bais = new ByteArrayInputStream(rawXML);
-			document = builder.parse(bais);
-		} catch (SAXException ex1) {
-			ex1.printStackTrace();
-		} catch (IOException ex2) {
-			ex2.printStackTrace();
-		}
-		NodeList ndList;
+	/**
+	 * @return the sender's bankname
+	 */
+	public String getBankName() {
+		return extractString("/CrossIndustryInvoice/SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeSettlementPaymentMeans/PayeeSpecifiedCreditorFinancialInstitution/Name");
+	}
 
-		// rootNode = document.getDocumentElement();
-		// ApplicableSupplyChainTradeSettlement
-		ndList = document.getDocumentElement().getElementsByTagNameNS("*", "PaymentReference"); //$NON-NLS-1$
+	public String getIBAN() {
+		return extractString("//PayeePartyCreditorFinancialAccount/IBANID");
+	}
 
-		for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
-			Node booking = ndList.item(bookingIndex);
-			// if there is a attribute in the tag number:value
+	public String getKTO() {
+		return extractString("//PayeePartyCreditorFinancialAccount/ProprietaryID");
+	}
 
-			setForeignReference(booking.getTextContent());
+	public String getHolder() {
+		return extractString("//SellerTradeParty/Name");
+	}
 
-		}
-		/*
-		 * ndList = document .getElementsByTagName("GermanBankleitzahlID");
-		 * //$NON-NLS-1$
-		 *
-		 * for (int bookingIndex = 0; bookingIndex < ndList .getLength();
-		 * bookingIndex++) { Node booking = ndList.item(bookingIndex); // if there is a
-		 * attribute in the tag number:value setBIC(booking.getTextContent());
-		 *
-		 * }
-		 *
-		 * ndList = document.getElementsByTagName("ProprietaryID"); //$NON-NLS-1$
-		 *
-		 * for (int bookingIndex = 0; bookingIndex < ndList .getLength();
-		 * bookingIndex++) { Node booking = ndList.item(bookingIndex); // if there is a
-		 * attribute in the tag number:value setIBAN(booking.getTextContent());
-		 *
-		 * } <ram:PayeePartyCreditorFinancialAccount> <ram:IBANID>DE1234</ram:IBANID>
-		 * </ram:PayeePartyCreditorFinancialAccount>
-		 * <ram:PayeeSpecifiedCreditorFinancialInstitution>
-		 * <ram:BICID>DE5656565</ram:BICID> <ram:Name>Commerzbank</ram:Name>
-		 * </ram:PayeeSpecifiedCreditorFinancialInstitution>
-		 *
-		 */
+	/**
+	 * @return the total payable amount
+	 */
+	public String getAmount() {
+		String result = extractString("//SpecifiedTradeSettlementHeaderMonetarySummation/DuePayableAmount");
+		if(result == null || result.isEmpty())
+			result = extractString("//SpecifiedTradeSettlementMonetarySummation/GrandTotalAmount");
+		return result;
+	}
 
-		/***
-		 * we should switch to xpath like this // Create XPathFactory object
-		 * XPathFactory xpathFactory = XPathFactory.newInstance();
-		 *
-		 * // Create XPath object XPath xpath = xpathFactory.newXPath(); XPathExpression
-		 * expr =
-		 * xpath.compile("//*[local-name()=\"GuidelineSpecifiedDocumentContextParameter\"]/[local-name()=\"ID\"]");
-		 * //evaluate expression result on XML document ndList = (NodeList)
-		 * expr.evaluate(doc, XPathConstants.NODESET);
-		 *
-		 */
+	/**
+	 * @return when the payment is due
+	 */
+	public String getDueDate() {
+		return extractString("//SpecifiedTradePaymentTerms/DueDateDateTime/DateTimeString");
+	}
 
-		ndList = document.getElementsByTagNameNS("*", "PayeePartyCreditorFinancialAccount"); //$NON-NLS-1$
-		for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
-
-			Node booking = ndList.item(bookingIndex);
-			// there are many "name" elements, so get the one below
-			// SellerTradeParty
-			NodeList bookingDetails = booking.getChildNodes();
-
-			for (int detailIndex = 0; detailIndex < bookingDetails.getLength(); detailIndex++) {
-				Node detail = bookingDetails.item(detailIndex);
-				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("IBANID"))) { //$NON-NLS-1$
-					setIBAN(detail.getTextContent());
-				}
-				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("ProprietaryID"))) { //$NON-NLS-1$
-					setKTO(detail.getTextContent());
-
-				}
-			}
-
-		}
-		ndList = document.getElementsByTagNameNS("*", "PayeeSpecifiedCreditorFinancialInstitution");// ZF1 //$NON-NLS-1$
-		for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
-			Node booking = ndList.item(bookingIndex);
-			// there are many "name" elements, so get the one below
-			// SellerTradeParty
-			NodeList bookingDetails = booking.getChildNodes();
-			for (int detailIndex = 0; detailIndex < bookingDetails.getLength(); detailIndex++) {
-				Node detail = bookingDetails.item(detailIndex);
-				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("BICID"))) { //$NON-NLS-1$
-					setBIC(detail.getTextContent());
-				}
-				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("GermanBankleitzahlID"))) { //$NON-NLS-1$
-					setBLZ(detail.getTextContent());
-				}
-				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("Name"))) { //$NON-NLS-1$
-					setBankName(detail.getTextContent());
-				}
-			}
-
-		}
-
-		ndList = document.getElementsByTagNameNS("*", "SellerTradeParty"); //$NON-NLS-1$
-
-		for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
-			Node booking = ndList.item(bookingIndex);
-			// there are many "name" elements, so get the one below
-			// SellerTradeParty
-			NodeList bookingDetails = booking.getChildNodes();
-			for (int detailIndex = 0; detailIndex < bookingDetails.getLength(); detailIndex++) {
-				Node detail = bookingDetails.item(detailIndex);
-				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("Name"))) { //$NON-NLS-1$
-					setHolder(detail.getTextContent());
-				}
-			}
-
-		}
-
-		ndList = document.getElementsByTagNameNS("*", "DuePayableAmount"); //$NON-NLS-1$
-
-		for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
-			Node booking = ndList.item(bookingIndex);
-			// if there is a attribute in the tag number:value
-			amountFound = true;
-			setAmount(booking.getTextContent());
-
-		}
-
-		if (!amountFound) {
-			/*
-			 * there is apparently no requirement to mention DuePayableAmount,, if it's not
-			 * there, check for GrandTotalAmount
-			 */
-			ndList = document.getElementsByTagNameNS("*", "GrandTotalAmount"); //$NON-NLS-1$
-			for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
-				Node booking = ndList.item(bookingIndex);
-				// if there is a attribute in the tag number:value
-				amountFound = true;
-				setAmount(booking.getTextContent());
-
-			}
-
-		}
-
-		ndList = document.getElementsByTagNameNS("*", "SpecifiedTradePaymentTerms"); //$NON-NLS-1$
-
-		for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
-			Node booking = ndList.item(bookingIndex);
-			// there are many "name" elements, so get the one below
-			// SellerTradeParty
-			NodeList bookingDetails = booking.getChildNodes();
-			for (int detailIndex = 0; detailIndex < bookingDetails.getLength(); detailIndex++) {
-				Node detail = bookingDetails.item(detailIndex);
-				if ((detail.getLocalName() != null) && (detail.getLocalName().equals("DueDateDateTime"))) { //$NON-NLS-1$
-					setDueDate(detail.getTextContent().trim());
-				}
-			}
-
-		}
-
-		parsed = true;
+	public HashMap<String, byte[]> getAdditionalData() {
+		return additionalXMLs;
 	}
 
 	/**
@@ -375,159 +278,6 @@ public class ZUGFeRDImporter {
 	 */
 	public boolean containsMeta() {
 		return containsMeta;
-	}
-
-	/**
-	 * @return the reference (purpose) the sender specified for this invoice
-	 */
-	public String getForeignReference() {
-		if (!parsed) {
-			throw new RuntimeException("use extract() before requesting a value");
-		}
-		if (foreignReference == null) {
-			parse();
-		}
-		return foreignReference;
-	}
-
-	private void setForeignReference(String foreignReference) {
-		this.foreignReference = foreignReference;
-	}
-
-	/**
-	 * @return the sender's bank's BLZ code
-	 */
-	public String getBLZ() {
-		if (!parsed) {
-			throw new RuntimeException("use extract() before requesting a value");
-		}
-		if (BLZ == null) {
-			parse();
-		}
-		return BLZ;
-	}
-
-	private void setBLZ(String blz) {
-		this.BLZ = blz;
-	}
-
-	/**
-	 * @return the sender's bank's BIC code
-	 */
-	public String getBIC() {
-		if (!parsed) {
-			throw new RuntimeException("use extract() before requesting a value");
-		}
-		if (BIC == null) {
-			parse();
-		}
-		return BIC;
-	}
-
-	private void setBIC(String bic) {
-		this.BIC = bic;
-	}
-
-	private void setDueDate(String dueDate) {
-		this.dueDate = dueDate;
-	}
-
-	private void setBankName(String bankname) {
-		this.bankName = bankname;
-	}
-
-	/**
-	 * @return the sender's IBAN
-	 */
-	public String getIBAN() {
-		if (!parsed) {
-			throw new RuntimeException("use extract() before requesting a value");
-		}
-		if (IBAN == null) {
-			parse();
-		}
-		return IBAN;
-	}
-
-	/**
-	 * @return the sender's KTO
-	 */
-	public String getKTO() {
-		if (!parsed) {
-			throw new RuntimeException("use extract() before requesting a value");
-		}
-		if (KTO == null) {
-			parse();
-		}
-		return KTO;
-	}
-
-	/**
-	 * @return the sender's bank name
-	 */
-	public String getBankName() {
-		if (!parsed) {
-			throw new RuntimeException("use extract() before requesting a value");
-		}
-		if (bankName == null) {
-			parse();
-		}
-		return bankName;
-	}
-
-	private void setIBAN(String IBAN) {
-		this.IBAN = IBAN;
-	}
-
-	private void setKTO(String KTO) {
-		this.KTO = KTO;
-	}
-
-	/**
-	 * @return the name of the owner of the sender's bank account
-	 */
-	public String getHolder() {
-		if (rawXML == null) {
-			throw new RuntimeException("use extract() before requesting a value");
-		}
-		if (holder == null) {
-			parse();
-		}
-		return holder;
-	}
-
-	private void setHolder(String holder) {
-		this.holder = holder;
-	}
-
-	/**
-	 * @return the total payable amount
-	 */
-	public String getAmount() {
-		if (rawXML == null) {
-			throw new RuntimeException("use extract() before requesting a value");
-		}
-		if (amount == null) {
-			parse();
-		}
-		return amount;
-	}
-
-	/**
-	 * @return when the payment is due
-	 */
-	public String getDueDate() {
-		if (rawXML == null) {
-			throw new RuntimeException("use extract() before requesting a value");
-		}
-		if (dueDate == null) {
-			parse();
-		}
-		return dueDate;
-	}
-
-	private void setAmount(String amount) {
-		this.amount = amount;
 	}
 
 	/**

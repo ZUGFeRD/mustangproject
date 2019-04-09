@@ -55,14 +55,12 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		// the writing part
 
 		try {
-			InputStream SOURCE_PDF = this.getClass()
-					.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
+			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
 			ZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1Factory().setProducer("My Application").setCreator("Test").setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931)
 					.load(SOURCE_PDF);
 
-			final byte[] UTF8ByteOrderMark = new byte[]{(byte) 0xef, (byte) 0xbb,
-					(byte) 0xbf};
+			final byte[] UTF8ByteOrderMark = new byte[]{(byte) 0xef, (byte) 0xbb, (byte) 0xbf};
 			/* we have much more information than just in the basic profile (comfort or extended) but it's perfectly valid to provide more information, just not less. */
 			String ownZUGFeRDXML = new String(UTF8ByteOrderMark) + "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 					"<rsm:CrossIndustryInvoice xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100\" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100\">\n" +
@@ -267,7 +265,6 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -275,32 +272,13 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
 		// Reading ZUGFeRD
-		String amount = null;
-		String bic = null;
-		String blz = null;
-		String iban = null;
-		String kto = null;
-		String holder = null;
-		String ref = null;
-
-		if (zi.canParse()) {
-			zi.parse();
-			amount = zi.getAmount();
-			blz = zi.getBLZ();
-			bic = zi.getBIC();
-			iban = zi.getIBAN();
-			kto = zi.getKTO();
-			holder = zi.getHolder();
-			ref = zi.getForeignReference();
-		}
-
-		assertEquals(amount, "571.04");
-		assertEquals(blz, "41441604");
-		assertEquals(bic, "COBADEFFXXX");
-		assertEquals(iban, "DE88 2008 0000 0970 3757 00");
-		assertEquals(kto, "44421800");
-		assertEquals(holder, "Bei Spiel GmbH");
-		assertEquals(ref, "RE-20171118/506");
+		assertEquals(zi.getAmount(), "571.04");
+		assertEquals(zi.getBLZ(), "41441604");
+		assertEquals(zi.getBIC(), "COBADEFFXXX");
+		assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
+		assertEquals(zi.getKTO(), "44421800");
+		assertEquals(zi.getHolder(), "Bei Spiel GmbH");
+		assertEquals(zi.getForeignReference(), "RE-20171118/506");
 	}
 
 	/**
@@ -317,8 +295,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		// the writing part
 
 		try {
-			InputStream SOURCE_PDF = this.getClass()
-					.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
+			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
 			ZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1Factory().setProducer("My Application").setCreator("Test").setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.BASIC)
 					.load(SOURCE_PDF);
@@ -468,7 +445,6 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>BASIC</zf:ConformanceLevel>") == -1);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -476,32 +452,13 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
 		// Reading ZUGFeRD
-		String amount = null;
-		String bic = null;
-		String blz = null;
-		String iban = null;
-		String kto = null;
-		String holder = null;
-		String ref = null;
-
-		if (zi.canParse()) {
-			zi.parse();
-			amount = zi.getAmount();
-			bic = zi.getBIC();
-			blz = zi.getBLZ();
-			iban = zi.getIBAN();
-			kto = zi.getKTO();
-			holder = zi.getHolder();
-			ref = zi.getForeignReference();
-		}
-
-		assertEquals(amount, "571.04");
-		assertEquals(bic, "COBADEFFXXX");
-		assertEquals(blz, "41441604");
-		assertEquals(iban, "DE88 2008 0000 0970 3757 00");
-		assertEquals(kto, "44421800");
-		assertEquals(holder, "Bei Spiel GmbH");
-		assertEquals(ref, "RE-20170509/505");
+		assertEquals(zi.getAmount(), "571.04");
+		assertEquals(zi.getBIC(), "COBADEFFXXX");
+		assertEquals(zi.getBLZ(), "41441604");
+		assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
+		assertEquals(zi.getKTO(), "44421800");
+		assertEquals(zi.getHolder(), "Bei Spiel GmbH");
+		assertEquals(zi.getForeignReference(), "RE-20170509/505");
 	}
 
 }
