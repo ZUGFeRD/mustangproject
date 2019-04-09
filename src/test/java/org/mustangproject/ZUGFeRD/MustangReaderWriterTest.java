@@ -346,14 +346,10 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 	 */
 
 	public void testAImport() throws IOException {
-		ZUGFeRDImporter zi = new ZUGFeRDImporter();
-		try (InputStream inputStream = this.getClass()
-				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf")) {
-			zi.extractLowLevel(inputStream);
-		}
+		InputStream inputStream = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
 
 		// Reading ZUGFeRD
-
 		String amount = null;
 		String blz = null;
 		String bic = null;
@@ -384,14 +380,10 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 	}
 
 	public void testForeignImport() throws IOException {
-		ZUGFeRDImporter zi = new ZUGFeRDImporter();
+		InputStream inputStream = this.getClass().getResourceAsStream("/zugferd_invoice.pdf");
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
 
-		try (InputStream inputStream = this.getClass()
-				.getResourceAsStream("/zugferd_invoice.pdf")) {
-			zi.extractLowLevel(inputStream);
-		}
 		// Reading ZUGFeRD
-
 		String amount = zi.getAmount();
 
 		assertEquals("<?xpacket begin=\"﻿\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>\n" +
@@ -522,10 +514,9 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		}
 
 		// now check the contents (like MustangReaderTest)
-		ZUGFeRDImporter zi = new ZUGFeRDImporter();
-		zi.extract(TARGET_PDF);
-		// Reading ZUGFeRD
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
+		// Reading ZUGFeRD
 		String amount = null;
 		String bic = null;
 		String iban = null;

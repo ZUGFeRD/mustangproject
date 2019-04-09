@@ -336,10 +336,10 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 	 */
 
 	public void testAImport() throws IOException {
-		ZUGFeRDImporter zi = new ZUGFeRDImporter();
-		zi.extractLowLevel(this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf"));
-		// Reading ZUGFeRD
+		InputStream inputStream = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
 
+		// Reading ZUGFeRD
 		String amount = null;
 		String bic = null;
 		String blz = null;
@@ -401,10 +401,9 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 		}
 
 		// now check the contents (like MustangReaderTest)
-		ZUGFeRDImporter zi = new ZUGFeRDImporter();
-		zi.extract(TARGET_PDF);
-		// Reading ZUGFeRD
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
+		// Reading ZUGFeRD
 		String amount = null;
 		String bic = null;
 		String blz = null;

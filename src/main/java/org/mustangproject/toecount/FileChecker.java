@@ -49,9 +49,8 @@ public class FileChecker {
 		if ((!isPDF) && (!thisRun.shallIgnoreFileExt())) {
 			return false;
 		}
-		ZUGFeRDImporter zi = new ZUGFeRDImporter();
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(filename);
 		try {
-			zi.extract(filename);
 			if (zi.canParse()) {
 				thisRun.incZUGFeRDCount();
 				return true;

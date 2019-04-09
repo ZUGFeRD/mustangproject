@@ -272,10 +272,9 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		}
 
 		// now check the contents (like MustangReaderTest)
-		ZUGFeRDImporter zi = new ZUGFeRDImporter();
-		zi.extract(TARGET_PDF);
-		// Reading ZUGFeRD
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
+		// Reading ZUGFeRD
 		String amount = null;
 		String bic = null;
 		String blz = null;
@@ -474,10 +473,9 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		}
 
 		// now check the contents (like MustangReaderTest)
-		ZUGFeRDImporter zi = new ZUGFeRDImporter();
-		zi.extract(TARGET_PDF);
-		// Reading ZUGFeRD
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
+		// Reading ZUGFeRD
 		String amount = null;
 		String bic = null;
 		String blz = null;

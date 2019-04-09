@@ -44,11 +44,13 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.logging.Logger;
 
 //root.setNamespace(Namespace.getNamespace("http://www.energystar.gov/manageBldgs/req"));
 
 public class ZUGFeRDImporter {
+
 	/*
 	 * call extract(importFilename). containsMeta() will return if ZUGFeRD data has
 	 * been found, afterwards you can call getBIC(), getIBAN() etc.
@@ -77,42 +79,28 @@ public class ZUGFeRDImporter {
 	private byte[] rawXML = null;
 	private String bankName;
 	private boolean amountFound;
-	private boolean extractAttempt = false;
 	private boolean parsed = false;
 	private String xmpString = null; // XMP metadata
 	private static final Logger LOG = Logger.getLogger(ZUGFeRDImporter.class.getName());
 
-	/**
-	 * Extracts a ZUGFeRD invoice from a PDF document represented by a file name.
-	 * Errors are just logged to STDOUT.
-	 *
-	 * @param pdfFilename the filename of the pdf
-	 */
-	public void extract(String pdfFilename) {
+	public ZUGFeRDImporter(String pdfFilename) {
 		try {
 			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(pdfFilename));
-
 			extractLowLevel(bis);
 			bis.close();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new ZUGFeRDExportException(e);
 		}
 	}
 
-	static String convertStreamToString(java.io.InputStream is) {
-		// source https://stackoverflow.com/questions/309424/how-do-i-read-convert-an-inputstream-into-a-string-in-java referring to
-		// https://community.oracle.com/blogs/pat/2004/10/23/stupid-scanner-tricks
-		java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
-		return s.hasNext() ? s.next() : "";
-	}
-
-	/**
-	 * get xmp metadata of the PDF, null if not available
-	 *
-	 * @return string
-	 */
-	public String getXMP() {
-		return xmpString;
+	public ZUGFeRDImporter(InputStream pdfStream) {
+		try {
+			extractLowLevel(pdfStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new ZUGFeRDExportException(e);
+		}
 	}
 
 	/**
@@ -121,9 +109,7 @@ public class ZUGFeRDImporter {
 	 *
 	 * @param pdfStream a inputstream of a pdf file
 	 */
-	public void extractLowLevel(InputStream pdfStream) throws IOException {
-		PDEmbeddedFilesNameTreeNode etn;
-		extractAttempt = true;
+	private void extractLowLevel(InputStream pdfStream) throws IOException {
 		try (PDDocument doc = PDDocument.load(pdfStream)) {
 			// PDDocumentInformation info = doc.getDocumentInformation();
 			PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
@@ -131,7 +117,8 @@ public class ZUGFeRDImporter {
 			InputStream XMP = doc.getDocumentCatalog().getMetadata().exportXMPMetadata();
 
 			xmpString = convertStreamToString(XMP);
-			etn = names.getEmbeddedFiles();
+
+			PDEmbeddedFilesNameTreeNode etn = names.getEmbeddedFiles();
 			if (etn == null) {
 				return;
 			}
@@ -200,9 +187,6 @@ public class ZUGFeRDImporter {
 		DocumentBuilder builder = null;
 		Document document = null;
 
-		if (!extractAttempt) {
-			throw new RuntimeException("extract() or extractLowLevel() must be used before parsing.");
-		}
 		if (!containsMeta) {
 			throw new RuntimeException("No suitable data/ZUGFeRD file could be found.");
 		}
@@ -375,6 +359,16 @@ public class ZUGFeRDImporter {
 
 		parsed = true;
 	}
+
+	/**
+	 * get xmp metadata of the PDF, null if not available
+	 *
+	 * @return string
+	 */
+	public String getXMP() {
+		return xmpString;
+	}
+
 
 	/**
 	 * @return if export found parseable ZUGFeRD data
@@ -604,4 +598,12 @@ public class ZUGFeRDImporter {
 		return (meta != null) && (meta.length() > 0) && ((meta.contains("SpecifiedExchangedDocumentContext") //$NON-NLS-1$
 				/* ZF1 */ || meta.contains("ExchangedDocumentContext") /* ZF2 */));
 	}
+
+	static String convertStreamToString(java.io.InputStream is) {
+		// source https://stackoverflow.com/questions/309424/how-do-i-read-convert-an-inputstream-into-a-string-in-java referring to
+		// https://community.oracle.com/blogs/pat/2004/10/23/stupid-scanner-tricks
+		Scanner s = new Scanner(is).useDelimiter("\\A");
+		return s.hasNext() ? s.next() : "";
+	}
+
 }
