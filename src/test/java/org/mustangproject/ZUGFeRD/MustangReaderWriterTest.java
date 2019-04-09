@@ -507,6 +507,62 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 			String pdfContent = baos.toString("UTF-8");
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
 			// check for pdf-a schema extension
+			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
+			assertFalse(pdfContent.indexOf("<pdfaSchema:prefix>zf</pdfaSchema:prefix>") == -1);
+			assertFalse(pdfContent.indexOf("urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#") == -1);
+			
+		}
+
+		// now check the contents (like MustangReaderTest)
+		ZUGFeRDImporter zi = new ZUGFeRDImporter();
+		zi.extract(TARGET_PDF);
+		// Reading ZUGFeRD
+
+		String amount = null;
+		String bic = null;
+		String iban = null;
+		String kto = null;
+		String holder = null;
+		String ref = null;
+		if (zi.canParse()) {
+			zi.parse();
+			amount = zi.getAmount();
+			bic = zi.getBIC();
+			iban = zi.getIBAN();
+			kto = zi.getKTO();
+			holder = zi.getHolder();
+			ref = zi.getForeignReference();
+		}
+
+		assertEquals(amount, "571.04");
+		assertEquals(bic, getOwnBIC());
+		assertEquals(iban, getOwnIBAN());
+		assertEquals(kto, getOwnKto());
+		assertEquals(holder, getOwnOrganisationName());
+		assertEquals(ref, getNumber());
+
+	}
+	/*
+	public void testFXExport() throws Exception {
+
+		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506fx.pdf";
+
+		// the writing part
+		try (InputStream SOURCE_PDF = this.getClass()
+				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
+
+			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
+			ze.setFacturX();
+			ze.PDFattachZugferdFile(this);
+			ze.disableAutoClose(true);
+			ze.export(TARGET_PDF);
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ze.export(baos);
+			ze.close();
+			String pdfContent = baos.toString("UTF-8");
+			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
+			// check for pdf-a schema extension
 			assertFalse(pdfContent.indexOf("<fx:ConformanceLevel>EN 16931</fx:ConformanceLevel>") == -1);
 			assertFalse(pdfContent.indexOf("<pdfaSchema:prefix>fx</pdfaSchema:prefix>") == -1);
 			assertFalse(pdfContent.indexOf("urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:en16931") == -1);
@@ -523,7 +579,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 	}
-
+*/
 	/**
 	 * @throws Exception
 	 * @Test(expected = IndexOutOfBoundsException.class)
