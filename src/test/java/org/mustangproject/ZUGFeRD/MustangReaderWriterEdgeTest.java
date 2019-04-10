@@ -336,40 +336,18 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 	 */
 
 	public void testAImport() throws IOException {
-		ZUGFeRDImporter zi = new ZUGFeRDImporter();
-		zi.extractLowLevel(this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf"));
+		InputStream inputStream = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
+
 		// Reading ZUGFeRD
-
-		String amount = null;
-		String bic = null;
-		String blz = null;
-		String iban = null;
-		String kto = null;
-		String holder = null;
-		String ref = null;
-		String dueDate = null;
-
-		if (zi.canParse()) {
-			zi.parse();
-			amount = zi.getAmount();
-			bic = zi.getBIC();
-			blz = zi.getBLZ();
-			iban = zi.getIBAN();
-			kto = zi.getKTO();
-			holder = zi.getHolder();
-			dueDate = zi.getDueDate();
-			ref = zi.getForeignReference();
-		}
-
-		assertEquals(amount, "571.04");
-		assertEquals(bic, getOwnBIC());
-		assertEquals(blz, getOwnBLZ());
-		assertEquals(iban, getOwnIBAN());
-		assertEquals(kto, getOwnKto());
-		assertEquals(holder, getOwnOrganisationName());
-
-		assertEquals(dueDate, "20170530");
-		assertEquals(ref, getNumber());
+		assertEquals(zi.getAmount(), "571.04");
+		assertEquals(zi.getBIC(), getOwnBIC());
+		assertEquals(zi.getBLZ(), getOwnBLZ());
+		assertEquals(zi.getIBAN(), getOwnIBAN());
+		assertEquals(zi.getKTO(), getOwnKto());
+		assertEquals(zi.getHolder(), getOwnOrganisationName());
+		assertEquals(zi.getDueDate(), "20170530");
+		assertEquals(zi.getForeignReference(), getNumber());
 
 	}
 
@@ -401,37 +379,16 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 		}
 
 		// now check the contents (like MustangReaderTest)
-		ZUGFeRDImporter zi = new ZUGFeRDImporter();
-		zi.extract(TARGET_PDF);
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
+
 		// Reading ZUGFeRD
-
-		String amount = null;
-		String bic = null;
-		String blz = null;
-		String iban = null;
-		String kto = null;
-		String holder = null;
-		String ref = null;
-
-		if (zi.canParse()) {
-			zi.parse();
-			amount = zi.getAmount();
-			bic = zi.getBIC();
-			blz = zi.getBLZ();
-			iban = zi.getIBAN();
-			kto = zi.getKTO();
-			holder = zi.getHolder();
-			ref = zi.getForeignReference();
-		}
-
-		assertEquals(amount, "571.04");
-		assertEquals(bic, getOwnBIC());
-		assertEquals(blz, getOwnBLZ());
-		assertEquals(iban, getOwnIBAN());
-		assertEquals(kto, getOwnKto());
-		assertEquals(holder, getOwnOrganisationName());
-		assertEquals(ref, getNumber());
-
+		assertEquals(zi.getAmount(), "571.04");
+		assertEquals(zi.getBIC(), getOwnBIC());
+		assertEquals(zi.getBLZ(), getOwnBLZ());
+		assertEquals(zi.getIBAN(), getOwnIBAN());
+		assertEquals(zi.getKTO(), getOwnKto());
+		assertEquals(zi.getHolder(), getOwnOrganisationName());
+		assertEquals(zi.getForeignReference(), getNumber());
 	}
 
 }
