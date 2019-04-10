@@ -94,7 +94,7 @@ class ZUGFeRDTransactionModelConverter {
 		document.setIssueDateTime(issueDateTime);
 
 		DocumentCodeType documentCodeType = xmlFactory.createDocumentCodeType();
-		documentCodeType.setValue(DocumentCodeTypeConstants.INVOICE);
+		documentCodeType.setValue(trans.getDocumentCode());
 		document.setTypeCode(documentCodeType);
 
 		TextType name = xmlFactory.createTextType();
