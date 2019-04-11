@@ -26,6 +26,8 @@ package org.mustangproject.ZUGFeRD;
  * @author jstaerk
  * */
 
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
+
 import java.math.BigDecimal;
 
 public interface IZUGFeRDExportableItem {
@@ -51,5 +53,8 @@ public interface IZUGFeRDExportableItem {
 	 */
 	BigDecimal getQuantity();
 
+	default String getCategoryCode() {
+		return TaxCategoryCodeTypeConstants.STANDARDRATE;
+	}
 
 }
