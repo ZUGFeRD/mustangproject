@@ -551,7 +551,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		assertEquals(ref, getNumber());
 
 	}
-	/*
+	
 	public void testFXExport() throws Exception {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506fx.pdf";
@@ -606,7 +606,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		assertEquals(ref, getNumber());
 
 	}
-*/
+
 	/**
 	 * @throws Exception
 	 * @Test(expected = IndexOutOfBoundsException.class)
