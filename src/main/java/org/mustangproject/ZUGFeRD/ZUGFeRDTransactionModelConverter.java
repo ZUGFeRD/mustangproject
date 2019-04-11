@@ -147,7 +147,7 @@ class ZUGFeRDTransactionModelConverter {
 		document.setIssueDateTime(issueDateTime);
 
 		DocumentCodeType documentCodeType = xmlFactory.createDocumentCodeType();
-		documentCodeType.setValue(DocumentCodeTypeConstants.INVOICE);
+		documentCodeType.setValue(trans.getDocumentCode());
 		document.setTypeCode(documentCodeType);
 
 		TextType name = xmlFactory.createTextType();
@@ -166,7 +166,7 @@ class ZUGFeRDTransactionModelConverter {
 			document.getIncludedNote().add(regularInfo);
 		}
 
-		if (trans.getReferenceNumber() != null && !new String().equals(trans.getReferenceNumber())) {
+		if (trans.getReferenceNumber() != null && !"".equals(trans.getReferenceNumber())) {
 			NoteType referenceInfo = xmlFactory.createNoteType();
 			TextType referenceInfoContent = xmlFactory.createTextType();
 			referenceInfoContent.setValue("Ursprungsbeleg: " + trans.getReferenceNumber());
@@ -410,8 +410,7 @@ class ZUGFeRDTransactionModelConverter {
 	private Collection<TradeTaxType> getTradeTax() {
 		List<TradeTaxType> tradeTaxTypes = new ArrayList<>();
 
-		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = this
-				.getVATPercentAmountMap();
+		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = this.getVATPercentAmountMap();
 		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
 
 			TradeTaxType tradeTax = xmlFactory.createTradeTaxType();
@@ -419,9 +418,9 @@ class ZUGFeRDTransactionModelConverter {
 			taxTypeCode.setValue(TaxTypeCodeTypeConstants.SALESTAX);
 			tradeTax.setTypeCode(taxTypeCode);
 
-			TaxCategoryCodeType taxCategoryCode = xmlFactory
-					.createTaxCategoryCodeType();
-			taxCategoryCode.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
+			TaxCategoryCodeType taxCategoryCode = xmlFactory.createTaxCategoryCodeType();
+			VATAmount vatAmount = VATPercentAmountMap.get(currentTaxPercent);
+			taxCategoryCode.setValue(vatAmount.getDocumentCode());
 			tradeTax.setCategoryCode(taxCategoryCode);
 
 			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
@@ -432,8 +431,7 @@ class ZUGFeRDTransactionModelConverter {
 
 			AmountType calculatedTaxAmount = xmlFactory.createAmountType();
 			calculatedTaxAmount.setCurrencyID(currency);
-			calculatedTaxAmount
-					.setValue(currencyFormat(amount.getCalculated()));
+			calculatedTaxAmount.setValue(currencyFormat(amount.getCalculated()));
 			tradeTax.getCalculatedAmount().add(calculatedTaxAmount);
 
 			AmountType basisTaxAmount = xmlFactory.createAmountType();
@@ -453,9 +451,7 @@ class ZUGFeRDTransactionModelConverter {
 
 		for (IZUGFeRDAllowanceCharge iAllowance : trans.getZFAllowances()) {
 
-			TradeAllowanceChargeType allowance = xmlFactory
-					.createTradeAllowanceChargeType();
-
+			TradeAllowanceChargeType allowance = xmlFactory.createTradeAllowanceChargeType();
 			IndicatorType chargeIndicator = xmlFactory.createIndicatorType();
 			chargeIndicator.setIndicator(false);
 			allowance.setChargeIndicator(chargeIndicator);
@@ -470,7 +466,6 @@ class ZUGFeRDTransactionModelConverter {
 			allowance.setReason(reason);
 
 			TradeTaxType tradeTax = xmlFactory.createTradeTaxType();
-
 			PercentType vatPercent = xmlFactory.createPercentType();
 			vatPercent.setValue(currencyFormat(iAllowance.getTaxPercent()));
 			tradeTax.setApplicablePercent(vatPercent);
@@ -482,9 +477,8 @@ class ZUGFeRDTransactionModelConverter {
 			 * basisAmount.setValue(amount.getBasis());
 			 * allowance.setBasisAmount(basisAmount);
 			 */
-			TaxCategoryCodeType taxType = xmlFactory
-					.createTaxCategoryCodeType();
-			taxType.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
+			TaxCategoryCodeType taxType = xmlFactory.createTaxCategoryCodeType();
+			taxType.setValue(iAllowance.getCategoryCode());
 			tradeTax.setCategoryCode(taxType);
 
 			TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
@@ -493,7 +487,6 @@ class ZUGFeRDTransactionModelConverter {
 
 			allowance.getCategoryTradeTax().add(tradeTax);
 			headerAllowances.add(allowance);
-
 		}
 
 		return headerAllowances;
@@ -505,9 +498,7 @@ class ZUGFeRDTransactionModelConverter {
 
 		for (IZUGFeRDAllowanceCharge iCharge : trans.getZFCharges()) {
 
-			TradeAllowanceChargeType charge = xmlFactory
-					.createTradeAllowanceChargeType();
-
+			TradeAllowanceChargeType charge = xmlFactory.createTradeAllowanceChargeType();
 			IndicatorType chargeIndicator = xmlFactory.createIndicatorType();
 			chargeIndicator.setIndicator(true);
 			charge.setChargeIndicator(chargeIndicator);
@@ -522,7 +513,6 @@ class ZUGFeRDTransactionModelConverter {
 			charge.setReason(reason);
 
 			TradeTaxType tradeTax = xmlFactory.createTradeTaxType();
-
 			PercentType vatPercent = xmlFactory.createPercentType();
 			vatPercent.setValue(currencyFormat(iCharge.getTaxPercent()));
 			tradeTax.setApplicablePercent(vatPercent);
@@ -534,9 +524,8 @@ class ZUGFeRDTransactionModelConverter {
 			 * basisAmount.setValue(amount.getBasis());
 			 * allowance.setBasisAmount(basisAmount);
 			 */
-			TaxCategoryCodeType taxType = xmlFactory
-					.createTaxCategoryCodeType();
-			taxType.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
+			TaxCategoryCodeType taxType = xmlFactory.createTaxCategoryCodeType();
+			taxType.setValue(iCharge.getCategoryCode());
 			tradeTax.setCategoryCode(taxType);
 
 			TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
@@ -555,16 +544,13 @@ class ZUGFeRDTransactionModelConverter {
 	private Collection<LogisticsServiceChargeType> getHeaderLogisticsServiceCharges() {
 		List<LogisticsServiceChargeType> headerServiceCharge = new ArrayList<>();
 
-		for (IZUGFeRDAllowanceCharge iServiceCharge : trans
-				.getZFLogisticsServiceCharges()) {
+		for (IZUGFeRDAllowanceCharge iServiceCharge : trans.getZFLogisticsServiceCharges()) {
 
-			LogisticsServiceChargeType serviceCharge = xmlFactory
-					.createLogisticsServiceChargeType();
+			LogisticsServiceChargeType serviceCharge = xmlFactory.createLogisticsServiceChargeType();
 
 			AmountType actualAmount = xmlFactory.createAmountType();
 			actualAmount.setCurrencyID(currency);
-			actualAmount.setValue(currencyFormat(iServiceCharge
-					.getTotalAmount()));
+			actualAmount.setValue(currencyFormat(iServiceCharge.getTotalAmount()));
 			serviceCharge.getAppliedAmount().add(actualAmount);
 
 			TextType reason = xmlFactory.createTextType();
@@ -584,9 +570,8 @@ class ZUGFeRDTransactionModelConverter {
 			 * basisAmount.setValue(amount.getBasis());
 			 * allowance.setBasisAmount(basisAmount);
 			 */
-			TaxCategoryCodeType taxType = xmlFactory
-					.createTaxCategoryCodeType();
-			taxType.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
+			TaxCategoryCodeType taxType = xmlFactory.createTaxCategoryCodeType();
+			taxType.setValue(iServiceCharge.getCategoryCode());
 			tradeTax.setCategoryCode(taxType);
 
 			TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
@@ -812,9 +797,8 @@ class ZUGFeRDTransactionModelConverter {
 					.createSupplyChainTradeSettlementType();
 			TradeTaxType tradeTax = xmlFactory.createTradeTaxType();
 
-			TaxCategoryCodeType taxCategoryCode = xmlFactory
-					.createTaxCategoryCodeType();
-			taxCategoryCode.setValue(TaxCategoryCodeTypeConstants.STANDARDRATE);
+			TaxCategoryCodeType taxCategoryCode = xmlFactory.createTaxCategoryCodeType();
+			taxCategoryCode.setValue(currentItem.getCategoryCode());
 			tradeTax.setCategoryCode(taxCategoryCode);
 
 			TaxTypeCodeType taxCode = xmlFactory.createTaxTypeCodeType();
@@ -932,15 +916,13 @@ class ZUGFeRDTransactionModelConverter {
 	}
 
 
-	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap(
-			Boolean itemOnly) {
+ 	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap(Boolean itemOnly) {
 		HashMap<BigDecimal, VATAmount> hm = new HashMap<>();
 
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			BigDecimal percent = currentItem.getProduct().getVATPercent();
 			LineCalc lc = new LineCalc(currentItem);
-			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(),
-					lc.getItemTotalVATAmount());
+			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(), trans.getDocumentCode());
 			VATAmount current = hm.get(percent);
 			if (current == null) {
 				hm.put(percent, itemVATAmount);
@@ -952,13 +934,12 @@ class ZUGFeRDTransactionModelConverter {
 			return hm;
 		}
 		if (trans.getZFAllowances() != null) {
-			for (IZUGFeRDAllowanceCharge headerAllowance : trans
-					.getZFAllowances()) {
+			for (IZUGFeRDAllowanceCharge headerAllowance : trans.getZFAllowances()) {
 				BigDecimal percent = headerAllowance.getTaxPercent();
 				VATAmount itemVATAmount = new VATAmount(
 						headerAllowance.getTotalAmount(), headerAllowance
-								.getTotalAmount().multiply(percent)
-								.divide(new BigDecimal(100)));
+						.getTotalAmount().multiply(percent)
+						.divide(new BigDecimal(100)), trans.getDocumentCode());
 				VATAmount current = hm.get(percent);
 				if (current == null) {
 					hm.put(percent, itemVATAmount);
@@ -975,7 +956,7 @@ class ZUGFeRDTransactionModelConverter {
 				VATAmount itemVATAmount = new VATAmount(
 						logisticsServiceCharge.getTotalAmount(),
 						logisticsServiceCharge.getTotalAmount()
-								.multiply(percent).divide(new BigDecimal(100)));
+								.multiply(percent).divide(new BigDecimal(100)), trans.getDocumentCode());
 				VATAmount current = hm.get(percent);
 				if (current == null) {
 					hm.put(percent, itemVATAmount);
@@ -990,7 +971,7 @@ class ZUGFeRDTransactionModelConverter {
 				BigDecimal percent = charge.getTaxPercent();
 				VATAmount itemVATAmount = new VATAmount(
 						charge.getTotalAmount(), charge.getTotalAmount()
-								.multiply(percent).divide(new BigDecimal(100)));
+						.multiply(percent).divide(new BigDecimal(100)), trans.getDocumentCode());
 				VATAmount current = hm.get(percent);
 				if (current == null) {
 					hm.put(percent, itemVATAmount);
@@ -1115,9 +1096,8 @@ class ZUGFeRDTransactionModelConverter {
 			// Set total net amount
 			totalNetAmount = res;
 
-			HashMap<BigDecimal, VATAmount> VATPercentAmountMap = getVATPercentAmountMap();
-			for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-				VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
+			HashMap<BigDecimal, VATAmount> vatAmountHashMap = getVATPercentAmountMap();
+			for (VATAmount amount : vatAmountHashMap.values()) {
 				res = res.add(amount.getCalculated());
 			}
 

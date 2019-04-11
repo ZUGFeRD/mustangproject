@@ -210,6 +210,13 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
+	 * @return the document code
+	 */
+	public String getDocumentCode() {
+		return extractString("//HeaderExchangedDocument/TypeCode");
+	}
+
+	/**
 	 * @return the sender's bank's BLZ code
 	 */
 	public String getBLZ() {

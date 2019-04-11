@@ -348,6 +348,7 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getDueDate(), "20170530");
 		assertEquals(zi.getForeignReference(), getNumber());
+		assertEquals(zi.getDocumentCode(), "380");
 
 	}
 
