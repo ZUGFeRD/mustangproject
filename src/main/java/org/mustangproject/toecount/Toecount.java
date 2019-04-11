@@ -406,8 +406,7 @@ public class Toecount {
 		ensureFileNotExists(xmlName);
 
 		// All params are good! continue...
-		ZUGFeRDImporter zi = new ZUGFeRDImporter();
-		zi.extract(pdfName);
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(pdfName);
 		byte[] XMLContent = zi.getRawXML();
 		if (XMLContent == null) {
 			System.err.println("No ZUGFeRD XML found in PDF file");

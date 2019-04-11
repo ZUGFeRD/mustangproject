@@ -134,8 +134,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			res = res.add(amount.getCalculated());
 		}
-
-
 		return res;
 	}
 
@@ -162,16 +160,14 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			BigDecimal percent = currentItem.getProduct().getVATPercent();
 			LineCalc lc = new LineCalc(currentItem);
-			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount());
+			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(), trans.getDocumentCode());
 			VATAmount current = hm.get(percent);
 			if (current == null) {
 				hm.put(percent, itemVATAmount);
 			} else {
 				hm.put(percent, current.add(itemVATAmount));
-
 			}
 		}
-
 		return hm;
 	}
 
