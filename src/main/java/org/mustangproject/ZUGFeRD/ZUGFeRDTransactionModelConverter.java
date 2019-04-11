@@ -18,14 +18,65 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import org.mustangproject.ZUGFeRD.model.*;
-
-import javax.xml.bind.JAXBElement;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.xml.bind.JAXBElement;
+
+import org.mustangproject.ZUGFeRD.model.AmountType;
+import org.mustangproject.ZUGFeRD.model.CodeType;
+import org.mustangproject.ZUGFeRD.model.CountryIDType;
+import org.mustangproject.ZUGFeRD.model.CreditorFinancialAccountType;
+import org.mustangproject.ZUGFeRD.model.CreditorFinancialInstitutionType;
+import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
+import org.mustangproject.ZUGFeRD.model.DateTimeType;
+import org.mustangproject.ZUGFeRD.model.DateTimeTypeConstants;
+import org.mustangproject.ZUGFeRD.model.DocumentCodeType;
+import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
+import org.mustangproject.ZUGFeRD.model.DocumentContextParameterType;
+import org.mustangproject.ZUGFeRD.model.DocumentContextParameterTypeConstants;
+import org.mustangproject.ZUGFeRD.model.DocumentLineDocumentType;
+import org.mustangproject.ZUGFeRD.model.ExchangedDocumentContextType;
+import org.mustangproject.ZUGFeRD.model.ExchangedDocumentType;
+import org.mustangproject.ZUGFeRD.model.IDType;
+import org.mustangproject.ZUGFeRD.model.IndicatorType;
+import org.mustangproject.ZUGFeRD.model.LogisticsServiceChargeType;
+import org.mustangproject.ZUGFeRD.model.NoteType;
+import org.mustangproject.ZUGFeRD.model.NoteTypeConstants;
+import org.mustangproject.ZUGFeRD.model.ObjectFactory;
+import org.mustangproject.ZUGFeRD.model.PaymentMeansCodeType;
+import org.mustangproject.ZUGFeRD.model.PaymentMeansCodeTypeConstants;
+import org.mustangproject.ZUGFeRD.model.PercentType;
+import org.mustangproject.ZUGFeRD.model.QuantityType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainEventType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeAgreementType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeDeliveryType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeLineItemType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeSettlementType;
+import org.mustangproject.ZUGFeRD.model.SupplyChainTradeTransactionType;
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeType;
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
+import org.mustangproject.ZUGFeRD.model.TaxRegistrationType;
+import org.mustangproject.ZUGFeRD.model.TaxRegistrationTypeConstants;
+import org.mustangproject.ZUGFeRD.model.TaxTypeCodeType;
+import org.mustangproject.ZUGFeRD.model.TaxTypeCodeTypeConstants;
+import org.mustangproject.ZUGFeRD.model.TextType;
+import org.mustangproject.ZUGFeRD.model.TradeAddressType;
+import org.mustangproject.ZUGFeRD.model.TradeAllowanceChargeType;
+import org.mustangproject.ZUGFeRD.model.TradePartyType;
+import org.mustangproject.ZUGFeRD.model.TradePaymentTermsType;
+import org.mustangproject.ZUGFeRD.model.TradePriceType;
+import org.mustangproject.ZUGFeRD.model.TradeProductType;
+import org.mustangproject.ZUGFeRD.model.TradeSettlementMonetarySummationType;
+import org.mustangproject.ZUGFeRD.model.TradeSettlementPaymentMeansType;
+import org.mustangproject.ZUGFeRD.model.TradeTaxType;
 
 class ZUGFeRDTransactionModelConverter {
 	private static final SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -36,10 +87,11 @@ class ZUGFeRDTransactionModelConverter {
 	private boolean isTest;
 	private String currency = "EUR";
 
+
 	ZUGFeRDTransactionModelConverter(IZUGFeRDExportableTransaction trans) {
 		this.trans = trans;
 		totals = new Totals();
-		this.currency = trans.getCurrency() != null ? trans.getCurrency() : currency;
+		currency = trans.getCurrency() != null ? trans.getCurrency() : currency;
 	}
 
 
@@ -47,14 +99,14 @@ class ZUGFeRDTransactionModelConverter {
 		CrossIndustryDocumentType invoice = xmlFactory
 				.createCrossIndustryDocumentType();
 
-		invoice.setSpecifiedExchangedDocumentContext(this.getDocumentContext());
-		invoice.setHeaderExchangedDocument(this.getDocument());
-		invoice.setSpecifiedSupplyChainTradeTransaction(this
-				.getTradeTransaction());
+		invoice.setSpecifiedExchangedDocumentContext(getDocumentContext());
+		invoice.setHeaderExchangedDocument(getDocument());
+		invoice.setSpecifiedSupplyChainTradeTransaction(getTradeTransaction());
 
 		return xmlFactory
 				.createCrossIndustryDocument(invoice);
 	}
+
 
 	private ExchangedDocumentContextType getDocumentContext() {
 
@@ -74,6 +126,7 @@ class ZUGFeRDTransactionModelConverter {
 
 		return context;
 	}
+
 
 	private ExchangedDocumentType getDocument() {
 
@@ -124,36 +177,44 @@ class ZUGFeRDTransactionModelConverter {
 		return document;
 	}
 
+
 	private SupplyChainTradeTransactionType getTradeTransaction() {
 
 		SupplyChainTradeTransactionType transaction = xmlFactory
 				.createSupplyChainTradeTransactionType();
 		transaction.getApplicableSupplyChainTradeAgreement().add(
-				this.getTradeAgreement());
-		transaction.setApplicableSupplyChainTradeDelivery(this
-				.getTradeDelivery());
-		transaction.setApplicableSupplyChainTradeSettlement(this
-				.getTradeSettlement());
+				getTradeAgreement());
+		transaction.setApplicableSupplyChainTradeDelivery(getTradeDelivery());
+		transaction.setApplicableSupplyChainTradeSettlement(getTradeSettlement());
 		transaction.getIncludedSupplyChainTradeLineItem().addAll(
-				this.getLineItems());
+				getLineItems());
 
 		return transaction;
 	}
+
 
 	private SupplyChainTradeAgreementType getTradeAgreement() {
 
 		SupplyChainTradeAgreementType tradeAgreement = xmlFactory
 				.createSupplyChainTradeAgreementType();
 
-		tradeAgreement.setBuyerTradeParty(this.getBuyer());
-		tradeAgreement.setSellerTradeParty(this.getSeller());
+		tradeAgreement.setBuyerTradeParty(getBuyer());
+		tradeAgreement.setSellerTradeParty(getSeller());
 
 		return tradeAgreement;
 	}
 
+
 	private TradePartyType getBuyer() {
 
 		TradePartyType buyerTradeParty = xmlFactory.createTradePartyType();
+
+		if (trans.getRecipient().getID() != null) {
+			IDType buyerID = xmlFactory.createIDType();
+			buyerID.setValue(trans.getRecipient().getID());
+			buyerTradeParty.getID().add(buyerID);
+		}
+
 		TextType buyerName = xmlFactory.createTextType();
 		buyerName.setValue(trans.getRecipient().getName());
 		buyerTradeParty.setName(buyerName);
@@ -189,9 +250,17 @@ class ZUGFeRDTransactionModelConverter {
 		return buyerTradeParty;
 	}
 
+
 	private TradePartyType getSeller() {
 
 		TradePartyType sellerTradeParty = xmlFactory.createTradePartyType();
+
+		if (trans.getOwnForeignOrganisationID() != null) {
+			IDType sellerID = xmlFactory.createIDType();
+			sellerID.setValue(trans.getOwnForeignOrganisationID());
+			sellerTradeParty.getID().add(sellerID);
+		}
+
 		TextType sellerName = xmlFactory.createTextType();
 		sellerName.setValue(trans.getOwnOrganisationName());
 		sellerTradeParty.setName(sellerName);
@@ -238,6 +307,7 @@ class ZUGFeRDTransactionModelConverter {
 		return sellerTradeParty;
 	}
 
+
 	private SupplyChainTradeDeliveryType getTradeDelivery() {
 
 		SupplyChainTradeDeliveryType tradeDelivery = xmlFactory
@@ -257,6 +327,7 @@ class ZUGFeRDTransactionModelConverter {
 		return tradeDelivery;
 	}
 
+
 	private SupplyChainTradeSettlementType getTradeSettlement() {
 		SupplyChainTradeSettlementType tradeSettlement = xmlFactory
 				.createSupplyChainTradeSettlementType();
@@ -270,28 +341,28 @@ class ZUGFeRDTransactionModelConverter {
 		tradeSettlement.setInvoiceCurrencyCode(currencyCode);
 
 		tradeSettlement.getSpecifiedTradeSettlementPaymentMeans().add(
-				this.getPaymentData());
-		tradeSettlement.getApplicableTradeTax().addAll(this.getTradeTax());
+				getPaymentData());
+		tradeSettlement.getApplicableTradeTax().addAll(getTradeTax());
 		tradeSettlement.getSpecifiedTradePaymentTerms().addAll(
-				this.getPaymentTerms());
+				getPaymentTerms());
 		if (trans.getZFAllowances() != null) {
 			tradeSettlement.getSpecifiedTradeAllowanceCharge().addAll(
-					this.getHeaderAllowances());
+					getHeaderAllowances());
 		}
 		if (trans.getZFLogisticsServiceCharges() != null) {
 			tradeSettlement.getSpecifiedLogisticsServiceCharge().addAll(
-					this.getHeaderLogisticsServiceCharges());
+					getHeaderLogisticsServiceCharges());
 		}
 		if (trans.getZFCharges() != null) {
 			tradeSettlement.getSpecifiedTradeAllowanceCharge().addAll(
-					this.getHeaderCharges());
+					getHeaderCharges());
 		}
 
-		tradeSettlement.setSpecifiedTradeSettlementMonetarySummation(this
-				.getMonetarySummation());
+		tradeSettlement.setSpecifiedTradeSettlementMonetarySummation(getMonetarySummation());
 
 		return tradeSettlement;
 	}
+
 
 	private TradeSettlementPaymentMeansType getPaymentData() {
 		TradeSettlementPaymentMeansType paymentData = xmlFactory
@@ -335,6 +406,7 @@ class ZUGFeRDTransactionModelConverter {
 		return paymentData;
 	}
 
+
 	private Collection<TradeTaxType> getTradeTax() {
 		List<TradeTaxType> tradeTaxTypes = new ArrayList<>();
 
@@ -372,6 +444,7 @@ class ZUGFeRDTransactionModelConverter {
 
 		return tradeTaxTypes;
 	}
+
 
 	private Collection<TradeAllowanceChargeType> getHeaderAllowances() {
 		List<TradeAllowanceChargeType> headerAllowances = new ArrayList<>();
@@ -418,6 +491,7 @@ class ZUGFeRDTransactionModelConverter {
 
 		return headerAllowances;
 	}
+
 
 	private Collection<TradeAllowanceChargeType> getHeaderCharges() {
 		List<TradeAllowanceChargeType> headerCharges = new ArrayList<>();
@@ -466,6 +540,7 @@ class ZUGFeRDTransactionModelConverter {
 		return headerCharges;
 	}
 
+
 	private Collection<LogisticsServiceChargeType> getHeaderLogisticsServiceCharges() {
 		List<LogisticsServiceChargeType> headerServiceCharge = new ArrayList<>();
 
@@ -511,6 +586,7 @@ class ZUGFeRDTransactionModelConverter {
 		return headerServiceCharge;
 	}
 
+
 	private Collection<TradePaymentTermsType> getPaymentTerms() {
 		List<TradePaymentTermsType> paymentTerms = new ArrayList<>();
 
@@ -537,6 +613,7 @@ class ZUGFeRDTransactionModelConverter {
 
 		return paymentTerms;
 	}
+
 
 	private TradeSettlementMonetarySummationType getMonetarySummation() {
 		TradeSettlementMonetarySummationType monetarySummation = xmlFactory
@@ -614,6 +691,7 @@ class ZUGFeRDTransactionModelConverter {
 
 		return monetarySummation;
 	}
+
 
 	private Collection<SupplyChainTradeLineItemType> getLineItems() {
 
@@ -761,21 +839,26 @@ class ZUGFeRDTransactionModelConverter {
 		return lineItems;
 	}
 
+
 	private BigDecimal vatFormat(BigDecimal value) {
 		return nDigitFormat(value, 2);
 	}
+
 
 	private BigDecimal currencyFormat(BigDecimal value) {
 		return nDigitFormat(value, 2);
 	}
 
+
 	private BigDecimal priceFormat(BigDecimal value) {
 		return nDigitFormat(value, 4);
 	}
 
+
 	private BigDecimal quantityFormat(BigDecimal value) {
 		return nDigitFormat(value, 4);
 	}
+
 
 	private BigDecimal nDigitFormat(BigDecimal value, int scale) {
 		/*
@@ -821,11 +904,10 @@ class ZUGFeRDTransactionModelConverter {
 
 	}
 
+
 	/**
-	 * which taxes have been used with which amounts in this transaction, empty
-	 * for no taxes, or e.g. 19=>190 and 7=>14 if 1000 Eur were applicable to
-	 * 19% VAT (=>190 EUR VAT) and 200 EUR were applicable to 7% (=>14 EUR VAT)
-	 * 190 Eur
+	 * which taxes have been used with which amounts in this transaction, empty for no taxes, or e.g. 19=>190 and 7=>14 if 1000 Eur were applicable to 19% VAT
+	 * (=>190 EUR VAT) and 200 EUR were applicable to 7% (=>14 EUR VAT) 190 Eur
 	 *
 	 * @return HashMap<BigDecimal, VATAmount> which taxes have been used with which amounts
 	 */
@@ -833,7 +915,8 @@ class ZUGFeRDTransactionModelConverter {
 		return getVATPercentAmountMap(false);
 	}
 
-	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap(Boolean itemOnly) {
+
+ 	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap(Boolean itemOnly) {
 		HashMap<BigDecimal, VATAmount> hm = new HashMap<>();
 
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
@@ -901,6 +984,7 @@ class ZUGFeRDTransactionModelConverter {
 		return hm;
 	}
 
+
 	ZUGFeRDTransactionModelConverter withTest(boolean isTest) {
 		this.isTest = isTest;
 		return this;
@@ -912,6 +996,7 @@ class ZUGFeRDTransactionModelConverter {
 		private BigDecimal itemTotalNetAmount;
 		private BigDecimal itemTotalVATAmount;
 		private BigDecimal itemNetAmount;
+
 
 		public LineCalc(IZUGFeRDExportableItem currentItem) {
 			BigDecimal totalAllowance = BigDecimal.ZERO;
@@ -955,13 +1040,16 @@ class ZUGFeRDTransactionModelConverter {
 							BigDecimal.ROUND_HALF_UP);
 		}
 
+
 		public BigDecimal getItemTotalNetAmount() {
 			return itemTotalNetAmount;
 		}
 
+
 		public BigDecimal getItemTotalVATAmount() {
 			return itemTotalVATAmount;
 		}
+
 
 		public BigDecimal getItemNetAmount() {
 			return itemNetAmount;
@@ -975,6 +1063,7 @@ class ZUGFeRDTransactionModelConverter {
 		private BigDecimal lineTotalAmount;
 		private BigDecimal totalTaxAmount;
 
+
 		public Totals() {
 			BigDecimal res = BigDecimal.ZERO;
 			for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
@@ -982,7 +1071,7 @@ class ZUGFeRDTransactionModelConverter {
 				res = res.add(lc.getItemTotalNetAmount());
 			}
 			// Set line total
-			this.lineTotalAmount = res;
+			lineTotalAmount = res;
 
 			if (trans.getZFAllowances() != null) {
 				for (IZUGFeRDAllowanceCharge headerAllowance : trans
@@ -1005,7 +1094,7 @@ class ZUGFeRDTransactionModelConverter {
 			}
 
 			// Set total net amount
-			this.totalNetAmount = res;
+			totalNetAmount = res;
 
 			HashMap<BigDecimal, VATAmount> vatAmountHashMap = getVATPercentAmountMap();
 			for (VATAmount amount : vatAmountHashMap.values()) {
@@ -1013,21 +1102,27 @@ class ZUGFeRDTransactionModelConverter {
 			}
 
 			// Set total gross amount
-			this.totalGrossAmount = res;
-			this.totalTaxAmount = this.totalGrossAmount.subtract(this.totalNetAmount);
+			totalGrossAmount = res;
+
+			totalTaxAmount = totalGrossAmount
+					.subtract(totalNetAmount);
 		}
+
 
 		public BigDecimal getTotalNet() {
 			return totalNetAmount;
 		}
 
+
 		public BigDecimal getTotalGross() {
 			return totalGrossAmount;
 		}
 
+
 		public BigDecimal getLineTotal() {
 			return lineTotalAmount;
 		}
+
 
 		public BigDecimal getTaxTotal() {
 			return totalTaxAmount;
