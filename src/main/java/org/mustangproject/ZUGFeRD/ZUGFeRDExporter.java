@@ -158,7 +158,11 @@ public class ZUGFeRDExporter implements Closeable {
 		if (isFacturX) {
 			return "factur-x.xml";
 		} else {
-			return "ZUGFeRD-invoice.xml";		
+			if (ver==1) {
+				return "ZUGFeRD-invoice.xml";		
+			} else {
+				return "zugferd-invoice.xml";		
+			}
 		}
 	}
 
