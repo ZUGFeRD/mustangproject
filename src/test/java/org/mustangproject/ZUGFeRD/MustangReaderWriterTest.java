@@ -350,32 +350,13 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
 
 		// Reading ZUGFeRD
-		String amount = null;
-		String blz = null;
-		String bic = null;
-		String iban = null;
-		String kto = null;
-		String holder = null;
-		String ref = null;
-
-		if (zi.canParse()) {
-			amount = zi.getAmount();
-			blz = zi.getBLZ();
-			bic = zi.getBIC();
-			iban = zi.getIBAN();
-			kto = zi.getKTO();
-			holder = zi.getHolder();
-			ref = zi.getForeignReference();
-		}
-		// this resembles the data written in MustangReaderWriterCustomXMLTest
-		assertEquals(amount, "571.04");
-		assertEquals(blz, "41441604");
-		assertEquals(bic, "COBADEFFXXX");
-		assertEquals(iban, "DE88 2008 0000 0970 3757 00");
-		assertEquals(kto, "44421800");
-		assertEquals(holder, "Bei Spiel GmbH");
-		assertEquals(ref, "RE-20170509/505");
-
+		assertEquals(zi.getAmount(), "571.04");
+		assertEquals(zi.getBLZ(), getOwnBLZ());
+		assertEquals(zi.getBIC(), getOwnBIC());
+		assertEquals(zi.getIBAN(), getOwnIBAN());
+		assertEquals(zi.getKTO(), getOwnKto());
+		assertEquals(zi.getHolder(), getOwnOrganisationName());
+		assertEquals(zi.getForeignReference(), "RE-20170509/505");
 	}
 
 	public void testForeignImport() throws IOException {

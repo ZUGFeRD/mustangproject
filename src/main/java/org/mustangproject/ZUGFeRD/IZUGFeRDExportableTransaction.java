@@ -27,9 +27,20 @@ package org.mustangproject.ZUGFeRD;
  * */
 
 
+import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
+
 import java.util.Date;
 
 public interface IZUGFeRDExportableTransaction {
+
+	/**
+	 *
+	 *
+	 * @return Code of Document
+	 */
+	default String getDocumentCode() {
+		return DocumentCodeTypeConstants.INVOICE;
+	}
 
 	/**
 	 * Number, typically invoice number of the invoice

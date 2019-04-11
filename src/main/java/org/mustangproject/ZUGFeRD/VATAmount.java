@@ -31,13 +31,16 @@ import java.math.BigDecimal;
  */
 public class VATAmount {
 
-	public VATAmount(BigDecimal basis, BigDecimal calculated) {
+	public VATAmount(BigDecimal basis, BigDecimal calculated, String documentCode) {
 		super();
 		this.basis = basis;
 		this.calculated = calculated;
+		this.documentCode = documentCode;
 	}
 
 	BigDecimal basis, calculated;
+
+	String documentCode;
 
 	public BigDecimal getBasis() {
 		return basis;
@@ -55,12 +58,20 @@ public class VATAmount {
 		this.calculated = calculated;
 	}
 
+	public String getDocumentCode() {
+		return documentCode;
+	}
+
+	public void setDocumentCode(String documentCode) {
+		this.documentCode = documentCode;
+	}
+
 	public VATAmount add(VATAmount v) {
-		return new VATAmount(basis.add(v.getBasis()), calculated.add(v.getCalculated()));
+		return new VATAmount(basis.add(v.getBasis()), calculated.add(v.getCalculated()), this.documentCode);
 	}
 
 	public VATAmount subtract(VATAmount v) {
-		return new VATAmount(basis.subtract(v.getBasis()), calculated.subtract(v.getCalculated()));
+		return new VATAmount(basis.subtract(v.getBasis()), calculated.subtract(v.getCalculated()), this.documentCode);
 	}
 
 }

@@ -15,16 +15,23 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
+
 import java.math.BigDecimal;
 
 /**
  * @author AlexanderSchmidt
  */
 public interface IZUGFeRDAllowanceCharge {
+
 	BigDecimal getTotalAmount();
 
 	String getReason();
 
 	BigDecimal getTaxPercent();
+
+	default String getCategoryCode() {
+		return TaxCategoryCodeTypeConstants.STANDARDRATE;
+	}
 
 }
