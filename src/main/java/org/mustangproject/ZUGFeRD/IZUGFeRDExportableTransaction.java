@@ -36,45 +36,54 @@ public interface IZUGFeRDExportableTransaction {
 	 *
 	 * @return invoice number
 	 */
-	String getNumber();
+	default String getNumber() {
+		return null;
+	}
+
 
 	/**
 	 * the date when the invoice was created
 	 *
 	 * @return when the invoice was created
 	 */
-	Date getIssueDate();
+	default Date getIssueDate() {
+		return null;
+	}
+
 
 	/**
-	 * this should be the full sender institution name, details, manager and tax registration.
-	 * It is one of the few functions which may return null.
-	 * e.g.
+	 * this should be the full sender institution name, details, manager and tax registration. It is one of the few functions which may return null. e.g.
 	 * <p/>
-	 * Lieferant GmbH
-	 * Lieferantenstraße 20
-	 * 80333 München
-	 * Deutschland
-	 * Geschäftsführer: Hans Muster
-	 * Handelsregisternummer: H A 123
+	 * Lieferant GmbH Lieferantenstraße 20 80333 München Deutschland Geschäftsführer: Hans Muster Handelsregisternummer: H A 123
 	 *
 	 * @return null or full sender institution name, details, manager and tax registration
 	 */
-	String getOwnOrganisationFullPlaintextInfo();
+	default String getOwnOrganisationFullPlaintextInfo() {
+		return null;
+	}
+
 
 	/**
 	 * when the invoice is to be paid
 	 *
 	 * @return when the invoice is to be paid
 	 */
-	Date getDueDate();
+	default Date getDueDate() {
+		return null;
+	}
+
 
 	IZUGFeRDAllowanceCharge[] getZFAllowances();
 
+
 	IZUGFeRDAllowanceCharge[] getZFCharges();
+
 
 	IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges();
 
+
 	IZUGFeRDExportableItem[] getZFItems();
+
 
 	/**
 	 * the recipient
@@ -83,89 +92,136 @@ public interface IZUGFeRDExportableTransaction {
 	 */
 	IZUGFeRDExportableContact getRecipient();
 
+
 	/**
 	 * BIC of the sender
 	 *
 	 * @return the BIC code of the recipient sender's bank
 	 */
-	String getOwnBIC();
+	default String getOwnBIC() {
+		return null;
+	}
+
 
 	/**
 	 * BLZ of the sender
 	 *
 	 * @return the BLZ code of the recipient sender's bank
 	 */
-	String getOwnBLZ();
+	default String getOwnBLZ() {
+		return null;
+	}
+
 
 	/**
 	 * Bank name of the sender
 	 *
 	 * @return the name of the sender's bank
 	 */
-	String getOwnBankName();
+	default String getOwnBankName() {
+		return null;
+	}
+
 
 	/**
 	 * IBAN of the sender
 	 *
 	 * @return the IBAN of the invoice sender's bank account
 	 */
-	String getOwnIBAN();
+	default String getOwnIBAN() {
+		return null;
+	}
+
 
 	/**
 	 * IBAN of the sender
 	 *
 	 * @return the Account Number of the invoice sender's bank account
 	 */
-	String getOwnKto();
+	default String getOwnKto() {
+		return null;
+	}
+
 
 	/**
 	 * Tax ID (not VAT ID) of the sender
 	 *
 	 * @return Tax ID (not VAT ID) of the sender
 	 */
-	String getOwnTaxID();
+	default String getOwnTaxID() {
+		return null;
+	}
+
 
 	/**
 	 * VAT ID (Umsatzsteueridentifikationsnummer) of the sender
 	 *
 	 * @return VAT ID (Umsatzsteueridentifikationsnummer) of the sender
 	 */
-	String getOwnVATID();
+	default String getOwnVATID() {
+		return null;
+	}
+
+
+	/**
+	 * supplier identification assigned by the costumer
+	 *
+	 * @return the sender's identification
+	 */
+	default String getOwnForeignOrganisationID() {
+		return null;
+	}
+
 
 	/**
 	 * own name
 	 *
 	 * @return the sender's organisation name
 	 */
-	String getOwnOrganisationName();
+	default String getOwnOrganisationName() {
+		return null;
+	}
+
 
 	/**
 	 * own street address
 	 *
 	 * @return sender street address
 	 */
-	String getOwnStreet();
+	default String getOwnStreet() {
+		return null;
+	}
+
 
 	/**
 	 * own street postal code
 	 *
 	 * @return sender postal code
 	 */
-	String getOwnZIP();
+	default String getOwnZIP() {
+		return null;
+	}
+
 
 	/**
 	 * own city
 	 *
 	 * @return the invoice sender's city
 	 */
-	String getOwnLocation();
+	default String getOwnLocation() {
+		return null;
+	}
+
 
 	/**
 	 * own two digit country code
 	 *
 	 * @return the invoice senders two character country iso code
 	 */
-	String getOwnCountry();
+	default String getOwnCountry() {
+		return null;
+	}
+
 
 	/**
 	 * get delivery date
@@ -174,35 +230,44 @@ public interface IZUGFeRDExportableTransaction {
 	 */
 	Date getDeliveryDate();
 
+
 	/**
 	 * get main invoice currency used on the invoice
 	 *
 	 * @return three character currency of this invoice
 	 */
-	String getCurrency();
+	default String getCurrency() {
+		return null;
+	}
+
 
 	/**
 	 * get payment information text. e.g. Bank transfer
 	 *
 	 * @return payment information text
 	 */
-	String getOwnPaymentInfoText();
+	default String getOwnPaymentInfoText() {
+		return null;
+	}
+
 
 	/**
-	 * get payment term descriptional text
-	 * e.g. Bis zum 22.10.2015 ohne Abzug
+	 * get payment term descriptional text e.g. Bis zum 22.10.2015 ohne Abzug
 	 *
 	 * @return get payment terms
 	 */
-	String getPaymentTermDescription();
+	default String getPaymentTermDescription() {
+		return null;
+	}
+
 
 	/**
-	 * get reference document number
-	 * typically used for Invoice Corrections
-	 * Will be added as IncludedNote in comfort profile
+	 * get reference document number typically used for Invoice Corrections Will be added as IncludedNote in comfort profile
 	 *
 	 * @return the ID of the document this document refers to
 	 */
-	String getReferenceNumber();
+	default String getReferenceNumber() {
+		return null;
+	}
 
 }

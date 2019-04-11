@@ -19,9 +19,7 @@
 package org.mustangproject.ZUGFeRD;
 
 /**
- * Mustangproject's ZUGFeRD implementation
- * Neccessary interface for ZUGFeRD exporter
- * Licensed under the APLv2
+ * Mustangproject's ZUGFeRD implementation Neccessary interface for ZUGFeRD exporter Licensed under the APLv2
  *
  * @author jstaerk
  * @version 1.2.0
@@ -32,11 +30,22 @@ package org.mustangproject.ZUGFeRD;
 public interface IZUGFeRDExportableContact {
 
 	/**
+	 * customer identification assigned by the seller
+	 *
+	 * @return customer identification
+	 */
+	default String getID() {
+		return null;
+	}
+
+
+	/**
 	 * First and last name of the recipient
 	 *
 	 * @return First and last name of the recipient
 	 */
 	String getName();
+
 
 	/**
 	 * Postal code of the recipient
@@ -45,12 +54,14 @@ public interface IZUGFeRDExportableContact {
 	 */
 	String getZIP();
 
+
 	/**
 	 * VAT ID (Umsatzsteueridentifikationsnummer) of the contact
 	 *
 	 * @return VAT ID (Umsatzsteueridentifikationsnummer) of the contact
 	 */
 	String getVATID();
+
 
 	/**
 	 * two-letter country code of the contact
@@ -59,12 +70,14 @@ public interface IZUGFeRDExportableContact {
 	 */
 	String getCountry();
 
+
 	/**
 	 * Returns the city of the contact
 	 *
 	 * @return Returns the city of the recipient
 	 */
 	String getLocation();
+
 
 	/**
 	 * Returns the street address (street+number) of the contact
