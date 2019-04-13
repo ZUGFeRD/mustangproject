@@ -33,7 +33,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExportableTransaction {
+public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 
 	@Override
 	public Date getDeliveryDate() {
@@ -56,33 +56,8 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 	}
 
 	@Override
-	public String getOwnKto() {
-		return "44421800";
-	}
-
-	@Override
-	public String getOwnBLZ() {
-		return "41441604";
-	}
-
-	@Override
-	public String getOwnBIC() {
-		return "COBADEFFXXX";
-	}
-
-	@Override
-	public String getOwnBankName() {
-		return "Commerzbank";
-	}
-
-	@Override
 	public String getOwnCountry() {
 		return "DE";
-	}
-
-	@Override
-	public String getOwnIBAN() {
-		return "DE88 2008 0000 0970 3757 00";
 	}
 
 	@Override
@@ -120,7 +95,6 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 		return new Contact();
 	}
 
-
 	@Override
 	public String getOwnOrganisationFullPlaintextInfo() {
 		return null;
@@ -142,11 +116,6 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 		allItems[1] = new Item(new BigDecimal("0.79"), new BigDecimal("400"), balloonProduct);
 		allItems[2] = new Item(new BigDecimal("0.10"), new BigDecimal("200"), airProduct);
 		return allItems;
-	}
-
-	@Override
-	public String getOwnPaymentInfoText() {
-		return "Überweisung";
 	}
 
 	@Override
@@ -173,140 +142,6 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 	@Override
 	public String getReferenceNumber() {
 		return null;
-	}
-
-	class Contact implements IZUGFeRDExportableContact {
-
-		@Override
-		public String getCountry() {
-			return "DE";
-		}
-
-		@Override
-		public String getLocation() {
-			return "Spielkreis";
-		}
-
-		@Override
-		public String getName() {
-			return "Theodor Est";
-		}
-
-		@Override
-		public String getStreet() {
-			return "Bahnstr. 42";
-		}
-
-		@Override
-		public String getVATID() {
-			return "DE999999999";
-		}
-
-		@Override
-		public String getZIP() {
-			return "88802";
-		}
-	}
-
-	class Item implements IZUGFeRDExportableItem {
-
-		public Item(BigDecimal price, BigDecimal quantity, Product product) {
-			super();
-			this.price = price;
-			this.quantity = quantity;
-			this.product = product;
-		}
-
-		private BigDecimal price, quantity;
-		private Product product;
-
-		@Override
-		public BigDecimal getPrice() {
-			return price;
-		}
-
-		public void setPrice(BigDecimal price) {
-			this.price = price;
-		}
-
-		@Override
-		public BigDecimal getQuantity() {
-			return quantity;
-		}
-
-		public void setQuantity(BigDecimal quantity) {
-			this.quantity = quantity;
-		}
-
-		@Override
-		public Product getProduct() {
-			return product;
-		}
-
-		public void setProduct(Product product) {
-			this.product = product;
-		}
-
-		@Override
-		public IZUGFeRDAllowanceCharge[] getItemAllowances() {
-			return null;
-		}
-
-		@Override
-		public IZUGFeRDAllowanceCharge[] getItemCharges() {
-			return null;
-		}
-
-	}
-
-	class Product implements IZUGFeRDExportableProduct {
-		private String description, name, unit;
-		private BigDecimal VATPercent;
-
-		public Product(String description, String name, String unit, BigDecimal VATPercent) {
-			super();
-			this.description = description;
-			this.name = name;
-			this.unit = unit;
-			this.VATPercent = VATPercent;
-		}
-
-		@Override
-		public String getDescription() {
-			return description;
-		}
-
-		public void setDescription(String description) {
-			this.description = description;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		@Override
-		public String getUnit() {
-			return unit;
-		}
-
-		public void setUnit(String unit) {
-			this.unit = unit;
-		}
-
-		@Override
-		public BigDecimal getVATPercent() {
-			return VATPercent;
-		}
-
-		public void setVATPercent(BigDecimal vATPercent) {
-			VATPercent = vATPercent;
-		}
-
 	}
 
 	/**
@@ -341,10 +176,10 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getOwnBIC());
-		assertEquals(zi.getBLZ(), getOwnBLZ());
-		assertEquals(zi.getIBAN(), getOwnIBAN());
-		assertEquals(zi.getKTO(), getOwnKto());
+		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
+		assertEquals(zi.getBLZ(), getTradeSettlementPayment()[0].getOwnBLZ());
+		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
+		assertEquals(zi.getKTO(), getTradeSettlementPayment()[0].getOwnKto());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getDueDate(), "20170530");
 		assertEquals(zi.getForeignReference(), getNumber());
@@ -384,10 +219,10 @@ public class MustangReaderWriterEdgeTest extends TestCase implements IZUGFeRDExp
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getOwnBIC());
-		assertEquals(zi.getBLZ(), getOwnBLZ());
-		assertEquals(zi.getIBAN(), getOwnIBAN());
-		assertEquals(zi.getKTO(), getOwnKto());
+		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
+		assertEquals(zi.getBLZ(), getTradeSettlementPayment()[0].getOwnBLZ());
+		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
+		assertEquals(zi.getKTO(), getTradeSettlementPayment()[0].getOwnKto());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 	}
