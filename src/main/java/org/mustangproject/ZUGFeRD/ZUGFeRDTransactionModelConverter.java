@@ -39,7 +39,6 @@ import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
 import org.mustangproject.ZUGFeRD.model.DateTimeType;
 import org.mustangproject.ZUGFeRD.model.DateTimeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeType;
-import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.DocumentContextParameterType;
 import org.mustangproject.ZUGFeRD.model.DocumentContextParameterTypeConstants;
 import org.mustangproject.ZUGFeRD.model.DocumentLineDocumentType;
@@ -62,7 +61,6 @@ import org.mustangproject.ZUGFeRD.model.SupplyChainTradeLineItemType;
 import org.mustangproject.ZUGFeRD.model.SupplyChainTradeSettlementType;
 import org.mustangproject.ZUGFeRD.model.SupplyChainTradeTransactionType;
 import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeType;
-import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.TaxRegistrationType;
 import org.mustangproject.ZUGFeRD.model.TaxRegistrationTypeConstants;
 import org.mustangproject.ZUGFeRD.model.TaxTypeCodeType;
@@ -340,7 +338,7 @@ class ZUGFeRDTransactionModelConverter {
 		currencyCode.setValue(currency);
 		tradeSettlement.setInvoiceCurrencyCode(currencyCode);
 
-		tradeSettlement.getSpecifiedTradeSettlementPaymentMeans().add(
+		tradeSettlement.getSpecifiedTradeSettlementPaymentMeans().addAll(
 				getPaymentData());
 		tradeSettlement.getApplicableTradeTax().addAll(getTradeTax());
 		tradeSettlement.getSpecifiedTradePaymentTerms().addAll(
@@ -364,46 +362,50 @@ class ZUGFeRDTransactionModelConverter {
 	}
 
 
-	private TradeSettlementPaymentMeansType getPaymentData() {
-		TradeSettlementPaymentMeansType paymentData = xmlFactory
-				.createTradeSettlementPaymentMeansType();
-		PaymentMeansCodeType paymentDataType = xmlFactory
-				.createPaymentMeansCodeType();
-		paymentDataType.setValue(PaymentMeansCodeTypeConstants.BANKACCOUNT);
-		paymentData.setTypeCode(paymentDataType);
+	private List<TradeSettlementPaymentMeansType> getPaymentData() {
+		List<TradeSettlementPaymentMeansType> result = new ArrayList<>();
+		for (IZUGFeRDTradeSettlementPayment settlementPayment : trans.getTradeSettlementPayment()) {
+			TradeSettlementPaymentMeansType paymentData = xmlFactory
+					.createTradeSettlementPaymentMeansType();
+			PaymentMeansCodeType paymentDataType = xmlFactory
+					.createPaymentMeansCodeType();
+			paymentDataType.setValue(PaymentMeansCodeTypeConstants.BANKACCOUNT);
+			paymentData.setTypeCode(paymentDataType);
 
-		TextType paymentInfo = xmlFactory.createTextType();
-		String paymentInfoText = trans.getOwnPaymentInfoText();
-		if (paymentInfoText == null) {
-			paymentInfoText = "";
+			TextType paymentInfo = xmlFactory.createTextType();
+			String paymentInfoText = settlementPayment.getOwnPaymentInfoText();
+			if (paymentInfoText == null) {
+				paymentInfoText = "";
+			}
+			paymentInfo.setValue(paymentInfoText);
+			paymentData.getInformation().add(paymentInfo);
+
+			CreditorFinancialAccountType bankAccount = xmlFactory
+					.createCreditorFinancialAccountType();
+			IDType iban = xmlFactory.createIDType();
+			iban.setValue(settlementPayment.getOwnIBAN());
+			bankAccount.setIBANID(iban);
+			IDType kto = xmlFactory.createIDType();
+			kto.setValue(settlementPayment.getOwnKto());
+			bankAccount.setProprietaryID(kto);
+			paymentData.setPayeePartyCreditorFinancialAccount(bankAccount);
+
+			CreditorFinancialInstitutionType bankData = xmlFactory
+					.createCreditorFinancialInstitutionType();
+			IDType bicId = xmlFactory.createIDType();
+			bicId.setValue(settlementPayment.getOwnBIC());
+			bankData.setBICID(bicId);
+			TextType bankName = xmlFactory.createTextType();
+			bankName.setValue(settlementPayment.getOwnBankName());
+			bankData.setName(bankName);
+			IDType blz = xmlFactory.createIDType();
+			blz.setValue(settlementPayment.getOwnBLZ());
+			bankData.setGermanBankleitzahlID(blz);
+
+			paymentData.setPayeeSpecifiedCreditorFinancialInstitution(bankData);
+			result.add(paymentData);
 		}
-		paymentInfo.setValue(paymentInfoText);
-		paymentData.getInformation().add(paymentInfo);
-
-		CreditorFinancialAccountType bankAccount = xmlFactory
-				.createCreditorFinancialAccountType();
-		IDType iban = xmlFactory.createIDType();
-		iban.setValue(trans.getOwnIBAN());
-		bankAccount.setIBANID(iban);
-		IDType kto = xmlFactory.createIDType();
-		kto.setValue(trans.getOwnKto());
-		bankAccount.setProprietaryID(kto);
-		paymentData.setPayeePartyCreditorFinancialAccount(bankAccount);
-
-		CreditorFinancialInstitutionType bankData = xmlFactory
-				.createCreditorFinancialInstitutionType();
-		IDType bicId = xmlFactory.createIDType();
-		bicId.setValue(trans.getOwnBIC());
-		bankData.setBICID(bicId);
-		TextType bankName = xmlFactory.createTextType();
-		bankName.setValue(trans.getOwnBankName());
-		bankData.setName(bankName);
-		IDType blz = xmlFactory.createIDType();
-		blz.setValue(trans.getOwnBLZ());
-		bankData.setGermanBankleitzahlID(blz);
-
-		paymentData.setPayeeSpecifiedCreditorFinancialInstitution(bankData);
-		return paymentData;
+		return result;
 	}
 
 
