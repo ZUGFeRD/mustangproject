@@ -55,7 +55,7 @@ public class ZUGFeRDExporter implements Closeable {
 
 	public static final int DefaultZUGFeRDVersion = 1;
 
-	private static boolean isFacturX = false;
+	private boolean isFacturX = false;
 
 	/**
 	 * To use the ZUGFeRD exporter, implement IZUGFeRDExportableTransaction in
@@ -133,7 +133,7 @@ public class ZUGFeRDExporter implements Closeable {
 		additionalXMLs.put(filename, xml);
 	}
 
-	public static String getNamespaceForVersion(int ver) {
+	public String getNamespaceForVersion(int ver) {
 		if (isFacturX) {
 			return "urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#";	
 		} else if (ver == 1) {
@@ -146,7 +146,7 @@ public class ZUGFeRDExporter implements Closeable {
 		}
 	}
 
-	public static String getPrefixForVersion(int ver) {
+	public String getPrefixForVersion(int ver) {
 		if (isFacturX) {
 			return "fx";
 		} else {
@@ -154,7 +154,7 @@ public class ZUGFeRDExporter implements Closeable {
 		}
 	}
 
-	public static String getFilenameForVersion(int ver) {
+	public String getFilenameForVersion(int ver) {
 		if (isFacturX) {
 			return "factur-x.xml";
 		} else {
@@ -498,13 +498,13 @@ public class ZUGFeRDExporter implements Closeable {
 
 		if (attachZUGFeRDHeaders) {
 			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, profile,
-					ZUGFeRDExporter.getNamespaceForVersion(ZFVersion), ZUGFeRDExporter.getPrefixForVersion(ZFVersion),
-					ZUGFeRDExporter.getFilenameForVersion(ZFVersion));
+					getNamespaceForVersion(ZFVersion), getPrefixForVersion(ZFVersion),
+					getFilenameForVersion(ZFVersion));
 
 			metadata.addSchema(zf);
 		}
 
-		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(metadata, ZFVersion, attachZUGFeRDHeaders);
+		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(this, metadata, ZFVersion, attachZUGFeRDHeaders);
 		pdfaex.setZUGFeRDVersion(ZFVersion);
 		metadata.addSchema(pdfaex);
 

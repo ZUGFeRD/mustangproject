@@ -506,6 +506,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		assertEquals(zi.getForeignReference(), getNumber());
 	}
 
+	
 	public void testFXExport() throws Exception {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506fx.pdf";
@@ -514,7 +515,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
+			ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
 			ze.setFacturX();
 			ze.PDFattachZugferdFile(this);
 			ze.disableAutoClose(true);
