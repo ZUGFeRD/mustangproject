@@ -45,7 +45,7 @@ public class ZUGFeRDTransactionModelConverterTest {
 				.setOwnStreet("own street")
 				.setOwnCountry("own country")
 				.setOwnLocation("own city")
-				.setOwnBankName("own bank")
+				.setTradeSettlementPayment(new IZUGFeRDTradeSettlementPaymentImpl().setOwnBankName("own bank"))
 				.setZFItems(
 						new IZUGFeRDExportableItemImpl()
 								.setProduct(new IZUGFeRDExportableProductImpl()

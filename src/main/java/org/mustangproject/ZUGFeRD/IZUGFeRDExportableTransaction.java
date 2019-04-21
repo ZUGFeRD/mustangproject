@@ -105,53 +105,9 @@ public interface IZUGFeRDExportableTransaction {
 
 
 	/**
-	 * BIC of the sender
-	 *
-	 * @return the BIC code of the recipient sender's bank
+	 * the creditors payment informations
 	 */
-	default String getOwnBIC() {
-		return null;
-	}
-
-
-	/**
-	 * BLZ of the sender
-	 *
-	 * @return the BLZ code of the recipient sender's bank
-	 */
-	default String getOwnBLZ() {
-		return null;
-	}
-
-
-	/**
-	 * Bank name of the sender
-	 *
-	 * @return the name of the sender's bank
-	 */
-	default String getOwnBankName() {
-		return null;
-	}
-
-
-	/**
-	 * IBAN of the sender
-	 *
-	 * @return the IBAN of the invoice sender's bank account
-	 */
-	default String getOwnIBAN() {
-		return null;
-	}
-
-
-	/**
-	 * IBAN of the sender
-	 *
-	 * @return the Account Number of the invoice sender's bank account
-	 */
-	default String getOwnKto() {
-		return null;
-	}
+	IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment();
 
 
 	/**
@@ -248,16 +204,6 @@ public interface IZUGFeRDExportableTransaction {
 	 * @return three character currency of this invoice
 	 */
 	default String getCurrency() {
-		return null;
-	}
-
-
-	/**
-	 * get payment information text. e.g. Bank transfer
-	 *
-	 * @return payment information text
-	 */
-	default String getOwnPaymentInfoText() {
 		return null;
 	}
 

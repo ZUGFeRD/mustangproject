@@ -29,13 +29,11 @@ import java.util.HashMap;
 public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 	private class LineCalc {
-		private IZUGFeRDExportableItem currentItem = null;
 		private BigDecimal totalGross;
 		private BigDecimal itemTotalNetAmount;
 		private BigDecimal itemTotalVATAmount;
 
 		public LineCalc(IZUGFeRDExportableItem currentItem) {
-			this.currentItem = currentItem;
 			BigDecimal multiplicator = currentItem.getProduct().getVATPercent().divide(new BigDecimal(100)).add(new BigDecimal(1));
 //			priceGross=currentItem.getPrice().multiply(multiplicator);
 			totalGross = currentItem.getPrice().multiply(multiplicator).multiply(currentItem.getQuantity());
@@ -58,14 +56,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 	protected byte[] zugferdData;
 	private IZUGFeRDExportableTransaction trans;
-	private boolean isTest;
 
 	/**
 	 * enables the flag to indicate a test invoice in the XML structure
 	 */
-	public void setTest() {
-		isTest = true;
-	}
+	public void setTest() {}
 
 	private String nDigitFormat(BigDecimal value, int scale) {
 		/*
@@ -155,7 +150,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	 * @return which taxes have been used with which amounts in this invoice
 	 */
 	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap() {
-		HashMap<BigDecimal, VATAmount> hm = new HashMap<BigDecimal, VATAmount>();
+		HashMap<BigDecimal, VATAmount> hm = new HashMap<>();
 
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			BigDecimal percent = currentItem.getProduct().getVATPercent();
@@ -174,15 +169,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 	@Override
 	public void generateXML(IZUGFeRDExportableTransaction trans) {
-
 		this.trans = trans;
 		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
 		SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
-		String testBooleanStr = "false";
-		if (isTest) {
-			testBooleanStr = "true";
-
-		}
 		String senderReg = "";
 		if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
 			senderReg = ""
@@ -331,21 +320,23 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "		</ram:ApplicableHeaderTradeDelivery>\n"
 				+ "		<ram:ApplicableHeaderTradeSettlement>\n" //$NON-NLS-1$
 				+ "			<ram:PaymentReference>" + trans.getNumber() + "</ram:PaymentReference>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "			<ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>\n" //$NON-NLS-1$
-				+ "			<ram:SpecifiedTradeSettlementPaymentMeans>\n" //$NON-NLS-1$
-				+ "				<ram:TypeCode>42</ram:TypeCode>\n" //$NON-NLS-1$
-				+ "				<ram:Information>Überweisung</ram:Information>\n" //$NON-NLS-1$
-				+ "				<ram:PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
-				+ "					<ram:IBANID>" + trans.getOwnIBAN() + "</ram:IBANID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "					<ram:ProprietaryID>" + trans.getOwnKto() + "</ram:ProprietaryID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				</ram:PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
-				+ "				<ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
-				+ "					<ram:BICID>" + trans.getOwnBIC() + "</ram:BICID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "					<ram:GermanBankleitzahlID>" + trans.getOwnBLZ() + "</ram:GermanBankleitzahlID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-//					+ "					<ram:Name>"+trans.getOwnBankName()+"</ram:Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				</ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
-				+ "			</ram:SpecifiedTradeSettlementPaymentMeans>\n"; //$NON-NLS-1$
+				+ "			<ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>\n"; //$NON-NLS-1$
 
+				for(IZUGFeRDTradeSettlementPayment payment : trans.getTradeSettlementPayment()) {
+					xml += "			<ram:SpecifiedTradeSettlementPaymentMeans>\n" //$NON-NLS-1$
+						+ "				<ram:TypeCode>42</ram:TypeCode>\n" //$NON-NLS-1$
+						+ "				<ram:Information>Überweisung</ram:Information>\n" //$NON-NLS-1$
+						+ "				<ram:PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
+						+ "					<ram:IBANID>" + payment.getOwnIBAN() + "</ram:IBANID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+						+ "					<ram:ProprietaryID>" + payment.getOwnKto() + "</ram:ProprietaryID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+						+ "				</ram:PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
+						+ "				<ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
+						+ "					<ram:BICID>" + payment.getOwnBIC() + "</ram:BICID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+						+ "					<ram:GermanBankleitzahlID>" + payment.getOwnBLZ() + "</ram:GermanBankleitzahlID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+//						+ "					<ram:Name>"+trans.getOwnBankName()+"</ram:Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
+						+ "				</ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
+						+ "			</ram:SpecifiedTradeSettlementPaymentMeans>\n"; //$NON-NLS-1$
+				}
 
 		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = getVATPercentAmountMap();
 		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
