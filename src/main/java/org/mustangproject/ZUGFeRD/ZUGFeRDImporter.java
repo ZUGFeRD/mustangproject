@@ -127,7 +127,7 @@ public class ZUGFeRDImporter {
 			 * currently (in the release candidate of version 1) only one attached file with
 			 * the name ZUGFeRD-invoice.xml is allowed
 			 */
-			if ((filename.equals("ZUGFeRD-invoice.xml") || filename.equals("factur-x.xml"))) { //$NON-NLS-1$
+			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml"))) { //$NON-NLS-1$
 				containsMeta = true;
 
 				PDComplexFileSpecification fileSpec = names.get(filename);
