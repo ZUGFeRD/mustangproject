@@ -63,8 +63,16 @@ public class ZUGFeRDMigrator {
 		 */
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		applySchematronXsl(new FileInputStream(xmlFilename), baos);
+		
 		String res = null;
 		res = baos.toString("UTF-8");
+
+		//somehow the XML parser seems to insert erreneous XML namespaces, depending on which one it is, saxon seems to be cleaner.
+		//nevertheless, remove them manually
+		res=res.replace("<rsm:ExchangedDocument xmlns:qdt=\"urn:un:unece:uncefact:data:standard:QualifiedDataType:100\">", "<rsm:ExchangedDocument>");
+		res=res.replace("<rsm:SupplyChainTradeTransaction xmlns:qdt=\"urn:un:unece:uncefact:data:standard:QualifiedDataType:100\">", "<rsm:SupplyChainTradeTransaction>");
+		
+		
 		return res;
 	}
 
