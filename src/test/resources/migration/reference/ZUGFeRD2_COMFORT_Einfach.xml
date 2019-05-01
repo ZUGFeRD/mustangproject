@@ -55,7 +55,7 @@ Migrated by Mustangproject XSLT
       </ram:TestIndicator>
       <!-- Im Echtbetrieb muss der TestIndicator entweder vollständig entfallen oder auf false stehen. -->
 		    <ram:GuidelineSpecifiedDocumentContextParameter>
-			      <ram:ID>urn:ferd:CrossIndustryDocument:invoice:1p0:comfort</ram:ID>
+			      <ram:ID>urn:cen.eu:en16931:2017</ram:ID>
 		    </ram:GuidelineSpecifiedDocumentContextParameter>
 	  </rsm:ExchangedDocumentContext>
    <rsm:ExchangedDocument>

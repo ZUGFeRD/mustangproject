@@ -25,7 +25,7 @@
             <udt:Indicator>false</udt:Indicator>
         </ram:TestIndicator>
         <ram:GuidelineSpecifiedDocumentContextParameter>
-            <ram:ID>urn:ferd:CrossIndustryDocument:invoice:1p0:extended</ram:ID>
+            <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:zugferd.de:2p0:extended</ram:ID>
         </ram:GuidelineSpecifiedDocumentContextParameter>
     </rsm:ExchangedDocumentContext>
     <rsm:ExchangedDocument>

@@ -67,6 +67,12 @@ public class ZUGFeRDMigrator {
 		String res = null;
 		res = baos.toString("UTF-8");
 
+		//migrate the profiles
+		
+		res=res.replace("urn:ferd:CrossIndustryDocument:invoice:1p0:basic", "urn:cen.eu:en16931:2017#compliant#urn:zugferd.de:2p0:basic");
+		res=res.replace("urn:ferd:CrossIndustryDocument:invoice:1p0:comfort", "urn:cen.eu:en16931:2017");
+		res=res.replace("urn:ferd:CrossIndustryDocument:invoice:1p0:extended", "urn:cen.eu:en16931:2017#conformant#urn:zugferd.de:2p0:extended");
+		
 		//somehow the XML parser seems to insert erreneous XML namespaces, depending on which one it is, saxon seems to be cleaner.
 		//nevertheless, remove them manually
 		res=res.replace("<rsm:ExchangedDocument xmlns:qdt=\"urn:un:unece:uncefact:data:standard:QualifiedDataType:100\">", "<rsm:ExchangedDocument>");

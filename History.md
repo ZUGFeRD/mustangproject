@@ -1,3 +1,13 @@
+signatur mustangproject wird nicht erkannt
+fx option in kommandozeile fehlt
+
+java -jar ZUV-0.7.0c-SNAPSHOT.jar --action validate -x /Users/jstaerk/workspace/mustangproject/src/test/resources/migration/reference/ZUGFeRD2_EXTENDED_Warenrechnung.xml
+errors
+
+
+java -jar ZUV-0.7.0c-SNAPSHOT.jar --action validate -x /Users/jstaerk/workspace/mustangproject/src/test/resources/migration/reference/ZUGFeRD2_COMFORT_Einfach.xml
+nullpointerex
+
 1.6.0
 =====
 2019-02-03
