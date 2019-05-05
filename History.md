@@ -1,12 +1,14 @@
-signatur mustangproject wird nicht erkannt
-fx option in kommandozeile fehlt
 
-java -jar ZUV-0.7.0c-SNAPSHOT.jar --action validate -x /Users/jstaerk/workspace/mustangproject/src/test/resources/migration/reference/ZUGFeRD2_EXTENDED_Warenrechnung.xml
-errors
+1.7.0
+=====
+2019-05-05
 
+Export ZF2 final now seems halfway valid (new filename, new namespace prefixa)
+Migrates profile names in ZF1 to ZF2 migration
+Nullpointerex solved with certain invalid profiles
+Be able to access additional files ("additional data")
+Known bugs: src/test/resources/migration/reference/ZUGFeRD2_EXTENDED_Warenrechnung.xml is invalid
 
-java -jar ZUV-0.7.0c-SNAPSHOT.jar --action validate -x /Users/jstaerk/workspace/mustangproject/src/test/resources/migration/reference/ZUGFeRD2_COMFORT_Einfach.xml
-nullpointerex
 
 1.6.0
 =====
