@@ -363,7 +363,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 			// check for pdf-a schema extension
 			assertFalse(pdfContent.indexOf("<fx:ConformanceLevel>EN 16931</fx:ConformanceLevel>") == -1);
 			assertFalse(pdfContent.indexOf("<pdfaSchema:prefix>fx</pdfaSchema:prefix>") == -1);
-			assertFalse(pdfContent.indexOf("urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:en16931") == -1);
+			assertFalse(pdfContent.indexOf("urn:cen.eu:en16931:2017") == -1);
 		}
 
 		// now check the contents (like MustangReaderTest)

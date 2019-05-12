@@ -194,7 +194,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "	<rsm:ExchangedDocumentContext>\n" //$NON-NLS-1$
 //					+ "		<ram:TestIndicator><udt:Indicator>"+testBooleanStr+"</udt:Indicator></ram:TestIndicator>\n" //$NON-NLS-1$
 				+ "		<ram:GuidelineSpecifiedDocumentContextParameter>\n" //$NON-NLS-1$
-				+ "			<ram:ID>urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:en16931</ram:ID>\n" //$NON-NLS-1$
+				+ "			<ram:ID>urn:cen.eu:en16931:2017</ram:ID>\n" //$NON-NLS-1$
 				+ "		</ram:GuidelineSpecifiedDocumentContextParameter>\n" //$NON-NLS-1$
 				+ "	</rsm:ExchangedDocumentContext>\n" //$NON-NLS-1$
 				+ "	<rsm:ExchangedDocument>\n" //$NON-NLS-1$
