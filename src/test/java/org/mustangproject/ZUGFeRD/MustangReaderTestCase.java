@@ -27,6 +27,10 @@ public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRD
 	public MustangReaderTestCase(String testName) {
 		super(testName);
 	}
+	
+	@Override public IZUGFeRDExportableOrganization getOwnOrganization() {
+		return new SenderOrganization();
+	}
 
 	@Override
 	public IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
@@ -99,6 +103,21 @@ public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRD
 		public String getZIP() {
 			return "88802";
 		}
+	}
+	
+	protected class SenderOrganization implements IZUGFeRDExportableOrganization {
+
+		@Override
+		public String getID() {
+			
+			return "HRA-555123456";
+		}
+
+		@Override
+		public String getName() {
+			return "Bei Spiel GmbH";
+		}
+		
 	}
 
 	protected class SenderContact implements IZUGFeRDExportableContact {

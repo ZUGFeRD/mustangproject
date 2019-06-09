@@ -292,6 +292,14 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		xml = xml + "			<ram:SellerTradeParty>\n" //$NON-NLS-1$
 		// + " <GlobalID schemeID=\"0088\">4000001123452</GlobalID>\n"
 				+ "				<ram:Name>" + trans.getOwnOrganisationName() + "</ram:Name>\n"; //$NON-NLS-1$ //$NON-NLS-2$
+		if (trans.getOwnOrganization()!=null) {
+			
+			xml = xml + "            <ram:SpecifiedLegalOrganization>\n" + 
+					"               <ram:ID>"+trans.getOwnOrganization().getID()+"</ram:ID>\n" + 
+					"               <ram:TradingBusinessName>"+trans.getOwnOrganization().getName()+"</ram:TradingBusinessName>\n" + 
+					"            </ram:SpecifiedLegalOrganization>";
+			
+		}
 		if (trans.getOwnContact() != null) {
 			xml = xml + "<ram:DefinedTradeContact>\n" + "     <ram:PersonName>" + trans.getOwnContact().getName()
 					+ "</ram:PersonName>\n";

@@ -83,6 +83,10 @@ public interface IZUGFeRDExportableTransaction {
 		return null;
 	}
 
+	default IZUGFeRDExportableOrganization getOwnOrganization() {
+		return null;
+	}
+
 	/**
 	 * who processed the order
 	 *
