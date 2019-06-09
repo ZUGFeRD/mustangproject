@@ -68,7 +68,7 @@ public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRD
 		}
 	}
 
-	protected class Contact implements IZUGFeRDExportableContact {
+	protected class RecipientContact implements IZUGFeRDExportableContact {
 
 		@Override
 		public String getCountry() {
@@ -99,6 +99,27 @@ public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRD
 		public String getZIP() {
 			return "88802";
 		}
+	}
+
+	protected class SenderContact implements IZUGFeRDExportableContact {
+
+
+
+		@Override
+		public String getName() {
+			return "Dieter Mara";
+		}
+
+		@Override
+		public String getPhone() {
+			return "++49(0)1771234567";
+		}
+
+		@Override
+		public String getEMail() {
+			return "Dieter@Mara.de";
+		}
+
 	}
 
 	protected class Item implements IZUGFeRDExportableItem {

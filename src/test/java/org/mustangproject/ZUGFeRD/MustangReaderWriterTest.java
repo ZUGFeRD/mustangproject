@@ -19,7 +19,6 @@
 package org.mustangproject.ZUGFeRD;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
@@ -92,7 +91,12 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 
 	@Override
 	public IZUGFeRDExportableContact getRecipient() {
-		return new Contact();
+		return new RecipientContact();
+	}
+	
+	@Override
+	public IZUGFeRDExportableContact getOwnContact() {
+		return new SenderContact();
 	}
 
 	@Override
@@ -148,7 +152,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 
 	@Override
 	public String getReferenceNumber() {
-		return null;
+		return "AB32";
 	}
 
 	/**
@@ -334,6 +338,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
 		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
+		assertEquals(zi.getReference(), getReferenceNumber());
 		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
 		assertEquals(zi.getKTO(), getTradeSettlementPayment()[0].getOwnKto());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());

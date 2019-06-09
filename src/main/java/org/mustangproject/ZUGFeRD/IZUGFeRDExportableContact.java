@@ -46,13 +46,23 @@ public interface IZUGFeRDExportableContact {
 	 */
 	String getName();
 
+	default String getPhone() {
+		return null;
+	}
+	
+	default String getEMail() {
+		return null;
+	}
+
 
 	/**
 	 * Postal code of the recipient
 	 *
 	 * @return Postal code of the recipient
 	 */
-	String getZIP();
+	default String getZIP() {
+		return null;
+	}
 
 
 	/**
@@ -60,7 +70,9 @@ public interface IZUGFeRDExportableContact {
 	 *
 	 * @return VAT ID (Umsatzsteueridentifikationsnummer) of the contact
 	 */
-	String getVATID();
+	default String getVATID() {
+		return null;
+	}
 
 
 	/**
@@ -68,7 +80,9 @@ public interface IZUGFeRDExportableContact {
 	 *
 	 * @return two-letter iso country code of the contact
 	 */
-	String getCountry();
+	default String getCountry() {
+		return null;
+	}
 
 
 	/**
@@ -76,7 +90,9 @@ public interface IZUGFeRDExportableContact {
 	 *
 	 * @return Returns the city of the recipient
 	 */
-	String getLocation();
+	default String getLocation() {
+		return null;
+	}
 
 
 	/**
@@ -84,6 +100,8 @@ public interface IZUGFeRDExportableContact {
 	 *
 	 * @return street address (street+number) of the contact
 	 */
-	String getStreet();
+	default String getStreet() {
+		return null;
+	}
 
 }

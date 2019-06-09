@@ -83,6 +83,15 @@ public interface IZUGFeRDExportableTransaction {
 		return null;
 	}
 
+	/**
+	 * who processed the order
+	 *
+	 * @return the contact person at the supplier side
+	 */
+	default IZUGFeRDExportableContact getOwnContact() {
+		return null;
+	}
+
 
 	IZUGFeRDAllowanceCharge[] getZFAllowances();
 

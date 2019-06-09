@@ -217,6 +217,13 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
+	 * @return the referred document
+	 */
+	public String getReference() {
+		return extractString("//ApplicableHeaderTradeAgreement/BuyerReference");
+	}
+
+	/**
 	 * @return the sender's bank's BLZ code
 	 */
 	public String getBLZ() {

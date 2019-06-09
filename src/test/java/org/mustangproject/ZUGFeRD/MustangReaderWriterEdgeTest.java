@@ -19,7 +19,6 @@
 package org.mustangproject.ZUGFeRD;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
@@ -75,6 +74,13 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 		return "Ecke 12";
 	}
 
+
+	@Override
+	public IZUGFeRDExportableContact getOwnContact() {
+		return new SenderContact();
+		
+	}
+
 	@Override
 	public String getOwnTaxID() {
 		return "22/815/0815/4";
@@ -92,7 +98,7 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 
 	@Override
 	public IZUGFeRDExportableContact getRecipient() {
-		return new Contact();
+		return new RecipientContact();
 	}
 
 	@Override
@@ -141,7 +147,7 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 
 	@Override
 	public String getReferenceNumber() {
-		return null;
+		return "AB321";
 	}
 
 	/**
