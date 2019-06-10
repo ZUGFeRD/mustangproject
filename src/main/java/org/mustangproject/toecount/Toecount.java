@@ -139,8 +139,8 @@ public class Toecount {
 			try {
 				input = buffer.readLine();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+
 			}
 
 			if (input.isEmpty()) {
@@ -176,8 +176,8 @@ public class Toecount {
 			try {
 				selectedName = buffer.readLine();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+
 			}
 
 			if (selectedName.isEmpty()) {
@@ -193,8 +193,7 @@ public class Toecount {
 				try {
 					selectedAnswer = buffer.readLine();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
 				}
 				if (!selectedAnswer.equals("Y") && !selectedAnswer.equals("y")) {
 					System.err.println("Aborted by user");
@@ -326,7 +325,7 @@ public class Toecount {
 				System.exit(2);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			
 			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
 			System.exit(-1);
 		}
@@ -454,8 +453,7 @@ public class Toecount {
 				try {
 					format = getStringFromUser("Format (fx=Factur-X, zf=ZUGFeRD,)", "zf", "fx|zf");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
 				}
 			} else {
 				System.out.println("Format set to " + format);
@@ -466,8 +464,7 @@ public class Toecount {
 				try {
 					zfVersion = getStringFromUser("Version (1 or 2)", "1", "1|2");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
 				}
 			} else {
 				System.out.println("Version set to " + zfVersion);
@@ -485,8 +482,8 @@ public class Toecount {
 								"E", "M|m|W|w|B|b|C|c|E|e|X|x|");
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+
 				}
 			} else {
 				System.out.println("Profile set to " + zfProfile);
@@ -550,9 +547,8 @@ public class Toecount {
 			System.out.println("Written to " + outName);
 
 		} catch (IOException e) {
-			e.printStackTrace();
-			// } catch (JAXBException e) {
-			// e.printStackTrace();
+			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+
 		}
 	}
 

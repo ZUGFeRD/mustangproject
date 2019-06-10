@@ -1,4 +1,12 @@
 
+1.7.2
+=====
+
+Support BuyerReference (r+w), as well as SpecifiedLegalOrganization (w) and DefinedTradeContact (w) 
+use dom4j to format output xml document
+corrected some exception logging glitches
+
+
 1.7.1
 =====
 2019-05-26

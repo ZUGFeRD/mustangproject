@@ -32,6 +32,7 @@ import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
+import org.mustangproject.toecount.Toecount;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -46,6 +47,8 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ZUGFeRDImporter {
 
@@ -69,7 +72,7 @@ public class ZUGFeRDImporter {
 			extractLowLevel(bis);
 			bis.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			throw new ZUGFeRDExportException(e);
 		}
 	}
@@ -78,7 +81,7 @@ public class ZUGFeRDImporter {
 		try {
 			extractLowLevel(pdfStream);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			throw new ZUGFeRDExportException(e);
 		}
 	}
@@ -161,7 +164,7 @@ public class ZUGFeRDImporter {
 		try {
 			transformer = tf.newTransformer();
 		} catch (TransformerConfigurationException e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 		}
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 		StringWriter writer = new StringWriter();
@@ -190,10 +193,10 @@ public class ZUGFeRDImporter {
 			XPath xpath = xpathFact.newXPath();
 			result = xpath.evaluate(xpathStr, document);
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			throw new ZUGFeRDExportException(e);
 		} catch (IOException | SAXException | TransformerException | XPathExpressionException e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			throw new ZUGFeRDExportException(e);
 		}
 		return result;

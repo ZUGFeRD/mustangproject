@@ -18,6 +18,10 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -25,6 +29,15 @@ import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
+import org.mustangproject.toecount.Toecount;
 
 public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
@@ -121,7 +134,28 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
 	@Override
 	public byte[] getXML() {
-		return zugferdData;
+
+		byte[] res = zugferdData;
+		
+		StringWriter sw = new StringWriter();
+		Document document=null;
+		try {
+			document = DocumentHelper.parseText(new String(zugferdData));
+		} catch (DocumentException e1) {
+			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e1);
+		}
+		try {
+			OutputFormat format = OutputFormat.createPrettyPrint();
+			XMLWriter writer = new XMLWriter(sw, format);
+			writer.write(document);
+			res = sw.toString().getBytes("UTF-8");
+
+		} catch (IOException e) {
+			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
+		}
+		
+		return res;
+		
 	}
 
 	private BigDecimal getTotalGross() {
@@ -292,13 +326,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		xml = xml + "			<ram:SellerTradeParty>\n" //$NON-NLS-1$
 		// + " <GlobalID schemeID=\"0088\">4000001123452</GlobalID>\n"
 				+ "				<ram:Name>" + trans.getOwnOrganisationName() + "</ram:Name>\n"; //$NON-NLS-1$ //$NON-NLS-2$
-		if (trans.getOwnOrganization()!=null) {
-			
-			xml = xml + "            <ram:SpecifiedLegalOrganization>\n" + 
-					"               <ram:ID>"+trans.getOwnOrganization().getID()+"</ram:ID>\n" + 
-					"               <ram:TradingBusinessName>"+trans.getOwnOrganization().getName()+"</ram:TradingBusinessName>\n" + 
-					"            </ram:SpecifiedLegalOrganization>";
-			
+		if (trans.getOwnOrganization() != null) {
+
+			xml = xml + "            <ram:SpecifiedLegalOrganization>\n" + "               <ram:ID>"
+					+ trans.getOwnOrganization().getID() + "</ram:ID>\n" + "               <ram:TradingBusinessName>"
+					+ trans.getOwnOrganization().getName() + "</ram:TradingBusinessName>\n"
+					+ "            </ram:SpecifiedLegalOrganization>";
+
 		}
 		if (trans.getOwnContact() != null) {
 			xml = xml + "<ram:DefinedTradeContact>\n" + "     <ram:PersonName>" + trans.getOwnContact().getName()
@@ -401,7 +435,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 			}
 		}
 		/*
-		 * xml+= " + "			<SpecifiedTradeAllowanceCharge>\n" +
+		 * xml+= " + " <SpecifiedTradeAllowanceCharge>\n" +
 		 * "				<ChargeIndicator>false</ChargeIndicator>\n" +
 		 * "				<BasisAmount currencyID=\"EUR\">10</BasisAmount>\n" +
 		 * "				<ActualAmount>1.00</ActualAmount>\n" +
@@ -485,8 +519,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				zugferdData = zugferdRaw;
 			}
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
 		} // $NON-NLS-1$
 	}
 
