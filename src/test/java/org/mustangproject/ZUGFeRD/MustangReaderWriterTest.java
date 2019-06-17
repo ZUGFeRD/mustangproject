@@ -36,22 +36,22 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 
 	@Override
 	public Date getDeliveryDate() {
-		return new GregorianCalendar(2017, Calendar.NOVEMBER, 17).getTime();
+		return new GregorianCalendar(2019, Calendar.JUNE, 10).getTime();
 	}
 
 	@Override
 	public Date getDueDate() {
-		return new GregorianCalendar(2017, Calendar.DECEMBER, 9).getTime();
+		return new GregorianCalendar(2019, Calendar.JULY, 1).getTime();
 	}
 
 	@Override
 	public Date getIssueDate() {
-		return new GregorianCalendar(2017, Calendar.NOVEMBER, 18).getTime();
+		return new GregorianCalendar(2019, Calendar.JUNE, 10).getTime();
 	}
 
 	@Override
 	public String getNumber() {
-		return "RE-20171118/506";
+		return "RE-20190610/507";
 	}
 
 	@Override
@@ -112,21 +112,21 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 	@Override
 	public IZUGFeRDExportableItem[] getZFItems() {
 		Item[] allItems = new Item[3];
-		Product designProduct = new Product("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR",
+		Product designProduct = new Product("", "Design (hours): Of a sample invoice", "HUR",
 				new BigDecimal("7.000000"));
-		Product balloonProduct = new Product("", "Luftballon: Bunt, ca. 500ml", "C62", new BigDecimal("19.000000"));
-		Product airProduct = new Product("", "Heiße Luft pro Liter", "LTR", new BigDecimal("19.000000"));
+		Product balloonProduct = new Product("", "Ballons: various colors, ~2000ml", "C62", new BigDecimal("19.000000"));
+		Product airProduct = new Product("", "Hot air „heiße Luft“ (litres)", "LTR", new BigDecimal("19.000000"));
 
 		allItems[0] = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
 		allItems[1] = new Item(new BigDecimal("0.79"), new BigDecimal("400"), balloonProduct);
-		allItems[2] = new Item(new BigDecimal("0.10"), new BigDecimal("200"), airProduct);
+		allItems[2] = new Item(new BigDecimal("0.025"), new BigDecimal("800"), airProduct);
 		return allItems;
 	}
 
 	@Override
 	public String getPaymentTermDescription() {
-		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-		return "Zahlbar ohne Abzug bis zum " + germanDateFormat.format(getDueDate());
+		SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		return "Remit until " + isoDateFormat.format(getDueDate());
 	}
 
 	@Override
@@ -152,7 +152,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 
 	@Override
 	public String getReferenceNumber() {
-		return "AB32";
+		return "AB321";
 	}
 
 	/**
@@ -312,7 +312,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 
 		// the writing part
 		try (InputStream SOURCE_PDF = this.getClass()
-				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
+				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
 			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
 
