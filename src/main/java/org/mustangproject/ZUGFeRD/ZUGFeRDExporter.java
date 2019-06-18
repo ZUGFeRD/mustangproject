@@ -354,7 +354,10 @@ public class ZUGFeRDExporter implements Closeable {
 	}
 
 	public void export(OutputStream output) throws IOException {
-		if (!fileAttached) {
+		if (!documentPrepared) {
+			prepareDocument();
+		}
+		if ((!fileAttached) && (attachZUGFeRDHeaders)) {
 			throw new IOException(
 					"File must be attached (usually with PDFattachZugferdFile) before perfoming this operation");
 		}
