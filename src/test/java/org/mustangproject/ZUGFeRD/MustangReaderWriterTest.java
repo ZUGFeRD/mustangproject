@@ -20,11 +20,20 @@ package org.mustangproject.ZUGFeRD;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.common.PDMetadata;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
+import org.apache.xmpbox.XMPMetadata;
+import org.apache.xmpbox.schema.PDFAIdentificationSchema;
+import org.apache.xmpbox.xml.DomXmpParser;
+import org.apache.xmpbox.xml.XmpParsingException;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -294,8 +303,39 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false).load(SOURCE_PDF);
 
 		File tempFile = File.createTempFile("ZUGFeRD-", "-test");
-		ze.export(tempFile.getName());
+		ze.export(tempFile.getAbsolutePath());
 		tempFile.deleteOnExit();
+		checkPdfA3B(tempFile);
+	}
+
+	public void testMigratePDFA1ToA3Stream() throws IOException {
+		// just make sure there is no Exception
+		InputStream SOURCE_PDF = this.getClass()
+				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
+
+		ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false).load(SOURCE_PDF);
+
+		File tempFile = File.createTempFile("ZUGFeRD-", "-test");
+		tempFile.deleteOnExit();
+		try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+			ze.export(fos);
+		}
+		checkPdfA3B(tempFile);
+	}
+
+	private void checkPdfA3B(File tempFile) throws IOException, InvalidPasswordException {
+		try (PDDocument doc = PDDocument.load(tempFile)) {
+			PDMetadata metadata = doc.getDocumentCatalog().getMetadata();
+			InputStream exportXMPMetadata = metadata.exportXMPMetadata();
+			byte[] xmpBytes = new byte[exportXMPMetadata.available()];
+			exportXMPMetadata.read(xmpBytes);
+			final XMPMetadata xmp = new DomXmpParser().parse(xmpBytes);
+			PDFAIdentificationSchema pdfaid = xmp.getPDFIdentificationSchema();
+			assertEquals(pdfaid.getPart().intValue(), 3);
+			assertEquals(pdfaid.getConformance(), "U");
+		} catch (XmpParsingException e) {
+			throw new IllegalStateException("Failed to read PDF", e);
+		}
 	}
 
 	/**
