@@ -320,7 +320,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
 		xml = xml + "		<ram:ApplicableHeaderTradeAgreement>\n"; //$NON-NLS-1$
 		if (trans.getReferenceNumber() != null) {
-			xml = xml + "			<BuyerReference>" + trans.getReferenceNumber() + "</BuyerReference>\n";
+			xml = xml + "			<ram:BuyerReference>" + trans.getReferenceNumber() + "</ram:BuyerReference>\n";
 
 		}
 		xml = xml + "			<ram:SellerTradeParty>\n" //$NON-NLS-1$
