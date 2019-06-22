@@ -369,7 +369,7 @@ public class ZUGFeRDImporter {
 	static String convertStreamToString(java.io.InputStream is) {
 		// source https://stackoverflow.com/questions/309424/how-do-i-read-convert-an-inputstream-into-a-string-in-java referring to
 		// https://community.oracle.com/blogs/pat/2004/10/23/stupid-scanner-tricks
-		Scanner s = new Scanner(is).useDelimiter("\\A");
+		Scanner s = new Scanner(is, "UTF-8").useDelimiter("\\A");
 		return s.hasNext() ? s.next() : "";
 	}
 
