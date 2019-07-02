@@ -167,7 +167,7 @@ class ZUGFeRDTransactionModelConverter {
 		if (trans.getReferenceNumber() != null && !"".equals(trans.getReferenceNumber())) {
 			NoteType referenceInfo = xmlFactory.createNoteType();
 			TextType referenceInfoContent = xmlFactory.createTextType();
-			referenceInfoContent.setValue("Ursprungsbeleg: " + trans.getReferenceNumber());
+			referenceInfoContent.setValue(trans.getReferenceNumber());
 			referenceInfo.getContent().add(referenceInfoContent);
 			document.getIncludedNote().add(referenceInfo);
 		}
