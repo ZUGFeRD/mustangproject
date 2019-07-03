@@ -422,7 +422,7 @@ class ZUGFeRDTransactionModelConverter {
 
 			TaxCategoryCodeType taxCategoryCode = xmlFactory.createTaxCategoryCodeType();
 			VATAmount vatAmount = VATPercentAmountMap.get(currentTaxPercent);
-			taxCategoryCode.setValue(vatAmount.getDocumentCode());
+			taxCategoryCode.setValue(vatAmount.getCategoryCode());
 			tradeTax.setCategoryCode(taxCategoryCode);
 
 			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
@@ -924,7 +924,7 @@ class ZUGFeRDTransactionModelConverter {
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			BigDecimal percent = currentItem.getProduct().getVATPercent();
 			LineCalc lc = new LineCalc(currentItem);
-			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(), trans.getDocumentCode());
+			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(), lc.getCategoryCode());
 			VATAmount current = hm.get(percent);
 			if (current == null) {
 				hm.put(percent, itemVATAmount);
@@ -958,7 +958,7 @@ class ZUGFeRDTransactionModelConverter {
 				VATAmount itemVATAmount = new VATAmount(
 						logisticsServiceCharge.getTotalAmount(),
 						logisticsServiceCharge.getTotalAmount()
-								.multiply(percent).divide(new BigDecimal(100)), trans.getDocumentCode());
+								.multiply(percent).divide(new BigDecimal(100)), logisticsServiceCharge.getCategoryCode());
 				VATAmount current = hm.get(percent);
 				if (current == null) {
 					hm.put(percent, itemVATAmount);
@@ -973,7 +973,7 @@ class ZUGFeRDTransactionModelConverter {
 				BigDecimal percent = charge.getTaxPercent();
 				VATAmount itemVATAmount = new VATAmount(
 						charge.getTotalAmount(), charge.getTotalAmount()
-						.multiply(percent).divide(new BigDecimal(100)), trans.getDocumentCode());
+						.multiply(percent).divide(new BigDecimal(100)), charge.getCategoryCode());
 				VATAmount current = hm.get(percent);
 				if (current == null) {
 					hm.put(percent, itemVATAmount);
@@ -998,6 +998,7 @@ class ZUGFeRDTransactionModelConverter {
 		private BigDecimal itemTotalNetAmount;
 		private BigDecimal itemTotalVATAmount;
 		private BigDecimal itemNetAmount;
+		private String categoryCode;
 
 
 		public LineCalc(IZUGFeRDExportableItem currentItem) {
@@ -1040,6 +1041,7 @@ class ZUGFeRDTransactionModelConverter {
 					.add(totalCharge)
 					.divide(currentItem.getQuantity(), 4,
 							BigDecimal.ROUND_HALF_UP);
+			categoryCode = currentItem.getCategoryCode();
 		}
 
 
@@ -1056,6 +1058,8 @@ class ZUGFeRDTransactionModelConverter {
 		public BigDecimal getItemNetAmount() {
 			return itemNetAmount;
 		}
+
+		public String getCategoryCode() { return categoryCode; }
 
 	}
 
