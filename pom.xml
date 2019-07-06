@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mustangproject.ZUGFeRD</groupId>
 	<artifactId>mustang</artifactId>
-	<version>1.7.2-SNAPSHOT</version>
+	<version>1.7.2</version>
 	<packaging>jar</packaging>
 	<name>Mustang</name>
 	<description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs
@@ -14,7 +13,7 @@
 		<connection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</connection>
 		<developerConnection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</developerConnection>
 		<url>https://github.com/ZUGFeRD/mustangproject</url>
-		<tag>mustang-1.5.2</tag>
+		<tag>mustang-1.7.2</tag>
 	</scm>
 	<repositories>
 		<repository><!-- for jargs -->
@@ -203,8 +202,7 @@
 				<version>2.4.3</version>
 				<configuration>
 					<transformers>
-						<transformer
-							implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+						<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 							<mainClass>org.mustangproject.toecount.Toecount</mainClass>
 						</transformer>
 					</transformers>
