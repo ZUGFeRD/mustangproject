@@ -46,6 +46,9 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -67,14 +70,13 @@ public class ZUGFeRDImporter {
 	private String xmpString = null; // XMP metadata
 
 	public ZUGFeRDImporter(String pdfFilename) {
-		try {
-			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(pdfFilename));
+		
+		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
 			extractLowLevel(bis);
-			bis.close();
 		} catch (IOException e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			throw new ZUGFeRDExportException(e);
-		}
+		} 
 	}
 
 	public ZUGFeRDImporter(InputStream pdfStream) {
@@ -125,7 +127,9 @@ public class ZUGFeRDImporter {
 
 
 	private void extractFiles(Map<String, PDComplexFileSpecification> names) throws IOException {
-		for (String filename : names.keySet()) {
+		for (String alias : names.keySet()) {
+			String filename=names.get(alias).getFilename();
+			
 			/**
 			 * currently (in the release candidate of version 1) only one attached file with
 			 * the name ZUGFeRD-invoice.xml is allowed

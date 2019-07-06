@@ -30,8 +30,10 @@ import org.mustangproject.ZUGFeRD.*;
 import javax.xml.transform.TransformerException;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -235,6 +237,8 @@ public class Toecount {
 
 			// Option: Help
 			Option<Boolean> helpOption = parser.addBooleanOption('h', "help");
+			// Option: Action
+			Option<String> actionOption = parser.addStringOption('a', "action");
 
 			// Generic options available for multiple command
 			// --source: input file
@@ -304,6 +308,7 @@ public class Toecount {
 			String sourceXMLName = parser.getOptionValue(sourceXmlOption);
 			String outName = parser.getOptionValue(outOption);
 			String format = parser.getOptionValue(formatOption);
+			String action = parser.getOptionValue(actionOption);
 			String zugferdVersion = parser.getOptionValue(zugferdVersionOption);
 			String zugferdProfile = parser.getOptionValue(zugferdProfileOption);
 
@@ -319,6 +324,8 @@ public class Toecount {
 				performConvert(sourceName, outName);
 			} else if (upgradeRequested) {
 				performUpgrade(sourceName, outName);
+			} else if (action.equals("convertToHTML")) {
+				performVisualization(sourceName, outName);
 			} else {
 				// no argument or argument unknown
 				printUsage();
@@ -332,6 +339,48 @@ public class Toecount {
 
 	}
 
+	private static void performVisualization(String sourceName, String outName) {
+				// Get params from user if not already defined
+				if (sourceName == null) {
+					sourceName = getFilenameFromUser("ZUGFeRD XML source", "zugferd-invoice.xml", "xml", true, false);
+				} else {
+					System.out.println("ZUGFeRD XML source set to " + sourceName);
+				}
+				if (outName == null) {
+					outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "factur-x.html", "html", false, true);
+				} else {
+					System.out.println("ZUGFeRD 1.0 XML source set to " + outName);
+				}
+
+				// Verify params
+				try {
+					ensureFileExists(sourceName);
+					ensureFileNotExists(outName);
+					
+					//stylesheets/ZUGFeRD_1p0_c1p0_s1p0.xslt
+				} catch (IOException e) {
+							Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+				}
+				
+				ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+				String xml = null;
+				try {
+					xml = zvi.visualize(sourceName);
+					Files.write(Paths.get(outName), xml.getBytes());
+				} catch (FileNotFoundException e) {
+					Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+				} catch (UnsupportedEncodingException e) {
+					Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+				} catch (TransformerException e) {
+					Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+				} catch (IOException e) {
+					Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+				}
+				System.out.println("Written to " + outName);
+				
+		
+	}
+
 	private static void performUpgrade(String xmlName, String outName) throws IOException, TransformerException {
 
 		// Get params from user if not already defined
@@ -341,7 +390,7 @@ public class Toecount {
 			System.out.println("ZUGFeRD 1.0 XML source set to " + xmlName);
 		}
 		if (outName == null) {
-			outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "factur-x.xml", "xml", false, true);
+			outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "zugferd-invoice.xml", "xml", false, true);
 		} else {
 			System.out.println("ZUGFeRD 1.0 XML source set to " + outName);
 		}
