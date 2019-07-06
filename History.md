@@ -1,6 +1,7 @@
 
 1.7.2
 =====
+2019-07-06
 
 Support BuyerReference (r+w), as well as SpecifiedLegalOrganization (w) and DefinedTradeContact (w) 
 use dom4j to format output xml document
