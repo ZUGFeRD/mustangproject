@@ -412,8 +412,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 					+ "				</ram:PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
 					+ "				<ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
 					+ "					<ram:BICID>" + payment.getOwnBIC() + "</ram:BICID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-					+ "					<ram:GermanBankleitzahlID>" + payment.getOwnBLZ() //$NON-NLS-1$
-					+ "</ram:GermanBankleitzahlID>\n" //$NON-NLS-1$
 					// + " <ram:Name>"+trans.getOwnBankName()+"</ram:Name>\n" //$NON-NLS-1$
 					// //$NON-NLS-2$
 					+ "				</ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
