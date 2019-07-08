@@ -1,7 +1,7 @@
 
 1.7.2
 =====
-2019-07-06
+2019-07-08
 
 Support BuyerReference (r+w), as well as SpecifiedLegalOrganization (w) and DefinedTradeContact (w) 
 use dom4j to format output xml document
@@ -9,6 +9,7 @@ corrected some exception logging glitches
 upgrade PDFBox to 2.0.15+
 extraction to use proper filename instead of alias #98
 NullPointerException in ZUGFeRDImporter.extractLowLevel #96
+Removed Bankleitzahl from ZF2
 
 
 1.7.1
