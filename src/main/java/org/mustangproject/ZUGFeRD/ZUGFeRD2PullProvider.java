@@ -214,9 +214,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
 		String senderReg = "";
 		if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
-			senderReg = "" + "<ram:IncludedCINote>\n" + "		<ram:Content>\n"
+			senderReg = "" + "<ram:IncludedNote>\n" + "		<ram:Content>\n"
 					+ trans.getOwnOrganisationFullPlaintextInfo() + "		</ram:Content>\n"
-					+ "<ram:SubjectCode>REG</ram:SubjectCode>\n" + "</ram:IncludedCINote>\n";
+					+ "<ram:SubjectCode>REG</ram:SubjectCode>\n" + "</ram:IncludedNote>\n";
 
 		}
 
@@ -378,11 +378,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				+ "					<ram:LineOne>" + trans.getRecipient().getStreet() + "</ram:LineOne>\n" //$NON-NLS-1$ //$NON-NLS-2$
 				+ "					<ram:CityName>" + trans.getRecipient().getLocation() + "</ram:CityName>\n" //$NON-NLS-1$ //$NON-NLS-2$
 				+ "					<ram:CountryID>" + trans.getRecipient().getCountry() + "</ram:CountryID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				</ram:PostalTradeAddress>\n" //$NON-NLS-1$
-				+ "				<ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
+				+ "				</ram:PostalTradeAddress>\n"; //$NON-NLS-1$
+		if (trans.getRecipient().getVATID() != null) {
+			xml += "				<ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
 				+ "					<ram:ID schemeID=\"VA\">" + trans.getRecipient().getVATID() + "</ram:ID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				</ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
-				+ "			</ram:BuyerTradeParty>\n" //$NON-NLS-1$
+				+ "				</ram:SpecifiedTaxRegistration>\n"; //$NON-NLS-1$
+		}
+		xml += "			</ram:BuyerTradeParty>\n" //$NON-NLS-1$
 				// + " <BuyerOrderReferencedDocument>\n"
 				// + " <IssueDateTime format=\"102\">20130301</IssueDateTime>\n"
 				// + " <ID>2013-471331</ID>\n"
