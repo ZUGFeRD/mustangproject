@@ -57,7 +57,7 @@ Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können
 	<xsl:variable name="XML" select="/"/>
 	<xsl:variable name="altova:nPxPerIn" select="96"/>
 	<xsl:decimal-format name="format1" grouping-separator="." decimal-separator=","/>
-	<xsl:import-schema schema-location="ZUGFeRD_1p0.xsd" use-when="system-property('xsl:is-schema-aware')='yes'" namespace="urn:ferd:CrossIndustryDocument:invoice:1p0"/>
+	<xsl:import-schema schema-location="../schema/ZUGFeRD_1p0.xsd" use-when="system-property('xsl:is-schema-aware')='yes'" namespace="urn:ferd:CrossIndustryDocument:invoice:1p0"/>
 	<xsl:variable name="altova:CssImages" select="()"/>
 	<xsl:template match="/">
 		<xsl:call-template name="altova:Root"/>
