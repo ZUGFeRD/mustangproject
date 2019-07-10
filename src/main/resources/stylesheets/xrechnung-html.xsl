@@ -18,9 +18,7 @@
 	<meta charset="UTF-8"/>
 	<title>XRechnung</title>
 	<meta name="viewport" content="width=device-width, user-scalable=yes, initial-scale=1.0"/>
-	<style>
-	  <xsl:value-of select="unparsed-text('xrechnung-viewer.css')"/>
-	</style>
+	  <link href="xrechnung-viewer.css" rel="stylesheet" type="text/css"/>
       </head>
       <body>
 	<form>
@@ -44,9 +42,7 @@
 	  </div>
 	</div>
       </body>
-      <script>
-	  <xsl:value-of select="unparsed-text('xrechnung-viewer.js')"/>
-      </script>
+      <script src='xrechnung-viewer.js'></script>
     </html>
   </xsl:template>
 
