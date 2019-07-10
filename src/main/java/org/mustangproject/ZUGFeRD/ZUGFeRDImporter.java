@@ -128,8 +128,9 @@ public class ZUGFeRDImporter {
 
 	private void extractFiles(Map<String, PDComplexFileSpecification> names) throws IOException {
 		for (String alias : names.keySet()) {
-			String filename=names.get(alias).getFilename();
-			
+
+			PDComplexFileSpecification fileSpec = names.get(alias);
+			String filename=fileSpec.getFilename();
 			/**
 			 * currently (in the release candidate of version 1) only one attached file with
 			 * the name ZUGFeRD-invoice.xml is allowed
@@ -137,7 +138,6 @@ public class ZUGFeRDImporter {
 			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml"))) { //$NON-NLS-1$
 				containsMeta = true;
 
-				PDComplexFileSpecification fileSpec = names.get(filename);
 				PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
 				// String embeddedFilename = filePath + filename;
 				// File file = new File(filePath + filename);
@@ -154,7 +154,6 @@ public class ZUGFeRDImporter {
 			}
 			if (filename.startsWith("additional_data")) {
 
-				PDComplexFileSpecification fileSpec = names.get(filename);
 				PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
 				additionalXMLs.put(filename, embeddedFile.toByteArray());
 

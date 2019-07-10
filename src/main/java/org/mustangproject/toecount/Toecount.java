@@ -106,8 +106,7 @@ public class Toecount {
 				+ "\t\t[--source-xml <filename>]: set input XML file\r\n"
 				+ "\t\t[--out <filename>]: set output PDF file\r\n"
 				+ "\t\t[--format <fx|zf>]: enable factur-x or ZUGFeRD\r\n"
-				+ "\t\t[--version <1|2>]: set ZUGFeRD version\r\n"
-				+ "\t\t[--profile <...>]: set ZUGFeRD profile\r\n"
+				+ "\t\t[--version <1|2>]: set ZUGFeRD version\r\n" + "\t\t[--profile <...>]: set ZUGFeRD profile\r\n"
 				+ "\t\t\tFor ZUGFeRD v1: <B>ASIC, <C>OMFORT or <E>XTENDED\r\n"
 				+ "\t\t\tFor ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, E<X>TENDED\r\n");
 	}
@@ -116,11 +115,15 @@ public class Toecount {
 	 * Asks the user (repeatedly, if neccessary) on the command line for a String
 	 * (offering a defaultValue) conforming to a Regex pattern
 	 *
-	 * @param prompt       the question to be asked to the user
-	 * @param defaultValue the default return value if user hits enter
-	 * @param pattern      a regex of acceptable values
+	 * @param prompt
+	 *            the question to be asked to the user
+	 * @param defaultValue
+	 *            the default return value if user hits enter
+	 * @param pattern
+	 *            a regex of acceptable values
 	 * @return the user answer conforming to pattern
-	 * @throws Exception if pattern not compielable or IOexception on input
+	 * @throws Exception
+	 *             if pattern not compielable or IOexception on input
 	 */
 	protected static String getStringFromUser(String prompt, String defaultValue, String pattern) throws Exception {
 		String input = "";
@@ -159,15 +162,20 @@ public class Toecount {
 	/**
 	 * Prompts the user for a input or output filename
 	 *
-	 * @param the                 text the user is asked
-	 * @param a                   default Filename
-	 * @param expectedExtension   will warn if filename does not match expected file extension
-	 * @param ensureFileExists    will warn if file does NOT exist (for input files)
-	 * @param ensureFileNotExists will warn if file DOES exist (for output files)
+	 * @param the
+	 *            text the user is asked
+	 * @param a
+	 *            default Filename
+	 * @param expectedExtension
+	 *            will warn if filename does not match expected file extension
+	 * @param ensureFileExists
+	 *            will warn if file does NOT exist (for input files)
+	 * @param ensureFileNotExists
+	 *            will warn if file DOES exist (for output files)
 	 * @return String
 	 */
 	protected static String getFilenameFromUser(String prompt, String defaultFilename, String expectedExtension,
-												boolean ensureFileExists, boolean ensureFileNotExists) {
+			boolean ensureFileExists, boolean ensureFileNotExists) {
 		boolean fileExistenceOK = false;
 		String selectedName = "";
 		do {
@@ -324,16 +332,59 @@ public class Toecount {
 				performConvert(sourceName, outName);
 			} else if (upgradeRequested) {
 				performUpgrade(sourceName, outName);
+			} else if (action.equals("visualize")) {
+				performVisualization(sourceName, outName);
 			} else {
 				// no argument or argument unknown
 				printUsage();
 				System.exit(2);
 			}
 		} catch (Exception e) {
-			
+
 			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
 			System.exit(-1);
 		}
+
+	}
+
+	private static void performVisualization(String sourceName, String outName) {
+		// Get params from user if not already defined
+		if (sourceName == null) {
+			sourceName = getFilenameFromUser("ZUGFeRD XML source", "zugferd-invoice.xml", "xml", true, false);
+		} else {
+			System.out.println("ZUGFeRD XML source set to " + sourceName);
+		}
+		if (outName == null) {
+			outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "factur-x.html", "html", false, true);
+		} else {
+			System.out.println("ZUGFeRD 1.0 XML source set to " + outName);
+		}
+
+		// Verify params
+		try {
+			ensureFileExists(sourceName);
+			ensureFileNotExists(outName);
+
+			// stylesheets/ZUGFeRD_1p0_c1p0_s1p0.xslt
+		} catch (IOException e) {
+			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+		}
+
+		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+		String xml = null;
+		try {
+			xml = zvi.visualize(sourceName);
+			Files.write(Paths.get(outName), xml.getBytes());
+		} catch (FileNotFoundException e) {
+			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+		} catch (UnsupportedEncodingException e) {
+			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+		} catch (TransformerException e) {
+			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+		} catch (IOException e) {
+			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+		}
+		System.out.println("Written to " + outName);
 
 	}
 
@@ -426,7 +477,7 @@ public class Toecount {
 	}
 
 	private static void performCombine(String pdfName, String xmlName, String outName, String format, String zfVersion,
-									   String zfProfile) throws Exception {
+			String zfProfile) throws Exception {
 		/*
 		 * ZUGFeRDExporter ze= new ZUGFeRDExporterFromA1Factory()
 		 * .setProducer("toecount") .setCreator(System.getProperty("user.name"))
@@ -464,7 +515,6 @@ public class Toecount {
 				System.out.println("Format set to " + format);
 			}
 
-
 			if (zfVersion == null) {
 				try {
 					zfVersion = getStringFromUser("Version (1 or 2)", "1", "1|2");
@@ -478,13 +528,12 @@ public class Toecount {
 
 			if (zfProfile == null) {
 				try {
-					if (format.equals("zf")&&(zfIntVersion == 1)) {
-						zfProfile = getStringFromUser("Profile b)asic, c)omfort or e)xtended", "e",
-								"B|b|C|c|E|e");
+					if (format.equals("zf") && (zfIntVersion == 1)) {
+						zfProfile = getStringFromUser("Profile b)asic, c)omfort or e)xtended", "e", "B|b|C|c|E|e");
 					} else {
 						zfProfile = getStringFromUser(
-								"Profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" + "[C]IUS, [E]N16931, E[X]TENDED",
-								"E", "M|m|W|w|B|b|C|c|E|e|X|x|");
+								"Profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" + "[C]IUS, [E]N16931, E[X]TENDED", "E",
+								"M|m|W|w|B|b|C|c|E|e|X|x|");
 					}
 				} catch (Exception e) {
 					Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
@@ -499,12 +548,12 @@ public class Toecount {
 			ensureFileExists(pdfName);
 			ensureFileExists(xmlName);
 			ensureFileNotExists(outName);
-			
-			if ((format.equals("fx"))&&(zfIntVersion>1)) {
+
+			if ((format.equals("fx")) && (zfIntVersion > 1)) {
 				throw new Exception("Factur-X is only available in version 1 (roughly corresponding to ZF2)");
 			}
 
-			if ((format.equals("zf"))&&(zfIntVersion == 1)) {
+			if ((format.equals("zf")) && (zfIntVersion == 1)) {
 				if (zfProfile.equals("b")) {
 					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.BASIC;
 				} else if (zfProfile.equals("c")) {
@@ -514,7 +563,7 @@ public class Toecount {
 				} else {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}
-			} else if (((format.equals("zf"))&&(zfIntVersion == 2))||(format.equals("fx"))) {
+			} else if (((format.equals("zf")) && (zfIntVersion == 2)) || (format.equals("fx"))) {
 				if (zfProfile.equals("m")) {
 					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.MINIMUM;
 				} else if (zfProfile.equals("w")) {
@@ -543,7 +592,6 @@ public class Toecount {
 			if (format.equals("fx")) {
 				ze.setFacturX();
 			}
-		
 
 			ze.setZUGFeRDXMLData(Files.readAllBytes(Paths.get(xmlName)));
 
