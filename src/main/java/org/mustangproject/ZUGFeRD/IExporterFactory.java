@@ -22,6 +22,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public interface IExporterFactory {
+	/**
+	 * factory: loads a PDF file and returns an appropriate exporter 
+	 *
+	 * @param pdfFilename binary of a PDF/A1 compliant document
+	 * @return the generated exporter
+	 * @throws IOException if anything is wrong with filename
+	 */
 	public ZUGFeRDExporter load(String pdfFilename) throws IOException;
 
 	/**
@@ -29,6 +36,8 @@ public interface IExporterFactory {
 	 * metadata level, this will not e.g. convert graphics to JPG-2000)
 	 *
 	 * @param pdfBinary binary of a PDF/A1 compliant document
+	 * @return the generated exporter
+	 * @throws IOException (should not happen at all)
 	 */
 	public ZUGFeRDExporter load(byte[] pdfBinary) throws IOException;
 
@@ -37,7 +46,8 @@ public interface IExporterFactory {
 	 * metadata level, this will not e.g. convert graphics to JPG-2000)
 	 *
 	 * @param pdfSource source to read a PDF/A1 compliant document from
-	 * @throws IOException
+	 * @throws IOException if anything is wrong with inputstream
+	 * @return the generated ZUGFeRDExporter
 	 */
 	public ZUGFeRDExporter load(InputStream pdfSource) throws IOException;
 

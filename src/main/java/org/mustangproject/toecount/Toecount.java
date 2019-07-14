@@ -162,16 +162,11 @@ public class Toecount {
 	/**
 	 * Prompts the user for a input or output filename
 	 *
-	 * @param the
-	 *            text the user is asked
-	 * @param a
-	 *            default Filename
-	 * @param expectedExtension
-	 *            will warn if filename does not match expected file extension
-	 * @param ensureFileExists
-	 *            will warn if file does NOT exist (for input files)
-	 * @param ensureFileNotExists
-	 *            will warn if file DOES exist (for output files)
+	 * @param prompt the text the user is asked
+	 * @param defaultFilename a default Filename
+	 * @param expectedExtension will warn if filename does not match expected file extension
+	 * @param ensureFileExists will warn if file does NOT exist (for input files)
+	 * @param ensureFileNotExists will warn if file DOES exist (for output files)
 	 * @return String
 	 */
 	protected static String getFilenameFromUser(String prompt, String defaultFilename, String expectedExtension,

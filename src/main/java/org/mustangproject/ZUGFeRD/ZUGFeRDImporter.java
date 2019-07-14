@@ -378,6 +378,7 @@ public class ZUGFeRDImporter {
 
 	/**
 	 * Returns the raw XML data as extracted from the ZUGFeRD PDF file.
+	 * @return the raw ZUGFeRD XML data
 	 */
 	public byte[] getRawXML() {
 		return rawXML;

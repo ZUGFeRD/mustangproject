@@ -27,7 +27,7 @@ import java.math.BigDecimal;
  *
  * @author jstaerk
  * @version 1.2.0
- * @date 2015-10-29
+ * dated 2015-10-29
  */
 public class VATAmount {
 
@@ -61,6 +61,7 @@ public class VATAmount {
 	/**
 	 *
 	 * @deprecated Use {@link #getCategoryCode() instead}
+	 * @return String with category code
 	 */
 	@Deprecated
 	public String getDocumentCode() {
@@ -68,7 +69,7 @@ public class VATAmount {
 	}
 
 	/**
-	 *
+     * @param documentCode as String
 	 * @deprecated Use {@link #setCategoryCode(String)} instead
 	 */
 	@Deprecated

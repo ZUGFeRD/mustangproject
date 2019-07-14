@@ -19,11 +19,11 @@
 package org.mustangproject.ZUGFeRD;
 
 /**
- * Mustangproject's ZUGFeRD implementation Neccessary interface for ZUGFeRD exporter Licensed under the APLv2
+ * Mustangproject's ZUGFeRD implementation neccessary interface for ZUGFeRD exporter Licensed under the APLv2
  *
  * @author jstaerk
  * @version 1.2.0
- * @date 2014-05-10
+ * dated 2014-05-10
  */
 
 

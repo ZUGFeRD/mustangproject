@@ -173,14 +173,14 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 
 	/**
 	 * All files are PDF/A-3, setConformance refers to the level conformance.
-	 * <p/>
+	 * <p>
 	 * PDF/A-3 has three coformance levels, called "A", "U" and "B".
-	 * <p/>
+	 * <p>
 	 * PDF/A-3-B where B means only visually preservable, U -standard for Mustang-
 	 * means visually and unicode preservable and A means full compliance, i.e.
 	 * visually, unicode and structurally preservable and tagged PDF, i.e. useful
 	 * metainformation for blind people.
-	 * <p/>
+	 * <p>
 	 * Feel free to pass "A" as new level if you know what you are doing :-)
 	 */
 	public IExporterFactory setConformanceLevel(PDFAConformanceLevel newLevel) {

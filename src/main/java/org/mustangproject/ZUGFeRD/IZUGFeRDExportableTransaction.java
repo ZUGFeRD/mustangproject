@@ -64,7 +64,7 @@ public interface IZUGFeRDExportableTransaction {
 
 	/**
 	 * this should be the full sender institution name, details, manager and tax registration. It is one of the few functions which may return null. e.g.
-	 * <p/>
+	 * <p>
 	 * Lieferant GmbH Lieferantenstraße 20 80333 München Deutschland Geschäftsführer: Hans Muster Handelsregisternummer: H A 123
 	 *
 	 * @return null or full sender institution name, details, manager and tax registration
@@ -115,6 +115,8 @@ public interface IZUGFeRDExportableTransaction {
 
 	/**
 	 * the creditors payment informations
+	 * 
+	 * @return an array of IZUGFeRDTradeSettlementPayment
 	 */
 	IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment();
 

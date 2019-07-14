@@ -1,3 +1,6 @@
+- migration: testIndicator entfernen
+- in ram:ExchangedDocument: ram:name entfernen
+- updated javadoc
 
 1.7.2
 =====
