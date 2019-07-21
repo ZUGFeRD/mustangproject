@@ -299,19 +299,19 @@ public class Toecount {
 			}
 
 			// Retrieve all options
+			String action = parser.getOptionValue(actionOption);
 			String directoryName = parser.getOptionValue(dirnameOption);
 			Boolean filesFromStdIn = parser.getOptionValue(filesFromStdInOption, Boolean.FALSE);
-			Boolean combineRequested = parser.getOptionValue(combineOption, Boolean.FALSE);
-			Boolean extractRequested = parser.getOptionValue(extractOption, Boolean.FALSE);
-			Boolean helpRequested = parser.getOptionValue(helpOption, Boolean.FALSE);
-			Boolean upgradeRequested = parser.getOptionValue(upgradeOption, Boolean.FALSE);
+			Boolean combineRequested = parser.getOptionValue(combineOption, Boolean.FALSE) || ((action!=null)&&(action.equals("combine")));
+			Boolean extractRequested = parser.getOptionValue(extractOption, Boolean.FALSE) || ((action!=null)&&(action.equals("extract")));
+			Boolean helpRequested = parser.getOptionValue(helpOption, Boolean.FALSE)  || ((action!=null)&&(action.equals("help")));
+			Boolean upgradeRequested = parser.getOptionValue(upgradeOption, Boolean.FALSE)  || ((action!=null)&&(action.equals("upgrade")));
 			Boolean ignoreFileExt = parser.getOptionValue(ignoreFileExtOption, Boolean.FALSE);
-			Boolean a3only = parser.getOptionValue(a3onlyOption, Boolean.FALSE);
+			Boolean a3only = parser.getOptionValue(a3onlyOption, Boolean.FALSE)  || ((action!=null)&&(action.equals("a3")));
 			String sourceName = parser.getOptionValue(sourceOption);
 			String sourceXMLName = parser.getOptionValue(sourceXmlOption);
 			String outName = parser.getOptionValue(outOption);
 			String format = parser.getOptionValue(formatOption);
-			String action = parser.getOptionValue(actionOption);
 			String zugferdVersion = parser.getOptionValue(zugferdVersionOption);
 			String zugferdProfile = parser.getOptionValue(zugferdProfileOption);
 
@@ -327,7 +327,7 @@ public class Toecount {
 				performConvert(sourceName, outName);
 			} else if (upgradeRequested) {
 				performUpgrade(sourceName, outName);
-			} else if (action.equals("visualize")) {
+			} else if ((action!=null)&&(action.equals("visualize"))) {
 				performVisualization(sourceName, outName);
 			} else {
 				// no argument or argument unknown

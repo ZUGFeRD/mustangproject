@@ -1,6 +1,7 @@
 - migration: testIndicator entfernen
 - in ram:ExchangedDocument: ram:name entfernen
 - updated javadoc
+- fixed #104 nullpointerex when specifying no parameter
 
 1.7.2
 =====
