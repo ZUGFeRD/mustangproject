@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -93,20 +94,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		 * end I decided to calculate myself and take eur+sparator+cents
 		 *
 		 */
-		value = value.setScale(scale, BigDecimal.ROUND_HALF_UP); // first, round so that e.g.
-																	// 1.189999999999999946709294817992486059665679931640625
-																	// becomes 1.19
-		char[] repeat = new char[scale];
-		Arrays.fill(repeat, '0');
-
-		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
-		otherSymbols.setDecimalSeparator('.');
-		String baseFormat="0";
-		if (scale>0) { 
-		  baseFormat+=".";
-		}
-		DecimalFormat dec = new DecimalFormat(baseFormat + new String(repeat), otherSymbols);
-		return dec.format(value);
+		return value.setScale(scale, RoundingMode.HALF_UP).toPlainString();
 
 	}
 

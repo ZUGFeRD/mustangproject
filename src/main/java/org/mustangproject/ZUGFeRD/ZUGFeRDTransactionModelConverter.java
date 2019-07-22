@@ -19,6 +19,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -843,22 +844,22 @@ class ZUGFeRDTransactionModelConverter {
 
 
 	private BigDecimal vatFormat(BigDecimal value) {
-		return value.setScale(2, BigDecimal.ROUND_HALF_UP);
+		return value.setScale(2, RoundingMode.HALF_UP);
  	}
 
 
 	private BigDecimal currencyFormat(BigDecimal value) {
-		return value.setScale(2, BigDecimal.ROUND_HALF_UP);
+		return value.setScale(2, RoundingMode.HALF_UP);
  	}
 
 
 	private BigDecimal priceFormat(BigDecimal value) {
-		return value.setScale(4, BigDecimal.ROUND_HALF_UP);
+		return value.setScale(4, RoundingMode.HALF_UP);
  	}
 
 
 	private BigDecimal quantityFormat(BigDecimal value) {
-		return value.setScale(4, BigDecimal.ROUND_HALF_UP);
+		return value.setScale(4, RoundingMode.HALF_UP);
  	}
 
 
