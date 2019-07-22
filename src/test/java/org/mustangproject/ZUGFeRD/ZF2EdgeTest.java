@@ -170,13 +170,10 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	// //////// TESTS //////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * The exporter test bases on @{code ./src/test/MustangGnuaccountingBeispielRE-20140703_502blanko.pdf}, adds metadata,
-	 * writes
-	 * to @{code ./target/testout-*} and then imports to check the values.
-	 * It would not make sense to have it run before the less complex importer test (which is probably redundant)
-	 * --> as only Name Ascending is supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
+	 * The exporter test bases on @{code ./src/test/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf}, adds metadata,
+	 * writes to @{code ./target/testout-*} and then imports to check the values.
 	 */
-	public void testEdgeExport() throws Exception {
+	public void testEdgeExport() {
 
 		// the writing part
 
@@ -194,6 +191,8 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryDocument"));
 			ze.export(TARGET_PDF);
+		} catch (IOException e) {
+			fail("IOException should not be raised in testEdgeExport");
 		}
 
 		// now check the contents (like MustangReaderTest)

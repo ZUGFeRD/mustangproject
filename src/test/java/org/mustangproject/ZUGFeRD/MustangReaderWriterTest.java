@@ -184,15 +184,12 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * The importer test imports from
-	 * ./src/test/MustangGnuaccountingBeispielRE-20170509_505.pdf to check the
-	 * values. --> as only Name Ascending is supported for Test Unit sequence, I
-	 * renamed the this test-A-Export to run before testZExport
-	 *
-	 * @throws IOException
+	 * The importer test imports from ./src/test/MustangGnuaccountingBeispielRE-20170509_505.pdf to check the
+	 * values. As only Name Ascending is supported for Test Unit sequence, I renamed the this testAImport
+	 * to run before testZExport
 	 */
 
-	public void testAImport() throws IOException {
+	public void testAImport() {
 		InputStream inputStream = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
 
@@ -206,7 +203,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		assertEquals(zi.getForeignReference(), "RE-20170509/505");
 	}
 
-	public void testForeignImport() throws IOException {
+	public void testForeignImport() {
 		InputStream inputStream = this.getClass().getResourceAsStream("/zugferd_invoice.pdf");
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
 
@@ -343,10 +340,10 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 	 * ./src/test/MustangGnuaccountingBeispielRE-20140703_502blanko.pdf}, adds
 	 * metadata, writes to @{code ./target/testout-*} and then imports to check the
 	 * values. It would not make sense to have it run before the less complex
-	 * importer test (which is probably redundant) --> as only Name Ascending is
+	 * importer test (which is probably redundant). As only Name Ascending is
 	 * supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
 	 */
-	public void testZExport() throws Exception {
+	public void testZExport() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506new.pdf";
 
@@ -370,6 +367,8 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 //			assertFalse(pdfContent.indexOf("<pdfaSchema:prefix>zf</pdfaSchema:prefix>") == -1);
 //			assertFalse(pdfContent.indexOf("urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#") == -1);
 			
+		} catch (IOException e) {
+			fail("IOException should not happen in testZExport");
 		}
 
 		// now check the contents (like MustangReaderTest)
@@ -423,11 +422,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		assertEquals(zi.getForeignReference(), getNumber());
 	}
 
-	/**
-	 * @throws Exception
-	 * @Test(expected = IndexOutOfBoundsException.class)
-	 */
-	public void testExceptionOnPDF14() throws Exception {
+	public void testExceptionOnPDF14() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505new.pdf";
 

@@ -170,13 +170,11 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 
 	/**
 	 * The importer test imports from ./src/test/MustangGnuaccountingBeispielRE-20170509_505.pdf to check the values.
-	 * --> as only Name Ascending is supported for Test Unit sequence, I renamed the this test-A-Export to run before
+	 * As only Name Ascending is supported for Test Unit sequence, I renamed the this test-A-Import to run before
 	 * testZExport
-	 *
-	 * @throws IOException
 	 */
 
-	public void testAImport() throws IOException {
+	public void testAImport() {
 		InputStream inputStream = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
 
@@ -195,12 +193,11 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 
 	/**
 	 * The exporter test bases on @{code ./src/test/MustangGnuaccountingBeispielRE-20140703_502blanko.pdf}, adds metadata,
-	 * writes
-	 * to @{code ./target/testout-*} and then imports to check the values.
-	 * It would not make sense to have it run before the less complex importer test (which is probably redundant)
-	 * --> as only Name Ascending is supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
+	 * writes to @{code ./target/testout-*} and then imports to check the values.
+	 * It would not make sense to have it run before the less complex importer test (which is probably redundant).
+	 * As only Name Ascending is supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
 	 */
-	public void testEdgeExport() throws Exception {
+	public void testEdgeExport() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505newEdge.pdf";
 		// the writing part
@@ -218,6 +215,8 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryDocument"));
 			ze.export(TARGET_PDF);
+		} catch (IOException e) {
+			fail("IOException should not happen in testEdgeExport");
 		}
 
 		// now check the contents (like MustangReaderTest)

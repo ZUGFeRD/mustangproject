@@ -34,6 +34,10 @@ public class ResourceUtilities {
 
 	/**
 	 * Loading a File into a String using a certain encoding and file path
+	 * @param encoding the charset used in the file
+	 * @param path the path to the file
+	 * @return the file contents as a String
+	 * @throws IOException if the file cannot be read
 	 */
 	public static String readFile(Charset encoding, String path) throws IOException {
 		byte[] content = Files.readAllBytes(Paths.get(path));
@@ -42,6 +46,10 @@ public class ResourceUtilities {
 
 	/**
 	 * Saving a String as a file to a certain file path
+	 * @param encoding the charset used in the file
+	 * @param path the path to the file
+	 * @param content the contents of the file
+	 * @throws FileNotFoundException if the file cannot be found
 	 */
 	public static void saveFile(Charset encoding, String path, String content) throws FileNotFoundException {
 
@@ -147,7 +155,7 @@ public class ResourceUtilities {
 
 	/**
 	 * To fix the 3 slashes bug for File URI: For example:
-	 * file:/C:/work/test.txt -> file:///C:/work/test.txt
+	 * file:/C:/work/test.txt gives file:///C:/work/test.txt
 	 *
 	 * @param u - the File URI
 	 * @return the String of the URI
