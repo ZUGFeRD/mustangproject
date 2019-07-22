@@ -77,7 +77,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 	public void setTest() {
 	}
 
-	private String nDigitFormat(BigDecimal value, int scale) {
+	public static String nDigitFormat(BigDecimal value, int scale) {
 		/*
 		 * I needed 123,45, locale independent.I tried
 		 * NumberFormat.getCurrencyInstance().format( 12345.6789 ); but that is locale
@@ -92,16 +92,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		 * http://docs.oracle.com/javase/tutorial/i18n/format/decimalFormat.html in the
 		 * end I decided to calculate myself and take eur+sparator+cents
 		 *
-		 * This function will cut off, i.e. floor() subcent values Tests:
-		 * System.err.println(utils.currencyFormat(new BigDecimal(0),
-		 * ".")+"\n"+utils.currencyFormat(new BigDecimal("-1.10"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("-1.1"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("-1.01"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3489"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3419"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("12"), ","));
-		 *
-		 * results 0.00 -1,10 -1,10 -1,01 20000123,34 20000123,34 12,00
 		 */
 		value = value.setScale(scale, BigDecimal.ROUND_HALF_UP); // first, round so that e.g.
 																	// 1.189999999999999946709294817992486059665679931640625
@@ -111,25 +101,29 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
 		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
 		otherSymbols.setDecimalSeparator('.');
-		DecimalFormat dec = new DecimalFormat("0." + new String(repeat), otherSymbols);
+		String baseFormat="0";
+		if (scale>0) { 
+		  baseFormat+=".";
+		}
+		DecimalFormat dec = new DecimalFormat(baseFormat + new String(repeat), otherSymbols);
 		return dec.format(value);
 
 	}
 
 	private String vatFormat(BigDecimal value) {
-		return nDigitFormat(value, 2);
+		return ZUGFeRD2PullProvider.nDigitFormat(value, 2);
 	}
 
 	private String currencyFormat(BigDecimal value) {
-		return nDigitFormat(value, 2);
+		return ZUGFeRD2PullProvider.nDigitFormat(value, 2);
 	}
 
 	private String priceFormat(BigDecimal value) {
-		return nDigitFormat(value, 4);
+		return ZUGFeRD2PullProvider.nDigitFormat(value, 4);
 	}
 
 	private String quantityFormat(BigDecimal value) {
-		return nDigitFormat(value, 4);
+		return ZUGFeRD2PullProvider.nDigitFormat(value, 4);
 	}
 
 	@Override

@@ -2,6 +2,7 @@
 - in ram:ExchangedDocument: ram:name entfernen
 - updated javadoc
 - fixed #104 nullpointerex when specifying no parameter
+- closed #23
 
 1.7.2
 =====
