@@ -49,7 +49,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 
 	// //////// TESTS
 	// //////////////////////////////////////////////////////////////////////////////////////////
-	public void testCustomZF2Export() throws Exception {
+	public void testCustomZF2Export() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506custom.pdf";
 		// the writing part
@@ -288,10 +288,10 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 	 * ./src/test/MustangGnuaccountingBeispielRE-20140703_502blanko.pdf}, adds
 	 * metadata, writes to @{code ./target/testout-*} and then imports to check the
 	 * values. It would not make sense to have it run before the less complex
-	 * importer test (which is probably redundant) --> as only Name Ascending is
+	 * importer test (which is probably redundant). As only Name Ascending is
 	 * supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
 	 */
-	public void testCustomZF1Export() throws Exception {
+	public void testCustomZF1Export() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505custom.pdf";
 		// the writing part
