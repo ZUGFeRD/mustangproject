@@ -60,11 +60,10 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			ZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1Factory().setProducer("My Application").setCreator("Test").setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931)
 					.load(SOURCE_PDF);
 
-			final byte[] UTF8ByteOrderMark = new byte[]{(byte) 0xef, (byte) 0xbb, (byte) 0xbf};
-			/* we have much more information than just in the basic profile (comfort or extended) but it's perfectly valid to provide more information, just not less. 
+			/* we have much more information than just in the basic profile (comfort or extended) but it's perfectly valid to provide more information, just not less.
 			 * test the export with bom (which is valid) because this will also test the import (which also needs to work and needs to be tested)
 			 * */
-			String ownZUGFeRDXML = new String(UTF8ByteOrderMark) + "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+			String ownZUGFeRDXML = "\ufeff<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 					"<rsm:CrossIndustryInvoice xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100\" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100\">\n" +
 					"	<rsm:ExchangedDocumentContext>\n" +
 					"		<ram:TestIndicator><udt:Indicator>false</udt:Indicator></ram:TestIndicator>\n" +
