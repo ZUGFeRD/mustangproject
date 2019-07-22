@@ -843,70 +843,26 @@ class ZUGFeRDTransactionModelConverter {
 
 
 	private BigDecimal vatFormat(BigDecimal value) {
-		return nDigitFormat(value, 2);
-	}
+		return value.setScale(2, BigDecimal.ROUND_HALF_UP);
+ 	}
 
 
 	private BigDecimal currencyFormat(BigDecimal value) {
-		return nDigitFormat(value, 2);
-	}
+		return value.setScale(2, BigDecimal.ROUND_HALF_UP);
+ 	}
 
 
 	private BigDecimal priceFormat(BigDecimal value) {
-		return nDigitFormat(value, 4);
-	}
+		return value.setScale(4, BigDecimal.ROUND_HALF_UP);
+ 	}
 
 
 	private BigDecimal quantityFormat(BigDecimal value) {
-		return nDigitFormat(value, 4);
-	}
+		return value.setScale(4, BigDecimal.ROUND_HALF_UP);
+ 	}
 
 
-	private BigDecimal nDigitFormat(BigDecimal value, int scale) {
-		/*
-		 * I needed 123,45, locale independent.I tried
-		 * NumberFormat.getCurrencyInstance().format( 12345.6789 ); but that is
-		 * locale specific.I also tried DecimalFormat df = new DecimalFormat(
-		 * "0,00" ); df.setDecimalSeparatorAlwaysShown(true);
-		 * df.setGroupingUsed(false); DecimalFormatSymbols symbols = new
-		 * DecimalFormatSymbols(); symbols.setDecimalSeparator(',');
-		 * symbols.setGroupingSeparator(' ');
-		 * df.setDecimalFormatSymbols(symbols);
-		 *
-		 * but that would not switch off grouping. Although I liked very much
-		 * the (incomplete) "BNF diagram" in
-		 * http://docs.oracle.com/javase/tutorial/i18n/format/decimalFormat.html
-		 * in the end I decided to calculate myself and take eur+sparator+cents
-		 *
-		 * This function will cut off, i.e. floor() subcent values Tests:
-		 * System.err.println(utils.currencyFormat(new BigDecimal(0),
-		 * ".")+"\n"+utils.currencyFormat(new BigDecimal("-1.10"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("-1.1"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("-1.01"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3489"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3419"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("12"), ","));
-		 *
-		 * results 0.00 -1,10 -1,10 -1,01 20000123,34 20000123,34 12,00
-		 */
-		value = value.setScale(scale, BigDecimal.ROUND_HALF_UP); // first, round
-		// so that
-		// e.g.
-		// 1.189999999999999946709294817992486059665679931640625
-		// becomes
-		// 1.19
-		char[] repeat = new char[scale];
-		Arrays.fill(repeat, '0');
-
-		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
-		otherSymbols.setDecimalSeparator('.');
-		DecimalFormat dec = new DecimalFormat("0." + new String(repeat),
-				otherSymbols);
-		return new BigDecimal(dec.format(value));
-
-	}
-
-
+ 
 	/**
 	 * which taxes have been used with which amounts in this transaction, empty for no taxes, or e.g. 19=>190 and 7=>14 if 1000 Eur were applicable to 19% VAT
 	 * (=>190 EUR VAT) and 200 EUR were applicable to 7% (=>14 EUR VAT) 190 Eur
