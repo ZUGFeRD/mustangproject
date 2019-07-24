@@ -34,6 +34,14 @@ import java.util.Date;
 public interface IZUGFeRDExportableTransaction {
 
 	/**
+	 * appears in /rsm:CrossIndustryDocument/rsm:HeaderExchangedDocument/ram:Name
+	 * @return Name of document
+	 */
+	default String getDocumentName() {
+		return "RECHNUNG";
+	}
+
+	/**
 	 *
 	 *
 	 * @return Code of Document

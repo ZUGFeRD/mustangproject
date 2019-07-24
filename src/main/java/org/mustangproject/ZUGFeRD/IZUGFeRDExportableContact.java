@@ -38,6 +38,24 @@ public interface IZUGFeRDExportableContact {
 		return null;
 	}
 
+	/**
+	 * customer global identification assigned by the seller
+	 *
+	 * @return customer identification
+	 */
+	default String getGlobalID() {
+		return null;
+	}
+
+	/**
+	 * customer global identification scheme
+	 *
+	 * @return customer identification
+	 */
+	default String getGlobalIDScheme() {
+		return null;
+	}
+
 
 	/**
 	 * First and last name of the recipient
