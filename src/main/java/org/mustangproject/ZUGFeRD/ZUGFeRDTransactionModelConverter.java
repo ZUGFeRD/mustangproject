@@ -149,7 +149,7 @@ class ZUGFeRDTransactionModelConverter {
 		document.setTypeCode(documentCodeType);
 
 		TextType name = xmlFactory.createTextType();
-		name.setValue("RECHNUNG");
+		name.setValue(trans.getDocumentName());
 		document.getName().add(name);
 
 		if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
@@ -211,6 +211,12 @@ class ZUGFeRDTransactionModelConverter {
 			IDType buyerID = xmlFactory.createIDType();
 			buyerID.setValue(trans.getRecipient().getID());
 			buyerTradeParty.getID().add(buyerID);
+		}
+		if (trans.getRecipient().getGlobalID() != null) {
+			IDType globalID = xmlFactory.createIDType();
+			globalID.setValue(trans.getRecipient().getGlobalID());
+			globalID.setSchemeID(trans.getRecipient().getGlobalIDScheme());
+			buyerTradeParty.getGlobalID().add(globalID);
 		}
 
 		TextType buyerName = xmlFactory.createTextType();
