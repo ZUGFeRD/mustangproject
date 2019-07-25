@@ -86,7 +86,6 @@ public class Toecount {
 		System.out.println("Mustangproject.org " + org.mustangproject.ZUGFeRD.Version.VERSION + " \r\n"
 				+ "A Apache Public License library and command line tool for statistics on PDF invoices with\r\n"
 				+ "ZUGFeRD Metadata (http://www.zugferd.org)\r\n" + "\r\n" + getUsage() + "\r\n"
-				+ "* --action=visualize to convert XML to HTML or \\r\\n"
 				+ "* Count operations\r\n" + "\t-d, --directory\tcount ZUGFeRD files in directory to be scanned\r\n"
 				+ "\t\tIf it is a directory, it will recurse.\r\n"
 				+ "\t-l, --listfromstdin\tcount ZUGFeRD files from a list of linefeed separated files on runtime.\r\n"
@@ -332,8 +331,6 @@ public class Toecount {
 				performConvert(sourceName, outName);
 			} else if (upgradeRequested) {
 				performUpgrade(sourceName, outName);
-			} else if ((action!=null)&&(action.equals("visualize"))) {
-				performVisualization(sourceName, outName);
 			} else {
 				// no argument or argument unknown
 				printUsage();
@@ -346,91 +343,6 @@ public class Toecount {
 		}
 
 	}
-
-	private static void performVisualization(String sourceName, String outName) {
-		// Get params from user if not already defined
-		if (sourceName == null) {
-			sourceName = getFilenameFromUser("ZUGFeRD XML source", "zugferd-invoice.xml", "xml", true, false);
-		} else {
-			System.out.println("ZUGFeRD XML source set to " + sourceName);
-		}
-		if (outName == null) {
-			outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "factur-x.html", "html", false, true);
-		} else {
-			System.out.println("ZUGFeRD 1.0 XML source set to " + outName);
-		}
-
-		// Verify params
-		try {
-			ensureFileExists(sourceName);
-			ensureFileNotExists(outName);
-
-			// stylesheets/ZUGFeRD_1p0_c1p0_s1p0.xslt
-		} catch (IOException e) {
-			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
-		}
-
-		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
-		String xml = null;
-		try {
-			xml = zvi.visualize(sourceName);
-			Files.write(Paths.get(outName), xml.getBytes());
-		} catch (FileNotFoundException e) {
-			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
-		} catch (UnsupportedEncodingException e) {
-			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
-		} catch (TransformerException e) {
-			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
-		} catch (IOException e) {
-			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
-		}
-		System.out.println("Written to " + outName);
-
-		try {
-			ExportResource("/xrechnung-viewer.css");
-			ExportResource("/xrechnung-viewer.js");
-
-			System.out.println("xrechnung-viewer.css and xrechnung-viewer.js written as well (to local working dir)");
-		} catch (Exception e) {
-			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
-		}
-
-		
-	}
-	
-	 /**
-     * Export a resource embedded into a Jar file to the local file path.
-     *
-     * @param resourceName ie.: "/SmartLibrary.dll"
-     * @return The path to the exported resource
-     * @throws Exception
-     */
-    static public String ExportResource(String resourceName) throws Exception {
-        InputStream stream = null;
-        OutputStream resStreamOut = null;
-        String jarFolder;
-        try {
-            stream = Toecount.class.getResourceAsStream(resourceName);//note that each / is a directory down in the "jar tree" been the jar the root of the tree
-            if(stream == null) {
-                throw new Exception("Cannot get resource \"" + resourceName + "\" from Jar file.");
-            }
-
-            int readBytes;
-            byte[] buffer = new byte[4096];
-            jarFolder = System.getProperty("user.dir");
-            resStreamOut = new FileOutputStream(jarFolder + resourceName);
-            while ((readBytes = stream.read(buffer)) > 0) {
-                resStreamOut.write(buffer, 0, readBytes);
-            }
-        } catch (Exception ex) {
-            throw ex;
-        } finally {
-            stream.close();
-            resStreamOut.close();
-        }
-
-        return jarFolder + resourceName;
-    }
 
 	private static void performUpgrade(String xmlName, String outName) throws IOException, TransformerException {
 
