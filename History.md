@@ -1,8 +1,10 @@
+- 1.8.0 feature: --action=visualize convert zugferd xml to html
 - migration: testIndicator entfernen
 - in ram:ExchangedDocument: ram:name entfernen
 - updated javadoc
 - fixed #104 nullpointerex when specifying no parameter
 - closed #23
+- #112
 
 1.7.2
 =====
