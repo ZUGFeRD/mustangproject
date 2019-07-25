@@ -30,6 +30,7 @@ import org.apache.xmpbox.xml.DomXmpParser;
 import org.apache.xmpbox.xml.XmpParsingException;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.mustangproject.ZUGFeRD.model.DocumentContextParameterTypeConstants;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -349,7 +350,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 
 		// the writing part
 		try (InputStream SOURCE_PDF = this.getClass()
-				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
+			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
 			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
 
@@ -366,7 +367,49 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 //			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
 //			assertFalse(pdfContent.indexOf("<pdfaSchema:prefix>zf</pdfaSchema:prefix>") == -1);
 //			assertFalse(pdfContent.indexOf("urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#") == -1);
-			
+
+		} catch (IOException e) {
+			fail("IOException should not happen in testZExport");
+		}
+
+		// now check the contents (like MustangReaderTest)
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
+
+		// Reading ZUGFeRD
+		assertEquals(zi.getAmount(), "571.04");
+		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
+		assertEquals(zi.getReference(), getReferenceNumber());
+		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
+		assertEquals(zi.getKTO(), getTradeSettlementPayment()[0].getOwnKto());
+		assertEquals(zi.getHolder(), getOwnOrganisationName());
+		assertEquals(zi.getForeignReference(), getNumber());
+	}
+
+	/**
+	 * Quick and dirty copy of testZExport to check if v1 files contain
+	 * the correct profile string when the comfort profile is selected.
+	 */
+	public void testZExportv1Profile() {
+
+		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506new.pdf";
+
+		// the writing part
+		try (InputStream SOURCE_PDF = this.getClass()
+			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
+
+			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(1).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.COMFORT).load(SOURCE_PDF)) {
+
+			ze.PDFattachZugferdFile(this);
+			ze.disableAutoClose(true);
+			ze.export(TARGET_PDF);
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ze.export(baos);
+			ze.close();
+			String pdfContent = baos.toString("UTF-8");
+			assertFalse(pdfContent.indexOf(DocumentContextParameterTypeConstants.EXTENDED) >= 0);
+			assertTrue(pdfContent.indexOf(DocumentContextParameterTypeConstants.COMFORT) >= 0);
+
 		} catch (IOException e) {
 			fail("IOException should not happen in testZExport");
 		}
