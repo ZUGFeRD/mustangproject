@@ -85,6 +85,7 @@ class ZUGFeRDTransactionModelConverter {
 	private final Totals totals;
 	private boolean isTest;
 	private String currency = "EUR";
+	private String profile;
 
 
 	ZUGFeRDTransactionModelConverter(IZUGFeRDExportableTransaction trans) {
@@ -114,7 +115,7 @@ class ZUGFeRDTransactionModelConverter {
 		DocumentContextParameterType contextParameter = xmlFactory
 				.createDocumentContextParameterType();
 		IDType idType = xmlFactory.createIDType();
-		idType.setValue(DocumentContextParameterTypeConstants.EXTENDED);
+		idType.setValue(profile);
 		contextParameter.setID(idType);
 		context.getGuidelineSpecifiedDocumentContextParameter().add(
 				contextParameter);
@@ -952,6 +953,11 @@ class ZUGFeRDTransactionModelConverter {
 
 	ZUGFeRDTransactionModelConverter withTest(boolean isTest) {
 		this.isTest = isTest;
+		return this;
+	}
+
+	public ZUGFeRDTransactionModelConverter withProfile(String profile) {
+		this.profile = profile;
 		return this;
 	}
 

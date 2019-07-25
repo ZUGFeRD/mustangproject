@@ -21,5 +21,7 @@ package org.mustangproject.ZUGFeRD;
 public interface IProfileProvider {
 
 	public String getProfile();
+
+	public void setProfile(ZUGFeRDConformanceLevel level);
 	
 }
