@@ -246,4 +246,15 @@ public interface IZUGFeRDExportableTransaction {
 		return null;
 	}
 
+	/**
+	 * get the ID of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
+	 * @return the ID of the document
+	 */
+	default String getBuyerOrderReferencedDocumentID() { return null; }
+
+	/**
+	 * get the issue timestamp of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
+	 * @return the IssueDateTime in format CCYY-MM-DDTHH:MM:SS
+	 */
+	default String getBuyerOrderReferencedDocumentIssueDateTime() { return null; }
 }
