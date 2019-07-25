@@ -407,24 +407,13 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 			ze.export(baos);
 			ze.close();
 			String pdfContent = baos.toString("UTF-8");
+			assertFalse(pdfContent.indexOf(DocumentContextParameterTypeConstants.BASIC) >= 0);
 			assertFalse(pdfContent.indexOf(DocumentContextParameterTypeConstants.EXTENDED) >= 0);
 			assertTrue(pdfContent.indexOf(DocumentContextParameterTypeConstants.COMFORT) >= 0);
 
 		} catch (IOException e) {
 			fail("IOException should not happen in testZExport");
 		}
-
-		// now check the contents (like MustangReaderTest)
-		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
-
-		// Reading ZUGFeRD
-		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
-		assertEquals(zi.getReference(), getReferenceNumber());
-		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
-		assertEquals(zi.getKTO(), getTradeSettlementPayment()[0].getOwnKto());
-		assertEquals(zi.getHolder(), getOwnOrganisationName());
-		assertEquals(zi.getForeignReference(), getNumber());
 	}
 
 	
