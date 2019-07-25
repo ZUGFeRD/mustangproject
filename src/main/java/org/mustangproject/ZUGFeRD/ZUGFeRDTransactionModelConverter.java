@@ -31,51 +31,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 
-import org.mustangproject.ZUGFeRD.model.AmountType;
-import org.mustangproject.ZUGFeRD.model.CodeType;
-import org.mustangproject.ZUGFeRD.model.CountryIDType;
-import org.mustangproject.ZUGFeRD.model.CreditorFinancialAccountType;
-import org.mustangproject.ZUGFeRD.model.CreditorFinancialInstitutionType;
-import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
-import org.mustangproject.ZUGFeRD.model.DateTimeType;
-import org.mustangproject.ZUGFeRD.model.DateTimeTypeConstants;
-import org.mustangproject.ZUGFeRD.model.DocumentCodeType;
-import org.mustangproject.ZUGFeRD.model.DocumentContextParameterType;
-import org.mustangproject.ZUGFeRD.model.DocumentContextParameterTypeConstants;
-import org.mustangproject.ZUGFeRD.model.DocumentLineDocumentType;
-import org.mustangproject.ZUGFeRD.model.ExchangedDocumentContextType;
-import org.mustangproject.ZUGFeRD.model.ExchangedDocumentType;
-import org.mustangproject.ZUGFeRD.model.IDType;
-import org.mustangproject.ZUGFeRD.model.IndicatorType;
-import org.mustangproject.ZUGFeRD.model.LogisticsServiceChargeType;
-import org.mustangproject.ZUGFeRD.model.NoteType;
-import org.mustangproject.ZUGFeRD.model.NoteTypeConstants;
-import org.mustangproject.ZUGFeRD.model.ObjectFactory;
-import org.mustangproject.ZUGFeRD.model.PaymentMeansCodeType;
-import org.mustangproject.ZUGFeRD.model.PaymentMeansCodeTypeConstants;
-import org.mustangproject.ZUGFeRD.model.PercentType;
-import org.mustangproject.ZUGFeRD.model.QuantityType;
-import org.mustangproject.ZUGFeRD.model.SupplyChainEventType;
-import org.mustangproject.ZUGFeRD.model.SupplyChainTradeAgreementType;
-import org.mustangproject.ZUGFeRD.model.SupplyChainTradeDeliveryType;
-import org.mustangproject.ZUGFeRD.model.SupplyChainTradeLineItemType;
-import org.mustangproject.ZUGFeRD.model.SupplyChainTradeSettlementType;
-import org.mustangproject.ZUGFeRD.model.SupplyChainTradeTransactionType;
-import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeType;
-import org.mustangproject.ZUGFeRD.model.TaxRegistrationType;
-import org.mustangproject.ZUGFeRD.model.TaxRegistrationTypeConstants;
-import org.mustangproject.ZUGFeRD.model.TaxTypeCodeType;
-import org.mustangproject.ZUGFeRD.model.TaxTypeCodeTypeConstants;
-import org.mustangproject.ZUGFeRD.model.TextType;
-import org.mustangproject.ZUGFeRD.model.TradeAddressType;
-import org.mustangproject.ZUGFeRD.model.TradeAllowanceChargeType;
-import org.mustangproject.ZUGFeRD.model.TradePartyType;
-import org.mustangproject.ZUGFeRD.model.TradePaymentTermsType;
-import org.mustangproject.ZUGFeRD.model.TradePriceType;
-import org.mustangproject.ZUGFeRD.model.TradeProductType;
-import org.mustangproject.ZUGFeRD.model.TradeSettlementMonetarySummationType;
-import org.mustangproject.ZUGFeRD.model.TradeSettlementPaymentMeansType;
-import org.mustangproject.ZUGFeRD.model.TradeTaxType;
+import org.mustangproject.ZUGFeRD.model.*;
 
 class ZUGFeRDTransactionModelConverter {
 	private static final SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -85,6 +41,7 @@ class ZUGFeRDTransactionModelConverter {
 	private final Totals totals;
 	private boolean isTest;
 	private String currency = "EUR";
+	private String profile;
 
 
 	ZUGFeRDTransactionModelConverter(IZUGFeRDExportableTransaction trans) {
@@ -114,7 +71,7 @@ class ZUGFeRDTransactionModelConverter {
 		DocumentContextParameterType contextParameter = xmlFactory
 				.createDocumentContextParameterType();
 		IDType idType = xmlFactory.createIDType();
-		idType.setValue(DocumentContextParameterTypeConstants.EXTENDED);
+		idType.setValue(profile);
 		contextParameter.setID(idType);
 		context.getGuidelineSpecifiedDocumentContextParameter().add(
 				contextParameter);
@@ -199,6 +156,15 @@ class ZUGFeRDTransactionModelConverter {
 
 		tradeAgreement.setBuyerTradeParty(getBuyer());
 		tradeAgreement.setSellerTradeParty(getSeller());
+
+		if (trans.getBuyerOrderReferencedDocumentID() != null) {
+			ReferencedDocumentType refdoc = xmlFactory.createReferencedDocumentType();
+			IDType id = xmlFactory.createIDType();
+			id.setValue(trans.getBuyerOrderReferencedDocumentID());
+			refdoc.getID().add(id);
+			refdoc.setIssueDateTime(trans.getBuyerOrderReferencedDocumentIssueDateTime());
+			tradeAgreement.getBuyerOrderReferencedDocument().add(refdoc);
+		}
 
 		return tradeAgreement;
 	}
@@ -952,6 +918,11 @@ class ZUGFeRDTransactionModelConverter {
 
 	ZUGFeRDTransactionModelConverter withTest(boolean isTest) {
 		this.isTest = isTest;
+		return this;
+	}
+
+	public ZUGFeRDTransactionModelConverter withProfile(String profile) {
+		this.profile = profile;
 		return this;
 	}
 

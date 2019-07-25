@@ -367,7 +367,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 */
 	public void PDFattachZugferdFile(IZUGFeRDExportableTransaction trans) throws IOException {
 		prepareDocument();
-
+		((IProfileProvider) xmlProvider).setProfile(profile);
 		xmlProvider.generateXML(trans);
 		String filename = getFilenameForVersion(ZFVersion);
 		PDFAttachGenericFile(doc, filename, "Alternative",
