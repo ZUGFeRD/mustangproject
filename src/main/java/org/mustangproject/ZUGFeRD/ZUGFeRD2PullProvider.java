@@ -71,6 +71,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
 	protected byte[] zugferdData;
 	private IZUGFeRDExportableTransaction trans;
+	private ZUGFeRDConformanceLevel level;
+
+	public void setProfile(ZUGFeRDConformanceLevel level) {
+		this.level = level;
+	}
 
 	/**
 	 * enables the flag to indicate a test invoice in the XML structure
