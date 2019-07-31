@@ -659,9 +659,14 @@ class ZUGFeRDTransactionModelConverter {
 		grandTotalAmount.setValue(currencyFormat(totals.getTotalGross()));
 		monetarySummation.getGrandTotalAmount().add(grandTotalAmount);
 
+		AmountType totalPrepaidAmount = xmlFactory.createAmountType();
+		totalPrepaidAmount.setCurrencyID(currency);
+		totalPrepaidAmount.setValue(currencyFormat(trans.getTotalPrepaidAmount()));
+		monetarySummation.getTotalPrepaidAmount().add(totalPrepaidAmount);
+
 		AmountType duePayableAmount = xmlFactory.createAmountType();
 		duePayableAmount.setCurrencyID(currency);
-		duePayableAmount.setValue(currencyFormat(totals.getTotalGross()));
+		duePayableAmount.setValue(currencyFormat(totals.getTotalGross().subtract(trans.getTotalPrepaidAmount())));
 		monetarySummation.getDuePayableAmount().add(duePayableAmount);
 
 		return monetarySummation;
