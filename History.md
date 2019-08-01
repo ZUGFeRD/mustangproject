@@ -1,11 +1,15 @@
-todo
-- migration: testIndicator entfernen
-- in ram:ExchangedDocument: ram:name entfernen
-done
+1.7.3
+=====
+2019-08-01
+
+- #105 does not build in windows
+- #99 BOMs confuse parser
 - updated javadoc
 - fixed #104 nullpointerex when specifying no parameter
-- closed #23
-- #112
+- PR #112 complete profile options for v1 
+- access to TotalPrepaidAmount in ZF v1 #118
+- have unit tests for nDigitFormat #23
+
 
 1.7.2
 =====
