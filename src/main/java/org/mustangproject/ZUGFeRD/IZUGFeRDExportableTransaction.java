@@ -29,6 +29,7 @@ package org.mustangproject.ZUGFeRD;
 
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public interface IZUGFeRDExportableTransaction {
@@ -257,4 +258,12 @@ public interface IZUGFeRDExportableTransaction {
 	 * @return the IssueDateTime in format CCYY-MM-DDTHH:MM:SS
 	 */
 	default String getBuyerOrderReferencedDocumentIssueDateTime() { return null; }
+
+	/**
+	 * get the TotalPrepaidAmount located in SpecifiedTradeSettlementMonetarySummation (v1) or
+	 * SpecifiedTradeSettlementHeaderMonetarySummation (v2)
+	 * @return the total sum (incl. VAT) of prepayments, i.e. the difference between GrandTotalAmount
+	 * and DuePayableAmount
+	 */
+	default BigDecimal getTotalPrepaidAmount() { return BigDecimal.ZERO; }
 }
