@@ -145,6 +145,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		
 	}
 
+	private BigDecimal getTotalPrepaid() {
+		return trans.getTotalPrepaidAmount();
+	}
+
 	private BigDecimal getTotalGross() {
 
 		BigDecimal res = getTotal();
@@ -477,8 +481,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				+ "				<ram:GrandTotalAmount>" + currencyFormat(getTotalGross()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 																														// //
 																														// currencyID=\"EUR\"
-				// + " <TotalPrepaidAmount currencyID=\"EUR\">0.00</TotalPrepaidAmount>\n"
-				+ "				<ram:DuePayableAmount>" + currencyFormat(getTotalGross()) + "</ram:DuePayableAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "             <ram:TotalPrepaidAmount currencyID=\"EUR\">" + currencyFormat(getTotalPrepaid()) + "</TotalPrepaidAmount>\n"
+				+ "				<ram:DuePayableAmount>" + currencyFormat(getTotalGross().subtract(getTotalPrepaid())) + "</ram:DuePayableAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 																														// //
 																														// currencyID=\"EUR\"
 				+ "			</ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n" //$NON-NLS-1$
