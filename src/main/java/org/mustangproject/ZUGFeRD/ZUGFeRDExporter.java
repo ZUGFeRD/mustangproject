@@ -33,6 +33,7 @@ import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.cos.COSObject;
 import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
@@ -478,17 +479,27 @@ public class ZUGFeRDExporter implements Closeable {
 		doc.getDocumentCatalog().setNames(names);
 
 		// AF entry (Array) in catalog with the FileSpec
-		COSArray cosArray = (COSArray) doc.getDocumentCatalog().getCOSObject().getItem("AF");
-		if (cosArray == null) {
-			cosArray = new COSArray();
-		}
-		cosArray.add(fs);
-		COSDictionary dict2 = doc.getDocumentCatalog().getCOSObject();
-		COSArray array = new COSArray();
-		array.add(fs.getCOSObject()); // see below
-		dict2.setItem("AF", array);
-		doc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
-	}
+        COSBase AFEntry = (COSBase)doc.getDocumentCatalog().getCOSObject().getItem("AF");
+        if ((AFEntry == null))
+        {
+            COSArray cosArray = new COSArray();
+		    cosArray.add(fs);
+		    doc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
+        } else if (AFEntry instanceof COSArray)
+        {
+            COSArray cosArray = (COSArray)AFEntry;
+            cosArray.add(fs);
+            doc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
+        } else if ((AFEntry instanceof COSObject) &&
+                   ((COSObject)AFEntry).getObject() instanceof COSArray)
+        {
+            COSArray cosArray = (COSArray)((COSObject)AFEntry).getObject();
+            cosArray.add(fs);
+        } else
+        {
+            throw new IOException("Unexpected object type for PDFDocument/Catalog/COSDictionary/Item(AF)");
+	    }
+    }
 
 	/**
 	 * Sets the ZUGFeRD XML data to be attached as a single byte array. This is
@@ -575,12 +586,12 @@ public class ZUGFeRDExporter implements Closeable {
 			buffer.write(prefix.getBytes("UTF-8")); // see https://github.com/ZUGFeRD/mustangproject/issues/44
 			serializer.serialize(xmpMetadata, buffer, false);
 			buffer.write(suffix.getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+        } catch (UnsupportedEncodingException e)
+        {
+            throw new TransformerException(e);
+        } catch (IOException e)
+        {
+            throw new TransformerException(e);
 		}
 		return buffer.toByteArray();
 	}
