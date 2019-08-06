@@ -31,8 +31,13 @@ import org.apache.xmpbox.schema.XMPSchema;
 
 public class XMPSchemaZugferd extends XMPSchema {
 
-	/**
+	/***
 	 * This is what needs to be added to the RDF metadata - basically the name of the embedded Zugferd file
+	 * @param metadata the xmp to be added to
+	 * @param conformanceLevel e.g.  conformanceLevel.EN16931
+	 * @param URN the xml URI for the XMP
+	 * @param prefix the xml namespace prefix for the XMP, zf for ZUGFeRD, fx for Factur-X
+	 * @param filename the filename of the invoice
 	 */
 	public XMPSchemaZugferd(XMPMetadata metadata, ZUGFeRDConformanceLevel conformanceLevel, String URN, String prefix, String filename) {
 		super(metadata, URN, prefix, "ZUGFeRD Schema");

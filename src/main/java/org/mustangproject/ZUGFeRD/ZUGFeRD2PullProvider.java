@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -70,6 +71,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
 	protected byte[] zugferdData;
 	private IZUGFeRDExportableTransaction trans;
+	private ZUGFeRDConformanceLevel level;
+
+	public void setProfile(ZUGFeRDConformanceLevel level) {
+		this.level = level;
+	}
 
 	/**
 	 * enables the flag to indicate a test invoice in the XML structure
@@ -77,7 +83,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 	public void setTest() {
 	}
 
-	private String nDigitFormat(BigDecimal value, int scale) {
+	public static String nDigitFormat(BigDecimal value, int scale) {
 		/*
 		 * I needed 123,45, locale independent.I tried
 		 * NumberFormat.getCurrencyInstance().format( 12345.6789 ); but that is locale
@@ -92,44 +98,25 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		 * http://docs.oracle.com/javase/tutorial/i18n/format/decimalFormat.html in the
 		 * end I decided to calculate myself and take eur+sparator+cents
 		 *
-		 * This function will cut off, i.e. floor() subcent values Tests:
-		 * System.err.println(utils.currencyFormat(new BigDecimal(0),
-		 * ".")+"\n"+utils.currencyFormat(new BigDecimal("-1.10"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("-1.1"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("-1.01"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3489"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3419"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("12"), ","));
-		 *
-		 * results 0.00 -1,10 -1,10 -1,01 20000123,34 20000123,34 12,00
 		 */
-		value = value.setScale(scale, BigDecimal.ROUND_HALF_UP); // first, round so that e.g.
-																	// 1.189999999999999946709294817992486059665679931640625
-																	// becomes 1.19
-		char[] repeat = new char[scale];
-		Arrays.fill(repeat, '0');
-
-		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
-		otherSymbols.setDecimalSeparator('.');
-		DecimalFormat dec = new DecimalFormat("0." + new String(repeat), otherSymbols);
-		return dec.format(value);
+		return value.setScale(scale, RoundingMode.HALF_UP).toPlainString();
 
 	}
 
 	private String vatFormat(BigDecimal value) {
-		return nDigitFormat(value, 2);
+		return ZUGFeRD2PullProvider.nDigitFormat(value, 2);
 	}
 
 	private String currencyFormat(BigDecimal value) {
-		return nDigitFormat(value, 2);
+		return ZUGFeRD2PullProvider.nDigitFormat(value, 2);
 	}
 
 	private String priceFormat(BigDecimal value) {
-		return nDigitFormat(value, 4);
+		return ZUGFeRD2PullProvider.nDigitFormat(value, 4);
 	}
 
 	private String quantityFormat(BigDecimal value) {
-		return nDigitFormat(value, 4);
+		return ZUGFeRD2PullProvider.nDigitFormat(value, 4);
 	}
 
 	@Override
@@ -156,6 +143,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		
 		return res;
 		
+	}
+
+	private BigDecimal getTotalPrepaid() {
+		return trans.getTotalPrepaidAmount();
 	}
 
 	private BigDecimal getTotalGross() {
@@ -214,9 +205,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
 		String senderReg = "";
 		if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
-			senderReg = "" + "<ram:IncludedCINote>\n" + "		<ram:Content>\n"
+			senderReg = "" + "<ram:IncludedNote>\n" + "		<ram:Content>\n"
 					+ trans.getOwnOrganisationFullPlaintextInfo() + "		</ram:Content>\n"
-					+ "<ram:SubjectCode>REG</ram:SubjectCode>\n" + "</ram:IncludedCINote>\n";
+					+ "<ram:SubjectCode>REG</ram:SubjectCode>\n" + "</ram:IncludedNote>\n";
 
 		}
 
@@ -378,11 +369,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				+ "					<ram:LineOne>" + trans.getRecipient().getStreet() + "</ram:LineOne>\n" //$NON-NLS-1$ //$NON-NLS-2$
 				+ "					<ram:CityName>" + trans.getRecipient().getLocation() + "</ram:CityName>\n" //$NON-NLS-1$ //$NON-NLS-2$
 				+ "					<ram:CountryID>" + trans.getRecipient().getCountry() + "</ram:CountryID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				</ram:PostalTradeAddress>\n" //$NON-NLS-1$
-				+ "				<ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
+				+ "				</ram:PostalTradeAddress>\n"; //$NON-NLS-1$
+		if (trans.getRecipient().getVATID() != null) {
+			xml += "				<ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
 				+ "					<ram:ID schemeID=\"VA\">" + trans.getRecipient().getVATID() + "</ram:ID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				</ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
-				+ "			</ram:BuyerTradeParty>\n" //$NON-NLS-1$
+				+ "				</ram:SpecifiedTaxRegistration>\n"; //$NON-NLS-1$
+		}
+		xml += "			</ram:BuyerTradeParty>\n" //$NON-NLS-1$
 				// + " <BuyerOrderReferencedDocument>\n"
 				// + " <IssueDateTime format=\"102\">20130301</IssueDateTime>\n"
 				// + " <ID>2013-471331</ID>\n"
@@ -412,8 +405,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 					+ "				</ram:PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
 					+ "				<ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
 					+ "					<ram:BICID>" + payment.getOwnBIC() + "</ram:BICID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-					+ "					<ram:GermanBankleitzahlID>" + payment.getOwnBLZ() //$NON-NLS-1$
-					+ "</ram:GermanBankleitzahlID>\n" //$NON-NLS-1$
 					// + " <ram:Name>"+trans.getOwnBankName()+"</ram:Name>\n" //$NON-NLS-1$
 					// //$NON-NLS-2$
 					+ "				</ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
@@ -490,8 +481,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				+ "				<ram:GrandTotalAmount>" + currencyFormat(getTotalGross()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 																														// //
 																														// currencyID=\"EUR\"
-				// + " <TotalPrepaidAmount currencyID=\"EUR\">0.00</TotalPrepaidAmount>\n"
-				+ "				<ram:DuePayableAmount>" + currencyFormat(getTotalGross()) + "</ram:DuePayableAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "             <ram:TotalPrepaidAmount currencyID=\"EUR\">" + currencyFormat(getTotalPrepaid()) + "</ram:TotalPrepaidAmount>\n"
+				+ "				<ram:DuePayableAmount>" + currencyFormat(getTotalGross().subtract(getTotalPrepaid())) + "</ram:DuePayableAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 																														// //
 																														// currencyID=\"EUR\"
 				+ "			</ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n" //$NON-NLS-1$

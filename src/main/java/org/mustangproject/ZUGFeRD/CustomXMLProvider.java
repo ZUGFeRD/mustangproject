@@ -18,7 +18,7 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-public class CustomXMLProvider implements IXMLProvider {
+public class CustomXMLProvider implements IXMLProvider, IProfileProvider {
 
 	protected byte[] zugferdData;
 
@@ -48,4 +48,14 @@ public class CustomXMLProvider implements IXMLProvider {
 
 	}
 
+	@Override
+	public String getProfile() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setProfile(ZUGFeRDConformanceLevel level) {
+		// TODO Auto-generated method stub
+	}
 }

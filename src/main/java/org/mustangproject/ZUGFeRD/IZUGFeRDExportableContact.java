@@ -19,11 +19,11 @@
 package org.mustangproject.ZUGFeRD;
 
 /**
- * Mustangproject's ZUGFeRD implementation Neccessary interface for ZUGFeRD exporter Licensed under the APLv2
+ * Mustangproject's ZUGFeRD implementation neccessary interface for ZUGFeRD exporter Licensed under the APLv2
  *
  * @author jstaerk
  * @version 1.2.0
- * @date 2014-05-10
+ * dated 2014-05-10
  */
 
 
@@ -35,6 +35,24 @@ public interface IZUGFeRDExportableContact {
 	 * @return customer identification
 	 */
 	default String getID() {
+		return null;
+	}
+
+	/**
+	 * customer global identification assigned by the seller
+	 *
+	 * @return customer identification
+	 */
+	default String getGlobalID() {
+		return null;
+	}
+
+	/**
+	 * customer global identification scheme
+	 *
+	 * @return customer identification
+	 */
+	default String getGlobalIDScheme() {
 		return null;
 	}
 

@@ -41,7 +41,7 @@ import static org.junit.Assert.assertFalse;
  * will be migrated to <code>src/test/resources/migration/output</code>.
  * If there is a similar named file as test reference <code>src/test/resources/migration/reference</code> a test
  * will be triggered for every single file.
- * <p/>
+ *
  * Note: Any 'ZUGFeRD1' will be exchanged to 'ZUGFeRD2' during migration and adequate reference will be searched for.
  */
 @RunWith(Parameterized.class)

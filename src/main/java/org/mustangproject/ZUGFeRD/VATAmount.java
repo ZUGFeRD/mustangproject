@@ -27,20 +27,20 @@ import java.math.BigDecimal;
  *
  * @author jstaerk
  * @version 1.2.0
- * @date 2015-10-29
+ * dated 2015-10-29
  */
 public class VATAmount {
 
-	public VATAmount(BigDecimal basis, BigDecimal calculated, String documentCode) {
+	public VATAmount(BigDecimal basis, BigDecimal calculated, String categoryCode) {
 		super();
 		this.basis = basis;
 		this.calculated = calculated;
-		this.documentCode = documentCode;
+		this.categoryCode = categoryCode;
 	}
 
 	BigDecimal basis, calculated;
 
-	String documentCode;
+	String categoryCode;
 
 	public BigDecimal getBasis() {
 		return basis;
@@ -58,20 +58,39 @@ public class VATAmount {
 		this.calculated = calculated;
 	}
 
+	/**
+	 *
+	 * @deprecated Use {@link #getCategoryCode() instead}
+	 * @return String with category code
+	 */
+	@Deprecated
 	public String getDocumentCode() {
-		return documentCode;
+		return categoryCode;
 	}
 
+	/**
+     * @param documentCode as String
+	 * @deprecated Use {@link #setCategoryCode(String)} instead
+	 */
+	@Deprecated
 	public void setDocumentCode(String documentCode) {
-		this.documentCode = documentCode;
+		this.categoryCode = documentCode;
+	}
+
+	public String getCategoryCode() {
+		return categoryCode;
+	}
+
+	public void setCategoryCode(String categoryCode) {
+		this.categoryCode = categoryCode;
 	}
 
 	public VATAmount add(VATAmount v) {
-		return new VATAmount(basis.add(v.getBasis()), calculated.add(v.getCalculated()), this.documentCode);
+		return new VATAmount(basis.add(v.getBasis()), calculated.add(v.getCalculated()), this.categoryCode);
 	}
 
 	public VATAmount subtract(VATAmount v) {
-		return new VATAmount(basis.subtract(v.getBasis()), calculated.subtract(v.getCalculated()), this.documentCode);
+		return new VATAmount(basis.subtract(v.getBasis()), calculated.subtract(v.getCalculated()), this.categoryCode);
 	}
 
 }

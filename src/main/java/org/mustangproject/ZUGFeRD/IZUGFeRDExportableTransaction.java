@@ -29,9 +29,18 @@ package org.mustangproject.ZUGFeRD;
 
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public interface IZUGFeRDExportableTransaction {
+
+	/**
+	 * appears in /rsm:CrossIndustryDocument/rsm:HeaderExchangedDocument/ram:Name
+	 * @return Name of document
+	 */
+	default String getDocumentName() {
+		return "RECHNUNG";
+	}
 
 	/**
 	 *
@@ -64,7 +73,7 @@ public interface IZUGFeRDExportableTransaction {
 
 	/**
 	 * this should be the full sender institution name, details, manager and tax registration. It is one of the few functions which may return null. e.g.
-	 * <p/>
+	 * <p>
 	 * Lieferant GmbH Lieferantenstraße 20 80333 München Deutschland Geschäftsführer: Hans Muster Handelsregisternummer: H A 123
 	 *
 	 * @return null or full sender institution name, details, manager and tax registration
@@ -115,6 +124,8 @@ public interface IZUGFeRDExportableTransaction {
 
 	/**
 	 * the creditors payment informations
+	 * 
+	 * @return an array of IZUGFeRDTradeSettlementPayment
 	 */
 	IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment();
 
@@ -236,4 +247,23 @@ public interface IZUGFeRDExportableTransaction {
 		return null;
 	}
 
+	/**
+	 * get the ID of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
+	 * @return the ID of the document
+	 */
+	default String getBuyerOrderReferencedDocumentID() { return null; }
+
+	/**
+	 * get the issue timestamp of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
+	 * @return the IssueDateTime in format CCYY-MM-DDTHH:MM:SS
+	 */
+	default String getBuyerOrderReferencedDocumentIssueDateTime() { return null; }
+
+	/**
+	 * get the TotalPrepaidAmount located in SpecifiedTradeSettlementMonetarySummation (v1) or
+	 * SpecifiedTradeSettlementHeaderMonetarySummation (v2)
+	 * @return the total sum (incl. VAT) of prepayments, i.e. the difference between GrandTotalAmount
+	 * and DuePayableAmount
+	 */
+	default BigDecimal getTotalPrepaidAmount() { return BigDecimal.ZERO; }
 }
