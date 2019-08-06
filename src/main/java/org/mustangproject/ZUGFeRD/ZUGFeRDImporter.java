@@ -68,6 +68,7 @@ public class ZUGFeRDImporter {
 	 */
 	private byte[] rawXML = null;
 	private String xmpString = null; // XMP metadata
+	private Document document;
 
 	public ZUGFeRDImporter(String pdfFilename) {
 		
@@ -146,8 +147,7 @@ public class ZUGFeRDImporter {
 				// ByteArrayOutputStream();
 				// FileOutputStream fos = new FileOutputStream(file);
 
-				rawXML = embeddedFile.toByteArray();
-				setMeta(new String(rawXML));
+				setRawXML(embeddedFile.toByteArray());
 
 				// fos.write(embeddedFile.getByteArray());
 				// fos.close();
@@ -176,15 +176,25 @@ public class ZUGFeRDImporter {
 		System.err.println(output);
 	}
 
-	private Document getDocument() throws ParserConfigurationException, IOException, SAXException, TransformerException {
+		private Document getDocument() { return document; }
+
+	public void setRawXML(byte[] rawXML) throws IOException {
+		this.rawXML = rawXML;
+		try {
+			setDocument();
+		} catch (ParserConfigurationException | SAXException e) {
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+			throw new ZUGFeRDExportException(e);
+		}
+	}
+
+	private void setDocument() throws ParserConfigurationException, IOException, SAXException {
 		DocumentBuilderFactory xmlFact = DocumentBuilderFactory.newInstance();
 		xmlFact.setNamespaceAware(false);
 		DocumentBuilder builder = xmlFact.newDocumentBuilder();
 		ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
 		is.skip(guessBOMSize(is));
-		Document doc = builder.parse(is);
-		//prettyPrint(doc);
-		return doc;
+		document = builder.parse(is);
 	}
 
 	/**
@@ -224,10 +234,7 @@ public class ZUGFeRDImporter {
 			XPathFactory xpathFact = XPathFactory.newInstance();
 			XPath xpath = xpathFact.newXPath();
 			result = xpath.evaluate(xpathStr, document);
-		} catch (ParserConfigurationException e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
-			throw new ZUGFeRDExportException(e);
-		} catch (IOException | SAXException | TransformerException | XPathExpressionException e) {
+		} catch (XPathExpressionException e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			throw new ZUGFeRDExportException(e);
 		}
@@ -332,8 +339,8 @@ public class ZUGFeRDImporter {
 	/**
 	 * @param meta raw XML to be set
 	 */
-	public void setMeta(String meta) {
-		this.rawXML = meta.getBytes();
+	public void setMeta(String meta) throws IOException {
+		setRawXML(meta.getBytes());
 	}
 
 	/**
