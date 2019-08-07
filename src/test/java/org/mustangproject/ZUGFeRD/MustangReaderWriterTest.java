@@ -202,6 +202,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		assertEquals(zi.getKTO(), getTradeSettlementPayment()[0].getOwnKto());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), "RE-20170509/505");
+		assertEquals(zi.getBankName(), "Commerzbank");
 	}
 
 	public void testForeignImport() {

@@ -290,6 +290,14 @@ public class ZUGFeRDImporter {
 		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/BICID");
 	}
 
+
+	/**
+	 * @return the sender's bank name code
+	 */
+	public String getBankName() {
+		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/Name");
+	}
+
 	/**
 	 * @return the sender's account IBAN code
 	 */
