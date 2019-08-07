@@ -294,7 +294,7 @@ public class ZUGFeRDImporter {
 
 
 	/**
-	 * @return the sender's bank name code
+	 * @return the sender's bank name
 	 */
 	public String getBankName() {
 		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/Name");
@@ -305,13 +305,6 @@ public class ZUGFeRDImporter {
 	 */
 	public String getIBAN() {
 		return extractString("//PayeePartyCreditorFinancialAccount/IBANID");
-	}
-
-	/**
-	 * @return the sender's bankname
-	 */
-	public String getBankName() {
-		return extractString("/CrossIndustryInvoice/SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeSettlementPaymentMeans/PayeeSpecifiedCreditorFinancialInstitution/Name");
 	}
 
 	public String getHolder() {
