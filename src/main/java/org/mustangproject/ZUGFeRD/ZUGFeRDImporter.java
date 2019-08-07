@@ -283,7 +283,7 @@ public class ZUGFeRDImporter {
 	 * @return the sender's bankname
 	 */
 	public String getBankName() {
-		return extractString("/CrossIndustryInvoice/SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeSettlementPaymentMeans/PayeeSpecifiedCreditorFinancialInstitution/Name");
+		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/Name");
 	}
 
 	public String getIBAN() {
