@@ -267,9 +267,20 @@ public class ZUGFeRDImporter {
 
 	/**
 	 * @return the sender's bank's BLZ code
+	 * @deprecated use BIC and IBAN instead of BLZ and KTO
 	 */
+	@Deprecated
 	public String getBLZ() {
 		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/GermanBankleitzahlID");
+	}
+
+	/**
+	 * @return the sender's account number
+	 * @deprecated use BIC and IBAN instead of BLZ and KTO
+	 */
+	@Deprecated
+	public String getKTO() {
+		return extractString("//PayeePartyCreditorFinancialAccount/ProprietaryID");
 	}
 
 	/**
@@ -279,19 +290,26 @@ public class ZUGFeRDImporter {
 		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/BICID");
 	}
 
+
 	/**
-	 * @return the sender's bankname
+	 * @return the sender's bank name code
 	 */
 	public String getBankName() {
 		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/Name");
 	}
 
+	/**
+	 * @return the sender's account IBAN code
+	 */
 	public String getIBAN() {
 		return extractString("//PayeePartyCreditorFinancialAccount/IBANID");
 	}
 
-	public String getKTO() {
-		return extractString("//PayeePartyCreditorFinancialAccount/ProprietaryID");
+	/**
+	 * @return the sender's bankname
+	 */
+	public String getBankName() {
+		return extractString("/CrossIndustryInvoice/SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeSettlementPaymentMeans/PayeeSpecifiedCreditorFinancialInstitution/Name");
 	}
 
 	public String getHolder() {
