@@ -56,28 +56,33 @@ import java.util.logging.Logger;
 public class ZUGFeRDImporter {
 
 	/**
-	 * @var if metadata has been found
+	 * if metadata has been found
 	 */
 	private boolean containsMeta = false;
 	/**
-	 * @var the reference (i.e. invoice number) of the sender
+	 * map filenames of additional XML files to their contents
 	 */
 	private HashMap<String, byte[]> additionalXMLs = new HashMap<>();
 	/**
 	 * Raw XML form of the extracted data - may be directly obtained.
 	 */
 	private byte[] rawXML = null;
+	/**
+	 * XMP metadata
+	 */
 	private String xmpString = null; // XMP metadata
+	/**
+	 * parsed Document
+	 */
 	private Document document;
 
 	public ZUGFeRDImporter(String pdfFilename) {
-		
 		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
 			extractLowLevel(bis);
 		} catch (IOException e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			throw new ZUGFeRDExportException(e);
-		} 
+		}
 	}
 
 	public ZUGFeRDImporter(InputStream pdfStream) {
@@ -133,8 +138,7 @@ public class ZUGFeRDImporter {
 			PDComplexFileSpecification fileSpec = names.get(alias);
 			String filename=fileSpec.getFilename();
 			/**
-			 * currently (in the release candidate of version 1) only one attached file with
-			 * the name ZUGFeRD-invoice.xml is allowed
+			 * filenames for invoice data (ZUGFeRD v1 and v2, Factur-X)
 			 */
 			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml"))) { //$NON-NLS-1$
 				containsMeta = true;
@@ -153,10 +157,8 @@ public class ZUGFeRDImporter {
 				// fos.close();
 			}
 			if (filename.startsWith("additional_data")) {
-
 				PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
 				additionalXMLs.put(filename, embeddedFile.toByteArray());
-
 			}
 		}
 	}
@@ -176,7 +178,16 @@ public class ZUGFeRDImporter {
 		System.err.println(output);
 	}
 
-		private Document getDocument() { return document; }
+	private Document getDocument() { return document; }
+
+	private void setDocument() throws ParserConfigurationException, IOException, SAXException {
+		DocumentBuilderFactory xmlFact = DocumentBuilderFactory.newInstance();
+		xmlFact.setNamespaceAware(false);
+		DocumentBuilder builder = xmlFact.newDocumentBuilder();
+		ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
+		is.skip(guessBOMSize(is));
+		document = builder.parse(is);
+	}
 
 	public void setRawXML(byte[] rawXML) throws IOException {
 		this.rawXML = rawXML;
@@ -186,15 +197,6 @@ public class ZUGFeRDImporter {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			throw new ZUGFeRDExportException(e);
 		}
-	}
-
-	private void setDocument() throws ParserConfigurationException, IOException, SAXException {
-		DocumentBuilderFactory xmlFact = DocumentBuilderFactory.newInstance();
-		xmlFact.setNamespaceAware(false);
-		DocumentBuilder builder = xmlFact.newDocumentBuilder();
-		ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
-		is.skip(guessBOMSize(is));
-		document = builder.parse(is);
 	}
 
 	/**
