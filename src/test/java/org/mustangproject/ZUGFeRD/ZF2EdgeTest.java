@@ -183,7 +183,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory()
 					 .setProducer("My Application")
 					 .setCreator(System.getProperty("user.name"))
-					 .setZUGFeRDVersion(1)
+					 .setZUGFeRDVersion(2)
 					 .ignorePDFAErrors()
 					 .load(SOURCE_PDF)) {
 			ze.PDFattachZugferdFile(this);
