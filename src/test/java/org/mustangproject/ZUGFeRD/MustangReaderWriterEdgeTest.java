@@ -208,9 +208,9 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory()
 					 .setProducer("My Application")
 					 .setCreator(System.getProperty("user.name"))
+				 	 .setZUGFeRDVersion(1)
 					 .ignorePDFAErrors()
 					 .load(SOURCE_PDF)) {
-			ze.setZUGFeRDVersion(1);
 			ze.PDFattachZugferdFile(this);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryDocument"));

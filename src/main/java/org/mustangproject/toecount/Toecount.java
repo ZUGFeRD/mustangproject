@@ -541,10 +541,10 @@ public class Toecount {
 
 			// All params are good! continue...
 			ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setProducer("Toecount")
+					.setZUGFeRDVersion(zfIntVersion)
 					.setCreator(System.getProperty("user.name")).setZUGFeRDConformanceLevel(zfConformanceLevelProfile)
 					.load(pdfName);
 
-			ze.setZUGFeRDVersion(zfIntVersion);
 			if (format.equals("fx")) {
 				ze.setFacturX();
 			}

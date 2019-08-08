@@ -97,7 +97,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 */
 	protected String producer = "mustangproject";
 	/**
-	 * Author/Creator attribute for PDF for PDF
+	 * Author/Creator attribute for PDF
 	 */
 	protected String creator = "mustangproject";
 	/**
@@ -709,4 +709,17 @@ public class ZUGFeRDExporter implements Closeable {
 		this.attachZUGFeRDHeaders = attachZUGFeRDHeaders;
 	}
 
+	/**
+	 * encapsulate the deprecated setters
+	 * @param zfVersion 1 or 2
+	 * @param zugferdConformanceLevel BASIC, COMFORT, EN16931, etc.
+	 * @param creator PDF creator
+	 * @param producer PDF producer
+	 */
+	public void configure(int zfVersion, ZUGFeRDConformanceLevel zugferdConformanceLevel, String creator, String producer) {
+		setZUGFeRDVersion(zfVersion);
+		setZUGFeRDConformanceLevel(zugferdConformanceLevel);
+		setCreator(creator);
+		setProducer(producer);
+	}
 }

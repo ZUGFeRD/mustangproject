@@ -186,7 +186,6 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 					 .setZUGFeRDVersion(2)
 					 .ignorePDFAErrors()
 					 .load(SOURCE_PDF)) {
-			ze.setZUGFeRDVersion(1);
 			ze.PDFattachZugferdFile(this);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryDocument"));
