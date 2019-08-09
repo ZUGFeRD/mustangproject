@@ -21,9 +21,6 @@
                           xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
     <!--Migrated by Mustangproject XSLT-->
     <rsm:ExchangedDocumentContext>
-        <ram:TestIndicator>
-            <udt:Indicator>false</udt:Indicator>
-        </ram:TestIndicator>
         <ram:GuidelineSpecifiedDocumentContextParameter>
             <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:zugferd.de:2p0:extended</ram:ID>
         </ram:GuidelineSpecifiedDocumentContextParameter>

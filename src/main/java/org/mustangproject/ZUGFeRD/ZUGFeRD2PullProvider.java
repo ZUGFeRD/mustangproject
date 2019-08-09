@@ -124,7 +124,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
 		byte[] res = zugferdData;
 		
-		StringWriter sw = new StringWriter();
+		/*StringWriter sw = new StringWriter();
 		Document document=null;
 		try {
 			document = DocumentHelper.parseText(new String(zugferdData));
@@ -140,13 +140,17 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		} catch (IOException e) {
 			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
 		}
-		
+		*/
 		return res;
 		
 	}
 
 	private BigDecimal getTotalPrepaid() {
-		return trans.getTotalPrepaidAmount();
+		if (trans.getTotalPrepaidAmount()==null) {
+			return new BigDecimal(0);
+		} else {
+			return trans.getTotalPrepaidAmount();
+		}
 	}
 
 	private BigDecimal getTotalGross() {

@@ -63,7 +63,12 @@ Migrated by Mustangproject XSLT
 	<!-- xsl:template match="//*[local-name() = 'HeaderExchangedDocument']"> 
 		<xsl:copy> <xsl:apply-templates select="@*|node()" /> </xsl:copy> </xsl:template> -->
 
-	<!-- attribute rename -->
+	<!-- element remode -->
+	<xsl:template match="//*[local-name() = 'TestIndicator']">
+	<!-- Testindicator element has been removed -->
+	</xsl:template>
+	
+	<!-- element rename -->
 	<xsl:template match="//*[local-name() = 'SpecifiedExchangedDocumentContext']">
 		<xsl:element name="rsm:ExchangedDocumentContext">
 			<xsl:apply-templates select="@*|node()" />

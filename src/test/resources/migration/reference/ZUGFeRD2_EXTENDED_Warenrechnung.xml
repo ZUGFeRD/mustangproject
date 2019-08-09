@@ -50,9 +50,6 @@ Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können
                           xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100"><!--
 Migrated by Mustangproject XSLT
 --><rsm:ExchangedDocumentContext>
-		    <ram:TestIndicator>
-         <udt:Indicator>true</udt:Indicator>
-      </ram:TestIndicator>
       <!-- Im Echtbetrieb muss der TestIndicator entweder vollständig entfallen oder auf false stehen. -->
 		    <ram:GuidelineSpecifiedDocumentContextParameter>
 			      <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:zugferd.de:2p0:extended</ram:ID>
