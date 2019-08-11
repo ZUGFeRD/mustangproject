@@ -116,7 +116,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	public IZUGFeRDExportableItem[] getZFItems() {
 		Item[] allItems = new Item[3];
 		Product designProduct = new Product("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR", new BigDecimal("7.000000"));
-		Product balloonProduct = new Product("", "Bestellerweiterung für E&F Umbau", "C62", new BigDecimal("19.000000"));// test for issue 102
+		Product balloonProduct = new Product("", "Bestellerweiterung für E&F Umbau", "C62", new BigDecimal("19.000000"));// test for issue 103
 		Product airProduct = new Product("", "Heiße Luft pro Liter", "LTR", new BigDecimal("19.000000"));
 
 		allItems[0] = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
@@ -167,6 +167,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		return new TestSuite(ZF2EdgeTest.class);
 	}
 
+	
 	// //////// TESTS //////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
