@@ -116,7 +116,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	public IZUGFeRDExportableItem[] getZFItems() {
 		Item[] allItems = new Item[3];
 		Product designProduct = new Product("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR", new BigDecimal("7.000000"));
-		Product balloonProduct = new Product("", "Bestellerweiterung für E&F Umbau", "C62", new BigDecimal("19.000000"));
+		Product balloonProduct = new Product("", "Bestellerweiterung für E&F Umbau", "C62", new BigDecimal("19.000000"));// test for issue 102
 		Product airProduct = new Product("", "Heiße Luft pro Liter", "LTR", new BigDecimal("19.000000"));
 
 		allItems[0] = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
@@ -188,7 +188,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 					 .load(SOURCE_PDF)) {
 			ze.PDFattachZugferdFile(this);
 			String theXML = new String(ze.getProvider().getXML());
-			assertTrue(theXML.contains("<rsm:CrossIndustryDocument"));
+			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(TARGET_PDF);
 		} catch (IOException e) {
 			fail("IOException should not be raised in testEdgeExport");
@@ -200,9 +200,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
 		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
-		assertEquals(zi.getBLZ(), getTradeSettlementPayment()[0].getOwnBLZ());
 		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
-		assertEquals(zi.getKTO(), getTradeSettlementPayment()[0].getOwnKto());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 	}
