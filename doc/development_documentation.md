@@ -1,20 +1,22 @@
-##New build
+## New build
 
 Target platform is java 1.7
-##Build
+
+## Build
 
 Toecount is now part of the package which can be build with
 ```
 mvn clean package
 ```
 
-##Test
+## Test
 
 `package -Dmaven.surefire.debug="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000 -Xnoagent -Djava.compiler=NONE"`
 can be used as debug configuration goal in eclipse
 
 
-##Deployment
+## Deployment
+
 A section in Maven's settings.xml is needed, in Linux (and MacOS) that's at ~/.m2/settings.xml 
 
 As „servers“, enter the following
@@ -59,7 +61,7 @@ Sign in in GitHub and click on the profile picture -> Settings. Now just generat
  The Token-ID is the password. 
 
 
-##Release
+## Release
 
 You will need a git client on the console, if that's available can e.g. be checked with "git --version" . 
 Change to the root of the repo.
@@ -76,7 +78,8 @@ Change to the project directory and run
 Afterwards you can access the release page and update the documentation, e.g. upload the jar, the jar javadoc and ZugferdDev. You can also enter a changelog and a better title. 
 
 
-##Release process
+## Release process
+
   * Update documentation
   * write/translate announcement
   * release via/for mvn
