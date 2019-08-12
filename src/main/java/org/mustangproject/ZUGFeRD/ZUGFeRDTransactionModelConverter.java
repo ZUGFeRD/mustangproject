@@ -39,7 +39,6 @@ import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
 import org.mustangproject.ZUGFeRD.model.DateTimeType;
 import org.mustangproject.ZUGFeRD.model.DateTimeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeType;
-import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.DocumentContextParameterType;
 import org.mustangproject.ZUGFeRD.model.DocumentContextParameterTypeConstants;
 import org.mustangproject.ZUGFeRD.model.DocumentLineDocumentType;
@@ -55,6 +54,7 @@ import org.mustangproject.ZUGFeRD.model.PaymentMeansCodeType;
 import org.mustangproject.ZUGFeRD.model.PaymentMeansCodeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.PercentType;
 import org.mustangproject.ZUGFeRD.model.QuantityType;
+import org.mustangproject.ZUGFeRD.model.ReferencedDocumentType;
 import org.mustangproject.ZUGFeRD.model.SupplyChainEventType;
 import org.mustangproject.ZUGFeRD.model.SupplyChainTradeAgreementType;
 import org.mustangproject.ZUGFeRD.model.SupplyChainTradeDeliveryType;
@@ -62,7 +62,6 @@ import org.mustangproject.ZUGFeRD.model.SupplyChainTradeLineItemType;
 import org.mustangproject.ZUGFeRD.model.SupplyChainTradeSettlementType;
 import org.mustangproject.ZUGFeRD.model.SupplyChainTradeTransactionType;
 import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeType;
-import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.TaxRegistrationType;
 import org.mustangproject.ZUGFeRD.model.TaxRegistrationTypeConstants;
 import org.mustangproject.ZUGFeRD.model.TaxTypeCodeType;
@@ -201,7 +200,26 @@ class ZUGFeRDTransactionModelConverter {
 		tradeAgreement.setBuyerTradeParty(getBuyer());
 		tradeAgreement.setSellerTradeParty(getSeller());
 
+		if (getBuyerOrderReferencedDocument() != null) {
+			tradeAgreement.getBuyerOrderReferencedDocument().add(getBuyerOrderReferencedDocument());
+		}
+
 		return tradeAgreement;
+	}
+
+
+	private ReferencedDocumentType getBuyerOrderReferencedDocument() {
+		if (trans.getOrderReferenceNumber() == null) {
+			return null;
+		}
+
+		ReferencedDocumentType buyerOrderReferencedDocument = xmlFactory.createReferencedDocumentType();
+
+		IDType orderID = xmlFactory.createIDType();
+		orderID.setValue(trans.getOrderReferenceNumber());
+		buyerOrderReferencedDocument.getID().add(orderID);
+
+		return buyerOrderReferencedDocument;
 	}
 
 
@@ -308,10 +326,62 @@ class ZUGFeRDTransactionModelConverter {
 	}
 
 
+	/**
+	 * If the ship-to party (e.g. in the case of international transactions) or, in the case of virtual goods, the recipient has to be shown separately on an
+	 * invoice, then this is done by adding the ShipToTradeParty
+	 */
+	private TradePartyType getShipToParty() {
+		if (trans.getShipToOrganisationName() == null) {
+			return null;
+		}
+
+		TradePartyType shipToParty = xmlFactory.createTradePartyType();
+
+		if (trans.getShipToOrganisationID() != null) {
+			IDType sellerID = xmlFactory.createIDType();
+			sellerID.setValue(trans.getShipToOrganisationID());
+			shipToParty.getID().add(sellerID);
+		}
+
+		TextType shipToName = xmlFactory.createTextType();
+		shipToName.setValue(trans.getShipToOrganisationName());
+		shipToParty.setName(shipToName);
+
+		if (trans.getShipToLocation() != null) {
+			TradeAddressType shipToAddressType = xmlFactory
+					.createTradeAddressType();
+			TextType shipToCityName = xmlFactory.createTextType();
+			shipToCityName.setValue(trans.getShipToLocation());
+			shipToAddressType.setCityName(shipToCityName);
+
+			CountryIDType shipToCountryId = xmlFactory.createCountryIDType();
+			shipToCountryId.setValue(trans.getShipToCountry());
+			shipToAddressType.setCountryID(shipToCountryId);
+
+			TextType shipToAddress = xmlFactory.createTextType();
+			shipToAddress.setValue(trans.getShipToStreet());
+			shipToAddressType.setLineOne(shipToAddress);
+
+			CodeType shipToPostcode = xmlFactory.createCodeType();
+			shipToPostcode.setValue(trans.getShipToZIP());
+			shipToAddressType.getPostcodeCode().add(shipToPostcode);
+
+			shipToParty.setPostalTradeAddress(shipToAddressType);
+		}
+
+		return shipToParty;
+	}
+
+
 	private SupplyChainTradeDeliveryType getTradeDelivery() {
 
 		SupplyChainTradeDeliveryType tradeDelivery = xmlFactory
 				.createSupplyChainTradeDeliveryType();
+
+		if (getShipToParty() != null) {
+			tradeDelivery.setShipToTradeParty(getShipToParty());
+		}
+
 		SupplyChainEventType deliveryEvent = xmlFactory
 				.createSupplyChainEventType();
 		DateTimeType deliveryDate = xmlFactory.createDateTimeType();
@@ -916,7 +986,7 @@ class ZUGFeRDTransactionModelConverter {
 	}
 
 
- 	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap(Boolean itemOnly) {
+	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap(Boolean itemOnly) {
 		HashMap<BigDecimal, VATAmount> hm = new HashMap<>();
 
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
@@ -938,8 +1008,9 @@ class ZUGFeRDTransactionModelConverter {
 				BigDecimal percent = headerAllowance.getTaxPercent();
 				VATAmount itemVATAmount = new VATAmount(
 						headerAllowance.getTotalAmount(), headerAllowance
-						.getTotalAmount().multiply(percent)
-						.divide(new BigDecimal(100)), trans.getDocumentCode());
+								.getTotalAmount().multiply(percent)
+								.divide(new BigDecimal(100)),
+						trans.getDocumentCode());
 				VATAmount current = hm.get(percent);
 				if (current == null) {
 					hm.put(percent, itemVATAmount);
@@ -956,7 +1027,8 @@ class ZUGFeRDTransactionModelConverter {
 				VATAmount itemVATAmount = new VATAmount(
 						logisticsServiceCharge.getTotalAmount(),
 						logisticsServiceCharge.getTotalAmount()
-								.multiply(percent).divide(new BigDecimal(100)), trans.getDocumentCode());
+								.multiply(percent).divide(new BigDecimal(100)),
+						trans.getDocumentCode());
 				VATAmount current = hm.get(percent);
 				if (current == null) {
 					hm.put(percent, itemVATAmount);
@@ -971,7 +1043,8 @@ class ZUGFeRDTransactionModelConverter {
 				BigDecimal percent = charge.getTaxPercent();
 				VATAmount itemVATAmount = new VATAmount(
 						charge.getTotalAmount(), charge.getTotalAmount()
-						.multiply(percent).divide(new BigDecimal(100)), trans.getDocumentCode());
+								.multiply(percent).divide(new BigDecimal(100)),
+						trans.getDocumentCode());
 				VATAmount current = hm.get(percent);
 				if (current == null) {
 					hm.put(percent, itemVATAmount);
