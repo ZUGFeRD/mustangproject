@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;
-
 import org.mustangproject.ZUGFeRD.model.*;
 
 class ZUGFeRDTransactionModelConverter {
@@ -170,6 +169,21 @@ class ZUGFeRDTransactionModelConverter {
 	}
 
 
+	private ReferencedDocumentType getBuyerOrderReferencedDocument() {
+		if (trans.getOrderReferenceNumber() == null) {
+			return null;
+		}
+
+		ReferencedDocumentType buyerOrderReferencedDocument = xmlFactory.createReferencedDocumentType();
+
+		IDType orderID = xmlFactory.createIDType();
+		orderID.setValue(trans.getOrderReferenceNumber());
+		buyerOrderReferencedDocument.getID().add(orderID);
+
+		return buyerOrderReferencedDocument;
+	}
+
+
 	private TradePartyType getBuyer() {
 
 		TradePartyType buyerTradeParty = xmlFactory.createTradePartyType();
@@ -279,10 +293,62 @@ class ZUGFeRDTransactionModelConverter {
 	}
 
 
+	/**
+	 * If the ship-to party (e.g. in the case of international transactions) or, in the case of virtual goods, the recipient has to be shown separately on an
+	 * invoice, then this is done by adding the ShipToTradeParty
+	 */
+	private TradePartyType getShipToParty() {
+		if (trans.getShipToOrganisationName() == null) {
+			return null;
+		}
+
+		TradePartyType shipToParty = xmlFactory.createTradePartyType();
+
+		if (trans.getShipToOrganisationID() != null) {
+			IDType sellerID = xmlFactory.createIDType();
+			sellerID.setValue(trans.getShipToOrganisationID());
+			shipToParty.getID().add(sellerID);
+		}
+
+		TextType shipToName = xmlFactory.createTextType();
+		shipToName.setValue(trans.getShipToOrganisationName());
+		shipToParty.setName(shipToName);
+
+		if (trans.getShipToLocation() != null) {
+			TradeAddressType shipToAddressType = xmlFactory
+					.createTradeAddressType();
+			TextType shipToCityName = xmlFactory.createTextType();
+			shipToCityName.setValue(trans.getShipToLocation());
+			shipToAddressType.setCityName(shipToCityName);
+
+			CountryIDType shipToCountryId = xmlFactory.createCountryIDType();
+			shipToCountryId.setValue(trans.getShipToCountry());
+			shipToAddressType.setCountryID(shipToCountryId);
+
+			TextType shipToAddress = xmlFactory.createTextType();
+			shipToAddress.setValue(trans.getShipToStreet());
+			shipToAddressType.setLineOne(shipToAddress);
+
+			CodeType shipToPostcode = xmlFactory.createCodeType();
+			shipToPostcode.setValue(trans.getShipToZIP());
+			shipToAddressType.getPostcodeCode().add(shipToPostcode);
+
+			shipToParty.setPostalTradeAddress(shipToAddressType);
+		}
+
+		return shipToParty;
+	}
+
+
 	private SupplyChainTradeDeliveryType getTradeDelivery() {
 
 		SupplyChainTradeDeliveryType tradeDelivery = xmlFactory
 				.createSupplyChainTradeDeliveryType();
+
+		if (getShipToParty() != null) {
+			tradeDelivery.setShipToTradeParty(getShipToParty());
+		}
+
 		SupplyChainEventType deliveryEvent = xmlFactory
 				.createSupplyChainEventType();
 		DateTimeType deliveryDate = xmlFactory.createDateTimeType();
@@ -852,7 +918,7 @@ class ZUGFeRDTransactionModelConverter {
 	}
 
 
- 	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap(Boolean itemOnly) {
+	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap(Boolean itemOnly) {
 		HashMap<BigDecimal, VATAmount> hm = new HashMap<>();
 
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
@@ -874,8 +940,9 @@ class ZUGFeRDTransactionModelConverter {
 				BigDecimal percent = headerAllowance.getTaxPercent();
 				VATAmount itemVATAmount = new VATAmount(
 						headerAllowance.getTotalAmount(), headerAllowance
-						.getTotalAmount().multiply(percent)
-						.divide(new BigDecimal(100)), trans.getDocumentCode());
+								.getTotalAmount().multiply(percent)
+								.divide(new BigDecimal(100)),
+						trans.getDocumentCode());
 				VATAmount current = hm.get(percent);
 				if (current == null) {
 					hm.put(percent, itemVATAmount);

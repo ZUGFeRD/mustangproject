@@ -27,10 +27,10 @@ package org.mustangproject.ZUGFeRD;
  * */
 
 
-import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 public interface IZUGFeRDExportableTransaction {
 
@@ -50,6 +50,7 @@ public interface IZUGFeRDExportableTransaction {
 	default String getDocumentCode() {
 		return DocumentCodeTypeConstants.INVOICE;
 	}
+
 
 	/**
 	 * Number, typically invoice number of the invoice
@@ -244,6 +245,75 @@ public interface IZUGFeRDExportableTransaction {
 	 * @return the ID of the document this document refers to
 	 */
 	default String getReferenceNumber() {
+		return null;
+	}
+
+	/**
+	 * get reference number of the purchase order this invoice is based on
+	 *
+	 * @return the ID of the purchase order this document refers to
+	 */
+	default String getOrderReferenceNumber() {
+		return null;
+	}
+
+
+	/**
+	 * consignee identification (identification of the organisation the goods are shipped to [assigned by the costumer])
+	 *
+	 * @return the sender's identification
+	 */
+	default String getShipToOrganisationID() {
+		return null;
+	}
+
+
+	/**
+	 * consignee name (name of the organisation the goods are shipped to)
+	 *
+	 * @return the consignee's organisation name
+	 */
+	default String getShipToOrganisationName() {
+		return null;
+	}
+
+
+	/**
+	 * consignee street address (street of the organisation the goods are shipped to)
+	 *
+	 * @return consignee street address
+	 */
+	default String getShipToStreet() {
+		return null;
+	}
+
+
+	/**
+	 * consignee street postal code (postal code of the organisation the goods are shipped to)
+	 *
+	 * @return consignee postal code
+	 */
+	default String getShipToZIP() {
+		return null;
+	}
+
+
+	/**
+	 * consignee city (city of the organisation the goods are shipped to)
+	 *
+	 * @return the consignee's city
+	 */
+	default String getShipToLocation() {
+		return null;
+	}
+
+
+	/**
+	 * consignee two digit country code (country code of the organisation the goods are shipped to)
+	 *
+	 * @return the consignee's two character country iso code
+	 */
+	default String getShipToCountry() {
 		return null;
 	}
 

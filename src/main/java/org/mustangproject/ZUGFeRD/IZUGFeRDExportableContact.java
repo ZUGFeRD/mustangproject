@@ -62,7 +62,9 @@ public interface IZUGFeRDExportableContact {
 	 *
 	 * @return First and last name of the recipient
 	 */
-	String getName();
+	default String getName() {
+		return null;
+	}
 
 	default String getPhone() {
 		return null;
