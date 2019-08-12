@@ -21,6 +21,7 @@ package org.mustangproject.ZUGFeRD;
 import java.util.Date;
 
 public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTransaction {
+
 	private String number;
 	private Date issueDate;
 	private String ownOrganisationFullPlaintextInfo;
@@ -30,11 +31,7 @@ public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTran
 	private IZUGFeRDAllowanceCharge[] zFLogisticsServiceCharges;
 	private IZUGFeRDExportableItem[] zFItems;
 	private IZUGFeRDExportableContact recipient;
-	private String ownKto;
-	private String ownBLZ;
-	private String ownBIC;
-	private String ownBankName;
-	private String ownIBAN;
+	private IZUGFeRDTradeSettlementPayment[] settlementPayments;
 	private String ownTaxID;
 	private String ownVATID;
 	private String ownOrganisationName;
@@ -44,7 +41,6 @@ public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTran
 	private String ownCountry;
 	private Date deliveryDate;
 	private String currency;
-	private String ownPaymentInfoText;
 	private String paymentTermDescription;
 	private String referenceNumber;
 
@@ -94,28 +90,8 @@ public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTran
 	}
 
 	@Override
-	public String getOwnKto() {
-		return ownKto;
-	}
-
-	@Override
-	public String getOwnBLZ() {
-		return ownBLZ;
-	}
-
-	@Override
-	public String getOwnBIC() {
-		return ownBIC;
-	}
-
-	@Override
-	public String getOwnBankName() {
-		return ownBankName;
-	}
-
-	@Override
-	public String getOwnIBAN() {
-		return ownIBAN;
+	public IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
+		return settlementPayments;
 	}
 
 	@Override
@@ -161,11 +137,6 @@ public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTran
 	@Override
 	public String getCurrency() {
 		return currency;
-	}
-
-	@Override
-	public String getOwnPaymentInfoText() {
-		return ownPaymentInfoText;
 	}
 
 	@Override
@@ -223,31 +194,6 @@ public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTran
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setOwnBLZ(String ownBLZ) {
-		this.ownBLZ = ownBLZ;
-		return this;
-	}
-
-	public IZUGFeRDExportableTransactionImpl setOwnBIC(String ownBIC) {
-		this.ownBIC = ownBIC;
-		return this;
-	}
-
-	public IZUGFeRDExportableTransactionImpl setOwnBankName(String ownBankName) {
-		this.ownBankName = ownBankName;
-		return this;
-	}
-
-	public IZUGFeRDExportableTransactionImpl setOwnKto(String ownKto) {
-		this.ownKto = ownKto;
-		return this;
-	}
-
-	public IZUGFeRDExportableTransactionImpl setOwnIBAN(String ownIBAN) {
-		this.ownIBAN = ownIBAN;
-		return this;
-	}
-
 	public IZUGFeRDExportableTransactionImpl setOwnTaxID(String ownTaxID) {
 		this.ownTaxID = ownTaxID;
 		return this;
@@ -293,11 +239,6 @@ public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTran
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setOwnPaymentInfoText(String ownPaymentInfoText) {
-		this.ownPaymentInfoText = ownPaymentInfoText;
-		return this;
-	}
-
 	public IZUGFeRDExportableTransactionImpl setPaymentTermDescription(String paymentTermDescription) {
 		this.paymentTermDescription = paymentTermDescription;
 		return this;
@@ -305,6 +246,11 @@ public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTran
 
 	public IZUGFeRDExportableTransactionImpl setReferenceNumber(String referenceNumber) {
 		this.referenceNumber = referenceNumber;
+		return this;
+	}
+
+	public IZUGFeRDExportableTransactionImpl setTradeSettlementPayment(IZUGFeRDTradeSettlementPayment... settlementPayments) {
+		this.settlementPayments = settlementPayments;
 		return this;
 	}
 }

@@ -63,20 +63,9 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	public ZUGFeRDExporter load(String pdfFilename) throws IOException {
 
 		ensurePDFIsValidPDFA(new FileDataSource(pdfFilename));
-		ZUGFeRDExporter zugFeRDExporter;
-		PDDocument doc = PDDocument.load(new File(pdfFilename));
-		zugFeRDExporter = new ZUGFeRDExporter(doc);
-		zugFeRDExporter.setZUGFeRDVersion(ZFVersion);
-		zugFeRDExporter.setZUGFeRDConformanceLevel(zugferdConformanceLevel);
-		zugFeRDExporter.setCreator(creator);
-		// Use creator as default for compatibility
-		zugFeRDExporter.setCreatorTool(creatorTool != null ? creatorTool : creator);
-		zugFeRDExporter.setProducer(producer);
-		zugFeRDExporter.setAttachZUGFeRDHeaders(attachZUGFeRDHeaders);
-		zugFeRDExporter.setPDFA3(ensurePDFisUpgraded);
-
-		return zugFeRDExporter;
-
+		try (FileInputStream pdf = new FileInputStream(pdfFilename)) {
+			return load(readAllBytes(pdf));
+		}
 	}
 
 
@@ -88,13 +77,9 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 	 */
 	public ZUGFeRDExporter load(byte[] pdfBinary) throws IOException {
 		ensurePDFIsValidPDFA(new ByteArrayDataSource(new ByteArrayInputStream(pdfBinary)));
-		ZUGFeRDExporter zugFeRDExporter;
 		PDDocument doc = PDDocument.load(pdfBinary);
-		zugFeRDExporter = new ZUGFeRDExporter(doc);
-		zugFeRDExporter.setZUGFeRDVersion(ZFVersion);
-		zugFeRDExporter.setZUGFeRDConformanceLevel(zugferdConformanceLevel);
-		zugFeRDExporter.setCreator(creator);
-		zugFeRDExporter.setProducer(producer);
+		ZUGFeRDExporter zugFeRDExporter = new ZUGFeRDExporter(doc);
+		zugFeRDExporter.configure(ZFVersion, zugferdConformanceLevel, creator, producer);
 		zugFeRDExporter.setAttachZUGFeRDHeaders(attachZUGFeRDHeaders);
 		zugFeRDExporter.setPDFA3(ensurePDFisUpgraded);
 
@@ -173,14 +158,14 @@ public class ZUGFeRDExporterFromA3Factory implements IExporterFactory {
 
 	/**
 	 * All files are PDF/A-3, setConformance refers to the level conformance.
-	 * <p/>
+	 * <p>
 	 * PDF/A-3 has three coformance levels, called "A", "U" and "B".
-	 * <p/>
+	 * <p>
 	 * PDF/A-3-B where B means only visually preservable, U -standard for Mustang-
 	 * means visually and unicode preservable and A means full compliance, i.e.
 	 * visually, unicode and structurally preservable and tagged PDF, i.e. useful
 	 * metainformation for blind people.
-	 * <p/>
+	 * <p>
 	 * Feel free to pass "A" as new level if you know what you are doing :-)
 	 */
 	public IExporterFactory setConformanceLevel(PDFAConformanceLevel newLevel) {

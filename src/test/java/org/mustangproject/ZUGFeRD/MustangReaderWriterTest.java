@@ -19,72 +19,54 @@
 package org.mustangproject.ZUGFeRD;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.common.PDMetadata;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
+import org.apache.xmpbox.XMPMetadata;
+import org.apache.xmpbox.schema.PDFAIdentificationSchema;
+import org.apache.xmpbox.xml.DomXmpParser;
+import org.apache.xmpbox.xml.XmpParsingException;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.mustangproject.ZUGFeRD.model.DocumentContextParameterTypeConstants;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExportableTransaction {
+public class MustangReaderWriterTest extends MustangReaderTestCase {
 
 	@Override
 	public Date getDeliveryDate() {
-		return new GregorianCalendar(2017, Calendar.NOVEMBER, 17).getTime();
+		return new GregorianCalendar(2019, Calendar.JUNE, 10).getTime();
 	}
 
 	@Override
 	public Date getDueDate() {
-		return new GregorianCalendar(2017, Calendar.DECEMBER, 9).getTime();
+		return new GregorianCalendar(2019, Calendar.JULY, 1).getTime();
 	}
 
 	@Override
 	public Date getIssueDate() {
-		return new GregorianCalendar(2017, Calendar.NOVEMBER, 18).getTime();
+		return new GregorianCalendar(2019, Calendar.JUNE, 10).getTime();
 	}
 
 	@Override
 	public String getNumber() {
-		return "RE-20171118/506";
-	}
-
-	@Override
-	public String getOwnKto() {
-		return "44421800";
-	}
-
-	@Override
-	public String getOwnBLZ() {
-		return "41441604";
-	}
-
-	@Override
-	public String getOwnBIC() {
-		return "COBADEFFXXX";
-	}
-
-	@Override
-	public String getOwnBankName() {
-		return "Commerzbank";
+		return "RE-20190610/507";
 	}
 
 	@Override
 	public String getOwnCountry() {
 		return "DE";
-	}
-
-	@Override
-	public String getOwnIBAN() {
-		return "DE88 2008 0000 0970 3757 00";
 	}
 
 	@Override
@@ -119,7 +101,12 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 
 	@Override
 	public IZUGFeRDExportableContact getRecipient() {
-		return new Contact();
+		return new RecipientContact();
+	}
+	
+	@Override
+	public IZUGFeRDExportableContact getOwnContact() {
+		return new SenderContact();
 	}
 
 	@Override
@@ -135,26 +122,21 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 	@Override
 	public IZUGFeRDExportableItem[] getZFItems() {
 		Item[] allItems = new Item[3];
-		Product designProduct = new Product("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR",
+		Product designProduct = new Product("", "Design (hours): Of a sample invoice", "HUR",
 				new BigDecimal("7.000000"));
-		Product balloonProduct = new Product("", "Luftballon: Bunt, ca. 500ml", "C62", new BigDecimal("19.000000"));
-		Product airProduct = new Product("", "Heiße Luft pro Liter", "LTR", new BigDecimal("19.000000"));
+		Product balloonProduct = new Product("", "Ballons: various colors, ~2000ml", "C62", new BigDecimal("19.000000"));
+		Product airProduct = new Product("", "Hot air „heiße Luft“ (litres)", "LTR", new BigDecimal("19.000000"));
 
 		allItems[0] = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
 		allItems[1] = new Item(new BigDecimal("0.79"), new BigDecimal("400"), balloonProduct);
-		allItems[2] = new Item(new BigDecimal("0.10"), new BigDecimal("200"), airProduct);
+		allItems[2] = new Item(new BigDecimal("0.025"), new BigDecimal("800"), airProduct);
 		return allItems;
 	}
 
 	@Override
-	public String getOwnPaymentInfoText() {
-		return "Überweisung";
-	}
-
-	@Override
 	public String getPaymentTermDescription() {
-		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-		return "Zahlbar ohne Abzug bis zum " + germanDateFormat.format(getDueDate());
+		SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		return "Remit until " + isoDateFormat.format(getDueDate());
 	}
 
 	@Override
@@ -180,141 +162,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 
 	@Override
 	public String getReferenceNumber() {
-		return null;
-	}
-
-	class Contact implements IZUGFeRDExportableContact {
-
-		@Override
-		public String getCountry() {
-			return "DE";
-		}
-
-		@Override
-		public String getLocation() {
-			return "Spielkreis";
-		}
-
-		@Override
-		public String getName() {
-			return "Theodor Est";
-		}
-
-		@Override
-		public String getStreet() {
-			return "Bahnstr. 42";
-		}
-
-		@Override
-		public String getVATID() {
-			return "DE999999999";
-		}
-
-		@Override
-		public String getZIP() {
-			return "88802";
-		}
-	}
-
-	class Item implements IZUGFeRDExportableItem {
-
-		public Item(BigDecimal price, BigDecimal quantity, Product product) {
-			super();
-			this.price = price;
-			this.quantity = quantity;
-			this.product = product;
-		}
-
-		private BigDecimal price, quantity;
-		private Product product;
-
-		@Override
-		public BigDecimal getPrice() {
-			return price;
-		}
-
-		public void setPrice(BigDecimal price) {
-			this.price = price;
-		}
-
-		@Override
-		public BigDecimal getQuantity() {
-			return quantity;
-		}
-
-		public void setQuantity(BigDecimal quantity) {
-			this.quantity = quantity;
-		}
-
-		@Override
-		public Product getProduct() {
-			return product;
-		}
-
-		public void setProduct(Product product) {
-			this.product = product;
-		}
-
-		@Override
-		public IZUGFeRDAllowanceCharge[] getItemAllowances() {
-			return null;
-		}
-
-		@Override
-		public IZUGFeRDAllowanceCharge[] getItemCharges() {
-			return null;
-		}
-
-	}
-
-	class Product implements IZUGFeRDExportableProduct {
-		private String description, name, unit;
-		private BigDecimal VATPercent;
-
-		public Product(String description, String name, String unit, BigDecimal VATPercent) {
-			super();
-			this.description = description;
-			this.name = name;
-			this.unit = unit;
-			this.VATPercent = VATPercent;
-		}
-
-		@Override
-		public String getDescription() {
-			return description;
-		}
-
-		public void setDescription(String description) {
-			this.description = description;
-		}
-
-		@Override
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		@Override
-		public String getUnit() {
-			return unit;
-		}
-
-		public void setUnit(String unit) {
-			this.unit = unit;
-		}
-
-		@Override
-		public BigDecimal getVATPercent() {
-			return VATPercent;
-		}
-
-		public void setVATPercent(BigDecimal VATPercent) {
-			this.VATPercent = VATPercent;
-		}
-
+		return "AB321";
 	}
 
 	/**
@@ -337,29 +185,27 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 	// //////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * The importer test imports from
-	 * ./src/test/MustangGnuaccountingBeispielRE-20170509_505.pdf to check the
-	 * values. --> as only Name Ascending is supported for Test Unit sequence, I
-	 * renamed the this test-A-Export to run before testZExport
-	 *
-	 * @throws IOException
+	 * The importer test imports from ./src/test/MustangGnuaccountingBeispielRE-20170509_505.pdf to check the
+	 * values. As only Name Ascending is supported for Test Unit sequence, I renamed the this testAImport
+	 * to run before testZExport
 	 */
 
-	public void testAImport() throws IOException {
+	public void testAImport() {
 		InputStream inputStream = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBLZ(), getOwnBLZ());
-		assertEquals(zi.getBIC(), getOwnBIC());
-		assertEquals(zi.getIBAN(), getOwnIBAN());
-		assertEquals(zi.getKTO(), getOwnKto());
+		assertEquals(zi.getBLZ(), getTradeSettlementPayment()[0].getOwnBLZ());
+		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
+		assertEquals(zi.getIBAN(),getTradeSettlementPayment()[0].getOwnIBAN());
+		assertEquals(zi.getKTO(), getTradeSettlementPayment()[0].getOwnKto());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), "RE-20170509/505");
+		assertEquals(zi.getBankName(), "Commerzbank");
 	}
 
-	public void testForeignImport() throws IOException {
+	public void testForeignImport() {
 		InputStream inputStream = this.getClass().getResourceAsStream("/zugferd_invoice.pdf");
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
 
@@ -456,8 +302,39 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false).load(SOURCE_PDF);
 
 		File tempFile = File.createTempFile("ZUGFeRD-", "-test");
-		ze.export(tempFile.getName());
+		ze.export(tempFile.getAbsolutePath());
 		tempFile.deleteOnExit();
+		checkPdfA3B(tempFile);
+	}
+
+	public void testMigratePDFA1ToA3Stream() throws IOException {
+		// just make sure there is no Exception
+		InputStream SOURCE_PDF = this.getClass()
+				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
+
+		ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false).load(SOURCE_PDF);
+
+		File tempFile = File.createTempFile("ZUGFeRD-", "-test");
+		tempFile.deleteOnExit();
+		try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+			ze.export(fos);
+		}
+		checkPdfA3B(tempFile);
+	}
+
+	private void checkPdfA3B(File tempFile) throws IOException, InvalidPasswordException {
+		try (PDDocument doc = PDDocument.load(tempFile)) {
+			PDMetadata metadata = doc.getDocumentCatalog().getMetadata();
+			InputStream exportXMPMetadata = metadata.exportXMPMetadata();
+			byte[] xmpBytes = new byte[exportXMPMetadata.available()];
+			exportXMPMetadata.read(xmpBytes);
+			final XMPMetadata xmp = new DomXmpParser().parse(xmpBytes);
+			PDFAIdentificationSchema pdfaid = xmp.getPDFIdentificationSchema();
+			assertEquals(pdfaid.getPart().intValue(), 3);
+			assertEquals(pdfaid.getConformance(), "U");
+		} catch (XmpParsingException e) {
+			throw new IllegalStateException("Failed to read PDF", e);
+		}
 	}
 
 	/**
@@ -465,16 +342,16 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 	 * ./src/test/MustangGnuaccountingBeispielRE-20140703_502blanko.pdf}, adds
 	 * metadata, writes to @{code ./target/testout-*} and then imports to check the
 	 * values. It would not make sense to have it run before the less complex
-	 * importer test (which is probably redundant) --> as only Name Ascending is
+	 * importer test (which is probably redundant). As only Name Ascending is
 	 * supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
 	 */
-	public void testZExport() throws Exception {
+	public void testZExport() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506new.pdf";
 
 		// the writing part
 		try (InputStream SOURCE_PDF = this.getClass()
-				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
+			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
 			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
 
@@ -488,10 +365,12 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 			String pdfContent = baos.toString("UTF-8");
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
 			// check for pdf-a schema extension
-			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
-			assertFalse(pdfContent.indexOf("<pdfaSchema:prefix>zf</pdfaSchema:prefix>") == -1);
-			assertFalse(pdfContent.indexOf("urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#") == -1);
-			
+//			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
+//			assertFalse(pdfContent.indexOf("<pdfaSchema:prefix>zf</pdfaSchema:prefix>") == -1);
+//			assertFalse(pdfContent.indexOf("urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#") == -1);
+
+		} catch (IOException e) {
+			fail("IOException should not happen in testZExport");
 		}
 
 		// now check the contents (like MustangReaderTest)
@@ -499,14 +378,46 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getOwnBIC());
-		assertEquals(zi.getIBAN(), getOwnIBAN());
-		assertEquals(zi.getKTO(), getOwnKto());
+		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
+		assertEquals(zi.getReference(), getReferenceNumber());
+		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
+		assertEquals(zi.getKTO(), getTradeSettlementPayment()[0].getOwnKto());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 	}
 
-	/*
+	/**
+	 * Quick and dirty copy of testZExport to check if v1 files contain
+	 * the correct profile string when the comfort profile is selected.
+	 */
+	public void testZExportv1Profile() {
+
+		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506new.pdf";
+
+		// the writing part
+		try (InputStream SOURCE_PDF = this.getClass()
+			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
+
+			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(1).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.COMFORT).load(SOURCE_PDF)) {
+
+			ze.PDFattachZugferdFile(this);
+			ze.disableAutoClose(true);
+			ze.export(TARGET_PDF);
+
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ze.export(baos);
+			ze.close();
+			String pdfContent = baos.toString("UTF-8");
+			assertFalse(pdfContent.indexOf(DocumentContextParameterTypeConstants.BASIC) >= 0);
+			assertFalse(pdfContent.indexOf(DocumentContextParameterTypeConstants.EXTENDED) >= 0);
+			assertTrue(pdfContent.indexOf(DocumentContextParameterTypeConstants.COMFORT) >= 0);
+
+		} catch (IOException e) {
+			fail("IOException should not happen in testZExport");
+		}
+	}
+
+	
 	public void testFXExport() throws Exception {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506fx.pdf";
@@ -515,7 +426,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
+			ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
 			ze.setFacturX();
 			ze.PDFattachZugferdFile(this);
 			ze.disableAutoClose(true);
@@ -529,7 +440,7 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 			// check for pdf-a schema extension
 			assertFalse(pdfContent.indexOf("<fx:ConformanceLevel>EN 16931</fx:ConformanceLevel>") == -1);
 			assertFalse(pdfContent.indexOf("<pdfaSchema:prefix>fx</pdfaSchema:prefix>") == -1);
-			assertFalse(pdfContent.indexOf("urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:en16931") == -1);
+			assertFalse(pdfContent.indexOf("urn:cen.eu:en16931:2017") == -1);
 		}
 
 		// now check the contents (like MustangReaderTest)
@@ -537,18 +448,14 @@ public class MustangReaderWriterTest extends TestCase implements IZUGFeRDExporta
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getOwnBIC());
-		assertEquals(zi.getIBAN(), getOwnIBAN());
-		assertEquals(zi.getKTO(), getOwnKto());
+		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
+		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
+		assertEquals(zi.getKTO(), getTradeSettlementPayment()[0].getOwnKto());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 	}
-*/
-	/**
-	 * @throws Exception
-	 * @Test(expected = IndexOutOfBoundsException.class)
-	 */
-	public void testExceptionOnPDF14() throws Exception {
+
+	public void testExceptionOnPDF14() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505new.pdf";
 

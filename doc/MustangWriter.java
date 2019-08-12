@@ -5,12 +5,15 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTransaction;
+import org.mustangproject.ZUGFeRD.ZUGFeRD2PullProvider;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1Factory;
 
@@ -32,8 +35,7 @@ public class MustangWriter implements IZUGFeRDExportableTransaction {
 			ze.export("./MustangGnuaccountingBeispielRE-20171118_506new.pdf");
 			System.out.println("Done.");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Logger.getLogger(MustangWriter.class.getName()).log(Level.SEVERE, null, e1);
 		}
 	}
 

@@ -19,6 +19,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -29,53 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;
-
-import org.mustangproject.ZUGFeRD.model.AmountType;
-import org.mustangproject.ZUGFeRD.model.CodeType;
-import org.mustangproject.ZUGFeRD.model.CountryIDType;
-import org.mustangproject.ZUGFeRD.model.CreditorFinancialAccountType;
-import org.mustangproject.ZUGFeRD.model.CreditorFinancialInstitutionType;
-import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
-import org.mustangproject.ZUGFeRD.model.DateTimeType;
-import org.mustangproject.ZUGFeRD.model.DateTimeTypeConstants;
-import org.mustangproject.ZUGFeRD.model.DocumentCodeType;
-import org.mustangproject.ZUGFeRD.model.DocumentContextParameterType;
-import org.mustangproject.ZUGFeRD.model.DocumentContextParameterTypeConstants;
-import org.mustangproject.ZUGFeRD.model.DocumentLineDocumentType;
-import org.mustangproject.ZUGFeRD.model.ExchangedDocumentContextType;
-import org.mustangproject.ZUGFeRD.model.ExchangedDocumentType;
-import org.mustangproject.ZUGFeRD.model.IDType;
-import org.mustangproject.ZUGFeRD.model.IndicatorType;
-import org.mustangproject.ZUGFeRD.model.LogisticsServiceChargeType;
-import org.mustangproject.ZUGFeRD.model.NoteType;
-import org.mustangproject.ZUGFeRD.model.NoteTypeConstants;
-import org.mustangproject.ZUGFeRD.model.ObjectFactory;
-import org.mustangproject.ZUGFeRD.model.PaymentMeansCodeType;
-import org.mustangproject.ZUGFeRD.model.PaymentMeansCodeTypeConstants;
-import org.mustangproject.ZUGFeRD.model.PercentType;
-import org.mustangproject.ZUGFeRD.model.QuantityType;
-import org.mustangproject.ZUGFeRD.model.ReferencedDocumentType;
-import org.mustangproject.ZUGFeRD.model.SupplyChainEventType;
-import org.mustangproject.ZUGFeRD.model.SupplyChainTradeAgreementType;
-import org.mustangproject.ZUGFeRD.model.SupplyChainTradeDeliveryType;
-import org.mustangproject.ZUGFeRD.model.SupplyChainTradeLineItemType;
-import org.mustangproject.ZUGFeRD.model.SupplyChainTradeSettlementType;
-import org.mustangproject.ZUGFeRD.model.SupplyChainTradeTransactionType;
-import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeType;
-import org.mustangproject.ZUGFeRD.model.TaxRegistrationType;
-import org.mustangproject.ZUGFeRD.model.TaxRegistrationTypeConstants;
-import org.mustangproject.ZUGFeRD.model.TaxTypeCodeType;
-import org.mustangproject.ZUGFeRD.model.TaxTypeCodeTypeConstants;
-import org.mustangproject.ZUGFeRD.model.TextType;
-import org.mustangproject.ZUGFeRD.model.TradeAddressType;
-import org.mustangproject.ZUGFeRD.model.TradeAllowanceChargeType;
-import org.mustangproject.ZUGFeRD.model.TradePartyType;
-import org.mustangproject.ZUGFeRD.model.TradePaymentTermsType;
-import org.mustangproject.ZUGFeRD.model.TradePriceType;
-import org.mustangproject.ZUGFeRD.model.TradeProductType;
-import org.mustangproject.ZUGFeRD.model.TradeSettlementMonetarySummationType;
-import org.mustangproject.ZUGFeRD.model.TradeSettlementPaymentMeansType;
-import org.mustangproject.ZUGFeRD.model.TradeTaxType;
+import org.mustangproject.ZUGFeRD.model.*;
 
 class ZUGFeRDTransactionModelConverter {
 	private static final SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -85,6 +40,7 @@ class ZUGFeRDTransactionModelConverter {
 	private final Totals totals;
 	private boolean isTest;
 	private String currency = "EUR";
+	private String profile;
 
 
 	ZUGFeRDTransactionModelConverter(IZUGFeRDExportableTransaction trans) {
@@ -114,7 +70,7 @@ class ZUGFeRDTransactionModelConverter {
 		DocumentContextParameterType contextParameter = xmlFactory
 				.createDocumentContextParameterType();
 		IDType idType = xmlFactory.createIDType();
-		idType.setValue(DocumentContextParameterTypeConstants.EXTENDED);
+		idType.setValue(profile);
 		contextParameter.setID(idType);
 		context.getGuidelineSpecifiedDocumentContextParameter().add(
 				contextParameter);
@@ -150,7 +106,7 @@ class ZUGFeRDTransactionModelConverter {
 		document.setTypeCode(documentCodeType);
 
 		TextType name = xmlFactory.createTextType();
-		name.setValue("RECHNUNG");
+		name.setValue(trans.getDocumentName());
 		document.getName().add(name);
 
 		if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
@@ -168,7 +124,7 @@ class ZUGFeRDTransactionModelConverter {
 		if (trans.getReferenceNumber() != null && !"".equals(trans.getReferenceNumber())) {
 			NoteType referenceInfo = xmlFactory.createNoteType();
 			TextType referenceInfoContent = xmlFactory.createTextType();
-			referenceInfoContent.setValue("Ursprungsbeleg: " + trans.getReferenceNumber());
+			referenceInfoContent.setValue(trans.getReferenceNumber());
 			referenceInfo.getContent().add(referenceInfoContent);
 			document.getIncludedNote().add(referenceInfo);
 		}
@@ -200,8 +156,13 @@ class ZUGFeRDTransactionModelConverter {
 		tradeAgreement.setBuyerTradeParty(getBuyer());
 		tradeAgreement.setSellerTradeParty(getSeller());
 
-		if (getBuyerOrderReferencedDocument() != null) {
-			tradeAgreement.getBuyerOrderReferencedDocument().add(getBuyerOrderReferencedDocument());
+		if (trans.getBuyerOrderReferencedDocumentID() != null) {
+			ReferencedDocumentType refdoc = xmlFactory.createReferencedDocumentType();
+			IDType id = xmlFactory.createIDType();
+			id.setValue(trans.getBuyerOrderReferencedDocumentID());
+			refdoc.getID().add(id);
+			refdoc.setIssueDateTime(trans.getBuyerOrderReferencedDocumentIssueDateTime());
+			tradeAgreement.getBuyerOrderReferencedDocument().add(refdoc);
 		}
 
 		return tradeAgreement;
@@ -231,6 +192,12 @@ class ZUGFeRDTransactionModelConverter {
 			IDType buyerID = xmlFactory.createIDType();
 			buyerID.setValue(trans.getRecipient().getID());
 			buyerTradeParty.getID().add(buyerID);
+		}
+		if (trans.getRecipient().getGlobalID() != null) {
+			IDType globalID = xmlFactory.createIDType();
+			globalID.setValue(trans.getRecipient().getGlobalID());
+			globalID.setSchemeID(trans.getRecipient().getGlobalIDScheme());
+			buyerTradeParty.getGlobalID().add(globalID);
 		}
 
 		TextType buyerName = xmlFactory.createTextType();
@@ -410,7 +377,7 @@ class ZUGFeRDTransactionModelConverter {
 		currencyCode.setValue(currency);
 		tradeSettlement.setInvoiceCurrencyCode(currencyCode);
 
-		tradeSettlement.getSpecifiedTradeSettlementPaymentMeans().add(
+		tradeSettlement.getSpecifiedTradeSettlementPaymentMeans().addAll(
 				getPaymentData());
 		tradeSettlement.getApplicableTradeTax().addAll(getTradeTax());
 		tradeSettlement.getSpecifiedTradePaymentTerms().addAll(
@@ -434,46 +401,50 @@ class ZUGFeRDTransactionModelConverter {
 	}
 
 
-	private TradeSettlementPaymentMeansType getPaymentData() {
-		TradeSettlementPaymentMeansType paymentData = xmlFactory
-				.createTradeSettlementPaymentMeansType();
-		PaymentMeansCodeType paymentDataType = xmlFactory
-				.createPaymentMeansCodeType();
-		paymentDataType.setValue(PaymentMeansCodeTypeConstants.BANKACCOUNT);
-		paymentData.setTypeCode(paymentDataType);
+	private List<TradeSettlementPaymentMeansType> getPaymentData() {
+		List<TradeSettlementPaymentMeansType> result = new ArrayList<>();
+		for (IZUGFeRDTradeSettlementPayment settlementPayment : trans.getTradeSettlementPayment()) {
+			TradeSettlementPaymentMeansType paymentData = xmlFactory
+					.createTradeSettlementPaymentMeansType();
+			PaymentMeansCodeType paymentDataType = xmlFactory
+					.createPaymentMeansCodeType();
+			paymentDataType.setValue(PaymentMeansCodeTypeConstants.BANKACCOUNT);
+			paymentData.setTypeCode(paymentDataType);
 
-		TextType paymentInfo = xmlFactory.createTextType();
-		String paymentInfoText = trans.getOwnPaymentInfoText();
-		if (paymentInfoText == null) {
-			paymentInfoText = "";
+			TextType paymentInfo = xmlFactory.createTextType();
+			String paymentInfoText = settlementPayment.getOwnPaymentInfoText();
+			if (paymentInfoText == null) {
+				paymentInfoText = "";
+			}
+			paymentInfo.setValue(paymentInfoText);
+			paymentData.getInformation().add(paymentInfo);
+
+			CreditorFinancialAccountType bankAccount = xmlFactory
+					.createCreditorFinancialAccountType();
+			IDType iban = xmlFactory.createIDType();
+			iban.setValue(settlementPayment.getOwnIBAN());
+			bankAccount.setIBANID(iban);
+			IDType kto = xmlFactory.createIDType();
+			kto.setValue(settlementPayment.getOwnKto());
+			bankAccount.setProprietaryID(kto);
+			paymentData.setPayeePartyCreditorFinancialAccount(bankAccount);
+
+			CreditorFinancialInstitutionType bankData = xmlFactory
+					.createCreditorFinancialInstitutionType();
+			IDType bicId = xmlFactory.createIDType();
+			bicId.setValue(settlementPayment.getOwnBIC());
+			bankData.setBICID(bicId);
+			TextType bankName = xmlFactory.createTextType();
+			bankName.setValue(settlementPayment.getOwnBankName());
+			bankData.setName(bankName);
+			IDType blz = xmlFactory.createIDType();
+			blz.setValue(settlementPayment.getOwnBLZ());
+			bankData.setGermanBankleitzahlID(blz);
+
+			paymentData.setPayeeSpecifiedCreditorFinancialInstitution(bankData);
+			result.add(paymentData);
 		}
-		paymentInfo.setValue(paymentInfoText);
-		paymentData.getInformation().add(paymentInfo);
-
-		CreditorFinancialAccountType bankAccount = xmlFactory
-				.createCreditorFinancialAccountType();
-		IDType iban = xmlFactory.createIDType();
-		iban.setValue(trans.getOwnIBAN());
-		bankAccount.setIBANID(iban);
-		IDType kto = xmlFactory.createIDType();
-		kto.setValue(trans.getOwnKto());
-		bankAccount.setProprietaryID(kto);
-		paymentData.setPayeePartyCreditorFinancialAccount(bankAccount);
-
-		CreditorFinancialInstitutionType bankData = xmlFactory
-				.createCreditorFinancialInstitutionType();
-		IDType bicId = xmlFactory.createIDType();
-		bicId.setValue(trans.getOwnBIC());
-		bankData.setBICID(bicId);
-		TextType bankName = xmlFactory.createTextType();
-		bankName.setValue(trans.getOwnBankName());
-		bankData.setName(bankName);
-		IDType blz = xmlFactory.createIDType();
-		blz.setValue(trans.getOwnBLZ());
-		bankData.setGermanBankleitzahlID(blz);
-
-		paymentData.setPayeeSpecifiedCreditorFinancialInstitution(bankData);
-		return paymentData;
+		return result;
 	}
 
 
@@ -490,7 +461,7 @@ class ZUGFeRDTransactionModelConverter {
 
 			TaxCategoryCodeType taxCategoryCode = xmlFactory.createTaxCategoryCodeType();
 			VATAmount vatAmount = VATPercentAmountMap.get(currentTaxPercent);
-			taxCategoryCode.setValue(vatAmount.getDocumentCode());
+			taxCategoryCode.setValue(vatAmount.getCategoryCode());
 			tradeTax.setCategoryCode(taxCategoryCode);
 
 			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
@@ -754,9 +725,14 @@ class ZUGFeRDTransactionModelConverter {
 		grandTotalAmount.setValue(currencyFormat(totals.getTotalGross()));
 		monetarySummation.getGrandTotalAmount().add(grandTotalAmount);
 
+		AmountType totalPrepaidAmount = xmlFactory.createAmountType();
+		totalPrepaidAmount.setCurrencyID(currency);
+		totalPrepaidAmount.setValue(currencyFormat(trans.getTotalPrepaidAmount()));
+		monetarySummation.getTotalPrepaidAmount().add(totalPrepaidAmount);
+
 		AmountType duePayableAmount = xmlFactory.createAmountType();
 		duePayableAmount.setCurrencyID(currency);
-		duePayableAmount.setValue(currencyFormat(totals.getTotalGross()));
+		duePayableAmount.setValue(currencyFormat(totals.getTotalGross().subtract(trans.getTotalPrepaidAmount())));
 		monetarySummation.getDuePayableAmount().add(duePayableAmount);
 
 		return monetarySummation;
@@ -911,70 +887,26 @@ class ZUGFeRDTransactionModelConverter {
 
 
 	private BigDecimal vatFormat(BigDecimal value) {
-		return nDigitFormat(value, 2);
-	}
+		return value.setScale(2, RoundingMode.HALF_UP);
+ 	}
 
 
 	private BigDecimal currencyFormat(BigDecimal value) {
-		return nDigitFormat(value, 2);
-	}
+		return value.setScale(2, RoundingMode.HALF_UP);
+ 	}
 
 
 	private BigDecimal priceFormat(BigDecimal value) {
-		return nDigitFormat(value, 4);
-	}
+		return value.setScale(4, RoundingMode.HALF_UP);
+ 	}
 
 
 	private BigDecimal quantityFormat(BigDecimal value) {
-		return nDigitFormat(value, 4);
-	}
+		return value.setScale(4, RoundingMode.HALF_UP);
+ 	}
 
 
-	private BigDecimal nDigitFormat(BigDecimal value, int scale) {
-		/*
-		 * I needed 123,45, locale independent.I tried
-		 * NumberFormat.getCurrencyInstance().format( 12345.6789 ); but that is
-		 * locale specific.I also tried DecimalFormat df = new DecimalFormat(
-		 * "0,00" ); df.setDecimalSeparatorAlwaysShown(true);
-		 * df.setGroupingUsed(false); DecimalFormatSymbols symbols = new
-		 * DecimalFormatSymbols(); symbols.setDecimalSeparator(',');
-		 * symbols.setGroupingSeparator(' ');
-		 * df.setDecimalFormatSymbols(symbols);
-		 *
-		 * but that would not switch off grouping. Although I liked very much
-		 * the (incomplete) "BNF diagram" in
-		 * http://docs.oracle.com/javase/tutorial/i18n/format/decimalFormat.html
-		 * in the end I decided to calculate myself and take eur+sparator+cents
-		 *
-		 * This function will cut off, i.e. floor() subcent values Tests:
-		 * System.err.println(utils.currencyFormat(new BigDecimal(0),
-		 * ".")+"\n"+utils.currencyFormat(new BigDecimal("-1.10"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("-1.1"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("-1.01"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3489"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("20000123.3419"),
-		 * ",")+"\n"+utils.currencyFormat(new BigDecimal("12"), ","));
-		 *
-		 * results 0.00 -1,10 -1,10 -1,01 20000123,34 20000123,34 12,00
-		 */
-		value = value.setScale(scale, BigDecimal.ROUND_HALF_UP); // first, round
-		// so that
-		// e.g.
-		// 1.189999999999999946709294817992486059665679931640625
-		// becomes
-		// 1.19
-		char[] repeat = new char[scale];
-		Arrays.fill(repeat, '0');
-
-		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
-		otherSymbols.setDecimalSeparator('.');
-		DecimalFormat dec = new DecimalFormat("0." + new String(repeat),
-				otherSymbols);
-		return new BigDecimal(dec.format(value));
-
-	}
-
-
+ 
 	/**
 	 * which taxes have been used with which amounts in this transaction, empty for no taxes, or e.g. 19=>190 and 7=>14 if 1000 Eur were applicable to 19% VAT
 	 * (=>190 EUR VAT) and 200 EUR were applicable to 7% (=>14 EUR VAT) 190 Eur
@@ -992,7 +924,7 @@ class ZUGFeRDTransactionModelConverter {
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			BigDecimal percent = currentItem.getProduct().getVATPercent();
 			LineCalc lc = new LineCalc(currentItem);
-			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(), trans.getDocumentCode());
+			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(), lc.getCategoryCode());
 			VATAmount current = hm.get(percent);
 			if (current == null) {
 				hm.put(percent, itemVATAmount);
@@ -1027,8 +959,7 @@ class ZUGFeRDTransactionModelConverter {
 				VATAmount itemVATAmount = new VATAmount(
 						logisticsServiceCharge.getTotalAmount(),
 						logisticsServiceCharge.getTotalAmount()
-								.multiply(percent).divide(new BigDecimal(100)),
-						trans.getDocumentCode());
+								.multiply(percent).divide(new BigDecimal(100)), logisticsServiceCharge.getCategoryCode());
 				VATAmount current = hm.get(percent);
 				if (current == null) {
 					hm.put(percent, itemVATAmount);
@@ -1043,8 +974,7 @@ class ZUGFeRDTransactionModelConverter {
 				BigDecimal percent = charge.getTaxPercent();
 				VATAmount itemVATAmount = new VATAmount(
 						charge.getTotalAmount(), charge.getTotalAmount()
-								.multiply(percent).divide(new BigDecimal(100)),
-						trans.getDocumentCode());
+						.multiply(percent).divide(new BigDecimal(100)), charge.getCategoryCode());
 				VATAmount current = hm.get(percent);
 				if (current == null) {
 					hm.put(percent, itemVATAmount);
@@ -1063,12 +993,18 @@ class ZUGFeRDTransactionModelConverter {
 		return this;
 	}
 
+	public ZUGFeRDTransactionModelConverter withProfile(String profile) {
+		this.profile = profile;
+		return this;
+	}
+
 	private class LineCalc {
 
 		private BigDecimal totalGross;
 		private BigDecimal itemTotalNetAmount;
 		private BigDecimal itemTotalVATAmount;
 		private BigDecimal itemNetAmount;
+		private String categoryCode;
 
 
 		public LineCalc(IZUGFeRDExportableItem currentItem) {
@@ -1111,6 +1047,7 @@ class ZUGFeRDTransactionModelConverter {
 					.add(totalCharge)
 					.divide(currentItem.getQuantity(), 4,
 							BigDecimal.ROUND_HALF_UP);
+			categoryCode = currentItem.getCategoryCode();
 		}
 
 
@@ -1127,6 +1064,8 @@ class ZUGFeRDTransactionModelConverter {
 		public BigDecimal getItemNetAmount() {
 			return itemNetAmount;
 		}
+
+		public String getCategoryCode() { return categoryCode; }
 
 	}
 

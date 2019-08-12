@@ -27,11 +27,20 @@ package org.mustangproject.ZUGFeRD;
  * */
 
 
-import java.util.Date;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 public interface IZUGFeRDExportableTransaction {
+
+	/**
+	 * appears in /rsm:CrossIndustryDocument/rsm:HeaderExchangedDocument/ram:Name
+	 * @return Name of document
+	 */
+	default String getDocumentName() {
+		return "RECHNUNG";
+	}
 
 	/**
 	 *
@@ -65,7 +74,7 @@ public interface IZUGFeRDExportableTransaction {
 
 	/**
 	 * this should be the full sender institution name, details, manager and tax registration. It is one of the few functions which may return null. e.g.
-	 * <p/>
+	 * <p>
 	 * Lieferant GmbH Lieferantenstraße 20 80333 München Deutschland Geschäftsführer: Hans Muster Handelsregisternummer: H A 123
 	 *
 	 * @return null or full sender institution name, details, manager and tax registration
@@ -81,6 +90,15 @@ public interface IZUGFeRDExportableTransaction {
 	 * @return when the invoice is to be paid
 	 */
 	default Date getDueDate() {
+		return null;
+	}
+
+	/**
+	 * who processed the order
+	 *
+	 * @return the contact person at the supplier side
+	 */
+	default IZUGFeRDExportableContact getOwnContact() {
 		return null;
 	}
 
@@ -106,53 +124,11 @@ public interface IZUGFeRDExportableTransaction {
 
 
 	/**
-	 * BIC of the sender
-	 *
-	 * @return the BIC code of the recipient sender's bank
+	 * the creditors payment informations
+	 * 
+	 * @return an array of IZUGFeRDTradeSettlementPayment
 	 */
-	default String getOwnBIC() {
-		return null;
-	}
-
-
-	/**
-	 * BLZ of the sender
-	 *
-	 * @return the BLZ code of the recipient sender's bank
-	 */
-	default String getOwnBLZ() {
-		return null;
-	}
-
-
-	/**
-	 * Bank name of the sender
-	 *
-	 * @return the name of the sender's bank
-	 */
-	default String getOwnBankName() {
-		return null;
-	}
-
-
-	/**
-	 * IBAN of the sender
-	 *
-	 * @return the IBAN of the invoice sender's bank account
-	 */
-	default String getOwnIBAN() {
-		return null;
-	}
-
-
-	/**
-	 * IBAN of the sender
-	 *
-	 * @return the Account Number of the invoice sender's bank account
-	 */
-	default String getOwnKto() {
-		return null;
-	}
+	IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment();
 
 
 	/**
@@ -254,16 +230,6 @@ public interface IZUGFeRDExportableTransaction {
 
 
 	/**
-	 * get payment information text. e.g. Bank transfer
-	 *
-	 * @return payment information text
-	 */
-	default String getOwnPaymentInfoText() {
-		return null;
-	}
-
-
-	/**
 	 * get payment term descriptional text e.g. Bis zum 22.10.2015 ohne Abzug
 	 *
 	 * @return get payment terms
@@ -281,7 +247,6 @@ public interface IZUGFeRDExportableTransaction {
 	default String getReferenceNumber() {
 		return null;
 	}
-
 
 	/**
 	 * get reference number of the purchase order this invoice is based on
@@ -352,4 +317,23 @@ public interface IZUGFeRDExportableTransaction {
 		return null;
 	}
 
+	/**
+	 * get the ID of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
+	 * @return the ID of the document
+	 */
+	default String getBuyerOrderReferencedDocumentID() { return null; }
+
+	/**
+	 * get the issue timestamp of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
+	 * @return the IssueDateTime in format CCYY-MM-DDTHH:MM:SS
+	 */
+	default String getBuyerOrderReferencedDocumentIssueDateTime() { return null; }
+
+	/**
+	 * get the TotalPrepaidAmount located in SpecifiedTradeSettlementMonetarySummation (v1) or
+	 * SpecifiedTradeSettlementHeaderMonetarySummation (v2)
+	 * @return the total sum (incl. VAT) of prepayments, i.e. the difference between GrandTotalAmount
+	 * and DuePayableAmount
+	 */
+	default BigDecimal getTotalPrepaidAmount() { return BigDecimal.ZERO; }
 }

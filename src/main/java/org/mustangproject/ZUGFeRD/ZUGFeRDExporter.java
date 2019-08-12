@@ -33,6 +33,7 @@ import org.apache.pdfbox.cos.COSArray;
 import org.apache.pdfbox.cos.COSBase;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.cos.COSObject;
 import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
@@ -55,7 +56,7 @@ public class ZUGFeRDExporter implements Closeable {
 
 	public static final int DefaultZUGFeRDVersion = 1;
 
-	private static boolean isFacturX = false;
+	private boolean isFacturX = false;
 
 	/**
 	 * To use the ZUGFeRD exporter, implement IZUGFeRDExportableTransaction in
@@ -96,7 +97,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 */
 	protected String producer = "mustangproject";
 	/**
-	 * Author/Creator attribute for PDF for PDF
+	 * Author/Creator attribute for PDF
 	 */
 	protected String creator = "mustangproject";
 	/**
@@ -133,7 +134,7 @@ public class ZUGFeRDExporter implements Closeable {
 		additionalXMLs.put(filename, xml);
 	}
 
-	public static String getNamespaceForVersion(int ver) {
+	public String getNamespaceForVersion(int ver) {
 		if (isFacturX) {
 			return "urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#";	
 		} else if (ver == 1) {
@@ -146,7 +147,7 @@ public class ZUGFeRDExporter implements Closeable {
 		}
 	}
 
-	public static String getPrefixForVersion(int ver) {
+	public String getPrefixForVersion(int ver) {
 		if (isFacturX) {
 			return "fx";
 		} else {
@@ -154,11 +155,15 @@ public class ZUGFeRDExporter implements Closeable {
 		}
 	}
 
-	public static String getFilenameForVersion(int ver) {
+	public String getFilenameForVersion(int ver) {
 		if (isFacturX) {
 			return "factur-x.xml";
 		} else {
-			return "ZUGFeRD-invoice.xml";		
+			if (ver==1) {
+				return "ZUGFeRD-invoice.xml";		
+			} else {
+				return "zugferd-invoice.xml";		
+			}
 		}
 	}
 
@@ -191,15 +196,16 @@ public class ZUGFeRDExporter implements Closeable {
 
 	/**
 	 * All files are PDF/A-3, setConformance refers to the level conformance.
-	 * <p/>
+	 * 
 	 * PDF/A-3 has three conformance levels, called "A", "U" and "B".
-	 * <p/>
+	 * <p>
 	 * PDF/A-3-B where B means only visually preservable, U -standard for Mustang-
 	 * means visually and unicode preservable and A means full compliance, i.e.
 	 * visually, unicode and structurally preservable and tagged PDF, i.e. useful
 	 * metainformation for blind people.
-	 * <p/>
+	 * <p>
 	 * Feel free to pass "A" as new level if you know what you are doing :-)
+	 * @param newLevel  "A", "U" or "B"
 	 *
 	 * @deprecated Use {@link ZUGFeRDExporterFromA1Factory} instead
 	 */
@@ -213,16 +219,17 @@ public class ZUGFeRDExporter implements Closeable {
 
 	/**
 	 * All files are PDF/A-3, setConformance refers to the level conformance.
-	 * <p/>
+	 * <p>
 	 * PDF/A-3 has three conformance levels, called "A", "U" and "B".
-	 * <p/>
+	 * <p>
 	 * PDF/A-3-B where B means only visually preservable, U -standard for Mustang-
 	 * means visually and unicode preservable and A means full compliance, i.e.
 	 * visually, unicode and structurally preservable and tagged PDF, i.e. useful
 	 * metainformation for blind people.
-	 * <p/>
+	 * <p>
 	 * Feel free to pass "A" as new level if you know what you are doing :-)
 	 *
+	 * @param newLevel "A", "U" or "B"
 	 * @deprecated Use
 	 * {@link #setConformanceLevel(org.mustangproject.ZUGFeRD.PDFAConformanceLevel)}
 	 * instead
@@ -247,27 +254,45 @@ public class ZUGFeRDExporter implements Closeable {
 		ignoreA1Errors = true;
 	}
 
-	/**
+	/***
+	 * load from a pdf which is already A/3
+	 * @param filename the PDF
+	 * @throws IOException if anything is wrong with filename
 	 * @deprecated Use the factory method {@link #createFromPDFA3(String)} instead
 	 */
 	@Deprecated
 	public void loadPDFA3(String filename) throws IOException {
 		doc = PDDocument.load(new File(filename));
 	}
-
+	
+	/***
+	 * factory create a ZUGFeRD exporter for a PDF/A-3 pdf file
+	 * @param filename of the pdf
+	 * @return the created ZUGFeRDExporter
+	 * @throws IOException if something is wrong with filename
+	 */
 	public static ZUGFeRDExporter createFromPDFA3(String filename) throws IOException {
 		return new ZUGFeRDExporter(PDDocument.load(new File(filename)));
 	}
 
 	/**
-	 * @deprecated Use the factory method {@link #createFromPDFA3(InputStream)}
-	 * instead
+	 * load from a pdf which is already A/3 from filestream
+	 * @param file InputStream to load pdf from
+	 * @deprecated Use the factory method {@link #createFromPDFA3(InputStream)} instead
+	 * @throws IOException in case anything is wrong with file
+	 * 
 	 */
 	@Deprecated
 	public void loadPDFA3(InputStream file) throws IOException {
 		doc = PDDocument.load(file);
 	}
 
+	/***
+	 * factory create a ZUGFeRD exporter for a PDF/A-3 inputstream
+	 * @param pdfSource the InputStream of the pdf
+	 * @return the created ZUGFeRDExporter
+	 * @throws IOException (should not happen)
+	 */
 	public static ZUGFeRDExporter createFromPDFA3(InputStream pdfSource) throws IOException {
 		return new ZUGFeRDExporter(PDDocument.load(pdfSource));
 	}
@@ -275,7 +300,13 @@ public class ZUGFeRDExporter implements Closeable {
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
 	 * metadata level, this will not e.g. convert graphics to JPG-2000)
-	 *
+	 * @param filename the pdf
+	 * @param producer the name of the xmp producer (app)
+	 * @param creator the name of the xmp creator (user)
+	 * @param attachZugferdHeaders whether to attach XMP ZUGFeRD headers
+	 * @return the created PDFbox PDDocumentCatalog
+	 * @throws IOException if anything is wrong with file
+	 * @throws TransformerException in case of xml (XMP) parsing issues
 	 * @deprecated use the {@link ZUGFeRDExporterFromA1Factory} instead
 	 */
 	@Deprecated
@@ -287,7 +318,18 @@ public class ZUGFeRDExporter implements Closeable {
 		return doc.getDocumentCatalog();
 	}
 
-	/**
+	/***
+	 * 
+	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
+	 * metadata level, this will not e.g. convert graphics to JPG-2000)
+
+	 * @param file the InputStream of the pdf
+	 * @param producer the name of the xmp producer (app)
+	 * @param creator the name of the xmp creator (user)
+	 * @param attachZugferdHeaders whether to attach XMP ZUGFeRD headers
+	 * @return the created PDFbox PDDocumentCatalog
+	 * @throws IOException if anything is wrong with file
+	 * @throws TransformerException in case of xml (XMP) parsing issues
 	 * @deprecated use the {@link ZUGFeRDExporterFromA1Factory} instead
 	 */
 	@Deprecated
@@ -298,6 +340,7 @@ public class ZUGFeRDExporter implements Closeable {
 
 		return doc.getDocumentCatalog();
 	}
+
 
 	private IExporterFactory createPDFA1Factory() {
 		ZUGFeRDExporterFromA1Factory factory = new ZUGFeRDExporterFromA1Factory();
@@ -321,10 +364,11 @@ public class ZUGFeRDExporter implements Closeable {
 	 *              populate the XML. This parameter may be null, if so the XML data
 	 *              should hav ebeen set via
 	 *              <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
+	 * @throws IOException if anything is wrong with already loaded PDF
 	 */
 	public void PDFattachZugferdFile(IZUGFeRDExportableTransaction trans) throws IOException {
 		prepareDocument();
-
+		((IProfileProvider) xmlProvider).setProfile(profile);
 		xmlProvider.generateXML(trans);
 		String filename = getFilenameForVersion(ZFVersion);
 		PDFAttachGenericFile(doc, filename, "Alternative",
@@ -335,6 +379,11 @@ public class ZUGFeRDExporter implements Closeable {
 		}
 	}
 
+	/***
+	 * Perform the final export to a now ZUGFeRD-enriched PDF file
+	 * @param ZUGFeRDfilename the pdf file name
+	 * @throws IOException if anything is wrong in the target location
+	 */
 	public void export(String ZUGFeRDfilename) throws IOException {
 		if (!documentPrepared) {
 			prepareDocument();
@@ -349,8 +398,17 @@ public class ZUGFeRDExporter implements Closeable {
 		}
 	}
 
+
+	/***
+	 * Perform the final export to a now ZUGFeRD-enriched PDF file as OutputStream
+	 * @param output the OutputStream
+	 * @throws IOException if anything is wrong in the OutputStream
+	 */
 	public void export(OutputStream output) throws IOException {
-		if (!fileAttached) {
+		if (!documentPrepared) {
+			prepareDocument();
+		}
+		if ((!fileAttached) && (attachZUGFeRDHeaders)) {
 			throw new IOException(
 					"File must be attached (usually with PDFattachZugferdFile) before perfoming this operation");
 		}
@@ -369,7 +427,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 * @param description  Human-readable description of the file content
 	 * @param subType      type of the data e.g. could be "text/xml" - mime like
 	 * @param data         the binary data of the file/attachment
-	 * @throws java.io.IOException
+	 * @throws java.io.IOException if anything is wrong with filename
 	 */
 	public void PDFAttachGenericFile(PDDocument doc, String filename, String relationship, String description,
 									 String subType, byte[] data) throws IOException {
@@ -421,17 +479,27 @@ public class ZUGFeRDExporter implements Closeable {
 		doc.getDocumentCatalog().setNames(names);
 
 		// AF entry (Array) in catalog with the FileSpec
-		COSArray cosArray = (COSArray) doc.getDocumentCatalog().getCOSObject().getItem("AF");
-		if (cosArray == null) {
-			cosArray = new COSArray();
-		}
-		cosArray.add(fs);
-		COSDictionary dict2 = doc.getDocumentCatalog().getCOSObject();
-		COSArray array = new COSArray();
-		array.add(fs.getCOSObject()); // see below
-		dict2.setItem("AF", array);
-		doc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
-	}
+        COSBase AFEntry = (COSBase)doc.getDocumentCatalog().getCOSObject().getItem("AF");
+        if ((AFEntry == null))
+        {
+            COSArray cosArray = new COSArray();
+		    cosArray.add(fs);
+		    doc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
+        } else if (AFEntry instanceof COSArray)
+        {
+            COSArray cosArray = (COSArray)AFEntry;
+            cosArray.add(fs);
+            doc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
+        } else if ((AFEntry instanceof COSObject) &&
+                   ((COSObject)AFEntry).getObject() instanceof COSArray)
+        {
+            COSArray cosArray = (COSArray)((COSObject)AFEntry).getObject();
+            cosArray.add(fs);
+        } else
+        {
+            throw new IOException("Unexpected object type for PDFDocument/Catalog/COSDictionary/Item(AF)");
+	    }
+    }
 
 	/**
 	 * Sets the ZUGFeRD XML data to be attached as a single byte array. This is
@@ -439,6 +507,7 @@ public class ZUGFeRDExporter implements Closeable {
 	 * API or component.
 	 *
 	 * @param zugferdData XML data to be set as a byte array (XML file in raw form).
+	 * @throws IOException (should not happen)
 	 */
 	public void setZUGFeRDXMLData(byte[] zugferdData) throws IOException {
 		CustomXMLProvider cus = new CustomXMLProvider();
@@ -488,19 +557,19 @@ public class ZUGFeRDExporter implements Closeable {
 	 * neccessary PDF/A schema extension description to be able to add this
 	 * information to RDF
 	 *
-	 * @param metadata
+	 * @param metadata the PDFbox XMPMetadata object
 	 */
 	protected void addXMP(XMPMetadata metadata) {
 
 		if (attachZUGFeRDHeaders) {
 			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, profile,
-					ZUGFeRDExporter.getNamespaceForVersion(ZFVersion), ZUGFeRDExporter.getPrefixForVersion(ZFVersion),
-					ZUGFeRDExporter.getFilenameForVersion(ZFVersion));
+					getNamespaceForVersion(ZFVersion), getPrefixForVersion(ZFVersion),
+					getFilenameForVersion(ZFVersion));
 
 			metadata.addSchema(zf);
 		}
 
-		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(metadata, ZFVersion, attachZUGFeRDHeaders);
+		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(this, metadata, ZFVersion, attachZUGFeRDHeaders);
 		pdfaex.setZUGFeRDVersion(ZFVersion);
 		metadata.addSchema(pdfaex);
 
@@ -517,12 +586,12 @@ public class ZUGFeRDExporter implements Closeable {
 			buffer.write(prefix.getBytes("UTF-8")); // see https://github.com/ZUGFeRD/mustangproject/issues/44
 			serializer.serialize(xmpMetadata, buffer, false);
 			buffer.write(suffix.getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+        } catch (UnsupportedEncodingException e)
+        {
+            throw new TransformerException(e);
+        } catch (IOException e)
+        {
+            throw new TransformerException(e);
 		}
 		return buffer.toByteArray();
 	}
@@ -600,7 +669,7 @@ public class ZUGFeRDExporter implements Closeable {
 	/**
 	 * the human author (use factory method instead)
 	 *
-	 * @param creator
+	 * @param creator the (human) name who created the PDF
 	 */
 	@Deprecated
 	public void setCreator(String creator) {
@@ -610,7 +679,7 @@ public class ZUGFeRDExporter implements Closeable {
 	/**
 	 * the CreatorTool attribute for the PDF
 	 *
-	 * @param creator
+	 * @param creatorTool the application which created the PDF
 	 */
 	protected void setCreatorTool(String creatorTool) {
 		this.creatorTool = creatorTool;
@@ -619,7 +688,7 @@ public class ZUGFeRDExporter implements Closeable {
 	/**
 	 * the authoring software (use factory method instead)
 	 *
-	 * @param producer
+	 * @param producer the authoring software
 	 */
 	@Deprecated
 	public void setProducer(String producer) {
@@ -640,4 +709,17 @@ public class ZUGFeRDExporter implements Closeable {
 		this.attachZUGFeRDHeaders = attachZUGFeRDHeaders;
 	}
 
+	/**
+	 * encapsulate the deprecated setters
+	 * @param zfVersion 1 or 2
+	 * @param zugferdConformanceLevel BASIC, COMFORT, EN16931, etc.
+	 * @param creator PDF creator
+	 * @param producer PDF producer
+	 */
+	public void configure(int zfVersion, ZUGFeRDConformanceLevel zugferdConformanceLevel, String creator, String producer) {
+		setZUGFeRDVersion(zfVersion);
+		setZUGFeRDConformanceLevel(zugferdConformanceLevel);
+		setCreator(creator);
+		setProducer(producer);
+	}
 }

@@ -30,8 +30,14 @@ import org.mustangproject.ZUGFeRD.*;
 import javax.xml.transform.TransformerException;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -69,8 +75,9 @@ public class Toecount {
 				+ "                [--source <filename>]: set input PDF file\n"
 				+ "                [--source-xml <filename>]: set input XML file\n"
 				+ "                [--out <filename>]: set output PDF file\n"
-				+ "                [--zugferd-version <1|2>]: set ZUGFeRD version\n"
-				+ "                [--zugferd-profile <...>]: set ZUGFeRD profile\n"
+				+ "                [--format <fx|zf>]: set ZUGFeRD or FacturX\n"
+				+ "                [--version <1|2>]: set ZUGFeRD version\n"
+				+ "                [--profile <...>]: set ZUGFeRD profile\n"
 				+ "                        For ZUGFeRD v1: <B>ASIC, <C>OMFORT or <E>XTENDED\n"
 				+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, E<X>TENDED ";
 	}
@@ -102,8 +109,8 @@ public class Toecount {
 				+ "\t\t[--source <filename>]: set input PDF file\r\n"
 				+ "\t\t[--source-xml <filename>]: set input XML file\r\n"
 				+ "\t\t[--out <filename>]: set output PDF file\r\n"
-				+ "\t\t[--zugferd-version <1|2>]: set ZUGFeRD version\r\n"
-				+ "\t\t[--zugferd-profile <...>]: set ZUGFeRD profile\r\n"
+				+ "\t\t[--format <fx|zf>]: enable factur-x or ZUGFeRD\r\n"
+				+ "\t\t[--version <1|2>]: set ZUGFeRD version\r\n" + "\t\t[--profile <...>]: set ZUGFeRD profile\r\n"
 				+ "\t\t\tFor ZUGFeRD v1: <B>ASIC, <C>OMFORT or <E>XTENDED\r\n"
 				+ "\t\t\tFor ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, E<X>TENDED\r\n");
 	}
@@ -112,11 +119,15 @@ public class Toecount {
 	 * Asks the user (repeatedly, if neccessary) on the command line for a String
 	 * (offering a defaultValue) conforming to a Regex pattern
 	 *
-	 * @param prompt       the question to be asked to the user
-	 * @param defaultValue the default return value if user hits enter
-	 * @param pattern      a regex of acceptable values
+	 * @param prompt
+	 *            the question to be asked to the user
+	 * @param defaultValue
+	 *            the default return value if user hits enter
+	 * @param pattern
+	 *            a regex of acceptable values
 	 * @return the user answer conforming to pattern
-	 * @throws Exception if pattern not compielable or IOexception on input
+	 * @throws Exception
+	 *             if pattern not compielable or IOexception on input
 	 */
 	protected static String getStringFromUser(String prompt, String defaultValue, String pattern) throws Exception {
 		String input = "";
@@ -137,8 +148,8 @@ public class Toecount {
 			try {
 				input = buffer.readLine();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+
 			}
 
 			if (input.isEmpty()) {
@@ -155,15 +166,15 @@ public class Toecount {
 	/**
 	 * Prompts the user for a input or output filename
 	 *
-	 * @param the                 text the user is asked
-	 * @param a                   default Filename
-	 * @param expectedExtension   will warn if filename does not match expected file extension
-	 * @param ensureFileExists    will warn if file does NOT exist (for input files)
+	 * @param prompt the text the user is asked
+	 * @param defaultFilename a default Filename
+	 * @param expectedExtension will warn if filename does not match expected file extension
+	 * @param ensureFileExists will warn if file does NOT exist (for input files)
 	 * @param ensureFileNotExists will warn if file DOES exist (for output files)
 	 * @return String
 	 */
 	protected static String getFilenameFromUser(String prompt, String defaultFilename, String expectedExtension,
-												boolean ensureFileExists, boolean ensureFileNotExists) {
+			boolean ensureFileExists, boolean ensureFileNotExists) {
 		boolean fileExistenceOK = false;
 		String selectedName = "";
 		do {
@@ -174,8 +185,8 @@ public class Toecount {
 			try {
 				selectedName = buffer.readLine();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+
 			}
 
 			if (selectedName.isEmpty()) {
@@ -191,8 +202,7 @@ public class Toecount {
 				try {
 					selectedAnswer = buffer.readLine();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
 				}
 				if (!selectedAnswer.equals("Y") && !selectedAnswer.equals("y")) {
 					System.err.println("Aborted by user");
@@ -234,6 +244,8 @@ public class Toecount {
 
 			// Option: Help
 			Option<Boolean> helpOption = parser.addBooleanOption('h', "help");
+			// Option: Action
+			Option<String> actionOption = parser.addStringOption('a', "action");
 
 			// Generic options available for multiple command
 			// --source: input file
@@ -264,12 +276,13 @@ public class Toecount {
 			// (--source: input PDF file)
 			// (--source-xml: input XML file)
 			// (--out: output PDF file)
-			// (--zugferd-version: ZUGFeRD version)
-			// (--zugferd-profile: ZUGFeRD profile)
+			// (--version: ZUGFeRD version)
+			// (--profile: ZUGFeRD profile)
 			Option<Boolean> combineOption = parser.addBooleanOption('c', "combine");
 			Option<String> sourceXmlOption = parser.addStringOption("source-xml");
-			Option<String> zugferdVersionOption = parser.addStringOption("zugferd-version");
-			Option<String> zugferdProfileOption = parser.addStringOption("zugferd-profile");
+			Option<String> formatOption = parser.addStringOption('f', "format");
+			Option<String> zugferdVersionOption = parser.addStringOption("version");
+			Option<String> zugferdProfileOption = parser.addStringOption("profile");
 
 			// Command: Show metrics in dir
 			// --directory
@@ -290,17 +303,19 @@ public class Toecount {
 			}
 
 			// Retrieve all options
+			String action = parser.getOptionValue(actionOption);
 			String directoryName = parser.getOptionValue(dirnameOption);
 			Boolean filesFromStdIn = parser.getOptionValue(filesFromStdInOption, Boolean.FALSE);
-			Boolean combineRequested = parser.getOptionValue(combineOption, Boolean.FALSE);
-			Boolean extractRequested = parser.getOptionValue(extractOption, Boolean.FALSE);
-			Boolean helpRequested = parser.getOptionValue(helpOption, Boolean.FALSE);
-			Boolean upgradeRequested = parser.getOptionValue(upgradeOption, Boolean.FALSE);
+			Boolean combineRequested = parser.getOptionValue(combineOption, Boolean.FALSE) || ((action!=null)&&(action.equals("combine")));
+			Boolean extractRequested = parser.getOptionValue(extractOption, Boolean.FALSE) || ((action!=null)&&(action.equals("extract")));
+			Boolean helpRequested = parser.getOptionValue(helpOption, Boolean.FALSE)  || ((action!=null)&&(action.equals("help")));
+			Boolean upgradeRequested = parser.getOptionValue(upgradeOption, Boolean.FALSE)  || ((action!=null)&&(action.equals("upgrade")));
 			Boolean ignoreFileExt = parser.getOptionValue(ignoreFileExtOption, Boolean.FALSE);
-			Boolean a3only = parser.getOptionValue(a3onlyOption, Boolean.FALSE);
+			Boolean a3only = parser.getOptionValue(a3onlyOption, Boolean.FALSE)  || ((action!=null)&&(action.equals("a3")));
 			String sourceName = parser.getOptionValue(sourceOption);
 			String sourceXMLName = parser.getOptionValue(sourceXmlOption);
 			String outName = parser.getOptionValue(outOption);
+			String format = parser.getOptionValue(formatOption);
 			String zugferdVersion = parser.getOptionValue(zugferdVersionOption);
 			String zugferdProfile = parser.getOptionValue(zugferdProfileOption);
 
@@ -309,7 +324,7 @@ public class Toecount {
 			} else if (((directoryName != null) && (directoryName.length() > 0)) || filesFromStdIn.booleanValue()) {
 				performMetrics(directoryName, filesFromStdIn, ignoreFileExt);
 			} else if (combineRequested) {
-				performCombine(sourceName, sourceXMLName, outName, zugferdVersion, zugferdProfile);
+				performCombine(sourceName, sourceXMLName, outName, format, zugferdVersion, zugferdProfile);
 			} else if (extractRequested) {
 				performExtract(sourceName, outName);
 			} else if (a3only) {
@@ -322,7 +337,7 @@ public class Toecount {
 				System.exit(2);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+
 			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
 			System.exit(-1);
 		}
@@ -338,7 +353,7 @@ public class Toecount {
 			System.out.println("ZUGFeRD 1.0 XML source set to " + xmlName);
 		}
 		if (outName == null) {
-			outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "factur-x.xml", "xml", false, true);
+			outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "zugferd-invoice.xml", "xml", false, true);
 		} else {
 			System.out.println("ZUGFeRD 1.0 XML source set to " + outName);
 		}
@@ -417,15 +432,15 @@ public class Toecount {
 		}
 	}
 
-	private static void performCombine(String pdfName, String xmlName, String outName, String zfVersion,
-									   String zfProfile) throws Exception {
+	private static void performCombine(String pdfName, String xmlName, String outName, String format, String zfVersion,
+			String zfProfile) throws Exception {
 		/*
 		 * ZUGFeRDExporter ze= new ZUGFeRDExporterFromA1Factory()
 		 * .setProducer("toecount") .setCreator(System.getProperty("user.name"))
 		 * .loadFromPDFA1("invoice.pdf");
 		 */
 		try {
-			int zfIntVersion = 1;
+			int zfIntVersion = ZUGFeRDExporter.DefaultZUGFeRDVersion;
 			ZUGFeRDConformanceLevel zfConformanceLevelProfile = ZUGFeRDConformanceLevel.EXTENDED;
 
 			if (pdfName == null) {
@@ -446,35 +461,42 @@ public class Toecount {
 				System.out.println("Ouput PDF set to " + outName);
 			}
 
-			if (zfVersion == null) {
+			if (format == null) {
 				try {
-					zfVersion = getStringFromUser("ZUGFeRD version (1 or 2)", "1", "1|2");
+					format = getStringFromUser("Format (fx=Factur-X, zf=ZUGFeRD,)", "zf", "fx|zf");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
 				}
 			} else {
-				System.out.println("ZUGFeRD version set to " + zfVersion);
+				System.out.println("Format set to " + format);
 			}
 
+			if (zfVersion == null) {
+				try {
+					zfVersion = getStringFromUser("Version (1 or 2)", "1", "1|2");
+				} catch (Exception e) {
+					Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+				}
+			} else {
+				System.out.println("Version set to " + zfVersion);
+			}
 			zfIntVersion = Integer.valueOf(zfVersion);
 
 			if (zfProfile == null) {
 				try {
-					if (zfIntVersion == 1) {
-						zfProfile = getStringFromUser("ZUGFeRD profile b)asic, c)omfort or e)xtended", "e",
-								"B|b|C|c|E|e");
+					if (format.equals("zf") && (zfIntVersion == 1)) {
+						zfProfile = getStringFromUser("Profile b)asic, c)omfort or e)xtended", "e", "B|b|C|c|E|e");
 					} else {
 						zfProfile = getStringFromUser(
-								"ZUGFeRD profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" + "[C]IUS, [E]N16931, E[X]TENDED",
-								"E", "M|m|W|w|B|b|C|c|E|e|X|x|");
+								"Profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" + "[C]IUS, [E]N16931, E[X]TENDED", "E",
+								"M|m|W|w|B|b|C|c|E|e|X|x|");
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+
 				}
 			} else {
-				System.out.println("ZUGFeRD profile set to " + zfProfile);
+				System.out.println("Profile set to " + zfProfile);
 			}
 			zfProfile = zfProfile.toLowerCase();
 
@@ -483,7 +505,11 @@ public class Toecount {
 			ensureFileExists(xmlName);
 			ensureFileNotExists(outName);
 
-			if (zfIntVersion == 1) {
+			if ((format.equals("fx")) && (zfIntVersion > 1)) {
+				throw new Exception("Factur-X is only available in version 1 (roughly corresponding to ZF2)");
+			}
+
+			if ((format.equals("zf")) && (zfIntVersion == 1)) {
 				if (zfProfile.equals("b")) {
 					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.BASIC;
 				} else if (zfProfile.equals("c")) {
@@ -493,7 +519,7 @@ public class Toecount {
 				} else {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}
-			} else if (zfIntVersion == 2) {
+			} else if (((format.equals("zf")) && (zfIntVersion == 2)) || (format.equals("fx"))) {
 				if (zfProfile.equals("m")) {
 					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.MINIMUM;
 				} else if (zfProfile.equals("w")) {
@@ -510,15 +536,18 @@ public class Toecount {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}
 			} else {
-				throw new Exception(String.format("Unknown ZUGFeRD version '%i'", zfIntVersion));
+				throw new Exception(String.format("Unknown version '%i'", zfIntVersion));
 			}
 
 			// All params are good! continue...
 			ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setProducer("Toecount")
+					.setZUGFeRDVersion(zfIntVersion)
 					.setCreator(System.getProperty("user.name")).setZUGFeRDConformanceLevel(zfConformanceLevelProfile)
 					.load(pdfName);
 
-			ze.setZUGFeRDVersion(zfIntVersion);
+			if (format.equals("fx")) {
+				ze.setFacturX();
+			}
 
 			ze.setZUGFeRDXMLData(Files.readAllBytes(Paths.get(xmlName)));
 
@@ -527,9 +556,8 @@ public class Toecount {
 			System.out.println("Written to " + outName);
 
 		} catch (IOException e) {
-			e.printStackTrace();
-			// } catch (JAXBException e) {
-			// e.printStackTrace();
+			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+
 		}
 	}
 

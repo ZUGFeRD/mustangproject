@@ -19,6 +19,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import org.mustangproject.ZUGFeRD.model.CrossIndustryDocumentType;
+import org.mustangproject.ZUGFeRD.model.DocumentContextParameterTypeConstants;
 import org.mustangproject.ZUGFeRD.model.ZFNamespacePrefixMapper;
 
 import javax.xml.bind.JAXBContext;
@@ -27,13 +28,27 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.ByteArrayOutputStream;
 
-public class ZUGFeRD1PullProvider implements IXMLProvider {
+public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
 
 
 	protected byte[] zugferdData;
 	private Marshaller marshaller;
 
 	private boolean isTest;
+	private ZUGFeRDConformanceLevel level;
+
+
+	public void setProfile(ZUGFeRDConformanceLevel level) {
+		this.level = level;
+	}
+
+	public String getProfile() {
+		switch (level) {
+			case BASIC: return DocumentContextParameterTypeConstants.BASIC;
+			case COMFORT: return DocumentContextParameterTypeConstants.COMFORT;
+			default: return DocumentContextParameterTypeConstants.EXTENDED;
+		}
+	}
 
 
 	/**
@@ -59,7 +74,7 @@ public class ZUGFeRD1PullProvider implements IXMLProvider {
 	private String createZugferdXMLForTransaction(IZUGFeRDExportableTransaction trans) {
 
 		JAXBElement<CrossIndustryDocumentType> jaxElement =
-				new ZUGFeRDTransactionModelConverter(trans).withTest(isTest).convertToModel();
+				new ZUGFeRDTransactionModelConverter(trans).withTest(isTest).withProfile(getProfile()).convertToModel();
 
 		try {
 			return marshalJaxToXMLString(jaxElement);

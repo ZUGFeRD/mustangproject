@@ -27,6 +27,7 @@ import org.junit.runners.MethodSorters;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MustangReaderWriterCustomXMLTest extends TestCase {
@@ -49,7 +50,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 
 	// //////// TESTS
 	// //////////////////////////////////////////////////////////////////////////////////////////
-	public void testCustomZF2Export() throws Exception {
+	public void testCustomZF2Export() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506custom.pdf";
 		// the writing part
@@ -61,8 +62,10 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					.load(SOURCE_PDF);
 
 			final byte[] UTF8ByteOrderMark = new byte[]{(byte) 0xef, (byte) 0xbb, (byte) 0xbf};
-			/* we have much more information than just in the basic profile (comfort or extended) but it's perfectly valid to provide more information, just not less. */
-			String ownZUGFeRDXML = new String(UTF8ByteOrderMark) + "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+			/* we have much more information than just in the basic profile (comfort or extended) but it's perfectly valid to provide more information, just not less. 
+			 * test the export with bom (which is valid) because this will also test the import (which also needs to work and needs to be tested)
+			 * */
+			String ownZUGFeRDXML = new String(UTF8ByteOrderMark, StandardCharsets.UTF_8) + "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 					"<rsm:CrossIndustryInvoice xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100\" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100\">\n" +
 					"	<rsm:ExchangedDocumentContext>\n" +
 					"		<ram:TestIndicator><udt:Indicator>false</udt:Indicator></ram:TestIndicator>\n" +
@@ -286,10 +289,10 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 	 * ./src/test/MustangGnuaccountingBeispielRE-20140703_502blanko.pdf}, adds
 	 * metadata, writes to @{code ./target/testout-*} and then imports to check the
 	 * values. It would not make sense to have it run before the less complex
-	 * importer test (which is probably redundant) --> as only Name Ascending is
+	 * importer test (which is probably redundant). As only Name Ascending is
 	 * supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
 	 */
-	public void testCustomZF1Export() throws Exception {
+	public void testCustomZF1Export() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505custom.pdf";
 		// the writing part
@@ -297,7 +300,10 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		try {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
-			ZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1Factory().setProducer("My Application").setCreator("Test").setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.BASIC)
+			ZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1Factory()
+					.setProducer("My Application")
+					.setCreator("Test")
+					.setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.BASIC)
 					.load(SOURCE_PDF);
 			/* we have much more information than just in the basic profile (comfort or extended) but it's perfectly valid to provide more information, just not less. */
 			String ownZUGFeRDXML = "<rsm:CrossIndustryDocument xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12\" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15\" xmlns:rsm=\"urn:ferd:CrossIndustryDocument:invoice:1p0\">\n"

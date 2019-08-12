@@ -27,7 +27,7 @@ import java.math.BigDecimal;
  *
  * @author jstaerk
  * @version 1.2.0
- * @date 2014-05-10
+ * dated 2014-05-10
  */
 
 public interface IZUGFeRDExportableProduct {

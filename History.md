@@ -1,3 +1,52 @@
+1.7.4
+=====
+
+- #102 XML entities for ZF2 export
+
+
+1.7.3
+=====
+2019-08-01
+
+- #105 does not build in windows
+- #99 BOMs confuse parser
+- updated javadoc
+- fixed #104 nullpointerex when specifying no parameter
+- PR #112 complete profile options for v1 
+- access to TotalPrepaidAmount in ZF v1 #118
+- have unit tests for nDigitFormat #23
+
+
+1.7.2
+=====
+2019-07-08
+
+Support BuyerReference (r+w), as well as SpecifiedLegalOrganization (w) and DefinedTradeContact (w) 
+use dom4j to format output xml document
+corrected some exception logging glitches
+upgrade PDFBox to 2.0.15+
+extraction to use proper filename instead of alias #98
+NullPointerException in ZUGFeRDImporter.extractLowLevel #96
+Removed Bankleitzahl from ZF2
+
+
+1.7.1
+=====
+2019-05-26
+
+Corrected EN16931 ZF2 profile name
+
+1.7.0
+=====
+2019-05-05
+
+Export ZF2 final now seems halfway valid (new filename, new namespace prefixa)
+Migrates profile names in ZF1 to ZF2 migration
+Nullpointerex solved with certain invalid profiles
+Be able to access additional files ("additional data")
+Known bugs: src/test/resources/migration/reference/ZUGFeRD2_EXTENDED_Warenrechnung.xml is invalid
+
+
 1.6.0
 =====
 2019-02-03

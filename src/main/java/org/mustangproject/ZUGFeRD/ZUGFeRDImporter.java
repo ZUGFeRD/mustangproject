@@ -32,6 +32,7 @@ import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
+import org.mustangproject.toecount.Toecount;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -45,31 +46,41 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ZUGFeRDImporter {
 
 	/**
-	 * @var if metadata has been found
+	 * if metadata has been found
 	 */
 	private boolean containsMeta = false;
 	/**
-	 * @var the reference (i.e. invoice number) of the sender
+	 * map filenames of additional XML files to their contents
 	 */
 	private HashMap<String, byte[]> additionalXMLs = new HashMap<>();
 	/**
 	 * Raw XML form of the extracted data - may be directly obtained.
 	 */
 	private byte[] rawXML = null;
+	/**
+	 * XMP metadata
+	 */
 	private String xmpString = null; // XMP metadata
+	/**
+	 * parsed Document
+	 */
+	private Document document;
 
 	public ZUGFeRDImporter(String pdfFilename) {
-		try {
-			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(pdfFilename));
+		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
 			extractLowLevel(bis);
-			bis.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			throw new ZUGFeRDExportException(e);
 		}
 	}
@@ -78,7 +89,7 @@ public class ZUGFeRDImporter {
 		try {
 			extractLowLevel(pdfStream);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			throw new ZUGFeRDExportException(e);
 		}
 	}
@@ -122,15 +133,16 @@ public class ZUGFeRDImporter {
 
 
 	private void extractFiles(Map<String, PDComplexFileSpecification> names) throws IOException {
-		for (String filename : names.keySet()) {
+		for (String alias : names.keySet()) {
+
+			PDComplexFileSpecification fileSpec = names.get(alias);
+			String filename=fileSpec.getFilename();
 			/**
-			 * currently (in the release candidate of version 1) only one attached file with
-			 * the name ZUGFeRD-invoice.xml is allowed
+			 * filenames for invoice data (ZUGFeRD v1 and v2, Factur-X)
 			 */
-			if ((filename.equals("ZUGFeRD-invoice.xml") || filename.equals("factur-x.xml"))) { //$NON-NLS-1$
+			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml"))) { //$NON-NLS-1$
 				containsMeta = true;
 
-				PDComplexFileSpecification fileSpec = names.get(filename);
 				PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
 				// String embeddedFilename = filePath + filename;
 				// File file = new File(filePath + filename);
@@ -139,18 +151,14 @@ public class ZUGFeRDImporter {
 				// ByteArrayOutputStream();
 				// FileOutputStream fos = new FileOutputStream(file);
 
-				rawXML = embeddedFile.toByteArray();
-				setMeta(new String(rawXML));
+				setRawXML(embeddedFile.toByteArray());
 
 				// fos.write(embeddedFile.getByteArray());
 				// fos.close();
 			}
 			if (filename.startsWith("additional_data")) {
-
-				PDComplexFileSpecification fileSpec = names.get(filename);
 				PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
 				additionalXMLs.put(filename, embeddedFile.toByteArray());
-
 			}
 		}
 	}
@@ -161,7 +169,7 @@ public class ZUGFeRDImporter {
 		try {
 			transformer = tf.newTransformer();
 		} catch (TransformerConfigurationException e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 		}
 		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 		StringWriter writer = new StringWriter();
@@ -170,13 +178,52 @@ public class ZUGFeRDImporter {
 		System.err.println(output);
 	}
 
-	private Document getDocument() throws ParserConfigurationException, IOException, SAXException, TransformerException {
+	private Document getDocument() { return document; }
+
+	private void setDocument() throws ParserConfigurationException, IOException, SAXException {
 		DocumentBuilderFactory xmlFact = DocumentBuilderFactory.newInstance();
 		xmlFact.setNamespaceAware(false);
 		DocumentBuilder builder = xmlFact.newDocumentBuilder();
-		Document doc = builder.parse(new ByteArrayInputStream(rawXML));
-		//prettyPrint(doc);
-		return doc;
+		ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
+		is.skip(guessBOMSize(is));
+		document = builder.parse(is);
+	}
+
+	public void setRawXML(byte[] rawXML) throws IOException {
+		this.rawXML = rawXML;
+		try {
+			setDocument();
+		} catch (ParserConfigurationException | SAXException e) {
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+			throw new ZUGFeRDExportException(e);
+		}
+	}
+
+	/**
+	 * Skips over a BOM at the beginning of the given ByteArrayInputStream, if one exists.
+	 * @param is the ByteArrayInputStream used
+	 * @throws IOException
+	 * @see <a href="https://www.w3.org/TR/xml/#sec-guessing">Autodetection of Character Encodings</a>
+	 */
+	private int guessBOMSize(ByteArrayInputStream is) throws IOException {
+		byte[] pad = new byte[4];
+		is.read(pad);
+		is.reset();
+		int test2 = ((pad[0] & 0xFF) << 8) | (pad[1] & 0xFF);
+		int test3 = ((test2 & 0xFFFF) << 8) | (pad[2] & 0xFF);
+		int test4 = ((test3 & 0xFFFFFF) << 8) | (pad[3] & 0xFF);
+		//
+		if (test4 == 0x0000FEFF || test4 == 0xFFFE0000 || test4 == 0x0000FFFE || test4 == 0xFEFF0000) {
+			// UCS-4: BOM takes 4 bytes
+			return 4;
+		} else if (test3 == 0xEFBBFF) {
+			// UTF-8: BOM takes 3 bytes
+			return 3;
+		} else if (test2 == 0xFEFF || test2 == 0xFFFE) {
+			// UTF-16: BOM takes 2 bytes
+			return 2;
+		}
+		return 0;
 	}
 
 	private String extractString(String xpathStr) {
@@ -189,11 +236,8 @@ public class ZUGFeRDImporter {
 			XPathFactory xpathFact = XPathFactory.newInstance();
 			XPath xpath = xpathFact.newXPath();
 			result = xpath.evaluate(xpathStr, document);
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-			throw new ZUGFeRDExportException(e);
-		} catch (IOException | SAXException | TransformerException | XPathExpressionException e) {
-			e.printStackTrace();
+		} catch (XPathExpressionException e) {
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			throw new ZUGFeRDExportException(e);
 		}
 		return result;
@@ -217,10 +261,28 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
-	 * @return the sender's bank's BLZ code
+	 * @return the referred document
 	 */
+	public String getReference() {
+		return extractString("//ApplicableHeaderTradeAgreement/BuyerReference");
+	}
+
+	/**
+	 * @return the sender's bank's BLZ code
+	 * @deprecated use BIC and IBAN instead of BLZ and KTO
+	 */
+	@Deprecated
 	public String getBLZ() {
 		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/GermanBankleitzahlID");
+	}
+
+	/**
+	 * @return the sender's account number
+	 * @deprecated use BIC and IBAN instead of BLZ and KTO
+	 */
+	@Deprecated
+	public String getKTO() {
+		return extractString("//PayeePartyCreditorFinancialAccount/ProprietaryID");
 	}
 
 	/**
@@ -230,19 +292,19 @@ public class ZUGFeRDImporter {
 		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/BICID");
 	}
 
+
 	/**
-	 * @return the sender's bankname
+	 * @return the sender's bank name
 	 */
 	public String getBankName() {
-		return extractString("/CrossIndustryInvoice/SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeSettlementPaymentMeans/PayeeSpecifiedCreditorFinancialInstitution/Name");
+		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/Name");
 	}
 
+	/**
+	 * @return the sender's account IBAN code
+	 */
 	public String getIBAN() {
 		return extractString("//PayeePartyCreditorFinancialAccount/IBANID");
-	}
-
-	public String getKTO() {
-		return extractString("//PayeePartyCreditorFinancialAccount/ProprietaryID");
 	}
 
 	public String getHolder() {
@@ -290,8 +352,8 @@ public class ZUGFeRDImporter {
 	/**
 	 * @param meta raw XML to be set
 	 */
-	public void setMeta(String meta) {
-		this.rawXML = meta.getBytes();
+	public void setMeta(String meta) throws IOException {
+		setRawXML(meta.getBytes());
 	}
 
 	/**
@@ -336,6 +398,7 @@ public class ZUGFeRDImporter {
 
 	/**
 	 * Returns the raw XML data as extracted from the ZUGFeRD PDF file.
+	 * @return the raw ZUGFeRD XML data
 	 */
 	public byte[] getRawXML() {
 		return rawXML;
@@ -359,7 +422,7 @@ public class ZUGFeRDImporter {
 	static String convertStreamToString(java.io.InputStream is) {
 		// source https://stackoverflow.com/questions/309424/how-do-i-read-convert-an-inputstream-into-a-string-in-java referring to
 		// https://community.oracle.com/blogs/pat/2004/10/23/stupid-scanner-tricks
-		Scanner s = new Scanner(is).useDelimiter("\\A");
+		Scanner s = new Scanner(is, "UTF-8").useDelimiter("\\A");
 		return s.hasNext() ? s.next() : "";
 	}
 
