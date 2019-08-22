@@ -70,10 +70,10 @@ You will need a git client on the console, if that's available can e.g. be check
 Change to the root of the repo.
 
 Change to the project directory and run 
-  * "/usr/local/Cellar/maven/3.5.2/bin/mvn clean install" . If that works you can 
-  * clean the release with „/usr/local/Cellar/maven/3.5.2/bin/mvn release:clean“ and  prepare the release with
-  * "/usr/local/Cellar/maven/3.5.2/bin/mvn release:prepare  -DignoreSnapshots=true" and enter the version numbers. 
-  * After that is through you can create a new release via "/usr/local/Cellar/maven/3.5.2/bin/mvn release:perform -Darguments="-Dmaven.javadoc.skip=true".This will also update the maven repo. 
+  * `mvn clean install` . If that works you can 
+  * clean the release with `mvn release:clean` and prepare the release with
+  * `mvn release:prepare  -DignoreSnapshots=true` and enter the version numbers. 
+  * After that is through you can create a new release via `mvn release:perform`.This will also update the maven repo. 
   
   ![screenshot](development_documentation_screenshot_release.png "Screenshot Release")
   

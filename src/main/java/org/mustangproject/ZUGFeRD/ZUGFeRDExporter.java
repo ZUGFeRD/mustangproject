@@ -593,11 +593,6 @@ public class ZUGFeRDExporter implements Closeable {
 		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(this, metadata, ZFVersion, attachZUGFeRDHeaders);
 		pdfaex.setZUGFeRDVersion(ZFVersion);
 		metadata.addSchema(pdfaex);
-		for (String filenameAdditional : additionalFiles.keySet()) {
-			XMPSchemaPDFAExtensionsAdditionalData pdfaexadd = new XMPSchemaPDFAExtensionsAdditionalData(metadata);
-			metadata.addSchema(pdfaexadd);
-		}
-
 	}
 
 	protected byte[] serializeXmpMetadata(XMPMetadata xmpMetadata) throws TransformerException {
