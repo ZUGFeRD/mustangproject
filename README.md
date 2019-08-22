@@ -1,4 +1,3 @@
-[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/ZUGFeRD/community)
 
 Mustangproject
 =====
@@ -38,13 +37,7 @@ As dependency use this
 <dependency>
   <groupId>org.mustangproject.ZUGFeRD</groupId>
   <artifactId>mustang</artifactId>
-  <version>1.7.1</version>
-</dependency>
-
-<dependency> 
-      <groupId>commons-logging</groupId> 
-      <artifactId>commons-logging</artifactId> 
-      <version>1.1.1</version> 
+  <version>1.7.4</version>
 </dependency>
 ```
 
