@@ -1,7 +1,11 @@
 1.7.4
 =====
+2019-08-22
 
 - #102 XML entities for ZF2 export
+- corrected addAddtionaldata to addAdditionalFile
+- add zugferdimporter.getversion
+- add total amount in metrics
 
 
 1.7.3
