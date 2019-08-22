@@ -23,6 +23,7 @@ import junit.framework.TestSuite;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -75,11 +76,10 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		return "Ecke 12";
 	}
 
-
 	@Override
 	public IZUGFeRDExportableContact getOwnContact() {
 		return new SenderContact();
-		
+
 	}
 
 	@Override
@@ -115,8 +115,10 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	@Override
 	public IZUGFeRDExportableItem[] getZFItems() {
 		Item[] allItems = new Item[3];
-		Product designProduct = new Product("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR", new BigDecimal("7.000000"));
-		Product balloonProduct = new Product("", "Bestellerweiterung für E&F Umbau", "C62", new BigDecimal("19.000000"));// test for issue 103
+		Product designProduct = new Product("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR",
+				new BigDecimal("7.000000"));
+		Product balloonProduct = new Product("", "Bestellerweiterung für E&F Umbau", "C62",
+				new BigDecimal("19.000000"));// test for issue 103
 		Product airProduct = new Product("", "Heiße Luft pro Liter", "LTR", new BigDecimal("19.000000"));
 
 		allItems[0] = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
@@ -167,26 +169,25 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		return new TestSuite(ZF2EdgeTest.class);
 	}
 
-	
-	// //////// TESTS //////////////////////////////////////////////////////////////////////////////////////////
+	// //////// TESTS
+	// //////////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * The exporter test bases on @{code ./src/test/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf}, adds metadata,
-	 * writes to @{code ./target/testout-*} and then imports to check the values.
+	 * The exporter test bases on @{code
+	 * ./src/test/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf}, adds
+	 * metadata, writes to @{code ./target/testout-*} and then imports to check the
+	 * values.
 	 */
 	public void testEdgeExport() {
 
 		// the writing part
 
-		try (InputStream SOURCE_PDF =
-					 this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
+		try (InputStream SOURCE_PDF = this.getClass()
+				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory()
-					 .setProducer("My Application")
-					 .setCreator(System.getProperty("user.name"))
-					 .setZUGFeRDVersion(2)
-					 .ignorePDFAErrors()
-					 .load(SOURCE_PDF)) {
+				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("My Application")
+						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
+						.load(SOURCE_PDF)) {
 			ze.PDFattachZugferdFile(this);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
@@ -204,6 +205,40 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
+		try {
+			assertEquals(zi.getVersion(), 2);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	/**
+	 * The exporter test bases on @{code
+	 * ./src/test/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf}, adds
+	 * metadata, writes to @{code ./target/testout-*} and then imports to check the
+	 * values.
+	 */
+	public void testOutpuStreamExport() {
+
+		// the writing part
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try (InputStream SOURCE_PDF = this.getClass()
+				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
+
+				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("My Application")
+						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
+						.load(SOURCE_PDF)) {
+			ze.PDFattachZugferdFile(this);
+			String theXML = new String(ze.getProvider().getXML());
+			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+			ze.export(bos);
+		} catch (IOException e) {
+			fail("IOException should not be raised in testEdgeExport");
+		}
+
 	}
 
 }

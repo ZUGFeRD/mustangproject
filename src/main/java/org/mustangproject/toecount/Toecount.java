@@ -18,6 +18,24 @@
  *********************************************************************** */
 package org.mustangproject.toecount;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.xml.transform.TransformerException;
+
+import org.mustangproject.ZUGFeRD.ZUGFeRDConformanceLevel;
+import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
+import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1Factory;
+import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
+import org.mustangproject.ZUGFeRD.ZUGFeRDMigrator;
+
 /***
  * This is the command line interface to mustangproject
  *
@@ -25,24 +43,6 @@ package org.mustangproject.toecount;
 
 import com.sanityinc.jargs.CmdLineParser;
 import com.sanityinc.jargs.CmdLineParser.Option;
-import org.mustangproject.ZUGFeRD.*;
-
-import javax.xml.transform.TransformerException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Toecount {
 	// build with: /opt/local/bin/mvn clean compile assembly:single
@@ -454,7 +454,7 @@ public class Toecount {
 			} else {
 				System.out.println("ZUGFeRD XML set to " + xmlName);
 			}
-
+						
 			if (outName == null) {
 				outName = getFilenameFromUser("Ouput PDF", "invoice.ZUGFeRD.pdf", "pdf", false, true);
 			} else {

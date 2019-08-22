@@ -230,6 +230,13 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 		assertEquals(zi.getKTO(), getTradeSettlementPayment()[0].getOwnKto());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
+		try {
+			assertEquals(zi.getVersion(), 1);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }

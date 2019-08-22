@@ -18,11 +18,14 @@
  *********************************************************************** */
 package org.mustangproject.toecount;
 
+import java.math.BigDecimal;
+
 public class StatRun {
 	private int pdfCount = 0;
 	private int horseCount = 0;
 	private int fileCount = 0;
 	private int dirCount = 0;
+	private BigDecimal total = BigDecimal.ZERO;
 	private boolean checkFileExt = true;
 
 	public void ignoreFileExtension() {
@@ -73,8 +76,8 @@ public class StatRun {
 	public String getSummaryLine() {
 
 		return "\r\n===================================================================\r\n" + String.format(
-				"Files:\t%d\tDirs:\t%d\tPDF:\t%d\tZUGFeRD:\t%d\r\n",
-				getFileCount(), getDirCount(), getPDFCount(), getZUGFeRDCount());
+				"Files:\t%d\tDirs:\t%d\tPDF:\t%d\tZUGFeRD:\t%d\tTotal:\t%s\r\n",
+				getFileCount(), getDirCount(), getPDFCount(), getZUGFeRDCount(), total.toString());
 
 	}
 
@@ -85,6 +88,11 @@ public class StatRun {
 	 */
 	public String getOutputLine() {
 		return ".";
+	}
+
+	public void incTotal(BigDecimal delta) {
+		total=total.add(delta);
+		
 	}
 
 

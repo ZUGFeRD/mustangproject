@@ -18,6 +18,8 @@
  *********************************************************************** */
 package org.mustangproject.toecount;
 
+import java.math.BigDecimal;
+
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
 
 public class FileChecker {
@@ -53,6 +55,7 @@ public class FileChecker {
 		try {
 			if (zi.canParse()) {
 				thisRun.incZUGFeRDCount();
+				thisRun.incTotal(new BigDecimal(zi.getAmount()));
 				return true;
 			} else {
 				return false;

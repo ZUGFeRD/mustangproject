@@ -32,7 +32,6 @@ import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
-import org.mustangproject.toecount.Toecount;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -161,21 +160,6 @@ public class ZUGFeRDImporter {
 				additionalXMLs.put(filename, embeddedFile.toByteArray());
 			}
 		}
-	}
-
-	private void prettyPrint(Document document) throws TransformerException {
-		TransformerFactory tf = TransformerFactory.newInstance();
-		Transformer transformer = null;
-		try {
-			transformer = tf.newTransformer();
-		} catch (TransformerConfigurationException e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
-		}
-		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		StringWriter writer = new StringWriter();
-		transformer.transform(new DOMSource(document), new StreamResult(writer));
-		String output = writer.getBuffer().toString();//.replaceAll("\n|\r", "");
-		System.err.println(output);
 	}
 
 	private Document getDocument() { return document; }
@@ -368,6 +352,16 @@ public class ZUGFeRDImporter {
 	}
 
 
+	public int getVersion() throws Exception {
+		if (!containsMeta) throw new Exception("Not yet parsed");
+		if (getUTF8().contains("<rsm:CrossIndustryDocument")) {
+			return 1;
+		} else if (getUTF8().contains("<rsm:CrossIndustryInvoice")) {
+			return 2;
+		}
+		throw new Exception("ZUGFeRD version could not be determined");
+	}
+	
 	/**
 	 * @return return UTF8 XML (without BOM) of the invoice
 	 */

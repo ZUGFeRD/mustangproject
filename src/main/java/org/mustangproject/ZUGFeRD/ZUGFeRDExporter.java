@@ -111,7 +111,7 @@ public class ZUGFeRDExporter implements Closeable {
 	private PDDocument doc;
 	int ZFVersion;
 
-	private HashMap<String, byte[]> additionalXMLs = new HashMap<String, byte[]>();
+	private HashMap<String, byte[]> additionalFiles = new HashMap<String, byte[]>();
 
 
 	private boolean disableAutoClose;
@@ -130,10 +130,21 @@ public class ZUGFeRDExporter implements Closeable {
 		init();
 	}
 
-	public void addAdditonalXML(String filename, byte[] xml) {
-		additionalXMLs.put(filename, xml);
+	/**
+	 * Adds additional file attachments into the ZF
+	 * @param filename
+	 * @param filecontent
+	 */
+	public void addAdditionalFile(String filename, byte[] xml) {
+		additionalFiles.put(filename, xml);
+
 	}
 
+	/***
+	 * internal helper function: get namespace for given zugferd or factur-x version
+	 * @param ver
+	 * @return
+	 */
 	public String getNamespaceForVersion(int ver) {
 		if (isFacturX) {
 			return "urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#";	
@@ -147,6 +158,11 @@ public class ZUGFeRDExporter implements Closeable {
 		}
 	}
 
+	/***
+	 * internal helper: returns the namespace prefix for the given zf/fx version number
+	 * @param ver
+	 * @return
+	 */
 	public String getPrefixForVersion(int ver) {
 		if (isFacturX) {
 			return "fx";
@@ -155,6 +171,11 @@ public class ZUGFeRDExporter implements Closeable {
 		}
 	}
 
+	/***
+	 * internal helper: return the name of the file attachment for the given zf/fx version
+	 * @param ver
+	 * @return
+	 */
 	public String getFilenameForVersion(int ver) {
 		if (isFacturX) {
 			return "factur-x.xml";
@@ -374,8 +395,8 @@ public class ZUGFeRDExporter implements Closeable {
 		PDFAttachGenericFile(doc, filename, "Alternative",
 				"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
 				"text/xml", xmlProvider.getXML());
-		for (String filenameAdditional : additionalXMLs.keySet()) {
-			PDFAttachGenericFile(doc, filenameAdditional, "Supplement", "ZUGFeRD extension/additional data", "text/xml", additionalXMLs.get(filenameAdditional));
+		for (String filenameAdditional : additionalFiles.keySet()) {
+			PDFAttachGenericFile(doc, filenameAdditional, "Supplement", "ZUGFeRD extension/additional data", "text/xml", additionalFiles.get(filenameAdditional));
 		}
 	}
 
@@ -518,7 +539,7 @@ public class ZUGFeRDExporter implements Closeable {
 	}
 
 	/**
-	 * Sets the ZUGFeRD conformance level (override).
+	 * Sets the ZUGFeRD profile.
 	 *
 	 * @param zUGFeRDConformanceLevel the new conformance level
 	 * @deprecated Use {@link ZUGFeRDExporterFromA1Factory} instead
@@ -532,7 +553,7 @@ public class ZUGFeRDExporter implements Closeable {
 	}
 
 	/**
-	 * Sets the ZUGFeRD conformance level (override).
+	 * Sets the ZUGFeRD profile.
 	 *
 	 * @param zUGFeRDConformanceLevel the new conformance level
 	 * @deprecated Use {@link #setConformanceLevel(PDFAConformanceLevel)} instead
@@ -572,6 +593,10 @@ public class ZUGFeRDExporter implements Closeable {
 		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(this, metadata, ZFVersion, attachZUGFeRDHeaders);
 		pdfaex.setZUGFeRDVersion(ZFVersion);
 		metadata.addSchema(pdfaex);
+		for (String filenameAdditional : additionalFiles.keySet()) {
+			XMPSchemaPDFAExtensionsAdditionalData pdfaexadd = new XMPSchemaPDFAExtensionsAdditionalData(metadata);
+			metadata.addSchema(pdfaexadd);
+		}
 
 	}
 
