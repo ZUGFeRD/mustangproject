@@ -217,7 +217,7 @@
 							<mainClass>org.mustangproject.toecount.Toecount</mainClass>
 						</transformer>
 					</transformers>
-					<minimizeJar>true</minimizeJar>
+					<minimizeJar>false</minimizeJar><!-- no longer java 11 compatible if set to true because it removes e.g. javax/xml/bind/annotation/XmlSchema-->
 					<filters>
 
 						<filter>

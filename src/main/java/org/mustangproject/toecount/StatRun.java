@@ -44,7 +44,7 @@ public class StatRun {
 		pdfCount++;
 	}
 
-	public void incZUGFeRDCount() {
+	public void incZUGFeRDCount(int version) {
 		horseCount++;
 	}
 

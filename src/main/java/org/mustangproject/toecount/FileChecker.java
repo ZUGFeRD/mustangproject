@@ -54,7 +54,7 @@ public class FileChecker {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(filename);
 		try {
 			if (zi.canParse()) {
-				thisRun.incZUGFeRDCount();
+				thisRun.incZUGFeRDCount(zi.getVersion());
 				thisRun.incTotal(new BigDecimal(zi.getAmount()));
 				return true;
 			} else {
