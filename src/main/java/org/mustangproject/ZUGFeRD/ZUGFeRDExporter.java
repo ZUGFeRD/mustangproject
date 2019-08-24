@@ -135,15 +135,15 @@ public class ZUGFeRDExporter implements Closeable {
 	 * @param filename
 	 * @param filecontent
 	 */
-	public void addAdditionalFile(String filename, byte[] xml) {
-		additionalFiles.put(filename, xml);
+	public void addAdditionalFile(String filename, byte[] filecontent) {
+		additionalFiles.put(filename, filecontent);
 
 	}
 
 	/***
 	 * internal helper function: get namespace for given zugferd or factur-x version
-	 * @param ver
-	 * @return
+	 * @param ver the ZUGFeRD version
+	 * @return the URN of the namespace
 	 */
 	public String getNamespaceForVersion(int ver) {
 		if (isFacturX) {
@@ -160,8 +160,8 @@ public class ZUGFeRDExporter implements Closeable {
 
 	/***
 	 * internal helper: returns the namespace prefix for the given zf/fx version number
-	 * @param ver
-	 * @return
+	 * @param ver the zf/fx version
+	 * @return the namespace prefix as string, without colon
 	 */
 	public String getPrefixForVersion(int ver) {
 		if (isFacturX) {
@@ -173,8 +173,8 @@ public class ZUGFeRDExporter implements Closeable {
 
 	/***
 	 * internal helper: return the name of the file attachment for the given zf/fx version
-	 * @param ver
-	 * @return
+	 * @param ver the zf/fx version
+	 * @return the filename of the file to be embedded
 	 */
 	public String getFilenameForVersion(int ver) {
 		if (isFacturX) {

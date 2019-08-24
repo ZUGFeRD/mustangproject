@@ -38,9 +38,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -186,7 +183,7 @@ public class ZUGFeRDImporter {
 	/**
 	 * Skips over a BOM at the beginning of the given ByteArrayInputStream, if one exists.
 	 * @param is the ByteArrayInputStream used
-	 * @throws IOException
+	 * @throws IOException if can not be read from is
 	 * @see <a href="https://www.w3.org/TR/xml/#sec-guessing">Autodetection of Character Encodings</a>
 	 */
 	private int guessBOMSize(ByteArrayInputStream is) throws IOException {
@@ -335,6 +332,7 @@ public class ZUGFeRDImporter {
 
 	/**
 	 * @param meta raw XML to be set
+	 * @throws IOException if raw can not be set
 	 */
 	public void setMeta(String meta) throws IOException {
 		setRawXML(meta.getBytes());
