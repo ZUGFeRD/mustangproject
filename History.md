@@ -1,11 +1,12 @@
 1.7.4
 =====
-2019-08-22
+2019-08-24
 
 - #102 XML entities for ZF2 export
 - corrected addAddtionaldata to addAdditionalFile
 - add zugferdimporter.getversion
 - add total amount in metrics
+- #132 Mustangproject does not work w/ Java 11
 
 
 1.7.3
