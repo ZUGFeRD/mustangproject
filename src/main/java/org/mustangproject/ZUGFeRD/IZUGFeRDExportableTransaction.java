@@ -27,20 +27,22 @@ package org.mustangproject.ZUGFeRD;
  * */
 
 
-
 import java.math.BigDecimal;
 import java.util.Date;
+
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 public interface IZUGFeRDExportableTransaction {
 
 	/**
 	 * appears in /rsm:CrossIndustryDocument/rsm:HeaderExchangedDocument/ram:Name
+	 * 
 	 * @return Name of document
 	 */
 	default String getDocumentName() {
 		return "RECHNUNG";
 	}
+
 
 	/**
 	 *
@@ -93,6 +95,7 @@ public interface IZUGFeRDExportableTransaction {
 		return null;
 	}
 
+
 	/**
 	 * who processed the order
 	 *
@@ -125,7 +128,7 @@ public interface IZUGFeRDExportableTransaction {
 
 	/**
 	 * the creditors payment informations
-	 * 
+	 *
 	 * @return an array of IZUGFeRDTradeSettlementPayment
 	 */
 	IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment();
@@ -248,15 +251,6 @@ public interface IZUGFeRDExportableTransaction {
 		return null;
 	}
 
-	/**
-	 * get reference number of the purchase order this invoice is based on
-	 *
-	 * @return the ID of the purchase order this document refers to
-	 */
-	default String getOrderReferenceNumber() {
-		return null;
-	}
-
 
 	/**
 	 * consignee identification (identification of the organisation the goods are shipped to [assigned by the costumer])
@@ -317,23 +311,33 @@ public interface IZUGFeRDExportableTransaction {
 		return null;
 	}
 
+
 	/**
 	 * get the ID of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
+	 * 
 	 * @return the ID of the document
 	 */
-	default String getBuyerOrderReferencedDocumentID() { return null; }
+	default String getBuyerOrderReferencedDocumentID() {
+		return null;
+	}
+
 
 	/**
 	 * get the issue timestamp of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
+	 * 
 	 * @return the IssueDateTime in format CCYY-MM-DDTHH:MM:SS
 	 */
-	default String getBuyerOrderReferencedDocumentIssueDateTime() { return null; }
+	default String getBuyerOrderReferencedDocumentIssueDateTime() {
+		return null;
+	}
+
 
 	/**
-	 * get the TotalPrepaidAmount located in SpecifiedTradeSettlementMonetarySummation (v1) or
-	 * SpecifiedTradeSettlementHeaderMonetarySummation (v2)
-	 * @return the total sum (incl. VAT) of prepayments, i.e. the difference between GrandTotalAmount
-	 * and DuePayableAmount
+	 * get the TotalPrepaidAmount located in SpecifiedTradeSettlementMonetarySummation (v1) or SpecifiedTradeSettlementHeaderMonetarySummation (v2)
+	 * 
+	 * @return the total sum (incl. VAT) of prepayments, i.e. the difference between GrandTotalAmount and DuePayableAmount
 	 */
-	default BigDecimal getTotalPrepaidAmount() { return BigDecimal.ZERO; }
+	default BigDecimal getTotalPrepaidAmount() {
+		return BigDecimal.ZERO;
+	}
 }
