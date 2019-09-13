@@ -1,30 +1,38 @@
-/** **********************************************************************
- *
- * Copyright 2018 Jochen Staerk
- *
- * Use is subject to license terms.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy
- * of the License at http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- *********************************************************************** */
+/**
+ * ********************************************************************** Copyright 2018 Jochen Staerk Use is subject to license terms. Licensed under the
+ * Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0. Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions
+ * and limitations under the License.
+ */
 package org.mustangproject.ZUGFeRD;
 /**
- * Mustangproject's ZUGFeRD implementation
- * ZUGFeRD importer
- * Licensed under the APLv2
+ * Mustangproject's ZUGFeRD implementation ZUGFeRD importer Licensed under the APLv2
+ *
  * @date 2014-07-07
  * @version 1.1.0
  * @author jstaerk
- * */
+ */
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
@@ -34,20 +42,6 @@ import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecifica
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ZUGFeRDImporter {
 
@@ -72,6 +66,7 @@ public class ZUGFeRDImporter {
 	 */
 	private Document document;
 
+
 	public ZUGFeRDImporter(String pdfFilename) {
 		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
 			extractLowLevel(bis);
@@ -80,6 +75,7 @@ public class ZUGFeRDImporter {
 			throw new ZUGFeRDExportException(e);
 		}
 	}
+
 
 	public ZUGFeRDImporter(InputStream pdfStream) {
 		try {
@@ -90,9 +86,9 @@ public class ZUGFeRDImporter {
 		}
 	}
 
+
 	/**
-	 * Extracts a ZUGFeRD invoice from a PDF document represented by an input
-	 * stream. Errors are reported via exception handling.
+	 * Extracts a ZUGFeRD invoice from a PDF document represented by an input stream. Errors are reported via exception handling.
 	 *
 	 * @param pdfStream a inputstream of a pdf file
 	 */
@@ -101,8 +97,13 @@ public class ZUGFeRDImporter {
 			// PDDocumentInformation info = doc.getDocumentInformation();
 			PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
 			//start
-			InputStream XMP = doc.getDocumentCatalog().getMetadata().exportXMPMetadata();
 
+			if (doc.getDocumentCatalog() == null || doc.getDocumentCatalog().getMetadata() == null) {
+				Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.INFO, "no-xmlpart");
+				return;
+			}
+
+			InputStream XMP = doc.getDocumentCatalog().getMetadata().exportXMPMetadata();
 			xmpString = convertStreamToString(XMP);
 
 			PDEmbeddedFilesNameTreeNode etn = names.getEmbeddedFiles();
@@ -132,7 +133,7 @@ public class ZUGFeRDImporter {
 		for (String alias : names.keySet()) {
 
 			PDComplexFileSpecification fileSpec = names.get(alias);
-			String filename=fileSpec.getFilename();
+			String filename = fileSpec.getFilename();
 			/**
 			 * filenames for invoice data (ZUGFeRD v1 and v2, Factur-X)
 			 */
@@ -159,7 +160,11 @@ public class ZUGFeRDImporter {
 		}
 	}
 
-	private Document getDocument() { return document; }
+
+	private Document getDocument() {
+		return document;
+	}
+
 
 	private void setDocument() throws ParserConfigurationException, IOException, SAXException {
 		DocumentBuilderFactory xmlFact = DocumentBuilderFactory.newInstance();
@@ -169,6 +174,7 @@ public class ZUGFeRDImporter {
 		is.skip(guessBOMSize(is));
 		document = builder.parse(is);
 	}
+
 
 	public void setRawXML(byte[] rawXML) throws IOException {
 		this.rawXML = rawXML;
@@ -180,8 +186,10 @@ public class ZUGFeRDImporter {
 		}
 	}
 
+
 	/**
 	 * Skips over a BOM at the beginning of the given ByteArrayInputStream, if one exists.
+	 *
 	 * @param is the ByteArrayInputStream used
 	 * @throws IOException if can not be read from is
 	 * @see <a href="https://www.w3.org/TR/xml/#sec-guessing">Autodetection of Character Encodings</a>
@@ -207,6 +215,7 @@ public class ZUGFeRDImporter {
 		return 0;
 	}
 
+
 	private String extractString(String xpathStr) {
 		if (!containsMeta) {
 			throw new ZUGFeRDExportException("No suitable data/ZUGFeRD file could be found.");
@@ -224,15 +233,18 @@ public class ZUGFeRDImporter {
 		return result;
 	}
 
+
 	/**
 	 * @return the reference (purpose) the sender specified for this invoice
 	 */
 	public String getForeignReference() {
 		String result = extractString("//ApplicableHeaderTradeSettlement/PaymentReference");
-		if(result == null || result.isEmpty())
+		if (result == null || result.isEmpty()) {
 			result = extractString("//ApplicableSupplyChainTradeSettlement/PaymentReference");
+		}
 		return result;
 	}
+
 
 	/**
 	 * @return the document code
@@ -241,12 +253,14 @@ public class ZUGFeRDImporter {
 		return extractString("//HeaderExchangedDocument/TypeCode");
 	}
 
+
 	/**
 	 * @return the referred document
 	 */
 	public String getReference() {
 		return extractString("//ApplicableHeaderTradeAgreement/BuyerReference");
 	}
+
 
 	/**
 	 * @return the sender's bank's BLZ code
@@ -257,6 +271,7 @@ public class ZUGFeRDImporter {
 		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/GermanBankleitzahlID");
 	}
 
+
 	/**
 	 * @return the sender's account number
 	 * @deprecated use BIC and IBAN instead of BLZ and KTO
@@ -265,6 +280,7 @@ public class ZUGFeRDImporter {
 	public String getKTO() {
 		return extractString("//PayeePartyCreditorFinancialAccount/ProprietaryID");
 	}
+
 
 	/**
 	 * @return the sender's bank's BIC code
@@ -281,6 +297,7 @@ public class ZUGFeRDImporter {
 		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/Name");
 	}
 
+
 	/**
 	 * @return the sender's account IBAN code
 	 */
@@ -288,19 +305,23 @@ public class ZUGFeRDImporter {
 		return extractString("//PayeePartyCreditorFinancialAccount/IBANID");
 	}
 
+
 	public String getHolder() {
 		return extractString("//SellerTradeParty/Name");
 	}
+
 
 	/**
 	 * @return the total payable amount
 	 */
 	public String getAmount() {
 		String result = extractString("//SpecifiedTradeSettlementHeaderMonetarySummation/DuePayableAmount");
-		if(result == null || result.isEmpty())
+		if (result == null || result.isEmpty()) {
 			result = extractString("//SpecifiedTradeSettlementMonetarySummation/GrandTotalAmount");
+		}
 		return result;
 	}
+
 
 	/**
 	 * @return when the payment is due
@@ -309,9 +330,11 @@ public class ZUGFeRDImporter {
 		return extractString("//SpecifiedTradePaymentTerms/DueDateDateTime/DateTimeString");
 	}
 
+
 	public HashMap<String, byte[]> getAdditionalData() {
 		return additionalXMLs;
 	}
+
 
 	/**
 	 * get xmp metadata of the PDF, null if not available
@@ -330,6 +353,7 @@ public class ZUGFeRDImporter {
 		return containsMeta;
 	}
 
+
 	/**
 	 * @param meta raw XML to be set
 	 * @throws IOException if raw can not be set
@@ -337,6 +361,7 @@ public class ZUGFeRDImporter {
 	public void setMeta(String meta) throws IOException {
 		setRawXML(meta.getBytes());
 	}
+
 
 	/**
 	 * @return raw XML of the invoice
@@ -351,7 +376,9 @@ public class ZUGFeRDImporter {
 
 
 	public int getVersion() throws Exception {
-		if (!containsMeta) throw new Exception("Not yet parsed");
+		if (!containsMeta) {
+			throw new Exception("Not yet parsed");
+		}
 		if (getUTF8().contains("<rsm:CrossIndustryDocument")) {
 			return 1;
 		} else if (getUTF8().contains("<rsm:CrossIndustryInvoice")) {
@@ -359,7 +386,8 @@ public class ZUGFeRDImporter {
 		}
 		throw new Exception("ZUGFeRD version could not be determined");
 	}
-	
+
+
 	/**
 	 * @return return UTF8 XML (without BOM) of the invoice
 	 */
@@ -388,17 +416,19 @@ public class ZUGFeRDImporter {
 		return new String(bomlessData);
 	}
 
+
 	/**
 	 * Returns the raw XML data as extracted from the ZUGFeRD PDF file.
+	 *
 	 * @return the raw ZUGFeRD XML data
 	 */
 	public byte[] getRawXML() {
 		return rawXML;
 	}
 
+
 	/**
-	 * will return true if the metadata (just extract-ed or set with setMeta)
-	 * contains ZUGFeRD XML
+	 * will return true if the metadata (just extract-ed or set with setMeta) contains ZUGFeRD XML
 	 *
 	 * @return true if the invoice contains ZUGFeRD XML
 	 */
@@ -410,6 +440,7 @@ public class ZUGFeRDImporter {
 		return (meta != null) && (meta.length() > 0) && ((meta.contains("SpecifiedExchangedDocumentContext") //$NON-NLS-1$
 				/* ZF1 */ || meta.contains("ExchangedDocumentContext") /* ZF2 */));
 	}
+
 
 	static String convertStreamToString(java.io.InputStream is) {
 		// source https://stackoverflow.com/questions/309424/how-do-i-read-convert-an-inputstream-into-a-string-in-java referring to
