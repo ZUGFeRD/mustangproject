@@ -34,38 +34,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ZF2EdgeTest extends MustangReaderTestCase {
-	final String TARGET_PDF = "./target/testout-ZF2newEdge.pdf";
-
-
-	protected class DebitPayment implements IZUGFeRDTradeSettlementDebit {
-
-	
-		@Override
-		public String getIBAN() {
-			return "DE540815";
-		}
-
-	
-		@Override
-		public String getMandate() {
-			return "DE99XX12345";
-		}
-		
-	}
-
-	
-	@Override
-	public IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
-		return null;
-	}
-	
-	@Override
-	public IZUGFeRDTradeSettlement[] getTradeSettlement() {	
-		IZUGFeRDTradeSettlement[] payments = new DebitPayment[1];
-		payments[0] = new DebitPayment();
-		return payments;
-	}
+public class ZF2Test extends MustangReaderTestCase {
+	final String TARGET_PDF = "./target/testout-ZF2new.pdf";
 
 
 	@Override
@@ -190,7 +160,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	 *
 	 * @param testName name of the test case
 	 */
-	public ZF2EdgeTest(String testName) {
+	public ZF2Test(String testName) {
 		super(testName);
 	}
 
@@ -198,7 +168,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	 * @return the suite of tests being tested
 	 */
 	public static Test suite() {
-		return new TestSuite(ZF2EdgeTest.class);
+		return new TestSuite(ZF2Test.class);
 	}
 
 	// //////// TESTS
@@ -210,7 +180,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	 * metadata, writes to @{code ./target/testout-*} and then imports to check the
 	 * values.
 	 */
-	public void testEdgeExport() {
+	public void testExport() {
 
 		// the writing part
 
@@ -231,15 +201,19 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
-		assertTrue(zi.getUTF8().contains("<ram:TypeCode>59</ram:TypeCode>"));
-		assertTrue(zi.getUTF8().contains("<ram:IBANID>DE540815</ram:IBANID>"));  
-		assertTrue(zi.getUTF8().contains("<ram:DirectDebitMandateID>DE99XX12345</ram:DirectDebitMandateID>"));
-		assertFalse(zi.getUTF8().contains("<ram:DueDateDateTime>"));
+		assertTrue(zi.getUTF8().contains("<ram:DueDateDateTime>"));
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
+
+		assertEquals(zi.getAmount(), "571.04");
+		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
+		assertEquals(zi.getIBAN(),getTradeSettlementPayment()[0].getOwnIBAN());
+		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
+		
+		
 		try {
 			assertEquals(zi.getVersion(), 2);
 		} catch (Exception e) {
@@ -248,32 +222,4 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		}
 		
 	}
-
-	/**
-	 * The exporter test bases on @{code
-	 * ./src/test/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf}, adds
-	 * metadata, writes to @{code ./target/testout-*} and then imports to check the
-	 * values.
-	 */
-	public void testOutputStreamExport() {
-
-		// the writing part
-
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try (InputStream SOURCE_PDF = this.getClass()
-				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
-
-				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("My Application")
-						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
-						.load(SOURCE_PDF)) {
-			ze.PDFattachZugferdFile(this);
-			String theXML = new String(ze.getProvider().getXML());
-			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
-			ze.export(bos);
-		} catch (IOException e) {
-			fail("IOException should not be raised in testEdgeExport");
-		}
-
-	}
-
 }
