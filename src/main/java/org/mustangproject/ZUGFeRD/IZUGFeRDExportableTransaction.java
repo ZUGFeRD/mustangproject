@@ -128,10 +128,20 @@ public interface IZUGFeRDExportableTransaction {
 
 	/**
 	 * the creditors payment informations
-	 *
+	 * @deprecated use getTradeSettlement
 	 * @return an array of IZUGFeRDTradeSettlementPayment
 	 */
-	IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment();
+	default IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {		
+		return null;
+	}
+	/**
+	 * the payment information for any payment means
+	 *
+	 * @return an array of IZUGFeRDTradeSettlement
+	 */
+	default IZUGFeRDTradeSettlement[] getTradeSettlement() {
+		return null;
+	}
 
 
 	/**

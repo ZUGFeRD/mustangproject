@@ -18,23 +18,52 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ZF2EdgeTest extends MustangReaderTestCase {
 	final String TARGET_PDF = "./target/testout-ZF2newEdge.pdf";
+	
+	protected class DebitPayment implements IZUGFeRDTradeSettlementDebit {
+
+	
+		@Override
+		public String getIBAN() {
+			return "DE540815";
+		}
+
+	
+		@Override
+		public String getMandate() {
+			return "DE99XX12345";
+		}
+		
+	}
+
+	
+	@Override
+	public IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
+		return null;
+	}
+	
+	@Override
+	public IZUGFeRDTradeSettlement[] getTradeSettlement() {	
+		IZUGFeRDTradeSettlement[] payments = new DebitPayment[1];
+		payments[0] = new DebitPayment();
+		return payments;
+	}
 
 	@Override
 	public Date getDeliveryDate() {
@@ -70,7 +99,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	public String getOwnOrganisationName() {
 		return "Bei Spiel GmbH";
 	}
-
+	
 	@Override
 	public String getOwnStreet() {
 		return "Ecke 12";
@@ -129,8 +158,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 
 	@Override
 	public String getPaymentTermDescription() {
-		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-		return "Zahlbar ohne Abzug bis zum " + germanDateFormat.format(getDueDate());
+		return "Zahlbar sofort";
 	}
 
 	@Override
@@ -191,6 +219,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 			ze.PDFattachZugferdFile(this);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+			assertTrue(theXML.contains("Zahlbar sofort"));
 			ze.export(TARGET_PDF);
 		} catch (IOException e) {
 			fail("IOException should not be raised in testEdgeExport");
@@ -199,10 +228,12 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
+		assertTrue(zi.getUTF8().contains("<ram:TypeCode>59</ram:TypeCode>"));
+		assertTrue(zi.getUTF8().contains("<ram:IBANID>DE540815</ram:IBANID>"));  
+		assertTrue(zi.getUTF8().contains("<ram:DirectDebitMandateID>DE99XX12345</ram:DirectDebitMandateID>"));
+		
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
-		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 		try {

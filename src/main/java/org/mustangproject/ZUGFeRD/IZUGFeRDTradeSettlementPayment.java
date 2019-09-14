@@ -18,7 +18,11 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-public interface IZUGFeRDTradeSettlementPayment {
+import java.text.SimpleDateFormat;
+
+import org.mustangproject.XMLTools;
+
+public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement {
 
 	/**
 	 * get payment information text. e.g. Bank transfer
@@ -77,5 +81,31 @@ public interface IZUGFeRDTradeSettlementPayment {
 	default String getOwnKto() {
 		return null;
 	}
+	
+	default String getSettlementXML() {
+		String xml = "			<ram:SpecifiedTradeSettlementPaymentMeans>\n" //$NON-NLS-1$
+				+ "				<ram:TypeCode>42</ram:TypeCode>\n" //$NON-NLS-1$
+				+ "				<ram:Information>Überweisung</ram:Information>\n" //$NON-NLS-1$
+				+ "				<ram:PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
+				+ "					<ram:IBANID>" + XMLTools.encodeXML(getOwnIBAN()) + "</ram:IBANID>\n"; //$NON-NLS-1$ //$NON-NLS-2$
+			if (getOwnKto()!=null) {
+				xml+= "					<ram:ProprietaryID>" + XMLTools.encodeXML(getOwnKto()) + "</ram:ProprietaryID>\n"; //$NON-NLS-1$ //$NON-NLS-2$
+				
+			}
+				xml+= "				</ram:PayeePartyCreditorFinancialAccount>\n" //$NON-NLS-1$
+				+ "				<ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
+				+ "					<ram:BICID>" + XMLTools.encodeXML(getOwnBIC()) + "</ram:BICID>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				// + " <ram:Name>"+trans.getOwnBankName()+"</ram:Name>\n" //$NON-NLS-1$
+				// //$NON-NLS-2$
+				+ "				</ram:PayeeSpecifiedCreditorFinancialInstitution>\n" //$NON-NLS-1$
+				+ "			</ram:SpecifiedTradeSettlementPaymentMeans>\n"; //$NON-NLS-1$
+		return xml;
+	}
+	
+	
+	/* I'd love to implement getPaymentXML() and put <ram:DueDateDateTime> there because this is where it belongs
+	 * unfortunately, the due date is part of the transaction which is not accessible here :-(
+	 */
+
 
 }
