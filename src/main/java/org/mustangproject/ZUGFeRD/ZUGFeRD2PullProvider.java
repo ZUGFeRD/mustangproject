@@ -40,13 +40,14 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
 	private class LineCalc {
 		private BigDecimal totalGross;
+		private BigDecimal priceGross;
 		private BigDecimal itemTotalNetAmount;
 		private BigDecimal itemTotalVATAmount;
 
 		public LineCalc(IZUGFeRDExportableItem currentItem) {
 			BigDecimal multiplicator = currentItem.getProduct().getVATPercent().divide(new BigDecimal(100))
 					.add(new BigDecimal(1));
-			// priceGross=currentItem.getPrice().multiply(multiplicator);
+			priceGross = currentItem.getPrice().multiply(multiplicator);
 			totalGross = currentItem.getPrice().multiply(multiplicator).multiply(currentItem.getQuantity());
 			itemTotalNetAmount = currentItem.getQuantity().multiply(currentItem.getPrice()).setScale(2,
 					BigDecimal.ROUND_HALF_UP);
@@ -59,6 +60,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
 		public BigDecimal getItemTotalVATAmount() {
 			return itemTotalVATAmount;
+		}
+
+		public BigDecimal getItemTotalGrossAmount() {
+			return itemTotalVATAmount;
+		}
+		public BigDecimal getPriceGross() {
+			return priceGross;
 		}
 
 	}
@@ -196,6 +204,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 	}
 
 	public String getProfile() {
+//		return "urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_1.2";
 		return "urn:cen.eu:en16931:2017";
 	}
 	
@@ -285,7 +294,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
 					+ "			<ram:SpecifiedLineTradeAgreement>\n" //$NON-NLS-1$
 					+ "				<ram:GrossPriceProductTradePrice>\n" //$NON-NLS-1$
-					+ "					<ram:ChargeAmount>" + priceFormat(currentItem.getPrice()) //$NON-NLS-1$
+					+ "					<ram:ChargeAmount>" + priceFormat(lc.getPriceGross()) //$NON-NLS-1$
 					+ "</ram:ChargeAmount>\n" //$NON-NLS-1$ //currencyID=\"EUR\"
 					+ "					<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) //$NON-NLS-1$
 					+ "\">1.0000</ram:BasisQuantity>\n" //$NON-NLS-1$
@@ -482,7 +491,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				+ "				<ram:GrandTotalAmount>" + currencyFormat(getTotalGross()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 																														// //
 																														// currencyID=\"EUR\"
-				+ "             <ram:TotalPrepaidAmount currencyID=\"EUR\">" + currencyFormat(getTotalPrepaid()) + "</ram:TotalPrepaidAmount>\n"
+				+ "             <ram:TotalPrepaidAmount>" + currencyFormat(getTotalPrepaid()) + "</ram:TotalPrepaidAmount>\n"
 				+ "				<ram:DuePayableAmount>" + currencyFormat(getTotalGross().subtract(getTotalPrepaid())) + "</ram:DuePayableAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 																														// //
 																														// currencyID=\"EUR\"

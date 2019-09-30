@@ -464,6 +464,7 @@ public class ZUGFeRDExporter implements Closeable {
 
 		ByteArrayInputStream fakeFile = new ByteArrayInputStream(data);
 		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
+//		ef.addCompression();
 		ef.setSubtype(subType);
 		ef.setSize(data.length);
 		ef.setCreationDate(new GregorianCalendar());
