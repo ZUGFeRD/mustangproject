@@ -81,5 +81,10 @@ public interface IZUGFeRDExportableProduct {
 	 * @return VAT percent of the product
 	 */
 	BigDecimal getVATPercent();
+	
+	 default String getTaxCategoryCode() {
+		 return "S";
+	 }
+	
 
 }

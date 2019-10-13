@@ -125,7 +125,7 @@ public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRD
 
 	protected class Item implements IZUGFeRDExportableItem {
 
-		public Item(BigDecimal price, BigDecimal quantity, Product product) {
+		public Item(BigDecimal price, BigDecimal quantity, IZUGFeRDExportableProduct product) {
 			super();
 			this.price = price;
 			this.quantity = quantity;
@@ -133,7 +133,7 @@ public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRD
 		}
 
 		private BigDecimal price, quantity;
-		private Product product;
+		private IZUGFeRDExportableProduct product;
 
 		@Override
 		public BigDecimal getPrice() {
@@ -154,11 +154,11 @@ public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRD
 		}
 
 		@Override
-		public Product getProduct() {
+		public IZUGFeRDExportableProduct getProduct() {
 			return product;
 		}
 
-		public void setProduct(Product product) {
+		public void setProduct(IZUGFeRDExportableProduct product) {
 			this.product = product;
 		}
 

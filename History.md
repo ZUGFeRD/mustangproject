@@ -1,8 +1,9 @@
-1.
+1.7.5
 =====
-2019-
+2019-10-
 
 - support Sepa Direct Debit
+- closes #134 ZUGFeRD2PullProvider uses NetPrice for GrossPrice
 
 1.7.4
 =====

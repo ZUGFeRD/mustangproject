@@ -34,39 +34,82 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ZF2EdgeTest extends MustangReaderTestCase {
+public class ZF2EdgeTest extends MustangReaderTestCase implements IZUGFeRDExportableTransaction {
 	final String TARGET_PDF = "./target/testout-ZF2newEdge.pdf";
 
+	protected class EdgeProduct implements IZUGFeRDExportableProduct {
+		private String description, name, unit;
+
+		public EdgeProduct(String description, String name, String unit) {
+			super();
+			this.description = description;
+			this.name = name;
+			this.unit = unit;
+		}
+
+		@Override
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		@Override
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String getUnit() {
+			return unit;
+		}
+
+		public void setUnit(String unit) {
+			this.unit = unit;
+		}
+
+		@Override
+		public BigDecimal getVATPercent() {
+			return BigDecimal.ZERO;
+		}
+
+		@Override
+		public String getTaxCategoryCode() {
+			return "K"; // simulate intra community supply
+		}
+	}
 
 	protected class DebitPayment implements IZUGFeRDTradeSettlementDebit {
 
-	
 		@Override
 		public String getIBAN() {
 			return "DE540815";
 		}
 
-	
 		@Override
 		public String getMandate() {
 			return "DE99XX12345";
 		}
-		
+
 	}
 
-	
 	@Override
 	public IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
 		return null;
 	}
-	
+
 	@Override
-	public IZUGFeRDTradeSettlement[] getTradeSettlement() {	
+	public IZUGFeRDTradeSettlement[] getTradeSettlement() {
 		IZUGFeRDTradeSettlement[] payments = new DebitPayment[1];
 		payments[0] = new DebitPayment();
 		return payments;
 	}
-
 
 	@Override
 	public Date getDeliveryDate() {
@@ -146,12 +189,12 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 
 	@Override
 	public IZUGFeRDExportableItem[] getZFItems() {
-		Item[] allItems = new Item[3];
-		Product designProduct = new Product("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR",
-				new BigDecimal("7.000000"));
-		Product balloonProduct = new Product("", "Bestellerweiterung für E&F Umbau", "C62",
-				new BigDecimal("19.000000"));// test for issue 103
-		Product airProduct = new Product("", "Heiße Luft pro Liter", "LTR", new BigDecimal("19.000000"));
+		Item[] allItems = new Item[2];
+		EdgeProduct designProduct = new EdgeProduct("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung",
+				"HUR");
+		EdgeProduct balloonProduct = new EdgeProduct("", "Bestellerweiterung für E&F Umbau", "C62");// test for issue
+																									// 103
+		EdgeProduct airProduct = new EdgeProduct("", "Heiße Luft pro Liter", "LTR");
 
 		allItems[0] = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
 		allItems[1] = new Item(new BigDecimal("0.79"), new BigDecimal("400"), balloonProduct);
@@ -232,12 +275,12 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
 		assertTrue(zi.getUTF8().contains("<ram:TypeCode>59</ram:TypeCode>"));
-		assertTrue(zi.getUTF8().contains("<ram:IBANID>DE540815</ram:IBANID>"));  
+		assertTrue(zi.getUTF8().contains("<ram:IBANID>DE540815</ram:IBANID>"));
 		assertTrue(zi.getUTF8().contains("<ram:DirectDebitMandateID>DE99XX12345</ram:DirectDebitMandateID>"));
 		assertFalse(zi.getUTF8().contains("<ram:DueDateDateTime>"));
 
 		// Reading ZUGFeRD
-		assertEquals(zi.getAmount(), "571.04");
+		assertEquals("496.00", zi.getAmount());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 		try {
@@ -246,7 +289,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	/**

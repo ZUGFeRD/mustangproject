@@ -319,7 +319,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 					+ "			<ram:SpecifiedLineTradeSettlement>\n" //$NON-NLS-1$
 					+ "				<ram:ApplicableTradeTax>\n" //$NON-NLS-1$
 					+ "					<ram:TypeCode>VAT</ram:TypeCode>\n" //$NON-NLS-1$
-					+ "					<ram:CategoryCode>S</ram:CategoryCode>\n" //$NON-NLS-1$
+					+ "					<ram:CategoryCode>"+currentItem.getProduct().getTaxCategoryCode()+"</ram:CategoryCode>\n" //$NON-NLS-1$
 					+ "					<ram:RateApplicablePercent>" //$NON-NLS-1$
 					+ vatFormat(currentItem.getProduct().getVATPercent()) + "</ram:RateApplicablePercent>\n" //$NON-NLS-1$
 					+ "				</ram:ApplicableTradeTax>\n" //$NON-NLS-1$
