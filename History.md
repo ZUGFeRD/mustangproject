@@ -4,6 +4,7 @@
 
 - support Sepa Direct Debit
 - closes #134 ZUGFeRD2PullProvider uses NetPrice for GrossPrice
+- support intra community supply (=vat category codes)
 
 1.7.4
 =====

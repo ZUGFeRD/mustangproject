@@ -189,7 +189,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IZUGFeRDExport
 
 	@Override
 	public IZUGFeRDExportableItem[] getZFItems() {
-		Item[] allItems = new Item[2];
+		Item[] allItems = new Item[3];
 		EdgeProduct designProduct = new EdgeProduct("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung",
 				"HUR");
 		EdgeProduct balloonProduct = new EdgeProduct("", "Bestellerweiterung für E&F Umbau", "C62");// test for issue

@@ -215,6 +215,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		this.trans = trans;
 
 		boolean hasDueDate=false;
+		String taxCategoryCode="";
 		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
 		SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
 
@@ -277,7 +278,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		int lineID = 0;
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			lineID++;
-
+			taxCategoryCode=currentItem.getProduct().getTaxCategoryCode();
 			LineCalc lc = new LineCalc(currentItem);
 			xml = xml + "		<ram:IncludedSupplyChainTradeLineItem>\n" + //$NON-NLS-1$
 					"			<ram:AssociatedDocumentLineDocument>\n" //$NON-NLS-1$
@@ -446,7 +447,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 						+ "</ram:CalculatedAmount>\n" //$NON-NLS-1$ //currencyID=\"EUR\"
 						+ "				<ram:TypeCode>VAT</ram:TypeCode>\n" //$NON-NLS-1$
 						+ "				<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>\n" // currencyID=\"EUR\"
-						+ "				<ram:CategoryCode>S</ram:CategoryCode>\n" //$NON-NLS-1$
+						+ "				<ram:CategoryCode>"+taxCategoryCode+"</ram:CategoryCode>\n" //$NON-NLS-1$
 						+ "				<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) //$NON-NLS-1$
 						+ "</ram:RateApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n"; //$NON-NLS-2$
 
