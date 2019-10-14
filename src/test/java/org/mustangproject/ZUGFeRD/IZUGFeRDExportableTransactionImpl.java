@@ -32,6 +32,7 @@ public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTran
 	private IZUGFeRDExportableItem[] zFItems;
 	private IZUGFeRDExportableContact recipient;
 	private IZUGFeRDTradeSettlementPayment[] settlementPayments;
+	private IZUGFeRDDate zfDeliveryDate;
 	private String ownTaxID;
 	private String ownVATID;
 	private String ownOrganisationName;
@@ -149,6 +150,11 @@ public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTran
 		return referenceNumber;
 	}
 
+	@Override
+	public IZUGFeRDDate getZFDeliveryDate() {
+		return zfDeliveryDate;
+	}
+
 	public IZUGFeRDExportableTransactionImpl setNumber(String number) {
 		this.number = number;
 		return this;
@@ -231,6 +237,11 @@ public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTran
 
 	public IZUGFeRDExportableTransactionImpl setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
+		return this;
+	}
+
+	public IZUGFeRDExportableTransactionImpl setZfDeliveryDate(IZUGFeRDDate zfDeliveryDate) {
+		this.zfDeliveryDate = zfDeliveryDate;
 		return this;
 	}
 

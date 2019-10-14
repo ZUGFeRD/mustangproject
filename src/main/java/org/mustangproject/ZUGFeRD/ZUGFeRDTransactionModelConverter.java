@@ -248,6 +248,12 @@ class ZUGFeRDTransactionModelConverter {
 		buyerAddress.setValue(trans.getRecipient().getStreet());
 		buyerAddressType.setLineOne(buyerAddress);
 
+		if (trans.getRecipient().getAdditionalAddress() != null) {
+			TextType buyerAdditionalAddress = xmlFactory.createTextType();
+			buyerAdditionalAddress.setValue(trans.getRecipient().getAdditionalAddress());
+			buyerAddressType.setLineTwo(buyerAdditionalAddress);
+		}
+
 		CodeType buyerPostcode = xmlFactory.createCodeType();
 		buyerPostcode.setValue(trans.getRecipient().getZIP());
 		buyerAddressType.getPostcodeCode().add(buyerPostcode);
@@ -385,9 +391,18 @@ class ZUGFeRDTransactionModelConverter {
 		DateTimeType deliveryDate = xmlFactory.createDateTimeType();
 		DateTimeType.DateTimeString deliveryDateString = xmlFactory
 				.createDateTimeTypeDateTimeString();
-		deliveryDateString.setFormat(DateTimeTypeConstants.DATE);
-		deliveryDateString.setValue(zugferdDateFormat.format(trans
-				.getDeliveryDate()));
+		IZUGFeRDDate zfDeliveryDate = trans.getZFDeliveryDate();
+		if (zfDeliveryDate != null) {
+			ZUGFeRDDateFormat deliveryDateFormat = zfDeliveryDate.getFormat();
+			deliveryDateString.setFormat(deliveryDateFormat.getDateTimeType());
+			deliveryDateString.setValue(
+					deliveryDateFormat.getFormatter().format(zfDeliveryDate.getDate()));
+		} else if (trans.getDeliveryDate() != null) {
+			deliveryDateString.setFormat(DateTimeTypeConstants.DATE);
+			deliveryDateString.setValue(zugferdDateFormat.format(trans.getDeliveryDate()));
+		} else {
+			throw new IllegalStateException("No delivery date provided");
+		}
 		deliveryDate.setDateTimeString(deliveryDateString);
 		deliveryEvent.getOccurrenceDateTime().add(deliveryDate);
 		tradeDelivery.getActualDeliverySupplyChainEvent().add(deliveryEvent);
