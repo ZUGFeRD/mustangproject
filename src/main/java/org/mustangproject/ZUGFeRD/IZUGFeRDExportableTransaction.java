@@ -131,6 +131,7 @@ public interface IZUGFeRDExportableTransaction {
 	 * @deprecated use getTradeSettlement
 	 * @return an array of IZUGFeRDTradeSettlementPayment
 	 */
+	@Deprecated
 	default IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {		
 		return null;
 	}
@@ -230,6 +231,16 @@ public interface IZUGFeRDExportableTransaction {
 	 * @return the day the goods have been delivered
 	 */
 	Date getDeliveryDate();
+
+	/**
+	 * get delivery date in more specific form. If this and getDeliveryDate() are
+	 * specified, this value will be taken
+	 * 
+	 * @return instance holding date and format
+	 */
+	default IZUGFeRDDate getZFDeliveryDate() {
+		return null;
+	}
 
 
 	/**

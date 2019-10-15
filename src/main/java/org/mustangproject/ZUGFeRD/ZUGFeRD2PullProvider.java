@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,6 +79,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 	private ZUGFeRDConformanceLevel level;
 	private String paymentTermsDescription;
 
+	@Override
 	public void setProfile(ZUGFeRDConformanceLevel level) {
 		this.level = level;
 	}
@@ -85,6 +87,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 	/**
 	 * enables the flag to indicate a test invoice in the XML structure
 	 */
+	@Override
 	public void setTest() {
 	}
 
@@ -203,6 +206,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		return hm;
 	}
 
+	@Override
 	public String getProfile() {
 //		return "urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_1.2";
 		return "urn:cen.eu:en16931:2017";
@@ -390,8 +394,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				// + " </DefinedTradeContact>\n"
 				+ "				<ram:PostalTradeAddress>\n" //$NON-NLS-1$
 				+ "					<ram:PostcodeCode>" + XMLTools.encodeXML(trans.getRecipient().getZIP()) + "</ram:PostcodeCode>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "					<ram:LineOne>" + XMLTools.encodeXML(trans.getRecipient().getStreet()) + "</ram:LineOne>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "					<ram:CityName>" + XMLTools.encodeXML(trans.getRecipient().getLocation()) + "</ram:CityName>\n" //$NON-NLS-1$ //$NON-NLS-2$
+				+ "					<ram:LineOne>" + XMLTools.encodeXML(trans.getRecipient().getStreet()) + "</ram:LineOne>\n"; //$NON-NLS-1$ //$NON-NLS-2$
+		if (trans.getRecipient().getAdditionalAddress() != null) {
+			xml += "				<ram:LineTwo>" + XMLTools.encodeXML(trans.getRecipient().getAdditionalAddress()) + "</ram:LineTwo>\n"; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		xml += "					<ram:CityName>" + XMLTools.encodeXML(trans.getRecipient().getLocation()) + "</ram:CityName>\n" //$NON-NLS-1$ //$NON-NLS-2$
 				+ "					<ram:CountryID>" + XMLTools.encodeXML(trans.getRecipient().getCountry()) + "</ram:CountryID>\n" //$NON-NLS-1$ //$NON-NLS-2$
 				+ "				</ram:PostalTradeAddress>\n"; //$NON-NLS-1$
 		if (trans.getRecipient().getVATID() != null) {
@@ -406,8 +413,20 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				// + " </BuyerOrderReferencedDocument>\n"
 				+ "		</ram:ApplicableHeaderTradeAgreement>\n" //$NON-NLS-1$
 				+ "		<ram:ApplicableHeaderTradeDelivery>\n" + "			<ram:ActualDeliverySupplyChainEvent>\n"
-				+ "				<ram:OccurrenceDateTime><udt:DateTimeString format=\"102\">"
-				+ zugferdDateFormat.format(trans.getDeliveryDate()) + "</udt:DateTimeString></ram:OccurrenceDateTime>\n"
+				+ "				<ram:OccurrenceDateTime>";
+
+		if (trans.getZFDeliveryDate() != null) {
+			ZUGFeRDDateFormat dateFormat = trans.getZFDeliveryDate().getFormat();
+			Date date = trans.getZFDeliveryDate().getDate();
+			xml += "<udt:DateTimeString format=\"" + dateFormat.getDateTimeType() + "\">"
+					+ dateFormat.getFormatter().format(date) + "</udt:DateTimeString>";
+		} else if (trans.getDeliveryDate() != null) {
+			xml += "<udt:DateTimeString format=\"102\">" + zugferdDateFormat.format(trans.getDeliveryDate())
+					+ "</udt:DateTimeString>";
+		} else {
+			throw new IllegalStateException("No delivery date provided");
+		}
+		xml += "</ram:OccurrenceDateTime>\n"
 				+ "			</ram:ActualDeliverySupplyChainEvent>\n"
 				/*
 				 * + "			<DeliveryNoteReferencedDocument>\n" +

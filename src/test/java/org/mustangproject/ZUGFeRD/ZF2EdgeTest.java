@@ -19,11 +19,6 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +27,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ZF2EdgeTest extends MustangReaderTestCase implements IZUGFeRDExportableTransaction {
@@ -286,7 +287,6 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IZUGFeRDExport
 		try {
 			assertEquals(zi.getVersion(), 2);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
