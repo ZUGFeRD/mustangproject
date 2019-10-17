@@ -584,7 +584,7 @@ public class ZUGFeRDExporter implements Closeable {
 	protected void addXMP(XMPMetadata metadata) {
 
 		if (attachZUGFeRDHeaders) {
-			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, profile,
+			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, ZFVersion, isFacturX, profile,
 					getNamespaceForVersion(ZFVersion), getPrefixForVersion(ZFVersion),
 					getFilenameForVersion(ZFVersion));
 

@@ -5,6 +5,8 @@
 - support Sepa Direct Debit
 - closes #134 ZUGFeRD2PullProvider uses NetPrice for GrossPrice
 - support intra community supply (=vat category codes)
+- Support different Date formats #136
+- corrected RDF metadata for ZF2
 
 1.7.4
 =====
