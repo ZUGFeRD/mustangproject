@@ -7,6 +7,7 @@
 - support intra community supply (=vat category codes)
 - Support different Date formats #136
 - corrected RDF metadata for ZF2
+- default conformance level now EN16931, not extended
 
 1.7.4
 =====
