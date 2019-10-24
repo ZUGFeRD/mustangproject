@@ -80,7 +80,7 @@ public class ZUGFeRDExporter implements Closeable {
 
 	// BASIC, COMFORT etc - may be set from outside.
 	@Deprecated
-	private ZUGFeRDConformanceLevel profile = ZUGFeRDConformanceLevel.EXTENDED;
+	private ZUGFeRDConformanceLevel profile = ZUGFeRDConformanceLevel.EN16931;
 
 	/**
 	 * Data (XML invoice) to be added to the ZUGFeRD PDF. It may be externally set,

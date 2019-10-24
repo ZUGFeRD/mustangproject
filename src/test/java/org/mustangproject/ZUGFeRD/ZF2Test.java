@@ -188,8 +188,9 @@ public class ZF2Test extends MustangReaderTestCase {
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
 
 				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("My Application")
-						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
+						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).ignorePDFAErrors()
 						.load(SOURCE_PDF)) {
+			
 			ze.PDFattachZugferdFile(this);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
