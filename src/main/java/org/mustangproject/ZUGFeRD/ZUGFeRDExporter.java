@@ -132,8 +132,8 @@ public class ZUGFeRDExporter implements Closeable {
 
 	/**
 	 * Adds additional file attachments into the ZF
-	 * @param filename
-	 * @param filecontent
+	 * @param filename the name of the attachment
+	 * @param filecontent the bytearray with the file contents
 	 */
 	public void addAdditionalFile(String filename, byte[] filecontent) {
 		additionalFiles.put(filename, filecontent);
