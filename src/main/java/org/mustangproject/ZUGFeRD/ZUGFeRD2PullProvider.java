@@ -250,6 +250,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		String taxCategoryCode="";
 		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy"); //$NON-NLS-1$
 		SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
+		String exemptionReason="";
 
 		if (paymentTermsDescription==null) {
 			paymentTermsDescription= "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
@@ -311,6 +312,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			lineID++;
 			taxCategoryCode=currentItem.getProduct().getTaxCategoryCode();
+			if  (currentItem.getProduct().isIntraCommunitySupply()) {
+				exemptionReason="<ram:ExemptionReason>Intra-community supply</ram:ExemptionReason>";
+			}
+			
 			LineCalc lc = new LineCalc(currentItem);
 			xml = xml + "		<ram:IncludedSupplyChainTradeLineItem>\n" + //$NON-NLS-1$
 					"			<ram:AssociatedDocumentLineDocument>\n" //$NON-NLS-1$
@@ -353,6 +358,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 					+ "				<ram:ApplicableTradeTax>\n" //$NON-NLS-1$
 					+ "					<ram:TypeCode>VAT</ram:TypeCode>\n" //$NON-NLS-1$
 					+ "					<ram:CategoryCode>"+currentItem.getProduct().getTaxCategoryCode()+"</ram:CategoryCode>\n" //$NON-NLS-1$
+					+ exemptionReason
 					+ "					<ram:RateApplicablePercent>" //$NON-NLS-1$
 					+ vatFormat(currentItem.getProduct().getVATPercent()) + "</ram:RateApplicablePercent>\n" //$NON-NLS-1$
 					+ "				</ram:ApplicableTradeTax>\n" //$NON-NLS-1$
@@ -486,6 +492,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 						+ "				<ram:TypeCode>VAT</ram:TypeCode>\n" //$NON-NLS-1$
 						+ "				<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>\n" // currencyID=\"EUR\"
 						+ "				<ram:CategoryCode>"+taxCategoryCode+"</ram:CategoryCode>\n" //$NON-NLS-1$
+						+ exemptionReason
 						+ "				<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) //$NON-NLS-1$
 						+ "</ram:RateApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n"; //$NON-NLS-2$
 

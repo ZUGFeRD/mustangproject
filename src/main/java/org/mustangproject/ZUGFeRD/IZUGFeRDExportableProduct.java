@@ -82,8 +82,17 @@ public interface IZUGFeRDExportableProduct {
 	 */
 	BigDecimal getVATPercent();
 	
-	 default String getTaxCategoryCode() {
-		 return "S";
+	default boolean isIntraCommunitySupply() {
+		return false;
+	}
+	
+	default String getTaxCategoryCode() {
+		 if (isIntraCommunitySupply()) {
+			 return "K";
+		 } else {
+			 return "S";
+			 
+		 }
 	 }
 	
 

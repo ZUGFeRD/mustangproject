@@ -81,8 +81,8 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IZUGFeRDExport
 		}
 
 		@Override
-		public String getTaxCategoryCode() {
-			return "K"; // simulate intra community supply
+		public boolean isIntraCommunitySupply() {
+			return true; // simulate intra community supply
 		}
 	}
 
