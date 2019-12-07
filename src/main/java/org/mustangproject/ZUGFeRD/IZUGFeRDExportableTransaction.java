@@ -361,4 +361,14 @@ public interface IZUGFeRDExportableTransaction {
 	default BigDecimal getTotalPrepaidAmount() {
 		return BigDecimal.ZERO;
 	}
+
+	
+	/***
+	 * delivery address, i.e. ram:ShipToTradeParty (only supported for zf2)
+	 * @return
+	 */
+
+	default IZUGFeRDExportableContact getDeliveryAddress() {
+		return null;
+	}
 }

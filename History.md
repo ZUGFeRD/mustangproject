@@ -1,3 +1,8 @@
+1.7.6
+=====
+
+- support different ship to address
+
 1.7.5
 =====
 2019-11-05

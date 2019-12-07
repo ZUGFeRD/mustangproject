@@ -66,6 +66,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		public BigDecimal getItemTotalGrossAmount() {
 			return itemTotalVATAmount;
 		}
+
 		public BigDecimal getPriceGross() {
 			return priceGross;
 		}
@@ -131,9 +132,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 	public byte[] getXML() {
 
 		byte[] res = zugferdData;
-		
+
 		StringWriter sw = new StringWriter();
-		Document document=null;
+		Document document = null;
 		try {
 			document = DocumentHelper.parseText(new String(zugferdData));
 		} catch (DocumentException e1) {
@@ -148,13 +149,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		} catch (IOException e) {
 			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
 		}
-		
+
 		return res;
-		
+
 	}
 
 	private BigDecimal getTotalPrepaid() {
-		if (trans.getTotalPrepaidAmount()==null) {
+		if (trans.getTotalPrepaidAmount() == null) {
 			return new BigDecimal(0);
 		} else {
 			return trans.getTotalPrepaidAmount();
@@ -211,8 +212,35 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 //		return "urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_1.2";
 		return "urn:cen.eu:en16931:2017";
 	}
-	
-	
+
+	protected String getContactAsXML(IZUGFeRDExportableContact contact) {
+		String xml = "	<ram:Name>" + XMLTools.encodeXML(contact.getName()) + "</ram:Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
+		// + " <DefinedTradeContact>\n"
+		// + " <PersonName>xxx</PersonName>\n"
+		// + " </DefinedTradeContact>\n"
+				+ "				<ram:PostalTradeAddress>\n" //$NON-NLS-1$
+				+ "					<ram:PostcodeCode>" + XMLTools.encodeXML(contact.getZIP()) //$NON-NLS-1$
+				+ "</ram:PostcodeCode>\n" //$NON-NLS-1$
+				+ "					<ram:LineOne>" + XMLTools.encodeXML(contact.getStreet()) //$NON-NLS-1$
+				+ "</ram:LineOne>\n"; //$NON-NLS-1$
+		if (trans.getRecipient().getAdditionalAddress() != null) {
+			xml += "				<ram:LineTwo>" + XMLTools.encodeXML(contact.getAdditionalAddress()) //$NON-NLS-1$
+					+ "</ram:LineTwo>\n"; //$NON-NLS-1$
+		}
+		xml += "					<ram:CityName>" + XMLTools.encodeXML(contact.getLocation()) //$NON-NLS-1$
+				+ "</ram:CityName>\n" //$NON-NLS-1$
+				+ "					<ram:CountryID>" + XMLTools.encodeXML(contact.getCountry()) //$NON-NLS-1$
+				+ "</ram:CountryID>\n" //$NON-NLS-1$
+				+ "				</ram:PostalTradeAddress>\n"; //$NON-NLS-1$
+		if (contact.getVATID() != null) {
+			xml += "				<ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
+					+ "					<ram:ID schemeID=\"VA\">" + XMLTools.encodeXML(contact.getVATID()) //$NON-NLS-1$
+					+ "</ram:ID>\n" //$NON-NLS-1$
+					+ "				</ram:SpecifiedTaxRegistration>\n"; //$NON-NLS-1$
+		}
+		return xml;
+
+	}
 
 	@Override
 	public void generateXML(IZUGFeRDExportableTransaction trans) {
@@ -385,34 +413,25 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				+ "					<ram:ID schemeID=\"VA\">" + XMLTools.encodeXML(trans.getOwnVATID()) + "</ram:ID>\n" //$NON-NLS-1$ //$NON-NLS-2$
 				+ "				</ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
 				+ "			</ram:SellerTradeParty>\n" //$NON-NLS-1$
-				+ "			<ram:BuyerTradeParty>\n" //$NON-NLS-1$
+				+ "			<ram:BuyerTradeParty>\n"; //$NON-NLS-1$
 				// + " <ID>GE2020211</ID>\n"
 				// + " <GlobalID schemeID=\"0088\">4000001987658</GlobalID>\n"
-				+ "				<ram:Name>" + XMLTools.encodeXML(trans.getRecipient().getName()) + "</ram:Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				// + " <DefinedTradeContact>\n"
-				// + " <PersonName>xxx</PersonName>\n"
-				// + " </DefinedTradeContact>\n"
-				+ "				<ram:PostalTradeAddress>\n" //$NON-NLS-1$
-				+ "					<ram:PostcodeCode>" + XMLTools.encodeXML(trans.getRecipient().getZIP()) + "</ram:PostcodeCode>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "					<ram:LineOne>" + XMLTools.encodeXML(trans.getRecipient().getStreet()) + "</ram:LineOne>\n"; //$NON-NLS-1$ //$NON-NLS-2$
-		if (trans.getRecipient().getAdditionalAddress() != null) {
-			xml += "				<ram:LineTwo>" + XMLTools.encodeXML(trans.getRecipient().getAdditionalAddress()) + "</ram:LineTwo>\n"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		xml += "					<ram:CityName>" + XMLTools.encodeXML(trans.getRecipient().getLocation()) + "</ram:CityName>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "					<ram:CountryID>" + XMLTools.encodeXML(trans.getRecipient().getCountry()) + "</ram:CountryID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				</ram:PostalTradeAddress>\n"; //$NON-NLS-1$
-		if (trans.getRecipient().getVATID() != null) {
-			xml += "				<ram:SpecifiedTaxRegistration>\n" //$NON-NLS-1$
-				+ "					<ram:ID schemeID=\"VA\">" + XMLTools.encodeXML(trans.getRecipient().getVATID()) + "</ram:ID>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "				</ram:SpecifiedTaxRegistration>\n"; //$NON-NLS-1$
-		}
-		xml += "			</ram:BuyerTradeParty>\n" //$NON-NLS-1$
+				
+				xml+=getContactAsXML(trans.getRecipient());
+				xml += "			</ram:BuyerTradeParty>\n" //$NON-NLS-1$
 				// + " <BuyerOrderReferencedDocument>\n"
 				// + " <IssueDateTime format=\"102\">20130301</IssueDateTime>\n"
 				// + " <ID>2013-471331</ID>\n"
 				// + " </BuyerOrderReferencedDocument>\n"
 				+ "		</ram:ApplicableHeaderTradeAgreement>\n" //$NON-NLS-1$
-				+ "		<ram:ApplicableHeaderTradeDelivery>\n" + "			<ram:ActualDeliverySupplyChainEvent>\n"
+				+ "		<ram:ApplicableHeaderTradeDelivery>\n" ;
+		if (this.trans.getDeliveryAddress()!=null) {
+			xml += "<ram:ShipToTradeParty>"+
+		getContactAsXML(this.trans.getDeliveryAddress())+
+	       "</ram:ShipToTradeParty>";
+		}
+				
+				xml+= "			<ram:ActualDeliverySupplyChainEvent>\n"
 				+ "				<ram:OccurrenceDateTime>";
 
 		if (trans.getZFDeliveryDate() != null) {
@@ -426,8 +445,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		} else {
 			throw new IllegalStateException("No delivery date provided");
 		}
-		xml += "</ram:OccurrenceDateTime>\n"
-				+ "			</ram:ActualDeliverySupplyChainEvent>\n"
+		xml += "</ram:OccurrenceDateTime>\n";
+		xml += "			</ram:ActualDeliverySupplyChainEvent>\n"
 				/*
 				 * + "			<DeliveryNoteReferencedDocument>\n" +
 				 * "				<IssueDateTime format=\"102\">20130603</IssueDateTime>\n" +
