@@ -29,8 +29,8 @@ public class CustomXMLProvider implements IXMLProvider, IProfileProvider {
 
 	public void setXML(byte[] newData) {
 		String zf = new String(newData);
-		if (!zf.contains("<rsm:CrossIndustry")) {
-			throw new RuntimeException("ZUGFeRD XML does not contain <rsm:CrossIndustry and can thus not be valid");
+		if (!zf.contains("CrossIndustry")) {
+			throw new RuntimeException("ZUGFeRD XML does not contain (<rsm:)CrossIndustry and can thus not be valid");
 		}
 
 		zugferdData = newData;

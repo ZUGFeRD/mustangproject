@@ -2,6 +2,7 @@
 =====
 
 - support different ship to address
+- allow for diffent namespace prefixes #140
 
 1.7.5
 =====
