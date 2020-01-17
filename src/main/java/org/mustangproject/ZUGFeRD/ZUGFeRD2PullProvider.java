@@ -473,29 +473,30 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 			}
 		}
 
-		xml = xml + "			<ram:SpecifiedTradePaymentTerms>\n" //$NON-NLS-1$
-				+ "				<ram:Description>"+
-				paymentTermsDescription
-				+ "</ram:Description>\n";
-		
-		if (trans.getTradeSettlement()!=null) {
-			for (IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
-				if(payment!=null) {
-					xml+=payment.getPaymentXML();
+		if (trans.getPaymentTerms() == null) {
+			xml = xml + "			<ram:SpecifiedTradePaymentTerms>\n" //$NON-NLS-1$
+					+ "				<ram:Description>" + paymentTermsDescription + "</ram:Description>\n";
+
+			if (trans.getTradeSettlement() != null) {
+				for (IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
+					if (payment != null) {
+						xml += payment.getPaymentXML();
+					}
 				}
 			}
+
+			if (hasDueDate) {
+				xml = xml + "				<ram:DueDateDateTime><udt:DateTimeString format=\"102\">" // $NON-NLS-2$
+						+ zugferdDateFormat.format(trans.getDueDate())
+						+ "</udt:DateTimeString></ram:DueDateDateTime>\n";// 20130704 //$NON-NLS-1$
+
+			}
+			xml = xml + "			</ram:SpecifiedTradePaymentTerms>\n"; //$NON-NLS-1$
+		} else {
+			xml = xml + buildPaymentTermsXml();
 		}
 
-		if(hasDueDate) {
-			xml=xml+"				<ram:DueDateDateTime><udt:DateTimeString format=\"102\">" //$NON-NLS-2$
-					+ zugferdDateFormat.format(trans.getDueDate()) + "</udt:DateTimeString></ram:DueDateDateTime>\n";// 20130704 //$NON-NLS-1$
-			
-		}
-				
-
-	
-		xml = xml + "			</ram:SpecifiedTradePaymentTerms>\n" //$NON-NLS-1$
-				+ "			<ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n" //$NON-NLS-1$
+		xml = xml + "			<ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n" //$NON-NLS-1$
 				+ "				<ram:LineTotalAmount>" + currencyFormat(getTotal()) + "</ram:LineTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 																													// currencyID=\"EUR\"
 				+ "				<ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>\n" //$NON-NLS-1$ currencyID=\"EUR\"
@@ -543,6 +544,50 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		} catch (UnsupportedEncodingException e) {
 			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
 		} // $NON-NLS-1$
+	}
+
+	private String buildPaymentTermsXml() {
+		String paymentTermsXml = "<ram:SpecifiedTradePaymentTerms>";
+
+		IZUGFeRDPaymentTerms paymentTerms = trans.getPaymentTerms();
+		IZUGFeRDPaymentDiscountTerms discountTerms = paymentTerms.getDiscountTerms();
+		IZUGFeRDDate dueDate = paymentTerms.getDueDate();
+		if (dueDate != null && discountTerms != null && discountTerms.getBaseDate() != null) {
+			throw new IllegalStateException(
+					"if paymentTerms.dueDate is specified, paymentTerms.discountTerms.baseDate has not to be specified");
+		}
+		paymentTermsXml += "<ram:Description>" + paymentTerms.getDescription() + "</ram:Description>";
+		if (dueDate != null) {
+			paymentTermsXml += "<ram:DueDateDateTime>";
+			paymentTermsXml += "<udt:DateTimeString format=\"" + dueDate.getFormat().getDateTimeType() + "\">"
+					+ dueDate.getFormat().getFormatter().format(dueDate.getDate()) + "</udt:DateTimeString>";
+			paymentTermsXml += "</ram:DueDateDateTime>";
+		}
+
+		if (discountTerms != null) {
+			paymentTermsXml += "<ram:ApplicableTradePaymentDiscountTerms>";
+			String currency = trans.getCurrency();
+			String basisAmount = currencyFormat(getTotalGross());
+			paymentTermsXml += "<ram:BasisAmount currencyID=\"" + currency + "\">" + basisAmount + "</ram:BasisAmount>";
+			paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toString()
+					+ "</ram:CalculationPercent>";
+
+			if (discountTerms.getBaseDate() != null) {
+				Date baseDate = discountTerms.getBaseDate().getDate();
+				ZUGFeRDDateFormat baseDateFormat = discountTerms.getBaseDate().getFormat();
+				paymentTermsXml += "<ram:BasisDateTime>";
+				paymentTermsXml += "<udt:DateTimeString format=\"" + baseDateFormat.getDateTimeType() + "\">" + baseDateFormat.getFormatter().format(baseDate) + "</udt:DateTimeString>";
+				paymentTermsXml += "</ram:BasisDateTime>";
+				
+				paymentTermsXml += "<ram:BasisPeriodMeasure unitCode=\"" + discountTerms.getBasePeriodUnitCode() + "\">"
+						+ discountTerms.getBasePeriodMeasure() + "</ram:BasisPeriodMeasure>";
+			}
+
+			paymentTermsXml += "</ram:ApplicableTradePaymentDiscountTerms>";
+		}
+
+		paymentTermsXml += "</ram:SpecifiedTradePaymentTerms>";
+		return paymentTermsXml;
 	}
 
 }
