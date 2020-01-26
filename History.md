@@ -5,6 +5,7 @@
 - allow for diffent namespace prefixes #140
 - include exemption reason if doing intra community supply
 - allow different currencies also for ZF2 (#150)
+- minor correction VAT exemptions
 
 1.7.5
 =====
