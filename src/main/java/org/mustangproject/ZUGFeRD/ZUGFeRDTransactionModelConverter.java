@@ -44,6 +44,7 @@ import org.mustangproject.ZUGFeRD.model.ExchangedDocumentType;
 import org.mustangproject.ZUGFeRD.model.IDType;
 import org.mustangproject.ZUGFeRD.model.IndicatorType;
 import org.mustangproject.ZUGFeRD.model.LogisticsServiceChargeType;
+import org.mustangproject.ZUGFeRD.model.MeasureType;
 import org.mustangproject.ZUGFeRD.model.NoteType;
 import org.mustangproject.ZUGFeRD.model.NoteTypeConstants;
 import org.mustangproject.ZUGFeRD.model.ObjectFactory;
@@ -67,6 +68,7 @@ import org.mustangproject.ZUGFeRD.model.TextType;
 import org.mustangproject.ZUGFeRD.model.TradeAddressType;
 import org.mustangproject.ZUGFeRD.model.TradeAllowanceChargeType;
 import org.mustangproject.ZUGFeRD.model.TradePartyType;
+import org.mustangproject.ZUGFeRD.model.TradePaymentDiscountTermsType;
 import org.mustangproject.ZUGFeRD.model.TradePaymentTermsType;
 import org.mustangproject.ZUGFeRD.model.TradePriceType;
 import org.mustangproject.ZUGFeRD.model.TradeProductType;
@@ -675,6 +677,9 @@ class ZUGFeRDTransactionModelConverter {
 
 
 	private Collection<TradePaymentTermsType> getPaymentTerms() {
+		if (trans.getPaymentTerms() != null) {
+			return handlePaymentTermsObject(trans.getPaymentTerms());
+		}
 		List<TradePaymentTermsType> paymentTerms = new ArrayList<>();
 
 		TradePaymentTermsType paymentTerm = xmlFactory
@@ -699,6 +704,69 @@ class ZUGFeRDTransactionModelConverter {
 		paymentTerms.add(paymentTerm);
 
 		return paymentTerms;
+	}
+
+	private Collection<TradePaymentTermsType> handlePaymentTermsObject(IZUGFeRDPaymentTerms paymentTerms) {
+		List<TradePaymentTermsType> xmlPaymentTerms = new ArrayList<>();
+
+		TradePaymentTermsType paymentTerm = xmlFactory.createTradePaymentTermsType();
+
+		TextType paymentTermDescr = xmlFactory.createTextType();
+
+		String paymentTermDescription = paymentTerms.getDescription();
+		if (paymentTermDescription == null) {
+			paymentTermDescription = "";
+		}
+		paymentTermDescr.setValue(paymentTermDescription);
+		paymentTerm.getDescription().add(paymentTermDescr);
+
+		IZUGFeRDPaymentDiscountTerms discountTerms = paymentTerms.getDiscountTerms();
+		if (paymentTerms.getDueDate() != null && discountTerms != null && discountTerms.getBaseDate() != null) {
+			throw new IllegalStateException(
+					"if paymentTerms.dueDate is specified, paymentTerms.discountTerms.baseDate has not to be specified");
+		}
+
+		if (paymentTerms.getDueDate() != null) {
+			DateTimeType dueDate = xmlFactory.createDateTimeType();
+			DateTimeType.DateTimeString dueDateString = xmlFactory.createDateTimeTypeDateTimeString();
+			dueDateString.setFormat(paymentTerms.getDueDate().getFormat().getDateTimeType());
+			dueDateString.setValue(
+					paymentTerms.getDueDate().getFormat().getFormatter().format(paymentTerms.getDueDate().getDate()));
+			dueDate.setDateTimeString(dueDateString);
+			paymentTerm.setDueDateDateTime(dueDate);
+		}
+
+		if (discountTerms != null) {
+			TradePaymentDiscountTermsType tradePaymentDiscountTerms = xmlFactory.createTradePaymentDiscountTermsType();
+
+			PercentType calculationPercent = xmlFactory.createPercentType();
+			calculationPercent.setValue(discountTerms.getCalculationPercentage());
+			tradePaymentDiscountTerms.setCalculationPercent(calculationPercent);
+
+			AmountType basisAmount = xmlFactory.createAmountType();
+			basisAmount.setCurrencyID(currency);
+			basisAmount.setValue(currencyFormat(totals.totalGrossAmount));
+			tradePaymentDiscountTerms.getBasisAmount().add(basisAmount);
+
+			if (discountTerms.getBaseDate() != null) {
+				DateTimeType baseDate = xmlFactory.createDateTimeType();
+				DateTimeType.DateTimeString baseDateString = xmlFactory.createDateTimeTypeDateTimeString();
+				baseDateString.setFormat(discountTerms.getBaseDate().getFormat().getDateTimeType());
+				baseDateString.setValue(discountTerms.getBaseDate().getFormat().getFormatter()
+						.format(discountTerms.getBaseDate().getDate()));
+				baseDate.setDateTimeString(baseDateString);
+				tradePaymentDiscountTerms.setBasisDateTime(baseDate);
+
+				MeasureType basisPeriodMeasure = xmlFactory.createMeasureType();
+				basisPeriodMeasure.setUnitCode(discountTerms.getBasePeriodUnitCode());
+				basisPeriodMeasure.setValue(new BigDecimal(discountTerms.getBasePeriodMeasure()));
+				tradePaymentDiscountTerms.setBasisPeriodMeasure(basisPeriodMeasure);
+			}
+			paymentTerm.getApplicableTradePaymentDiscountTerms().add(tradePaymentDiscountTerms);
+		}
+		xmlPaymentTerms.add(paymentTerm);
+
+		return xmlPaymentTerms;
 	}
 
 

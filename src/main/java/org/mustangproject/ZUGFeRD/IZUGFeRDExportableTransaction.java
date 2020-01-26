@@ -262,6 +262,16 @@ public interface IZUGFeRDExportableTransaction {
 		return null;
 	}
 
+	/**
+	 * get payment terms. if set, getPaymentTermDescription() and getDueDate() are
+	 * ignored
+	 * 
+	 * @return
+	 */
+	default IZUGFeRDPaymentTerms getPaymentTerms() {
+		return null;
+	}
+
 
 	/**
 	 * get reference document number typically used for Invoice Corrections Will be added as IncludedNote in comfort profile
