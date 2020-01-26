@@ -190,7 +190,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IZUGFeRDExport
 
 	@Override
 	public String getCurrency() {
-		return "EUR";
+		return "USD";
 	}
 
 	@Override
@@ -285,6 +285,8 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IZUGFeRDExport
 		assertTrue(zi.getUTF8().contains("<ram:IBANID>DE540815</ram:IBANID>"));
 		assertTrue(zi.getUTF8().contains("<ram:DirectDebitMandateID>DE99XX12345</ram:DirectDebitMandateID>"));
 		assertFalse(zi.getUTF8().contains("<ram:DueDateDateTime>"));
+		assertFalse(zi.getUTF8().contains("EUR"));
+		assertTrue(zi.getUTF8().contains("USD"));//currency should be USD, test for #150
 
 		// Reading ZUGFeRD
 		assertEquals("496.00", zi.getAmount());
