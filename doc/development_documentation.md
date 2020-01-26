@@ -72,6 +72,14 @@ Sign in in GitHub and click on the profile picture -> Settings. Now just generat
 ![screenshot](development_documentation_screenshot_github_settings.png "Screenshot Github Settings")
  The Token-ID is the password. 
 
+## Integrate before release
+
+If you added functionality which you need to test in another project before a new version of Mustang is released you can
+install the jar you just generated in your target branch in your local maven cache so it gets picked *instead* of the
+maybe not yet even existing new release version:
+
+`mvn install:install-file -Dfile=mustang-1.7.6-SNAPSHOT.jar -DgroupId=org.mustangproject.ZUGFeRD -DartifactId=mustang -Dversion=1.7.6 -Dpackaging=jar -DgeneratePom=true`
+
 
 ## Release
 
