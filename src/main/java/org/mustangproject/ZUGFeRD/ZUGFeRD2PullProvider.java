@@ -461,7 +461,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				 */
 				+ "		</ram:ApplicableHeaderTradeDelivery>\n" + "		<ram:ApplicableHeaderTradeSettlement>\n" //$NON-NLS-2$
 				+ "			<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>\n" //$NON-NLS-1$ //$NON-NLS-2$
-				+ "			<ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>\n"; //$NON-NLS-1$
+				+ "			<ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>\n"; //$NON-NLS-1$
 
 		if (trans.getTradeSettlementPayment()!=null) {
 			for (IZUGFeRDTradeSettlementPayment payment : trans.getTradeSettlementPayment()) {
@@ -532,7 +532,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				+ "				<ram:TaxBasisTotalAmount>" + currencyFormat(getTotal()) + "</ram:TaxBasisTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 																															// //
 																															// currencyID=\"EUR\"
-				+ "				<ram:TaxTotalAmount currencyID=\"EUR\">" //$NON-NLS-1$
+				+ "				<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">" //$NON-NLS-1$
 				+ currencyFormat(getTotalGross().subtract(getTotal())) + "</ram:TaxTotalAmount>\n" //$NON-NLS-1$
 				+ "				<ram:GrandTotalAmount>" + currencyFormat(getTotalGross()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-1$ //$NON-NLS-2$
 																														// //
