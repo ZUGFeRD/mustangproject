@@ -56,5 +56,9 @@ public interface IZUGFeRDExportableItem {
 	default String getCategoryCode() {
 		return TaxCategoryCodeTypeConstants.STANDARDRATE;
 	}
+	
+	default String getAdditionalReferencedDocumentID() {
+		return null;
+	}
 
 }

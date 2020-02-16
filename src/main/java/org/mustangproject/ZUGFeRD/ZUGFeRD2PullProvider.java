@@ -357,16 +357,21 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 					+ "			<ram:SpecifiedLineTradeSettlement>\n" //$NON-NLS-1$
 					+ "				<ram:ApplicableTradeTax>\n" //$NON-NLS-1$
 					+ "					<ram:TypeCode>VAT</ram:TypeCode>\n" //$NON-NLS-1$
-					+ "					<ram:CategoryCode>"+currentItem.getProduct().getTaxCategoryCode()+"</ram:CategoryCode>\n" //$NON-NLS-1$
 					+ exemptionReason
+					+ "					<ram:CategoryCode>"+currentItem.getProduct().getTaxCategoryCode()+"</ram:CategoryCode>\n" //$NON-NLS-1$
+					
 					+ "					<ram:RateApplicablePercent>" //$NON-NLS-1$
 					+ vatFormat(currentItem.getProduct().getVATPercent()) + "</ram:RateApplicablePercent>\n" //$NON-NLS-1$
 					+ "				</ram:ApplicableTradeTax>\n" //$NON-NLS-1$
 					+ "				<ram:SpecifiedTradeSettlementLineMonetarySummation>\n" //$NON-NLS-1$
 					+ "					<ram:LineTotalAmount>" + currencyFormat(lc.getItemTotalNetAmount()) //$NON-NLS-1$
 					+ "</ram:LineTotalAmount>\n" //$NON-NLS-1$ // currencyID=\"EUR\"
-					+ "				</ram:SpecifiedTradeSettlementLineMonetarySummation>\n" //$NON-NLS-1$
-					+ "			</ram:SpecifiedLineTradeSettlement>\n" //$NON-NLS-1$
+					+ "				</ram:SpecifiedTradeSettlementLineMonetarySummation>\n"; //$NON-NLS-1$
+					if (currentItem.getAdditionalReferencedDocumentID()!=null) {
+						xml=xml	+ "			<ram:AdditionalReferencedDocument><ram:IssuerAssignedID>"+currentItem.getAdditionalReferencedDocumentID()+"</ram:IssuerAssignedID><ram:TypeCode>130</ram:TypeCode></ram:AdditionalReferencedDocument>\n"; //$NON-NLS-1$
+											
+					}
+				xml=xml	+ "			</ram:SpecifiedLineTradeSettlement>\n" //$NON-NLS-1$
 					+ "		</ram:IncludedSupplyChainTradeLineItem>\n"; //$NON-NLS-1$
 
 		}
@@ -490,9 +495,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 						+ "				<ram:CalculatedAmount>" + currencyFormat(amount.getCalculated()) //$NON-NLS-1$
 						+ "</ram:CalculatedAmount>\n" //$NON-NLS-1$ //currencyID=\"EUR\"
 						+ "				<ram:TypeCode>VAT</ram:TypeCode>\n" //$NON-NLS-1$
+						+ exemptionReason
 						+ "				<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>\n" // currencyID=\"EUR\"
 						+ "				<ram:CategoryCode>"+taxCategoryCode+"</ram:CategoryCode>\n" //$NON-NLS-1$
-						+ exemptionReason
 						+ "				<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) //$NON-NLS-1$
 						+ "</ram:RateApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n"; //$NON-NLS-2$
 

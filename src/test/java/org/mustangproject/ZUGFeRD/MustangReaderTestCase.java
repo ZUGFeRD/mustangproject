@@ -22,6 +22,8 @@ import junit.framework.TestCase;
 
 import java.math.BigDecimal;
 
+import org.mustangproject.ZUGFeRD.MustangReaderTestCase.Item;
+
 public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRDExportableTransaction {
 
 	public MustangReaderTestCase(String testName) {
@@ -134,6 +136,11 @@ public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRD
 
 		private BigDecimal price, quantity;
 		private IZUGFeRDExportableProduct product;
+		private String addReference=null;
+		
+		public String getAdditionalReferencedDocumentID() {
+			return addReference;
+		}
 
 		@Override
 		public BigDecimal getPrice() {
@@ -171,6 +178,15 @@ public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRD
 		public IZUGFeRDAllowanceCharge[] getItemCharges() {
 			return null;
 		}
+
+		public String getAddReference() {
+			return addReference;
+		}
+
+		public void setAddReference(String addReference) {
+			this.addReference = addReference;
+		}
+		
 
 	}
 

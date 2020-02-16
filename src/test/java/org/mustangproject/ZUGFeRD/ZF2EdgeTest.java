@@ -30,6 +30,7 @@ import java.util.GregorianCalendar;
 
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.mustangproject.ZUGFeRD.MustangReaderTestCase.Item;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -202,7 +203,9 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IZUGFeRDExport
 																									// 103
 		EdgeProduct airProduct = new EdgeProduct("", "Heiße Luft pro Liter", "LTR");
 
-		allItems[0] = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
+		Item design=new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
+		design.setAddReference("1825");
+		allItems[0] = design;
 		allItems[1] = new Item(new BigDecimal("0.79"), new BigDecimal("400"), balloonProduct);
 		allItems[2] = new Item(new BigDecimal("0.10"), new BigDecimal("200"), airProduct);
 		return allItems;

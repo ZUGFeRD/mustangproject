@@ -1,5 +1,12 @@
+1.7.7
+=====
+
+- Refactored comparison operator for ChargeIndicator https://github.com/ZUGFeRD/mustangproject/pull/153
+- #148 support additional documents for items
+
 1.7.6
 =====
+2020-02-06
 
 - support different ship to address
 - allow for diffent namespace prefixes #140
