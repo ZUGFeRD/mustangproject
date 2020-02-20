@@ -387,7 +387,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
 		if ((trans.getOwnVATID()!=null)&&(trans.getOwnOrganisationName()!=null)) {
 			
-			xml = xml + "            <ram:SpecifiedLegalOrganization>\n" + "               <ram:ID schemeID='9930'>"
+			xml = xml + "            <ram:SpecifiedLegalOrganization>\n" + "               <ram:ID>"
 					+ XMLTools.encodeXML(trans.getOwnVATID()) + "</ram:ID>\n" + "               <ram:TradingBusinessName>"
 					+ XMLTools.encodeXML(trans.getOwnOrganisationName()) + "</ram:TradingBusinessName>\n"
 					+ "            </ram:SpecifiedLegalOrganization>";

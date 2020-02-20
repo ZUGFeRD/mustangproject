@@ -3,6 +3,7 @@
 
 - Refactored comparison operator for ChargeIndicator https://github.com/ZUGFeRD/mustangproject/pull/153
 - #148 support additional documents for items
+- #154 german VAT ID may not be used for sellercontact scheme id
 
 1.7.6
 =====
