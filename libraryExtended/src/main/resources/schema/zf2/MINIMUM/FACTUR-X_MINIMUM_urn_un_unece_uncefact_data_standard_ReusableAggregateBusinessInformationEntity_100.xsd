@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100"
+    xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100"
+    targetNamespace="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100"
+    elementFormDefault="qualified">
+  <xs:import namespace="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" schemaLocation="FACTUR-X_MINIMUM_urn_un_unece_uncefact_data_standard_QualifiedDataType_100.xsd"/>
+  <xs:import namespace="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100" schemaLocation="FACTUR-X_MINIMUM_urn_un_unece_uncefact_data_standard_UnqualifiedDataType_100.xsd"/>
+  <xs:complexType name="DocumentContextParameterType">
+    <xs:sequence>
+      <xs:element name="ID" type="udt:IDType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ExchangedDocumentContextType">
+    <xs:sequence>
+      <xs:element name="BusinessProcessSpecifiedDocumentContextParameter" type="ram:DocumentContextParameterType" minOccurs="0"/>
+      <xs:element name="GuidelineSpecifiedDocumentContextParameter" type="ram:DocumentContextParameterType"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ExchangedDocumentType">
+    <xs:sequence>
+      <xs:element name="ID" type="udt:IDType"/>
+      <xs:element name="TypeCode" type="qdt:DocumentCodeType"/>
+      <xs:element name="IssueDateTime" type="udt:DateTimeType"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="HeaderTradeAgreementType">
+    <xs:sequence>
+      <xs:element name="BuyerReference" type="udt:TextType" minOccurs="0"/>
+      <xs:element name="SellerTradeParty" type="ram:TradePartyType"/>
+      <xs:element name="BuyerTradeParty" type="ram:TradePartyType"/>
+      <xs:element name="BuyerOrderReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="HeaderTradeDeliveryType"/>
+  <xs:complexType name="HeaderTradeSettlementType">
+    <xs:sequence>
+      <xs:element name="InvoiceCurrencyCode" type="qdt:CurrencyCodeType"/>
+      <xs:element name="SpecifiedTradeSettlementHeaderMonetarySummation" type="ram:TradeSettlementHeaderMonetarySummationType"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="LegalOrganizationType">
+    <xs:sequence>
+      <xs:element name="ID" type="udt:IDType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ReferencedDocumentType">
+    <xs:sequence>
+      <xs:element name="IssuerAssignedID" type="udt:IDType"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="SupplyChainTradeTransactionType">
+    <xs:sequence>
+      <xs:element name="ApplicableHeaderTradeAgreement" type="ram:HeaderTradeAgreementType"/>
+      <xs:element name="ApplicableHeaderTradeDelivery" type="ram:HeaderTradeDeliveryType"/>
+      <xs:element name="ApplicableHeaderTradeSettlement" type="ram:HeaderTradeSettlementType"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TaxRegistrationType">
+    <xs:sequence>
+      <xs:element name="ID" type="udt:IDType"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TradeAddressType">
+    <xs:sequence>
+      <xs:element name="PostcodeCode" type="udt:CodeType" minOccurs="0"/>
+      <xs:element name="LineOne" type="udt:TextType" minOccurs="0"/>
+      <xs:element name="LineTwo" type="udt:TextType" minOccurs="0"/>
+      <xs:element name="LineThree" type="udt:TextType" minOccurs="0"/>
+      <xs:element name="CityName" type="udt:TextType" minOccurs="0"/>
+      <xs:element name="CountryID" type="qdt:CountryIDType"/>
+      <xs:element name="CountrySubDivisionName" type="udt:TextType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TradePartyType">
+    <xs:sequence>
+      <xs:element name="Name" type="udt:TextType"/>
+      <xs:element name="SpecifiedLegalOrganization" type="ram:LegalOrganizationType" minOccurs="0"/>
+      <xs:element name="PostalTradeAddress" type="ram:TradeAddressType" minOccurs="0"/>
+      <xs:element name="SpecifiedTaxRegistration" type="ram:TaxRegistrationType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TradeSettlementHeaderMonetarySummationType">
+    <xs:sequence>
+      <xs:element name="TaxBasisTotalAmount" type="udt:AmountType"/>
+      <xs:element name="TaxTotalAmount" type="udt:AmountType" minOccurs="0"/>
+      <xs:element name="GrandTotalAmount" type="udt:AmountType"/>
+      <xs:element name="DuePayableAmount" type="udt:AmountType"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

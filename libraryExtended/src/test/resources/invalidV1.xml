@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rsm:CrossIndustryDocument xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rsm="urn:ferd:CrossIndustryDocument:invoice:1p0" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15">
+  <rsm:SpecifiedExchangedDocumentContext>
+    <ram:TestIndicator>
+      <udt:Indicator>false</udt:Indicator>
+    </ram:TestIndicator>
+    <ram:GuidelineSpecifiedDocumentContextParameter>
+      <ram:ID>urn:ferd:CrossIndustryDocument:invoice:1p0:extended</ram:ID>
+    </ram:GuidelineSpecifiedDocumentContextParameter>
+  </rsm:SpecifiedExchangedDocumentContext>
+  <rsm:HederExchangedDocument>
+    <ram:ID>57144</ram:ID>
+    <ram:Name>RECHNUNG</ram:Name>
+    <ram:TypeCode>380</ram:TypeCode>
+    <ram:IssueDateTime>
+      <udt:DateTimeString format="1020">00010101</udt:DateTimeString>
+    </ram:IssueDateTime>
+  </rsm:HederExchangedDocument>
+  <rsm:SpecifiedSupplyChainTradeTransaction>
+    <ram:ApplicableSupplyChainTradeAgreement>
+      <ram:SellerTradeParty>
+        <ram:Name>------</ram:Name>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>--- </ram:PostcodeCode>
+          <ram:LineOne>Flugplatz A 70/B0-1</ram:LineOne>
+          <ram:CityName>----</ram:CityName>
+          <ram:CountryID>AF</ram:CountryID>
+        </ram:PostalTradeAddress>
+      </ram:SellerTradeParty>
+      <ram:BuyerTradeParty>
+        <ram:ID>123</ram:ID>
+        <ram:Name>---- </ram:Name>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>1234</ram:PostcodeCode>
+          <ram:LineOne>Strassev sfsdfsaf</ram:LineOne>
+          <ram:CityName>---</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+      </ram:BuyerTradeParty>
+    </ram:ApplicableSupplyChainTradeAgreement>
+    <ram:ApplicableSupplyChainTradeDelivery />
+    <ram:ApplicableSupplyChainTradeSettlement>
+      <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
+      <ram:SpecifiedTradePaymentTerms>
+        <ram:Description>Bis zum 19.05.2019 mit 2% Skonto (=1,98).
+Bis zum 20.05.2019 netto; </ram:Description>
+      </ram:SpecifiedTradePaymentTerms>
+      <ram:SpecifiedTradeSettlementMonetarySummation>
+        <ram:LineTotalAmount currencyID="EUR">60.00</ram:LineTotalAmount>
+        <ram:ChargeTotalAmount currencyID="EUR">40.00</ram:ChargeTotalAmount>
+        <ram:AllowanceTotalAmount currencyID="EUR">17.00</ram:AllowanceTotalAmount>
+        <ram:TaxBasisTotalAmount currencyID="EUR">83.00</ram:TaxBasisTotalAmount>
+        <ram:TaxTotalAmount currencyID="EUR">15.77</ram:TaxTotalAmount>
+        <ram:GrandTotalAmount currencyID="EUR">98.77</ram:GrandTotalAmount>
+      </ram:SpecifiedTradeSettlementMonetarySummation>
+    </ram:ApplicableSupplyChainTradeSettlement>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>1</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedSupplyChainTradeAgreement>
+        <ram:GrossPriceProductTradePrice>
+          <ram:ChargeAmount currencyID="EUR">20.0000</ram:ChargeAmount>
+          <ram:AppliedTradeAllowanceCharge>
+            <ram:ChargeIndicator>
+              <udt:Indicator>false</udt:Indicator>
+            </ram:ChargeIndicator>
+            <ram:BasisAmount currencyID="EUR">10.0000</ram:BasisAmount>
+            <ram:ActualAmount currencyID="EUR">10.0000</ram:ActualAmount>
+            <ram:Reason>Abschlag</ram:Reason>
+          </ram:AppliedTradeAllowanceCharge>
+        </ram:GrossPriceProductTradePrice>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount currencyID="EUR">10.0000</ram:ChargeAmount>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedSupplyChainTradeAgreement>
+      <ram:SpecifiedSupplyChainTradeDelivery>
+        <ram:BilledQuantity unitCode="C62">1.0000</ram:BilledQuantity>
+      </ram:SpecifiedSupplyChainTradeDelivery>
+      <ram:SpecifiedSupplyChainTradeSettlement>
+        <ram:SpecifiedTradeSettlementMonetarySummation>
+          <ram:LineTotalAmount currencyID="EUR">10.00</ram:LineTotalAmount>
+        </ram:SpecifiedTradeSettlementMonetarySummation>
+      </ram:SpecifiedSupplyChainTradeSettlement>
+      <ram:SpecifiedTradeProduct>
+        <ram:Name>1</ram:Name>
+        <ram:Description>3053.4.0.009
+Test Halter.............................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................</ram:Description>
+      </ram:SpecifiedTradeProduct>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>2</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedSupplyChainTradeAgreement>
+        <ram:GrossPriceProductTradePrice>
+          <ram:ChargeAmount currencyID="EUR">50.0000</ram:ChargeAmount>
+        </ram:GrossPriceProductTradePrice>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount currencyID="EUR">50.0000</ram:ChargeAmount>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedSupplyChainTradeAgreement>
+      <ram:SpecifiedSupplyChainTradeDelivery>
+        <ram:BilledQuantity unitCode="C62">1.0000</ram:BilledQuantity>
+      </ram:SpecifiedSupplyChainTradeDelivery>
+      <ram:SpecifiedSupplyChainTradeSettlement>
+        <ram:SpecifiedTradeSettlementMonetarySummation>
+          <ram:LineTotalAmount currencyID="EUR">50.00</ram:LineTotalAmount>
+        </ram:SpecifiedTradeSettlementMonetarySummation>
+      </ram:SpecifiedSupplyChainTradeSettlement>
+      <ram:SpecifiedTradeProduct>
+        <ram:Name>B405</ram:Name>
+        <ram:Description>Radbagger klein</ram:Description>
+      </ram:SpecifiedTradeProduct>
+    </ram:IncludedSupplyChainTradeLineItem>
+  </rsm:SpecifiedSupplyChainTradeTransaction>
+</rsm:CrossIndustryDocument>

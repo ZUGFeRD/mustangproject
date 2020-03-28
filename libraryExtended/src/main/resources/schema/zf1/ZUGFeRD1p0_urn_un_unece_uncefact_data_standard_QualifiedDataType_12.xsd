@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:12"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15"
+    targetNamespace="urn:un:unece:uncefact:data:standard:QualifiedDataType:12"
+    elementFormDefault="qualified"
+    version="12.0">
+  <xs:import namespace="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15" schemaLocation="ZUGFeRD1p0_urn_un_unece_uncefact_data_standard_UnqualifiedDataType_15.xsd"/>
+  <xs:simpleType name="AllowanceChargeReasonCodeContentType">
+    <xs:restriction base="xs:token"/>
+  </xs:simpleType>
+  <xs:complexType name="AllowanceChargeReasonCodeType">
+    <xs:simpleContent>
+      <xs:extension base="qdt:AllowanceChargeReasonCodeContentType"/>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="CountryIDContentType">
+    <xs:restriction base="xs:token"/>
+  </xs:simpleType>
+  <xs:complexType name="CountryIDType">
+    <xs:simpleContent>
+      <xs:extension base="qdt:CountryIDContentType"/>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="DateMandatoryDateTimeType">
+    <xs:union memberTypes="xs:dateTime xs:date"/>
+  </xs:simpleType>
+  <xs:simpleType name="DeliveryTermsCodeContentType">
+    <xs:restriction base="xs:token"/>
+  </xs:simpleType>
+  <xs:complexType name="DeliveryTermsCodeType">
+    <xs:simpleContent>
+      <xs:extension base="qdt:DeliveryTermsCodeContentType"/>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="DocumentCodeContentType">
+    <xs:restriction base="xs:token"/>
+  </xs:simpleType>
+  <xs:complexType name="DocumentCodeType">
+    <xs:simpleContent>
+      <xs:extension base="qdt:DocumentCodeContentType"/>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="PaymentMeansCodeContentType">
+    <xs:restriction base="xs:token"/>
+  </xs:simpleType>
+  <xs:complexType name="PaymentMeansCodeType">
+    <xs:simpleContent>
+      <xs:extension base="qdt:PaymentMeansCodeContentType"/>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="ReferenceCodeContentType">
+    <xs:restriction base="xs:token"/>
+  </xs:simpleType>
+  <xs:complexType name="ReferenceCodeType">
+    <xs:simpleContent>
+      <xs:extension base="qdt:ReferenceCodeContentType"/>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="TaxCategoryCodeContentType">
+    <xs:restriction base="xs:token"/>
+  </xs:simpleType>
+  <xs:complexType name="TaxCategoryCodeType">
+    <xs:simpleContent>
+      <xs:extension base="qdt:TaxCategoryCodeContentType"/>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="TaxTypeCodeContentType">
+    <xs:restriction base="xs:token"/>
+  </xs:simpleType>
+  <xs:complexType name="TaxTypeCodeType">
+    <xs:simpleContent>
+      <xs:extension base="qdt:TaxTypeCodeContentType"/>
+    </xs:simpleContent>
+  </xs:complexType>
+</xs:schema>

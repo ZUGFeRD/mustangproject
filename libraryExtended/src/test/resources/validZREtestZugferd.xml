@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<rsm:CrossIndustryInvoice xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100">
+    <rsm:ExchangedDocumentContext>
+        <ram:TestIndicator>
+            <udt:Indicator>true</udt:Indicator>
+        </ram:TestIndicator>
+        <ram:GuidelineSpecifiedDocumentContextParameter>
+            <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:zugferd.de:2p0:extended</ram:ID>
+        </ram:GuidelineSpecifiedDocumentContextParameter>
+    </rsm:ExchangedDocumentContext>
+    <rsm:ExchangedDocument>
+        <ram:ID>RE4123123162018</ram:ID>
+        <ram:Name>Rechnung</ram:Name>
+        <ram:TypeCode>380</ram:TypeCode>
+        <ram:IssueDateTime>
+            <udt:DateTimeString format="102">20200214</udt:DateTimeString>
+        </ram:IssueDateTime>
+        <ram:IncludedNote>
+            <ram:Content></ram:Content>
+            <ram:SubjectCode>REG</ram:SubjectCode>
+        </ram:IncludedNote>
+        <ram:IncludedNote>
+            <ram:Content>Kopftext</ram:Content>
+        </ram:IncludedNote>
+    </rsm:ExchangedDocument>
+    <rsm:SupplyChainTradeTransaction>
+        <ram:IncludedSupplyChainTradeLineItem>
+            <ram:AssociatedDocumentLineDocument>
+                <ram:LineID>1</ram:LineID>
+            </ram:AssociatedDocumentLineDocument>
+            <ram:SpecifiedTradeProduct>
+                <ram:GlobalID schemeID="0160">ART232323</ram:GlobalID>
+                <ram:SellerAssignedID/>
+                <ram:BuyerAssignedID/>
+                <ram:Name>K?se</ram:Name>
+            </ram:SpecifiedTradeProduct>
+            <ram:SpecifiedLineTradeAgreement>
+                <ram:GrossPriceProductTradePrice>
+                    <ram:ChargeAmount>32.0000</ram:ChargeAmount>
+                    <ram:AppliedTradeAllowanceCharge>
+                        <ram:ChargeIndicator>
+                            <udt:Indicator>false</udt:Indicator>
+                        </ram:ChargeIndicator>
+                        <ram:ActualAmount>3.2000</ram:ActualAmount>
+                    </ram:AppliedTradeAllowanceCharge>
+                </ram:GrossPriceProductTradePrice>
+                <ram:NetPriceProductTradePrice>
+                    <ram:ChargeAmount>28.8000</ram:ChargeAmount>
+                </ram:NetPriceProductTradePrice>
+            </ram:SpecifiedLineTradeAgreement>
+            <ram:SpecifiedLineTradeDelivery>
+                <ram:BilledQuantity unitCode="KGM">32.0000</ram:BilledQuantity>
+            </ram:SpecifiedLineTradeDelivery>
+            <ram:SpecifiedLineTradeSettlement>
+                <ram:ApplicableTradeTax>
+                    <ram:CalculatedAmount>64.51</ram:CalculatedAmount>
+                    <ram:TypeCode>VAT</ram:TypeCode>
+                    <ram:CategoryCode>S</ram:CategoryCode>
+                    <ram:RateApplicablePercent>7.00</ram:RateApplicablePercent>
+                </ram:ApplicableTradeTax>
+                <ram:SpecifiedTradeSettlementLineMonetarySummation>
+                    <ram:LineTotalAmount>1024.00</ram:LineTotalAmount>
+                    <ram:TotalAllowanceChargeAmount>102.40</ram:TotalAllowanceChargeAmount>
+                </ram:SpecifiedTradeSettlementLineMonetarySummation>
+            </ram:SpecifiedLineTradeSettlement>
+        </ram:IncludedSupplyChainTradeLineItem>
+        <ram:IncludedSupplyChainTradeLineItem>
+            <ram:AssociatedDocumentLineDocument>
+                <ram:LineID>2</ram:LineID>
+            </ram:AssociatedDocumentLineDocument>
+            <ram:SpecifiedTradeProduct>
+                <ram:GlobalID schemeID="0160">PN000001</ram:GlobalID>
+                <ram:SellerAssignedID/>
+                <ram:BuyerAssignedID/>
+                <ram:Name>Fleisch</ram:Name>
+            </ram:SpecifiedTradeProduct>
+            <ram:SpecifiedLineTradeAgreement>
+                <ram:GrossPriceProductTradePrice>
+                    <ram:ChargeAmount>32.0000</ram:ChargeAmount>
+                    <ram:AppliedTradeAllowanceCharge>
+                        <ram:ChargeIndicator>
+                            <udt:Indicator>false</udt:Indicator>
+                        </ram:ChargeIndicator>
+                        <ram:ActualAmount>10.0000</ram:ActualAmount>
+                    </ram:AppliedTradeAllowanceCharge>
+                </ram:GrossPriceProductTradePrice>
+                <ram:NetPriceProductTradePrice>
+                    <ram:ChargeAmount>22.0000</ram:ChargeAmount>
+                </ram:NetPriceProductTradePrice>
+            </ram:SpecifiedLineTradeAgreement>
+            <ram:SpecifiedLineTradeDelivery>
+                <ram:BilledQuantity unitCode="KGM">1.0000</ram:BilledQuantity>
+            </ram:SpecifiedLineTradeDelivery>
+            <ram:SpecifiedLineTradeSettlement>
+                <ram:ApplicableTradeTax>
+                    <ram:CalculatedAmount>1.54</ram:CalculatedAmount>
+                    <ram:TypeCode>VAT</ram:TypeCode>
+                    <ram:CategoryCode>S</ram:CategoryCode>
+                    <ram:RateApplicablePercent>7.00</ram:RateApplicablePercent>
+                </ram:ApplicableTradeTax>
+                <ram:SpecifiedTradeSettlementLineMonetarySummation>
+                    <ram:LineTotalAmount>32.00</ram:LineTotalAmount>
+                    <ram:TotalAllowanceChargeAmount>10.00</ram:TotalAllowanceChargeAmount>
+                </ram:SpecifiedTradeSettlementLineMonetarySummation>
+            </ram:SpecifiedLineTradeSettlement>
+        </ram:IncludedSupplyChainTradeLineItem>
+        <ram:ApplicableHeaderTradeAgreement>
+            <ram:SellerTradeParty>
+                <ram:Name>Onkel Machtes GmbH &amp; Co. KG</ram:Name>
+                <ram:DefinedTradeContact>
+                    <ram:PersonName>Jürgen Machtes</ram:PersonName>
+                </ram:DefinedTradeContact>
+                <ram:PostalTradeAddress>
+                    <ram:PostcodeCode>75331</ram:PostcodeCode>
+                    <ram:LineOne>Buckelweg 110</ram:LineOne>
+                    <ram:CityName>Engelsbrand</ram:CityName>
+                    <ram:CountryID>DE</ram:CountryID>
+                </ram:PostalTradeAddress>
+                <ram:SpecifiedTaxRegistration>
+                    <ram:ID schemeID="FC">1234567890</ram:ID>
+                </ram:SpecifiedTaxRegistration>
+            </ram:SellerTradeParty>
+            <ram:BuyerTradeParty>
+                <ram:Name>Test Kunde</ram:Name>
+                <ram:DefinedTradeContact>
+                    <ram:PersonName>Ansprechparter</ram:PersonName>
+                </ram:DefinedTradeContact>
+                <ram:PostalTradeAddress>
+                    <ram:PostcodeCode>12334</ram:PostcodeCode>
+                    <ram:LineOne>Adresse</ram:LineOne>
+                    <ram:CityName>Basdsd</ram:CityName>
+                    <ram:CountryID>DE</ram:CountryID>
+                </ram:PostalTradeAddress>
+            </ram:BuyerTradeParty>
+            <ram:BuyerOrderReferencedDocument>
+                <ram:IssuerAssignedID>Bestellnummer</ram:IssuerAssignedID>
+                <ram:FormattedIssueDateTime>
+                    <qdt:DateTimeString format="102">20200214</qdt:DateTimeString>
+                </ram:FormattedIssueDateTime>
+            </ram:BuyerOrderReferencedDocument>
+        </ram:ApplicableHeaderTradeAgreement>
+        <ram:ApplicableHeaderTradeDelivery>
+            <ram:ShipToTradeParty>
+                <ram:Name>Test Kunde</ram:Name>
+                <ram:DefinedTradeContact/>
+                <ram:PostalTradeAddress>
+                    <ram:PostcodeCode>12334</ram:PostcodeCode>
+                    <ram:LineOne>Adresse</ram:LineOne>
+                    <ram:CityName>Basdsd</ram:CityName>
+                    <ram:CountryID>DE</ram:CountryID>
+                </ram:PostalTradeAddress>
+            </ram:ShipToTradeParty>
+            <ram:DeliveryNoteReferencedDocument>
+                <ram:IssuerAssignedID></ram:IssuerAssignedID>
+            </ram:DeliveryNoteReferencedDocument>
+        </ram:ApplicableHeaderTradeDelivery>
+        <ram:ApplicableHeaderTradeSettlement>
+            <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
+            <ram:SpecifiedTradeSettlementPaymentMeans>
+                <ram:TypeCode>1</ram:TypeCode>
+                <ram:PayeePartyCreditorFinancialAccount>
+                    <ram:IBANID>DE27100777770209299700</ram:IBANID>
+                    <ram:AccountName>Norisbank Berlin</ram:AccountName>
+                </ram:PayeePartyCreditorFinancialAccount>
+                <ram:PayeeSpecifiedCreditorFinancialInstitution>
+                    <ram:BICID>NORSDE51XXX</ram:BICID>
+                </ram:PayeeSpecifiedCreditorFinancialInstitution>
+            </ram:SpecifiedTradeSettlementPaymentMeans>
+            <ram:ApplicableTradeTax>
+                <ram:CalculatedAmount>66.05</ram:CalculatedAmount>
+                <ram:TypeCode>VAT</ram:TypeCode>
+                <ram:BasisAmount>943.60</ram:BasisAmount>
+                <ram:CategoryCode>S</ram:CategoryCode>
+                <ram:RateApplicablePercent>7.00</ram:RateApplicablePercent>
+            </ram:ApplicableTradeTax>
+            <ram:SpecifiedTradeAllowanceCharge>
+                <ram:ChargeIndicator>
+                    <udt:Indicator>false</udt:Indicator>
+                </ram:ChargeIndicator>
+                <ram:ActualAmount>112.40</ram:ActualAmount>
+                <ram:Reason>Gesamt Rabatt</ram:Reason>
+                <ram:CategoryTradeTax>
+                    <ram:TypeCode>VAT</ram:TypeCode>
+                    <ram:CategoryCode>S</ram:CategoryCode>
+                    <ram:RateApplicablePercent>7.00</ram:RateApplicablePercent>
+                </ram:CategoryTradeTax>
+            </ram:SpecifiedTradeAllowanceCharge>
+            <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+                <ram:LineTotalAmount>1056.00</ram:LineTotalAmount>
+                <ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>
+                <ram:AllowanceTotalAmount>112.40</ram:AllowanceTotalAmount>
+                <ram:TaxBasisTotalAmount currencyID="EUR">943.60</ram:TaxBasisTotalAmount>
+                <ram:TaxTotalAmount currencyID="EUR">66.05</ram:TaxTotalAmount>
+                <ram:GrandTotalAmount currencyID="EUR">1009.65</ram:GrandTotalAmount>
+                <ram:TotalPrepaidAmount>0.00</ram:TotalPrepaidAmount>
+                <ram:DuePayableAmount>1009.65</ram:DuePayableAmount>
+            </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+        </ram:ApplicableHeaderTradeSettlement>
+    </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>
