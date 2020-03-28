@@ -1,4 +1,4 @@
-package ZUV;
+package org.mustangproject.library.extended;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

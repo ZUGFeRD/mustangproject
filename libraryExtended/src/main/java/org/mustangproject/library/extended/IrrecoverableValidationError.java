@@ -1,4 +1,4 @@
-package ZUV;
+package org.mustangproject.library.extended;
 
 public class IrrecoverableValidationError extends Exception {
 

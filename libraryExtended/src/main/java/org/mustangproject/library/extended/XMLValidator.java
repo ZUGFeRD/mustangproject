@@ -1,4 +1,4 @@
-package ZUV;
+package org.mustangproject.library.extended;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -295,7 +295,7 @@ public class XMLValidator extends Validator {
 		
 		context.addCustomXML("<info><version>" + ((context.getVersion() != null) ? context.getVersion() : "invalid")
 				+ "</version><profile>" + ((context.getProfile() != null) ? context.getProfile() : "invalid") + 
-				  "</profile><validator version=\""+Main.class.getPackage().getImplementationVersion()+"\"></validator><rules><fired>"+firedRules+"</fired><failed>"+failedRules+"</failed></rules>" + "<duration unit='ms'>" + (endTime - startXMLTime) + "</duration></info>");
+				  "</profile><validator version=\""+XMLValidator.class.getPackage().getImplementationVersion()+"\"></validator><rules><fired>"+firedRules+"</fired><failed>"+failedRules+"</failed></rules>" + "<duration unit='ms'>" + (endTime - startXMLTime) + "</duration></info>");
 
 	}
 	

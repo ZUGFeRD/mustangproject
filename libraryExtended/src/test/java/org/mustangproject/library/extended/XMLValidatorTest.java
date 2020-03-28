@@ -1,4 +1,4 @@
-package ZUV;
+package org.mustangproject.library.extended;
 
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 import java.io.File;
