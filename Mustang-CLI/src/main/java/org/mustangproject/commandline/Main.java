@@ -35,7 +35,7 @@ import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1Factory;
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
 import org.mustangproject.ZUGFeRD.ZUGFeRDMigrator;
-import ZUV.ZUGFeRDValidator;
+import org.mustangproject.library.extended.ZUGFeRDValidator;
 
 /***
  * This is the command line interface to mustangproject
