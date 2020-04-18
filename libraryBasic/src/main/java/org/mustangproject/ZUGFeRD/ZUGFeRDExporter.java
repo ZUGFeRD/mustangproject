@@ -54,7 +54,7 @@ import java.util.Map;
 
 public class ZUGFeRDExporter implements Closeable {
 
-	public static final int DefaultZUGFeRDVersion = 1;
+	public static final int DefaultZUGFeRDVersion = 2;
 
 	private boolean isFacturX = false;
 
