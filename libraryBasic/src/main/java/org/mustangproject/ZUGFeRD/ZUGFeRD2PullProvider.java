@@ -252,12 +252,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd"); //$NON-NLS-1$
 		String exemptionReason="";
 
+		if (trans.getPaymentTermDescription()!=null) {
+			paymentTermsDescription=trans.getPaymentTermDescription();
+		}
+
 		if (paymentTermsDescription==null) {
 			paymentTermsDescription= "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
 			
-		}
-		if (trans.getPaymentTermDescription()!=null) {
-			paymentTermsDescription=trans.getPaymentTermDescription();
 		}
 
 		String senderReg = "";
