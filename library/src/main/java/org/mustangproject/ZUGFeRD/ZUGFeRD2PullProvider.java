@@ -516,7 +516,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				}
 			}
 
-			if (hasDueDate) {
+			if (hasDueDate && (trans.getDueDate()!=null)) {
 				xml = xml + "				<ram:DueDateDateTime><udt:DateTimeString format=\"102\">" // $NON-NLS-2$
 						+ zugferdDateFormat.format(trans.getDueDate())
 						+ "</udt:DateTimeString></ram:DueDateDateTime>\n";// 20130704 //$NON-NLS-1$
