@@ -2,6 +2,7 @@
 =====
 
 - Refactored comparison operator for ChargeIndicator https://github.com/ZUGFeRD/mustangproject/pull/153
+- ZUGFeRD2PullProvider needs getDueDate() although getPaymentTermDescription() is defined  https://github.com/ZUGFeRD/mustangproject/pull/155
 - #148 support additional documents for items
 - #154 german VAT ID may not be used for sellercontact scheme id
 
