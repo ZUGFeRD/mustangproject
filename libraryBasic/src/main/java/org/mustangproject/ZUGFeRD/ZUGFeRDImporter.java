@@ -161,7 +161,7 @@ public class ZUGFeRDImporter {
 	}
 
 
-	private Document getDocument() {
+	protected Document getDocument() {
 		return document;
 	}
 
@@ -216,7 +216,7 @@ public class ZUGFeRDImporter {
 	}
 
 
-	private String extractString(String xpathStr) {
+	protected String extractString(String xpathStr) {
 		if (!containsMeta) {
 			throw new ZUGFeRDExportException("No suitable data/ZUGFeRD file could be found.");
 		}
