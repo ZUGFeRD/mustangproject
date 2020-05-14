@@ -34,19 +34,10 @@ Target platform is java 1.8
 
 ## Build
 
-Toecount is now part of the package which can be build with
+The package can be build with
 ```
-mvn clean package
+mvnw clean package
 ```
-
-## Eclipse 
-
-Eclipse XPath Evaluation plugin from the Eclipse Marketplace provides a very handy view to apply XPath on a XML file, useful e.g. when you try XPath expressions or you only have the Xpath, not the line number, to a problem.
-
-To be able to validate against schema files, enter Settings|XML|XML Catalog and add the location of e.g.
-zugferd2p0_en16931.xsd, which will resolve to the key (namespace)
-urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100, just as ZUGFeRD1p0.xsd will provide the key for
-urn:ferd:CrossIndustryDocument:invoice:1p0
 
 ## Test
 
