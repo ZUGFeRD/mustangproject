@@ -39,7 +39,7 @@ import junit.framework.TestSuite;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ZF2InvoiceImporterTest extends TestCase  {
-	final String TARGET_PDF = "./target/testout-ZF2New.pdf";
+	final String TARGET_PDF = "./target/testout-ZF2new.pdf";
 
 	public void testInvoiceImport() {
 

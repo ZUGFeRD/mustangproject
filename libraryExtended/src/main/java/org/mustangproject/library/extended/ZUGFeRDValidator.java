@@ -34,13 +34,14 @@ public class ZUGFeRDValidator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDValidator.class.getCanonicalName()); // log
 																												// output
 	protected ValidationContext context = new ValidationContext(LOGGER);
-	private String sha1Checksum;
-	private boolean pdfValidity;
-	private boolean displayXMLValidationOutput;
-	private long startTime;
-	private boolean optionsRecognized;
-	private String Signature;
-	private boolean wasCompletelyValid = false;
+	protected String sha1Checksum;
+	protected boolean pdfValidity;
+	protected boolean displayXMLValidationOutput;
+	protected long startTime;
+	protected boolean optionsRecognized;
+	protected String Signature;
+	protected boolean wasCompletelyValid = false;
+	protected String logAppend=null;
 
 	/***
 	 * within the validation it turned out something in the options was wrong, e.g.
@@ -50,6 +51,10 @@ public class ZUGFeRDValidator {
 	public boolean hasOptionsError() {
 		return !optionsRecognized;
 
+	}
+
+	public void setLogAppend(String tobeappended) {
+		logAppend = tobeappended;
 	}
 
 	/***
@@ -74,7 +79,7 @@ public class ZUGFeRDValidator {
 		StringBuffer finalStringResult = new StringBuffer();
 		SimpleDateFormat isoDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
 		Date date = new Date();
-
+		startTime = Calendar.getInstance().getTimeInMillis();
 		try {
 			Path path = Paths.get(filename);
 			context.setFilename(path.getFileName().toString());// set filename without path
@@ -135,11 +140,7 @@ public class ZUGFeRDValidator {
 						pdfValidity = context.isValid();
 
 						Signature = context.getSignature();
-						context.clear();
-						if (!pdfValidity) {
-							// clear sets valid to true again
-							context.setInvalid();
-						}
+						context.clear();// clear sets valid to true again
 						if (pdfv.getRawXML() != null) {
 							xv.setStringContent(pdfv.getRawXML());
 							displayXMLValidationOutput = true;
@@ -202,6 +203,10 @@ public class ZUGFeRDValidator {
 					context.clearCustomXML();
 				}
 
+				if ((isPDF)&&(!pdfValidity)) {
+					context.setInvalid();
+				}
+
 			}
 		}
 
@@ -231,9 +236,16 @@ public class ZUGFeRDValidator {
 		xmlValidity = context.isValid();
 		long duration = Calendar.getInstance().getTimeInMillis() - startTime;
 
+		String toBeAppended="";
+		if (logAppend!=null) {
+			toBeAppended=logAppend;
+		}
+
+
+
 		LOGGER.info("Parsed PDF:" + (pdfValidity ? "valid" : "invalid") + " XML:" + (xmlValidity ? "valid" : "invalid")
 				+ " Signature:" + Signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
-				+ " Version:" + context.getVersion() + " Took:" + duration + "ms");
+				+ " Version:" + context.getVersion() + " Took:" + duration + "ms Errors:["+context.getCSVResult()+"] "+toBeAppended);
 		wasCompletelyValid = ((pdfValidity) && (xmlValidity));
 		return sw.toString();
 	}

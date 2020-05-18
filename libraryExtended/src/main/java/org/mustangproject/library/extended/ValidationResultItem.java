@@ -22,10 +22,12 @@ public class ValidationResultItem {
 
 
 	private EPart part;
+	private XMLTools xt;
 
 	public ValidationResultItem(ESeverity sev, String msg) {
 		setSeverity(sev);
 		setMessage(msg);
+		xt=new XMLTools();
 	}
 	public ValidationResultItem setMessage(String msg) {
 		message=msg;
@@ -72,16 +74,16 @@ public class ValidationResultItem {
 			additionalAttributes+=" type=\""+section+"\"";
 		}
 		if (location!=null) {
-			additionalAttributes+=" location=\""+XMLTools.encodeAttribute(location)+"\"";
+			additionalAttributes+=" location=\""+xt.escapeAttributeEntities(location)+"\"";
 		}
 		if (criterion!=null) {
-			additionalAttributes+=" criterion=\""+XMLTools.encodeAttribute(criterion)+"\"";
+			additionalAttributes+=" criterion=\""+xt.escapeAttributeEntities(criterion)+"\"";
 		}
 		if (stacktrace!=null) {
-			additionalContents+="<stacktrace>"+XMLTools.encodeAttribute(stacktrace)+"</stacktrace>";
+			additionalContents+="<stacktrace>"+xt.escapeAttributeEntities(stacktrace)+"</stacktrace>";
 		}
 		hasBeenOutputted=true;
-		return "<"+tagname+additionalAttributes+">"+XMLTools.encodeXML(message+additionalContents)+"</"+tagname+">";
+		return "<"+tagname+additionalAttributes+">"+xt.escapeElementEntities(message+additionalContents)+"</"+tagname+">";
 	}
 	
 	public String getXMLOnce() {

@@ -1,5 +1,6 @@
 package org.mustangproject.library.extended;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import org.slf4j.Logger;
@@ -113,6 +114,19 @@ public class ValidationContext {
 		}
 		res += "<summary status='" + (isValid ? "valid" : "invalid") + "'/>";
 		return res;
+	}
+
+	/***
+	 *
+	 * @return the unique error types as comma separated string
+	 */
+	public String getCSVResult() {
+		ArrayList<String> errorcodes = new ArrayList<String>();
+		for (ValidationResultItem validationResultItem : results) {
+			String errorCodeStr=Integer.toString(validationResultItem.getSection());
+			errorcodes.add(errorCodeStr);
+		}
+		return String.join(",", errorcodes);
 	}
 
 	public void setInvalid() {

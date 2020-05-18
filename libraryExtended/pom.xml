@@ -68,7 +68,7 @@
       <dependency>
          <groupId>com.helger</groupId>
          <artifactId>ph-schematron</artifactId>
-         <version>5.0.8</version>
+         <version>5.6.0</version>
       </dependency>
       <dependency>
          <groupId>org.mustangproject</groupId>

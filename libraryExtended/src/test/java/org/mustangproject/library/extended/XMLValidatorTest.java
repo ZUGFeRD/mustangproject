@@ -99,7 +99,7 @@ public class XMLValidatorTest extends ResourceCase {
 			}
 		}*/
 
-		content = "<xml>" + res + "</xml>";
+		content = "<validation>" + res + "</validation>";
 
 		assertThat(content).valueByXPath("count(//error)")
 				.asInt()
@@ -131,8 +131,8 @@ public class XMLValidatorTest extends ResourceCase {
 			xv.setFilename(tempFile.getAbsolutePath());
 			xv.validate();
 
-			source = Input.fromString("<xml>" + xv.getXMLResult() + "</xml>").build();
-			content = xpath.evaluate("/xml/summary/@status", source);
+			source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
+			content = xpath.evaluate("/validation/summary/@status", source);
 			assertEquals("invalid", content);
 
 			// assertEquals(true, xv.getXMLResult().contains("valid") &&
@@ -157,8 +157,8 @@ public class XMLValidatorTest extends ResourceCase {
 			xv.setFilename(tempFile.getAbsolutePath());
 			xv.validate();
 
-			source = Input.fromString("<xml>" + xv.getXMLResult() + "</xml>").build();
-			content = xpath.evaluate("/xml/summary/@status", source);
+			source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
+			content = xpath.evaluate("/validation/summary/@status", source);
 			assertEquals("invalid", content);
 
 		} catch (IrrecoverableValidationError e) {
