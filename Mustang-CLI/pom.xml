@@ -13,10 +13,6 @@
    <version>2.0.0-SNAPSHOT</version>
    <repositories>
       <repository>
-         <id>mavencentral</id>
-         <url>http://repo.maven.apache.org/maven2</url>
-      </repository>
-      <repository>
          <!-- for jargs -->
          <id>sonatype-oss-public</id>
          <url>https://oss.sonatype.org/content/groups/public/</url>
@@ -32,49 +28,6 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
    </properties>
    <dependencies>
-      <!-- for java9 -->
-      <dependency>
-         <groupId>javax.xml.bind</groupId>
-         <artifactId>jaxb-api</artifactId>
-         <version>2.1</version>
-      </dependency>
-      <!-- for xml pretty print -->
-	  <dependency>
-	 	<groupId>org.dom4j</groupId>
-		<artifactId>dom4j</artifactId>
-		<version>2.1.1</version>
-	  </dependency>
-      <!-- for ph-schematron -->
-      <dependency>
-         <groupId>ch.qos.logback</groupId>
-         <artifactId>logback-classic</artifactId>
-         <version>1.2.3</version>
-      </dependency>
-      <dependency>
-         <groupId>ch.qos.logback</groupId>
-         <artifactId>logback-core</artifactId>
-         <version>1.2.3</version>
-      </dependency>
-      <!-- https://mvnrepository.com/artifact/com.googlecode.slf4j-maven-plugin-log/slf4j-maven-plugin-log -->
-      <dependency>
-         <groupId>com.googlecode.slf4j-maven-plugin-log</groupId>
-         <artifactId>slf4j-maven-plugin-log</artifactId>
-         <version>1.0.0</version>
-      </dependency>
-      <!-- Verapdf plugin <dependency> <groupId>org.verapdf</groupId> <artifactId>core</artifactId> 
-			<version>1.6.2</version> </dependency> -->
-      <!-- embedded verapdf -->
-      <dependency>
-         <groupId>org.verapdf</groupId>
-         <artifactId>validation-model</artifactId>
-         <version>1.12.1</version>
-      </dependency>
-      <!-- https://mvnrepository.com/artifact/com.helger/ph-schematron -->
-      <dependency>
-         <groupId>com.helger</groupId>
-         <artifactId>ph-schematron</artifactId>
-         <version>5.0.8</version>
-      </dependency>
       <dependency>
          <groupId>org.mustangproject</groupId>
          <artifactId>libraryExtended</artifactId>
@@ -83,18 +36,6 @@
         mvn install:install-file -Dfile=mustang-1.5.4-SNAPSHOT.jar -DgroupId=org.mustangproject.ZUGFeRD -DartifactId=mustang -Dversion=1.5.4 -Dpackaging=jar -DgeneratePom=true
         -->
       </dependency>
-      <dependency>
-  		<groupId>org.xmlunit</groupId>
-  		<artifactId>xmlunit-core</artifactId>
-  		<version>2.6.3</version>
-      </dependency>
-      <dependency>
-          <groupId>org.xmlunit</groupId>
-          <artifactId>xmlunit-assertj</artifactId>
-          <version>2.6.3</version>
-          <scope>test</scope>
-      </dependency>
-      
       <dependency>
          <!-- for commandline options -->
          <groupId>com.sanityinc</groupId>
