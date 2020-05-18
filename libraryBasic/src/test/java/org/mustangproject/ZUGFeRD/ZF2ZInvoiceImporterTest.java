@@ -36,10 +36,12 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 
-
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ZF2InvoiceImporterTest extends TestCase  {
-	final String TARGET_PDF = "./target/testout-ZF2new.pdf";
+/***
+ * Classname ZF2ZInvoiceImporterTest is alphabetical behind the tests which will create the file
+ * used for this import, testout-ZF2New.pdf
+ */
+public class ZF2ZInvoiceImporterTest extends TestCase  {
+	final String TARGET_PDF = "./target/testout-ZF2New.pdf";
 
 	public void testInvoiceImport() {
 
