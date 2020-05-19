@@ -235,6 +235,25 @@ public class ZUGFeRDImporter {
 
 
 	/**
+	 * Wrapper for protected method
+	 * @return the extracted String for the specific path in the document
+	 */
+	public String wExtractString(String xpathStr) {
+		return extractString(xpathStr);
+	}
+
+
+	/**
+	 * @return an ISO XXX coded datetime string
+	 */
+	public String getISOdate(String xpathString) {
+		String date = extractString(xpathString);
+		//do some conversion magic here
+		return date;
+	}
+
+
+	/**
 	 * @return the reference (purpose) the sender specified for this invoice
 	 */
 	public String getForeignReference() {
