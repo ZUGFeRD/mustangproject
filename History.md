@@ -1,3 +1,20 @@
+2.0 todo
+- verapdf as prevalidation
+- remove jaxb
+- remove migration
+- visualization?
+- factory for xrechnung
+- new sample innvoice
+- complete or discard read into push provider
+
+done
+- 2.1 now default
+- pushprovider
+- integrates ZUV
+- integrates mustangserver
+- modular project setup
+
+
 1.7.7
 =====
 
