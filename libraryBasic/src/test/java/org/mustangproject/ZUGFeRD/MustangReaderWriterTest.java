@@ -203,6 +203,13 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), "RE-20170509/505");
 		assertEquals(zi.getBankName(), "Commerzbank");
+		assertEquals(zi.getSellerTradePartyAddress().getCityName(), "Stadthausen");
+		assertEquals(zi.getSellerTradePartyAddress().getCountryID(), "DE");
+		assertEquals(zi.getSellerTradePartyAddress().getCountrySubDivisionName(), null);
+		assertEquals(zi.getSellerTradePartyAddress().getLineOne(), "Ecke 12");
+		assertEquals(zi.getSellerTradePartyAddress().getLineThree(), null);
+		assertEquals(zi.getSellerTradePartyAddress().getLineTwo(), null);
+		assertEquals(zi.getSellerTradePartyAddress().getPostcodeCode(), "12345");
 	}
 
 	public void testForeignImport() {
