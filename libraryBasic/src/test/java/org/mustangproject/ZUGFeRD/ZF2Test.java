@@ -208,6 +208,7 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals(zi.getAmount(), "571.04");
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getDocumentCode(),"380");
+		assertEquals(zi.getReference(),"AB321");
 		assertEquals(zi.getAmount(), "571.04");
 		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
 		assertEquals(zi.getIBAN(),getTradeSettlementPayment()[0].getOwnIBAN());

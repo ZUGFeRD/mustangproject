@@ -276,7 +276,16 @@ public class ZUGFeRDImporter {
 	 * @return the referred document
 	 */
 	public String getReference() {
-		return extractString("//ApplicableHeaderTradeAgreement/BuyerReference");
+		try {
+			if (getVersion() == 1) {
+				return extractString("//ApplicableSupplyChainTradeAgreement/BuyerReference");
+			} else {
+				return extractString("//ApplicableHeaderTradeAgreement/BuyerReference");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
 	}
 
 
