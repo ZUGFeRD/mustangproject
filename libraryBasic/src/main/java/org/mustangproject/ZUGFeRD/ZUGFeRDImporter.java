@@ -259,7 +259,16 @@ public class ZUGFeRDImporter {
 	 * @return the document code
 	 */
 	public String getDocumentCode() {
-		return extractString("//HeaderExchangedDocument/TypeCode");
+		try {
+			if (getVersion() == 1) {
+				return extractString("//HeaderExchangedDocument/TypeCode");
+			} else {
+				return extractString("//ExchangedDocument/TypeCode");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
 	}
 
 
@@ -458,6 +467,10 @@ public class ZUGFeRDImporter {
 		return s.hasNext() ? s.next() : "";
 	}
 
+	/**
+	 * returns an instance of PostalTradeAddress for SellerTradeParty section
+	 * @return an instance of PostalTradeAddress
+	 */
 	public PostalTradeAddress getSellerTradePartyAddress() {
 
 		NodeList nl = null;
