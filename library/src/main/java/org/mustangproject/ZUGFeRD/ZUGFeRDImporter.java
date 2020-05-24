@@ -30,9 +30,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.*;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
@@ -41,6 +39,8 @@ import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ZUGFeRDImporter {
@@ -231,6 +231,15 @@ public class ZUGFeRDImporter {
 			throw new ZUGFeRDExportException(e);
 		}
 		return result;
+	}
+
+
+	/**
+	 * Wrapper for protected method exracteString
+	 * @return the extracted String for the specific path in the document
+	 */
+	public String wExtractString(String xpathStr) {
+		return extractString(xpathStr);
 	}
 
 
@@ -447,6 +456,75 @@ public class ZUGFeRDImporter {
 		// https://community.oracle.com/blogs/pat/2004/10/23/stupid-scanner-tricks
 		Scanner s = new Scanner(is, "UTF-8").useDelimiter("\\A");
 		return s.hasNext() ? s.next() : "";
+	}
+
+	public PostalTradeAddress getSellerTradePartyAddress() {
+
+		NodeList nl = null;
+		PostalTradeAddress address = new PostalTradeAddress();
+
+		try {
+			if (getVersion() == 1) {
+				nl = getNodeListByPath("//CrossIndustryDocument//SpecifiedSupplyChainTradeTransaction//ApplicableSupplyChainTradeAgreement//SellerTradeParty//PostalTradeAddress");
+			} else {
+				nl = getNodeListByPath("//CrossIndustryInvoice//SupplyChainTradeTransaction//ApplicableHeaderTradeAgreement//SellerTradeParty//PostalTradeAddress");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return address;
+		}
+
+		if (nl != null) {
+			for (int i = 0; i < nl.getLength(); i++) {
+				Node n = nl.item(i);
+				NodeList nodes = n.getChildNodes();
+				for (int j = 0; j < nodes.getLength(); j++) {
+					n = nodes.item(j);
+					short nodeType = n.getNodeType();
+					if (nodeType==Node.ELEMENT_NODE){
+						switch (n.getNodeName()) {
+							case "ram:PostcodeCode":
+								address.setPostCodeCode(n.getFirstChild().getNodeValue());
+								break;
+							case "ram:LineOne":
+								address.setLineOne(n.getFirstChild().getNodeValue());
+								break;
+							case "ram:LineTwo":
+								address.setLineTwo(n.getFirstChild().getNodeValue());
+								break;
+							case "ram:LineThree":
+								address.setLineThree(n.getFirstChild().getNodeValue());
+								break;
+							case "ram:CityName":
+								address.setCityName(n.getFirstChild().getNodeValue());
+								break;
+							case "ram:CountryID":
+								address.setCountryID(n.getFirstChild().getNodeValue());
+								break;
+							case "ram:CountrySubDivisionName":
+								address.setCountrySubDivisionName(n.getFirstChild().getNodeValue());
+								break;
+						}
+					}
+				}
+			}
+		}
+		return address;
+	}
+
+	public NodeList getNodeListByPath(String path) {
+
+		XPathFactory xpathFact = XPathFactory.newInstance();
+		XPath xPath = xpathFact.newXPath();
+		String s = path;
+
+		try {
+			XPathExpression xpr = xPath.compile(s);
+			return (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

@@ -213,7 +213,13 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals(zi.getIBAN(),getTradeSettlementPayment()[0].getOwnIBAN());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
-		
+		assertEquals(zi.getSellerTradePartyAddress().getPostcodeCode(), "12345");
+		assertEquals(zi.getSellerTradePartyAddress().getLineOne(), "Ecke 12");
+		assertEquals(zi.getSellerTradePartyAddress().getLineTwo(), null);
+		assertEquals(zi.getSellerTradePartyAddress().getLineThree(), null);
+		assertEquals(zi.getSellerTradePartyAddress().getCountrySubDivisionName(), null);
+		assertEquals(zi.getSellerTradePartyAddress().getCountryID(), "DE");
+		assertEquals(zi.getSellerTradePartyAddress().getCityName(), "Stadthausen");
 		
 		try {
 			assertEquals(zi.getVersion(), 2);
