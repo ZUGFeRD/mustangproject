@@ -8,7 +8,8 @@
 - complete or discard read into push provider
 - validate as library doc
 - javadoc export
-
+- prompt for source file for validation has to be pdf
+- be able to disable "source pdf set to timeout"
 done
 - 2.1 now default
 - pushprovider

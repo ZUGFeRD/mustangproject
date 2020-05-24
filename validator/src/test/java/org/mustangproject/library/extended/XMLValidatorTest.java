@@ -113,6 +113,35 @@ public class XMLValidatorTest extends ResourceCase {
 
 		ctx.clear();
 
+		try {
+
+			tempFile = getResourceAsFile("validv2.xml");
+
+			xv.setFilename(tempFile.getAbsolutePath());
+
+			xv.validate();
+		} catch (IrrecoverableValidationError e) {
+			// ignore, will be in XML output anyway
+		}
+		res = xv.getXMLResult();
+
+		content = "<validation>" + res + "</validation>";
+
+		assertThat(content).valueByXPath("count(//error)")
+				.asInt()
+				.isEqualTo(0);
+
+		assertThat(content).valueByXPath("count(//notice)")
+				.asInt()
+				.isEqualTo(3); // 3 notices RE XRechnung
+		assertThat(content).valueByXPath("/validation/summary/@status")
+				.asString()
+				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+		assertThat(content).valueByXPath("/validation/xml/@status")
+				.asString()
+				.isEqualTo("valid");
+
+		ctx.clear();
 		tempFile = getResourceAsFile("validV2Basic.xml");
 		try {
 
