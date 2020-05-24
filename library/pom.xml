@@ -11,7 +11,7 @@
 	<artifactId>library</artifactId>
 	<version>2.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>Library for to write and read FacturX 1.0 and ZUGFeRD 1.0 and 2.1 e-invoices. A PDF/A file is required, the XML can be generated or provided. </name>
+	<name>Library to write and read FacturX 1.0 and ZUGFeRD 1.0 and 2.1 e-invoices. A PDF/A file is required, the XML can be generated or provided. </name>
 	<description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs
     </description>
 	<url>http://www.mustangproject.org/</url>

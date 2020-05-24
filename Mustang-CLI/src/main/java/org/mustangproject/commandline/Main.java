@@ -52,26 +52,26 @@ public class Main {
 	}
 
 	private static String getUsage() {
-		return "Usage: [-d,--directory] [-l,--listfromstdin] [-i,--ignorefileextension] | [-c,--combine] | [-e,--extract] | [-u,--upgrade] | [-a,--a3only] | [-h,--help] \r\n"
-				+ "* Count operations\n" + "        -d, --directory count ZUGFeRD files in directory to be scanned\n"
+		return "Usage: --action metrics|combine|extract|a3only|upgrade|validate [-d,--directory] [-l,--listfromstdin] [-i,--ignorefileextension] | [-c,--combine] | [-e,--extract] | [-u,--upgrade] | [-a,--a3only] | [-h,--help] \r\n"
+				+ "* merics\n" + "        -d, --directory count ZUGFeRD files in directory to be scanned\n"
 				+ "                If it is a directory, it will recurse.\n"
 				+ "        -l, --listfromstdin     count ZUGFeRD files from a list of linefeed separated files on runtime.\n"
 				+ "                It will start once a blank line has been entered.\n" + "\n"
 				+ "        Additional parameter for both count operations\n"
 				+ "        [-i, --ignorefileextension]     Check for all files (*.*) instead of PDF files only (*.pdf)\n"
-				+ "\n" + "* Merge operations\n" + "        -e, --extract   extract ZUGFeRD PDF to XML file\n"
+				+ "\n" + "* Merge actions\n" + "        extract   extract ZUGFeRD PDF to XML file\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source <filename>]: set input PDF file\n"
 				+ "                [--out <filename>]: set output XML file\n"
-				+ "        -u, --upgrade   upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
+				+ "        upgrade   upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source <filename>]: set input XML ZUGFeRD 1 file\n"
 				+ "                [--out <filename>]: set output XML ZUGFeRD 2 file\n"
-				+ "        -a, --a3only    upgrade from PDF/A1 to A3 only (no ZUGFeRD data attached)\n"
+				+ "        a3only    upgrade from PDF/A1 to A3 only (no ZUGFeRD data attached)\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source <filename>]: set input PDF file\n"
 				+ "                [--out <filename>]: set output PDF file\n"
-				+ "        -c, --combine   combine XML and PDF file to ZUGFeRD PDF file\n"
+				+ "        combine   combine XML and PDF file to ZUGFeRD PDF file\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source <filename>]: set input PDF file\n"
 				+ "                [--source-xml <filename>]: set input XML file\n"
@@ -80,7 +80,11 @@ public class Main {
 				+ "                [--version <1|2>]: set ZUGFeRD version\n"
 				+ "                [--profile <...>]: set ZUGFeRD profile\n"
 				+ "                        For ZUGFeRD v1: <B>ASIC, <C>OMFORT or <E>XTENDED\n"
-				+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, E<X>TENDED ";
+				+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, E<X>TENDED "
+				+ "        validate  validate XML or PDF file \n"
+				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
+				+ "                [--source <filename>]: input PDF or XML file\n"
+				;
 	}
 
 	private static void printHelp() {
@@ -254,23 +258,6 @@ public class Main {
 			// --out: output file
 			Option<String> outOption = parser.addStringOption("out");
 
-			// Command: Extract XML
-			// --extract
-			// (--source: input PDF file)
-			// (--out: output XML file)
-			Option<Boolean> extractOption = parser.addBooleanOption('e', "extract");
-
-			// Command: Migrating ZUGFeRD 1 to 2
-			// --upgrade
-			// (--source: input XML ZUGFeRD 1 file)
-			// (--out: output XML ZUGFeRD 2 file)
-			Option<Boolean> upgradeOption = parser.addBooleanOption('u', "upgrade");
-
-			// Command: Convert PDF/A-1 to PDF/A-3
-			// --a3only
-			// (--source: input PDF file)
-			// (--out: output PDF file)
-			Option<Boolean> a3onlyOption = parser.addBooleanOption('a', "a3only");
 
 			// Command: Combining PDF and XML
 			// --combine
@@ -279,7 +266,6 @@ public class Main {
 			// (--out: output PDF file)
 			// (--version: ZUGFeRD version)
 			// (--profile: ZUGFeRD profile)
-			Option<Boolean> combineOption = parser.addBooleanOption('c', "combine");
 			Option<String> sourceXmlOption = parser.addStringOption("source-xml");
 			Option<String> formatOption = parser.addStringOption('f', "format");
 			Option<String> zugferdVersionOption = parser.addStringOption("version");
@@ -307,12 +293,8 @@ public class Main {
 			String action = parser.getOptionValue(actionOption);
 			String directoryName = parser.getOptionValue(dirnameOption);
 			Boolean filesFromStdIn = parser.getOptionValue(filesFromStdInOption, Boolean.FALSE);
-			Boolean combineRequested = parser.getOptionValue(combineOption, Boolean.FALSE) || ((action!=null)&&(action.equals("combine")));
-			Boolean extractRequested = parser.getOptionValue(extractOption, Boolean.FALSE) || ((action!=null)&&(action.equals("extract")));
 			Boolean helpRequested = parser.getOptionValue(helpOption, Boolean.FALSE)  || ((action!=null)&&(action.equals("help")));
-			Boolean upgradeRequested = parser.getOptionValue(upgradeOption, Boolean.FALSE)  || ((action!=null)&&(action.equals("upgrade")));
 			Boolean ignoreFileExt = parser.getOptionValue(ignoreFileExtOption, Boolean.FALSE);
-			Boolean a3only = parser.getOptionValue(a3onlyOption, Boolean.FALSE)  || ((action!=null)&&(action.equals("a3")));
 			String sourceName = parser.getOptionValue(sourceOption);
 			String sourceXMLName = parser.getOptionValue(sourceXmlOption);
 			String outName = parser.getOptionValue(outOption);
@@ -323,29 +305,24 @@ public class Main {
 			if (helpRequested) {
 				printHelp();
 				optionsRecognized=true;
-			} else if (((directoryName != null) && (directoryName.length() > 0)) || filesFromStdIn.booleanValue()) {
+			} else if ((action!=null)&&(action.equals("metrics"))) {
 				performMetrics(directoryName, filesFromStdIn, ignoreFileExt);
 				optionsRecognized=true;
-			} else if (combineRequested) {
+			} else if ((action!=null)&&(action.equals("combine")))  {
 				performCombine(sourceName, sourceXMLName, outName, format, zugferdVersion, zugferdProfile);
 				optionsRecognized=true;
-			} else if (extractRequested) {
+			} else if ((action!=null)&&(action.equals("extract"))) {
 				performExtract(sourceName, outName);
 				optionsRecognized=true;
-			} else if (a3only) {
+			} else if ((action!=null)&&(action.equals("a3only")))  {
 				performConvert(sourceName, outName);
 				optionsRecognized=true;
-			} else if (upgradeRequested) {
+			} else if ((action!=null)&&(action.equals("upgrade"))) {
 				performUpgrade(sourceName, outName);
 				optionsRecognized=true;
 			} else if ((action!=null)&&(action.equals("validate"))) {
-				ZUGFeRDValidator zfv=new ZUGFeRDValidator();
-				System.out.println(zfv.validate(sourceName));
 
-				optionsRecognized = !zfv.hasOptionsError();
-				if (!zfv.wasCompletelyValid()) {
-					System.exit(-1);
-				}
+				optionsRecognized=performValidate(sourceName);
 
 			} else {
 				// no argument or argument unknown
@@ -358,6 +335,23 @@ public class Main {
 			System.exit(-1);
 		}
 
+	}
+
+	private static boolean performValidate(String sourceName) {
+		boolean optionsRecognized;
+		if (sourceName == null) {
+			sourceName = getFilenameFromUser("Source PDF", "invoice.pdf", "pdf", true, false);
+		} else {
+			System.out.println("Source PDF set to " + sourceName);
+		}
+
+		ZUGFeRDValidator zfv=new ZUGFeRDValidator();
+		System.out.println(zfv.validate(sourceName));
+		optionsRecognized = !zfv.hasOptionsError();
+		if (!zfv.wasCompletelyValid()) {
+			System.exit(-1);
+		}
+		return optionsRecognized;
 	}
 
 	private static void performUpgrade(String xmlName, String outName) throws IOException, TransformerException {

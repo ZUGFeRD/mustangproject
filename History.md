@@ -6,6 +6,8 @@
 - factory for xrechnung
 - new sample innvoice
 - complete or discard read into push provider
+- validate as library doc
+- javadoc export
 
 done
 - 2.1 now default
@@ -15,6 +17,7 @@ done
 - integrates mustangserver
 - modular project setup
 - getSellerTradePartyAddress (PR #157 ) thanks to aberndt-hub 
+- switched from eclipse to IntelliJ
 
 
 1.7.7
