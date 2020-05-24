@@ -46,5 +46,38 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 		assertEquals(true, res.contains("status=\"valid\""));
 		assertEquals(false, res.contains("status=\"invalid\""));
 
+		tempFile = getResourceAsFile("validAvoir_FR_type380_BASICWL.pdf");
+		zfv = new ZUGFeRDValidator();
+
+		res = zfv.validate(tempFile.getAbsolutePath());
+		assertEquals(true, res.contains("status=\"valid\""));
+		assertEquals(false, res.contains("status=\"invalid\""));
+
+	}
+
+	/***
+	 * the XMLValidatorTests only cover the <xml></xml> part, this one includes the root element and
+	 * the global <summary></summary> part as well
+	 */
+	public void testXMLValidation() {
+		File tempFile = getResourceAsFile("validV2.xml");
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+		assertThat(res).valueByXPath("count(//error)")
+				.asInt()
+				.isEqualTo(0);
+
+		assertThat(res).valueByXPath("count(//notice)")
+				.asInt()
+				.isEqualTo(3); // 3 notices RE XRechnung
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.asString()
+				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+				.asString()
+				.isEqualTo("valid");
+
 	}
 }

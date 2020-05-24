@@ -257,7 +257,6 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					"	</rsm:SupplyChainTradeTransaction>\n" +
 					"</rsm:CrossIndustryInvoice>";
 			zea1.setZUGFeRDXMLData(ownZUGFeRDXML.getBytes("UTF-8"));
-
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			zea1.disableAutoClose(true);
 			zea1.export(TARGET_PDF);
@@ -265,7 +264,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			zea1.close();
 			String pdfContent = baos.toString("UTF-8");
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
-			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
+			assertFalse(pdfContent.indexOf("<fx:ConformanceLevel>EN 16931</fx:ConformanceLevel>") == -1);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -303,6 +302,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			ZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1Factory()
 					.setProducer("My Application")
 					.setCreator("Test")
+					.setZUGFeRDVersion(1)
 					.setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.BASIC)
 					.load(SOURCE_PDF);
 			/* we have much more information than just in the basic profile (comfort or extended) but it's perfectly valid to provide more information, just not less. */
@@ -448,7 +448,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			zea1.close();
 			String pdfContent = baos.toString("UTF-8");
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
-			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>BASIC</zf:ConformanceLevel>") == -1);
+			assertFalse(pdfContent.indexOf("<fx:ConformanceLevel>BASIC</fx:ConformanceLevel>") == -1);
 
 		} catch (IOException e) {
 			e.printStackTrace();

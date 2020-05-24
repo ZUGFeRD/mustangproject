@@ -56,7 +56,7 @@ public class ZUGFeRDExporter implements Closeable {
 
 	public static final int DefaultZUGFeRDVersion = 2;
 
-	private boolean isFacturX = false;
+	private boolean isFacturX = true;
 
 	/**
 	 * To use the ZUGFeRD exporter, implement IZUGFeRDExportableTransaction in
@@ -210,11 +210,21 @@ public class ZUGFeRDExporter implements Closeable {
 		setZUGFeRDVersion(DefaultZUGFeRDVersion);
 	}
 
+	/**
+	 * Factur-X is now set by default since ZF 2.1, you have to disable it if you dont wont it
+	 * Generate ZF2.1 files with filename factur-x.xml
+	 * @deprecated
+	 * */
 	public void setFacturX() {
-		setZUGFeRDVersion(2);
 		isFacturX = true;
 	}
 
+	/***
+	 * Generate ZF2.0/2.1 files with filename zugferd-invoice.xml instead of factur-x.xml
+	 */
+	public void disableFacturX() {
+		isFacturX = false;
+	}
 	/**
 	 * All files are PDF/A-3, setConformance refers to the level conformance.
 	 * 

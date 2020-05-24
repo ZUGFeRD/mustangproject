@@ -10,6 +10,8 @@
 - javadoc export
 - prompt for source file for validation has to be pdf
 - be able to disable "source pdf set to timeout"
+- automated tests zuv/verapdf validate created library test files
+- unify loggers
 done
 - 2.1 now default
 - pushprovider
