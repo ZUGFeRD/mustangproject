@@ -35,7 +35,6 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.XMLTools;
-import org.mustangproject.toecount.Toecount;
 
 public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
@@ -574,7 +573,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				zugferdData = zugferdRaw;
 			}
 		} catch (UnsupportedEncodingException e) {
-			Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, e);
+			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
 		} // $NON-NLS-1$
 	}
 

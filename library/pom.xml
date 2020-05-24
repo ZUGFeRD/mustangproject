@@ -8,10 +8,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mustangproject</groupId>
-	<artifactId>libraryBasic</artifactId>
+	<artifactId>library</artifactId>
 	<version>2.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>libraryBasic</name>
+	<name>Library for to write and read FacturX 1.0 and ZUGFeRD 1.0 and 2.1 e-invoices. A PDF/A file is required, the XML can be generated or provided. </name>
 	<description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs
     </description>
 	<url>http://www.mustangproject.org/</url>
@@ -19,7 +19,7 @@
 		<connection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</connection>
 		<developerConnection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</developerConnection>
 		<url>https://github.com/ZUGFeRD/mustangproject</url>
-		<tag>mustang-1.7.3</tag>
+		<tag>mustang-2.0.0-SNAPSHOT</tag>
 	</scm>
 	<repositories>
 		<repository><!-- for jargs -->

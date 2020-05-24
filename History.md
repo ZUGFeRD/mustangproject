@@ -10,7 +10,8 @@
 done
 - 2.1 now default
 - pushprovider
-- integrates ZUV
+- integrates validator
+- validator now additionally supports xrechnung 
 - integrates mustangserver
 - modular project setup
 

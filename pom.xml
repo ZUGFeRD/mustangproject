@@ -1,86 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.mustangproject</groupId>
-	<artifactId>core</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
-	<name>Mustang</name>
-	
-<modules>
-    <module>libraryBasic</module>
-    <module>libraryExtended</module>
-    <module>Mustang-CLI</module>
-    <module>Mustang-Server</module>
-</modules>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.mustangproject</groupId>
+    <artifactId>core</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Mustang</name>
 
-	<description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs
+    <modules>
+        <module>library</module>
+        <module>validator</module>
+        <module>Mustang-CLI</module>
+    </modules>
+
+    <description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs
     </description>
-	<url>http://www.mustangproject.org/</url>
-	<scm>
-		<connection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</connection>
-		<developerConnection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</developerConnection>
-		<url>https://github.com/ZUGFeRD/mustangproject</url>
-		<tag>mustang-1.7.3</tag>
-	</scm>
-	<repositories>
-		<repository><!-- for jargs -->
-			<id>sonatype-oss-public</id>
-			<url>https://oss.sonatype.org/content/groups/public/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	<distributionManagement>
-		<repository>
-			<id>internal.repo</id>
-			<name>Temporary Staging Repository</name>
-			<url>file://${project.build.directory}/mvn-repo</url>
-		</repository>
-	</distributionManagement>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<github.global.server>github</github.global.server>
-		<additionalparam>-Xdoclint:none</additionalparam>
-		<!-- Skip error check for javadoc -->
-		<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-	</properties>
-		
-	<mailingLists>
-		<mailingList>
-			<name>User List</name>
-			<archive>https://groups.google.com/forum/?hl=de#!forum/mustangproject</archive>
-		</mailingList>
-	</mailingLists>
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-			<comments>A business-friendly OSS license</comments>
-		</license>
-	</licenses>
-	<developers>
-		<developer>
-			<name>Jochen Stärk</name>
-			<email>jstaerk@usegroup.de</email>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-		</developer>
-		<developer>
-			<name>Alexander Schmidt</name>
-			<email>schmidt.alexander@mail.de</email>
-			<roles>
-				<role>developer</role>
-			</roles>
-		</developer>
-	</developers>
+    <url>http://www.mustangproject.org/</url>
+    <scm>
+        <connection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</connection>
+        <developerConnection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</developerConnection>
+        <url>https://github.com/ZUGFeRD/mustangproject</url>
+        <tag>mustang-1.7.3</tag>
+    </scm>
+    <repositories>
+        <repository><!-- for jargs -->
+            <id>sonatype-oss-public</id>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <distributionManagement>
+        <repository>
+            <id>internal.repo</id>
+            <name>Temporary Staging Repository</name>
+            <url>file://${project.build.directory}/mvn-repo</url>
+        </repository>
+    </distributionManagement>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <github.global.server>github</github.global.server>
+        <additionalparam>-Xdoclint:none</additionalparam>
+        <!-- Skip error check for javadoc -->
+        <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
+    <mailingLists>
+        <mailingList>
+            <name>User List</name>
+            <archive>https://groups.google.com/forum/?hl=de#!forum/mustangproject</archive>
+        </mailingList>
+    </mailingLists>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Jochen Stärk</name>
+            <email>jstaerk@usegroup.de</email>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Alexander Schmidt</name>
+            <email>schmidt.alexander@mail.de</email>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
 </project>
