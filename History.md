@@ -14,6 +14,7 @@ done
 - validator now additionally supports xrechnung 
 - integrates mustangserver
 - modular project setup
+- getSellerTradePartyAddress (PR #157 ) thanks to aberndt-hub 
 
 
 1.7.7
