@@ -729,11 +729,9 @@ public class ZUGFeRDImporter {
 		try {
 			return new BigDecimal(nodeValue);
 		} catch (Exception e) {
-			e.printStackTrace();
 			try {
 				return new BigDecimal(Float.valueOf(nodeValue));
 			} catch (Exception ex) {
-				ex.printStackTrace();
 				return new BigDecimal("0.00");
 			}
 		}

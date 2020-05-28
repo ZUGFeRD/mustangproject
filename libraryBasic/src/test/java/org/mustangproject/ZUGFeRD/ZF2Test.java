@@ -235,7 +235,6 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals(zi.getLineItemList().get(0).product.getName(), "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung");
 		assertEquals(zi.getLineItemList().get(0).product.getDescription(), "");
 
-		int i = 1;
 		try {
 			assertEquals(zi.getVersion(), 2);
 		} catch (Exception e) {
