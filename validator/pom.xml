@@ -133,7 +133,7 @@
                 <configuration>
                     <schematronDirectory>${basedir}/src/main/resources/schematron</schematronDirectory>
                     <xsltDirectory>${basedir}/src/main/resources/xslt</xsltDirectory>
-                    <schematronPattern>**/XRechnung-CII-validation.sch</schematronPattern>
+                    <schematronPattern>**/XRechnung-CII-validation.sch</schematronPattern><!-- the xrechnung refers to fragments also called ...sch, which will cause the build to fail if not excluded -->
                 </configuration>
                 <executions>
                     <execution>
