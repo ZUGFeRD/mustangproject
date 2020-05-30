@@ -125,6 +125,24 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <!-- be able to generate XSLT from XRechnung Schematron-->
+            <plugin>
+                <groupId>com.helger.maven</groupId>
+                <artifactId>ph-schematron-maven-plugin</artifactId>
+                <version>5.6.0</version>
+                <configuration>
+                    <schematronDirectory>${basedir}/src/main/resources/schematron</schematronDirectory>
+                    <xsltDirectory>${basedir}/src/main/resources/xslt</xsltDirectory>
+                    <schematronPattern>**/XRechnung-CII-validation.sch</schematronPattern>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>convert</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- allow getImplementationVersion for the pom.xml -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

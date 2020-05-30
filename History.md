@@ -21,10 +21,11 @@ done
 - modular project setup
 - getSellerTradePartyAddress (PR #157 ) thanks to aberndt-hub 
 - switched from eclipse to IntelliJ
-
+- added ph-schematron-maven-plugin so that xrechnung xslt can be generated
 
 1.7.7
 =====
+2020-05-26
 
 - Refactored comparison operator for ChargeIndicator https://github.com/ZUGFeRD/mustangproject/pull/153
 - ZUGFeRD2PullProvider needs getDueDate() although getPaymentTermDescription() is defined  https://github.com/ZUGFeRD/mustangproject/pull/155
