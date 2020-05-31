@@ -7,13 +7,68 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 import java.math.BigDecimal;
 
 public class Item implements IZUGFeRDExportableItem {
-	protected BigDecimal price, quantity;
+	protected BigDecimal price, quantity, tax, grossPrice, lineTotalAmount;
+	protected String id, sellerAssignedID, buyerAssignedID;
 	protected Product product;
 
 	public Item(Product product, BigDecimal price, BigDecimal quantity) {
 		this.price = price;
 		this.quantity = quantity;
 		this.product = product;
+	}
+
+	public BigDecimal getLineTotalAmount() {
+		return lineTotalAmount;
+	}
+
+	public Item setLineTotalAmount(BigDecimal lineTotalAmount) {
+		this.lineTotalAmount = lineTotalAmount;
+		return this;
+	}
+
+	public String getSellerAssignedID() {
+		return sellerAssignedID;
+	}
+
+	public Item setSellerAssignedID(String sellerAssignedID) {
+		this.sellerAssignedID = sellerAssignedID;
+		return this;
+	}
+
+	public String getBuyerAssignedID() {
+		return buyerAssignedID;
+	}
+
+	public Item setBuyerAssignedID(String buyerAssignedID) {
+		this.buyerAssignedID = buyerAssignedID;
+		return this;
+	}
+
+	public BigDecimal getGrossPrice() {
+		return grossPrice;
+	}
+
+	public Item setGrossPrice(BigDecimal grossPrice) {
+		this.grossPrice = grossPrice;
+		return this;
+	}
+
+	public BigDecimal getTax() {
+		return tax;
+	}
+
+	public Item setTax(BigDecimal tax) {
+		this.tax = tax;
+		return this;
+	}
+
+	public Item setId(String id) {
+		this.id = id;
+		return this;
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	@Override
@@ -25,6 +80,8 @@ public class Item implements IZUGFeRDExportableItem {
 		this.price = price;
 		return this;
 	}
+
+
 
 	@Override
 	public BigDecimal getQuantity() {
