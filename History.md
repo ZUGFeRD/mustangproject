@@ -1,7 +1,34 @@
+2.0 todo
+- verapdf as prevalidation
+- remove jaxb
+- remove migration
+- visualization?
+- factory for xrechnung
+- new sample innvoice
+- complete or discard read into push provider
+- validate as library doc
+- javadoc export
+- prompt for source file for validation has to be pdf
+- be able to disable "source pdf set to timeout"
+- automated tests zuv/verapdf validate created library test files
+- unify loggers
+done
+- 2.1 now default
+- pushprovider
+- integrates validator
+- validator now additionally supports xrechnung 
+- integrates mustangserver
+- modular project setup
+- getSellerTradePartyAddress (PR #157 ) thanks to aberndt-hub 
+- switched from eclipse to IntelliJ
+- added ph-schematron-maven-plugin so that xrechnung xslt can be generated
+
 1.7.7
 =====
+2020-05-26
 
 - Refactored comparison operator for ChargeIndicator https://github.com/ZUGFeRD/mustangproject/pull/153
+- ZUGFeRD2PullProvider needs getDueDate() although getPaymentTermDescription() is defined  https://github.com/ZUGFeRD/mustangproject/pull/155
 - #148 support additional documents for items
 - #154 german VAT ID may not be used for sellercontact scheme id
 

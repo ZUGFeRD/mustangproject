@@ -1,22 +1,43 @@
+
+## General approach
+
+1. build
+
+as excercise to check if the neccessary tools are there, the build is in a stable state and works on your platform, e.g. download and extract https://github.com/ZUGFeRD/mustangproject/archive/master.zip and run ./mvnw clean package
+
+Mvnw is a maven wrapper which will download maven.Maven is the dependency management tool which will download all libraries, their dependencies, and build the whole thing.
+
+You will need a Java JDK, e.g. https://www.azul.com/downloads/zulu-community/?architecture=x86-64-bit&package=jdk
+
+If that does not work feel free to address the community support mailing list with error messages/steps to reproduce.
+
+You may already start developing what you wanted. Of course you can use any editor or IDE you like, I suggest Intellij Community Edition https://www.jetbrains.com/de-de/idea/download/
+
+
+2. fork
+
+Once you can build, the idea is that you contribute patches via pull requests. For this you need a github account and  a personal copy of the repository to store your changes in. Just klick fork on the mustangproject. On your copy you will have git write access. My suggestion as git client is sourcetree (I can send you instructions how to set it up).
+
+3. branch
+
+If you do a pull request, please do a feature branch, e.g. if you are working on a feature abc you could call your branch feature_abc. Merge requests unfortunately don't work if you don't have a branch you request merge of. Technically we follow the "github flow" strategy (not to be exchanged with the more sophisticated "git flow" strategy)
+
+4. test
+
+Most of mustang is a library, adding (autmated junit) test cases is often not only the most sustainable but also the fastest way to see if new/changed functionality works. If something is changed so that old test cases break on purpose please do not just remove them but take the time to fix the test cases
+
+
+
 ## New build
 
-Target platform is java 1.7
+Target platform is java 1.8
 
 ## Build
 
-Toecount is now part of the package which can be build with
+The package can be build with
 ```
-mvn clean package
+mvnw clean package
 ```
-
-## Eclipse 
-
-Eclipse XPath Evaluation plugin from the Eclipse Marketplace provides a very handy view to apply XPath on a XML file, useful e.g. when you try XPath expressions or you only have the Xpath, not the line number, to a problem.
-
-To be able to validate against schema files, enter Settings|XML|XML Catalog and add the location of e.g.
-zugferd2p0_en16931.xsd, which will resolve to the key (namespace)
-urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100, just as ZUGFeRD1p0.xsd will provide the key for
-urn:ferd:CrossIndustryDocument:invoice:1p0
 
 ## Test
 
