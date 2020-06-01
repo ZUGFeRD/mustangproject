@@ -1,6 +1,6 @@
-package org.mustangproject.validator;
+package org.mustangproject.commandline;
 
-import static org.xmlunit.assertj.XmlAssert.assertThat;
+
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -12,14 +12,23 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xmlunit.builder.Input;
+import org.xmlunit.xpath.JAXPXPathEngine;
+import org.xmlunit.xpath.XPathEngine;
+import org.mustangproject.validator.ZUGFeRDValidator;
 
-public  class TestFileWalker
+import static org.xmlunit.assertj.XmlAssert.assertThat;
+
+public  class ValidatorFileWalker
     extends SimpleFileVisitor<Path> {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ValidatorFileWalker.class.getCanonicalName()); // log
 	protected PathMatcher matcher;
 	protected ZUGFeRDValidator zul;
 	protected int fileCount=1;
 
-	public TestFileWalker() {
+	public ValidatorFileWalker() {
 		this.zul = new ZUGFeRDValidator();
 		;
 		matcher = FileSystems.getDefault().getPathMatcher("glob:*.{pdf,xml}");
@@ -36,7 +45,7 @@ public  class TestFileWalker
         if ((attr!=null)&&(attr.isRegularFile())) {
         	if (matcher.matches(file.getFileName())) {
         		
-                System.out.format("\n@%s Testing file %d: %s ", dateFormat.format(date), fileCount++, file);
+                LOGGER.info(String.format("\n@%s Testing file %d: %s ", dateFormat.format(date), fileCount++, file));
                 assertThat(zul.validate(file.toAbsolutePath().toString())).valueByXPath("/validation/summary/@status") 
     			.asString() 
     			.isEqualTo(
@@ -51,7 +60,7 @@ public  class TestFileWalker
     @Override
     public FileVisitResult postVisitDirectory(Path dir,
                                           IOException exc) {
-        System.out.format("Directory: %s%n", dir);
+        LOGGER.info("\nDirectory: %s%n", dir);
         return FileVisitResult.CONTINUE;
     }
 
@@ -63,7 +72,7 @@ public  class TestFileWalker
     @Override
     public FileVisitResult visitFileFailed(Path file,
                                        IOException exc) {
-        System.err.println(exc);
+        LOGGER.error(exc.getMessage(),exc);
         return FileVisitResult.CONTINUE;
     }
 }

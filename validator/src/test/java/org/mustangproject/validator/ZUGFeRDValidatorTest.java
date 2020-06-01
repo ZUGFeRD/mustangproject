@@ -1,6 +1,5 @@
 package org.mustangproject.validator;
 
-import static org.xmlunit.assertj.XmlAssert.assertThat;
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -53,6 +53,21 @@
          <version>4.12</version>
          <scope>test</scope>
       </dependency>
+
+<!-- for directory validation: -->
+      <dependency>
+         <groupId>org.xmlunit</groupId>
+         <artifactId>xmlunit-core</artifactId>
+         <version>2.6.3</version>
+      </dependency>
+      <dependency>
+         <groupId>org.xmlunit</groupId>
+         <artifactId>xmlunit-assertj</artifactId>
+         <version>2.6.3</version>
+      </dependency>
+
+<!-- /directory validation: -->
+
    </dependencies>
    <build>
       <pluginManagement>
