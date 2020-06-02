@@ -225,12 +225,11 @@ public class ZF2Test extends MustangReaderTestCase {
 
 		List<org.mustangproject.ZUGFeRD.Item> li = zi.getLineItemList();
 		assertEquals(zi.getLineItemList().get(0).getId().toString(), "1");
-		assertEquals(zi.getLineItemList().get(0).getBuyerAssignedID(), "");
-		assertEquals(zi.getLineItemList().get(0).getSellerAssignedID(), "");
+		assertEquals(zi.getLineItemList().get(0).product.getBuyerAssignedID(), "");
+		assertEquals(zi.getLineItemList().get(0).product.getSellerAssignedID(), "");
 		assertEquals(zi.getLineItemList().get(0).getLineTotalAmount().toString(), "160.00");
 		assertEquals(zi.getLineItemList().get(0).getQuantity().toString(), "1.0000");
 		assertEquals(zi.getLineItemList().get(0).getGrossPrice().toString(), "171.2000");
-		assertEquals(zi.getLineItemList().get(0).getBuyerAssignedID(), "");
 		assertEquals(zi.getLineItemList().get(0).product.getVATPercent().toString(), "7.00");
 		assertEquals(zi.getLineItemList().get(0).product.getName(), "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung");
 		assertEquals(zi.getLineItemList().get(0).product.getDescription(), "");
@@ -241,6 +240,5 @@ public class ZF2Test extends MustangReaderTestCase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 }

@@ -576,10 +576,10 @@ public class ZUGFeRDImporter {
 					case "ram:SpecifiedTradeProduct":
 
 						node = getNodeByName(nn.getChildNodes(), "ram:SellerAssignedID");
-						lineItem.setSellerAssignedID(getNodeValue(node));
+						lineItem.product.setSellerAssignedID(getNodeValue(node));
 
 						node = getNodeByName(nn.getChildNodes(), "ram:BuyerAssignedID");
-						lineItem.setBuyerAssignedID(getNodeValue(node));
+						lineItem.product.setBuyerAssignedID(getNodeValue(node));
 
 						node = getNodeByName(nn.getChildNodes(), "ram:Name");
 						lineItem.product.setName(getNodeValue(node));

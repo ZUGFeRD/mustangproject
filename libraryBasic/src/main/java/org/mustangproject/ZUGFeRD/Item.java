@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 public class Item implements IZUGFeRDExportableItem {
 	protected BigDecimal price, quantity, tax, grossPrice, lineTotalAmount;
-	protected String id, sellerAssignedID, buyerAssignedID;
+	protected String id;
 	protected Product product;
 
 	public Item(Product product, BigDecimal price, BigDecimal quantity) {
@@ -23,24 +23,6 @@ public class Item implements IZUGFeRDExportableItem {
 
 	public Item setLineTotalAmount(BigDecimal lineTotalAmount) {
 		this.lineTotalAmount = lineTotalAmount;
-		return this;
-	}
-
-	public String getSellerAssignedID() {
-		return sellerAssignedID;
-	}
-
-	public Item setSellerAssignedID(String sellerAssignedID) {
-		this.sellerAssignedID = sellerAssignedID;
-		return this;
-	}
-
-	public String getBuyerAssignedID() {
-		return buyerAssignedID;
-	}
-
-	public Item setBuyerAssignedID(String buyerAssignedID) {
-		this.buyerAssignedID = buyerAssignedID;
 		return this;
 	}
 

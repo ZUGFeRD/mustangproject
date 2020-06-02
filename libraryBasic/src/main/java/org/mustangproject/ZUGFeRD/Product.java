@@ -5,9 +5,8 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 import java.math.BigDecimal;
 
 public class Product implements IZUGFeRDExportableProduct {
-	protected String unit, name, description;
+	protected String unit, name, description, sellerAssignedID, buyerAssignedID;
 	protected BigDecimal VATPercent;
-
 
 	public Product(String name, String description, String unit, BigDecimal VATPercent) {
 		this.unit = unit;
@@ -16,6 +15,24 @@ public class Product implements IZUGFeRDExportableProduct {
 		this.VATPercent = VATPercent;
 	}
 
+
+	public String getSellerAssignedID() {
+		return sellerAssignedID;
+	}
+
+	public Product setSellerAssignedID(String sellerAssignedID) {
+		this.sellerAssignedID = sellerAssignedID;
+		return this;
+	}
+
+	public String getBuyerAssignedID() {
+		return buyerAssignedID;
+	}
+
+	public Product setBuyerAssignedID(String buyerAssignedID) {
+		this.buyerAssignedID = buyerAssignedID;
+		return this;
+	}
 
 	@Override
 	public String getUnit() {
