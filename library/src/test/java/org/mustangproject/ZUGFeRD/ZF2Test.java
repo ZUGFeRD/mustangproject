@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ZF2Test extends MustangReaderTestCase {
@@ -207,7 +208,8 @@ public class ZF2Test extends MustangReaderTestCase {
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
-
+		assertEquals(zi.getDocumentCode(),"380");
+		assertEquals(zi.getReference(),"AB321");
 		assertEquals(zi.getAmount(), "571.04");
 		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
 		assertEquals(zi.getIBAN(),getTradeSettlementPayment()[0].getOwnIBAN());
@@ -220,13 +222,23 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals(zi.getSellerTradePartyAddress().getCountrySubDivisionName(), null);
 		assertEquals(zi.getSellerTradePartyAddress().getCountryID(), "DE");
 		assertEquals(zi.getSellerTradePartyAddress().getCityName(), "Stadthausen");
-		
+
+		List<org.mustangproject.ZUGFeRD.Item> li = zi.getLineItemList();
+		assertEquals(zi.getLineItemList().get(0).getId().toString(), "1");
+		assertEquals(zi.getLineItemList().get(0).product.getBuyerAssignedID(), "");
+		assertEquals(zi.getLineItemList().get(0).product.getSellerAssignedID(), "");
+		assertEquals(zi.getLineItemList().get(0).getLineTotalAmount().toString(), "160.00");
+		assertEquals(zi.getLineItemList().get(0).getQuantity().toString(), "1.0000");
+		assertEquals(zi.getLineItemList().get(0).getGrossPrice().toString(), "171.2000");
+		assertEquals(zi.getLineItemList().get(0).product.getVATPercent().toString(), "7.00");
+		assertEquals(zi.getLineItemList().get(0).product.getName(), "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung");
+		assertEquals(zi.getLineItemList().get(0).product.getDescription(), "");
+
 		try {
 			assertEquals(zi.getVersion(), 2);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 }
