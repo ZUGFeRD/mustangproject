@@ -106,6 +106,16 @@ public interface IZUGFeRDExportableTransaction {
 	}
 
 
+	/**
+	 * subject of the document e.g. invoice and order
+	 * number as human readable text
+	 * 
+	 * @return string with document subject
+	 */
+	default String getSubjectNote() {
+		return null;
+	}
+
 	IZUGFeRDAllowanceCharge[] getZFAllowances();
 
 
@@ -272,6 +282,14 @@ public interface IZUGFeRDExportableTransaction {
 		return null;
 	}
 
+	/**
+	 * returns if a rebate agreements exists
+	 * 
+	 * @return
+	 */
+	default boolean rebateAgreementExists() {
+		return false;
+	}
 
 	/**
 	 * get reference document number typically used for Invoice Corrections Will be added as IncludedNote in comfort profile

@@ -76,6 +76,25 @@ public interface IZUGFeRDExportableProduct {
 	String getDescription();
 
 	/**
+	 * Get the ID that had been assigned by the seller to
+	 * identify the product
+	 * 
+	 * @return seller assigned product ID
+	 */
+	default String getSellerAssignedID() {
+		return null;
+	}
+
+	/**
+	 * Get the ID that had been assigned by the buyer to
+	 * identify the product
+	 * 
+	 * @return buyer assigned product ID
+	 */
+	default String getBuyerAssignedID() {
+		return null;
+	}
+	/**
 	 * VAT percent of the product (e.g. 19, or 5.1 if you like)
 	 *
 	 * @return VAT percent of the product
@@ -95,5 +114,9 @@ public interface IZUGFeRDExportableProduct {
 		 }
 	 }
 	
-
+	default String getTaxExemptionReason() {
+		if (isIntraCommunitySupply())
+			return "Intra-community supply";
+		return null;
+	}
 }

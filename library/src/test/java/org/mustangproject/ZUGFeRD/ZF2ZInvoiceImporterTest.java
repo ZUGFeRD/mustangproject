@@ -41,7 +41,7 @@ import junit.framework.TestSuite;
  * used for this import, testout-ZF2New.pdf
  */
 public class ZF2ZInvoiceImporterTest extends TestCase  {
-	final String TARGET_PDF = "./target/testout-ZF2New.pdf";
+	final String TARGET_PDF = "./target/testout-ZF2new.pdf";
 
 	public void testInvoiceImport() {
 

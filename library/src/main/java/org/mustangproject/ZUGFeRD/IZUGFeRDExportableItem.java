@@ -47,11 +47,20 @@ public interface IZUGFeRDExportableItem {
 	BigDecimal getPrice();
 
 	/**
-	 * how many
+	 * how many get billed
 	 *
 	 * @return the quantity of the item
 	 */
 	BigDecimal getQuantity();
+
+	/**
+	 * how many items units per price
+	 * 
+	 * @return item units per price
+	 */
+	default BigDecimal getBasisQuantity() {
+		return BigDecimal.ONE.setScale(4);
+	}
 
 	default String getCategoryCode() {
 		return TaxCategoryCodeTypeConstants.STANDARDRATE;

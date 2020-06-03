@@ -48,9 +48,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 			BigDecimal multiplicator = currentItem.getProduct().getVATPercent().divide(new BigDecimal(100))
 					.add(new BigDecimal(1));
 			priceGross = currentItem.getPrice().multiply(multiplicator);
-			totalGross = currentItem.getPrice().multiply(multiplicator).multiply(currentItem.getQuantity());
-			itemTotalNetAmount = currentItem.getQuantity().multiply(currentItem.getPrice()).setScale(2,
-					BigDecimal.ROUND_HALF_UP);
+			totalGross = currentItem.getQuantity().multiply(currentItem.getPrice()).divide(currentItem.getBasisQuantity())
+					.multiply(multiplicator);
+			itemTotalNetAmount = currentItem.getQuantity().multiply(currentItem.getPrice()).divide(currentItem.getBasisQuantity())
+					.setScale(2, BigDecimal.ROUND_HALF_UP);
 			itemTotalVATAmount = totalGross.subtract(itemTotalNetAmount);
 		}
 
@@ -268,6 +269,20 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
 		}
 
+		String rebateAgreement = "";
+		if (trans.rebateAgreementExists()) {
+			rebateAgreement = "<ram:IncludedNote>\n" + "		<ram:Content>"
+					+ "Es bestehen Rabatt- und Bonusvereinbarungen.</ram:Content>\n"
+					+ "<ram:SubjectCode>AAK</ram:SubjectCode>\n" + "</ram:IncludedNote>\n";
+		}
+
+		String subjectNote = "";
+		if (trans.getSubjectNote()!=null) {
+			subjectNote = "<ram:IncludedNote>\n" + "		<ram:Content>"
+					+ XMLTools.encodeXML(trans.getSubjectNote())+ "</ram:Content>\n"
+					+ "</ram:IncludedNote>\n";
+		}
+
 		String xml = "﻿<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //$NON-NLS-1$
 
 				+ "<rsm:CrossIndustryInvoice xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\""
@@ -293,27 +308,18 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 																													// format
 																													// was
 																													// 20130605
+				+ subjectNote
+				+ rebateAgreement
 				+ senderReg
-				// + " <IncludedNote>\n"
-				// + " <Content>\n"
-				// + "Rechnung gemäß Bestellung Nr. 2013-471331 vom 01.03.2013.\n"
-				// + "\n"
-				// + " </Content>\n"
-				// + " </IncludedNote>\n"
-				// + " <IncludedNote>\n"
-				// + " <Content>\n"
-				// + "Es bestehen Rabatt- und Bonusvereinbarungen.\n"
-				// + " </Content>\n"
-				// + " <SubjectCode>AAK</SubjectCode>\n"
-				// + " </IncludedNote>\n"
+
 				+ "	</rsm:ExchangedDocument>\n" //$NON-NLS-1$
 				+ "	<rsm:SupplyChainTradeTransaction>\n"; //$NON-NLS-1$
 		int lineID = 0;
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			lineID++;
 			taxCategoryCode=currentItem.getProduct().getTaxCategoryCode();
-			if  (currentItem.getProduct().isIntraCommunitySupply()) {
-				exemptionReason="<ram:ExemptionReason>Intra-community supply</ram:ExemptionReason>";
+			if  (currentItem.getProduct().getTaxExemptionReason() != null) {
+				exemptionReason="<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
 			
 			LineCalc lc = new LineCalc(currentItem);
@@ -321,11 +327,17 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 					"			<ram:AssociatedDocumentLineDocument>\n" //$NON-NLS-1$
 					+ "				<ram:LineID>" + lineID + "</ram:LineID>\n" //$NON-NLS-1$ //$NON-NLS-2$
 					+ "			</ram:AssociatedDocumentLineDocument>\n" //$NON-NLS-1$
-					+ "			<ram:SpecifiedTradeProduct>\n" //$NON-NLS-1$
+					+ "			<ram:SpecifiedTradeProduct>\n"; //$NON-NLS-1$
 					// + " <GlobalID schemeID=\"0160\">4012345001235</GlobalID>\n"
-					// + " <SellerAssignedID>KR3M</SellerAssignedID>\n"
-					// + " <BuyerAssignedID>55T01</BuyerAssignedID>\n"
-					+ "				<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
+			if (currentItem.getProduct().getSellerAssignedID() != null) {
+			    xml = xml + "				<ram:SellerAssignedID>"
+				        + XMLTools.encodeXML(currentItem.getProduct().getSellerAssignedID()) + "</ram:SellerAssignedID>\n";
+			}
+			if (currentItem.getProduct().getBuyerAssignedID() != null) {
+			    xml = xml + "				<ram:BuyerAssignedID>"
+				        + XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>\n";
+			}
+			xml = xml + "					<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>\n" //$NON-NLS-1$ //$NON-NLS-2$
 					+ "				<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription()) //$NON-NLS-1$
 					+ "</ram:Description>\n" //$NON-NLS-1$
 					+ "			</ram:SpecifiedTradeProduct>\n" //$NON-NLS-1$
@@ -335,7 +347,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 					+ "					<ram:ChargeAmount>" + priceFormat(lc.getPriceGross()) //$NON-NLS-1$
 					+ "</ram:ChargeAmount>\n" //$NON-NLS-1$ //currencyID=\"EUR\"
 					+ "					<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) //$NON-NLS-1$
-					+ "\">1.0000</ram:BasisQuantity>\n" //$NON-NLS-1$
+					+ "\">" + quantityFormat(currentItem.getBasisQuantity()) +"</ram:BasisQuantity>\n" //$NON-NLS-1$
 					// + " <AppliedTradeAllowanceCharge>\n"
 					// + " <ChargeIndicator>false</ChargeIndicator>\n"
 					// + " <ActualAmount currencyID=\"EUR\">0.6667</ActualAmount>\n"
@@ -346,7 +358,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 					+ "					<ram:ChargeAmount>" + priceFormat(currentItem.getPrice()) //$NON-NLS-1$
 					+ "</ram:ChargeAmount>\n" //$NON-NLS-1$ // currencyID=\"EUR\"
 					+ "					<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) //$NON-NLS-1$
-					+ "\">1.0000</ram:BasisQuantity>\n" //$NON-NLS-1$
+					+ "\">" + quantityFormat(currentItem.getBasisQuantity()) +"</ram:BasisQuantity>\n" //$NON-NLS-1$
 					+ "				</ram:NetPriceProductTradePrice>\n" //$NON-NLS-1$
 					+ "			</ram:SpecifiedLineTradeAgreement>\n" //$NON-NLS-1$
 
@@ -381,9 +393,16 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 			xml = xml + "			<ram:BuyerReference>" + XMLTools.encodeXML(trans.getReferenceNumber()) + "</ram:BuyerReference>\n";
 
 		}
-		xml = xml + "			<ram:SellerTradeParty>\n" //$NON-NLS-1$
-		// + " <GlobalID schemeID=\"0088\">4000001123452</GlobalID>\n"
-				+ "				<ram:Name>" + XMLTools.encodeXML(trans.getOwnOrganisationName()) + "</ram:Name>\n"; //$NON-NLS-1$ //$NON-NLS-2$
+		xml = xml + "			<ram:SellerTradeParty>\n"; //$NON-NLS-1$
+		if (trans.getOwnForeignOrganisationID()!=null) {
+			xml = xml + "			<ram:ID>" + XMLTools.encodeXML(trans.getOwnForeignOrganisationID()) + "</ram:ID>\n";
+		}
+		
+		if ((trans.getOwnContact()!=null)&&(trans.getOwnContact().getGlobalID()!=null)&&(trans.getOwnContact().getGlobalIDScheme()!=null)) {
+			xml = xml + "           <ram:GlobalID schemeID=\"" + XMLTools.encodeXML(trans.getOwnContact().getGlobalIDScheme()) + "\">"
+					  + XMLTools.encodeXML(trans.getOwnContact().getGlobalID()) + "</ram:GlobalID>\n";
+		}
+		xml = xml + "				<ram:Name>" + XMLTools.encodeXML(trans.getOwnOrganisationName()) + "</ram:Name>\n"; //$NON-NLS-1$ //$NON-NLS-2$
 
 		if ((trans.getOwnVATID()!=null)&&(trans.getOwnOrganisationName()!=null)) {
 			
@@ -429,12 +448,15 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				// + " <GlobalID schemeID=\"0088\">4000001987658</GlobalID>\n"
 				
 				xml+=getContactAsXML(trans.getRecipient());
-				xml += "			</ram:BuyerTradeParty>\n" //$NON-NLS-1$
-				// + " <BuyerOrderReferencedDocument>\n"
-				// + " <IssueDateTime format=\"102\">20130301</IssueDateTime>\n"
-				// + " <ID>2013-471331</ID>\n"
-				// + " </BuyerOrderReferencedDocument>\n"
-				+ "		</ram:ApplicableHeaderTradeAgreement>\n" //$NON-NLS-1$
+				xml += "			</ram:BuyerTradeParty>\n"; //$NON-NLS-1$
+
+		if (trans.getBuyerOrderReferencedDocumentID()!=null) {
+			xml = xml + "   <ram:BuyerOrderReferencedDocument>\n"  //$NON-NLS-1$
+					  + "       <ram:IssuerAssignedID>"  //$NON-NLS-1$
+					  + XMLTools.encodeXML(trans.getBuyerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>\n"  //$NON-NLS-1$
+					  + "   </ram:BuyerOrderReferencedDocument>\n";
+		}
+		xml = xml  + "		</ram:ApplicableHeaderTradeAgreement>\n" //$NON-NLS-1$
 				+ "		<ram:ApplicableHeaderTradeDelivery>\n" ;
 		if (this.trans.getDeliveryAddress()!=null) {
 			xml += "<ram:ShipToTradeParty>"+
@@ -510,13 +532,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
 			if (trans.getTradeSettlement() != null) {
 				for (IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
-					if (payment != null) {
+					if ((payment != null) && (payment instanceof IZUGFeRDTradeSettlementDebit)) {
 						xml += payment.getPaymentXML();
 					}
 				}
 			}
 
-			if (hasDueDate) {
+			if (hasDueDate && (trans.getDueDate()!=null)) {
 				xml = xml + "				<ram:DueDateDateTime><udt:DateTimeString format=\"102\">" // $NON-NLS-2$
 						+ zugferdDateFormat.format(trans.getDueDate())
 						+ "</udt:DateTimeString></ram:DueDateDateTime>\n";// 20130704 //$NON-NLS-1$
