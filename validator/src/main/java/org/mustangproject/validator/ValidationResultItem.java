@@ -1,4 +1,4 @@
-package org.mustangproject.library.extended;
+package org.mustangproject.validator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

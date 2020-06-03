@@ -1,4 +1,4 @@
-package org.mustangproject.library.extended;
+package org.mustangproject.validator;
 
 import java.util.ArrayList;
 import java.util.Vector;

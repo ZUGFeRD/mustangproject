@@ -1,4 +1,4 @@
-package org.mustangproject.library.extended;
+package org.mustangproject.validator;
 
 public class IrrecoverableValidationError extends Exception {
 

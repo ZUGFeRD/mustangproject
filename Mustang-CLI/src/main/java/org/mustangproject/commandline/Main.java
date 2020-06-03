@@ -35,7 +35,7 @@ import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1Factory;
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
 import org.mustangproject.ZUGFeRD.ZUGFeRDMigrator;
-import org.mustangproject.library.extended.ZUGFeRDValidator;
+import org.mustangproject.validator.ZUGFeRDValidator;
 
 /***
  * This is the command line interface to mustangproject
@@ -324,6 +324,10 @@ public class Main {
 
 				optionsRecognized=performValidate(sourceName);
 
+			} else if ((action!=null)&&(action.equals("validateExpectValid"))) {
+
+				optionsRecognized=performValidateExpect(true, directoryName);
+
 			} else {
 				// no argument or argument unknown
 				printUsage();
@@ -352,6 +356,20 @@ public class Main {
 			System.exit(-1);
 		}
 		return optionsRecognized;
+	}
+
+	private static boolean performValidateExpect(boolean valid, String dirName) {
+		ValidatorFileWalker zfWalk = new ValidatorFileWalker();
+		Path startingDir = Paths.get(dirName);
+		try {
+			Files.walkFileTree(startingDir, zfWalk);
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		return true;
 	}
 
 	private static void performUpgrade(String xmlName, String outName) throws IOException, TransformerException {

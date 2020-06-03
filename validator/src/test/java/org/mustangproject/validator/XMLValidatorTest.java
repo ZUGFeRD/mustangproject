@@ -1,5 +1,4 @@
-package org.mustangproject.library.extended;
-
+package org.mustangproject.validator;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 import java.io.File;
 import java.io.FileOutputStream;
