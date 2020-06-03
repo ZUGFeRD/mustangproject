@@ -38,9 +38,17 @@ public class VATAmount {
 		this.categoryCode = categoryCode;
 	}
 
-	BigDecimal basis, calculated;
+	BigDecimal basis, calculated, applicablePercent;
 
 	String categoryCode;
+
+	public BigDecimal getApplicablePercent() {
+		return applicablePercent;
+	}
+
+	public void setApplicablePercent(BigDecimal applicablePercent) {
+		this.applicablePercent = applicablePercent;
+	}
 
 	public BigDecimal getBasis() {
 		return basis;

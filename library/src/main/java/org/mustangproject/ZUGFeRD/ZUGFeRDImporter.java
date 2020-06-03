@@ -17,13 +17,11 @@ package org.mustangproject.ZUGFeRD;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -259,7 +257,16 @@ public class ZUGFeRDImporter {
 	 * @return the document code
 	 */
 	public String getDocumentCode() {
-		return extractString("//HeaderExchangedDocument/TypeCode");
+		try {
+			if (getVersion() == 1) {
+				return extractString("//HeaderExchangedDocument/TypeCode");
+			} else {
+				return extractString("//ExchangedDocument/TypeCode");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
 	}
 
 
@@ -267,7 +274,16 @@ public class ZUGFeRDImporter {
 	 * @return the referred document
 	 */
 	public String getReference() {
-		return extractString("//ApplicableHeaderTradeAgreement/BuyerReference");
+		try {
+			if (getVersion() == 1) {
+				return extractString("//ApplicableSupplyChainTradeAgreement/BuyerReference");
+			} else {
+				return extractString("//ApplicableHeaderTradeAgreement/BuyerReference");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
 	}
 
 
@@ -458,6 +474,10 @@ public class ZUGFeRDImporter {
 		return s.hasNext() ? s.next() : "";
 	}
 
+	/**
+	 * returns an instance of PostalTradeAddress for SellerTradeParty section
+	 * @return an instance of PostalTradeAddress
+	 */
 	public PostalTradeAddress getSellerTradePartyAddress() {
 
 		NodeList nl = null;
@@ -512,6 +532,165 @@ public class ZUGFeRDImporter {
 		return address;
 	}
 
+
+	/**
+	 * returns a list of LineItems
+	 * @return a List of LineItem instances
+	 */
+	public List<Item> getLineItemList() {
+		List<Node> nodeList = getLineItemNodes();
+		List<Item> lineItemList = new ArrayList<>();
+
+		for (Node n: nodeList
+		) {
+			Item lineItem = new Item(null, null, null);
+			lineItem.setProduct(new Product(null,null,null,null));
+
+			NodeList nl = n.getChildNodes();
+			for (int i = 0; i < nl.getLength(); i++) {
+				Node nn = nl.item(i);
+				Node node = null;
+				switch (nn.getNodeName()) {
+					case "ram:SpecifiedLineTradeAgreement":
+					case "ram:SpecifiedSupplyChainTradeAgreement":
+
+						node = getNodeByName(nn.getChildNodes(), "ram:NetPriceProductTradePrice");
+						if (node != null) {
+							node = getNodeByName(node.getChildNodes(), "ram:ChargeAmount");
+							lineItem.setPrice(tryBigDecimal(getNodeValue(node)));
+						}
+
+						node = getNodeByName(nn.getChildNodes(), "ram:GrossPriceProductTradePrice");
+						if (node != null) {
+							node = getNodeByName(node.getChildNodes(), "ram:ChargeAmount");
+							lineItem.setGrossPrice(tryBigDecimal(getNodeValue(node)));
+						}
+						break;
+
+					case "ram:AssociatedDocumentLineDocument":
+
+						node = getNodeByName(nn.getChildNodes(), "ram:LineID");
+						lineItem.setId(getNodeValue(node));
+						break;
+
+					case "ram:SpecifiedTradeProduct":
+
+						node = getNodeByName(nn.getChildNodes(), "ram:SellerAssignedID");
+						lineItem.product.setSellerAssignedID(getNodeValue(node));
+
+						node = getNodeByName(nn.getChildNodes(), "ram:BuyerAssignedID");
+						lineItem.product.setBuyerAssignedID(getNodeValue(node));
+
+						node = getNodeByName(nn.getChildNodes(), "ram:Name");
+						lineItem.product.setName(getNodeValue(node));
+
+						node = getNodeByName(nn.getChildNodes(), "ram:Description");
+						lineItem.product.setDescription(getNodeValue(node));
+						break;
+
+					case "ram:SpecifiedLineTradeDelivery":
+					case "ram:SpecifiedSupplyChainTradeDelivery":
+						node = getNodeByName(nn.getChildNodes(), "ram:BilledQuantity");
+						lineItem.setQuantity(tryBigDecimal(getNodeValue(node)));
+						break;
+
+					case "ram:SpecifiedLineTradeSettlement":
+
+						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");
+						if (node != null) {
+							node = getNodeByName(node.getChildNodes(), "ram:RateApplicablePercent");
+							lineItem.product.setVATPercent(tryBigDecimal(getNodeValue(node)));
+						}
+
+						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");
+						if (node != null) {
+							node = getNodeByName(node.getChildNodes(), "ram:CalculatedAmount");
+							lineItem.setTax(tryBigDecimal(getNodeValue(node)));
+						}
+
+						node = getNodeByName(nn.getChildNodes(), "ram:SpecifiedTradeSettlementLineMonetarySummation");
+						if (node != null) {
+							node = getNodeByName(node.getChildNodes(), "ram:LineTotalAmount");
+							lineItem.setLineTotalAmount(tryBigDecimal(getNodeValue(node)));
+						}
+						break;
+					case "ram:SpecifiedSupplyChainTradeSettlement":
+						//ZF 1!
+
+						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");
+						if (node != null) {
+							node = getNodeByName(node.getChildNodes(), "ram:ApplicablePercent");
+							lineItem.product.setVATPercent(tryBigDecimal(getNodeValue(node)));
+						}
+
+						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");
+						if (node != null) {
+							node = getNodeByName(node.getChildNodes(), "ram:CalculatedAmount");
+							lineItem.setTax(tryBigDecimal(getNodeValue(node)));
+						}
+
+						node = getNodeByName(nn.getChildNodes(), "ram:SpecifiedTradeSettlementMonetarySummation");
+						if (node != null) {
+							node = getNodeByName(node.getChildNodes(), "ram:LineTotalAmount");
+							lineItem.setLineTotalAmount(tryBigDecimal(getNodeValue(node)));
+						}
+						break;
+				}
+			}
+			lineItemList.add(lineItem);
+		}
+		return lineItemList;
+	}
+
+	/**
+	 * returns a List of LineItem Nodes from ZUGFeRD XML
+	 * @return a List of Node instances
+	 */
+	public List<Node> getLineItemNodes() {
+		List<Node> lineItemNodes = new ArrayList<>();
+		NodeList nl = null;
+		try {
+			if (getVersion() == 1) {
+				nl = getNodeListByPath("//CrossIndustryDocument//SpecifiedSupplyChainTradeTransaction//IncludedSupplyChainTradeLineItem");
+			} else {
+				nl = getNodeListByPath("//CrossIndustryInvoice//SupplyChainTradeTransaction//IncludedSupplyChainTradeLineItem");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		for (int i = 0; i < nl.getLength(); i++) {
+			Node n = nl.item(i);
+			lineItemNodes.add(n);
+		}
+		return lineItemNodes;
+	}
+
+	/**
+	 * Returns a node, found by name. If more nodes with the same name are present, the first occurence will be returned
+	 * @param nl - A NodeList which may contains the searched node
+	 * @param name The nodes name
+	 * @return a Node or null, if nothing is found
+	 */
+	private Node getNodeByName(NodeList nl, String name) {
+		for (int i = 0; i < nl.getLength(); i++) {
+			if (nl.item(i).getNodeName() == name) {
+				return nl.item(i);
+			} else if (nl.item(i).getChildNodes().getLength() > 0) {
+				Node node = getNodeByName(nl.item(i).getChildNodes(), name);
+				if (node != null) {
+					return node;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get a NodeList by providing an path
+	 * @param path a compliable Path
+	 * @return a Nodelist or null, if an error occurs
+	 */
 	public NodeList getNodeListByPath(String path) {
 
 		XPathFactory xpathFact = XPathFactory.newInstance();
@@ -527,4 +706,34 @@ public class ZUGFeRDImporter {
 		}
 	}
 
+	/**
+	 * returns the value of an node
+	 * @param node the Node to get the value from
+	 * @return A String or empty String, if no value was found
+	 */
+	private String getNodeValue(Node node) {
+		if (node != null) {
+			if (node.getFirstChild() != null) {
+				return node.getFirstChild().getNodeValue();
+			}
+		}
+		return "";
+	}
+
+	/**
+	 * tries to convert an String to BigDecimal.
+	 * @param nodeValue The value as String
+	 * @return a BigDecimal with the value provides as String or a BigDecimal with value 0.00 if an error occurs
+	 */
+	private BigDecimal tryBigDecimal(String nodeValue) {
+		try {
+			return new BigDecimal(nodeValue);
+		} catch (Exception e) {
+			try {
+				return new BigDecimal(Float.valueOf(nodeValue));
+			} catch (Exception ex) {
+				return new BigDecimal("0.00");
+			}
+		}
+	}
 }
