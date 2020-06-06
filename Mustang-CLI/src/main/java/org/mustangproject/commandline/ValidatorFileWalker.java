@@ -64,6 +64,7 @@ public  class ValidatorFileWalker
 				} catch (AssertionError ae) {
 					thisResultValid=false;
 					thisResultString="invalid";
+					allValid=false;
 				}
 				LOGGER.info(String.format("\n@%s Testing file %d: %s (%s)", dateFormat.format(date), fileCount++, thisResultString, file));
 
