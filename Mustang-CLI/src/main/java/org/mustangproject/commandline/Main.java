@@ -328,6 +328,11 @@ public class Main {
 
 				optionsRecognized=performValidateExpect(true, directoryName);
 
+
+			} else if ((action!=null)&&(action.equals("validateExpectInvalid"))) {
+
+				optionsRecognized=performValidateExpect(false, directoryName);
+
 			} else {
 				// no argument or argument unknown
 				printUsage();

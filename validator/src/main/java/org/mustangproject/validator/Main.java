@@ -80,7 +80,7 @@ public class Main {
 
 		if ((!optionsRecognized) || (helpRequested != null && helpRequested.booleanValue())) {
 			System.out.println(
-					"usage: --action validate -f <ZUGFeRD PDF Filename.pdf>|<ZUGFeRD XML Filename.xml> [-l (shows license)][--logAppend \"String to be appended to validation result log\"]");
+					"usage: --action validate --source <ZUGFeRD PDF Filename.pdf>|<ZUGFeRD XML Filename.xml> [-l (shows license)][--logAppend \"String to be appended to validation result log\"]");
 			System.exit(-1);
 		}
 
