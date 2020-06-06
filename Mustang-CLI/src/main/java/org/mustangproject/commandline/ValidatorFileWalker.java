@@ -27,12 +27,18 @@ public  class ValidatorFileWalker
 	protected PathMatcher matcher;
 	protected ZUGFeRDValidator zul;
 	protected int fileCount=1;
+	protected boolean expectValid=true;
+	protected boolean allValid=true;
 
-	public ValidatorFileWalker() {
+	public ValidatorFileWalker(boolean expectValid) {
 		this.zul = new ZUGFeRDValidator();
-		;
+		this.expectValid=expectValid;
 		matcher = FileSystems.getDefault().getPathMatcher("glob:*.{pdf,xml}");
 
+	}
+
+	public boolean getResult() {
+		return allValid;
 	}
     // Print information about
     // each type of file.
@@ -42,16 +48,26 @@ public  class ValidatorFileWalker
     	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         //get current date time with Date()
         Date date = new Date();
+        String expectedString="valid";
+        if (!expectValid) {
+			expectedString="invalid";
+		}
         if ((attr!=null)&&(attr.isRegularFile())) {
         	if (matcher.matches(file.getFileName())) {
-        		
-                LOGGER.info(String.format("\n@%s Testing file %d: %s ", dateFormat.format(date), fileCount++, file));
-                assertThat(zul.validate(file.toAbsolutePath().toString())).valueByXPath("/validation/summary/@status") 
-    			.asString() 
-    			.isEqualTo(
-    					"valid");
+        		boolean thisResultValid=true;
+        		String thisResultString="  valid";
+				try {
+					assertThat(zul.validate(file.toAbsolutePath().toString())).valueByXPath("/validation/summary/@status")
+							.asString()
+							.isEqualTo(expectedString);
 
-        	}
+				} catch (AssertionError ae) {
+					thisResultValid=false;
+					thisResultString="invalid";
+				}
+				LOGGER.info(String.format("\n@%s Testing file %d: %s (%s)", dateFormat.format(date), fileCount++, thisResultString, file));
+
+			}
         }
         return FileVisitResult.CONTINUE;
     }

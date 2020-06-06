@@ -52,13 +52,13 @@ public class Main {
 	}
 
 	private static String getUsage() {
-		return "Usage: --action metrics|combine|extract|a3only|upgrade|validate [-d,--directory] [-l,--listfromstdin] [-i,--ignorefileextension] | [-c,--combine] | [-e,--extract] | [-u,--upgrade] | [-a,--a3only] | [-h,--help] \r\n"
+		return "Usage: --action metrics|combine|extract|a3only|upgrade|validate [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] | [-c,--combine] | [-e,--extract] | [-u,--upgrade] | [-a,--a3only] | [-h,--help] \r\n"
 				+ "* merics\n" + "        -d, --directory count ZUGFeRD files in directory to be scanned\n"
 				+ "                If it is a directory, it will recurse.\n"
 				+ "        -l, --listfromstdin     count ZUGFeRD files from a list of linefeed separated files on runtime.\n"
 				+ "                It will start once a blank line has been entered.\n" + "\n"
 				+ "        Additional parameter for both count operations\n"
-				+ "        [-i, --ignorefileextension]     Check for all files (*.*) instead of PDF files only (*.pdf)\n"
+				+ "        [-i, --ignorefileextension]     Check for all files (*.*) instead of PDF files only (*.pdf) in metrics, ignore PDF/A input file errors in combine\n"
 				+ "\n" + "* Merge actions\n" + "        extract   extract ZUGFeRD PDF to XML file\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source <filename>]: set input PDF file\n"
@@ -309,7 +309,7 @@ public class Main {
 				performMetrics(directoryName, filesFromStdIn, ignoreFileExt);
 				optionsRecognized=true;
 			} else if ((action!=null)&&(action.equals("combine")))  {
-				performCombine(sourceName, sourceXMLName, outName, format, zugferdVersion, zugferdProfile);
+				performCombine(sourceName, sourceXMLName, outName, format, zugferdVersion, zugferdProfile, ignoreFileExt);
 				optionsRecognized=true;
 			} else if ((action!=null)&&(action.equals("extract"))) {
 				performExtract(sourceName, outName);
@@ -364,7 +364,7 @@ public class Main {
 	}
 
 	private static boolean performValidateExpect(boolean valid, String dirName) {
-		ValidatorFileWalker zfWalk = new ValidatorFileWalker();
+		ValidatorFileWalker zfWalk = new ValidatorFileWalker(valid);
 		Path startingDir = Paths.get(dirName);
 		try {
 			Files.walkFileTree(startingDir, zfWalk);
@@ -373,7 +373,12 @@ public class Main {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		String totalResult="valid";
+		if (!zfWalk.getResult()) {
+			totalResult="invalid";
+		}
 
+		System.out.println("Overall test result: "+totalResult);
 		return true;
 	}
 
@@ -466,7 +471,7 @@ public class Main {
 	}
 
 	private static void performCombine(String pdfName, String xmlName, String outName, String format, String zfVersion,
-			String zfProfile) throws Exception {
+			String zfProfile, Boolean ignoreInputErrors) throws Exception {
 		/*
 		 * ZUGFeRDExporter ze= new ZUGFeRDExporterFromA1Factory()
 		 * .setProducer("toecount") .setCreator(System.getProperty("user.name"))
@@ -577,6 +582,10 @@ public class Main {
 					.setZUGFeRDVersion(zfIntVersion)
 					.setCreator(System.getProperty("user.name")).setZUGFeRDConformanceLevel(zfConformanceLevelProfile)
 					.load(pdfName);
+			if (ignoreInputErrors) {
+				ze.ignoreA1Errors();
+
+			}
 
 			if (format.equals("fx")) {
 				ze.setFacturX();
