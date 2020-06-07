@@ -34,7 +34,6 @@ import org.mustangproject.ZUGFeRD.ZUGFeRDConformanceLevel;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1Factory;
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
-import org.mustangproject.ZUGFeRD.ZUGFeRDMigrator;
 import org.mustangproject.validator.ZUGFeRDValidator;
 
 /***
@@ -52,7 +51,7 @@ public class Main {
 	}
 
 	private static String getUsage() {
-		return "Usage: --action metrics|combine|extract|a3only|upgrade|validate [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] | [-c,--combine] | [-e,--extract] | [-u,--upgrade] | [-a,--a3only] | [-h,--help] \r\n"
+		return "Usage: --action metrics|combine|extract|a3only|validate [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] | [-h,--help] \r\n"
 				+ "* merics\n" + "        -d, --directory count ZUGFeRD files in directory to be scanned\n"
 				+ "                If it is a directory, it will recurse.\n"
 				+ "        -l, --listfromstdin     count ZUGFeRD files from a list of linefeed separated files on runtime.\n"
@@ -63,10 +62,6 @@ public class Main {
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source <filename>]: set input PDF file\n"
 				+ "                [--out <filename>]: set output XML file\n"
-				+ "        upgrade   upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
-				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "                [--source <filename>]: set input XML ZUGFeRD 1 file\n"
-				+ "                [--out <filename>]: set output XML ZUGFeRD 2 file\n"
 				+ "        a3only    upgrade from PDF/A1 to A3 only (no ZUGFeRD data attached)\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source <filename>]: set input PDF file\n"
@@ -317,9 +312,6 @@ public class Main {
 			} else if ((action!=null)&&(action.equals("a3only")))  {
 				performConvert(sourceName, outName);
 				optionsRecognized=true;
-			} else if ((action!=null)&&(action.equals("upgrade"))) {
-				performUpgrade(sourceName, outName);
-				optionsRecognized=true;
 			} else if ((action!=null)&&(action.equals("validate"))) {
 
 				optionsRecognized=performValidate(sourceName);
@@ -382,35 +374,6 @@ public class Main {
 		return true;
 	}
 
-	private static void performUpgrade(String xmlName, String outName) throws IOException, TransformerException {
-
-		// Get params from user if not already defined
-		if (xmlName == null) {
-			xmlName = getFilenameFromUser("ZUGFeRD 1.0 XML source", "ZUGFeRD-invoice.xml", "xml", true, false);
-		} else {
-			System.out.println("ZUGFeRD 1.0 XML source set to " + xmlName);
-		}
-		if (outName == null) {
-			outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "zugferd-invoice.xml", "xml", false, true);
-		} else {
-			System.out.println("ZUGFeRD 1.0 XML source set to " + outName);
-		}
-
-		// Verify params
-		ensureFileExists(xmlName);
-		ensureFileNotExists(outName);
-
-		// All params are good! continue...
-		ZUGFeRDMigrator zmi = new ZUGFeRDMigrator();
-		String xml = null;
-		xml = zmi.migrateFromV1ToV2(xmlName);
-		Files.write(Paths.get(outName), xml.getBytes());
-		System.out.println("Written to " + outName);
-		/*
-		 * } catch (FileNotFoundException ex) {
-		 * Logger.getLogger(Toecount.class.getName()).log(Level.SEVERE, null, ex);
-		 */
-	}
 
 	private static void performConvert(String pdfName, String outName) throws IOException {
 		/*

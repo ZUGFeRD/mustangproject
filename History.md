@@ -1,7 +1,6 @@
 2.0 todo
 - verapdf as prevalidation
 - remove jaxb
-- remove migration
 - visualization?
 - factory for xrechnung
 - new sample innvoice
@@ -22,6 +21,8 @@ done
 - getSellerTradePartyAddress (PR #157 ) thanks to aberndt-hub 
 - switched from eclipse to IntelliJ
 - added ph-schematron-maven-plugin so that xrechnung xslt can be generated
+- remove migration
+- be able to recursively validate directories
 
 1.7.7
 =====
