@@ -180,23 +180,23 @@ public class XMLValidator extends Validator {
                     if (isMiniumum) {
                         LOGGER.debug("is Minimum");
                         validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/MINIMUM/FACTUR-X_MINIMUM.xsd", 18, EPart.fx);
-                        xsltFilename = "/xslt/zugferd21_minimum.xsl";
+                        xsltFilename = "/xslt/ZF_211/FACTUR-X_MINIMUM.xslt";
                     } else if (isBasicWithoutLines) {
                         LOGGER.debug("is Basic/WL");
                         validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/BASIC-WL/FACTUR-X_BASIC-WL.xsd", 18, EPart.fx);
-                        xsltFilename = "/xslt/zugferd21_basicwl.xsl";
+                        xsltFilename = "/xslt/ZF_211/FACTUR-X_BASIC-WL.xslt";
                     } else if (isBasic) {
                         LOGGER.debug("is Basic");
                         validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/BASIC/FACTUR-X_BASIC.xsd", 18, EPart.fx);
-                        xsltFilename = "/xslt/zugferd21_basic.xsl";
+                        xsltFilename = "/xslt/ZF_211/FACTUR-X_BASIC.xslt";
                     } else if (isEN16931) {
                         LOGGER.debug("is EN16931");
                         validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
-                        xsltFilename = "/xslt/zugferd21_en16931.xsl";
+                        xsltFilename = "/xslt/ZF_211/FACTUR-X_EN16931.xslt";
                     } else if (isExtended) {
                         LOGGER.debug("is EXTENDED");
                         validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
-                        xsltFilename = "/xslt/zugferd21_extended.xsl";
+                        xsltFilename = "/xslt/ZF_211/FACTUR-X_EXTENDED.xslt";
                     } /*
                      * ISchematronResource aResSCH = SchematronResourceXSLT.fromFile(new File(
                      * "/Users/jstaerk/workspace/ZUV/src/main/resources/ZUGFeRDSchematronStylesheet.xsl"
@@ -280,77 +280,9 @@ public class XMLValidator extends Validator {
 
     }
 
-    protected String getXRValidationResult(String xml) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        TransformerFactory factory = TransformerFactory.newInstance();
-
-        try {
-            // Use the factory to create a template containing the xsl file
-            Templates template = factory.newTemplates(new StreamSource(
-                    this.getClass().getResourceAsStream("/xslt/XRechnung-CII-validation.xsl")));
-
-            // Use the template to create a transformer
-            Transformer xformer = template.newTransformer();
-
-            // Prepare the input and output files
-
-            Source source = new StreamSource(new ByteArrayInputStream(xml.getBytes()));
-            Result result = new StreamResult(baos);
-
-            // Apply the xsl file to the source file and write the result
-            // to the output file
-            xformer.transform(source, result);
-
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage(), ex);
-        }
-        return baos.toString();
-
-    }
-
     public void validateXR(String xml) throws IrrecoverableValidationError {
 
-/*
-        DocumentBuilderFactory docbfactory = DocumentBuilderFactory.newInstance();
-        try {
-            DocumentBuilder builder = docbfactory.newDocumentBuilder();
-            InputSource is = new InputSource(new StringReader(getXRValidationResult(xml)));
-            Document docXMP = builder.parse(is);
-
-            XPathFactory xpathFactory = XPathFactory.newInstance();
-
-            // Create XPath object XPath xpath = xpathFactory.newXPath(); XPathExpression
-
-            XPath xpath = xpathFactory.newXPath();
-            // xpath.compile("//*[local-name()=\"GuidelineSpecifiedDocumentContextParameter\"]/[local-name()=\"ID\"]");
-            // evaluate expression result on XML document ndList = (NodeList)
-
-            // get the first element
-            XPathExpression xpr = xpath.compile(
-                    "//*[local-name()=\"failed-assert\"]");
-            NodeList nodes = (NodeList) xpr.evaluate(docXMP, XPathConstants.NODESET);
-            for (int nodeIndex = 0; nodeIndex < nodes.getLength(); nodeIndex++) {
-                String loc=nodes.item(nodeIndex).getAttributes().getNamedItem("location").getTextContent();
-                NodeList failedSubNodes=nodes.item(nodeIndex).getChildNodes();
-                for (int failedSubNodeIndex = 0; failedSubNodeIndex < nodes.getLength(); failedSubNodeIndex++) {
-
-                    if (failedSubNodes.item(failedSubNodeIndex).getNodeName().equals("svrl:text")) {
-                        context.addResultItem(
-                                new ValidationResultItem(ESeverity.warning, failedSubNodes.item(failedSubNodeIndex).getTextContent())
-                                        .setLocation(loc).setSection(27).setPart(EPart.xr));
-
-                    }
-                }
-
-
-            }
-        } catch (Exception ex) {
-            LOGGER.error(ex.getMessage(), ex);
-
-        }
-*/
-
-        validateSchematron(xml, "/xslt/XRechnung-CII-validation.xslt",27, ESeverity.notice);
+        validateSchematron(xml, "/xslt/XR/XRechnung-CII-validation.xslt",27, ESeverity.notice);
 
     }
 

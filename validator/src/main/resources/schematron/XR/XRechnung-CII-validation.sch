@@ -26,11 +26,13 @@
 
     <!-- Abstract CEN BII patterns -->
     <!-- ========================= -->
-    <include href="abstract/XRechnung-model.sch" />
+    <!-- in the original these includes are mistakenly called .sch but that has to be changed manually
+    since they are no complete schematrons which otherwise conflicts with ph-schematron -->
+    <include href="abstract/XRechnung-model.part" />
 
     <!-- Data Binding parameters -->
     <!-- ======================= -->
-    <include href="CII/XRechnung-CII-model.sch" />
+    <include href="CII/XRechnung-CII-model.part" />
 
 
 </schema>

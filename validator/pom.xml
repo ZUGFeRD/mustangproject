@@ -133,7 +133,6 @@
                 <configuration>
                     <schematronDirectory>${basedir}/src/main/resources/schematron</schematronDirectory>
                     <xsltDirectory>${basedir}/src/main/resources/xslt</xsltDirectory>
-                    <schematronPattern>**/XRechnung-CII-validation.sch</schematronPattern><!-- the xrechnung refers to fragments also called ...sch, which will cause the build to fail if not excluded -->
                 </configuration>
                 <executions>
                     <execution>
@@ -231,6 +230,31 @@
                             <artifactSet>
                                 <excludes/>
                             </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-zf-schematron-xml-dependencies</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+
+                        <configuration>
+                            <outputDirectory>${basedir}/xslt/ZF_211/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>/schematron/ZF_211/</directory>
+                                    <includes>
+                                        <include>*.xml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
