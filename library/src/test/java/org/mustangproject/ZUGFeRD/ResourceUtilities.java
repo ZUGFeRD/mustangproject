@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 
 
 /**
- * This test utility class is providing usability functions for test file resources
+ * This test utility class is providing usability functions to test file resources
  */
 public class ResourceUtilities {
 	private static final Logger LOG = Logger.getLogger(ResourceUtilities.class.getName());

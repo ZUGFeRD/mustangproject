@@ -192,6 +192,7 @@ public class ZUGFeRDExporter implements Closeable {
 	public void setZUGFeRDVersion(int ver) {
 		if (ver == 1) {
 			ZUGFeRD1PullProvider z1p = new ZUGFeRD1PullProvider();
+			disableFacturX();
 			this.xmlProvider = z1p;
 		} else if (ver == 2) {
 			ZUGFeRD2PullProvider z2p = new ZUGFeRD2PullProvider();

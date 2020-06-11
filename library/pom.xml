@@ -11,8 +11,8 @@
 	<artifactId>library</artifactId>
 	<version>2.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>Library to write and read FacturX 1.0 and ZUGFeRD 1.0 and 2.1 e-invoices. A PDF/A file is required, the XML can be generated or provided. </name>
-	<description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs
+	<name>Library to write and read FacturX and ZUGFeRD e-invoices.  </name>
+	<description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs. To write files, a provided PDF/A will be combined with generated or provided XML.
     </description>
 	<url>http://www.mustangproject.org/</url>
 	<scm>
@@ -55,26 +55,6 @@
 			<groupId>net.sf.saxon</groupId>
 			<artifactId>Saxon-HE</artifactId>
 			<version>9.8.0-11</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>2.2.11</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-core</artifactId>
-			<version>2.2.11</version>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jaxb</groupId>
-			<artifactId>jaxb-runtime</artifactId>
-			<version>2.2.11</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.activation</groupId>
@@ -246,18 +226,6 @@
 								<include>**</include>
 							</includes>
 						</filter>
-						<filter>
-							<artifact>com.sun.xml.bind:jaxb-impl</artifact>
-							<includes>
-								<include>**</include>
-							</includes>
-						</filter>
-						<filter>
-							<artifact>com.sun.xml.bind:jaxb-core</artifact>
-							<includes>
-								<include>**</include>
-							</includes>
-						</filter>
 					</filters>
 				</configuration>
 				<executions>
@@ -290,26 +258,6 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxb2-maven-plugin</artifactId>
-				<version>2.5.0</version>
-				<executions>
-					<execution>
-						<id>xjc</id>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<target>2.1</target>
-					<packageName>org.mustangproject.ZUGFeRD.model</packageName>
-					<sources>
-						<source>src/main/resources/schema/ZUGFeRD1p0.xsd</source>
-					</sources>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
