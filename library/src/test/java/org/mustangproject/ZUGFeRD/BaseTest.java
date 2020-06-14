@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import org.mustangproject.XMLTools;
 
 public class BaseTest extends TestCase {
 	/**
@@ -51,15 +52,15 @@ public class BaseTest extends TestCase {
 	}
 
 	public void testCorrectDigits() {
-		assertEquals("0.00", ZUGFeRD2PullProvider.nDigitFormat(new BigDecimal(0),2));
-		assertEquals("-1.10", ZUGFeRD2PullProvider.nDigitFormat(new BigDecimal("-1.10"),2));
-		assertEquals("-1.10", ZUGFeRD2PullProvider.nDigitFormat(new BigDecimal("-1.1"),2));
-		assertEquals("-1.01", ZUGFeRD2PullProvider.nDigitFormat(new BigDecimal("-1.01"),2));
-		assertEquals("20000123.35", ZUGFeRD2PullProvider.nDigitFormat(new BigDecimal("20000123.3489"),2));
-		assertEquals("20000123.34", ZUGFeRD2PullProvider.nDigitFormat(new BigDecimal("20000123.3419"),2));
-		assertEquals("12.00", ZUGFeRD2PullProvider.nDigitFormat(new BigDecimal("12"),2));
-		assertEquals("12", ZUGFeRD2PullProvider.nDigitFormat(new BigDecimal("12"),0));
-		assertEquals("20000123.342", ZUGFeRD2PullProvider.nDigitFormat(new BigDecimal("20000123.3419"),3));
+		assertEquals("0.00", XMLTools.nDigitFormat(new BigDecimal(0),2));
+		assertEquals("-1.10", XMLTools.nDigitFormat(new BigDecimal("-1.10"),2));
+		assertEquals("-1.10", XMLTools.nDigitFormat(new BigDecimal("-1.1"),2));
+		assertEquals("-1.01", XMLTools.nDigitFormat(new BigDecimal("-1.01"),2));
+		assertEquals("20000123.35", XMLTools.nDigitFormat(new BigDecimal("20000123.3489"),2));
+		assertEquals("20000123.34", XMLTools.nDigitFormat(new BigDecimal("20000123.3419"),2));
+		assertEquals("12.00", XMLTools.nDigitFormat(new BigDecimal("12"),2));
+		assertEquals("12", XMLTools.nDigitFormat(new BigDecimal("12"),0));
+		assertEquals("20000123.342", XMLTools.nDigitFormat(new BigDecimal("20000123.3419"),3));
 	}
 
 }

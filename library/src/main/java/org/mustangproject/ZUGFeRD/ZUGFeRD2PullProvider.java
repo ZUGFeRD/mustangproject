@@ -38,41 +38,6 @@ import org.mustangproject.XMLTools;
 
 public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 
-	private class LineCalc {
-		private BigDecimal totalGross;
-		private BigDecimal priceGross;
-		private BigDecimal itemTotalNetAmount;
-		private BigDecimal itemTotalVATAmount;
-
-		public LineCalc(IZUGFeRDExportableItem currentItem) {
-			BigDecimal multiplicator = currentItem.getProduct().getVATPercent().divide(new BigDecimal(100))
-					.add(new BigDecimal(1));
-			priceGross = currentItem.getPrice().multiply(multiplicator);
-			totalGross = currentItem.getQuantity().multiply(currentItem.getPrice()).divide(currentItem.getBasisQuantity())
-					.multiply(multiplicator);
-			itemTotalNetAmount = currentItem.getQuantity().multiply(currentItem.getPrice()).divide(currentItem.getBasisQuantity())
-					.setScale(2, BigDecimal.ROUND_HALF_UP);
-			itemTotalVATAmount = totalGross.subtract(itemTotalNetAmount);
-		}
-
-		public BigDecimal getItemTotalNetAmount() {
-			return itemTotalNetAmount;
-		}
-
-		public BigDecimal getItemTotalVATAmount() {
-			return itemTotalVATAmount;
-		}
-
-		public BigDecimal getItemTotalGrossAmount() {
-			return itemTotalVATAmount;
-		}
-
-		public BigDecimal getPriceGross() {
-			return priceGross;
-		}
-
-	}
-
 	//// MAIN CLASS
 
 	protected byte[] zugferdData;
@@ -92,40 +57,20 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 	public void setTest() {
 	}
 
-	public static String nDigitFormat(BigDecimal value, int scale) {
-		/*
-		 * I needed 123,45, locale independent.I tried
-		 * NumberFormat.getCurrencyInstance().format( 12345.6789 ); but that is locale
-		 * specific.I also tried DecimalFormat df = new DecimalFormat( "0,00" );
-		 * df.setDecimalSeparatorAlwaysShown(true); df.setGroupingUsed(false);
-		 * DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-		 * symbols.setDecimalSeparator(','); symbols.setGroupingSeparator(' ');
-		 * df.setDecimalFormatSymbols(symbols);
-		 *
-		 * but that would not switch off grouping. Although I liked very much the
-		 * (incomplete) "BNF diagram" in
-		 * http://docs.oracle.com/javase/tutorial/i18n/format/decimalFormat.html in the
-		 * end I decided to calculate myself and take eur+sparator+cents
-		 *
-		 */
-		return value.setScale(scale, RoundingMode.HALF_UP).toPlainString();
-
-	}
-
 	private String vatFormat(BigDecimal value) {
-		return ZUGFeRD2PullProvider.nDigitFormat(value, 2);
+		return XMLTools.nDigitFormat(value, 2);
 	}
 
 	private String currencyFormat(BigDecimal value) {
-		return ZUGFeRD2PullProvider.nDigitFormat(value, 2);
+		return XMLTools.nDigitFormat(value, 2);
 	}
 
 	private String priceFormat(BigDecimal value) {
-		return ZUGFeRD2PullProvider.nDigitFormat(value, 4);
+		return XMLTools.nDigitFormat(value, 4);
 	}
 
 	private String quantityFormat(BigDecimal value) {
-		return ZUGFeRD2PullProvider.nDigitFormat(value, 4);
+		return XMLTools.nDigitFormat(value, 4);
 	}
 
 	@Override

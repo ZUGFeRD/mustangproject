@@ -1,6 +1,32 @@
 package org.mustangproject;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class XMLTools {
+
+
+	public static String nDigitFormat(BigDecimal value, int scale) {
+		/*
+		 * I needed 123,45, locale independent.I tried
+		 * NumberFormat.getCurrencyInstance().format( 12345.6789 ); but that is locale
+		 * specific.I also tried DecimalFormat df = new DecimalFormat( "0,00" );
+		 * df.setDecimalSeparatorAlwaysShown(true); df.setGroupingUsed(false);
+		 * DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+		 * symbols.setDecimalSeparator(','); symbols.setGroupingSeparator(' ');
+		 * df.setDecimalFormatSymbols(symbols);
+		 *
+		 * but that would not switch off grouping. Although I liked very much the
+		 * (incomplete) "BNF diagram" in
+		 * http://docs.oracle.com/javase/tutorial/i18n/format/decimalFormat.html in the
+		 * end I decided to calculate myself and take eur+sparator+cents
+		 *
+		 */
+		return value.setScale(scale, RoundingMode.HALF_UP).toPlainString();
+
+	}
+
+
 	public static String encodeXML(CharSequence s) {
 	    StringBuilder sb = new StringBuilder();
 	    int len = s.length();
