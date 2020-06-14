@@ -1,9 +1,16 @@
+1.7.8
+=====
+2020-06-14
+
+- \#159 gross price in ZF2 should be without VAT
+
 1.7.7
 =====
+2020-05-26
 
 - Refactored comparison operator for ChargeIndicator https://github.com/ZUGFeRD/mustangproject/pull/153
-- #148 support additional documents for items
-- #154 german VAT ID may not be used for sellercontact scheme id
+- \#148 support additional documents for items
+- \#154 german VAT ID may not be used for sellercontact scheme id
 
 1.7.6
 =====
@@ -30,19 +37,19 @@
 =====
 2019-08-24
 
-- #102 XML entities for ZF2 export
+- \#102 XML entities for ZF2 export
 - corrected addAddtionaldata to addAdditionalFile
 - add zugferdimporter.getversion
 - add total amount in metrics
-- #132 Mustangproject does not work w/ Java 11
+- \#132 Mustangproject does not work w/ Java 11
 
 
 1.7.3
 =====
 2019-08-01
 
-- #105 does not build in windows
-- #99 BOMs confuse parser
+- \#105 does not build in windows
+- \#99 BOMs confuse parser
 - updated javadoc
 - fixed #104 nullpointerex when specifying no parameter
 - PR #112 complete profile options for v1 

@@ -48,7 +48,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		public LineCalc(IZUGFeRDExportableItem currentItem) {
 			BigDecimal multiplicator = currentItem.getProduct().getVATPercent().divide(new BigDecimal(100))
 					.add(new BigDecimal(1));
-			priceGross = currentItem.getPrice().multiply(multiplicator);
+			priceGross = currentItem.getPrice();//issue #159
 			totalGross = currentItem.getPrice().multiply(multiplicator).multiply(currentItem.getQuantity());
 			itemTotalNetAmount = currentItem.getQuantity().multiply(currentItem.getPrice()).setScale(2,
 					BigDecimal.ROUND_HALF_UP);
