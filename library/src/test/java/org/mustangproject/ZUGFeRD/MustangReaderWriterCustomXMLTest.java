@@ -275,10 +275,8 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBLZ(), "41441604");
 		assertEquals(zi.getBIC(), "COBADEFFXXX");
 		assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
-		assertEquals(zi.getKTO(), "44421800");
 		assertEquals(zi.getHolder(), "Bei Spiel GmbH");
 		assertEquals(zi.getForeignReference(), "RE-20171118/506");
 	}
@@ -448,7 +446,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			zea1.close();
 			String pdfContent = baos.toString("UTF-8");
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
-			assertFalse(pdfContent.indexOf("<fx:ConformanceLevel>BASIC</fx:ConformanceLevel>") == -1);
+			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>BASIC</zf:ConformanceLevel>") == -1);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -460,9 +458,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
 		assertEquals(zi.getBIC(), "COBADEFFXXX");
-		assertEquals(zi.getBLZ(), "41441604");
 		assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
-		assertEquals(zi.getKTO(), "44421800");
 		assertEquals(zi.getHolder(), "Bei Spiel GmbH");
 		assertEquals(zi.getForeignReference(), "RE-20170509/505");
 	}

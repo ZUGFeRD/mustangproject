@@ -14,6 +14,8 @@
 done
 - 2.1 now default
 - pushprovider
+- new xrechnung profile
+- german bank account numbers can no longer be specified (dropped in favor of IBAN and BIC)
 - integrates validator
 - validator now additionally supports xrechnung 
 - integrates mustangserver

@@ -288,26 +288,6 @@ public class ZUGFeRDImporter {
 
 
 	/**
-	 * @return the sender's bank's BLZ code
-	 * @deprecated use BIC and IBAN instead of BLZ and KTO
-	 */
-	@Deprecated
-	public String getBLZ() {
-		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/GermanBankleitzahlID");
-	}
-
-
-	/**
-	 * @return the sender's account number
-	 * @deprecated use BIC and IBAN instead of BLZ and KTO
-	 */
-	@Deprecated
-	public String getKTO() {
-		return extractString("//PayeePartyCreditorFinancialAccount/ProprietaryID");
-	}
-
-
-	/**
 	 * @return the sender's bank's BIC code
 	 */
 	public String getBIC() {

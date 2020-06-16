@@ -179,7 +179,7 @@ public class PDFValidator extends Validator {
 			boolean conformanceLevelValid=false;
 			for (int i = 0; i < nodes.getLength(); i++) {
 
-				String[] valueArray = { "BASIC WL", "BASIC", "MINIMUM", "EN 16931", "COMFORT", "CIUS", "EXTENDED" };
+				String[] valueArray = { "BASIC WL", "BASIC", "MINIMUM", "EN 16931", "COMFORT", "CIUS", "EXTENDED", "XRECHNUNG" };
 				if (stringArrayContains(valueArray, nodes.item(i).getTextContent())) {
 					conformanceLevelValid=true;
 				}

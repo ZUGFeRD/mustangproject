@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.print.attribute.standard.Severity;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.*;
@@ -105,7 +106,7 @@ public class XMLValidator extends Validator {
             // it takes 30-40min,
 
             try {
-
+				ESeverity XrechnungSeverity=ESeverity.notice;
                 /***
                  * private static final String VALID_SCHEMATRON = "test-sch/valid01.sch";
                  * private static final String VALID_XMLINSTANCE = "test-xml/valid01.xml";
@@ -153,9 +154,10 @@ public class XMLValidator extends Validator {
                 boolean isBasic = false;
                 boolean isBasicWithoutLines = false;
                 boolean isEN16931 = false;
-                boolean isExtended = false;
-                String xsltFilename = null;
-                // urn:ferd:CrossIndustryDocument:invoice:1p0:extended,
+				boolean isExtended = false;
+				boolean isXRechnung = false;
+				String xsltFilename = null;
+				// urn:ferd:CrossIndustryDocument:invoice:1p0:extended,
                 // urn:ferd:CrossIndustryDocument:invoice:1p0:comfort,
                 // urn:ferd:CrossIndustryDocument:invoice:1p0:basic,
 
@@ -173,8 +175,10 @@ public class XMLValidator extends Validator {
                     isEN16931 = matchesURI(context.getProfile(), "urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:en16931")
                             || matchesURI(context.getProfile(), "urn:cen.eu:en16931:2017");
 
-                    isExtended = context.getProfile().contains("extended");
-                    if (isExtended) {
+					isExtended = context.getProfile().contains("extended");
+					isXRechnung = context.getProfile().contains("xrechnung");
+
+					if ((isExtended)||(isXRechnung)) {
                         isEN16931 = false;// the uri for extended is urn:cen.eu:en16931:2017#conformant#urn:zugferd.de:2p0:extended and thus contains en16931...
                     }
                     if (isMiniumum) {
@@ -194,10 +198,15 @@ public class XMLValidator extends Validator {
                         validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
                         xsltFilename = "/xslt/ZF_211/FACTUR-X_EN16931.xslt";
                     } else if (isExtended) {
-                        LOGGER.debug("is EXTENDED");
-                        validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
-                        xsltFilename = "/xslt/ZF_211/FACTUR-X_EXTENDED.xslt";
-                    } /*
+						LOGGER.debug("is EXTENDED");
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
+						xsltFilename = "/xslt/ZF_211/FACTUR-X_EXTENDED.xslt";
+					} else if (isXRechnung) {
+						LOGGER.debug("is XRechnung");
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
+						xsltFilename = "/xslt/ZF_211/FACTUR-X_EN16931.xslt";
+						XrechnungSeverity=ESeverity.error;
+					} /*
                      * ISchematronResource aResSCH = SchematronResourceXSLT.fromFile(new File(
                      * "/Users/jstaerk/workspace/ZUV/src/main/resources/ZUGFeRDSchematronStylesheet.xsl"
                      * ));
@@ -255,7 +264,7 @@ public class XMLValidator extends Validator {
                     //additionally validate against CEN
                     validateSchematron(zfXML, "/xslt/cii16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
 
-                    validateXR(zfXML);
+                    validateXR(zfXML, XrechnungSeverity);
                 }
 
 
@@ -280,9 +289,9 @@ public class XMLValidator extends Validator {
 
     }
 
-    public void validateXR(String xml) throws IrrecoverableValidationError {
+    public void validateXR(String xml, ESeverity errorImpact) throws IrrecoverableValidationError {
 
-        validateSchematron(xml, "/xslt/XR/XRechnung-CII-validation.xslt",27, ESeverity.notice);
+        validateSchematron(xml, "/xslt/XR/XRechnung-CII-validation.xslt",27, errorImpact);
 
     }
 

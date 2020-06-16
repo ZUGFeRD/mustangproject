@@ -112,7 +112,7 @@ public class Main {
 				+ "\t\t[--format <fx|zf>]: enable factur-x or ZUGFeRD\r\n"
 				+ "\t\t[--version <1|2>]: set ZUGFeRD version\r\n" + "\t\t[--profile <...>]: set ZUGFeRD profile\r\n"
 				+ "\t\t\tFor ZUGFeRD v1: <B>ASIC, <C>OMFORT or <E>XTENDED\r\n"
-				+ "\t\t\tFor ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, E<X>TENDED\r\n");
+				+ "\t\t\tFor ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, EX<T>ENDED, <X>Rechnung\r\n");
 	}
 
 	/**
@@ -459,12 +459,12 @@ public class Main {
 			if (outName == null) {
 				outName = getFilenameFromUser("Ouput PDF", "invoice.ZUGFeRD.pdf", "pdf", false, true);
 			} else {
-				System.out.println("Ouput PDF set to " + outName);
+				System.out.println("Output PDF set to " + outName);
 			}
 
 			if (format == null) {
 				try {
-					format = getStringFromUser("Format (fx=Factur-X, zf=ZUGFeRD,)", "zf", "fx|zf");
+					format = getStringFromUser("Format (fx=Factur-X, zf=ZUGFeRD)", "zf", "fx|zf");
 				} catch (Exception e) {
 					Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
 				}
@@ -474,7 +474,7 @@ public class Main {
 
 			if (zfVersion == null) {
 				try {
-					zfVersion = getStringFromUser("Version (1 or 2)", "1", "1|2");
+					zfVersion = getStringFromUser("Version (1 or 2)", Integer.toString(ZUGFeRDExporter.DefaultZUGFeRDVersion), "1|2");
 				} catch (Exception e) {
 					Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
 				}
@@ -489,8 +489,8 @@ public class Main {
 						zfProfile = getStringFromUser("Profile b)asic, c)omfort or e)xtended", "e", "B|b|C|c|E|e");
 					} else {
 						zfProfile = getStringFromUser(
-								"Profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" + "[C]IUS, [E]N16931, E[X]TENDED", "E",
-								"M|m|W|w|B|b|C|c|E|e|X|x|");
+								"Profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" + "[C]IUS, [E]N16931, EX[T]ENDED or [X]RECHNUNG", "E",
+								"M|m|W|w|B|b|C|c|E|e|T|t|X|x|");
 					}
 				} catch (Exception e) {
 					Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
@@ -531,8 +531,10 @@ public class Main {
 					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.CIUS;
 				} else if (zfProfile.equals("e")) {
 					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.EN16931;
-				} else if (zfProfile.equals("x")) {
+				} else if (zfProfile.equals("t")) {
 					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.EXTENDED;
+				} else if (zfProfile.equals("x")) {
+					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.XRECHNUNG;
 				} else {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}

@@ -196,10 +196,8 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBLZ(), getTradeSettlementPayment()[0].getOwnBLZ());
 		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
 		assertEquals(zi.getIBAN(),getTradeSettlementPayment()[0].getOwnIBAN());
-		assertEquals(zi.getKTO(), getTradeSettlementPayment()[0].getOwnKto());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), "RE-20170509/505");
 		assertEquals(zi.getBankName(), "Commerzbank");
@@ -388,7 +386,6 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
 		assertEquals(zi.getReference(), getReferenceNumber());
 		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
-		assertEquals(zi.getKTO(), getTradeSettlementPayment()[0].getOwnKto());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 	}
@@ -457,7 +454,6 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		assertEquals(zi.getAmount(), "571.04");
 		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
 		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
-		assertEquals(zi.getKTO(), getTradeSettlementPayment()[0].getOwnKto());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 	}
