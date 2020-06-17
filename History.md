@@ -1,3 +1,61 @@
+2.0 todo
+- verapdf as prevalidation
+- remove jaxb
+- visualization?
+- factory for xrechnung
+- new sample innvoice
+- complete or discard read into push provider
+- validate as library doc
+- javadoc export
+- prompt for source file for validation has to be pdf
+- be able to disable "source pdf set to timeout"
+- automated tests zuv/verapdf validate created library test files
+- unify loggers
+done
+- 2.1 now default
+- pushprovider
+- new xrechnung profile
+- german bank account numbers can no longer be specified (dropped in favor of IBAN and BIC)
+- integrates validator
+- validator now additionally supports xrechnung 
+- integrates mustangserver
+- modular project setup
+- getSellerTradePartyAddress (PR #157 ) thanks to aberndt-hub 
+- switched from eclipse to IntelliJ
+- added ph-schematron-maven-plugin so that xrechnung xslt can be generated
+- remove migration
+- be able to recursively validate directories
+
+1.7.7
+=====
+2020-05-26
+
+- Refactored comparison operator for ChargeIndicator https://github.com/ZUGFeRD/mustangproject/pull/153
+- ZUGFeRD2PullProvider needs getDueDate() although getPaymentTermDescription() is defined  https://github.com/ZUGFeRD/mustangproject/pull/155
+- #148 support additional documents for items
+- #154 german VAT ID may not be used for sellercontact scheme id
+
+1.7.6
+=====
+2020-02-06
+
+- support different ship to address
+- allow for diffent namespace prefixes #140
+- include exemption reason if doing intra community supply
+- allow different currencies also for ZF2 (#150)
+- minor correction VAT exemptions
+
+1.7.5
+=====
+2019-11-05
+
+- support Sepa Direct Debit
+- closes #134 ZUGFeRD2PullProvider uses NetPrice for GrossPrice
+- support intra community supply (=vat category codes)
+- Support different Date formats #136
+- corrected RDF metadata for ZF2
+- default conformance level now EN16931, not extended
+
 1.7.4
 =====
 2019-08-24

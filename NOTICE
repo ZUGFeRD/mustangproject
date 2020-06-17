@@ -23,3 +23,7 @@ Copyright (c) 2006-2007, www.jempbox.org
 
 Apache PDFBox was based on source code originally developed in the PaDaF project.
 Copyright (c) 2010 Atos Worldline SAS
+
+Based on VeraPDF-library https://github.com/veraPDF/veraPDF-library licensed under the MPL 2.0
+Based on PH-Schematron https://github.com/phax/ph-schematron licensed under the APL2.0
+Based on https://github.com/itplr-kosit/xrechnung-schematron licensed under the APL2.0

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rsm:CrossIndustryDocument xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rsm="urn:ferd:CrossIndustryDocument:invoice:1p0" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15">
+     <ram:GuidelineSpecifiedDocumentContextParameter>
+      <ram:ID>urn:ferd:CrossIndustryDocument:invoice:1p0:extended</ram:ID>
+    </ram:GuidelineSpecifiedDocumentContextParameter>
+</rsm:CrossIndustryDocument>
