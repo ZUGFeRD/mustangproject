@@ -404,7 +404,14 @@ public class ZUGFeRDImporter {
 	 * @return the BuyerTradeParty GlobalID
 	 */
 	public String getBuyerTradePartyGlobalID() {
-		return wExtractString("//BuyerTradeParty//GlobalID");
+		return extractString("//BuyerTradeParty//GlobalID");
+	}
+
+	/**
+	 * @return the BuyerTradeParty SpecifiedTaxRegistration ID
+	 */
+	public String getBuyertradePartySpecifiedTaxRegistrationID() {
+		return extractString("//BuyerTradeParty//SpecifiedTaxRegistration//ID");
 	}
 
 	/**

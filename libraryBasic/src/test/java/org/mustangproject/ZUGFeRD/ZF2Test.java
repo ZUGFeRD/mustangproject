@@ -223,6 +223,7 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals(zi.getBuyerTradePartyGlobalID(), "");
 		assertEquals(zi.getSellerTradePartyGlobalID(), "");
 		assertEquals(zi.getBuyerTradePartyID(), "DE999999999");
+		assertEquals(zi.getBuyertradePartySpecifiedTaxRegistrationID(), "DE999999999");
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getDocumentCode(),"380");
 		assertEquals(zi.getReference(),"AB321");
