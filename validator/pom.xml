@@ -126,7 +126,7 @@
         </pluginManagement>
         <plugins>
             <!-- be able to generate XSLT from XRechnung Schematron-->
-            <plugin>
+            <!--plugin>
                 <groupId>com.helger.maven</groupId>
                 <artifactId>ph-schematron-maven-plugin</artifactId>
                 <version>5.6.0</version>
@@ -141,7 +141,8 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin -->
+
             <!-- allow getImplementationVersion for the pom.xml -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -240,18 +241,18 @@
                 <executions>
                     <execution>
                         <id>copy-zf-schematron-xml-dependencies</id>
-                        <phase>validate</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
 
                         <configuration>
-                            <outputDirectory>${basedir}/xslt/ZF_211/</outputDirectory>
+                            <outputDirectory>${basedir}/src/main/resources/xslt/ZF_211/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>/schematron/ZF_211/</directory>
+                                    <directory>${basedir}/src/main/resources/schematron/ZF_211/</directory>
                                     <includes>
-                                        <include>*.xml</include>
+                                        <include>**/*.xml</include>
                                     </includes>
                                 </resource>
                             </resources>
