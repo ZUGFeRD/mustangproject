@@ -275,6 +275,22 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
+	 * @return the Invoice Currency Code
+	 */
+	public String getInvoiceCurrencyCode() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//ApplicableSupplyChainTradeSettlement//InvoiceCurrencyCode");
+			} else {
+				return extractString("//ApplicableHeaderTradeSettlement//InvoiceCurrencyCode");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
 	 * @return the Invoice ID
 	 */
 	public String getInvoiceID() {
