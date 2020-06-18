@@ -253,6 +253,28 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
+	 * @return the ZUGFeRD Profile
+	 */
+	public String getZUGFeRDProfil() {
+		switch (extractString("//GuidelineSpecifiedDocumentContextParameter//ID")) {
+			case "urn:cen.eu:en16931:2017":
+			case "urn:ferd:CrossIndustryDocument:invoice:1p0:comfort":
+				return "COMFORT";
+			case "urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic":
+			case "urn:ferd:CrossIndustryDocument:invoice:1p0:basic":
+				return "BASIC";
+			case "urn:factur-x.eu:1p0:basicwl":
+				return "BASIC WL";
+			case "urn:factur-x.eu:1p0:minimum":
+				return "MINIMUM";
+			case "urn:ferd:CrossIndustryDocument:invoice:1p0:extended":
+			case "urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended":
+				return "EXTENDED";
+		}
+		return "";
+	}
+
+	/**
 	 * @return the Invoice ID
 	 */
 	public String getInvoiceID() {
@@ -267,6 +289,7 @@ public class ZUGFeRDImporter {
 			return "";
 		}
 	}
+
 
 
 	/**
