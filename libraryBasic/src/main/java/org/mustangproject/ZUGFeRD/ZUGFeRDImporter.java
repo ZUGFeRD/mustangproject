@@ -252,6 +252,22 @@ public class ZUGFeRDImporter {
 		return result;
 	}
 
+	/**
+	 * @return the Invoice ID
+	 */
+	public String getInvoiceID() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//HeaderExchangedDocument//ID");
+			} else {
+				return extractString("//ExchangedDocument//ID");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
 
 	/**
 	 * @return the document code
