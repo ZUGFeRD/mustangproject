@@ -346,6 +346,23 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
+	 * @return the TaxTotalAmount
+	 */
+	public String getTaxTotalAmount() {
+		try {
+			if (getVersion() == 1) {
+				return wExtractString("//SpecifiedTradeSettlementMonetarySummation//TaxTotalAmount");
+			} else {
+				return wExtractString("//SpecifiedTradeSettlementHeaderMonetarySummation//TaxTotalAmount");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+
+	/**
 	 * @return the line Total Amount
 	 */
 	public String getLineTotalAmount() {
