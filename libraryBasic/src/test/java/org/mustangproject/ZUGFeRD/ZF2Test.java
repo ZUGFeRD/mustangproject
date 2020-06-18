@@ -211,6 +211,8 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals(zi.getZUGFeRDProfil(), "COMFORT");
 		assertEquals(zi.getInvoiceCurrencyCode(), "EUR");
 		assertEquals(zi.getIssuerAssignedID(),"");
+		assertEquals(zi.getIssueDate(), "20170509");
+		assertEquals(zi.getBuyerTradePartyID(), "DE999999999");
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getDocumentCode(),"380");
 		assertEquals(zi.getReference(),"AB321");

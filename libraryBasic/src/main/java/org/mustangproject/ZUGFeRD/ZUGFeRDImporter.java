@@ -314,6 +314,22 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
+	 * @return the Issue Date()
+	 */
+	public String getIssueDate() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//HeaderExchangedDocument//IssueDateTime//DateTimeString");
+			} else {
+				return extractString("//ExchangedDocument//IssueDateTime//DateTimeString");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
 	 * @return the Invoice ID
 	 */
 	public String getInvoiceID() {
