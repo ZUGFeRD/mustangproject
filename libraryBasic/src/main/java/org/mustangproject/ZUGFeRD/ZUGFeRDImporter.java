@@ -330,6 +330,22 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
+	 * @return the line Total Amount
+	 */
+	public String getLineTotalAmount() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//SpecifiedTradeSettlementMonetarySummation//LineTotalAmount");
+			} else {
+				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//LineTotalAmount");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
 	 * @return the Payment Terms
 	 */
 	public String getPaymentTerms() {
