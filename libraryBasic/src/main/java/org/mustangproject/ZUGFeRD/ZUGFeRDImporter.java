@@ -330,6 +330,13 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
+	 * @return the Payment Terms
+	 */
+	public String getPaymentTerms() {
+		return extractString("//SpecifiedTradePaymentTerms//Description");
+	}
+
+	/**
 	 * @return the Taxpoint Date
 	 */
 	public String getTaxPointDate() {

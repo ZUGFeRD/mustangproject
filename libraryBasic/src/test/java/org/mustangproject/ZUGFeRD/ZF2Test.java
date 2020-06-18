@@ -213,6 +213,7 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals(zi.getIssuerAssignedID(),"");
 		assertEquals(zi.getIssueDate(), "20170509");
 		assertEquals(zi.getTaxPointDate(), "20170507");
+		assertEquals(zi.getPaymentTerms(), "Zahlbar ohne Abzug bis zum 30.05.2017");
 		assertEquals(zi.getBuyerTradePartyID(), "DE999999999");
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getDocumentCode(),"380");
