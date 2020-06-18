@@ -393,6 +393,13 @@ public class ZUGFeRDImporter {
 		}
 	}
 
+	/**
+	 * @return SellerTradeParty GlobalID
+	 */
+	public String getSellerTradePartyGlobalID() {
+		return extractString("//SellerTradeParty//GlobalID");
+	}
+
 
 	/**
 	 * @return the line Total Amount
