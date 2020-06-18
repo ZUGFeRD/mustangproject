@@ -377,6 +377,22 @@ public class ZUGFeRDImporter {
 		}
 	}
 
+	/**
+	 * @return the TotalPrepaidAmount
+	 */
+	public String getPaidAmount() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//SpecifiedTradeSettlementMonetarySummation//TotalPrepaidAmount");
+			} else {
+				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//TotalPrepaidAmount");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
 
 	/**
 	 * @return the line Total Amount
