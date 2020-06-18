@@ -351,9 +351,25 @@ public class ZUGFeRDImporter {
 	public String getTaxTotalAmount() {
 		try {
 			if (getVersion() == 1) {
-				return wExtractString("//SpecifiedTradeSettlementMonetarySummation//TaxTotalAmount");
+				return extractString("//SpecifiedTradeSettlementMonetarySummation//TaxTotalAmount");
 			} else {
-				return wExtractString("//SpecifiedTradeSettlementHeaderMonetarySummation//TaxTotalAmount");
+				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//TaxTotalAmount");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
+	 * @return the RoundingAmount
+	 */
+	public String getRoundingAmount() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//SpecifiedTradeSettlementMonetarySummation//RoundingAmount");
+			} else {
+				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//RoundingAmount");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
