@@ -291,6 +291,29 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
+	 * @return the IssuerAssigned ID
+	 */
+	public String getIssuerAssignedID() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//BuyerOrderReferencedDocument//ID");
+			} else {
+				return extractString("//BuyerOrderReferencedDocument//IssuerAssignedID");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
+	 * @return the BuyerTradeParty ID
+	 */
+	public String getBuyerTradePartyID() {
+		return extractString("//BuyerTradeParty//ID");
+	}
+
+	/**
 	 * @return the Invoice ID
 	 */
 	public String getInvoiceID() {
