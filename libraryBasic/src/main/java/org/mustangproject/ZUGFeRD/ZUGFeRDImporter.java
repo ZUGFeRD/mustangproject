@@ -330,6 +330,22 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
+	 * @return the Taxpoint Date
+	 */
+	public String getTaxPointDate() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//ActualDeliverySupplyChainEvent//OccurrenceDateTime//DateTimeString");
+			} else {
+				return extractString("//ActualDeliverySupplyChainEvent//OccurrenceDateTime//DateTimeString");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
 	 * @return the Invoice ID
 	 */
 	public String getInvoiceID() {
