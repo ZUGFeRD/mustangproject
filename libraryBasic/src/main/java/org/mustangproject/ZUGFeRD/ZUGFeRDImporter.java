@@ -400,6 +400,14 @@ public class ZUGFeRDImporter {
 		return extractString("//SellerTradeParty//GlobalID");
 	}
 
+	/**
+	 * @return the BuyerTradeParty Name
+	 */
+	public String getBuyerTradePartyName() {
+		return extractString("//BuyerTradeParty//Name");
+	}
+
+
 
 	/**
 	 * @return the line Total Amount
@@ -683,6 +691,28 @@ public class ZUGFeRDImporter {
 	 * returns an instance of PostalTradeAddress for SellerTradeParty section
 	 * @return an instance of PostalTradeAddress
 	 */
+	public PostalTradeAddress getBuyerTradePartyAddress() {
+
+		NodeList nl = null;
+
+		try {
+			if (getVersion() == 1) {
+				nl = getNodeListByPath("//CrossIndustryDocument//SpecifiedSupplyChainTradeTransaction//ApplicableSupplyChainTradeAgreement//BuyerTradeParty//PostalTradeAddress");
+			} else {
+				nl = getNodeListByPath("//CrossIndustryInvoice//SupplyChainTradeTransaction//ApplicableHeaderTradeAgreement//BuyerTradeParty//PostalTradeAddress");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return getAddressFromNodeList(nl);
+	}
+
+	/**
+	 * returns an instance of PostalTradeAddress for SellerTradeParty section
+	 * @return an instance of PostalTradeAddress
+	 */
 	public PostalTradeAddress getSellerTradePartyAddress() {
 
 		NodeList nl = null;
@@ -696,8 +726,14 @@ public class ZUGFeRDImporter {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return address;
+			return null;
 		}
+
+		return getAddressFromNodeList(nl);
+	}
+
+	private PostalTradeAddress getAddressFromNodeList(NodeList nl) {
+		PostalTradeAddress address = new PostalTradeAddress();
 
 		if (nl != null) {
 			for (int i = 0; i < nl.getLength(); i++) {
@@ -736,7 +772,6 @@ public class ZUGFeRDImporter {
 		}
 		return address;
 	}
-
 
 	/**
 	 * returns a list of LineItems
