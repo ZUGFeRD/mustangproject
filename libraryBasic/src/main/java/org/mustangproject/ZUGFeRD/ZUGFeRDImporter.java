@@ -414,6 +414,23 @@ public class ZUGFeRDImporter {
 		return extractString("//BuyerTradeParty//SpecifiedTaxRegistration//ID");
 	}
 
+
+	/**
+	 * @return the IncludedNote
+	 */
+	public String getIncludedNote() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//HeaderExchangedDocument//IncludedNote");
+			} else {
+				return extractString("//ExchangedDocument//IncludedNote");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
 	/**
 	 * @return the BuyerTradeParty Name
 	 */
