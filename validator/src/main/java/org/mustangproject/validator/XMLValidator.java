@@ -260,7 +260,7 @@ public class XMLValidator extends Validator {
                 validateSchematron(zfXML, xsltFilename, 4, ESeverity.error);
 
                 if (context.getVersion().equals("2")
-                        && isEN16931) {
+                        && (isEN16931 || isXRechnung)) {
                     //additionally validate against CEN
                     validateSchematron(zfXML, "/xslt/cii16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
 

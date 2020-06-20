@@ -176,14 +176,18 @@ public class ZUGFeRDExporter implements Closeable {
 	 * @param ver the zf/fx version
 	 * @return the filename of the file to be embedded
 	 */
-	public String getFilenameForVersion(int ver) {
+	public String getFilenameForVersion(int ver, ZUGFeRDConformanceLevel profile) {
 		if (isFacturX) {
 			return "factur-x.xml";
 		} else {
 			if (ver==1) {
 				return "ZUGFeRD-invoice.xml";		
 			} else {
-				return "zugferd-invoice.xml";		
+				if (profile==ZUGFeRDConformanceLevel.XRECHNUNG) {
+					return "xrechnung.xml";
+				} else {
+					return "zugferd-invoice.xml";
+				}
 			}
 		}
 	}
@@ -402,7 +406,7 @@ public class ZUGFeRDExporter implements Closeable {
 		prepareDocument();
 		((IProfileProvider) xmlProvider).setProfile(profile);
 		xmlProvider.generateXML(trans);
-		String filename = getFilenameForVersion(ZFVersion);
+		String filename = getFilenameForVersion(ZFVersion, profile);
 		PDFAttachGenericFile(doc, filename, "Alternative",
 				"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
 				"text/xml", xmlProvider.getXML());
@@ -597,7 +601,7 @@ public class ZUGFeRDExporter implements Closeable {
 		if (attachZUGFeRDHeaders) {
 			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, ZFVersion, isFacturX, profile,
 					getNamespaceForVersion(ZFVersion), getPrefixForVersion(ZFVersion),
-					getFilenameForVersion(ZFVersion));
+					getFilenameForVersion(ZFVersion, profile));
 
 			metadata.addSchema(zf);
 		}

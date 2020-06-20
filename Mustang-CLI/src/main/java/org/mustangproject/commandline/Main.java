@@ -412,7 +412,7 @@ public class Main {
 			System.out.println("Source PDF set to " + pdfName);
 		}
 		if (xmlName == null) {
-			xmlName = getFilenameFromUser("ZUGFeRD XML", "ZUGFeRD-invoice.xml", "xml", false, true);
+			xmlName = getFilenameFromUser("ZUGFeRD XML", "factur-x.xml", "xml", false, true);
 		} else {
 			System.out.println("ZUGFeRD XML set to " + pdfName);
 		}
