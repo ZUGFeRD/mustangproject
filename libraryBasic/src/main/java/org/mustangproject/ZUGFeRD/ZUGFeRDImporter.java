@@ -776,25 +776,46 @@ public class ZUGFeRDImporter {
 					if (nodeType==Node.ELEMENT_NODE){
 						switch (n.getNodeName()) {
 							case "ram:PostcodeCode":
-								address.setPostCodeCode(n.getFirstChild().getNodeValue());
+								address.setPostCodeCode("");
+								if (n.getFirstChild() != null) {
+									address.setPostCodeCode(n.getFirstChild().getNodeValue());
+								}
 								break;
 							case "ram:LineOne":
-								address.setLineOne(n.getFirstChild().getNodeValue());
+								address.setLineOne("");
+								if (n.getFirstChild() != null) {
+									address.setLineOne(n.getFirstChild().getNodeValue());
+								}
 								break;
 							case "ram:LineTwo":
-								address.setLineTwo(n.getFirstChild().getNodeValue());
+								address.setLineTwo("");
+								if (n.getFirstChild() != null) {
+									address.setLineTwo(n.getFirstChild().getNodeValue());
+								}
 								break;
 							case "ram:LineThree":
-								address.setLineThree(n.getFirstChild().getNodeValue());
+								address.setLineThree("");
+								if (n.getFirstChild() != null) {
+									address.setLineThree(n.getFirstChild().getNodeValue());
+								}
 								break;
 							case "ram:CityName":
-								address.setCityName(n.getFirstChild().getNodeValue());
+								address.setCityName("");
+								if (n.getFirstChild() != null) {
+									address.setCityName(n.getFirstChild().getNodeValue());
+								}
 								break;
 							case "ram:CountryID":
-								address.setCountryID(n.getFirstChild().getNodeValue());
+								address.setCountryID("");
+								if (n.getFirstChild() != null) {
+									address.setCountryID(n.getFirstChild().getNodeValue());
+								}
 								break;
 							case "ram:CountrySubDivisionName":
-								address.setCountrySubDivisionName(n.getFirstChild().getNodeValue());
+								address.setCountrySubDivisionName("");
+								if (n.getFirstChild() != null) {
+									address.setCountrySubDivisionName(n.getFirstChild().getNodeValue());
+								}
 								break;
 						}
 					}
