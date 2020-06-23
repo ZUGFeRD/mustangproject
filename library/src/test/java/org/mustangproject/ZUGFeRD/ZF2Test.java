@@ -207,6 +207,24 @@ public class ZF2Test extends MustangReaderTestCase {
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
+		assertEquals(zi.getInvoiceID(), "RE-20170509/505");
+		assertEquals(zi.getZUGFeRDProfil(), "COMFORT");
+		assertEquals(zi.getInvoiceCurrencyCode(), "EUR");
+		assertEquals(zi.getIssuerAssignedID(),"");
+		assertEquals(zi.getIssueDate(), "20170509");
+		assertEquals(zi.getTaxPointDate(), "20170507");
+		assertEquals(zi.getPaymentTerms(), "Zahlbar ohne Abzug bis zum 30.05.2017");
+		assertEquals(zi.getLineTotalAmount(), "496.00");
+		assertEquals(zi.getTaxBasisTotalAmount(), "496.00");
+		assertEquals(zi.getTaxTotalAmount(),"75.04");
+		assertEquals(zi.getRoundingAmount(), "");
+		assertEquals(zi.getPaidAmount(), "0.00");
+		assertEquals(zi.getBuyerTradePartyName(), "Theodor Est");
+		assertEquals(zi.getBuyerTradePartyGlobalID(), "");
+		assertEquals(zi.getSellerTradePartyGlobalID(), "");
+		assertEquals(zi.getBuyerTradePartyID(), "DE999999999");
+		assertEquals(zi.getBuyertradePartySpecifiedTaxRegistrationID(), "DE999999999");
+		assertEquals(zi.getIncludedNote(), "");
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getDocumentCode(),"380");
 		assertEquals(zi.getReference(),"AB321");
@@ -215,6 +233,13 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals(zi.getIBAN(),getTradeSettlementPayment()[0].getOwnIBAN());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
+		assertEquals(zi.getBuyerTradePartyAddress().getPostcodeCode(), "88802");
+		assertEquals(zi.getBuyerTradePartyAddress().getLineOne(), "Bahnstr. 42");
+		assertEquals(zi.getBuyerTradePartyAddress().getLineTwo(), null);
+		assertEquals(zi.getBuyerTradePartyAddress().getLineThree(), null);
+		assertEquals(zi.getBuyerTradePartyAddress().getCountrySubDivisionName(), null);
+		assertEquals(zi.getBuyerTradePartyAddress().getCountryID(), "DE");
+		assertEquals(zi.getBuyerTradePartyAddress().getCityName(), "Spielkreis");
 		assertEquals(zi.getSellerTradePartyAddress().getPostcodeCode(), "12345");
 		assertEquals(zi.getSellerTradePartyAddress().getLineOne(), "Ecke 12");
 		assertEquals(zi.getSellerTradePartyAddress().getLineTwo(), null);
