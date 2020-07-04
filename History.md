@@ -25,6 +25,7 @@ done
 - added ph-schematron-maven-plugin so that xrechnung xslt can be generated
 - remove migration
 - be able to recursively validate directories
+- be able to ignore input pdf errors with -i
 
 1.7.7
 =====
