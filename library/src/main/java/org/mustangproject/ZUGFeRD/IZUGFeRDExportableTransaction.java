@@ -242,16 +242,6 @@ public interface IZUGFeRDExportableTransaction {
 	 */
 	Date getDeliveryDate();
 
-	/**
-	 * get delivery date in more specific form. If this and getDeliveryDate() are
-	 * specified, this value will be taken
-	 * 
-	 * @return instance holding date and format
-	 */
-	default IZUGFeRDDate getZFDeliveryDate() {
-		return null;
-	}
-
 
 	/**
 	 * get main invoice currency used on the invoice

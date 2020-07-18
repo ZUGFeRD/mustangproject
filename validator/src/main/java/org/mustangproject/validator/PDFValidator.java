@@ -277,6 +277,7 @@ public class PDFValidator extends Validator {
 			byte[] intarsysSignature = "intarsys ".getBytes("UTF-8");
 			byte[] konikSignature = "Konik".getBytes("UTF-8");
 			byte[] pdfMachineSignature = "pdfMachine from Broadgun Software".getBytes("UTF-8");
+			byte[] ghostscriptSignature = "%%Invocation:".getBytes("UTF-8");
 
 			if (searcher.indexOf(file, symtraxSignature) != -1) {
 				Signature = "Symtrax";
@@ -290,6 +291,8 @@ public class PDFValidator extends Validator {
 				Signature = "Konik";
 			} else if (searcher.indexOf(file, pdfMachineSignature) != -1) {
 				Signature = "pdfMachine";
+			} else if (searcher.indexOf(file, ghostscriptSignature) != -1) {
+				Signature = "Ghostscript";
 			}
 
 			context.setSignature(Signature);

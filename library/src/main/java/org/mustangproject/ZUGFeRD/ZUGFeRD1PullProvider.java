@@ -46,6 +46,7 @@ public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
 	private IZUGFeRDExportableTransaction trans;
 	private ZUGFeRDConformanceLevel level;
 	private String paymentTermsDescription;
+	SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	@Override
 	public void setProfile(ZUGFeRDConformanceLevel level) {
@@ -194,7 +195,6 @@ public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
 		boolean hasDueDate=false;
 		String taxCategoryCode="";
 		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-		SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
 		String exemptionReason="";
 
 		if (trans.getPaymentTermDescription()!=null) {
@@ -335,12 +335,7 @@ public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
 		xml+= "			<ram:ActualDeliverySupplyChainEvent>\n"
 				+ "				<ram:OccurrenceDateTime>";
 
-		if (trans.getZFDeliveryDate() != null) {
-			ZUGFeRDDateFormat dateFormat = trans.getZFDeliveryDate().getFormat();
-			Date date = trans.getZFDeliveryDate().getDate();
-			xml += "<udt:DateTimeString format=\"" + dateFormat.getDateTimeType() + "\">"
-					+ dateFormat.getFormatter().format(date) + "</udt:DateTimeString>";
-		} else if (trans.getDeliveryDate() != null) {
+		if (trans.getDeliveryDate() != null) {
 			xml += "<udt:DateTimeString format=\"102\">" + zugferdDateFormat.format(trans.getDeliveryDate())
 					+ "</udt:DateTimeString>";
 		} else {
@@ -550,7 +545,7 @@ public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
 
 		IZUGFeRDPaymentTerms paymentTerms = trans.getPaymentTerms();
 		IZUGFeRDPaymentDiscountTerms discountTerms = paymentTerms.getDiscountTerms();
-		IZUGFeRDDate dueDate = paymentTerms.getDueDate();
+		Date dueDate = paymentTerms.getDueDate();
 		if (dueDate != null && discountTerms != null && discountTerms.getBaseDate() != null) {
 			throw new IllegalStateException(
 					"if paymentTerms.dueDate is specified, paymentTerms.discountTerms.baseDate has not to be specified");
@@ -558,8 +553,8 @@ public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
 		paymentTermsXml += "<ram:Description>" + paymentTerms.getDescription() + "</ram:Description>";
 		if (dueDate != null) {
 			paymentTermsXml += "<ram:DueDateDateTime>";
-			paymentTermsXml += "<udt:DateTimeString format=\"" + dueDate.getFormat().getDateTimeType() + "\">"
-					+ dueDate.getFormat().getFormatter().format(dueDate.getDate()) + "</udt:DateTimeString>";
+			paymentTermsXml += "<udt:DateTimeString format=\"102\">"
+					+ zugferdDateFormat.format(dueDate.getDate()) + "</udt:DateTimeString>";
 			paymentTermsXml += "</ram:DueDateDateTime>";
 		}
 
@@ -572,10 +567,9 @@ public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
 					+ "</ram:CalculationPercent>";
 
 			if (discountTerms.getBaseDate() != null) {
-				Date baseDate = discountTerms.getBaseDate().getDate();
-				ZUGFeRDDateFormat baseDateFormat = discountTerms.getBaseDate().getFormat();
+				Date baseDate = discountTerms.getBaseDate();
 				paymentTermsXml += "<ram:BasisDateTime>";
-				paymentTermsXml += "<udt:DateTimeString format=\"" + baseDateFormat.getDateTimeType() + "\">" + baseDateFormat.getFormatter().format(baseDate) + "</udt:DateTimeString>";
+				paymentTermsXml += "<udt:DateTimeString format=\"102\">" + zugferdDateFormat.format(baseDate) + "</udt:DateTimeString>";
 				paymentTermsXml += "</ram:BasisDateTime>";
 				
 				paymentTermsXml += "<ram:BasisPeriodMeasure unitCode=\"" + discountTerms.getBasePeriodUnitCode() + "\">"

@@ -1,10 +1,12 @@
 package org.mustangproject.ZUGFeRD;
 
+import java.util.Date;
+
 public interface IZUGFeRDPaymentTerms {
 
 	String getDescription();
 
-	IZUGFeRDDate getDueDate();
+	Date getDueDate();
 
 	IZUGFeRDPaymentDiscountTerms getDiscountTerms();
 }
