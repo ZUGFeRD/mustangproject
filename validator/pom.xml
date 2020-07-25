@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
     <artifactId>validator</artifactId>
-    <name>Library to validate Factur-X/ZUGFeRD 1.0 and 2.1 as well as XRechnung e-invoices. </name>
+    <name>Library to validate Factur-X/ZUGFeRD 1.0 and 2.1 as well as XRechnung e-invoices.</name>
 
     <packaging>jar</packaging>
     <version>2.0.0-SNAPSHOT</version>
@@ -119,7 +119,7 @@
         </pluginManagement>
         <plugins>
             <!-- be able to generate XSLT from XRechnung Schematron-->
-            <!--plugin>
+            <plugin>
                 <groupId>com.helger.maven</groupId>
                 <artifactId>ph-schematron-maven-plugin</artifactId>
                 <version>5.6.0</version>
@@ -134,12 +134,13 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin -->
+            </plugin>
 
             <!-- allow getImplementationVersion for the pom.xml -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -167,12 +168,23 @@
             </plugin>
             <!-- /ZUV -->
             <!-- generate XSLT files from schematron upon build (goal convert is part
-                   of the preparation of the "package" step)
-                <plugin> <groupId>com.helger.maven</groupId> <artifactId>ph-sch2xslt-maven-plugin</artifactId>
-                   <version>5.0.8</version> <configuration> <schematronDirectory>${basedir}/src/main/resources/</schematronDirectory>
-                   <xsltDirectory>${basedir}/src/main/resources/xslt</xsltDirectory> </configuration>
-                   <executions> <execution> <goals> <goal>convert</goal> </goals> </execution>
-                   </executions> </plugin> -->
+                   of the preparation of the "package" step)-->
+            <plugin>
+                <groupId>com.helger.maven</groupId>
+                <artifactId>ph-sch2xslt-maven-plugin</artifactId>
+                <version>5.0.8</version>
+                <configuration>
+                    <schematronDirectory>${basedir}/src/main/resources/</schematronDirectory>
+                    <xsltDirectory>${basedir}/src/main/resources/xslt</xsltDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>convert</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>

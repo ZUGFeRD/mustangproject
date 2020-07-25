@@ -1,9 +1,8 @@
 2.0 todo
 - verapdf as prevalidation
-- remove jaxb
-- visualization?
+- visualization? zugferdvisualizer?
 - factory for xrechnung
-- new sample innvoice
+- new sample invoice
 - complete or discard read into push provider
 - validate as library doc
 - javadoc export
@@ -12,6 +11,7 @@
 - automated tests zuv/verapdf validate created library test files
 - unify loggers
 done
+- remove jaxb
 - 2.1 now default
 - pushprovider
 - new xrechnung profile
