@@ -18,13 +18,15 @@
  * <p>
  * **********************************************************************
  */
-package org.mustangproject.ZUGFeRD;
+package library.src.main.java.org.mustangproject;
+
+import org.mustangproject.ZUGFeRD.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
+public class Invoice implements IZUGFeRDExportableTransaction {
 
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownTaxID = null, ownVATID = null, ownForeignOrganisationID = null, ownOrganisationName = null, ownStreet = null, ownZIP = null, ownLocation = null, ownCountry = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
@@ -37,7 +39,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 	protected IZUGFeRDPaymentTerms paymentTerms = null;
 
 
-	public ZUGFeRD2PushProvider() {
+	public Invoice() {
 		ZFItems = new ArrayList<IZUGFeRDExportableItem>();
 	}
 
@@ -46,7 +48,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return documentName;
 	}
 
-	public ZUGFeRD2PushProvider setDocumentName(String documentName) {
+	public Invoice setDocumentName(String documentName) {
 		this.documentName = documentName;
 		return this;
 	}
@@ -56,7 +58,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return documentCode;
 	}
 
-	public ZUGFeRD2PushProvider setDocumentCode(String documentCode) {
+	public Invoice setDocumentCode(String documentCode) {
 		this.documentCode = documentCode;
 		return this;
 	}
@@ -66,7 +68,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return number;
 	}
 
-	public ZUGFeRD2PushProvider setNumber(String number) {
+	public Invoice setNumber(String number) {
 		this.number = number;
 		return this;
 	}
@@ -76,7 +78,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return ownOrganisationFullPlaintextInfo;
 	}
 
-	public ZUGFeRD2PushProvider setOwnOrganisationFullPlaintextInfo(String ownOrganisationFullPlaintextInfo) {
+	public Invoice setOwnOrganisationFullPlaintextInfo(String ownOrganisationFullPlaintextInfo) {
 		this.ownOrganisationFullPlaintextInfo = ownOrganisationFullPlaintextInfo;
 		return this;
 	}
@@ -86,7 +88,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return referenceNumber;
 	}
 
-	public ZUGFeRD2PushProvider setReferenceNumber(String referenceNumber) {
+	public Invoice setReferenceNumber(String referenceNumber) {
 		this.referenceNumber = referenceNumber;
 		return this;
 	}
@@ -96,7 +98,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return shipToOrganisationID;
 	}
 
-	public ZUGFeRD2PushProvider setShipToOrganisationID(String shipToOrganisationID) {
+	public Invoice setShipToOrganisationID(String shipToOrganisationID) {
 		this.shipToOrganisationID = shipToOrganisationID;
 		return this;
 	}
@@ -106,7 +108,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return shipToOrganisationName;
 	}
 
-	public ZUGFeRD2PushProvider setShipToOrganisationName(String shipToOrganisationName) {
+	public Invoice setShipToOrganisationName(String shipToOrganisationName) {
 		this.shipToOrganisationName = shipToOrganisationName;
 		return this;
 	}
@@ -116,7 +118,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return shipToStreet;
 	}
 
-	public ZUGFeRD2PushProvider setShipToStreet(String shipToStreet) {
+	public Invoice setShipToStreet(String shipToStreet) {
 		this.shipToStreet = shipToStreet;
 		return this;
 	}
@@ -126,7 +128,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return shipToZIP;
 	}
 
-	public ZUGFeRD2PushProvider setShipToZIP(String shipToZIP) {
+	public Invoice setShipToZIP(String shipToZIP) {
 		this.shipToZIP = shipToZIP;
 		return this;
 	}
@@ -136,7 +138,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return shipToLocation;
 	}
 
-	public ZUGFeRD2PushProvider setShipToLocation(String shipToLocation) {
+	public Invoice setShipToLocation(String shipToLocation) {
 		this.shipToLocation = shipToLocation;
 		return this;
 	}
@@ -146,7 +148,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return shipToCountry;
 	}
 
-	public ZUGFeRD2PushProvider setShipToCountry(String shipToCountry) {
+	public Invoice setShipToCountry(String shipToCountry) {
 		this.shipToCountry = shipToCountry;
 		return this;
 	}
@@ -156,7 +158,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return buyerOrderReferencedDocumentID;
 	}
 
-	public ZUGFeRD2PushProvider setBuyerOrderReferencedDocumentID(String buyerOrderReferencedDocumentID) {
+	public Invoice setBuyerOrderReferencedDocumentID(String buyerOrderReferencedDocumentID) {
 		this.buyerOrderReferencedDocumentID = buyerOrderReferencedDocumentID;
 		return this;
 	}
@@ -166,7 +168,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return buyerOrderReferencedDocumentIssueDateTime;
 	}
 
-	public ZUGFeRD2PushProvider setBuyerOrderReferencedDocumentIssueDateTime(String buyerOrderReferencedDocumentIssueDateTime) {
+	public Invoice setBuyerOrderReferencedDocumentIssueDateTime(String buyerOrderReferencedDocumentIssueDateTime) {
 		this.buyerOrderReferencedDocumentIssueDateTime = buyerOrderReferencedDocumentIssueDateTime;
 		return this;
 	}
@@ -176,7 +178,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return ownTaxID;
 	}
 
-	public ZUGFeRD2PushProvider setOwnTaxID(String ownTaxID) {
+	public Invoice setOwnTaxID(String ownTaxID) {
 		this.ownTaxID = ownTaxID;
 		return this;
 	}
@@ -186,7 +188,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return ownVATID;
 	}
 
-	public ZUGFeRD2PushProvider setOwnVATID(String ownVATID) {
+	public Invoice setOwnVATID(String ownVATID) {
 		this.ownVATID = ownVATID;
 		return this;
 	}
@@ -196,7 +198,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return ownForeignOrganisationID;
 	}
 
-	public ZUGFeRD2PushProvider setOwnForeignOrganisationID(String ownForeignOrganisationID) {
+	public Invoice setOwnForeignOrganisationID(String ownForeignOrganisationID) {
 		this.ownForeignOrganisationID = ownForeignOrganisationID;
 		return this;
 	}
@@ -206,7 +208,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return ownOrganisationName;
 	}
 
-	public ZUGFeRD2PushProvider setOwnOrganisationName(String ownOrganisationName) {
+	public Invoice setOwnOrganisationName(String ownOrganisationName) {
 		this.ownOrganisationName = ownOrganisationName;
 		return this;
 	}
@@ -216,7 +218,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return ownStreet;
 	}
 
-	public ZUGFeRD2PushProvider setOwnStreet(String ownStreet) {
+	public Invoice setOwnStreet(String ownStreet) {
 		this.ownStreet = ownStreet;
 		return this;
 	}
@@ -226,7 +228,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return ownZIP;
 	}
 
-	public ZUGFeRD2PushProvider setOwnZIP(String ownZIP) {
+	public Invoice setOwnZIP(String ownZIP) {
 		this.ownZIP = ownZIP;
 		return this;
 	}
@@ -235,7 +237,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return ownLocation;
 	}
 
-	public ZUGFeRD2PushProvider setOwnLocation(String getOwnLocation) {
+	public Invoice setOwnLocation(String getOwnLocation) {
 		this.ownLocation = getOwnLocation;
 		return this;
 	}
@@ -244,7 +246,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return ownCountry;
 	}
 
-	public ZUGFeRD2PushProvider setOwnCountry(String getOwnCountry) {
+	public Invoice setOwnCountry(String getOwnCountry) {
 		this.ownCountry = getOwnCountry;
 		return this;
 	}
@@ -254,7 +256,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return currency;
 	}
 
-	public ZUGFeRD2PushProvider setCurrency(String currency) {
+	public Invoice setCurrency(String currency) {
 		this.currency = currency;
 		return this;
 	}
@@ -264,7 +266,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return paymentTermDescription;
 	}
 
-	public ZUGFeRD2PushProvider setPaymentTermDescription(String paymentTermDescription) {
+	public Invoice setPaymentTermDescription(String paymentTermDescription) {
 		this.paymentTermDescription = paymentTermDescription;
 		return this;
 	}
@@ -274,7 +276,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return issueDate;
 	}
 
-	public ZUGFeRD2PushProvider setIssueDate(Date issueDate) {
+	public Invoice setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
 		return this;
 	}
@@ -284,7 +286,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return dueDate;
 	}
 
-	public ZUGFeRD2PushProvider setDueDate(Date dueDate) {
+	public Invoice setDueDate(Date dueDate) {
 		this.dueDate = dueDate;
 		return this;
 	}
@@ -294,7 +296,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return deliveryDate;
 	}
 
-	public ZUGFeRD2PushProvider setDeliveryDate(Date deliveryDate) {
+	public Invoice setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
 		return this;
 	}
@@ -304,7 +306,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return totalPrepaidAmount;
 	}
 
-	public ZUGFeRD2PushProvider setTotalPrepaidAmount(BigDecimal totalPrepaidAmount) {
+	public Invoice setTotalPrepaidAmount(BigDecimal totalPrepaidAmount) {
 		this.totalPrepaidAmount = totalPrepaidAmount;
 		return this;
 	}
@@ -314,7 +316,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return ownContact;
 	}
 
-	public ZUGFeRD2PushProvider setOwnContact(IZUGFeRDExportableContact ownContact) {
+	public Invoice setOwnContact(IZUGFeRDExportableContact ownContact) {
 		this.ownContact = ownContact;
 		return this;
 	}
@@ -324,7 +326,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return recipient;
 	}
 
-	public ZUGFeRD2PushProvider setRecipient(IZUGFeRDExportableContact recipient) {
+	public Invoice setRecipient(IZUGFeRDExportableContact recipient) {
 		this.recipient = recipient;
 		return this;
 	}
@@ -334,7 +336,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return ZFAllowances;
 	}
 
-	public ZUGFeRD2PushProvider setZFAllowances(IZUGFeRDAllowanceCharge[] ZFAllowances) {
+	public Invoice setZFAllowances(IZUGFeRDAllowanceCharge[] ZFAllowances) {
 		this.ZFAllowances = ZFAllowances;
 		return this;
 	}
@@ -344,7 +346,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return ZFCharges;
 	}
 
-	public ZUGFeRD2PushProvider setZFCharges(IZUGFeRDAllowanceCharge[] ZFCharges) {
+	public Invoice setZFCharges(IZUGFeRDAllowanceCharge[] ZFCharges) {
 		this.ZFCharges = ZFCharges;
 		return this;
 	}
@@ -354,7 +356,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return ZFLogisticsServiceCharges;
 	}
 
-	public ZUGFeRD2PushProvider setZFLogisticsServiceCharges(IZUGFeRDAllowanceCharge[] ZFLogisticsServiceCharges) {
+	public Invoice setZFLogisticsServiceCharges(IZUGFeRDAllowanceCharge[] ZFLogisticsServiceCharges) {
 		this.ZFLogisticsServiceCharges = ZFLogisticsServiceCharges;
 		return this;
 	}
@@ -363,7 +365,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return getTradeSettlement;
 	}
 
-	public ZUGFeRD2PushProvider setGetTradeSettlement(IZUGFeRDTradeSettlement[] getTradeSettlement) {
+	public Invoice setGetTradeSettlement(IZUGFeRDTradeSettlement[] getTradeSettlement) {
 		this.getTradeSettlement = getTradeSettlement;
 		return this;
 	}
@@ -373,7 +375,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return paymentTerms;
 	}
 
-	public ZUGFeRD2PushProvider setPaymentTerms(IZUGFeRDPaymentTerms paymentTerms) {
+	public Invoice setPaymentTerms(IZUGFeRDPaymentTerms paymentTerms) {
 		this.paymentTerms = paymentTerms;
 		return this;
 	}
@@ -383,7 +385,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return deliveryAddress;
 	}
 
-	public ZUGFeRD2PushProvider setDeliveryAddress(IZUGFeRDExportableContact deliveryAddress) {
+	public Invoice setDeliveryAddress(IZUGFeRDExportableContact deliveryAddress) {
 		this.deliveryAddress = deliveryAddress;
 		return this;
 	}
@@ -393,7 +395,7 @@ public class ZUGFeRD2PushProvider implements IZUGFeRDExportableTransaction {
 		return ZFItems.toArray(new IZUGFeRDExportableItem[0]);
 	}
 
-	public ZUGFeRD2PushProvider addItem(IZUGFeRDExportableItem item) {
+	public Invoice addItem(IZUGFeRDExportableItem item) {
 		ZFItems.add(item);
 		return this;
 	}

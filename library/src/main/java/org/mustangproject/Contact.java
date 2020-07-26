@@ -1,4 +1,6 @@
-package org.mustangproject.ZUGFeRD;
+package library.src.main.java.org.mustangproject;
+
+import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
 
 public class Contact implements IZUGFeRDExportableContact {
 

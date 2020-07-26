@@ -1,23 +1,24 @@
 package org.mustangproject.ZUGFeRD;
 
-import org.w3c.dom.Document;
+import library.src.main.java.org.mustangproject.Contact;
+import library.src.main.java.org.mustangproject.Invoice;
+import library.src.main.java.org.mustangproject.Item;
+import library.src.main.java.org.mustangproject.Product;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.*;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 	public ZUGFeRDInvoiceImporter(String filename) {
 		super(filename);
 	}
-	public ZUGFeRD2PushProvider extractInvoice() {
+	public Invoice extractInvoice() {
 
 		String number="AB123";
-			ZUGFeRD2PushProvider zpp=new ZUGFeRD2PushProvider().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOwnStreet("teststr").setOwnZIP("55232").setOwnLocation("teststadt").setOwnCountry("DE").setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new Contact("Franz Müller", "0177123456", "fmueller@test.com", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number);
+			Invoice zpp=new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOwnStreet("teststr").setOwnZIP("55232").setOwnLocation("teststadt").setOwnCountry("DE").setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new Contact("Franz Müller", "0177123456", "fmueller@test.com", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number);
 //.addItem(new Item(new Product("Testprodukt","","C62",new BigDecimal(0)),amount,new BigDecimal(1.0)))
 		zpp.setOwnOrganisationName(extractString("//SellerTradeParty/Name"));
 

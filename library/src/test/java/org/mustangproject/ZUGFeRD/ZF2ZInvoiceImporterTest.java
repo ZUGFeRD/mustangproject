@@ -19,15 +19,7 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
+import library.src.main.java.org.mustangproject.Invoice;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
@@ -47,7 +39,7 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 
 		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter(TARGET_PDF);
 
-		ZUGFeRD2PushProvider invoice=zii.extractInvoice();
+		Invoice invoice=zii.extractInvoice();
 		// Reading ZUGFeRD
 		assertEquals("Bei Spiel GmbH", invoice.getOwnOrganisationName());
 		assertEquals(3, invoice.getZFItems().length);

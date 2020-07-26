@@ -30,6 +30,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 
+import library.src.main.java.org.mustangproject.Item;
+import library.src.main.java.org.mustangproject.Product;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
@@ -809,13 +811,13 @@ public class ZUGFeRDImporter {
 	 * returns a list of LineItems
 	 * @return a List of LineItem instances
 	 */
-	public List<Item> getLineItemList() {
+	public List<library.src.main.java.org.mustangproject.Item> getLineItemList() {
 		List<Node> nodeList = getLineItemNodes();
-		List<Item> lineItemList = new ArrayList<>();
+		List<library.src.main.java.org.mustangproject.Item> lineItemList = new ArrayList<>();
 
 		for (Node n: nodeList
 		) {
-			Item lineItem = new Item(null, null, null);
+			library.src.main.java.org.mustangproject.Item lineItem = new Item(null, null, null);
 			lineItem.setProduct(new Product(null,null,null,null));
 
 			NodeList nl = n.getChildNodes();
@@ -848,16 +850,16 @@ public class ZUGFeRDImporter {
 					case "ram:SpecifiedTradeProduct":
 
 						node = getNodeByName(nn.getChildNodes(), "ram:SellerAssignedID");
-						lineItem.product.setSellerAssignedID(getNodeValue(node));
+						lineItem.getProduct().setSellerAssignedID(getNodeValue(node));
 
 						node = getNodeByName(nn.getChildNodes(), "ram:BuyerAssignedID");
-						lineItem.product.setBuyerAssignedID(getNodeValue(node));
+						lineItem.getProduct().setBuyerAssignedID(getNodeValue(node));
 
 						node = getNodeByName(nn.getChildNodes(), "ram:Name");
-						lineItem.product.setName(getNodeValue(node));
+						lineItem.getProduct().setName(getNodeValue(node));
 
 						node = getNodeByName(nn.getChildNodes(), "ram:Description");
-						lineItem.product.setDescription(getNodeValue(node));
+						lineItem.getProduct().setDescription(getNodeValue(node));
 						break;
 
 					case "ram:SpecifiedLineTradeDelivery":
@@ -871,7 +873,7 @@ public class ZUGFeRDImporter {
 						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");
 						if (node != null) {
 							node = getNodeByName(node.getChildNodes(), "ram:RateApplicablePercent");
-							lineItem.product.setVATPercent(tryBigDecimal(getNodeValue(node)));
+							lineItem.getProduct().setVATPercent(tryBigDecimal(getNodeValue(node)));
 						}
 
 						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");
@@ -892,7 +894,7 @@ public class ZUGFeRDImporter {
 						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");
 						if (node != null) {
 							node = getNodeByName(node.getChildNodes(), "ram:ApplicablePercent");
-							lineItem.product.setVATPercent(tryBigDecimal(getNodeValue(node)));
+							lineItem.getProduct().setVATPercent(tryBigDecimal(getNodeValue(node)));
 						}
 
 						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");

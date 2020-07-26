@@ -1,8 +1,7 @@
-package org.mustangproject.ZUGFeRD;
+package library.src.main.java.org.mustangproject;
 
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 
 import java.math.BigDecimal;
 

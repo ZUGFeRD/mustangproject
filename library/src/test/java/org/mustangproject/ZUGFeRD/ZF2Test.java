@@ -24,7 +24,6 @@ import junit.framework.TestSuite;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -248,16 +247,16 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals(zi.getSellerTradePartyAddress().getCountryID(), "DE");
 		assertEquals(zi.getSellerTradePartyAddress().getCityName(), "Stadthausen");
 
-		List<org.mustangproject.ZUGFeRD.Item> li = zi.getLineItemList();
+		List<library.src.main.java.org.mustangproject.Item> li = zi.getLineItemList();
 		assertEquals(zi.getLineItemList().get(0).getId().toString(), "1");
-		assertEquals(zi.getLineItemList().get(0).product.getBuyerAssignedID(), "");
-		assertEquals(zi.getLineItemList().get(0).product.getSellerAssignedID(), "");
+		assertEquals(zi.getLineItemList().get(0).getProduct().getBuyerAssignedID(), "");
+		assertEquals(zi.getLineItemList().get(0).getProduct().getSellerAssignedID(), "");
 		assertEquals(zi.getLineItemList().get(0).getLineTotalAmount().toString(), "160.00");
 		assertEquals(zi.getLineItemList().get(0).getQuantity().toString(), "1.0000");
 		assertEquals(zi.getLineItemList().get(0).getGrossPrice().toString(), "160.0000");
-		assertEquals(zi.getLineItemList().get(0).product.getVATPercent().toString(), "7.00");
-		assertEquals(zi.getLineItemList().get(0).product.getName(), "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung");
-		assertEquals(zi.getLineItemList().get(0).product.getDescription(), "");
+		assertEquals(zi.getLineItemList().get(0).getProduct().getVATPercent().toString(), "7.00");
+		assertEquals(zi.getLineItemList().get(0).getProduct().getName(), "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung");
+		assertEquals(zi.getLineItemList().get(0).getProduct().getDescription(), "");
 
 		try {
 			assertEquals(zi.getVersion(), 2);
