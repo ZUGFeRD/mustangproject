@@ -33,9 +33,6 @@ import com.helger.schematron.svrl.SVRLHelper;
 import org.xml.sax.InputSource;
 
 public class XMLValidator extends Validator {
-    public XMLValidator(ValidationContext ctx) {
-        super(ctx);
-    }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XMLValidator.class.getCanonicalName()); // log output
     // is
@@ -46,9 +43,15 @@ public class XMLValidator extends Validator {
     protected String filename = "";
     int firedRules = 0;
     int failedRules = 0;
+    boolean disableNotices=false;
     ISchematronResource aResSCH = null;
 
-    public void setFilename(String name) throws IrrecoverableValidationError { // from XML Filename
+
+	public XMLValidator(ValidationContext ctx) {
+		super(ctx);
+	}
+
+	public void setFilename(String name) throws IrrecoverableValidationError { // from XML Filename
         filename = name;
         // file existence must have been checked before
 
@@ -74,6 +77,13 @@ public class XMLValidator extends Validator {
         return (uri1.equals(uri2) || uri1.startsWith(uri2 + "#"));
     }
 
+
+	/***
+	 * don't report notices in validation report
+	 */
+	public void disableNotices() {
+		disableNotices=true;
+	}
     /***
      *
      * @param xmlString
@@ -263,8 +273,9 @@ public class XMLValidator extends Validator {
                         && (isEN16931 || isXRechnung)) {
                     //additionally validate against CEN
                     validateSchematron(zfXML, "/xslt/cii16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
-
-                    validateXR(zfXML, XrechnungSeverity);
+					if (!disableNotices||XrechnungSeverity!=ESeverity.notice) {
+						validateXR(zfXML, XrechnungSeverity);
+					}
                 }
 
 

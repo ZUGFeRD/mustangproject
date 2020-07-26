@@ -18,6 +18,15 @@
  *********************************************************************** */
 package org.mustangproject.commandline;
 
+import com.sanityinc.jargs.CmdLineParser;
+import com.sanityinc.jargs.CmdLineParser.Option;
+import org.mustangproject.ZUGFeRD.ZUGFeRDConformanceLevel;
+import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
+import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1Factory;
+import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
+import org.mustangproject.validator.Validator;
+import org.mustangproject.validator.ZUGFeRDValidator;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -43,9 +52,11 @@ import org.mustangproject.validator.ZUGFeRDValidator;
 
 import com.sanityinc.jargs.CmdLineParser;
 import com.sanityinc.jargs.CmdLineParser.Option;
+import org.slf4j.LoggerFactory;
 
 public class Main {
-	// build with: /opt/local/bin/mvn clean compile assembly:single
+	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Validator.class.getCanonicalName()); // log output
+
 	private static void printUsage() {
 		System.err.println(getUsage());
 	}
@@ -74,45 +85,27 @@ public class Main {
 				+ "                [--format <fx|zf>]: set ZUGFeRD or FacturX\n"
 				+ "                [--version <1|2>]: set ZUGFeRD version\n"
 				+ "                [--profile <...>]: set ZUGFeRD profile\n"
-				+ "                        For ZUGFeRD v1: <B>ASIC, <C>OMFORT or <E>XTENDED\n"
-				+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, E<X>TENDED "
+				+ "                        For ZUGFeRD v1: <B>ASIC, <C>OMFORT or EX<T>ENDED\n"
+				+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED "
 				+ "        validate  validate XML or PDF file \n"
+				+ "                [--no-notices]: refrain from reporting notices\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source <filename>]: input PDF or XML file\n"
+				+ "        validateExpectValid  validate directory expecting positive results \n"
+				+ "                [--no-notices]: refrain from reporting notices\n"
+				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
+				+ "					-d, --directory to check recursively \n"
+				+ "        validateExpectInvalid  validate directory expecting negative results \n"
+				+ "                [--no-notices]: refrain from reporting notices\n"
+				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
+				+ "					-d, --directory to check recursively\n"
 				;
 	}
 
 	private static void printHelp() {
 		System.out.println("Mustangproject.org " + org.mustangproject.ZUGFeRD.Version.VERSION + " \r\n"
-				+ "A Apache Public License library and command line tool for statistics on PDF invoices with\r\n"
-				+ "ZUGFeRD Metadata (http://www.zugferd.org)\r\n" + "\r\n" + getUsage() + "\r\n"
-				+ "* Count operations\r\n" + "\t-d, --directory\tcount ZUGFeRD files in directory to be scanned\r\n"
-				+ "\t\tIf it is a directory, it will recurse.\r\n"
-				+ "\t-l, --listfromstdin\tcount ZUGFeRD files from a list of linefeed separated files on runtime.\r\n"
-				+ "\t\tIt will start once a blank line has been entered.\r\n" + "\r\n"
-				+ "\tAdditional parameter for both count operations\r\n"
-				+ "\t[-i, --ignorefileextension]\tCheck for all files (*.*) instead of PDF files only (*.pdf)\r\n"
-				+ "\r\n" + "* Merge operations\r\n" + "\t-e, --extract\textract ZUGFeRD PDF to XML file\r\n"
-				+ "\t\tAdditional parameters (optional - user will be prompted if not defined)\r\n"
-				+ "\t\t[--source <filename>]: set input PDF file\r\n"
-				+ "\t\t[--out <filename>]: set output XML file\r\n"
-				+ "\t-u, --upgrade\tupgrade ZUGFeRD XML to ZUGFeRD 2 XML\r\n"
-				+ "\t\tAdditional parameters (optional - user will be prompted if not defined)\r\n"
-				+ "\t\t[--source <filename>]: set input XML ZUGFeRD 1 file\r\n"
-				+ "\t\t[--out <filename>]: set output XML ZUGFeRD 2 file\r\n"
-				+ "\t-a, --a3only\tupgrade from PDF/A1 to A3 only (no ZUGFeRD data attached) \r\n"
-				+ "\t\tAdditional parameters (optional - user will be prompted if not defined)\r\n"
-				+ "\t\t[--source <filename>]: set input PDF file\r\n"
-				+ "\t\t[--out <filename>]: set output PDF file\r\n"
-				+ "\t-c, --combine\tcombine XML and PDF file to ZUGFeRD PDF file\r\n"
-				+ "\t\tAdditional parameters (optional - user will be prompted if not defined)\r\n"
-				+ "\t\t[--source <filename>]: set input PDF file\r\n"
-				+ "\t\t[--source-xml <filename>]: set input XML file\r\n"
-				+ "\t\t[--out <filename>]: set output PDF file\r\n"
-				+ "\t\t[--format <fx|zf>]: enable factur-x or ZUGFeRD\r\n"
-				+ "\t\t[--version <1|2>]: set ZUGFeRD version\r\n" + "\t\t[--profile <...>]: set ZUGFeRD profile\r\n"
-				+ "\t\t\tFor ZUGFeRD v1: <B>ASIC, <C>OMFORT or <E>XTENDED\r\n"
-				+ "\t\t\tFor ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, EX<T>ENDED, <X>Rechnung\r\n");
+				+ "A Apache Public License tool for e-invoices with\r\n"
+				+ "ZUGFeRD Metadata (http://www.zugferd.org)\r\n" + "\r\n" + getUsage() + "\r\n");
 	}
 
 	/**
@@ -148,7 +141,7 @@ public class Main {
 			try {
 				input = buffer.readLine();
 			} catch (IOException e) {
-				Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+				LOGGER.error(e.getMessage(), e);
 
 			}
 
@@ -185,7 +178,7 @@ public class Main {
 			try {
 				selectedName = buffer.readLine();
 			} catch (IOException e) {
-				Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+				LOGGER.error(e.getMessage(), e);
 
 			}
 
@@ -217,7 +210,7 @@ public class Main {
 				try {
 					selectedAnswer = buffer.readLine();
 				} catch (IOException e) {
-					Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+					LOGGER.error(e.getMessage(), e);
 				}
 				if (!selectedAnswer.equals("Y") && !selectedAnswer.equals("y")) {
 					System.err.println("Aborted by user");
@@ -259,6 +252,7 @@ public class Main {
 			Option<String> sourceOption = parser.addStringOption("source");
 			// --out: output file
 			Option<String> outOption = parser.addStringOption("out");
+			Option<Boolean> noNoticesOption = parser.addBooleanOption("no-notices");
 
 
 			// Command: Combining PDF and XML
@@ -282,7 +276,6 @@ public class Main {
 			// Command: Show metrics from list from stdin
 			// --listfromstdin
 			Option<Boolean> filesFromStdInOption = parser.addBooleanOption('l', "listfromstdin");
-
 			try {
 				parser.parse(args);
 			} catch (CmdLineParser.OptionException e) {
@@ -301,6 +294,8 @@ public class Main {
 			String sourceXMLName = parser.getOptionValue(sourceXmlOption);
 			String outName = parser.getOptionValue(outOption);
 			String format = parser.getOptionValue(formatOption);
+			Boolean noNotices = parser.getOptionValue(noNoticesOption);
+
 			String zugferdVersion = parser.getOptionValue(zugferdVersionOption);
 			String zugferdProfile = parser.getOptionValue(zugferdProfileOption);
 			boolean optionsRecognized=false;
@@ -320,37 +315,32 @@ public class Main {
 				performConvert(sourceName, outName);
 				optionsRecognized=true;
 			} else if ((action!=null)&&(action.equals("validate"))) {
-
-				optionsRecognized=performValidate(sourceName);
-
+				optionsRecognized=performValidate(sourceName, noNotices!=null&&noNotices);
 			} else if ((action!=null)&&(action.equals("validateExpectValid"))) {
-
 				optionsRecognized=performValidateExpect(true, directoryName);
-
-
 			} else if ((action!=null)&&(action.equals("validateExpectInvalid"))) {
-
 				optionsRecognized=performValidateExpect(false, directoryName);
-
 			} else {
 				// no argument or argument unknown
 				printUsage();
 				System.exit(2);
 			}
 		} catch (Exception e) {
-
-			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+			LOGGER.error(e.getMessage(), e);
 			System.exit(-1);
 		}
 
 	}
 
-	private static boolean performValidate(String sourceName) {
+	private static boolean performValidate(String sourceName, boolean noNotices) {
 		boolean optionsRecognized;
 		if (sourceName == null) {
 			sourceName = getFilenameFromUser("Source PDF or XML", "invoice.pdf", "pdf|xml", true, false);
 		}
 		ZUGFeRDValidator zfv=new ZUGFeRDValidator();
+		if (noNotices) {
+			zfv.disableNotices();
+		}
 		System.out.println(zfv.validate(sourceName));
 		optionsRecognized = !zfv.hasOptionsError();
 		if (!zfv.wasCompletelyValid()) {
@@ -470,7 +460,7 @@ public class Main {
 				try {
 					format = getStringFromUser("Format (fx=Factur-X, zf=ZUGFeRD)", "zf", "fx|zf");
 				} catch (Exception e) {
-					Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+					LOGGER.error(e.getMessage(), e);
 				}
 			} else {
 				System.out.println("Format set to " + format);
@@ -480,7 +470,7 @@ public class Main {
 				try {
 					zfVersion = getStringFromUser("Version (1 or 2)", Integer.toString(ZUGFeRDExporter.DefaultZUGFeRDVersion), "1|2");
 				} catch (Exception e) {
-					Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+					LOGGER.error(e.getMessage(), e);
 				}
 			} else {
 				System.out.println("Version set to " + zfVersion);
@@ -497,8 +487,7 @@ public class Main {
 								"M|m|W|w|B|b|C|c|E|e|T|t|X|x|");
 					}
 				} catch (Exception e) {
-					Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
-
+					LOGGER.error(e.getMessage(), e);
 				}
 			} else {
 				System.out.println("Profile set to " + zfProfile);
@@ -567,8 +556,7 @@ public class Main {
 			System.out.println("Written to " + outName);
 
 		} catch (IOException e) {
-			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
-
+			LOGGER.error(e.getMessage(), e);
 		}
 	}
 

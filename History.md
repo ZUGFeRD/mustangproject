@@ -29,6 +29,7 @@ done
 - remove migration
 - be able to recursively validate directories
 - be able to ignore input pdf errors with -i
+- be able to recursively scan directories using validateExpectValid/validateExpectInvalid
 - upgraded to verapdf 1.16.1
 - added Ghostscript signature
 - removal of izugferddate/IZUGFeRDPaymentTerms,IZUGFeRDPaymentDiscountTerms
