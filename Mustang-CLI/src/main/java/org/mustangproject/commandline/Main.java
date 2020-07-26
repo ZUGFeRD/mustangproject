@@ -168,7 +168,7 @@ public class Main {
 	 *
 	 * @param prompt the text the user is asked
 	 * @param defaultFilename a default Filename
-	 * @param expectedExtension will warn if filename does not match expected file extension
+	 * @param expectedExtension will warn if filename does not match expected file extension, "or" possible with e.g. pdf|xml
 	 * @param ensureFileExists will warn if file does NOT exist (for input files)
 	 * @param ensureFileNotExists will warn if file DOES exist (for output files)
 	 * @return String
@@ -194,8 +194,23 @@ public class Main {
 				selectedName = defaultFilename;
 			}
 
+			boolean hasCorrectExtension=false;
+			String[] expectedExtensions=expectedExtension.split("\\|");
+			for (String currentExtension: expectedExtensions) {
+				if (selectedName.toLowerCase().endsWith(expectedExtension.toLowerCase())) {
+					hasCorrectExtension=true;
+				}
+			}
 			// error cases
-			if (!selectedName.toLowerCase().endsWith(expectedExtension.toLowerCase())) {
+			if (ensureFileExists) {
+				if (fileExists(selectedName)) {
+					fileExistenceOK = true;
+				} else {
+					System.out.println("File does not exist, try again or CTRL+C to cancel");
+					// discard the input, a scanner.reset is not sufficient
+					fileExistenceOK = false;
+				}
+			} else if (!hasCorrectExtension) {
 				System.err.println("Expected " + expectedExtension
 						+ " extension, this may corrupt your file. Do you still want to continue?(Y|N)");
 				String selectedAnswer = "";
@@ -209,14 +224,6 @@ public class Main {
 					System.exit(-1);
 				}
 
-			} else if (ensureFileExists) {
-				if (fileExists(selectedName)) {
-					fileExistenceOK = true;
-				} else {
-					System.out.println("File does not exist, try again or CTRL+C to cancel");
-					// discard the input, a scanner.reset is not sufficient
-					fileExistenceOK = false;
-				}
 			} else {
 				fileExistenceOK = true;
 
@@ -341,11 +348,8 @@ public class Main {
 	private static boolean performValidate(String sourceName) {
 		boolean optionsRecognized;
 		if (sourceName == null) {
-			sourceName = getFilenameFromUser("Source PDF", "invoice.pdf", "pdf", true, false);
-		} else {
-			System.out.println("Source PDF set to " + sourceName);
+			sourceName = getFilenameFromUser("Source PDF or XML", "invoice.pdf", "pdf|xml", true, false);
 		}
-
 		ZUGFeRDValidator zfv=new ZUGFeRDValidator();
 		System.out.println(zfv.validate(sourceName));
 		optionsRecognized = !zfv.hasOptionsError();

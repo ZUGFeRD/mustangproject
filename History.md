@@ -10,6 +10,8 @@
 - be able to disable "source pdf set to timeout"
 - automated tests zuv/verapdf validate created library test files
 - unify loggers
+- xmp errors may not show correctly in log
+- switch for no log and no notices
 - merge readmes and history.md s
 done
 - remove jaxb
