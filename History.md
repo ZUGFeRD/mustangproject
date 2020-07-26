@@ -10,6 +10,7 @@
 - be able to disable "source pdf set to timeout"
 - automated tests zuv/verapdf validate created library test files
 - unify loggers
+- merge readmes and history.md s
 done
 - remove jaxb
 - 2.1 now default
