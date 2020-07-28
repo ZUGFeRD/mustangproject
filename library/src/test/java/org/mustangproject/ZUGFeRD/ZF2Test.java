@@ -187,11 +187,11 @@ public class ZF2Test extends MustangReaderTestCase {
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
 
-				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("My Application")
-						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).ignorePDFAErrors()
+			 ZUGFeRDExporterFromA3 ze = new ZUGFeRDExporterFromA3().setProducer("My Application")
+						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile(Profiles.EN16931)
 						.load(SOURCE_PDF)) {
 			
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(TARGET_PDF);
@@ -247,7 +247,7 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals(zi.getSellerTradePartyAddress().getCountryID(), "DE");
 		assertEquals(zi.getSellerTradePartyAddress().getCityName(), "Stadthausen");
 
-		List<library.src.main.java.org.mustangproject.Item> li = zi.getLineItemList();
+		List<org.mustangproject.Item> li = zi.getLineItemList();
 		assertEquals(zi.getLineItemList().get(0).getId().toString(), "1");
 		assertEquals(zi.getLineItemList().get(0).getProduct().getBuyerAssignedID(), "");
 		assertEquals(zi.getLineItemList().get(0).getProduct().getSellerAssignedID(), "");

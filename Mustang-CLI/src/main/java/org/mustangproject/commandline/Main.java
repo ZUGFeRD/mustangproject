@@ -20,10 +20,7 @@ package org.mustangproject.commandline;
 
 import com.sanityinc.jargs.CmdLineParser;
 import com.sanityinc.jargs.CmdLineParser.Option;
-import org.mustangproject.ZUGFeRD.ZUGFeRDConformanceLevel;
-import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
-import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1Factory;
-import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
+import org.mustangproject.ZUGFeRD.*;
 import org.mustangproject.validator.Validator;
 import org.mustangproject.validator.ZUGFeRDValidator;
 
@@ -34,24 +31,12 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.xml.transform.TransformerException;
-
-import org.mustangproject.ZUGFeRD.ZUGFeRDConformanceLevel;
-import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
-import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1Factory;
-import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
-import org.mustangproject.validator.ZUGFeRDValidator;
 
 /***
  * This is the command line interface to mustangproject
  *
  */
 
-import com.sanityinc.jargs.CmdLineParser;
-import com.sanityinc.jargs.CmdLineParser.Option;
 import org.slf4j.LoggerFactory;
 
 public class Main {
@@ -392,7 +377,7 @@ public class Main {
 		ensureFileNotExists(outName);
 
 		// All params are good! continue...
-		ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false).load(pdfName);
+		ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().convertOnly().load(pdfName);
 
 		ze.export(outName);
 		System.out.println("Written to " + outName);
@@ -435,8 +420,8 @@ public class Main {
 		 * .loadFromPDFA1("invoice.pdf");
 		 */
 		try {
-			int zfIntVersion = ZUGFeRDExporter.DefaultZUGFeRDVersion;
-			ZUGFeRDConformanceLevel zfConformanceLevelProfile = ZUGFeRDConformanceLevel.EXTENDED;
+			int zfIntVersion = ZUGFeRDExporterFromA3.DefaultZUGFeRDVersion;
+			Profiles zfConformanceLevelProfile = Profiles.EXTENDED;
 
 			if (pdfName == null) {
 				pdfName = getFilenameFromUser("Source PDF", "invoice.pdf", "pdf", true, false);
@@ -468,7 +453,7 @@ public class Main {
 
 			if (zfVersion == null) {
 				try {
-					zfVersion = getStringFromUser("Version (1 or 2)", Integer.toString(ZUGFeRDExporter.DefaultZUGFeRDVersion), "1|2");
+					zfVersion = getStringFromUser("Version (1 or 2)", Integer.toString(ZUGFeRDExporterFromA3.DefaultZUGFeRDVersion), "1|2");
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);
 				}
@@ -505,29 +490,29 @@ public class Main {
 
 			if ((format.equals("zf")) && (zfIntVersion == 1)) {
 				if (zfProfile.equals("b")) {
-					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.BASIC;
+					zfConformanceLevelProfile = Profiles.BASIC;
 				} else if (zfProfile.equals("c")) {
-					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.COMFORT;
+					zfConformanceLevelProfile = Profiles.COMFORT;
 				} else if (zfProfile.equals("e")) {
-					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.EXTENDED;
+					zfConformanceLevelProfile = Profiles.EXTENDED;
 				} else {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}
 			} else if (((format.equals("zf")) && (zfIntVersion == 2)) || (format.equals("fx"))) {
 				if (zfProfile.equals("m")) {
-					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.MINIMUM;
+					zfConformanceLevelProfile = Profiles.MINIMUM;
 				} else if (zfProfile.equals("w")) {
-					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.BASICWL;
+					zfConformanceLevelProfile = Profiles.BASICWL;
 				} else if (zfProfile.equals("b")) {
-					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.BASIC;
+					zfConformanceLevelProfile = Profiles.BASIC;
 				} else if (zfProfile.equals("c")) {
-					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.CIUS;
+					zfConformanceLevelProfile = Profiles.CIUS;
 				} else if (zfProfile.equals("e")) {
-					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.EN16931;
+					zfConformanceLevelProfile = Profiles.EN16931;
 				} else if (zfProfile.equals("t")) {
-					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.EXTENDED;
+					zfConformanceLevelProfile = Profiles.EXTENDED;
 				} else if (zfProfile.equals("x")) {
-					zfConformanceLevelProfile = ZUGFeRDConformanceLevel.XRECHNUNG;
+					zfConformanceLevelProfile = Profiles.XRECHNUNG;
 				} else {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}
@@ -536,20 +521,20 @@ public class Main {
 			}
 
 			// All params are good! continue...
-			ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setProducer("Mustang-cli")
+			ZUGFeRDExporterFromA1 ze = (ZUGFeRDExporterFromA1) new ZUGFeRDExporterFromA1().setProducer("Mustang-cli")
 					.setZUGFeRDVersion(zfIntVersion)
-					.setCreator(System.getProperty("user.name")).setZUGFeRDConformanceLevel(zfConformanceLevelProfile)
+					.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile)
 					.load(pdfName);
 			if (ignoreInputErrors) {
-				ze.ignoreA1Errors();
+				ze.ignorePDFAErrors();
 
 			}
 
-			if (format.equals("fx")) {
-				ze.setFacturX();
+			if (!format.equals("fx")) {
+				ze.disableFacturX();
 			}
 
-			ze.setZUGFeRDXMLData(Files.readAllBytes(Paths.get(xmlName)));
+			ze.setXML(Files.readAllBytes(Paths.get(xmlName)));
 
 			ze.export(outName);
 

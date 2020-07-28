@@ -22,9 +22,7 @@ import junit.framework.TestCase;
 
 import java.math.BigDecimal;
 
-import org.mustangproject.ZUGFeRD.MustangReaderTestCase.Item;
-
-public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRDExportableTransaction {
+public abstract class MustangReaderTestCase extends TestCase implements IExportableTransaction {
 
 	public MustangReaderTestCase(String testName) {
 		super(testName);

@@ -1,9 +1,9 @@
 package org.mustangproject.ZUGFeRD;
 
-import library.src.main.java.org.mustangproject.Contact;
-import library.src.main.java.org.mustangproject.Invoice;
-import library.src.main.java.org.mustangproject.Item;
-import library.src.main.java.org.mustangproject.Product;
+import org.mustangproject.Contact;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 

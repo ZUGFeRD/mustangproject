@@ -30,13 +30,12 @@ import java.util.GregorianCalendar;
 
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import org.mustangproject.ZUGFeRD.MustangReaderTestCase.Item;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ZF2EdgeTest extends MustangReaderTestCase implements IZUGFeRDExportableTransaction {
+public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTransaction {
 	final String TARGET_PDF = "./target/testout-ZF2newEdge.pdf";
 
 	protected class EdgeProduct implements IZUGFeRDExportableProduct {
@@ -266,12 +265,12 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IZUGFeRDExport
 		// the writing part
 
 		try (InputStream SOURCE_PDF = this.getClass()
-				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
+				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
 
-				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("My Application")
+			 ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("My Application")
 						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
 						.load(SOURCE_PDF)) {
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(TARGET_PDF);
@@ -316,10 +315,10 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IZUGFeRDExport
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
 
-				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("My Application")
-						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
+				IZUGFeRDExporter ze = new ZUGFeRDExporterFromA3().setProducer("My Application")
+						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).disableFacturX()
 						.load(SOURCE_PDF)) {
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(bos);

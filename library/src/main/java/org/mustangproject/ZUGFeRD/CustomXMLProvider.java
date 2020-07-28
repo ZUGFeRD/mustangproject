@@ -37,7 +37,7 @@ public class CustomXMLProvider implements IXMLProvider, IProfileProvider {
 	}
 
 	@Override
-	public void generateXML(IZUGFeRDExportableTransaction trans) {
+	public void generateXML(IExportableTransaction trans) {
 		// TODO Auto-generated method stub
 
 	}
@@ -55,7 +55,7 @@ public class CustomXMLProvider implements IXMLProvider, IProfileProvider {
 	}
 
 	@Override
-	public void setProfile(ZUGFeRDConformanceLevel level) {
+	public void setProfile(Profiles level) {
 		// TODO Auto-generated method stub
 	}
 }

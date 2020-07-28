@@ -32,7 +32,7 @@ import java.util.Date;
 
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
-public interface IZUGFeRDExportableTransaction {
+public interface IExportableTransaction {
 
 	/**
 	 * appears in /rsm:CrossIndustryDocument/rsm:HeaderExchangedDocument/ram:Name

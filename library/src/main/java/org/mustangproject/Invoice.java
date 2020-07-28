@@ -18,7 +18,7 @@
  * <p>
  * **********************************************************************
  */
-package library.src.main.java.org.mustangproject;
+package org.mustangproject;
 
 import org.mustangproject.ZUGFeRD.*;
 
@@ -26,7 +26,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Invoice implements IZUGFeRDExportableTransaction {
+public class Invoice implements IExportableTransaction {
 
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownTaxID = null, ownVATID = null, ownForeignOrganisationID = null, ownOrganisationName = null, ownStreet = null, ownZIP = null, ownLocation = null, ownCountry = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;

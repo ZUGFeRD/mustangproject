@@ -1,4 +1,4 @@
-package library.src.main.java.org.mustangproject;
+package org.mustangproject;
 
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;

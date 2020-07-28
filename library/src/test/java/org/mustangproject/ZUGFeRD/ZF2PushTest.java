@@ -24,17 +24,14 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import library.src.main.java.org.mustangproject.Contact;
-import library.src.main.java.org.mustangproject.Invoice;
-import library.src.main.java.org.mustangproject.Item;
-import library.src.main.java.org.mustangproject.Product;
+import org.mustangproject.Contact;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -50,13 +47,13 @@ public class ZF2PushTest extends TestCase  {
 		String amountStr="1.00";
 		BigDecimal amount=new BigDecimal(amountStr);
 		try (InputStream SOURCE_PDF = this.getClass()
-				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
+				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
 
-				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("My Application")
+			 ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("My Application")
 						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
 						.load(SOURCE_PDF)) {
 
-			ze.PDFattachZugferdFile(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOwnOrganisationName(orgname).setOwnStreet("teststr").setOwnZIP("55232").setOwnLocation("teststadt").setOwnCountry("DE").setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new Contact("Franz Müller", "0177123456", "fmueller@test.com", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number).addItem(new Item(new Product("Testprodukt","","C62",new BigDecimal(0)),amount,new BigDecimal(1.0))));
+			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOwnOrganisationName(orgname).setOwnStreet("teststr").setOwnZIP("55232").setOwnLocation("teststadt").setOwnCountry("DE").setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new Contact("Franz Müller", "0177123456", "fmueller@test.com", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number).addItem(new Item(new Product("Testprodukt","","C62",new BigDecimal(0)),amount,new BigDecimal(1.0))));
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(TARGET_PDF);

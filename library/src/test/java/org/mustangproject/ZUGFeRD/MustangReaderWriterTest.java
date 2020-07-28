@@ -304,7 +304,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
 
 
-		ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false).load(SOURCE_PDF);
+		IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setAttachZUGFeRDHeaders(false).load(SOURCE_PDF);
 
 		File tempFile = File.createTempFile("ZUGFeRD-", "-test");
 		ze.export(tempFile.getAbsolutePath());
@@ -317,7 +317,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
 
-		ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false).load(SOURCE_PDF);
+		IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setAttachZUGFeRDHeaders(false).load(SOURCE_PDF);
 
 		File tempFile = File.createTempFile("ZUGFeRD-", "-test");
 		tempFile.deleteOnExit();
@@ -358,9 +358,9 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile(Profiles.EN16931).load(SOURCE_PDF)) {
 
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF);
 
@@ -402,9 +402,9 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(1).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.COMFORT).load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(1).setProfile(Profiles.COMFORT).load(SOURCE_PDF)) {
 
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF);
 
@@ -430,9 +430,8 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
 
-			ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
-			ze.setFacturX();
-			ze.PDFattachZugferdFile(this);
+			IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile(Profiles.EN16931).load(SOURCE_PDF)) {
+			ze.setTransaction(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF);
 
@@ -467,9 +466,9 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDF14.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().load(SOURCE_PDF)) {
 
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			ze.export(TARGET_PDF);
 
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();

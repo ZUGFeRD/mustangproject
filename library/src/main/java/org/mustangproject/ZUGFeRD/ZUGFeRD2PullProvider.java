@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,12 +40,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 	//// MAIN CLASS
 	protected SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
 	protected byte[] zugferdData;
-	private IZUGFeRDExportableTransaction trans;
-	private ZUGFeRDConformanceLevel level;
+	private IExportableTransaction trans;
+	private Profiles level;
 	private String paymentTermsDescription;
 
 	@Override
-	public void setProfile(ZUGFeRDConformanceLevel level) {
+	public void setProfile(Profiles level) {
 		this.level = level;
 	}
 
@@ -188,7 +187,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 	}
 
 	@Override
-	public void generateXML(IZUGFeRDExportableTransaction trans) {
+	public void generateXML(IExportableTransaction trans) {
 		this.trans = trans;
 
 		boolean hasDueDate=false;

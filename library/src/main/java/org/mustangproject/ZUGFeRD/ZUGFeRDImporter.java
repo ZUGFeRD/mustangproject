@@ -30,8 +30,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 
-import library.src.main.java.org.mustangproject.Item;
-import library.src.main.java.org.mustangproject.Product;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
@@ -811,13 +811,13 @@ public class ZUGFeRDImporter {
 	 * returns a list of LineItems
 	 * @return a List of LineItem instances
 	 */
-	public List<library.src.main.java.org.mustangproject.Item> getLineItemList() {
+	public List<Item> getLineItemList() {
 		List<Node> nodeList = getLineItemNodes();
-		List<library.src.main.java.org.mustangproject.Item> lineItemList = new ArrayList<>();
+		List<Item> lineItemList = new ArrayList<>();
 
 		for (Node n: nodeList
 		) {
-			library.src.main.java.org.mustangproject.Item lineItem = new Item(null, null, null);
+			Item lineItem = new Item(null, null, null);
 			lineItem.setProduct(new Product(null,null,null,null));
 
 			NodeList nl = n.getChildNodes();

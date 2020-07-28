@@ -22,6 +22,6 @@ public interface IProfileProvider {
 
 	public String getProfile();
 
-	public void setProfile(ZUGFeRDConformanceLevel level);
+	public void setProfile(Profiles level);
 	
 }

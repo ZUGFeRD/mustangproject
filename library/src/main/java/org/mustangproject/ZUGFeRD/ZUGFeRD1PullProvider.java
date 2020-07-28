@@ -24,13 +24,11 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.XMLTools;
-import org.mustangproject.ZUGFeRD.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,13 +41,13 @@ public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
 	//// MAIN CLASS
 
 	protected byte[] zugferdData;
-	private IZUGFeRDExportableTransaction trans;
-	private ZUGFeRDConformanceLevel level;
+	private IExportableTransaction trans;
+	private Profiles level;
 	private String paymentTermsDescription;
 	SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
 
 	@Override
-	public void setProfile(ZUGFeRDConformanceLevel level) {
+	public void setProfile(Profiles level) {
 		this.level = level;
 	}
 
@@ -189,7 +187,7 @@ public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
 	}
 
 	@Override
-	public void generateXML(IZUGFeRDExportableTransaction trans) {
+	public void generateXML(IExportableTransaction trans) {
 		this.trans = trans;
 
 		boolean hasDueDate=false;

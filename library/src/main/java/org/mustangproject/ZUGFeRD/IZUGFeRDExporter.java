@@ -18,10 +18,12 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import javax.activation.DataSource;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 
-public interface IExporterFactory {
+public interface IZUGFeRDExporter extends Closeable, IExporter  {
 	/**
 	 * factory: loads a PDF file and returns an appropriate exporter 
 	 *
@@ -29,7 +31,7 @@ public interface IExporterFactory {
 	 * @return the generated exporter
 	 * @throws IOException if anything is wrong with filename
 	 */
-	public ZUGFeRDExporter load(String pdfFilename) throws IOException;
+	public IZUGFeRDExporter load(String pdfFilename) throws IOException;
 
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
@@ -39,7 +41,7 @@ public interface IExporterFactory {
 	 * @return the generated exporter
 	 * @throws IOException (should not happen at all)
 	 */
-	public ZUGFeRDExporter load(byte[] pdfBinary) throws IOException;
+	public IZUGFeRDExporter load(byte[] pdfBinary) throws IOException;
 
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
@@ -49,18 +51,18 @@ public interface IExporterFactory {
 	 * @throws IOException if anything is wrong with inputstream
 	 * @return the generated ZUGFeRDExporter
 	 */
-	public ZUGFeRDExporter load(InputStream pdfSource) throws IOException;
-
-	public IExporterFactory setCreator(String creator);
-
-	public IExporterFactory setConformanceLevel(PDFAConformanceLevel newLevel);
-
-	public IExporterFactory setProducer(String producer);
-
-	public IExporterFactory setZUGFeRDVersion(int version);
-
-	public IExporterFactory ignorePDFAErrors();
-
-	public IExporterFactory setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel zugferdConformanceLevel);
+	public IZUGFeRDExporter load(InputStream pdfSource) throws IOException;
+	public IZUGFeRDExporter setCreator(String creator);
+	public IZUGFeRDExporter setConformanceLevel(PDFAConformanceLevel newLevel);
+	public IZUGFeRDExporter setProducer(String producer);
+	public IZUGFeRDExporter setZUGFeRDVersion(int version);
+	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException;
+	public IZUGFeRDExporter setXML(byte[] zugferdData) throws IOException;
+	public IZUGFeRDExporter disableFacturX();
+	public IZUGFeRDExporter setProfile(Profiles zugferdConformanceLevel);
+	public String getNamespaceForVersion(int ver);
+	public String getPrefixForVersion(int ver) ;
+	public IZUGFeRDExporter disableAutoClose(boolean disableAutoClose);
+	public IXMLProvider getProvider();
 
 }

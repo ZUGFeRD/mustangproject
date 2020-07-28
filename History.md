@@ -1,9 +1,7 @@
 2.0 todo
 - verapdf as prevalidation
 - visualization? zugferdvisualizer?
-- factory for xrechnung
 - new sample invoice
-- complete or discard read into push provider
 - validate as library doc
 - javadoc export
 - prompt for source file for validation has to be pdf
@@ -13,12 +11,16 @@
 - xmp errors may not show correctly in log
 - switch for no log and no notices
 - merge readmes and history.md s
+- homepage to be updated accordingly
+- confirm correct generation from pdf/a3 files zf2edgetest
 done
 - remove jaxb
 - 2.1 now default
 - pushprovider
 - new xrechnung profile
 - german bank account numbers can no longer be specified (dropped in favor of IBAN and BIC)
+- factory for xrechnung
+- complete or discard read into push provider
 - integrates validator
 - validator now additionally supports xrechnung 
 - integrates mustangserver
@@ -33,6 +35,9 @@ done
 - upgraded to verapdf 1.16.1
 - added Ghostscript signature
 - removal of izugferddate/IZUGFeRDPaymentTerms,IZUGFeRDPaymentDiscountTerms
+switch
+- change from ZUGFeRDExporter to IZUGFeRDExporter
+
 1.7.7
 =====
 2020-05-26

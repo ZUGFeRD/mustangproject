@@ -53,7 +53,7 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 	public String namespace = null;
 	public String prefix = null;
 	
-	protected ZUGFeRDExporter exporter;
+	protected IZUGFeRDExporter exporter;
 
 
 	protected void setZUGFeRDVersion(int ver) {
@@ -89,14 +89,14 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 		return li;
 	}
 
-	public XMPSchemaPDFAExtensions(ZUGFeRDExporter ze, XMPMetadata metadata, int ZFVersion) {
+	public XMPSchemaPDFAExtensions(IZUGFeRDExporter ze, XMPMetadata metadata, int ZFVersion) {
 		super(metadata);
 		exporter=ze;
 		setZUGFeRDVersion(ZFVersion);
 		attachExtensions(metadata, true);
 	}
 
-	public XMPSchemaPDFAExtensions(ZUGFeRDExporter ze, XMPMetadata metadata, int ZFVersion, boolean withZF) {
+	public XMPSchemaPDFAExtensions(IZUGFeRDExporter ze, XMPMetadata metadata, int ZFVersion, boolean withZF) {
 		super(metadata);
 		exporter=ze;
 		setZUGFeRDVersion(ZFVersion);

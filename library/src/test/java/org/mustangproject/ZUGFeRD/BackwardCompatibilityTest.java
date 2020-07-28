@@ -34,7 +34,7 @@ import junit.framework.TestCase;
  * @author jstaerk
  *
  */
-public class BackwardCompatibilityTest extends TestCase implements IZUGFeRDExportableTransaction{
+public class BackwardCompatibilityTest extends TestCase implements IExportableTransaction {
 
 	final String TARGET_PDF_ZF1 = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506zf1.pdf";
 	final String TARGET_PDF_ZF2 = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506zf2.pdf";
@@ -55,9 +55,9 @@ public class BackwardCompatibilityTest extends TestCase implements IZUGFeRDExpor
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(1).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(1).setProfile(Profiles.EN16931).load(SOURCE_PDF)) {
 
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF_ZF1);
 
@@ -95,9 +95,9 @@ public class BackwardCompatibilityTest extends TestCase implements IZUGFeRDExpor
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile(Profiles.EN16931).load(SOURCE_PDF)) {
 
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF_ZF2);
 
@@ -133,10 +133,9 @@ public class BackwardCompatibilityTest extends TestCase implements IZUGFeRDExpor
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile(Profiles.EN16931).load(SOURCE_PDF)) {
 
-			ze.setFacturX();
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF_FX);
 

@@ -18,11 +18,14 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.OutputStream;
 
-public class ZUGFeRDExporterFromA1Factory extends ZUGFeRDExporterFromA3Factory implements IExporterFactory {
-	public ZUGFeRDExporterFromA1Factory() {
-		ensurePDFisUpgraded = true;
+public interface IExporter {
 
-	}
+	public IExporter setTransaction(IExportableTransaction trans) throws IOException;
+	public void export(String ZUGFeRDfilename) throws IOException;
+	public void export(OutputStream output) throws IOException;
 
 }

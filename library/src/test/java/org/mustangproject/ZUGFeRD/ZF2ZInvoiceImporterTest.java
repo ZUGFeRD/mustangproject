@@ -19,7 +19,7 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import library.src.main.java.org.mustangproject.Invoice;
+import org.mustangproject.Invoice;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 

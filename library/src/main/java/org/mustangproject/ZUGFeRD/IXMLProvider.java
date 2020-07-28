@@ -24,6 +24,6 @@ public interface IXMLProvider {
 
 	public void setTest();
 
-	public void generateXML(IZUGFeRDExportableTransaction trans);
+	public void generateXML(IExportableTransaction trans);
 
 }

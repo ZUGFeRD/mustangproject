@@ -20,7 +20,7 @@ package org.mustangproject.ZUGFeRD;
 
 import java.util.Date;
 
-public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTransaction {
+public class IExportableTransactionImpl implements IExportableTransaction {
 
 	private String number;
 	private Date issueDate;
@@ -150,107 +150,107 @@ public class IZUGFeRDExportableTransactionImpl implements IZUGFeRDExportableTran
 	}
 
 
-	public IZUGFeRDExportableTransactionImpl setNumber(String number) {
+	public IExportableTransactionImpl setNumber(String number) {
 		this.number = number;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setIssueDate(Date issueDate) {
+	public IExportableTransactionImpl setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setOwnOrganisationFullPlaintextInfo(String ownOrganisationFullPlaintextInfo) {
+	public IExportableTransactionImpl setOwnOrganisationFullPlaintextInfo(String ownOrganisationFullPlaintextInfo) {
 		this.ownOrganisationFullPlaintextInfo = ownOrganisationFullPlaintextInfo;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setDueDate(Date dueDate) {
+	public IExportableTransactionImpl setDueDate(Date dueDate) {
 		this.dueDate = dueDate;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setZFAllowances(IZUGFeRDAllowanceCharge... zFAllowances) {
+	public IExportableTransactionImpl setZFAllowances(IZUGFeRDAllowanceCharge... zFAllowances) {
 		this.zFAllowances = zFAllowances;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setZFCharges(IZUGFeRDAllowanceCharge... zFCharges) {
+	public IExportableTransactionImpl setZFCharges(IZUGFeRDAllowanceCharge... zFCharges) {
 		this.zFCharges = zFCharges;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setZFLogisticsServiceCharges(IZUGFeRDAllowanceCharge... zFLogisticsServiceCharges) {
+	public IExportableTransactionImpl setZFLogisticsServiceCharges(IZUGFeRDAllowanceCharge... zFLogisticsServiceCharges) {
 		this.zFLogisticsServiceCharges = zFLogisticsServiceCharges;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setZFItems(IZUGFeRDExportableItem... zFItems) {
+	public IExportableTransactionImpl setZFItems(IZUGFeRDExportableItem... zFItems) {
 		this.zFItems = zFItems;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setRecipient(IZUGFeRDExportableContact recipient) {
+	public IExportableTransactionImpl setRecipient(IZUGFeRDExportableContact recipient) {
 		this.recipient = recipient;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setOwnTaxID(String ownTaxID) {
+	public IExportableTransactionImpl setOwnTaxID(String ownTaxID) {
 		this.ownTaxID = ownTaxID;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setOwnVATID(String ownVATID) {
+	public IExportableTransactionImpl setOwnVATID(String ownVATID) {
 		this.ownVATID = ownVATID;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setOwnOrganisationName(String ownOrganisationName) {
+	public IExportableTransactionImpl setOwnOrganisationName(String ownOrganisationName) {
 		this.ownOrganisationName = ownOrganisationName;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setOwnStreet(String ownStreet) {
+	public IExportableTransactionImpl setOwnStreet(String ownStreet) {
 		this.ownStreet = ownStreet;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setOwnZIP(String ownZIP) {
+	public IExportableTransactionImpl setOwnZIP(String ownZIP) {
 		this.ownZIP = ownZIP;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setOwnLocation(String ownLocation) {
+	public IExportableTransactionImpl setOwnLocation(String ownLocation) {
 		this.ownLocation = ownLocation;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setOwnCountry(String ownCountry) {
+	public IExportableTransactionImpl setOwnCountry(String ownCountry) {
 		this.ownCountry = ownCountry;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setDeliveryDate(Date deliveryDate) {
+	public IExportableTransactionImpl setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
 		return this;
 	}
 	
-	public IZUGFeRDExportableTransactionImpl setCurrency(String currency) {
+	public IExportableTransactionImpl setCurrency(String currency) {
 		this.currency = currency;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setPaymentTermDescription(String paymentTermDescription) {
+	public IExportableTransactionImpl setPaymentTermDescription(String paymentTermDescription) {
 		this.paymentTermDescription = paymentTermDescription;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setReferenceNumber(String referenceNumber) {
+	public IExportableTransactionImpl setReferenceNumber(String referenceNumber) {
 		this.referenceNumber = referenceNumber;
 		return this;
 	}
 
-	public IZUGFeRDExportableTransactionImpl setTradeSettlementPayment(IZUGFeRDTradeSettlementPayment... settlementPayments) {
+	public IExportableTransactionImpl setTradeSettlementPayment(IZUGFeRDTradeSettlementPayment... settlementPayments) {
 		this.settlementPayments = settlementPayments;
 		return this;
 	}

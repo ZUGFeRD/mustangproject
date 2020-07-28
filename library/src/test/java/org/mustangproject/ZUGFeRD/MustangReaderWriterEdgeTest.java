@@ -202,19 +202,19 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 
 		try (InputStream SOURCE_PDF =
 					 this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
-
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory()
+		) {
+			IZUGFeRDExporter ze = new ZUGFeRDExporterFromA3()
 					 .setProducer("My Application")
 					 .setCreator(System.getProperty("user.name"))
 				 	 .setZUGFeRDVersion(1)
-					 .ignorePDFAErrors()
-					 .load(SOURCE_PDF)) {
-			ze.PDFattachZugferdFile(this);
+					 .load(SOURCE_PDF);
+			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryDocument"));
 			ze.export(TARGET_PDF);
 		} catch (IOException e) {
-			fail("IOException should not happen in testEdgeExport");
+			e.printStackTrace();
+			fail("IOException should not happen in testEdgeExport ");
 		}
 
 		// now check the contents (like MustangReaderTest)

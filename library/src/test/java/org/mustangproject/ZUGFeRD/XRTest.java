@@ -19,29 +19,18 @@
  * <p>
  * **********************************************************************
  */
-package library.src.test.java.org.mustangproject.ZUGFeRD;
+package org.mustangproject.ZUGFeRD;
 
 import junit.framework.TestCase;
-import library.src.main.java.org.mustangproject.Contact;
-import library.src.main.java.org.mustangproject.Invoice;
-import library.src.main.java.org.mustangproject.Item;
-import library.src.main.java.org.mustangproject.Product;
+import org.mustangproject.Contact;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.mustangproject.ZUGFeRD.ZUGFeRD2PullProvider;
-import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
-import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA3Factory;
-import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
 
 
-
-import org.xmlunit.builder.Input;
-import org.xmlunit.xpath.JAXPXPathEngine;
-import org.xmlunit.xpath.XPathEngine;
-
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Date;
 
