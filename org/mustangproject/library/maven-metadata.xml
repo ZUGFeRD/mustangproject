@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>org.mustangproject</groupId>
+  <artifactId>library</artifactId>
+  <versioning>
+    <release>1.9.0-alpha1</release>
+    <versions>
+      <version>1.9.0-alpha1</version>
+    </versions>
+    <lastUpdated>20200806143303</lastUpdated>
+  </versioning>
+</metadata>
