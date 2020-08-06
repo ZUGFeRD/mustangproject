@@ -227,6 +227,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 					+ "</ram:IncludedNote>\n";
 		}
 
+		String typecode="380";
+		if (trans.getDocumentCode()!=null) {
+			typecode=trans.getDocumentCode();
+		}
 		String xml = "﻿<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //$NON-NLS-1$
 
 				+ "<rsm:CrossIndustryInvoice xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\""
@@ -247,7 +251,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				+ "		<ram:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:ID>\n" //$NON-NLS-1$ //$NON-NLS-2$
 				// + " <ram:Name>RECHNUNG</ram:Name>\n" //$NON-NLS-1$
 				// + "		<ram:TypeCode>380</ram:TypeCode>\n" //$NON-NLS-1$
-				+ "		<ram:TypeCode>" + XMLTools.encodeXML(trans.getDocumentCode()) + "</ram:TypeCode>\n" //$NON-NLS-1$
+				+ "		<ram:TypeCode>" + typecode + "</ram:TypeCode>\n" //$NON-NLS-1$
 				+ "		<ram:IssueDateTime><udt:DateTimeString format=\"102\">" //$NON-NLS-1$
 				+ zugferdDateFormat.format(trans.getIssueDate()) + "</udt:DateTimeString></ram:IssueDateTime>\n" // date //$NON-NLS-1$
 																													// format
