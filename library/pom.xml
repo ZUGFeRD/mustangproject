@@ -9,7 +9,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mustangproject</groupId>
 	<artifactId>library</artifactId>
-	<version>1.9.0-alpha1</version>
+	<version>1.9.0-alpha1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Library to write and read FacturX and ZUGFeRD e-invoices.  </name>
 	<description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs. To write files, a provided PDF/A will be combined with generated or provided XML.

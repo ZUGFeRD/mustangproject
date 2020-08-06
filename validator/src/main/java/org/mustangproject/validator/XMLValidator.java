@@ -51,6 +51,11 @@ public class XMLValidator extends Validator {
 		super(ctx);
 	}
 
+	/***
+	 * set source file
+	 * @param name
+	 * @throws IrrecoverableValidationError
+	 */
 	public void setFilename(String name) throws IrrecoverableValidationError { // from XML Filename
 		filename = name;
 		// file existence must have been checked before
@@ -69,10 +74,20 @@ public class XMLValidator extends Validator {
 		}
 	}
 
+	/***
+	 * manually set the xml content
+	 * @param xml the xml to be checked
+	 */
 	public void setStringContent(String xml) {
 		zfXML = xml;
 	}
 
+	/**
+	 * whether uri1 has the same meaning like uri1 (it has, if it only differs in the fragment, i.e. uri1#1==uri1#2 )
+	 * @param uri1
+	 * @param uri2
+	 * @return true if semantically identical
+	 */
 	public static boolean matchesURI(String uri1, String uri2) {
 		return (uri1.equals(uri2) || uri1.startsWith(uri2 + "#"));
 	}
@@ -85,13 +100,10 @@ public class XMLValidator extends Validator {
 		disableNotices = true;
 	}
 
+
 	/***
-	 *
-	 * @param xmlString
-	 * @param overrideProfileCheck
-	 *            if set to true, all ZF2 files will be checked against EN16931
-	 *            schematron, since no other schematron is available
-	 * @return
+	 * perform validation
+	 * @throws IrrecoverableValidationError if any fatal errors occur, e.g. source file can not be read
 	 */
 	@Override
 	public void validate() throws IrrecoverableValidationError {
@@ -315,6 +327,14 @@ public class XMLValidator extends Validator {
 	}
 
 
+	/***
+	 * validate using a xslt file generated from a schematron in the build preparation of this software
+	 * @param xml the xml to be checked
+	 * @param xsltFilename the filename of the intermediate XSLT file
+	 * @param section the error type code, if one arises
+	 * @param severity how serious a error should be treated - may only be notice
+	 * @throws IrrecoverableValidationError if anything happened that prevents further checks
+	 */
 	public void validateSchematron(String xml, String xsltFilename, int section, ESeverity severity) throws IrrecoverableValidationError {
 		ISchematronResource aResSCH = null;
 		aResSCH = SchematronResourceXSLT.fromClassPath(xsltFilename);

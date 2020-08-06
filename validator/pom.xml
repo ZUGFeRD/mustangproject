@@ -12,7 +12,7 @@
     <name>Library to validate Factur-X/ZUGFeRD 1.0 and 2.1 as well as XRechnung e-invoices.</name>
 
     <packaging>jar</packaging>
-    <version>1.9.0-alpha1</version>
+    <version>1.9.0-alpha1-SNAPSHOT</version>
     <repositories>
         <repository>
             <!-- for jargs -->
