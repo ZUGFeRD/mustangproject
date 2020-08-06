@@ -3,14 +3,14 @@
 <parent>
     <groupId>org.mustangproject</groupId>
     <artifactId>core</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>1.9.0-alpha1</version>
 </parent>
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.zugferd</groupId>
    <artifactId>Mustang-CLI</artifactId>
    <name>Mustang commandline tool</name>
    <packaging>jar</packaging>
-   <version>2.0.0-SNAPSHOT</version>
+   <version>1.9.0-alpha1</version>
    <repositories>
       <repository>
          <!-- for jargs -->

@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.mustangproject</groupId>
         <artifactId>core</artifactId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>1.9.0-alpha1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
@@ -12,7 +12,7 @@
     <name>Library to validate Factur-X/ZUGFeRD 1.0 and 2.1 as well as XRechnung e-invoices.</name>
 
     <packaging>jar</packaging>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>1.9.0-alpha1</version>
     <repositories>
         <repository>
             <!-- for jargs -->
@@ -76,7 +76,7 @@
         <dependency>
             <groupId>org.mustangproject</groupId>
             <artifactId>library</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>1.9.0-alpha1</version>
             <!-- prototypes of new mustangproject versions can be installed by referring to them and installed to the local repo from a jar file with
            mvn install:install-file -Dfile=mustang-1.5.4-SNAPSHOT.jar -DgroupId=org.mustangproject.ZUGFeRD -DartifactId=mustang -Dversion=1.5.4 -Dpackaging=jar -DgeneratePom=true
            -->
