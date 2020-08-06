@@ -10,7 +10,7 @@
    <artifactId>Mustang-CLI</artifactId>
    <name>Mustang commandline tool</name>
    <packaging>jar</packaging>
-   <version>1.9.0-alpha1-SNAPSHOT</version>
+   <version>1.9.0-alpha1</version>
    <repositories>
       <repository>
          <!-- for jargs -->

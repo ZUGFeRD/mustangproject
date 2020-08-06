@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.mustangproject</groupId>
         <artifactId>core</artifactId>
@@ -12,7 +11,7 @@
     <name>Library to validate Factur-X/ZUGFeRD 1.0 and 2.1 as well as XRechnung e-invoices.</name>
 
     <packaging>jar</packaging>
-    <version>1.9.0-alpha1-SNAPSHOT</version>
+    <version>1.9.0-alpha1</version>
     <repositories>
         <repository>
             <!-- for jargs -->
@@ -216,7 +215,7 @@
                         </goals>
                         <configuration>
                             <artifactSet>
-                                <excludes/>
+                                <excludes />
                             </artifactSet>
                         </configuration>
                     </execution>
