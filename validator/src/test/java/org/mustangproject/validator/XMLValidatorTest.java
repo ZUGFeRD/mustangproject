@@ -1,5 +1,7 @@
 package org.mustangproject.validator;
+
 import static org.xmlunit.assertj.XmlAssert.assertThat;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -105,8 +107,8 @@ public class XMLValidatorTest extends ResourceCase {
 				.isGreaterThan(1); //2 errors are OK because there is a known bug
 
 
-		assertThat(content).valueByXPath("//error[@type=\"4\"]") 
-				.asString() 
+		assertThat(content).valueByXPath("//error[@type=\"4\"]")
+				.asString()
 				.contains(
 						"In Deutschland sind die Profile MINIMUM und BASIC WL nur als Buchungshilfe (TypeCode: 751) zugelassen.");
 
@@ -204,6 +206,14 @@ public class XMLValidatorTest extends ResourceCase {
 			Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
 			String content = xpath.evaluate("/validation/summary/@status", source);
 			assertEquals("valid", content);
+
+			tempFile = getResourceAsFile("invalidXRv2.xml");
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
+			content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("invalid", content);
 
 
 		} catch (IrrecoverableValidationError e) {
