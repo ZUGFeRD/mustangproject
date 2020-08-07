@@ -1,19 +1,5 @@
-2.0 todo
-- verapdf as prevalidation
-- visualization? zugferdvisualizer?
-- new sample invoice
-- validate as library doc
-- javadoc export
-- prompt for source file for validation has to be pdf
-- be able to disable "source pdf set to timeout"
-- automated tests zuv/verapdf validate created library test files
-- unify loggers
-- xmp errors may not show correctly in log
-- switch for no log and no notices
-- merge readmes and history.md s
-- homepage to be updated accordingly
-- confirm correct generation from pdf/a3 files zf2edgetest
-done
+##2.0 done
+
 - remove jaxb
 - 2.1 now default
 - pushprovider
@@ -38,6 +24,22 @@ done
 - removal of izugferddate/IZUGFeRDPaymentTerms,IZUGFeRDPaymentDiscountTerms
 switch
 - change from ZUGFeRDExporter to IZUGFeRDExporter
+- javadoc export
+##2.0 still todo
+- release notes
+- verapdf as prevalidation?
+- visualization? zugferdvisualizer?
+- new sample invoice
+- validate as library doc
+- prompt for source file for validation has to be pdf
+- be able to disable "source pdf set to timeout"
+- automated tests zuv/verapdf validate created library test files
+- unify loggers
+- xmp errors may not show correctly in log
+- switch for no log and no notices
+- merge readmes and history.md 
+- homepage to be updated accordingly
+- confirm correct generation from pdf/a3 files zf2edgetest
 
 1.7.7
 =====
