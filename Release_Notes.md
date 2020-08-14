@@ -7,7 +7,7 @@ It integrates the successor of the ZUGFeRD [Validator ZUV](https://github.com/ZU
  
 This is a preview release, please do not (yet) use it in production
 
-## Use on command line
+### Use on command line
 `java -jar Mustang-CLI-2.0.0-alpha1.jar --action=combine` embedds a XML into a PDF (A-1) file and exports as PDF/A-3
 
 `java -jar mustang-cli.jar --action=extract` extracts XML from a ZUGFeRD file and
@@ -51,7 +51,7 @@ result codes apply:
 | 27  | XRechnung Schematron Check |
  
  
-## Use as Library
+### Use as Library
 
 | What  | old value | new value |
 |---|---|---|
@@ -90,7 +90,7 @@ String amount = zi.getAmount();
 ``` 
 but we are also working on an importer to import into the new invoice class.
 
-## Using the library
+## Using the library to create e-invoices
 ```
 
 <repositories>
@@ -132,7 +132,7 @@ public class Main {
 }
 ```
 
-## Invoice class
+### Export XML
 A invoice like this
 ```
 Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOwnOrganisationName(orgname).setOwnStreet("teststr").setOwnZIP("55232").setOwnLocation("teststadt").setOwnCountry("DE").setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new Contact("Franz Müller", "0177123456", "fmueller@test.com", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), amount, new BigDecimal(1.0)));
@@ -144,7 +144,7 @@ zf2p.generateXML(i);
 String theXML = new String(zf2p.getXML());
 ```
 or can also be used with setTransaction to generate invoice PDFs straight away.
-## Embedding the validator
+### Embedding the validator
 ```
 
 <repositories>
