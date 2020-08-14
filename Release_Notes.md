@@ -64,7 +64,7 @@ as artifact ID. "validator" includes the library functionality but is >20 MB
 bigger due to it's dependencies. 
 
 
-## Update from 1.x to 2.0
+### Update from 1.x to 2.0
 
 ZF2 was possible with Mustang 1 but it is default in Mustang 2, so 
 you will need to `.setZUGFeRDVersion(1)` if you don't want ZUGFeRD 2 files.
@@ -90,7 +90,7 @@ String amount = zi.getAmount();
 ``` 
 but we are also working on an importer to import into the new invoice class.
 
-## Using the library to create e-invoices
+### Using the library to create e-invoices
 ```
 
 <repositories>
