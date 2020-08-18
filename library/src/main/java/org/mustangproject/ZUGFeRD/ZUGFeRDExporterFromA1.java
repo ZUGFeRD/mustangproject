@@ -77,6 +77,7 @@ public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 implements IZUG
 
 	public ZUGFeRDExporterFromA1() {
 		ensurePDFisUpgraded = true;
+		setZUGFeRDVersion(ZUGFeRDExporterFromA3.DefaultZUGFeRDVersion);
 
 	}
 

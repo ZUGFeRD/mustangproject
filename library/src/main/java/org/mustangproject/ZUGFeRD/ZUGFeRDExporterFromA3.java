@@ -199,7 +199,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	}
 
 	public ZUGFeRDExporterFromA3() {
-
+		super();
 		ensurePDFisUpgraded = false;
 	}
 
