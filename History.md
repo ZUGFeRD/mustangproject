@@ -1,4 +1,5 @@
-##2.0 done
+## 2.0 
+### done
 
 - remove jaxb
 - 2.1 now default
@@ -24,7 +25,8 @@
 switch
 - change from ZUGFeRDExporter to IZUGFeRDExporter
 - javadoc export
-##2.0 still todo
+
+### 2.0 still todo
 - release notes
 - verapdf as prevalidation?
 - visualization? zugferdvisualizer?
