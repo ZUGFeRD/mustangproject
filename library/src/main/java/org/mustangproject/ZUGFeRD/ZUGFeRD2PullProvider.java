@@ -496,7 +496,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		xml = xml + "			<ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n"
 				+ "				<ram:LineTotalAmount>" + currencyFormat(getTotal()) + "</ram:LineTotalAmount>\n" //$NON-NLS-2$
 																													// currencyID=\"EUR\"
-				+ "				<ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>\n" currencyID=\"EUR\"
+				+ "				<ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>\n"
 				+ "				<ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>\n" //
 																								// currencyID=\"EUR\"
 				// + " <ChargeTotalAmount currencyID=\"EUR\">5.80</ChargeTotalAmount>\n"

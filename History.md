@@ -25,6 +25,7 @@
 switch
 - change from ZUGFeRDExporter to IZUGFeRDExporter
 - javadoc export
+- have visualizer
 
 ### 2.0 still todo
 - release notes
@@ -36,6 +37,10 @@ switch
 - be able to disable "source pdf set to timeout"
 - automated tests zuv/verapdf validate created library test files
 - unify loggers
+- *visualizer to work with Extended profile
+- *visualizer tests
+- *validator not to log to stdout
+- *validator not to XR error on ZF files (only notices)
 - xmp errors may not show correctly in log
 - switch for no log and no notices
 - merge readmes and history.md 

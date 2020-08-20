@@ -24,10 +24,7 @@ import org.mustangproject.ZUGFeRD.*;
 import org.mustangproject.validator.Validator;
 import org.mustangproject.validator.ZUGFeRDValidator;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,6 +36,8 @@ import java.nio.file.Paths;
 
 import org.slf4j.LoggerFactory;
 
+import javax.xml.transform.TransformerException;
+
 public class Main {
 	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Validator.class.getCanonicalName()); // log output
 
@@ -47,7 +46,7 @@ public class Main {
 	}
 
 	private static String getUsage() {
-		return "Usage: --action metrics|combine|extract|a3only|validate [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] | [-h,--help] \r\n"
+		return "Usage: --action metrics|combine|extract|a3only|validate|visualize [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] | [-h,--help] \r\n"
 				+ "* merics\n" + "        -d, --directory count ZUGFeRD files in directory to be scanned\n"
 				+ "                If it is a directory, it will recurse.\n"
 				+ "        -l, --listfromstdin     count ZUGFeRD files from a list of linefeed separated files on runtime.\n"
@@ -84,6 +83,7 @@ public class Main {
 				+ "                [--no-notices]: refrain from reporting notices\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "					-d, --directory to check recursively\n"
+				+ "        visualize  convert XML to HTML \n"
 				;
 	}
 
@@ -299,6 +299,9 @@ public class Main {
 			} else if ((action!=null)&&(action.equals("a3only")))  {
 				performConvert(sourceName, outName);
 				optionsRecognized=true;
+			} else if ((action!=null)&&(action.equals("visualize")))  {
+				performVisualization(sourceName, outName);
+				optionsRecognized=true;
 			} else if ((action!=null)&&(action.equals("validate"))) {
 				optionsRecognized=performValidate(sourceName, noNotices!=null&&noNotices);
 			} else if ((action!=null)&&(action.equals("validateExpectValid"))) {
@@ -430,7 +433,7 @@ public class Main {
 			}
 
 			if (xmlName == null) {
-				xmlName = getFilenameFromUser("ZUGFeRD XML", "ZUGFeRD-invoice.xml", "xml", true, false);
+				xmlName = getFilenameFromUser("ZUGFeRD XML", "factur-x.xml", "xml", true, false);
 			} else {
 				System.out.println("ZUGFeRD XML set to " + xmlName);
 			}
@@ -581,6 +584,91 @@ public class Main {
 
 		}
 		System.out.println(sr.getSummaryLine());
+	}
+
+	private static void performVisualization(String sourceName, String outName) {
+		// Get params from user if not already defined
+		if (sourceName == null) {
+			sourceName = getFilenameFromUser("ZUGFeRD XML source", "factur-x.xml", "xml", true, false);
+		} else {
+			System.out.println("ZUGFeRD XML source set to " + sourceName);
+		}
+		if (outName == null) {
+			outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "factur-x.html", "html", false, true);
+		} else {
+			System.out.println("ZUGFeRD 1.0 XML source set to " + outName);
+		}
+
+		// Verify params
+		try {
+			ensureFileExists(sourceName);
+			ensureFileNotExists(outName);
+
+			// stylesheets/ZUGFeRD_1p0_c1p0_s1p0.xslt
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+
+		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+		String xml = null;
+		try {
+			xml = zvi.visualize(sourceName);
+			Files.write(Paths.get(outName), xml.getBytes());
+		} catch (FileNotFoundException e) {
+			LOGGER.error(e.getMessage(), e);
+		} catch (UnsupportedEncodingException e) {
+			LOGGER.error(e.getMessage(), e);
+		} catch (TransformerException e) {
+			LOGGER.error(e.getMessage(), e);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		System.out.println("Written to " + outName);
+
+		try {
+			ExportResource("/xrechnung-viewer.css");
+			ExportResource("/xrechnung-viewer.js");
+
+			System.out.println("xrechnung-viewer.css and xrechnung-viewer.js written as well (to local working dir)");
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+
+
+	}
+
+	/**
+	 * Export a resource embedded into a Jar file to the local file path.
+	 *
+	 * @param resourceName ie.: "/SmartLibrary.dll"
+	 * @return The path to the exported resource
+	 * @throws Exception
+	 */
+	static public String ExportResource(String resourceName) throws Exception {
+		InputStream stream = null;
+		OutputStream resStreamOut = null;
+		String jarFolder;
+		try {
+			stream = Main.class.getResourceAsStream(resourceName);//note that each / is a directory down in the "jar tree" been the jar the root of the tree
+			if(stream == null) {
+				throw new Exception("Cannot get resource \"" + resourceName + "\" from Jar file.");
+			}
+
+			int readBytes;
+			byte[] buffer = new byte[4096];
+			jarFolder = System.getProperty("user.dir");
+			resStreamOut = new FileOutputStream(jarFolder + resourceName);
+			while ((readBytes = stream.read(buffer)) > 0) {
+				resStreamOut.write(buffer, 0, readBytes);
+			}
+		} catch (Exception ex) {
+			throw ex;
+		} finally {
+			stream.close();
+			resStreamOut.close();
+		}
+
+		return jarFolder + resourceName;
 	}
 
 	private static void ensureFileExists(String fileName) throws IOException {
