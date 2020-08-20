@@ -229,7 +229,7 @@ public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
 		if (trans.getDocumentCode()!=null) {
 			typecode=trans.getDocumentCode();
 		}
-		String xml = "﻿<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 
 				+ "<rsm:CrossIndustryDocument xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:ferd:CrossIndustryDocument:invoice:1p0\""
 				// + "

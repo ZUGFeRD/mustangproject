@@ -28,13 +28,13 @@ public interface IZUGFeRDTradeSettlementDebit extends IZUGFeRDTradeSettlement {
 		
 	
 		
-		String xml = "			<ram:SpecifiedTradeSettlementPaymentMeans>\n" //$NON-NLS-1$
-				+ "				<ram:TypeCode>59</ram:TypeCode>\n" //$NON-NLS-1$
-				+ "          	<ram:PayerPartyDebtorFinancialAccount>\n" //$NON-NLS-1$
-      		    + "               <ram:IBANID>"+XMLTools.encodeXML(getIBAN())+"</ram:IBANID>\n" //$NON-NLS-1$
-      		    + "             </ram:PayerPartyDebtorFinancialAccount>\n"; //$NON-NLS-1$
+		String xml = "			<ram:SpecifiedTradeSettlementPaymentMeans>\n"
+				+ "				<ram:TypeCode>59</ram:TypeCode>\n"
+				+ "          	<ram:PayerPartyDebtorFinancialAccount>\n"
+      		    + "               <ram:IBANID>"+XMLTools.encodeXML(getIBAN())+"</ram:IBANID>\n"
+      		    + "             </ram:PayerPartyDebtorFinancialAccount>\n";
 		
-		xml = xml + "			</ram:SpecifiedTradeSettlementPaymentMeans>\n"; //$NON-NLS-1$
+		xml = xml + "			</ram:SpecifiedTradeSettlementPaymentMeans>\n";
 		return xml;
 	}
 	

@@ -78,7 +78,7 @@ public class ZUGFeRDValidator {
 		boolean xmlValidity;
 		context.clear();
 		StringBuffer finalStringResult = new StringBuffer();
-		SimpleDateFormat isoDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
+		SimpleDateFormat isoDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
 		startTime = Calendar.getInstance().getTimeInMillis();
 		try {

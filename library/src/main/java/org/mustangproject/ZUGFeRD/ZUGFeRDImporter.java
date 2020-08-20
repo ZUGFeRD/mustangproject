@@ -137,7 +137,7 @@ public class ZUGFeRDImporter {
 			/**
 			 * filenames for invoice data (ZUGFeRD v1 and v2, Factur-X)
 			 */
-			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml")) || filename.equals("xrechnung.xml")) { //$NON-NLS-1$
+			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml")) || filename.equals("xrechnung.xml")) {
 				containsMeta = true;
 
 				PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
@@ -688,7 +688,7 @@ public class ZUGFeRDImporter {
 		// SpecifiedExchangedDocumentContext is in the schema, so a relatively good
 		// indication if zugferd is present - better than just invoice
 		String meta = getMeta();
-		return (meta != null) && (meta.length() > 0) && ((meta.contains("SpecifiedExchangedDocumentContext") //$NON-NLS-1$
+		return (meta != null) && (meta.length() > 0) && ((meta.contains("SpecifiedExchangedDocumentContext")
 				/* ZF1 */ || meta.contains("ExchangedDocumentContext") /* ZF2 */));
 	}
 

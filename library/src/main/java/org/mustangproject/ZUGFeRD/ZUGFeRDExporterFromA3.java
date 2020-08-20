@@ -215,7 +215,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		}
 		if ((!fileAttached) && (attachZUGFeRDHeaders)) {
 			throw new IOException(
-					"File must be attached (usually with PDFattachZugferdFile) before perfoming this operation");
+					"File must be attached (usually with setTransaction) before perfoming this operation");
 		}
 		doc.save(ZUGFeRDfilename);
 		if (!disableAutoClose) {
@@ -242,7 +242,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		}
 		if ((!fileAttached) && (attachZUGFeRDHeaders)) {
 			throw new IOException(
-					"File must be attached (usually with PDFattachZugferdFile) before perfoming this operation");
+					"File must be attached (usually with setTransaction) before perfoming this operation");
 		}
 		doc.save(output);
 		if (!disableAutoClose) {
@@ -469,7 +469,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		pdf.setProducer(fullProducer);
 		if (ensurePDFisUpgraded) {
 			try {
-				pdfaid.setConformance(conformanceLevel.getLetter());// $NON-NLS-1$ //$NON-NLS-1$
+				pdfaid.setConformance(conformanceLevel.getLetter());// $NON-NLS-1$
 			} catch (BadFieldValueException ex) {
 				// This should be impossible, because it would occur only if an illegal
 				// conformance level is supplied,

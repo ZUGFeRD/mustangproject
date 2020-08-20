@@ -32,12 +32,12 @@ import java.util.logging.Logger;
 public class ZUGFeRDVisualizer {
 
 	static final ClassLoader CLASS_LOADER = ZUGFeRDVisualizer.class.getClassLoader();
-	private static final String RESOURCE_PATH = ""; //$NON-NLS-1$
+	private static final String RESOURCE_PATH = "";
 	private static final Logger LOG = Logger.getLogger(ZUGFeRDVisualizer.class.getName());
 	// private static File createTempFileResult(final Transformer transformer, final
 	// StreamSource toTransform,
 	// final String suffix) throws TransformerException, IOException {
-	// File result = File.createTempFile("ZUV_", suffix); //$NON-NLS-1$
+	// File result = File.createTempFile("ZUV_", suffix);
 	// result.deleteOnExit();
 	//
 	// try (FileOutputStream fos = new FileOutputStream(result)) {
