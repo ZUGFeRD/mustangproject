@@ -159,11 +159,21 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 	}
 
 	protected String getTradePartyAsXML(IZUGFeRDExportableTradeParty contact) {
-		String xml = "	<ram:Name>" + XMLTools.encodeXML(contact.getName()) + "</ram:Name>\n" //$NON-NLS-2$
+		String xml = "";
+		// According EN16931 either GlobalID or seller assigned ID might be present for BuyerTradeParty 
+		// and ShipToTradeParty, but not both. Prefer seller assigned ID for now.
+		if (contact.getID()!=null) {
+			xml += "	<ram:ID>" + XMLTools.encodeXML(contact.getID()) + "</ram:ID>\n";
+		}
+		else if ((contact.getGlobalIDScheme()!=null)&&(contact.getGlobalID()!=null)) {
+			xml = xml + "           <ram:GlobalID schemeID=\"" + XMLTools.encodeXML(contact.getGlobalIDScheme()) + "\">"
+					  + XMLTools.encodeXML(contact.getGlobalID()) + "</ram:GlobalID>\n";
+		}
+		xml += 		"	<ram:Name>" + XMLTools.encodeXML(contact.getName()) + "</ram:Name>\n"; //$NON-NLS-2$
 		// + " <DefinedTradeContact>\n"
 		// + " <PersonName>xxx</PersonName>\n"
 		// + " </DefinedTradeContact>\n"
-				+ "				<ram:PostalTradeAddress>\n"
+		xml +=  	"				<ram:PostalTradeAddress>\n"
 				+ "					<ram:PostcodeCode>" + XMLTools.encodeXML(contact.getZIP())
 				+ "</ram:PostcodeCode>\n"
 				+ "					<ram:LineOne>" + XMLTools.encodeXML(contact.getStreet())
@@ -406,9 +416,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				+ "				</ram:SpecifiedTaxRegistration>\n"
 				+ "			</ram:SellerTradeParty>\n"
 				+ "			<ram:BuyerTradeParty>\n";
-				// + " <ID>GE2020211</ID>\n"
-				// + " <GlobalID schemeID=\"0088\">4000001987658</GlobalID>\n"
-				
 				xml+=getTradePartyAsXML(trans.getRecipient());
 				xml += "			</ram:BuyerTradeParty>\n";
 
