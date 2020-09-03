@@ -35,25 +35,68 @@ import junit.framework.TestCase;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ZF2PushTest extends TestCase  {
+public class ZF2PushTest extends TestCase {
 	final String TARGET_PDF = "./target/testout-ZF2Push.pdf";
+	final String TARGET_CORRECTIONPDF = "./target/testout-ZF2Correction.pdf";
 
 	public void testPushExport() {
 
 		// the writing part
 
-		String orgname="Test company";
-		String number="123";
-		String amountStr="1.00";
-		BigDecimal amount=new BigDecimal(amountStr);
+		String orgname = "Test company";
+		String number = "123";
+		String amountStr = "1.00";
+		BigDecimal amount = new BigDecimal(amountStr);
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
 
 			 ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("My Application")
-						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
-						.load(SOURCE_PDF)) {
+					 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
+					 .load(SOURCE_PDF)) {
 
-			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOwnOrganisationName(orgname).setOwnStreet("teststr").setOwnZIP("55232").setOwnLocation("teststadt").setOwnCountry("DE").setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new Contact("Franz Müller", "0177123456", "fmueller@test.com", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number).addItem(new Item(new Product("Testprodukt","","C62",new BigDecimal(0)),amount,new BigDecimal(1.0))));
+			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOwnOrganisationName(orgname).setOwnStreet("teststr").setOwnZIP("55232").setOwnLocation("teststadt").setOwnCountry("DE").setOwnTaxID("4711").setOwnVATID("DE19990815").setRecipient(new Contact("Franz Müller", "0177123456", "fmueller@test.com", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), amount, new BigDecimal(1.0))));
+			String theXML = new String(ze.getProvider().getXML());
+			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+			ze.export(TARGET_PDF);
+		} catch (IOException e) {
+			fail("IOException should not be raised in testEdgeExport");
+		}
+
+		// now check the contents (like MustangReaderTest)
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
+
+		assertTrue(zi.getUTF8().contains("EUR"));
+
+		// Reading ZUGFeRD
+		assertEquals(amountStr, zi.getAmount());
+		assertEquals(zi.getHolder(), orgname);
+		assertEquals(zi.getForeignReference(), number);
+		try {
+			assertEquals(zi.getVersion(), 2);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+/*
+	public void testAttachmentsExport() {
+
+		String orgname = "Test company";
+		String number = "123";
+		String amountStr = "1.00";
+		BigDecimal amount = new BigDecimal(amountStr);
+		try (InputStream SOURCE_PDF = this.getClass()
+				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
+
+			 ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("My Application")
+					 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
+					 .load(SOURCE_PDF)) {
+
+			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOwnOrganisationName(orgname).setOwnStreet("teststr").setOwnZIP("55232").setOwnLocation("teststadt").setOwnCountry("DE").setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new Contact("Franz Müller", "0177123456", "fmueller@test.com", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), amount, new BigDecimal(1.0)))
+			.set
+			);
+			ze.attachFile("one.pdf");
+			ze.attachFile("two.pdf");
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(TARGET_PDF);
@@ -76,6 +119,145 @@ public class ZF2PushTest extends TestCase  {
 			e.printStackTrace();
 		}
 
+
 	}
+
+	public void testItemChargesAllowancesExport() {
+
+		String orgname = "Test company";
+		String number = "123";
+		String amountStr = "1.00";
+		BigDecimal amount = new BigDecimal(amountStr);
+		try (InputStream SOURCE_PDF = this.getClass()
+				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
+
+			 ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("My Application")
+					 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
+					 .load(SOURCE_PDF)) {
+
+			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOwnOrganisationName(orgname).setOwnStreet("teststr").setOwnZIP("55232").setOwnLocation("teststadt").setOwnCountry("DE").setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new Contact("Franz Müller", "0177123456", "fmueller@test.com", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number)
+					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), amount, new BigDecimal(1.0)).addCharge(new BigDecimal(0.1)))
+					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), amount, new BigDecimal(1.0)).addAllowance(new BigDecimal(0.07)))
+					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), amount, new BigDecimal(1.0)).addAllowance(new BigDecimal(0.07)).addCharge(new BigDecimal(0.1)))
+
+			);
+			String theXML = new String(ze.getProvider().getXML());
+			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+			ze.export(TARGET_PDF);
+		} catch (IOException e) {
+			fail("IOException should not be raised in testEdgeExport");
+		}
+
+		// now check the contents (like MustangReaderTest)
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
+
+		assertFalse(zi.getUTF8().contains("EUR"));
+
+		// Reading ZUGFeRD
+		assertEquals(amountStr, zi.getAmount());
+		assertEquals(zi.getHolder(), orgname);
+		assertEquals(zi.getForeignReference(), number);
+		try {
+			assertEquals(zi.getVersion(), 2);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
+	}
+
+	public void testItemChargesAllowancesExport() {
+
+		String orgname = "Test company";
+		String number = "123";
+		String amountStr = "1.00";
+		BigDecimal amount = new BigDecimal(amountStr);
+		try (InputStream SOURCE_PDF = this.getClass()
+				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
+
+			 ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("My Application")
+					 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
+					 .load(SOURCE_PDF)) {
+
+			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOwnOrganisationName(orgname).setOwnStreet("teststr").setOwnZIP("55232").setOwnLocation("teststadt").setOwnCountry("DE").setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new Contact("Franz Müller", "0177123456", "fmueller@test.com", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number)
+					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), amount, new BigDecimal(1.0)))
+					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), amount, new BigDecimal(1.0)))
+					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), amount, new BigDecimal(1.0)))
+					.addCharge(new BigDecimal(0.5))
+					.addAllowance(new BigDecimal(0.7))
+
+			);
+			String theXML = new String(ze.getProvider().getXML());
+			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+			ze.export(TARGET_PDF);
+		} catch (IOException e) {
+			fail("IOException should not be raised in testEdgeExport");
+		}
+
+		// now check the contents (like MustangReaderTest)
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
+
+		assertFalse(zi.getUTF8().contains("EUR"));
+
+		// Reading ZUGFeRD
+		assertEquals(amountStr, zi.getAmount());
+		assertEquals(zi.getHolder(), orgname);
+		assertEquals(zi.getForeignReference(), number);
+		try {
+			assertEquals(zi.getVersion(), 2);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
+	}
+
+ */
+	public void testCorrectionExport() {
+
+		String orgname = "Test company";
+		String number = "123";
+		String priceStr = "1.00";
+		BigDecimal price = new BigDecimal(priceStr);
+		BigDecimal amount=new BigDecimal(-1.0);
+		try (InputStream SOURCE_PDF = this.getClass()
+				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
+
+			 ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("My Application")
+					 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
+					 .load(SOURCE_PDF)) {
+
+			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOwnOrganisationName(orgname).setOwnStreet("teststr").setOwnZIP("55232").setOwnLocation("teststadt").setOwnCountry("DE").setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new Contact("Franz Müller", "0177123456", "fmueller@test.com", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number)
+					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), price, amount))
+					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), price, amount))
+					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), price, amount))
+					.setDocumentCode("384")
+
+			);
+			String theXML = new String(ze.getProvider().getXML());
+			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+			ze.export(TARGET_CORRECTIONPDF);
+		} catch (IOException e) {
+			fail("IOException should not be raised in testEdgeExport");
+		}
+
+		// now check the contents (like MustangReaderTest)
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_CORRECTIONPDF);
+
+		assertTrue(zi.getUTF8().contains("EUR"));
+
+		// Reading ZUGFeRD
+		assertEquals("-3.00", zi.getAmount());
+		assertEquals(zi.getHolder(), orgname);
+		assertEquals(zi.getForeignReference(), number);
+		try {
+			assertEquals(zi.getVersion(), 2);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
+	}
+
 
 }

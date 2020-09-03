@@ -28,23 +28,8 @@ public class IZUGFeRDTradeSettlementPaymentImpl implements IZUGFeRDTradeSettleme
 	private String ownPaymentInfoText;
 
 	@Override
-	public String getOwnKto() {
-		return ownKto;
-	}
-
-	@Override
-	public String getOwnBLZ() {
-		return ownBLZ;
-	}
-
-	@Override
 	public String getOwnBIC() {
 		return ownBIC;
-	}
-
-	@Override
-	public String getOwnBankName() {
-		return ownBankName;
 	}
 
 	@Override

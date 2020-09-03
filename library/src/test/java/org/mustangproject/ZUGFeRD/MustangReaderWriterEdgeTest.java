@@ -23,6 +23,7 @@ import junit.framework.TestSuite;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -203,7 +204,7 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 		try (InputStream SOURCE_PDF =
 					 this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
 		) {
-			IZUGFeRDExporter ze = new ZUGFeRDExporterFromA3()
+			ZUGFeRDExporterFromA3 ze = new ZUGFeRDExporterFromA3()
 					 .setProducer("My Application")
 					 .setCreator(System.getProperty("user.name"))
 				 	 .setZUGFeRDVersion(1)

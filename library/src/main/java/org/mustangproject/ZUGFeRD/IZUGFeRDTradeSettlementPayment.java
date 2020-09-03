@@ -44,26 +44,6 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 
 
 	/**
-	 * BLZ of the sender
-	 *
-	 * @return the BLZ code of the recipient sender's bank
-	 */
-	default String getOwnBLZ() {
-		return null;
-	}
-
-
-	/**
-	 * Bank name of the sender
-	 *
-	 * @return the name of the sender's bank
-	 */
-	default String getOwnBankName() {
-		return null;
-	}
-
-
-	/**
 	 * IBAN of the sender
 	 *
 	 * @return the IBAN of the invoice sender's bank account
@@ -73,25 +53,12 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 	}
 
 
-	/**
-	 * IBAN of the sender
-	 *
-	 * @return the Account Number of the invoice sender's bank account
-	 */
-	default String getOwnKto() {
-		return null;
-	}
-	
 	default String getSettlementXML() {
 		String xml = "			<ram:SpecifiedTradeSettlementPaymentMeans>\n"
 				+ "				<ram:TypeCode>42</ram:TypeCode>\n"
 				+ "				<ram:Information>Überweisung</ram:Information>\n"
 				+ "				<ram:PayeePartyCreditorFinancialAccount>\n"
 				+ "					<ram:IBANID>" + XMLTools.encodeXML(getOwnIBAN()) + "</ram:IBANID>\n"; //$NON-NLS-2$
-			if (getOwnKto()!=null) {
-				xml+= "					<ram:ProprietaryID>" + XMLTools.encodeXML(getOwnKto()) + "</ram:ProprietaryID>\n"; //$NON-NLS-2$
-				
-			}
 				xml+= "				</ram:PayeePartyCreditorFinancialAccount>\n"
 				+ "				<ram:PayeeSpecifiedCreditorFinancialInstitution>\n"
 				+ "					<ram:BICID>" + XMLTools.encodeXML(getOwnBIC()) + "</ram:BICID>\n" //$NON-NLS-2$

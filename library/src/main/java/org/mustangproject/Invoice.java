@@ -41,6 +41,7 @@ public class Invoice implements IExportableTransaction {
 
 	public Invoice() {
 		ZFItems = new ArrayList<IZUGFeRDExportableItem>();
+		setCurrency("EUR");
 	}
 
 	@Override

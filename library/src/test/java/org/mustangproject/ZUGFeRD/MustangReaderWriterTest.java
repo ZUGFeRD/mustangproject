@@ -430,7 +430,16 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
 
-			IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile(Profiles.EN16931).load(SOURCE_PDF)) {
+			 ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile(Profiles.EN16931).load(SOURCE_PDF)) {
+			ByteArrayOutputStream result = new ByteArrayOutputStream();
+			byte[] buffer = new byte[1024];
+			int length;
+			while ((length = SOURCE_PDF.read(buffer)) != -1) {
+				result.write(buffer, 0, length);
+			}
+
+			ze.addAdditionalFile("test.pdf", result.toByteArray());
+
 			ze.setTransaction(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF);

@@ -47,7 +47,7 @@ public interface IExportableTransaction {
 	/**
 	 *
 	 *
-	 * @return Code of Document
+	 * @return Code number of Document type, e.g. "380" for invoiceF
 	 */
 	default String getDocumentCode() {
 		return DocumentCodeTypeConstants.INVOICE;

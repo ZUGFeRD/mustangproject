@@ -113,6 +113,11 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return xmlProvider;
 	}
 
+	public ZUGFeRDExporterFromA3 addAdditionalFile(String name, byte[] content) {
+
+		additionalFiles.put(name,content);
+		return this;
+	}
 
 	/***
 	 * internal helper function: get namespace for given zugferd or factur-x version
@@ -512,6 +517,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		PDFAttachGenericFile(doc, filename, "Alternative",
 				"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
 				"text/xml", xmlProvider.getXML());
+
 		for (String filenameAdditional : additionalFiles.keySet()) {
 			PDFAttachGenericFile(doc, filenameAdditional, "Supplement", "ZUGFeRD extension/additional data", "text/xml", additionalFiles.get(filenameAdditional));
 		}

@@ -27,6 +27,7 @@ switch
 - javadoc export
 - have visualizer
 
+
 ### 2.0 still todo
 - release notes
 - verapdf as prevalidation?
@@ -41,11 +42,17 @@ switch
 - *visualizer tests
 - *validator not to log to stdout
 - *validator not to XR error on ZF files (only notices)
+- *from A3 does not seem tow ork see mustangreaderwriteredgetest:testedgeexport
 - xmp errors may not show correctly in log
 - switch for no log and no notices
 - merge readmes and history.md 
 - homepage to be updated accordingly
 - confirm correct generation from pdf/a3 files zf2edgetest
+- *correctiontest exports zf1+zf2?
+- *use validator in tests of library
+- *invoiceprovider currencyid missing
+- *USt 0% wird aus invoice-klasse noch nicht sauber abgefangen
+- *ownContact sollte in einen Contact schreiben
 
 1.7.7
 =====

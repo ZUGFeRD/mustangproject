@@ -39,23 +39,8 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 	protected class Payment implements IZUGFeRDTradeSettlementPayment {
 
 		@Override
-		public String getOwnKto() {
-			return "44421800";
-		}
-
-		@Override
-		public String getOwnBLZ() {
-			return "41441604";
-		}
-
-		@Override
 		public String getOwnBIC() {
 			return "COBADEFFXXX";
-		}
-
-		@Override
-		public String getOwnBankName() {
-			return "Commerzbank";
 		}
 
 		@Override

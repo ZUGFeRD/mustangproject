@@ -594,7 +594,7 @@ public class Main {
 			System.out.println("ZUGFeRD XML source set to " + sourceName);
 		}
 		if (outName == null) {
-			outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "factur-x.html", "html", false, true);
+			outName = getFilenameFromUser("ZUGFeRD 2.0 HTML target", "factur-x.html", "html", false, true);
 		} else {
 			System.out.println("ZUGFeRD 1.0 XML source set to " + outName);
 		}

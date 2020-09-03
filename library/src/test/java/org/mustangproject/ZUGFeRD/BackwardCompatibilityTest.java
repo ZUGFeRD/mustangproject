@@ -199,11 +199,6 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 		}
 
 		@Override
-		public String getOwnBankName() {
-			return "bla";
-		}
-
-		@Override
 		public String getOwnIBAN() {
 			return "bla";
 		}
