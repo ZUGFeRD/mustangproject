@@ -4,11 +4,14 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 public class Item implements IZUGFeRDExportableItem {
 	protected BigDecimal price, quantity, tax, grossPrice, lineTotalAmount;
 	protected String id;
 	protected Product product;
+	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<IZUGFeRDAllowanceCharge>(),
+			Charges = new ArrayList<IZUGFeRDAllowanceCharge>();
 
 	public Item(Product product, BigDecimal price, BigDecimal quantity) {
 		this.price = price;
@@ -81,16 +84,32 @@ public class Item implements IZUGFeRDExportableItem {
 
 	@Override
 	public IZUGFeRDAllowanceCharge[] getItemAllowances() {
-		return null;
+		if (Allowances.isEmpty()) {
+			return null;
+		} else
+			return Allowances.toArray(new IZUGFeRDAllowanceCharge[0]);
 	}
 
 	@Override
 	public IZUGFeRDAllowanceCharge[] getItemCharges() {
-		return null;
+		if (Charges.isEmpty()) {
+			return null;
+		} else
+			return Charges.toArray(new IZUGFeRDAllowanceCharge[0]);
 	}
 
 	public Item setProduct(Product product) {
 		this.product = product;
+		return this;
+	}
+
+
+	public Item addCharge(IZUGFeRDAllowanceCharge izac) {
+		Charges.add(izac);
+		return this;
+	}
+	public Item addAllowance(IZUGFeRDAllowanceCharge izac) {
+		Allowances.add(izac);
 		return this;
 	}
 }

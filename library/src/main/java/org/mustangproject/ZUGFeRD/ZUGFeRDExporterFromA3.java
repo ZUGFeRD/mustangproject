@@ -208,6 +208,9 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		ensurePDFisUpgraded = false;
 	}
 
+	public void attachFile(String filename, byte[] data, String mimetype, String relation) {
+		//throw new RuntimeException("Not implemented");
+	}
 
 	/***
 	 * Perform the final export to a now ZUGFeRD-enriched PDF file

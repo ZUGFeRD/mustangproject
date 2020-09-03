@@ -34,7 +34,8 @@ public class Invoice implements IExportableTransaction {
 	protected IZUGFeRDExportableContact ownContact = null, recipient = null, deliveryAddress = null;
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
 
-	protected IZUGFeRDAllowanceCharge[] ZFAllowances = null, ZFCharges = null, ZFLogisticsServiceCharges = null;
+	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<IZUGFeRDAllowanceCharge>(),
+			Charges = new ArrayList<IZUGFeRDAllowanceCharge>(), LogisticsServiceCharges = new ArrayList<IZUGFeRDAllowanceCharge>();
 	protected IZUGFeRDTradeSettlement[] getTradeSettlement = null;
 	protected IZUGFeRDPaymentTerms paymentTerms = null;
 
@@ -334,33 +335,30 @@ public class Invoice implements IExportableTransaction {
 
 	@Override
 	public IZUGFeRDAllowanceCharge[] getZFAllowances() {
-		return ZFAllowances;
+		if (Allowances.isEmpty()) {
+			return null;
+		} else
+		return Allowances.toArray(new IZUGFeRDAllowanceCharge[0]);
 	}
 
-	public Invoice setZFAllowances(IZUGFeRDAllowanceCharge[] ZFAllowances) {
-		this.ZFAllowances = ZFAllowances;
-		return this;
-	}
 
 	@Override
 	public IZUGFeRDAllowanceCharge[] getZFCharges() {
-		return ZFCharges;
+		if (Charges.isEmpty()) {
+			return null;
+		} else
+			return Charges.toArray(new IZUGFeRDAllowanceCharge[0]);
 	}
 
-	public Invoice setZFCharges(IZUGFeRDAllowanceCharge[] ZFCharges) {
-		this.ZFCharges = ZFCharges;
-		return this;
-	}
 
 	@Override
 	public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
-		return ZFLogisticsServiceCharges;
+		if (LogisticsServiceCharges.isEmpty()) {
+			return null;
+		} else
+			return LogisticsServiceCharges.toArray(new IZUGFeRDAllowanceCharge[0]);
 	}
 
-	public Invoice setZFLogisticsServiceCharges(IZUGFeRDAllowanceCharge[] ZFLogisticsServiceCharges) {
-		this.ZFLogisticsServiceCharges = ZFLogisticsServiceCharges;
-		return this;
-	}
 
 	public IZUGFeRDTradeSettlement[] getGetTradeSettlement() {
 		return getTradeSettlement;
@@ -413,4 +411,12 @@ public class Invoice implements IExportableTransaction {
 		//		this.country = country;
 	}
 
+	public Invoice addCharge(IZUGFeRDAllowanceCharge izac) {
+		Charges.add(izac);
+		return this;
+	}
+	public Invoice addAllowance(IZUGFeRDAllowanceCharge izac) {
+		Allowances.add(izac);
+		return this;
+	}
 }
