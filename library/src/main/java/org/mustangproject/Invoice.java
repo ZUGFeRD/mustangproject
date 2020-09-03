@@ -33,6 +33,7 @@ public class Invoice implements IExportableTransaction {
 	protected BigDecimal totalPrepaidAmount = null;
 	protected IZUGFeRDExportableContact ownContact = null, recipient = null, deliveryAddress = null;
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
+	protected String contractReferencedDocument = null;
 
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<IZUGFeRDAllowanceCharge>(),
 			Charges = new ArrayList<IZUGFeRDAllowanceCharge>(), LogisticsServiceCharges = new ArrayList<IZUGFeRDAllowanceCharge>();
@@ -49,6 +50,8 @@ public class Invoice implements IExportableTransaction {
 	public String getDocumentName() {
 		return documentName;
 	}
+
+	public String getContractReferencedDocument() { return contractReferencedDocument; }
 
 	public Invoice setDocumentName(String documentName) {
 		this.documentName = documentName;
@@ -417,6 +420,11 @@ public class Invoice implements IExportableTransaction {
 	}
 	public Invoice addAllowance(IZUGFeRDAllowanceCharge izac) {
 		Allowances.add(izac);
+		return this;
+	}
+
+	public Invoice setContractReferencedDocument(String s) {
+		contractReferencedDocument=s;
 		return this;
 	}
 }
