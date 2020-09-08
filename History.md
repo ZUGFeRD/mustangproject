@@ -26,6 +26,8 @@ switch
 - change from ZUGFeRDExporter to IZUGFeRDExporter
 - javadoc export
 - have visualizer
+- validate as library doc
+- unify loggers
 
 
 ### 2.0 still todo
@@ -33,14 +35,11 @@ switch
 - verapdf as prevalidation?
 - visualization? zugferdvisualizer?
 - new sample invoice
-- validate as library doc
 - prompt for source file for validation has to be pdf
 - be able to disable "source pdf set to timeout"
 - automated tests zuv/verapdf validate created library test files
-- unify loggers
 - *visualizer to work with Extended profile
 - *visualizer tests
-- *validator not to log to stdout
 - *validator not to XR error on ZF files (only notices)
 - *from A3 does not seem tow ork see mustangreaderwriteredgetest:testedgeexport
 - xmp errors may not show correctly in log
@@ -50,7 +49,6 @@ switch
 - confirm correct generation from pdf/a3 files zf2edgetest
 - *correctiontest exports zf1+zf2?
 - *use validator in tests of library
-- *invoiceprovider currencyid missing
 - *USt 0% wird aus invoice-klasse noch nicht sauber abgefangen
 - *ownContact sollte in einen Contact schreiben
 
