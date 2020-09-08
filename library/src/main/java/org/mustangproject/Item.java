@@ -25,6 +25,16 @@ public class Item implements IZUGFeRDExportableItem {
 		return this;
 	}
 
+	public Item addCharge(IZUGFeRDAllowanceCharge charge) {
+		//@todo
+		return this;
+	}
+
+	public Item addAllowance(IZUGFeRDAllowanceCharge allowance) {
+		//@todo
+		return this;
+	}
+
 	public BigDecimal getGrossPrice() {
 		return grossPrice;
 	}

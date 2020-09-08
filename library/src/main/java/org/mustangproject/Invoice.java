@@ -402,6 +402,22 @@ public class Invoice implements IExportableTransaction {
 	}
 
 
+
+	public Invoice addCharge(IZUGFeRDAllowanceCharge charge) {
+		//@todo
+		return this;
+	}
+
+	public Invoice addAllowance(IZUGFeRDAllowanceCharge allowance) {
+		//@todo
+		return this;
+	}
+
+
+	/***
+	 * checks if all required items are set in order to be able to export it
+	 * @return
+	 */
 	public boolean isValid() {
 		return (dueDate != null) && (ownZIP != null) && (ownStreet != null) && (ownLocation != null) && (ownCountry != null) && (ownTaxID != null) && (ownVATID != null) && (recipient != null);
 		//contact
