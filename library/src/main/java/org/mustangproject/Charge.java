@@ -1,7 +1,6 @@
 package org.mustangproject;
 
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 
 import java.math.BigDecimal;
 
@@ -40,13 +39,14 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 		return this;
 	}
 
-	public Charge setReason(String reason) {
-		this.reason = reason;
-		return this;
+
+	@Override
+	public String getReason() {
+		return reason;
 	}
 
-	public Charge setCategoryCode(String categoryCode) {
-		this.categoryCode = categoryCode;
+	public Charge setReason(String reason) {
+		this.reason = reason;
 		return this;
 	}
 
@@ -56,19 +56,15 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 		return totalAmount;
 	}
 
-	@Override
-	public String getReason() {
-		return reason;
-	}
 
 	@Override
 	public BigDecimal getTaxPercent() {
 		return taxPercent;
 	}
 
-	@Override
-	public String getCategoryCode() {
-		return categoryCode;
-	}
 
+	public Charge setCategoryCode(String categoryCode) {
+		this.categoryCode = categoryCode;
+		return this;
+	}
 }

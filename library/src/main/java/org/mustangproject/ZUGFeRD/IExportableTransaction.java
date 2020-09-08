@@ -95,6 +95,10 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	default String getContractReferencedDocument() {
+		return null;
+	}
+
 
 	/**
 	 * who processed the order
