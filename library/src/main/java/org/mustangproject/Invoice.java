@@ -35,6 +35,9 @@ public class Invoice implements IExportableTransaction {
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
 	protected String contractReferencedDocument = null;
 
+	protected Date occurrenceDateFrom = null;
+	protected Date occurrenceDateTo = null;
+
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<IZUGFeRDAllowanceCharge>(),
 			Charges = new ArrayList<IZUGFeRDAllowanceCharge>(), LogisticsServiceCharges = new ArrayList<IZUGFeRDAllowanceCharge>();
 	protected IZUGFeRDTradeSettlement[] getTradeSettlement = null;
@@ -432,5 +435,42 @@ public class Invoice implements IExportableTransaction {
 	public Invoice setContractReferencedDocument(String s) {
 		contractReferencedDocument=s;
 		return this;
+	}
+
+	public Invoice setOccurrenceDate(Date occur) {
+		occurrenceDateFrom=occur;
+		occurrenceDateTo=null;
+
+		return this;
+	}
+
+	public Invoice setOccurrencePeriod(Date start, Date end) {
+		occurrenceDateFrom=start;
+		occurrenceDateTo=end;
+
+		return this;
+	}
+
+	@Override
+	public Date getOccurrenceDate() {
+
+		return occurrenceDateFrom;
+	}
+
+	@Override
+	public Date getOccurrencePeriodFrom() {
+		if (occurrenceDateTo!=null)  {
+			return occurrenceDateFrom;
+		} else {
+			return null;
+		}
+	}
+	@Override
+	public Date getOccurrencePeriodTo() {
+		if (occurrenceDateTo!=null)  {
+			return occurrenceDateTo;
+		} else {
+			return null;
+		}
 	}
 }

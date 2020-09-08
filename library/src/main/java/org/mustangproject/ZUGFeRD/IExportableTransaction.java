@@ -393,4 +393,15 @@ public interface IExportableTransaction {
 	default IZUGFeRDExportableContact getDeliveryAddress() {
 		return null;
 	}
+
+	default Date getOccurrenceDate() {
+		return null;
+	}
+
+	default Date getOccurrencePeriodFrom() {
+		return null;
+	}
+	default Date getOccurrencePeriodTo() {
+		return null;
+	}
 }
