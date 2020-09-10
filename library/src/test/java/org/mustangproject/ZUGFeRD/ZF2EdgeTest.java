@@ -153,8 +153,8 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 	}
 
 	@Override
-	public IZUGFeRDExportableContact getOwnContact() {
-		return new SenderContact();
+	public IZUGFeRDExportableTradeParty getSender() {
+		return new SenderTradeParty();
 	}
 
 	@Override

@@ -105,8 +105,8 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 	}
 	
 	@Override
-	public IZUGFeRDExportableContact getOwnContact() {
-		return new SenderContact();
+	public IZUGFeRDExportableTradeParty getSender() {
+		return new SenderTradeParty();
 	}
 
 	@Override
@@ -459,11 +459,11 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
 		// Reading ZUGFeRD
-		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
-		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
-		assertEquals(zi.getHolder(), getOwnOrganisationName());
-		assertEquals(zi.getForeignReference(), getNumber());
+		assertEquals("571.04", zi.getAmount());
+		assertEquals(getTradeSettlementPayment()[0].getOwnBIC(), zi.getBIC());
+		assertEquals(getTradeSettlementPayment()[0].getOwnIBAN(), zi.getIBAN());
+		assertEquals(getOwnOrganisationName(), zi.getHolder());
+		assertEquals(getNumber(), zi.getForeignReference());
 	}
 
 	public void testExceptionOnPDF14() {

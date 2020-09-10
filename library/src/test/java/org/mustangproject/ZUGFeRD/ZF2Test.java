@@ -59,28 +59,8 @@ public class ZF2Test extends MustangReaderTestCase {
 	}
 
 	@Override
-	public String getOwnCountry() {
-		return "DE";
-	}
-
-	@Override
-	public String getOwnLocation() {
-		return "Stadthausen";
-	}
-
-	@Override
-	public String getOwnOrganisationName() {
-		return "Bei Spiel GmbH";
-	}
-
-	@Override
-	public String getOwnStreet() {
-		return "Ecke 12";
-	}
-
-	@Override
-	public IZUGFeRDExportableContact getOwnContact() {
-		return new SenderContact();
+	public IZUGFeRDExportableTradeParty getSender() {
+		return new SenderTradeParty();
 
 	}
 

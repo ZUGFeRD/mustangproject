@@ -351,7 +351,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 			xml = xml + "           <ram:GlobalID schemeID=\"" + XMLTools.encodeXML(trans.getSender().getGlobalIDScheme()) + "\">"
 					  + XMLTools.encodeXML(trans.getSender().getGlobalID()) + "</ram:GlobalID>\n";
 		}
-		xml = xml + "				<ram:Name>" + XMLTools.encodeXML(trans.getOwnOrganisationName()) + "</ram:Name>\n"; //$NON-NLS-2$
+		xml = xml + "				<ram:Name>" + XMLTools.encodeXML(trans.getSender().getName()) + "</ram:Name>\n"; //$NON-NLS-2$
 
 		if ((trans.getOwnVATID()!=null)&&(trans.getOwnOrganisationName()!=null)) {
 			

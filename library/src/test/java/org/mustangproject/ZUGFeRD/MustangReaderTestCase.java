@@ -86,7 +86,7 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 			return "88802";
 		}
 	}
-	
+
 	protected class SenderContact implements IZUGFeRDExportableContact {
 
 
@@ -104,6 +104,36 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 		@Override
 		public String getEMail() {
 			return "info@localhost.local";
+		}
+
+	}
+
+	protected class SenderTradeParty implements IZUGFeRDExportableTradeParty {
+		
+
+		@Override
+		public String getName() {
+			return "Bei Spiel GmbH";
+		}
+
+		@Override
+		public String getZIP() {
+			return "55232";
+		}
+
+		@Override
+		public String getCountry() {
+			return "DE";
+		}
+
+		@Override
+		public String getLocation() {
+			return "Stadthausen";
+		}
+
+		@Override
+		public String getStreet() {
+			return "Ecke 12";
 		}
 
 	}

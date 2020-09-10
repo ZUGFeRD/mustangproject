@@ -195,7 +195,11 @@ public interface IExportableTransaction {
 	 * @return the sender's organisation name
 	 */
 	default String getOwnOrganisationName() {
-		return null;
+		if (getSender()!=null) {
+			return getSender().getName();
+		} else {
+			return null;
+		}
 	}
 
 
@@ -205,7 +209,11 @@ public interface IExportableTransaction {
 	 * @return sender street address
 	 */
 	default String getOwnStreet() {
-		return null;
+		if (getSender()!=null) {
+			return getSender().getStreet();
+		} else {
+			return null;
+		}
 	}
 
 
@@ -215,7 +223,12 @@ public interface IExportableTransaction {
 	 * @return sender postal code
 	 */
 	default String getOwnZIP() {
-		return null;
+		if (getSender()!=null) {
+			return getSender().getZIP();
+		} else {
+			return null;
+		}
+
 	}
 
 
@@ -225,7 +238,12 @@ public interface IExportableTransaction {
 	 * @return the invoice sender's city
 	 */
 	default String getOwnLocation() {
-		return null;
+		if (getSender()!=null) {
+			return getSender().getLocation();
+		} else {
+			return null;
+		}
+
 	}
 
 
@@ -235,7 +253,12 @@ public interface IExportableTransaction {
 	 * @return the invoice senders two character country iso code
 	 */
 	default String getOwnCountry() {
-		return null;
+		if (getSender()!=null) {
+			return getSender().getCountry();
+		} else {
+			return null;
+		}
+
 	}
 
 

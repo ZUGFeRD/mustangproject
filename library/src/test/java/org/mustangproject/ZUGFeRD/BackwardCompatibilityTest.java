@@ -302,11 +302,16 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 		return new GregorianCalendar(2019, Calendar.JUNE, 10).getTime();
 	}
 
-	
+
 
 	@Override
 	public IZUGFeRDExportableTradeParty getRecipient() {
 		return new TradeParty("name","street","zip","city","DE");
+	}
+
+	@Override
+	public IZUGFeRDExportableTradeParty getSender() {
+		return new TradeParty("Bei Spiel GmbH","street","zip","city","DE");
 	}
 	
 		
