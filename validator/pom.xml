@@ -8,7 +8,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
     <artifactId>validator</artifactId>
-    <name>Library to validate Factur-X/ZUGFeRD 1.0 and 2.1 as well as XRechnung e-invoices.</name>
+    <name>Library to validate e-invoices (ZUGFeRD, Factur-X and Xrechnung)</name>
 
     <packaging>jar</packaging>
     <version>1.9.0-alpha2-SNAPSHOT</version>

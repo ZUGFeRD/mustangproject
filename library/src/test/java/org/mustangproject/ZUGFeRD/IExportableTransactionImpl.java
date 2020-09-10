@@ -30,7 +30,7 @@ public class IExportableTransactionImpl implements IExportableTransaction {
 	private IZUGFeRDAllowanceCharge[] zFCharges;
 	private IZUGFeRDAllowanceCharge[] zFLogisticsServiceCharges;
 	private IZUGFeRDExportableItem[] zFItems;
-	private IZUGFeRDExportableContact recipient;
+	private IZUGFeRDExportableTradeParty recipient;
 	private IZUGFeRDTradeSettlementPayment[] settlementPayments;
 	private String ownTaxID;
 	private String ownVATID;
@@ -85,7 +85,7 @@ public class IExportableTransactionImpl implements IExportableTransaction {
 	}
 
 	@Override
-	public IZUGFeRDExportableContact getRecipient() {
+	public IZUGFeRDExportableTradeParty getRecipient() {
 		return recipient;
 	}
 
@@ -190,7 +190,7 @@ public class IExportableTransactionImpl implements IExportableTransaction {
 		return this;
 	}
 
-	public IExportableTransactionImpl setRecipient(IZUGFeRDExportableContact recipient) {
+	public IExportableTransactionImpl setRecipient(IZUGFeRDExportableTradeParty recipient) {
 		this.recipient = recipient;
 		return this;
 	}

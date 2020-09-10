@@ -28,10 +28,10 @@ import java.util.Date;
 
 public class Invoice implements IExportableTransaction {
 
-	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownTaxID = null, ownVATID = null, ownForeignOrganisationID = null, ownOrganisationName = null, ownStreet = null, ownZIP = null, ownLocation = null, ownCountry = null, currency = null, paymentTermDescription = null;
+	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownTaxID = null, ownVATID = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
 	protected BigDecimal totalPrepaidAmount = null;
-	protected IZUGFeRDExportableContact ownContact = null, recipient = null, deliveryAddress = null;
+	protected TradeParty sender=null, recipient = null, deliveryAddress = null;
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
 	protected String contractReferencedDocument = null;
 
@@ -223,41 +223,25 @@ public class Invoice implements IExportableTransaction {
 
 	@Override
 	public String getOwnStreet() {
-		return ownStreet;
+		return sender.getStreet();
 	}
 
-	public Invoice setOwnStreet(String ownStreet) {
-		this.ownStreet = ownStreet;
-		return this;
-	}
 
 	@Override
 	public String getOwnZIP() {
-		return ownZIP;
+		return sender.getZIP();
 	}
 
-	public Invoice setOwnZIP(String ownZIP) {
-		this.ownZIP = ownZIP;
-		return this;
-	}
 
 	public String getOwnLocation() {
-		return ownLocation;
+		return sender.getLocation();
 	}
 
-	public Invoice setOwnLocation(String getOwnLocation) {
-		this.ownLocation = getOwnLocation;
-		return this;
-	}
 
 	public String getOwnCountry() {
-		return ownCountry;
+		return sender.getCountry();
 	}
 
-	public Invoice setOwnCountry(String getOwnCountry) {
-		this.ownCountry = getOwnCountry;
-		return this;
-	}
 
 	@Override
 	public String getCurrency() {
@@ -320,22 +304,26 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	@Override
-	public IZUGFeRDExportableContact getOwnContact() {
-		return ownContact;
+	public IZUGFeRDExportableTradeParty getSender() {
+		return sender;
 	}
 
-	public Invoice setOwnContact(IZUGFeRDExportableContact ownContact) {
-		this.ownContact = ownContact;
+	public Invoice setOwnContact(Contact ownContact) {
+		this.sender.setContact(ownContact);
 		return this;
 	}
 
-	@Override
-	public IZUGFeRDExportableContact getRecipient() {
+	public IZUGFeRDExportableTradeParty getRecipient() {
 		return recipient;
 	}
 
-	public Invoice setRecipient(IZUGFeRDExportableContact recipient) {
+	public Invoice setRecipient(TradeParty recipient) {
 		this.recipient = recipient;
+		return this;
+	}
+
+	public Invoice setSender(TradeParty sender) {
+		this.sender = sender;
 		return this;
 	}
 
@@ -386,11 +374,11 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	@Override
-	public IZUGFeRDExportableContact getDeliveryAddress() {
+	public TradeParty getDeliveryAddress() {
 		return deliveryAddress;
 	}
 
-	public Invoice setDeliveryAddress(IZUGFeRDExportableContact deliveryAddress) {
+	public Invoice setDeliveryAddress(TradeParty deliveryAddress) {
 		this.deliveryAddress = deliveryAddress;
 		return this;
 	}
@@ -413,7 +401,7 @@ public class Invoice implements IExportableTransaction {
 	 * @return
 	 */
 	public boolean isValid() {
-		return (dueDate != null) && (ownZIP != null) && (ownStreet != null) && (ownLocation != null) && (ownCountry != null) && (ownTaxID != null) && (ownVATID != null) && (recipient != null);
+		return (dueDate != null) && (sender != null) && (ownTaxID != null) && (ownVATID != null) && (recipient != null);
 		//contact
 		//		this.phone = phone;
 		//		this.email = email;

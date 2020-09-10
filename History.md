@@ -29,7 +29,7 @@ switch
 - validate as library doc
 - unify loggers
 - release notes
-
+- new tradeparty class, switch recipient, shipping address from contact to tradeparty
 
 ### 2.0 still todo
 - verapdf as prevalidation?

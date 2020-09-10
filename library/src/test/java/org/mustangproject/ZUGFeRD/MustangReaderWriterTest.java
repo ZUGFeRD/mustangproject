@@ -100,8 +100,8 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 	}
 
 	@Override
-	public IZUGFeRDExportableContact getRecipient() {
-		return new RecipientContact();
+	public IZUGFeRDExportableTradeParty getRecipient() {
+		return new RecipientTradeParty();
 	}
 	
 	@Override

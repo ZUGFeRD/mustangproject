@@ -27,7 +27,7 @@ package org.mustangproject.ZUGFeRD;
  */
 
 
-public interface IZUGFeRDExportableContact {
+public interface IZUGFeRDExportableTradeParty {
 
 	/**
 	 * customer identification assigned by the seller
@@ -38,6 +38,28 @@ public interface IZUGFeRDExportableContact {
 		return null;
 	}
 
+	/**
+	 * customer global identification assigned by the seller
+	 *
+	 * @return customer identification
+	 */
+	default String getGlobalID() {
+		return null;
+	}
+
+	/**
+	 * customer global identification scheme
+	 *
+	 * @return customer identification
+	 */
+	default String getGlobalIDScheme() {
+		return null;
+	}
+
+
+	default IZUGFeRDExportableContact getContact() {
+		return null;
+	}
 
 	/**
 	 * First and last name of the recipient
@@ -47,16 +69,6 @@ public interface IZUGFeRDExportableContact {
 	default String getName() {
 		return null;
 	}
-
-	default String getPhone() {
-		return null;
-	}
-	
-	default String getEMail() {
-		return null;
-	}
-
-
 	/**
 	 * Postal code of the recipient
 	 *

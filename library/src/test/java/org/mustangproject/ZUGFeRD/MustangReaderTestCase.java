@@ -54,7 +54,7 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 		}
 	}
 
-	protected class RecipientContact implements IZUGFeRDExportableContact {
+	protected class RecipientTradeParty implements IZUGFeRDExportableTradeParty {
 
 		@Override
 		public String getCountry() {

@@ -101,11 +101,11 @@ public interface IExportableTransaction {
 
 
 	/**
-	 * who processed the order
+	 * the sender of the invoice
 	 *
 	 * @return the contact person at the supplier side
 	 */
-	default IZUGFeRDExportableContact getOwnContact() {
+	default IZUGFeRDExportableTradeParty getSender() {
 		return null;
 	}
 
@@ -137,7 +137,7 @@ public interface IExportableTransaction {
 	 *
 	 * @return the recipient of the invoice
 	 */
-	IZUGFeRDExportableContact getRecipient();
+	IZUGFeRDExportableTradeParty getRecipient();
 
 
 	/**
@@ -390,7 +390,7 @@ public interface IExportableTransaction {
 	 * @return
 	 */
 
-	default IZUGFeRDExportableContact getDeliveryAddress() {
+	default IZUGFeRDExportableTradeParty getDeliveryAddress() {
 		return null;
 	}
 

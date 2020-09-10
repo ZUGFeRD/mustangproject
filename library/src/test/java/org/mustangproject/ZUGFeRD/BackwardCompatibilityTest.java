@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
+import org.mustangproject.TradeParty;
 
 /***
  * This is a test to confirm the minimum steps to implement a interface are still sufficient
@@ -304,8 +305,8 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 	
 
 	@Override
-	public IZUGFeRDExportableContact getRecipient() {
-		return new Contact();
+	public IZUGFeRDExportableTradeParty getRecipient() {
+		return new TradeParty("name","street","zip","city","DE");
 	}
 	
 		

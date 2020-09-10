@@ -1,9 +1,6 @@
 package org.mustangproject.ZUGFeRD;
 
-import org.mustangproject.Contact;
-import org.mustangproject.Invoice;
-import org.mustangproject.Item;
-import org.mustangproject.Product;
+import org.mustangproject.*;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -18,7 +15,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 	public Invoice extractInvoice() {
 
 		String number="AB123";
-			Invoice zpp=new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOwnStreet("teststr").setOwnZIP("55232").setOwnLocation("teststadt").setOwnCountry("DE").setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new Contact("Franz Müller", "0177123456", "fmueller@test.com", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number);
+			Invoice zpp=new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty("company","teststr","55232","teststadt","DE")).setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number);
 //.addItem(new Item(new Product("Testprodukt","","C62",new BigDecimal(0)),amount,new BigDecimal(1.0)))
 		zpp.setOwnOrganisationName(extractString("//SellerTradeParty/Name"));
 

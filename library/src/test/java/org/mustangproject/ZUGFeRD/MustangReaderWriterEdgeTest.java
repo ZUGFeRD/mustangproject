@@ -23,7 +23,6 @@ import junit.framework.TestSuite;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -98,8 +97,8 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 	}
 
 	@Override
-	public IZUGFeRDExportableContact getRecipient() {
-		return new RecipientContact();
+	public IZUGFeRDExportableTradeParty getRecipient() {
+		return new RecipientTradeParty();
 	}
 
 	@Override

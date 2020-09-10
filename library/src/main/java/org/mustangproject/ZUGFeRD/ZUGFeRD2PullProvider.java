@@ -157,7 +157,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		return "urn:cen.eu:en16931:2017";
 	}
 
-	protected String getContactAsXML(IZUGFeRDExportableContact contact) {
+	protected String getTradePartyAsXML(IZUGFeRDExportableTradeParty contact) {
 		String xml = "	<ram:Name>" + XMLTools.encodeXML(contact.getName()) + "</ram:Name>\n" //$NON-NLS-2$
 		// + " <DefinedTradeContact>\n"
 		// + " <PersonName>xxx</PersonName>\n"
@@ -167,7 +167,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				+ "</ram:PostcodeCode>\n"
 				+ "					<ram:LineOne>" + XMLTools.encodeXML(contact.getStreet())
 				+ "</ram:LineOne>\n";
-		if (trans.getRecipient().getAdditionalAddress() != null) {
+		if (contact.getAdditionalAddress() != null) {
 			xml += "				<ram:LineTwo>" + XMLTools.encodeXML(contact.getAdditionalAddress())
 					+ "</ram:LineTwo>\n";
 		}
@@ -347,9 +347,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 			xml = xml + "			<ram:ID>" + XMLTools.encodeXML(trans.getOwnForeignOrganisationID()) + "</ram:ID>\n";
 		}
 		
-		if ((trans.getOwnContact()!=null)&&(trans.getOwnContact().getGlobalID()!=null)&&(trans.getOwnContact().getGlobalIDScheme()!=null)) {
-			xml = xml + "           <ram:GlobalID schemeID=\"" + XMLTools.encodeXML(trans.getOwnContact().getGlobalIDScheme()) + "\">"
-					  + XMLTools.encodeXML(trans.getOwnContact().getGlobalID()) + "</ram:GlobalID>\n";
+		if ((trans.getSender()!=null)&&(trans.getSender().getGlobalID()!=null)&&(trans.getSender().getGlobalIDScheme()!=null)) {
+			xml = xml + "           <ram:GlobalID schemeID=\"" + XMLTools.encodeXML(trans.getSender().getGlobalIDScheme()) + "\">"
+					  + XMLTools.encodeXML(trans.getSender().getGlobalID()) + "</ram:GlobalID>\n";
 		}
 		xml = xml + "				<ram:Name>" + XMLTools.encodeXML(trans.getOwnOrganisationName()) + "</ram:Name>\n"; //$NON-NLS-2$
 
@@ -361,19 +361,19 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 					+ "            </ram:SpecifiedLegalOrganization>";
 		}
 
-		if (trans.getOwnContact() != null) {
-			xml = xml + "<ram:DefinedTradeContact>\n" + "     <ram:PersonName>" + XMLTools.encodeXML(trans.getOwnContact().getName())
+		if (trans.getSender().getContact() != null) {
+			xml = xml + "<ram:DefinedTradeContact>\n" + "     <ram:PersonName>" + XMLTools.encodeXML(trans.getSender().getContact().getName())
 					+ "</ram:PersonName>\n";
-			if (trans.getOwnContact().getPhone() != null) {
+			if (trans.getSender().getContact().getPhone() != null) {
 
 				xml = xml + "     <ram:TelephoneUniversalCommunication>\n" + "        <ram:CompleteNumber>"
-						+ XMLTools.encodeXML(trans.getOwnContact().getPhone()) + "</ram:CompleteNumber>\n"
+						+ XMLTools.encodeXML(trans.getSender().getContact().getPhone()) + "</ram:CompleteNumber>\n"
 						+ "     </ram:TelephoneUniversalCommunication>\n";
 			}
-			if (trans.getOwnContact().getEMail() != null) {
+			if (trans.getSender().getContact().getEMail() != null) {
 
 				xml = xml + "     <ram:EmailURIUniversalCommunication>\n" + "        <ram:URIID>"
-						+ XMLTools.encodeXML(trans.getOwnContact().getEMail()) + "</ram:URIID>\n"
+						+ XMLTools.encodeXML(trans.getSender().getContact().getEMail()) + "</ram:URIID>\n"
 						+ "     </ram:EmailURIUniversalCommunication>\n";
 			}
 			xml = xml + "  </ram:DefinedTradeContact>";
@@ -396,7 +396,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				// + " <ID>GE2020211</ID>\n"
 				// + " <GlobalID schemeID=\"0088\">4000001987658</GlobalID>\n"
 				
-				xml+=getContactAsXML(trans.getRecipient());
+				xml+=getTradePartyAsXML(trans.getRecipient());
 				xml += "			</ram:BuyerTradeParty>\n";
 
 		if (trans.getBuyerOrderReferencedDocumentID()!=null) {
@@ -409,7 +409,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				+ "		<ram:ApplicableHeaderTradeDelivery>\n" ;
 		if (this.trans.getDeliveryAddress()!=null) {
 			xml += "<ram:ShipToTradeParty>"+
-		getContactAsXML(this.trans.getDeliveryAddress())+
+		getTradePartyAsXML(this.trans.getDeliveryAddress())+
 	       "</ram:ShipToTradeParty>";
 		}
 				
