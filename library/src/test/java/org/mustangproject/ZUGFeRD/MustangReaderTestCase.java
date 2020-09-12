@@ -109,7 +109,7 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 	}
 
 	protected class SenderTradeParty implements IZUGFeRDExportableTradeParty {
-		
+
 
 		@Override
 		public String getName() {
@@ -134,6 +134,11 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 		@Override
 		public String getStreet() {
 			return "Ecke 12";
+		}
+
+		@Override
+		public String getTaxID() {
+			return "0815";
 		}
 
 	}

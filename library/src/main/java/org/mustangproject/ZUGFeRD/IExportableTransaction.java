@@ -165,7 +165,11 @@ public interface IExportableTransaction {
 	 * @return Tax ID (not VAT ID) of the sender
 	 */
 	default String getOwnTaxID() {
-		return null;
+		if (getSender()!=null) {
+			return getSender().getTaxID();
+		} else {
+			return null;
+		}
 	}
 
 
@@ -175,7 +179,11 @@ public interface IExportableTransaction {
 	 * @return VAT ID (Umsatzsteueridentifikationsnummer) of the sender
 	 */
 	default String getOwnVATID() {
-		return null;
+		if (getSender()!=null) {
+			return getSender().getVATID();
+		} else {
+			return null;
+		}
 	}
 
 

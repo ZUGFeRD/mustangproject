@@ -28,7 +28,7 @@ import java.util.Date;
 
 public class Invoice implements IExportableTransaction {
 
-	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownTaxID = null, ownVATID = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
+	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
 	protected BigDecimal totalPrepaidAmount = null;
 	protected TradeParty sender=null, recipient = null, deliveryAddress = null;
@@ -78,6 +78,16 @@ public class Invoice implements IExportableTransaction {
 
 	public Invoice setNumber(String number) {
 		this.number = number;
+		return this;
+	}
+
+	/***
+	 * switch type to invoice correction and refer to document number
+	 * @param number
+	 * @return
+	 */
+	public Invoice setCorrection(String number) {
+
 		return this;
 	}
 
@@ -183,21 +193,21 @@ public class Invoice implements IExportableTransaction {
 
 	@Override
 	public String getOwnTaxID() {
-		return ownTaxID;
+		return getSender().getTaxID();
 	}
 
 	public Invoice setOwnTaxID(String ownTaxID) {
-		this.ownTaxID = ownTaxID;
+		sender.addTaxID(ownTaxID);
 		return this;
 	}
 
 	@Override
 	public String getOwnVATID() {
-		return ownVATID;
+		return getSender().getVATID();
 	}
 
 	public Invoice setOwnVATID(String ownVATID) {
-		this.ownVATID = ownVATID;
+		sender.addVATID(ownVATID);
 		return this;
 	}
 
@@ -401,7 +411,7 @@ public class Invoice implements IExportableTransaction {
 	 * @return
 	 */
 	public boolean isValid() {
-		return (dueDate != null) && (sender != null) && (ownTaxID != null) && (ownVATID != null) && (recipient != null);
+		return (dueDate != null) && (sender != null) && (sender.getTaxID() != null) && (sender.getVATID() != null) && (recipient != null);
 		//contact
 		//		this.phone = phone;
 		//		this.email = email;

@@ -18,12 +18,14 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import org.mustangproject.TradeParty;
+
 /**
  * Mustangproject's ZUGFeRD implementation neccessary interface for ZUGFeRD exporter Licensed under the APLv2
  *
  * @author jstaerk
- * @version 1.2.0
- * dated 2014-05-10
+ * @version 2.0.0
+ * dated 2020-09-12
  */
 
 
@@ -126,5 +128,15 @@ public interface IZUGFeRDExportableTradeParty {
 	default String getAdditionalAddress() {
 		return null;
 	}
+
+
+	/***
+	 * obligatory for sender but not for recipient
+	 * @return
+	 */
+	default String getTaxID() {
+		return null;
+	}
+
 
 }
