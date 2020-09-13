@@ -32,6 +32,7 @@ switch
 - new tradeparty class, Contact getOwnContact superseded by TradeParty getSender
 - switch recipient, shipping address from contact to tradeparty
 - new invoicecorrection class
+- order-x read support
 
 ### 2.0 still todo
 - verapdf as prevalidation?

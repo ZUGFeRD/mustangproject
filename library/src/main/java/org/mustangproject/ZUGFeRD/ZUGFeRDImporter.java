@@ -137,7 +137,7 @@ public class ZUGFeRDImporter {
 			/**
 			 * filenames for invoice data (ZUGFeRD v1 and v2, Factur-X)
 			 */
-			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml")) || filename.equals("xrechnung.xml")) {
+			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml")) || filename.equals("xrechnung.xml") || filename.equals("order-x.xml")) {
 				containsMeta = true;
 
 				PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
