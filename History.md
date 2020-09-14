@@ -33,6 +33,8 @@ switch
 - switch recipient, shipping address from contact to tradeparty
 - new invoicecorrection class
 - order-x read support
+- automated tests zuv/verapdf validate created library test files
+
 
 ### 2.0 still todo
 - verapdf as prevalidation?
@@ -40,20 +42,17 @@ switch
 - new sample invoice
 - prompt for source file for validation has to be pdf
 - be able to disable "source pdf set to timeout"
-- automated tests zuv/verapdf validate created library test files
 - *visualizer to work with Extended profile
 - *visualizer tests
 - *validator not to XR error on ZF files (only notices)
 - *from A3 does not seem tow ork see mustangreaderwriteredgetest:testedgeexport
 - xmp errors may not show correctly in log
 - switch for no log and no notices
-- merge readmes and history.md 
 - homepage to be updated accordingly
 - confirm correct generation from pdf/a3 files zf2edgetest
 - *correctiontest exports zf1+zf2?
 - *use validator in tests of library
 - *USt 0% wird aus invoice-klasse noch nicht sauber abgefangen
-- *ownContact sollte in einen Contact schreiben
 - new features additional docs, contract id, periods, corrected invoices, discounts, occurrence dates and periods
 
 Mustangproject 1.7.8
