@@ -34,7 +34,8 @@ import junit.framework.TestCase;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ZF2PushTest extends TestCase {
 	final String TARGET_PDF = "./target/testout-ZF2Push.pdf";
-	final String TARGET_CORRECTIONPDF = "./target/testout-ZF2Correction.pdf";
+	final String TARGET_CORRECTIONPDF = "./target/testout-ZF2PushCorrection.pdf";
+	final String TARGET_CHARGESALLOWANCESPDF = "./target/testout-ZF2PushChargesAllowances.pdf";
 
 	public void testPushExport() {
 
@@ -134,7 +135,7 @@ public class ZF2PushTest extends TestCase {
 					 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
 					 .load(SOURCE_PDF)) {
 
-			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(orgname,"teststr", "55232","teststadt","DE")).setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number)
+			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(orgname,"teststr", "55232","teststadt","DE")).setOwnTaxID("4711").setOwnVATID("DE0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number)
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addCharge(new Charge(new BigDecimal(0.1),new BigDecimal(0), "","K")))
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance(new BigDecimal(0.07),new BigDecimal(0), "","K")))
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance(new BigDecimal(0.07),new BigDecimal(0), "","K")).addCharge(new Charge(new BigDecimal(0.1),new BigDecimal(0), "","K")))
@@ -142,13 +143,13 @@ public class ZF2PushTest extends TestCase {
 			);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
-			ze.export(TARGET_PDF);
+			ze.export(TARGET_CHARGESALLOWANCESPDF);
 		} catch (IOException e) {
 			fail("IOException should not be raised in testEdgeExport");
 		}
 
 		// now check the contents (like MustangReaderTest)
-		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_CHARGESALLOWANCESPDF);
 
 		assertTrue(zi.getUTF8().contains("EUR"));
 

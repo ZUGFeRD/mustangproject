@@ -51,7 +51,6 @@ switch
 - homepage to be updated accordingly
 - confirm correct generation from pdf/a3 files zf2edgetest
 - *correctiontest exports zf1+zf2?
-- *use validator in tests of library
 - *USt 0% wird aus invoice-klasse noch nicht sauber abgefangen
 - new features additional docs, contract id, periods, corrected invoices, discounts, occurrence dates and periods
 

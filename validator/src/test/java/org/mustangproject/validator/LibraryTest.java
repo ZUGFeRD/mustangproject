@@ -27,7 +27,7 @@ public class LibraryTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.isEqualTo("valid");
-		tempFile = new File("../library/target/testout-ZF2Correction.pdf");
+		tempFile = new File("../library/target/testout-ZF2PushCorrection.pdf");
 		assertTrue(tempFile.exists());
 
 		res = zfv.validate(tempFile.getAbsolutePath());
@@ -44,7 +44,25 @@ public class LibraryTest extends ResourceCase {
 
 	}
 	public void testLibraryPushCorrection() {
-		File tempFile = new File("../library/target/testout-ZF2Correction.pdf");
+		File tempFile = new File("../library/target/testout-ZF2PushCorrection.pdf");
+		assertTrue(tempFile.exists());
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+
+		assertThat(res).valueByXPath("/validation/pdf/summary/@status")
+				.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+				.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.isEqualTo("valid");
+
+	}
+	public void testLibraryPushAllowances() {
+		File tempFile = new File("../library/target/testout-ZF2PushChargesAllowances.pdf");
 		assertTrue(tempFile.exists());
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
 
