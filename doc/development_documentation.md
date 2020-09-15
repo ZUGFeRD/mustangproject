@@ -3,7 +3,7 @@
 
 1. build
 
-as excercise to check if the neccessary tools are there, the build is in a stable state and works on your platform, e.g. download and extract https://github.com/ZUGFeRD/mustangproject/archive/master.zip and run ./mvnw clean package
+To check if the necessary tools are there, the build is in a stable state and works on your platform, e.g. download and extract https://github.com/ZUGFeRD/mustangproject/archive/master.zip and run ./mvnw clean package
 
 Mvnw is a maven wrapper which will download maven.Maven is the dependency management tool which will download all libraries, their dependencies, and build the whole thing.
 
@@ -27,6 +27,19 @@ If you do a pull request, please do a feature branch, e.g. if you are working on
 Most of mustang is a library, adding (autmated junit) test cases is often not only the most sustainable but also the fastest way to see if new/changed functionality works. If something is changed so that old test cases break on purpose please do not just remove them but take the time to fix the test cases
 
 
+## Architecture
+
+Mustang contains a library to read/write e-invoices, 
+a validator library  
+(and can also read/write e-invoices, but is substantially 
+larger) and a commandline application using the latter 
+library.
+
+The validator component embeds VeraPDF, a open-source
+PDF/A-validator, via maven dependency and uses ph-schematron 
+to validate the XML part of the invoices.
+
+![architecture of the validator](ZUV-Architektur.svg "Graph of the architecture of the validator component")
 
 ## New build
 
@@ -46,7 +59,13 @@ can be used as debug configuration goal in Eclipse. In that case you can set bre
 
 ## Validate
 
-[ZUV](https://github.com/ZUGFeRD/ZUV/) can be used to validate generated files.
+The former ZUGFeRD VeraPDF [ZUV](https://github.com/ZUGFeRD/ZUV/) validator
+is now part of Mustangproject. 
+The JUnit tests of the validator component will also run through a couple of
+test files of the library component.
+
+
+
 
 ## Deployment
 

@@ -642,7 +642,7 @@ public class Main {
 	 *
 	 * @param resourceName ie.: "/SmartLibrary.dll"
 	 * @return The path to the exported resource
-	 * @throws Exception
+	 * @throws Exception e.g. if the specified resource does not exist at the specified location
 	 */
 	static public String ExportResource(String resourceName) throws Exception {
 		InputStream stream = null;

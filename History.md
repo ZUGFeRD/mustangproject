@@ -1,8 +1,9 @@
 ## 2.0 
 ### done
 
-- remove jaxb
-- 2.1 now default
+- support for ZF 2.1.1, i.e. "Reference profile" Xrechnung 
+- ZF 2.1.1 now default (up to 1.7.8 ZF2 could be set but ZF1 was default)
+- removed jaxb
 - pushprovider
 - new xrechnung profile
 - german bank account numbers can no longer be specified (dropped in favor of IBAN and BIC)
@@ -53,6 +54,9 @@ switch
 - *correctiontest exports zf1+zf2?
 - *USt 0% wird aus invoice-klasse noch nicht sauber abgefangen
 - new features additional docs, contract id, periods, corrected invoices, discounts, occurrence dates and periods
+
+Alpha2 2020-09-15
+Alpha1 2020-08-06
 
 Mustangproject 1.7.8
 =====
