@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
     <artifactId>core</artifactId>
-    <version>1.9.0-alpha2-SNAPSHOT</version>
+    <version>1.9.0-alpha2</version>
     <packaging>pom</packaging>
     <name>Mustang</name>
 
@@ -20,7 +20,7 @@
         <connection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</connection>
         <developerConnection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</developerConnection>
         <url>https://github.com/ZUGFeRD/mustangproject</url>
-        <tag>mustang-1.7.3</tag>
+        <tag>core-1.9.0-alpha2</tag>
     </scm>
     <repositories>
         <repository><!-- for jargs -->
