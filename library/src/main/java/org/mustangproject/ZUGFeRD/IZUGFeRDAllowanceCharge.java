@@ -34,4 +34,5 @@ public interface IZUGFeRDAllowanceCharge {
 		return TaxCategoryCodeTypeConstants.STANDARDRATE;
 	}
 
+	public boolean isCharge();
 }

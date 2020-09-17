@@ -62,6 +62,11 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 		return taxPercent;
 	}
 
+	@Override
+	public boolean isCharge() {
+		return true;
+	}
+
 
 	public Charge setCategoryCode(String categoryCode) {
 		this.categoryCode = categoryCode;

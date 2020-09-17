@@ -33,6 +33,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.mustangproject.Charge;
 import org.mustangproject.XMLTools;
 
 public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
@@ -121,7 +122,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		BigDecimal res = new BigDecimal(0);
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			LineCalc lc = new LineCalc(currentItem);
-			res = res.add(lc.getItemTotalNetAmount());
+			res = res.add(lc.getItemTotalGrossAmount());
 		}
 		return res;
 	}
@@ -286,6 +287,19 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 			    xml = xml + "				<ram:BuyerAssignedID>"
 				        + XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>\n";
 			}
+
+			String allowanceStr="					<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
+					+ "\">" + quantityFormat(currentItem.getBasisQuantity()) +"</ram:BasisQuantity>\n";
+			if (currentItem.getItemAllowances()!=null && currentItem.getItemAllowances().length>0) {
+				for (IZUGFeRDAllowanceCharge allowance:currentItem.getItemAllowances()) {
+					if (allowance.isCharge()) {
+						throw new RuntimeException("Item level charges are not yet implemented");
+					} else {
+						allowanceStr= "<ram:AppliedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>false</udt:Indicator></ram:ChargeIndicator><ram:ActualAmount>"+priceFormat(allowance.getTotalAmount())+"</ram:ActualAmount></ram:AppliedTradeAllowanceCharge>";
+					}
+				}
+			}
+
 			xml = xml + "					<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>\n" //$NON-NLS-2$
 					+ "				<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription())
 					+ "</ram:Description>\n"
@@ -295,8 +309,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 					+ "				<ram:GrossPriceProductTradePrice>\n"
 					+ "					<ram:ChargeAmount>" + priceFormat(lc.getPriceGross())
 					+ "</ram:ChargeAmount>\n" //currencyID=\"EUR\"
-					+ "					<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
-					+ "\">" + quantityFormat(currentItem.getBasisQuantity()) +"</ram:BasisQuantity>\n"
+					+ allowanceStr
 					// + " <AppliedTradeAllowanceCharge>\n"
 					// + " <ChargeIndicator>false</ChargeIndicator>\n"
 					// + " <ActualAmount currencyID=\"EUR\">0.6667</ActualAmount>\n"
@@ -304,7 +317,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 					// + " </AppliedTradeAllowanceCharge>\n"
 					+ "				</ram:GrossPriceProductTradePrice>\n"
 					+ "				<ram:NetPriceProductTradePrice>\n"
-					+ "					<ram:ChargeAmount>" + priceFormat(currentItem.getPrice())
+					+ "					<ram:ChargeAmount>" + priceFormat(lc.getPrice())
 					+ "</ram:ChargeAmount>\n" // currencyID=\"EUR\"
 					+ "					<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
 					+ "\">" + quantityFormat(currentItem.getBasisQuantity()) +"</ram:BasisQuantity>\n"

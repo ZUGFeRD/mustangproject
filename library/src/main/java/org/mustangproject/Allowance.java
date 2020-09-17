@@ -13,4 +13,9 @@ public class Allowance extends Charge implements IZUGFeRDAllowanceCharge {
 		super(totalAmount, taxPercent, reason, categoryCode);
 
 	}
+
+	@Override
+	public boolean isCharge() {
+		return false;
+	}
 }
