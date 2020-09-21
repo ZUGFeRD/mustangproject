@@ -37,11 +37,13 @@ import org.apache.xmpbox.schema.PDFAIdentificationSchema;
 import org.apache.xmpbox.schema.XMPBasicSchema;
 import org.apache.xmpbox.type.BadFieldValueException;
 import org.apache.xmpbox.xml.XmpSerializer;
+import org.mustangproject.FileAttachment;
 
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.xml.transform.TransformerException;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,11 +55,9 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	protected Profiles profile = Profiles.EXTENDED;
 	protected PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
-
+	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<FileAttachment>();
 
 	protected boolean ensurePDFisUpgraded = true;
-
-	private HashMap<String, byte[]> additionalFiles = new HashMap<String, byte[]>();
 
 
 	private boolean disableAutoClose;
@@ -114,8 +114,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	}
 
 	public ZUGFeRDExporterFromA3 addAdditionalFile(String name, byte[] content) {
-
-		additionalFiles.put(name,content);
+		fileAttachments.add(new FileAttachment(name, "text/xml", "Supplement", content).setDescription("ZUGFeRD extension/additional data"));
 		return this;
 	}
 
@@ -209,7 +208,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	}
 
 	public void attachFile(String filename, byte[] data, String mimetype, String relation) {
-		//throw new RuntimeException("Not implemented");
+		FileAttachment fa=new FileAttachment(filename, mimetype, relation, data);
+		fileAttachments.add(fa);
 	}
 
 	/***
@@ -521,9 +521,10 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 				"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
 				"text/xml", xmlProvider.getXML());
 
-		for (String filenameAdditional : additionalFiles.keySet()) {
-			PDFAttachGenericFile(doc, filenameAdditional, "Supplement", "ZUGFeRD extension/additional data", "text/xml", additionalFiles.get(filenameAdditional));
+		for (FileAttachment  attachment: fileAttachments) {
+			PDFAttachGenericFile(doc, attachment.getFilename(), attachment.getRelation(), attachment.getDescription(), attachment.getMimetype(), attachment.getData());
 		}
+
 		return this;
 	}
 
