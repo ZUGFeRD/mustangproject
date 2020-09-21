@@ -310,6 +310,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				}
 			}
 
+
+
 			xml = xml + "					<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>\n" //$NON-NLS-2$
 					+ "				<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription())
 					+ "</ram:Description>\n"
@@ -319,9 +321,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 					+ "				<ram:GrossPriceProductTradePrice>\n"
 					+ "					<ram:ChargeAmount>" + priceFormat(lc.getPriceGross())
 					+ "</ram:ChargeAmount>\n" //currencyID=\"EUR\"
-					+ allowanceChargeStr +
-					"<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
+					+ "<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
 					+ "\">" + quantityFormat(currentItem.getBasisQuantity()) + "</ram:BasisQuantity>\n"
+					+ allowanceChargeStr
 			// + " <AppliedTradeAllowanceCharge>\n"
 			// + " <ChargeIndicator>false</ChargeIndicator>\n"
 			// + " <ActualAmount currencyID=\"EUR\">0.6667</ActualAmount>\n"
