@@ -61,6 +61,25 @@ public class LibraryTest extends ResourceCase {
 				.isEqualTo("valid");
 
 	}
+	public void testLibraryPushItemAllowances() {
+		File tempFile = new File("../library/target/testout-ZF2PushItemChargesAllowances.pdf");
+		assertTrue(tempFile.exists());
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+
+		assertThat(res).valueByXPath("/validation/pdf/summary/@status")
+				.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+				.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.isEqualTo("valid");
+
+	}
+
 	public void testLibraryPushAllowances() {
 		File tempFile = new File("../library/target/testout-ZF2PushChargesAllowances.pdf");
 		assertTrue(tempFile.exists());

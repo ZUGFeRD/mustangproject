@@ -6,6 +6,12 @@ public class Contact implements IZUGFeRDExportableContact {
 
 	protected String name,phone,email,zip,street,location,country;
 
+	public Contact(String name, String phone, String email) {
+		this.name = name;
+		this.phone = phone;
+		this.email = email;
+
+	}
 	public Contact(String name, String phone, String email, String street, String zip, String location, String country) {
 		this.name = name;
 		this.phone = phone;

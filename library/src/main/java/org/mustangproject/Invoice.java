@@ -196,6 +196,11 @@ public class Invoice implements IExportableTransaction {
 		return getSender().getTaxID();
 	}
 
+
+	@Deprecated
+	/***
+	 * @deprecated use TradeParty::addTaxID instead
+	 */
 	public Invoice setOwnTaxID(String ownTaxID) {
 		sender.addTaxID(ownTaxID);
 		return this;
@@ -206,6 +211,10 @@ public class Invoice implements IExportableTransaction {
 		return getSender().getVATID();
 	}
 
+	@Deprecated
+	/***
+	 * @deprecated use TradeParty::addVATID instead
+	 */
 	public Invoice setOwnVATID(String ownVATID) {
 		sender.addVATID(ownVATID);
 		return this;

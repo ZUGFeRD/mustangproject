@@ -27,7 +27,7 @@ public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
 	boolean isCharge=true;
 
 	@Override
-	public BigDecimal getTotalAmount() {
+	public BigDecimal getTotalAmount(IZUGFeRDExportableItem currentItem) {
 		return totalAmount;
 	}
 

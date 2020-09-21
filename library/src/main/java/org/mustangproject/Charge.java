@@ -1,6 +1,7 @@
 package org.mustangproject;
 
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
+import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
 
 import java.math.BigDecimal;
 
@@ -16,11 +17,12 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 
 	}
 
-	public Charge(BigDecimal totalAmount, BigDecimal taxPercent, String reason, String categoryCode) {
+	/***
+	 * creates a item level or invoice level charge
+	 * @param totalAmount (the absolute amount)
+	 */
+	public Charge(BigDecimal totalAmount) {
 		this.totalAmount = totalAmount;
-		this.taxPercent = taxPercent;
-		this.reason = reason;
-		this.categoryCode = categoryCode;
 	}
 
 
@@ -52,10 +54,20 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 
 
 	@Override
-	public BigDecimal getTotalAmount() {
-		return totalAmount;
+	public BigDecimal getTotalAmount(IZUGFeRDExportableItem currentItem) {
+		if (totalAmount!=null) {
+			return totalAmount;
+		} else if (percent!=null) {
+			return currentItem.getPrice().multiply(getPercent().divide(new BigDecimal(100)));
+		} else {
+			throw new RuntimeException("Either totalAmount or percent must be set");
+		}
 	}
 
+
+	public BigDecimal getPercent() {
+		return percent;
+	}
 
 	@Override
 	public BigDecimal getTaxPercent() {
