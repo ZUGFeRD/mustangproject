@@ -159,38 +159,54 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		return "urn:cen.eu:en16931:2017";
 	}
 
-	protected String getTradePartyAsXML(IZUGFeRDExportableTradeParty contact) {
+	protected String getTradePartyAsXML(IZUGFeRDExportableTradeParty party) {
 		String xml = "";
 		// According EN16931 either GlobalID or seller assigned ID might be present for BuyerTradeParty
 		// and ShipToTradeParty, but not both. Prefer seller assigned ID for now.
-		if (contact.getID()!=null) {
-			xml += "	<ram:ID>" + XMLTools.encodeXML(contact.getID()) + "</ram:ID>\n";
+		if (party.getID()!=null) {
+			xml += "	<ram:ID>" + XMLTools.encodeXML(party.getID()) + "</ram:ID>\n";
 		}
-		else if ((contact.getGlobalIDScheme()!=null)&&(contact.getGlobalID()!=null)) {
-			xml = xml + "           <ram:GlobalID schemeID=\"" + XMLTools.encodeXML(contact.getGlobalIDScheme()) + "\">"
-					  + XMLTools.encodeXML(contact.getGlobalID()) + "</ram:GlobalID>\n";
+		else if ((party.getGlobalIDScheme()!=null)&&(party.getGlobalID()!=null)) {
+			xml = xml + "           <ram:GlobalID schemeID=\"" + XMLTools.encodeXML(party.getGlobalIDScheme()) + "\">"
+					  + XMLTools.encodeXML(party.getGlobalID()) + "</ram:GlobalID>\n";
 		}
-		xml += 		"	<ram:Name>" + XMLTools.encodeXML(contact.getName()) + "</ram:Name>\n"; //$NON-NLS-2$
-		// + " <DefinedTradeContact>\n"
-		// + " <PersonName>xxx</PersonName>\n"
-		// + " </DefinedTradeContact>\n"
+		xml += 		"	<ram:Name>" + XMLTools.encodeXML(party.getName()) + "</ram:Name>\n"; //$NON-NLS-2$
+
+		if (party.getContact() != null) {
+			xml = xml + "<ram:DefinedTradeContact>\n" + "     <ram:PersonName>" + XMLTools.encodeXML(party.getContact().getName())
+					+ "</ram:PersonName>\n";
+			if (party.getContact().getPhone() != null) {
+
+				xml = xml + "     <ram:TelephoneUniversalCommunication>\n" + "        <ram:CompleteNumber>"
+						+ XMLTools.encodeXML(party.getContact().getPhone()) + "</ram:CompleteNumber>\n"
+						+ "     </ram:TelephoneUniversalCommunication>\n";
+			}
+			if (party.getContact().getEMail() != null) {
+
+				xml = xml + "     <ram:EmailURIUniversalCommunication>\n" + "        <ram:URIID>"
+						+ XMLTools.encodeXML(party.getContact().getEMail()) + "</ram:URIID>\n"
+						+ "     </ram:EmailURIUniversalCommunication>\n";
+			}
+			xml = xml + "  </ram:DefinedTradeContact>";
+
+		}
 		xml +=  	"				<ram:PostalTradeAddress>\n"
-				+ "					<ram:PostcodeCode>" + XMLTools.encodeXML(contact.getZIP())
+				+ "					<ram:PostcodeCode>" + XMLTools.encodeXML(party.getZIP())
 				+ "</ram:PostcodeCode>\n"
-				+ "					<ram:LineOne>" + XMLTools.encodeXML(contact.getStreet())
+				+ "					<ram:LineOne>" + XMLTools.encodeXML(party.getStreet())
 				+ "</ram:LineOne>\n";
-		if (contact.getAdditionalAddress() != null) {
-			xml += "				<ram:LineTwo>" + XMLTools.encodeXML(contact.getAdditionalAddress())
+		if (party.getAdditionalAddress() != null) {
+			xml += "				<ram:LineTwo>" + XMLTools.encodeXML(party.getAdditionalAddress())
 					+ "</ram:LineTwo>\n";
 		}
-		xml += "					<ram:CityName>" + XMLTools.encodeXML(contact.getLocation())
+		xml += "					<ram:CityName>" + XMLTools.encodeXML(party.getLocation())
 				+ "</ram:CityName>\n"
-				+ "					<ram:CountryID>" + XMLTools.encodeXML(contact.getCountry())
+				+ "					<ram:CountryID>" + XMLTools.encodeXML(party.getCountry())
 				+ "</ram:CountryID>\n"
 				+ "				</ram:PostalTradeAddress>\n";
-		if (contact.getVATID() != null) {
+		if (party.getVATID() != null) {
 			xml += "				<ram:SpecifiedTaxRegistration>\n"
-					+ "					<ram:ID schemeID=\"VA\">" + XMLTools.encodeXML(contact.getVATID())
+					+ "					<ram:ID schemeID=\"VA\">" + XMLTools.encodeXML(party.getVATID())
 					+ "</ram:ID>\n"
 					+ "				</ram:SpecifiedTaxRegistration>\n";
 		}
@@ -369,55 +385,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 			xml = xml + "			<ram:BuyerReference>" + XMLTools.encodeXML(trans.getReferenceNumber()) + "</ram:BuyerReference>\n";
 
 		}
-		xml = xml + "			<ram:SellerTradeParty>\n";
-		if (trans.getOwnForeignOrganisationID() != null) {
-			xml = xml + "			<ram:ID>" + XMLTools.encodeXML(trans.getOwnForeignOrganisationID()) + "</ram:ID>\n";
-		}
-
-		if ((trans.getSender() != null) && (trans.getSender().getGlobalID() != null) && (trans.getSender().getGlobalIDScheme() != null)) {
-			xml = xml + "           <ram:GlobalID schemeID=\"" + XMLTools.encodeXML(trans.getSender().getGlobalIDScheme()) + "\">"
-					+ XMLTools.encodeXML(trans.getSender().getGlobalID()) + "</ram:GlobalID>\n";
-		}
-		xml = xml + "				<ram:Name>" + XMLTools.encodeXML(trans.getSender().getName()) + "</ram:Name>\n"; //$NON-NLS-2$
-
-		if ((trans.getOwnVATID() != null) && (trans.getOwnOrganisationName() != null)) {
-
-			xml = xml + "            <ram:SpecifiedLegalOrganization>\n" + "               <ram:ID>"
-					+ XMLTools.encodeXML(trans.getOwnVATID()) + "</ram:ID>\n" + "               <ram:TradingBusinessName>"
-					+ XMLTools.encodeXML(trans.getOwnOrganisationName()) + "</ram:TradingBusinessName>\n"
-					+ "            </ram:SpecifiedLegalOrganization>";
-		}
-
-		if (trans.getSender().getContact() != null) {
-			xml = xml + "<ram:DefinedTradeContact>\n" + "     <ram:PersonName>" + XMLTools.encodeXML(trans.getSender().getContact().getName())
-					+ "</ram:PersonName>\n";
-			if (trans.getSender().getContact().getPhone() != null) {
-
-				xml = xml + "     <ram:TelephoneUniversalCommunication>\n" + "        <ram:CompleteNumber>"
-						+ XMLTools.encodeXML(trans.getSender().getContact().getPhone()) + "</ram:CompleteNumber>\n"
-						+ "     </ram:TelephoneUniversalCommunication>\n";
-			}
-			if (trans.getSender().getContact().getEMail() != null) {
-
-				xml = xml + "     <ram:EmailURIUniversalCommunication>\n" + "        <ram:URIID>"
-						+ XMLTools.encodeXML(trans.getSender().getContact().getEMail()) + "</ram:URIID>\n"
-						+ "     </ram:EmailURIUniversalCommunication>\n";
-			}
-			xml = xml + "  </ram:DefinedTradeContact>";
-
-		}
-
-		xml = xml + "				<ram:PostalTradeAddress>\n" + "					<ram:PostcodeCode>"
-				+ XMLTools.encodeXML(trans.getOwnZIP()) + "</ram:PostcodeCode>\n" + "					<ram:LineOne>"
-				+ XMLTools.encodeXML(trans.getOwnStreet()) + "</ram:LineOne>\n" + "					<ram:CityName>" + XMLTools.encodeXML(trans.getOwnLocation())
-				+ "</ram:CityName>\n" + "					<ram:CountryID>" + XMLTools.encodeXML(trans.getOwnCountry())
-				+ "</ram:CountryID>\n" + "				</ram:PostalTradeAddress>\n"
-				+ "				<ram:SpecifiedTaxRegistration>\n"
-				+ "					<ram:ID schemeID=\"FC\">" + XMLTools.encodeXML(trans.getOwnTaxID()) + "</ram:ID>\n" //$NON-NLS-2$
-				+ "				</ram:SpecifiedTaxRegistration>\n"
-				+ "				<ram:SpecifiedTaxRegistration>\n"
-				+ "					<ram:ID schemeID=\"VA\">" + XMLTools.encodeXML(trans.getOwnVATID()) + "</ram:ID>\n" //$NON-NLS-2$
-				+ "				</ram:SpecifiedTaxRegistration>\n"
+		xml = xml + "			<ram:SellerTradeParty>\n"
+				+ getTradePartyAsXML(trans.getSender())
 				+ "			</ram:SellerTradeParty>\n"
 				+ "			<ram:BuyerTradeParty>\n";
 				// + " <ID>GE2020211</ID>\n"

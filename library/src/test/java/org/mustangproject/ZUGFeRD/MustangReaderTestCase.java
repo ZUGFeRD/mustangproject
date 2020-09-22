@@ -118,7 +118,7 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 
 		@Override
 		public String getZIP() {
-			return "55232";
+			return "12345";
 		}
 
 		@Override

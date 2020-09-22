@@ -5,9 +5,9 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTradeParty;
 
 public class TradeParty implements IZUGFeRDExportableTradeParty {
 
-	protected String name,zip,street,location,country;
-	protected String taxID=null, vatID=null;
-	protected Contact contact=null;
+	protected String name, zip, street, location, country;
+	protected String taxID = null, vatID = null;
+	protected Contact contact = null;
 
 	public TradeParty(String name, String street, String zip, String location, String country) {
 		this.name = name;
@@ -24,12 +24,12 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	}
 
 	public TradeParty addTaxID(String taxID) {
-		this.taxID=taxID;
+		this.taxID = taxID;
 		return this;
 	}
 
 	public TradeParty addVATID(String vatID) {
-		this.vatID=vatID;
+		this.vatID = vatID;
 		return this;
 	}
 
@@ -90,5 +90,19 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	public TradeParty setCountry(String country) {
 		this.country = country;
 		return this;
+	}
+
+
+	public String getVatID() {
+		return vatID;
+	}
+
+	public String getZip() {
+		return zip;
+	}
+
+	@Override
+	public IZUGFeRDExportableContact getContact() {
+		return contact;
 	}
 }
