@@ -250,7 +250,7 @@ public class ZF2PushTest extends TestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_CORRECTIONPDF);
 
 		assertTrue(zi.getUTF8().contains("EUR"));
-
+//totest: typecode 384, BuyerOrderReferencedDocument
 		// Reading ZUGFeRD
 		assertEquals("-3.57", zi.getAmount());
 		assertEquals(zi.getHolder(), orgname);

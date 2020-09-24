@@ -21,6 +21,7 @@
 package org.mustangproject;
 
 import org.mustangproject.ZUGFeRD.*;
+import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -87,7 +88,8 @@ public class Invoice implements IExportableTransaction {
 	 * @return
 	 */
 	public Invoice setCorrection(String number) {
-
+		setBuyerOrderReferencedDocumentID(number);
+		documentCode= DocumentCodeTypeConstants.CORRECTEDINVOICE;
 		return this;
 	}
 

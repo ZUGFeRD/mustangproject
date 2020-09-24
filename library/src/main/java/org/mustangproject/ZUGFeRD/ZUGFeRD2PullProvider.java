@@ -35,6 +35,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.mustangproject.Invoice;
 import org.mustangproject.XMLTools;
 
 public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
@@ -213,8 +214,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		return xml;
 
 	}
-
-	@Override
+		@Override
 	public void generateXML(IExportableTransaction trans) {
 		this.trans = trans;
 
