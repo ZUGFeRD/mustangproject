@@ -18,9 +18,10 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-public class CustomXMLProvider implements IXMLProvider, IProfileProvider {
+public class CustomXMLProvider implements IXMLProvider {
 
 	protected byte[] zugferdData;
+	protected Profile profile=Profiles.getByName("EN16931");
 
 	@Override
 	public byte[] getXML() {
@@ -49,13 +50,11 @@ public class CustomXMLProvider implements IXMLProvider, IProfileProvider {
 	}
 
 	@Override
-	public String getProfile() {
-		// TODO Auto-generated method stub
-		return null;
+	public Profile getProfile() {
+		return profile;
 	}
 
-	@Override
-	public void setProfile(Profiles level) {
-		// TODO Auto-generated method stub
+	public void setProfile(Profile level) {
+		profile=level;
 	}
 }

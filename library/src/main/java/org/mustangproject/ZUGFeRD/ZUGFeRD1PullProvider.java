@@ -35,21 +35,17 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
+public class ZUGFeRD1PullProvider implements IXMLProvider {
 
 
 	//// MAIN CLASS
 
 	protected byte[] zugferdData;
 	private IExportableTransaction trans;
-	private Profiles level;
 	private String paymentTermsDescription;
 	SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
+	protected Profile profile=Profiles.getByName("COMFORT",1);
 
-	@Override
-	public void setProfile(Profiles level) {
-		this.level = level;
-	}
 
 	/**
 	 * enables the flag to indicate a test invoice in the XML structure
@@ -71,6 +67,12 @@ public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
 
 	private String quantityFormat(BigDecimal value) {
 		return XMLTools.nDigitFormat(value, 4);
+	}
+
+
+	@Override
+	public Profile getProfile() {
+		return profile;
 	}
 
 	@Override
@@ -150,11 +152,6 @@ public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
 			}
 		}
 		return hm;
-	}
-
-	@Override
-	public String getProfile() {
-		return "urn:ferd:CrossIndustryDocument:invoice:1p0:comfort";
 	}
 
 	protected String getTradePartyAsXML(IZUGFeRDExportableTradeParty contact) {
@@ -242,7 +239,7 @@ public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
 				// <ram:TestIndicator><udt:Indicator>"+testBooleanStr+"</udt:Indicator></ram:TestIndicator>\n"
 				//
 				+ "		<ram:GuidelineSpecifiedDocumentContextParameter>\n"
-				+ "			<ram:ID>" + getProfile() + "</ram:ID>\n"
+				+ "			<ram:ID>" + getProfile().getID() + "</ram:ID>\n"
 				+ "		</ram:GuidelineSpecifiedDocumentContextParameter>\n"
 				+ "	</rsm:SpecifiedExchangedDocumentContext>\n"
 				+ "	<rsm:HeaderExchangedDocument>\n"
@@ -539,6 +536,11 @@ public class ZUGFeRD1PullProvider implements IXMLProvider, IProfileProvider {
 		} catch (UnsupportedEncodingException e) {
 			Logger.getLogger(ZUGFeRD1PullProvider.class.getName()).log(Level.SEVERE, null, e);
 		} // $NON-NLS-1$
+	}
+
+	@Override
+	public void setProfile(Profile p) {
+		profile=p;
 	}
 
 	private String buildPaymentTermsXml() {

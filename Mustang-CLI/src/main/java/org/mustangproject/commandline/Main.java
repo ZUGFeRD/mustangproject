@@ -424,7 +424,7 @@ public class Main {
 		 */
 		try {
 			int zfIntVersion = ZUGFeRDExporterFromA3.DefaultZUGFeRDVersion;
-			Profiles zfConformanceLevelProfile = Profiles.EXTENDED;
+			Profile zfConformanceLevelProfile = Profiles.getByName("EXTENDED");
 
 			if (pdfName == null) {
 				pdfName = getFilenameFromUser("Source PDF", "invoice.pdf", "pdf", true, false);
@@ -493,29 +493,29 @@ public class Main {
 
 			if ((format.equals("zf")) && (zfIntVersion == 1)) {
 				if (zfProfile.equals("b")) {
-					zfConformanceLevelProfile = Profiles.BASIC;
+					zfConformanceLevelProfile = Profiles.getByName("BASIC", zfIntVersion);
 				} else if (zfProfile.equals("c")) {
-					zfConformanceLevelProfile = Profiles.COMFORT;
+					zfConformanceLevelProfile = Profiles.getByName("COMFORT", zfIntVersion);
 				} else if (zfProfile.equals("e")) {
-					zfConformanceLevelProfile = Profiles.EXTENDED;
+					zfConformanceLevelProfile = Profiles.getByName("EXTENDED", zfIntVersion);
 				} else {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}
 			} else if (((format.equals("zf")) && (zfIntVersion == 2)) || (format.equals("fx"))) {
 				if (zfProfile.equals("m")) {
-					zfConformanceLevelProfile = Profiles.MINIMUM;
+					zfConformanceLevelProfile = Profiles.getByName("MINIMUM", zfIntVersion);
 				} else if (zfProfile.equals("w")) {
-					zfConformanceLevelProfile = Profiles.BASICWL;
+					zfConformanceLevelProfile = Profiles.getByName("BASICWL", zfIntVersion);
 				} else if (zfProfile.equals("b")) {
-					zfConformanceLevelProfile = Profiles.BASIC;
+					zfConformanceLevelProfile = Profiles.getByName("BASIC", zfIntVersion);
 				} else if (zfProfile.equals("c")) {
-					zfConformanceLevelProfile = Profiles.CIUS;
+					zfConformanceLevelProfile = Profiles.getByName("CIUS", zfIntVersion);
 				} else if (zfProfile.equals("e")) {
-					zfConformanceLevelProfile = Profiles.EN16931;
+					zfConformanceLevelProfile = Profiles.getByName("EN16931", zfIntVersion);
 				} else if (zfProfile.equals("t")) {
-					zfConformanceLevelProfile = Profiles.EXTENDED;
+					zfConformanceLevelProfile = Profiles.getByName("EXTENDED", zfIntVersion);
 				} else if (zfProfile.equals("x")) {
-					zfConformanceLevelProfile = Profiles.XRECHNUNG;
+					zfConformanceLevelProfile = Profiles.getByName("XRECHNUNG", zfIntVersion);
 				} else {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}

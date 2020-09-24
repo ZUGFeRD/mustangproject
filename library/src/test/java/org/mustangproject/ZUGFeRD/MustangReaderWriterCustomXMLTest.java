@@ -31,13 +31,13 @@ import java.nio.charset.StandardCharsets;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MustangReaderWriterCustomXMLTest extends TestCase {
-
 	/**
 	 * Create the test case
 	 *
 	 * @param testName name of the test case
 	 */
 	public MustangReaderWriterCustomXMLTest(String testName) {
+
 		super(testName);
 	}
 
@@ -58,7 +58,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		try {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
-			IZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1().setProducer("My Application").setCreator("Test").setProfile(Profiles.EN16931)
+			IZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1().setProducer("My Application").setCreator("Test").setProfile(Profiles.getByName("EN16931"))
 					.load(SOURCE_PDF);
 
 			final byte[] UTF8ByteOrderMark = new byte[]{(byte) 0xef, (byte) 0xbb, (byte) 0xbf};
@@ -301,7 +301,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					.setProducer("My Application")
 					.setCreator("Test")
 					.setZUGFeRDVersion(1)
-					.setProfile(Profiles.BASIC)
+					.setProfile(Profiles.getByName("BASIC",1))
 					.load(SOURCE_PDF);
 			/* we have much more information than just in the basic profile (comfort or extended) but it's perfectly valid to provide more information, just not less. */
 			String ownZUGFeRDXML = "<rsm:CrossIndustryDocument xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12\" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15\" xmlns:rsm=\"urn:ferd:CrossIndustryDocument:invoice:1p0\">\n"

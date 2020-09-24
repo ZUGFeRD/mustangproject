@@ -150,6 +150,7 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 		return "AB321";
 	}
 
+
 	/**
 	 * Create the test case
 	 *

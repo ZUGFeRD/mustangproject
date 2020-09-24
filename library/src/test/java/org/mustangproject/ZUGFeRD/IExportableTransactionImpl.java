@@ -43,6 +43,7 @@ public class IExportableTransactionImpl implements IExportableTransaction {
 	private String currency;
 	private String paymentTermDescription;
 	private String referenceNumber;
+	private Profile profile;
 
 	@Override
 	public String getNumber() {
@@ -148,7 +149,6 @@ public class IExportableTransactionImpl implements IExportableTransaction {
 	public String getReferenceNumber() {
 		return referenceNumber;
 	}
-
 
 	public IExportableTransactionImpl setNumber(String number) {
 		this.number = number;

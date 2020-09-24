@@ -53,7 +53,6 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	public static final int DefaultZUGFeRDVersion = 2;
 
-	protected Profiles profile = Profiles.EXTENDED;
 	protected PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
 	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<FileAttachment>();
 
@@ -62,7 +61,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	private boolean disableAutoClose;
 	private boolean fileAttached = false;
-
+	private Profile profile = null;
 	private boolean documentPrepared = false;
 
 	/**
@@ -113,6 +112,23 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return xmlProvider;
 	}
 
+	public ZUGFeRDExporterFromA3 setProfile(Profile p) {
+		this.profile=p;
+		if (xmlProvider!=null) {
+			xmlProvider.setProfile(p);
+		}
+		return this;
+	}
+
+	public ZUGFeRDExporterFromA3 setProfile(String profilename) {
+		this.profile=Profiles.getByName(profilename);
+
+		if (xmlProvider!=null) {
+			xmlProvider.setProfile(this.profile);
+		}
+		return this;
+	}
+
 	public ZUGFeRDExporterFromA3 addAdditionalFile(String name, byte[] content) {
 		fileAttachments.add(new FileAttachment(name, "text/xml", "Supplement", content).setDescription("ZUGFeRD extension/additional data"));
 		return this;
@@ -154,14 +170,14 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * @param ver the zf/fx version
 	 * @return the filename of the file to be embedded
 	 */
-	public String getFilenameForVersion(int ver, Profiles profile) {
+	public String getFilenameForVersion(int ver, Profile profile) {
 		if (isFacturX) {
 			return "factur-x.xml";
 		} else {
 			if (ver == 1) {
 				return "ZUGFeRD-invoice.xml";
 			} else {
-				if (profile == Profiles.XRECHNUNG) {
+				if (profile.getName().equals("XRECHNUNG")) {
 					return "xrechnung.xml";
 				} else {
 					return "zugferd-invoice.xml";
@@ -190,6 +206,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
+
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
 	 * metadata level, this will not e.g. convert graphics to JPG-2000)
@@ -207,6 +224,9 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		ensurePDFisUpgraded = false;
 	}
 
+	public void attachFile(FileAttachment file) {
+		fileAttachments.add(file);
+	}
 	public void attachFile(String filename, byte[] data, String mimetype, String relation) {
 		FileAttachment fa=new FileAttachment(filename, mimetype, relation, data);
 		fileAttachments.add(fa);
@@ -349,8 +369,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	public ZUGFeRDExporterFromA3 setXML(byte[] zugferdData) throws IOException {
 		CustomXMLProvider cus = new CustomXMLProvider();
 		cus.setXML(zugferdData);
-		this.xmlProvider = cus;
-		setTransaction(null);
+		this.setXMLProvider(cus);
+		prepare();
 		return this;
 	}
 
@@ -375,15 +395,6 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return buffer.toByteArray();
 	}
 
-	/**
-	 * Sets the ZUGFeRD conformance level (override).
-	 *
-	 * @param zugferdConformanceLevel the new conformance level
-	 */
-	public ZUGFeRDExporterFromA3 setProfile(Profiles zugferdConformanceLevel) {
-		this.profile = zugferdConformanceLevel;
-		return this;
-	}
 
 	/**
 	 * All files are PDF/A-3, setConformance refers to the level conformance.
@@ -434,9 +445,9 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	protected void addXMP(XMPMetadata metadata) {
 
 		if (attachZUGFeRDHeaders) {
-			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, ZFVersion, isFacturX, profile,
+			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, ZFVersion, isFacturX, xmlProvider.getProfile(),
 					getNamespaceForVersion(ZFVersion), getPrefixForVersion(ZFVersion),
-					getFilenameForVersion(ZFVersion, profile));
+					getFilenameForVersion(ZFVersion, xmlProvider.getProfile()));
 
 			metadata.addSchema(zf);
 		}
@@ -513,10 +524,13 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 */
 	public IExporter setTransaction(IExportableTransaction trans) throws IOException {
 		this.trans = trans;
+		return prepare();
+	}
+
+	public IExporter prepare() throws IOException{
 		prepareDocument();
-		((IProfileProvider) xmlProvider).setProfile(profile);
 		xmlProvider.generateXML(trans);
-		String filename = getFilenameForVersion(ZFVersion, profile);
+		String filename = getFilenameForVersion(ZFVersion, xmlProvider.getProfile());
 		PDFAttachGenericFile(doc, filename, "Alternative",
 				"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
 				"text/xml", xmlProvider.getXML());
@@ -563,16 +577,22 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
+	protected void setXMLProvider(IXMLProvider p) {
+		this.xmlProvider = p;
+		if (profile!=null) {
+			xmlProvider.setProfile(profile);
+		}
+	}
 	@Override
 	public ZUGFeRDExporterFromA3 setZUGFeRDVersion(int version) {
 		this.ZFVersion = version;
 		if (version == 1) {
 			ZUGFeRD1PullProvider z1p = new ZUGFeRD1PullProvider();
 			disableFacturX();
-			this.xmlProvider = z1p;
+			setXMLProvider(z1p);
 		} else if (version == 2) {
 			ZUGFeRD2PullProvider z2p = new ZUGFeRD2PullProvider();
-			this.xmlProvider = z2p;
+			setXMLProvider(z2p);
 		} else {
 			throw new IllegalArgumentException("Version not supported");
 		}

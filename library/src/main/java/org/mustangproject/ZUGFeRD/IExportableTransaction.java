@@ -435,4 +435,6 @@ public interface IExportableTransaction {
 	default Date getOccurrencePeriodTo() {
 		return null;
 	}
+
+
 }

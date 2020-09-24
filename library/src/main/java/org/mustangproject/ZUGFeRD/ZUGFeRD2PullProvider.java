@@ -38,19 +38,15 @@ import org.dom4j.io.XMLWriter;
 import org.mustangproject.Invoice;
 import org.mustangproject.XMLTools;
 
-public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
+public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 	//// MAIN CLASS
 	protected SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
 	protected byte[] zugferdData;
 	private IExportableTransaction trans;
-	private Profiles level;
 	private String paymentTermsDescription;
+	protected Profile profile=Profiles.getByName("EN16931");
 
-	@Override
-	public void setProfile(Profiles level) {
-		this.level = level;
-	}
 
 	/**
 	 * enables the flag to indicate a test invoice in the XML structure
@@ -155,9 +151,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 	}
 
 	@Override
-	public String getProfile() {
-//		return "urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_1.2";
-		return "urn:cen.eu:en16931:2017";
+	public Profile getProfile() {
+		return profile;
 	}
 
 	protected String getTradePartyAsXML(IZUGFeRDExportableTradeParty party) {
@@ -272,7 +267,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 				// <ram:TestIndicator><udt:Indicator>"+testBooleanStr+"</udt:Indicator></ram:TestIndicator>\n"
 				//
 				+ "		<ram:GuidelineSpecifiedDocumentContextParameter>\n"
-				+ "			<ram:ID>" + getProfile() + "</ram:ID>\n"
+				+ "			<ram:ID>" + getProfile().getID() + "</ram:ID>\n"
 				+ "		</ram:GuidelineSpecifiedDocumentContextParameter>\n"
 				+ "	</rsm:ExchangedDocumentContext>\n"
 				+ "	<rsm:ExchangedDocument>\n"
@@ -537,6 +532,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IProfileProvider {
 		} catch (UnsupportedEncodingException e) {
 			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
 		} // $NON-NLS-1$
+	}
+
+	@Override
+	public void setProfile(Profile p) {
+		profile=p;
 	}
 
 	private String buildPaymentTermsXml() {

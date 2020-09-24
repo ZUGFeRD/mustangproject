@@ -68,6 +68,14 @@ public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 implements IZUG
 		}
 	}
 
+
+	public ZUGFeRDExporterFromA1 setProfile(Profile p) {
+		return (ZUGFeRDExporterFromA1)super.setProfile(p);
+	}
+	public ZUGFeRDExporterFromA1 setProfile(String profileName) {
+		return (ZUGFeRDExporterFromA1)super.setProfile(profileName);
+	}
+
 	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
 		if (!ignorePDFAErrors && !isValidA1(dataSource)) {
 			throw new IOException("File is not a valid PDF/A input file");
@@ -106,9 +114,6 @@ public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 implements IZUG
 		return (ZUGFeRDExporterFromA1) super.setXML(zugferdData);
 	}
 
-	public ZUGFeRDExporterFromA1 setProfile(Profiles zugferdConformanceLevel){
-		return (ZUGFeRDExporterFromA1) super.setProfile(zugferdConformanceLevel);
-	}
 	public ZUGFeRDExporterFromA1 disableAutoClose(boolean disableAutoClose){
 		return (ZUGFeRDExporterFromA1) super.disableAutoClose(disableAutoClose);
 	}

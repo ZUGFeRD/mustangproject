@@ -26,4 +26,9 @@ public interface IXMLProvider {
 
 	public void generateXML(IExportableTransaction trans);
 
+	public void setProfile(Profile p);
+
+	public Profile getProfile();
+
+
 }

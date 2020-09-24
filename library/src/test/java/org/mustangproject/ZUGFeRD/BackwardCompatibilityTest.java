@@ -56,7 +56,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
-			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(1).setProfile(Profiles.EN16931).load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(1).setProfile("EN16931").load(SOURCE_PDF)) {
 
 			ze.setTransaction(this);
 			ze.disableAutoClose(true);
@@ -96,7 +96,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
-			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile(Profiles.EN16931).load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile("EN16931").load(SOURCE_PDF)) {
 
 			ze.setTransaction(this);
 			ze.disableAutoClose(true);
@@ -134,7 +134,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
-			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile(Profiles.EN16931).load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile("EN16931").load(SOURCE_PDF)) {
 
 			ze.setTransaction(this);
 			ze.disableAutoClose(true);

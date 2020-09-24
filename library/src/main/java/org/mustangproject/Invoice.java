@@ -43,6 +43,7 @@ public class Invoice implements IExportableTransaction {
 			Charges = new ArrayList<IZUGFeRDAllowanceCharge>(), LogisticsServiceCharges = new ArrayList<IZUGFeRDAllowanceCharge>();
 	protected IZUGFeRDTradeSettlement[] getTradeSettlement = null;
 	protected IZUGFeRDPaymentTerms paymentTerms = null;
+	private Profile profile;
 
 
 	public Invoice() {
@@ -71,6 +72,7 @@ public class Invoice implements IExportableTransaction {
 		this.documentCode = documentCode;
 		return this;
 	}
+
 
 	@Override
 	public String getNumber() {
@@ -482,4 +484,5 @@ public class Invoice implements IExportableTransaction {
 			return null;
 		}
 	}
+
 }

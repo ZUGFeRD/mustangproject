@@ -25,13 +25,14 @@
 - removal of izugferddate/IZUGFeRDPaymentTerms,IZUGFeRDPaymentDiscountTerms
 switch
 - change from ZUGFeRDExporter to IZUGFeRDExporter
+- switch recipient, shipping address from contact to tradeparty
+- switch from profiles to profile
 - javadoc export
 - have visualizer
 - validate as library doc
 - unify loggers
 - release notes
 - new tradeparty class, Contact getOwnContact superseded by TradeParty getSender
-- switch recipient, shipping address from contact to tradeparty
 - new invoicecorrection class
 - order-x read support
 - automated tests zuv/verapdf validate created library test files

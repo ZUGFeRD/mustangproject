@@ -168,7 +168,7 @@ public class ZF2Test extends MustangReaderTestCase {
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
 
 			 ZUGFeRDExporterFromA3 ze = new ZUGFeRDExporterFromA3().setProducer("My Application")
-						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile(Profiles.EN16931)
+						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile("EN16931")
 						.load(SOURCE_PDF)) {
 			
 			ze.setTransaction(this);
