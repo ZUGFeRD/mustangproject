@@ -32,6 +32,11 @@ public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
 	}
 
 	@Override
+	public BigDecimal getTotalAmount(IExportableTransaction currentTransaction) {
+		return totalAmount;
+	}
+
+	@Override
 	public String getReason() {
 		return reason;
 	}

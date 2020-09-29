@@ -1,5 +1,6 @@
 package org.mustangproject;
 
+import org.mustangproject.ZUGFeRD.IExportableTransaction;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 
 import java.math.BigDecimal;
