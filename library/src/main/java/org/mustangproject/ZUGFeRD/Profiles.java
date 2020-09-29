@@ -46,11 +46,14 @@ public class Profiles {
 
 
 	public static Profile getByName(String name, int version) {
+		Profile result=null;
 		if (version==1) {
-			return zf1Map.get(name);
+			result=zf1Map.get(name.toUpperCase());
 		} else {
-			return zf2Map.get(name);
+			result=zf2Map.get(name.toUpperCase());
 		}
+		if (result==null) { throw new RuntimeException("Profile not found"); }
+		return result;
 	}
 	public static Profile getByName(String name) {
 		return getByName(name, ZUGFeRDExporterFromA3.DefaultZUGFeRDVersion);

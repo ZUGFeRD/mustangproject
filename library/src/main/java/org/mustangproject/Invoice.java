@@ -43,7 +43,6 @@ public class Invoice implements IExportableTransaction {
 			Charges = new ArrayList<IZUGFeRDAllowanceCharge>(), LogisticsServiceCharges = new ArrayList<IZUGFeRDAllowanceCharge>();
 	protected IZUGFeRDTradeSettlement[] getTradeSettlement = null;
 	protected IZUGFeRDPaymentTerms paymentTerms = null;
-	private Profile profile;
 
 
 	public Invoice() {
