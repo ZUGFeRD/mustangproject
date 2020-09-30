@@ -101,11 +101,6 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 	}
 
 	@Override
-	public IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
-		return null;
-	}
-
-	@Override
 	public IZUGFeRDTradeSettlement[] getTradeSettlement() {
 		IZUGFeRDTradeSettlement[] payments = new DebitPayment[1];
 		payments[0] = new DebitPayment();

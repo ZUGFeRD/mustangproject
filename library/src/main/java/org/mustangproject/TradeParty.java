@@ -2,11 +2,15 @@ package org.mustangproject;
 
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTradeParty;
+import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlement;
+
+import java.util.ArrayList;
 
 public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	protected String name, zip, street, location, country;
 	protected String taxID = null, vatID = null;
+	protected ArrayList<BankDetails> bankDetails = new ArrayList<BankDetails>();
 	protected Contact contact = null;
 
 	public TradeParty(String name, String street, String zip, String location, String country) {
@@ -22,7 +26,13 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		this.contact = c;
 		return this;
 	}
-
+	public TradeParty addBankDetails(BankDetails s) {
+		bankDetails.add(s);
+		return this;
+	}
+	public ArrayList<BankDetails> getBankDetails() {
+		return bankDetails;
+	}
 	public TradeParty addTaxID(String taxID) {
 		this.taxID = taxID;
 		return this;
@@ -104,5 +114,12 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	@Override
 	public IZUGFeRDExportableContact getContact() {
 		return contact;
+	}
+
+	public IZUGFeRDTradeSettlement[] getAsTradeSettlement() {
+		if (bankDetails.size()==0) {
+			return null;
+		}
+		return bankDetails.toArray(new IZUGFeRDTradeSettlement[0]);
 	}
 }

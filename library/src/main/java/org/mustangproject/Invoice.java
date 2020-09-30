@@ -41,7 +41,6 @@ public class Invoice implements IExportableTransaction {
 
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<IZUGFeRDAllowanceCharge>(),
 			Charges = new ArrayList<IZUGFeRDAllowanceCharge>(), LogisticsServiceCharges = new ArrayList<IZUGFeRDAllowanceCharge>();
-	protected IZUGFeRDTradeSettlement[] getTradeSettlement = null;
 	protected IZUGFeRDPaymentTerms paymentTerms = null;
 
 
@@ -138,6 +137,8 @@ public class Invoice implements IExportableTransaction {
 	public String getShipToStreet() {
 		return shipToStreet;
 	}
+
+
 
 	public Invoice setShipToStreet(String shipToStreet) {
 		this.shipToStreet = shipToStreet;
@@ -346,6 +347,10 @@ public class Invoice implements IExportableTransaction {
 
 	public Invoice setSender(TradeParty sender) {
 		this.sender = sender;
+		if ((sender.getBankDetails()!=null)&&(sender.getBankDetails().size()>0)) {
+			// convert bankdetails
+
+		}
 		return this;
 	}
 
@@ -376,14 +381,17 @@ public class Invoice implements IExportableTransaction {
 	}
 
 
-	public IZUGFeRDTradeSettlement[] getGetTradeSettlement() {
-		return getTradeSettlement;
+	@Override
+	public IZUGFeRDTradeSettlement[] getTradeSettlement() {
+
+		if (getSender()==null) {
+			return null;
+		}
+
+		return ((TradeParty)getSender()).getAsTradeSettlement();
+
 	}
 
-	public Invoice setGetTradeSettlement(IZUGFeRDTradeSettlement[] getTradeSettlement) {
-		this.getTradeSettlement = getTradeSettlement;
-		return this;
-	}
 
 	@Override
 	public IZUGFeRDPaymentTerms getPaymentTerms() {

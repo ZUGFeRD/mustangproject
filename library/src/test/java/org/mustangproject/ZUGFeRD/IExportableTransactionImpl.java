@@ -91,11 +91,6 @@ public class IExportableTransactionImpl implements IExportableTransaction {
 	}
 
 	@Override
-	public IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
-		return settlementPayments;
-	}
-
-	@Override
 	public String getOwnTaxID() {
 		return ownTaxID;
 	}

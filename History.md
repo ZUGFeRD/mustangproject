@@ -36,9 +36,11 @@ switch
 - new invoicecorrection class
 - order-x read support
 - automated tests zuv/verapdf validate created library test files
-
+- trans.getTradeSettlementPayment() removed in favor of trans.getTradeSettlement()
 
 ### 2.0 still todo
+- dont show empty tax number field
+- be able to specify iban via tradeparty object
 - verapdf as prevalidation?
 - visualization? zugferdvisualizer?
 - new sample invoice
@@ -50,7 +52,6 @@ switch
 - *from A3 does not seem tow ork see mustangreaderwriteredgetest:testedgeexport
 - xmp errors may not show correctly in log
 - switch for no log and no notices
-- homepage to be updated accordingly
 - confirm correct generation from pdf/a3 files zf2edgetest
 - *correctiontest exports zf1+zf2?
 - *USt 0% wird aus invoice-klasse noch nicht sauber abgefangen

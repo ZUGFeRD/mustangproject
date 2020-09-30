@@ -30,7 +30,7 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 	
 
 	@Override
-	public IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
+	public IZUGFeRDTradeSettlement[] getTradeSettlement() {
 		Payment[] payments = new Payment[1];
 		payments[0] = new Payment();
 		return payments;

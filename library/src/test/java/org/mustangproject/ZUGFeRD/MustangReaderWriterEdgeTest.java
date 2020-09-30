@@ -181,8 +181,8 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
-		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
+		assertEquals(zi.getBIC(), "COBADEFFXXX");
+		assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getDueDate(), "20170530");
 		assertEquals(zi.getForeignReference(), getNumber());
@@ -223,8 +223,8 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 
 		// Reading ZUGFeRD
 		assertEquals("571.04", zi.getAmount());
-		assertEquals(getTradeSettlementPayment()[0].getOwnBIC(), zi.getBIC());
-		assertEquals(getTradeSettlementPayment()[0].getOwnIBAN(), zi.getIBAN());
+		assertEquals("COBADEFFXXX", zi.getBIC());
+		assertEquals("DE88 2008 0000 0970 3757 00", zi.getIBAN());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 		try {

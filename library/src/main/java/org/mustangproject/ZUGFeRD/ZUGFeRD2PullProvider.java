@@ -116,12 +116,41 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		return res;
 	}
 
+	private BigDecimal getCharges() {
+		BigDecimal res = new BigDecimal(0);
+		IZUGFeRDAllowanceCharge[] charges= trans.getZFCharges();
+		if ((charges!=null) && (charges.length>0)) {
+			for (IZUGFeRDAllowanceCharge currentCharge:charges) {
+
+				res=res.add(currentCharge.getTotalAmount(trans));
+			}
+		}
+
+		return res;
+	}
+	private BigDecimal getAllowances() {
+		BigDecimal res = new BigDecimal(0);
+		IZUGFeRDAllowanceCharge[] allowances= trans.getZFAllowances();
+		if ((allowances!=null) && (allowances.length>0)) {
+			for (IZUGFeRDAllowanceCharge currentAllowance:allowances) {
+				res=res.add(currentAllowance.getTotalAmount(trans));
+			}
+		}
+
+
+		return res;
+	}
 	private BigDecimal getTotal() {
 		BigDecimal res = new BigDecimal(0);
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			LineCalc lc = new LineCalc(currentItem);
 			res = res.add(lc.getItemTotalGrossAmount());
 		}
+		return res;
+	}
+
+	private BigDecimal getTaxBasis() {
+		BigDecimal res = getTotal().add(getCharges()).subtract(getAllowances());
 		return res;
 	}
 
@@ -147,6 +176,31 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				hm.put(percent, current.add(itemVATAmount));
 			}
 		}
+
+
+		IZUGFeRDAllowanceCharge[] charges= trans.getZFCharges();
+		if ((charges!=null) && (charges.length>0)) {
+			for (IZUGFeRDAllowanceCharge currentCharge:charges) {
+				VATAmount theAmount=hm.get(currentCharge.getTaxPercent());
+				if (theAmount==null) {
+					theAmount=new VATAmount(new BigDecimal(0),new BigDecimal(0),"S");
+				}
+				theAmount.setCalculated(theAmount.getCalculated().add(currentCharge.getTotalAmount(trans)));
+			}
+		}
+		IZUGFeRDAllowanceCharge[] allowances= trans.getZFAllowances();
+		if ((allowances!=null) && (allowances.length>0)) {
+			for (IZUGFeRDAllowanceCharge currentAllowance:allowances) {
+				VATAmount theAmount=hm.get(currentAllowance.getTaxPercent());
+				if (theAmount==null) {
+					theAmount=new VATAmount(new BigDecimal(0),new BigDecimal(0),"S");
+				}
+				theAmount.setCalculated(theAmount.getCalculated().subtract(currentAllowance.getTotalAmount(trans)));
+			}
+		}
+
+
+
 		return hm;
 	}
 
@@ -461,7 +515,41 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			}
 		}
 
-		if (trans.getPaymentTerms() == null) {
+			if ((trans.getZFCharges()!=null)&&(trans.getZFCharges().length>0)) {
+				xml = xml + "	 <ram:SpecifiedTradeAllowanceCharge>\n" +
+						"        <ram:ChargeIndicator>\n" +
+						"          <udt:Indicator>true</udt:Indicator>\n" +
+						"        </ram:ChargeIndicator>\n" +
+						"        <ram:ActualAmount>"+currencyFormat(getCharges())+"</ram:ActualAmount>\n" +
+						"        <ram:Reason>Charge</ram:Reason>\n" +
+						"        <ram:CategoryTradeTax>\n" +
+						"          <ram:TypeCode>VAT</ram:TypeCode>\n" +
+						"          <ram:CategoryCode>S</ram:CategoryCode>\n" +
+						"          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>\n" +
+						"        </ram:CategoryTradeTax>\n" +
+						"      </ram:SpecifiedTradeAllowanceCharge>	\n";
+
+
+			}
+
+			if ((trans.getZFAllowances()!=null)&&(trans.getZFAllowances().length>0)) {
+				xml = xml + "	 <ram:SpecifiedTradeAllowanceCharge>\n" +
+						"        <ram:ChargeIndicator>\n" +
+						"          <udt:Indicator>false</udt:Indicator>\n" +
+						"        </ram:ChargeIndicator>\n" +
+						"        <ram:ActualAmount>"+currencyFormat(getAllowances())+"</ram:ActualAmount>\n" +
+						"        <ram:Reason>Allowance</ram:Reason>\n" +
+						"        <ram:CategoryTradeTax>\n" +
+						"          <ram:TypeCode>VAT</ram:TypeCode>\n" +
+						"          <ram:CategoryCode>S</ram:CategoryCode>\n" +
+						"          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>\n" +
+						"        </ram:CategoryTradeTax>\n" +
+						"      </ram:SpecifiedTradeAllowanceCharge>	\n";
+
+			}
+
+
+			if (trans.getPaymentTerms() == null) {
 			xml = xml + "			<ram:SpecifiedTradePaymentTerms>\n"
 					+ "				<ram:Description>" + paymentTermsDescription + "</ram:Description>\n";
 
@@ -485,31 +573,16 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 
 
-			String chargeTotalLine="";
 
-			IZUGFeRDAllowanceCharge[] allowances= trans.getZFAllowances();
-			BigDecimal allowanceTotal=new BigDecimal(0);
-			if ((allowances!=null) && (allowances.length>0)) {
-				for (IZUGFeRDAllowanceCharge currentAllowance:allowances) {
-					allowanceTotal=allowanceTotal.add(currentAllowance.getTotalAmount(trans));
-				}
-			}
-			String allowanceTotalLine="<ram:AllowanceTotalAmount currencyID=\"+trans.getCurrency()+\">"+currencyFormat(allowanceTotal)+"</ram:AllowanceTotalAmount>";
+			String allowanceTotalLine="<ram:AllowanceTotalAmount>"+currencyFormat(getAllowances())+"</ram:AllowanceTotalAmount>";
 
-			IZUGFeRDAllowanceCharge[] charges= trans.getZFCharges();
-			BigDecimal chargesTotal=new BigDecimal(0);
-			if ((charges!=null) && (charges.length>0)) {
-				for (IZUGFeRDAllowanceCharge currentCharge:charges) {
-					chargesTotal=chargesTotal.add(currentCharge.getTotalAmount(trans));
-				}
-			}
-			String chargesTotalLine="<ram:ChargeTotalAmount currencyID=\""+trans.getCurrency()+"\">"+currencyFormat(chargesTotal)+"</ram:ChargeTotalAmount>";
+			String chargesTotalLine="<ram:ChargeTotalAmount>"+currencyFormat(getCharges())+"</ram:ChargeTotalAmount>";
 
 			xml = xml + "			<ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n"
 				+ "				<ram:LineTotalAmount>" + currencyFormat(getTotal()) + "</ram:LineTotalAmount>\n" //$NON-NLS-2$
 				+ chargesTotalLine
 				+ allowanceTotalLine
-				+ "				<ram:TaxBasisTotalAmount>" + currencyFormat(getTotal()) + "</ram:TaxBasisTotalAmount>\n" //$NON-NLS-2$
+				+ "				<ram:TaxBasisTotalAmount>" + currencyFormat(getTaxBasis()) + "</ram:TaxBasisTotalAmount>\n" //$NON-NLS-2$
 				// //
 				// currencyID=\"EUR\"
 				+ "				<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
