@@ -208,8 +208,7 @@ public class ZF2PushTest extends TestCase {
 		assertFalse(zi.getUTF8().contains("EUR"));
 
 		// Reading ZUGFeRD
-	//	assertEquals("11.07", zi.getAmount());
-		assertEquals("10.71", zi.getAmount());
+		assertEquals("11.07", zi.getAmount());
 		assertEquals(zi.getHolder(), orgname);
 		assertEquals(zi.getForeignReference(), number);
 		try {
