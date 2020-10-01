@@ -107,7 +107,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 	private BigDecimal getTotalGross() {
 
-		BigDecimal res = getTotal();
+		BigDecimal res = getTaxBasis();
 		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = getVATPercentAmountMap();
 		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
 			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
@@ -121,11 +121,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		IZUGFeRDAllowanceCharge[] charges= trans.getZFCharges();
 		if ((charges!=null) && (charges.length>0)) {
 			for (IZUGFeRDAllowanceCharge currentCharge:charges) {
-
 				res=res.add(currentCharge.getTotalAmount(trans));
 			}
 		}
-
 		return res;
 	}
 	private BigDecimal getAllowances() {
@@ -136,8 +134,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				res=res.add(currentAllowance.getTotalAmount(trans));
 			}
 		}
-
-
 		return res;
 	}
 	private BigDecimal getTotal() {
@@ -185,7 +181,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				if (theAmount==null) {
 					theAmount=new VATAmount(new BigDecimal(0),new BigDecimal(0),"S");
 				}
-				theAmount.setCalculated(theAmount.getCalculated().add(currentCharge.getTotalAmount(trans)));
+				theAmount.setBasis(theAmount.getBasis().add(currentCharge.getTotalAmount(trans)));
+				BigDecimal factor=currentCharge.getTaxPercent().divide(new BigDecimal(100));
+				theAmount.setCalculated(theAmount.getBasis().multiply(factor));
+				hm.put(currentCharge.getTaxPercent(), theAmount);
 			}
 		}
 		IZUGFeRDAllowanceCharge[] allowances= trans.getZFAllowances();
@@ -195,7 +194,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				if (theAmount==null) {
 					theAmount=new VATAmount(new BigDecimal(0),new BigDecimal(0),"S");
 				}
-				theAmount.setCalculated(theAmount.getCalculated().subtract(currentAllowance.getTotalAmount(trans)));
+				theAmount.setBasis(theAmount.getBasis().subtract(currentAllowance.getTotalAmount(trans)));
+				BigDecimal factor=currentAllowance.getTaxPercent().divide(new BigDecimal(100));
+				theAmount.setCalculated(theAmount.getBasis().multiply(factor));
+
+				hm.put(currentAllowance.getTaxPercent(), theAmount);
 			}
 		}
 
@@ -586,7 +589,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				// //
 				// currencyID=\"EUR\"
 				+ "				<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
-				+ currencyFormat(getTotalGross().subtract(getTotal())) + "</ram:TaxTotalAmount>\n"
+				+ currencyFormat(getTotalGross().subtract(getTaxBasis())) + "</ram:TaxTotalAmount>\n"
 				+ "				<ram:GrandTotalAmount>" + currencyFormat(getTotalGross()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-2$
 				// //
 				// currencyID=\"EUR\"

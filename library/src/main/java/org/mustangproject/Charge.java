@@ -15,7 +15,7 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	protected String categoryCode;
 
 	public Charge() {
-
+		taxPercent=new BigDecimal(0);
 	}
 
 	/***

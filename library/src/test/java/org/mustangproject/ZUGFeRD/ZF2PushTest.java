@@ -56,8 +56,8 @@ public class ZF2PushTest extends TestCase {
 
 			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setContractReferencedDocument("0815").setSender(new TradeParty(orgname,"teststr", "55232","teststadt","DE").addBankDetails(new BankDetails("777666555","DE4321"))).setOwnTaxID("4711").setOwnVATID("DE19990815").setRecipient(new TradeParty("Franz Müller","teststr.12", "55232", "Entenhausen", "DE").setContact(new Contact("nameRep", "phoneRep", "emailRep@test.com"))).setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0))));
 			String theXML = new String(ze.getProvider().getXML());
-		//	assertTrue(theXML.contains("777666555")); //the iban
-		//	assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+			assertTrue(theXML.contains("777666555")); //the iban
+			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(TARGET_PDF);
 		} catch (IOException e) {
 			fail("IOException should not be raised in testEdgeExport");
@@ -191,8 +191,8 @@ public class ZF2PushTest extends TestCase {
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)))
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)))
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)))
-					.addCharge(new Charge(new BigDecimal(0.5)))
-					.addAllowance(new Allowance(new BigDecimal(0.2)))
+					.addCharge(new Charge(new BigDecimal(0.5)).setTaxPercent(new BigDecimal(19)))
+					.addAllowance(new Allowance(new BigDecimal(0.2)).setTaxPercent(new BigDecimal(19)))
 
 			);
 			String theXML = new String(ze.getProvider().getXML());
