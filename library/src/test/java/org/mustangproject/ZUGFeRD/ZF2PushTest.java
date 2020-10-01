@@ -86,6 +86,7 @@ public class ZF2PushTest extends TestCase {
 		String orgname = "Test company";
 		String number = "123";
 		String amountStr = "1.00";
+		String taxID="9990815";
 		BigDecimal amount = new BigDecimal(amountStr);
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
@@ -97,7 +98,7 @@ public class ZF2PushTest extends TestCase {
 			byte[] b={12,13};
 			ze.attachFile("one.pdf", b, "Application/PDF", "Alternative");
 			ze.attachFile("two.pdf", b, "Application/PDF", "Alternative");
-			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(orgname,"teststr", "55232","teststadt","DE").addTaxID("0815")).setOwnVATID("DE0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE4711").setContact(new Contact("Franz Müller","01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE"))).setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)))
+			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(orgname,"teststr", "55232","teststadt","DE").addTaxID(taxID)).setOwnVATID("DE0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE4711").setContact(new Contact("Franz Müller","01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE"))).setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)))
 
 			);
 			String theXML = new String(ze.getProvider().getXML());
@@ -111,6 +112,7 @@ public class ZF2PushTest extends TestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_ATTACHMENTSPDF);
 
 		assertTrue(zi.getUTF8().contains("EUR"));
+		assertTrue(zi.getUTF8().contains(taxID));
 
 		// Reading ZUGFeRD
 		assertEquals("1.19", zi.getAmount());
