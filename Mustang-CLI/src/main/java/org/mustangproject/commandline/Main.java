@@ -55,17 +55,17 @@ public class Main {
 				+ "        [-i, --ignorefileextension]     Check for all files (*.*) instead of PDF files only (*.pdf) in metrics, ignore PDF/A input file errors in combine\n"
 				+ "\n" + "* Merge actions\n" + "        extract   extract ZUGFeRD PDF to XML file\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "                [--source <filename>]: set input PDF file\n"
-				+ "                [--out <filename>]: set output XML file\n"
+				+ "                [--source=<filename>]: set input PDF file\n"
+				+ "                [--out=<filename>]: set output XML file\n"
 				+ "        a3only    upgrade from PDF/A1 to A3 only (no ZUGFeRD data attached)\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "                [--source <filename>]: set input PDF file\n"
-				+ "                [--out <filename>]: set output PDF file\n"
+				+ "                [--source=<filename>]: set input PDF file\n"
+				+ "                [--out=<filename>]: set output PDF file\n"
 				+ "        combine   combine XML and PDF file to ZUGFeRD PDF file\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "                [--source <filename>]: set input PDF file\n"
-				+ "                [--source-xml <filename>]: set input XML file\n"
-				+ "                [--out <filename>]: set output PDF file\n"
+				+ "                [--source=<filename>]: set input PDF file\n"
+				+ "                [--source-xml=<filename>]: set input XML file\n"
+				+ "                [--out=<filename>]: set output PDF file\n"
 				+ "                [--format <fx|zf>]: set ZUGFeRD or FacturX\n"
 				+ "                [--version <1|2>]: set ZUGFeRD version\n"
 				+ "                [--profile <...>]: set ZUGFeRD profile\n"
@@ -73,8 +73,9 @@ public class Main {
 				+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED "
 				+ "        validate  validate XML or PDF file \n"
 				+ "                [--no-notices]: refrain from reporting notices\n"
+				+ "                [--logAppend=<text>]: text to be added to log line\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "                [--source <filename>]: input PDF or XML file\n"
+				+ "                [--source=<filename>]: input PDF or XML file\n"
 				+ "        validateExpectValid  validate directory expecting positive results \n"
 				+ "                [--no-notices]: refrain from reporting notices\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
@@ -238,7 +239,7 @@ public class Main {
 			// --out: output file
 			Option<String> outOption = parser.addStringOption("out");
 			Option<Boolean> noNoticesOption = parser.addBooleanOption("no-notices");
-
+			Option<String> logAppendOption = parser.addStringOption("logAppend");
 
 			// Command: Combining PDF and XML
 			// --combine
@@ -303,7 +304,7 @@ public class Main {
 				performVisualization(sourceName, outName);
 				optionsRecognized=true;
 			} else if ((action!=null)&&(action.equals("validate"))) {
-				optionsRecognized=performValidate(sourceName, noNotices!=null&&noNotices);
+				optionsRecognized=performValidate(sourceName, noNotices!=null&&noNotices, parser.getOptionValue(logAppendOption));
 			} else if ((action!=null)&&(action.equals("validateExpectValid"))) {
 				optionsRecognized=performValidateExpect(true, directoryName);
 			} else if ((action!=null)&&(action.equals("validateExpectInvalid"))) {
@@ -320,12 +321,15 @@ public class Main {
 
 	}
 
-	private static boolean performValidate(String sourceName, boolean noNotices) {
+	private static boolean performValidate(String sourceName, boolean noNotices, String logAppend) {
 		boolean optionsRecognized;
 		if (sourceName == null) {
 			sourceName = getFilenameFromUser("Source PDF or XML", "invoice.pdf", "pdf|xml", true, false);
 		}
 		ZUGFeRDValidator zfv=new ZUGFeRDValidator();
+		if ((logAppend!=null)&&(logAppend.length()>0)) {
+			zfv.setLogAppend(logAppend);
+		}
 		if (noNotices) {
 			zfv.disableNotices();
 		}

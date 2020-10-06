@@ -263,6 +263,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "</ram:ID>\n"
 					+ "				</ram:SpecifiedTaxRegistration>\n";
 		}
+		if (party.getTaxID() != null) {
+			xml += "				<ram:SpecifiedTaxRegistration>\n"
+					+ "					<ram:ID schemeID=\"FC\">" + XMLTools.encodeXML(party.getTaxID())
+					+ "</ram:ID>\n"
+					+ "				</ram:SpecifiedTaxRegistration>\n";
+
+		}
 		return xml;
 
 	}
