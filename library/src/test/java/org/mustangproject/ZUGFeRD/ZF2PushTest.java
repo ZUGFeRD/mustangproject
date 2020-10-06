@@ -49,6 +49,9 @@ public class ZF2PushTest extends TestCase {
 		String number = "123";
 		String amountStr = "1.00";
 		BigDecimal amount = new BigDecimal(amountStr);
+		String occurenceFrom="20201001";
+		String occurenceTo="20201005";
+		String contractID="376zreurzu0983";
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
@@ -57,7 +60,7 @@ public class ZF2PushTest extends TestCase {
 					 .load(SOURCE_PDF)) {
 
 			try {
-				ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOccurrencePeriod(new SimpleDateFormat("yyyy-MM-dd").parse("2020-10-01"), new SimpleDateFormat("yyyy-MM-dd").parse("2020-10-05")).setContractReferencedDocument("0815").setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addBankDetails(new BankDetails("777666555", "DE4321"))).setOwnTaxID("4711").setOwnVATID("DE19990815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setContact(new Contact("nameRep", "phoneRep", "emailRep@test.com"))).setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0))));
+				ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setContractReferencedDocument(contractID).setOccurrencePeriod(new SimpleDateFormat("yyyyMMdd").parse(occurenceFrom), new SimpleDateFormat("yyyyMMdd").parse(occurenceTo)).setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addBankDetails(new BankDetails("777666555", "DE4321"))).setOwnTaxID("4711").setOwnVATID("DE19990815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setContact(new Contact("nameRep", "phoneRep", "emailRep@test.com"))).setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0))));
 			} catch (ParseException ex) {
 				throw new RuntimeException("Parse exception");
 			}
@@ -74,6 +77,9 @@ public class ZF2PushTest extends TestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
 		assertTrue(zi.getUTF8().contains("EUR"));
+		assertTrue(zi.getUTF8().contains(occurenceFrom));
+		assertTrue(zi.getUTF8().contains(occurenceTo));
+		assertTrue(zi.getUTF8().contains(contractID));
 		assertTrue(zi.getUTF8().contains("0815"));
 
 		// Reading ZUGFeRD
