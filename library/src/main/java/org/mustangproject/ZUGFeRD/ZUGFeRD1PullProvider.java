@@ -35,13 +35,12 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ZUGFeRD1PullProvider implements IXMLProvider {
+public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLProvider {
 
 
 	//// MAIN CLASS
 
 	protected byte[] zugferdData;
-	private IExportableTransaction trans;
 	private String paymentTermsDescription;
 	SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
 	protected Profile profile=Profiles.getByName("COMFORT",1);
@@ -101,87 +100,6 @@ public class ZUGFeRD1PullProvider implements IXMLProvider {
 
 	}
 
-	private BigDecimal getTotalPrepaid() {
-		if (trans.getTotalPrepaidAmount() == null) {
-			return new BigDecimal(0);
-		} else {
-			return trans.getTotalPrepaidAmount();
-		}
-	}
-
-	private BigDecimal getTotalGross() {
-
-		BigDecimal res = getTotal();
-		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = getVATPercentAmountMap();
-		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
-			res = res.add(amount.getCalculated());
-		}
-		return res;
-	}
-
-	private BigDecimal getTotal() {
-		BigDecimal res = new BigDecimal(0);
-		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
-			LineCalc lc = new LineCalc(currentItem);
-			res = res.add(lc.getItemTotalNetAmount());
-		}
-		return res;
-	}
-
-	/**
-	 * which taxes have been used with which amounts in this transaction, empty for
-	 * no taxes, or e.g. 19=>190 and 7=>14 if 1000 Eur were applicable to 19% VAT
-	 * (=>190 EUR VAT) and 200 EUR were applicable to 7% (=>14 EUR VAT) 190 Eur
-	 *
-	 * @return which taxes have been used with which amounts in this invoice
-	 */
-	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap() {
-		HashMap<BigDecimal, VATAmount> hm = new HashMap<>();
-
-		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
-			BigDecimal percent = currentItem.getProduct().getVATPercent();
-			LineCalc lc = new LineCalc(currentItem);
-			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(),
-					trans.getDocumentCode());
-			VATAmount current = hm.get(percent);
-			if (current == null) {
-				hm.put(percent, itemVATAmount);
-			} else {
-				hm.put(percent, current.add(itemVATAmount));
-			}
-		}
-		return hm;
-	}
-
-	protected String getTradePartyAsXML(IZUGFeRDExportableTradeParty contact) {
-		String xml = "	<ram:Name>" + XMLTools.encodeXML(contact.getName()) + "</ram:Name>\n" //$NON-NLS-2$
-		// + " <DefinedTradeContact>\n"
-		// + " <PersonName>xxx</PersonName>\n"
-		// + " </DefinedTradeContact>\n"
-				+ "				<ram:PostalTradeAddress>\n"
-				+ "					<ram:PostcodeCode>" + XMLTools.encodeXML(contact.getZIP())
-				+ "</ram:PostcodeCode>\n"
-				+ "					<ram:LineOne>" + XMLTools.encodeXML(contact.getStreet())
-				+ "</ram:LineOne>\n";
-		if (contact.getAdditionalAddress() != null) {
-			xml += "				<ram:LineTwo>" + XMLTools.encodeXML(contact.getAdditionalAddress())
-					+ "</ram:LineTwo>\n";
-		}
-		xml += "					<ram:CityName>" + XMLTools.encodeXML(contact.getLocation())
-				+ "</ram:CityName>\n"
-				+ "					<ram:CountryID>" + XMLTools.encodeXML(contact.getCountry())
-				+ "</ram:CountryID>\n"
-				+ "				</ram:PostalTradeAddress>\n";
-		if (contact.getVATID() != null) {
-			xml += "				<ram:SpecifiedTaxRegistration>\n"
-					+ "					<ram:ID schemeID=\"VA\">" + XMLTools.encodeXML(contact.getVATID())
-					+ "</ram:ID>\n"
-					+ "				</ram:SpecifiedTaxRegistration>\n";
-		}
-		return xml;
-
-	}
 
 	@Override
 	public void generateXML(IExportableTransaction trans) {

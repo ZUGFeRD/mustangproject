@@ -43,7 +43,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 	//// MAIN CLASS
 	protected SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
 	protected byte[] zugferdData;
-	private IExportableTransaction trans;
+	protected IExportableTransaction trans;
 	private String paymentTermsDescription;
 	protected Profile profile = Profiles.getByName("EN16931");
 
@@ -97,7 +97,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 
 	}
 //move
-	private BigDecimal getTotalPrepaid() {
+	protected BigDecimal getTotalPrepaid() {
 		if (trans.getTotalPrepaidAmount() == null) {
 			return new BigDecimal(0);
 		} else {
@@ -105,7 +105,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 		}
 	}
 
-	private BigDecimal getTotalGross() {
+	protected BigDecimal getTotalGross() {
 
 		BigDecimal res = getTaxBasis();
 		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = getVATPercentAmountMap();
@@ -116,7 +116,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 		return res;
 	}
 
-	private BigDecimal getCharges() {
+	protected BigDecimal getCharges() {
 		BigDecimal res = new BigDecimal(0);
 		IZUGFeRDAllowanceCharge[] charges = trans.getZFCharges();
 		if ((charges != null) && (charges.length > 0)) {
@@ -127,7 +127,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 		return res;
 	}
 
-	private BigDecimal getAllowances() {
+	protected BigDecimal getAllowances() {
 		BigDecimal res = new BigDecimal(0);
 		IZUGFeRDAllowanceCharge[] allowances = trans.getZFAllowances();
 		if ((allowances != null) && (allowances.length > 0)) {
@@ -138,7 +138,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 		return res;
 	}
 
-	private BigDecimal getTotal() {
+	protected BigDecimal getTotal() {
 		BigDecimal res = new BigDecimal(0);
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			LineCalc lc = new LineCalc(currentItem);
@@ -147,7 +147,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 		return res;
 	}
 
-	private BigDecimal getTaxBasis() {
+	protected BigDecimal getTaxBasis() {
 		BigDecimal res = getTotal().add(getCharges()).subtract(getAllowances());
 		return res;
 	}
@@ -159,7 +159,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 	 *
 	 * @return which taxes have been used with which amounts in this invoice
 	 */
-	private HashMap<BigDecimal, VATAmount> getVATPercentAmountMap() {
+	protected HashMap<BigDecimal, VATAmount> getVATPercentAmountMap() {
 		HashMap<BigDecimal, VATAmount> hm = new HashMap<>();
 
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
