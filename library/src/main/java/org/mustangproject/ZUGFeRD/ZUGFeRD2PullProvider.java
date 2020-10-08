@@ -38,7 +38,7 @@ import org.dom4j.io.XMLWriter;
 import org.mustangproject.Invoice;
 import org.mustangproject.XMLTools;
 
-public class ZUGFeRD2PullProvider implements IXMLProvider {
+public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvider {
 
 	//// MAIN CLASS
 	protected SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -96,7 +96,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		return res;
 
 	}
-
+//move
 	private BigDecimal getTotalPrepaid() {
 		if (trans.getTotalPrepaidAmount() == null) {
 			return new BigDecimal(0);
@@ -121,7 +121,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		IZUGFeRDAllowanceCharge[] charges = trans.getZFCharges();
 		if ((charges != null) && (charges.length > 0)) {
 			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
-				res = res.add(currentCharge.getTotalAmount(trans));
+				res = res.add(currentCharge.getTotalAmount(this));
 			}
 		}
 		return res;
@@ -132,7 +132,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		IZUGFeRDAllowanceCharge[] allowances = trans.getZFAllowances();
 		if ((allowances != null) && (allowances.length > 0)) {
 			for (IZUGFeRDAllowanceCharge currentAllowance : allowances) {
-				res = res.add(currentAllowance.getTotalAmount(trans));
+				res = res.add(currentAllowance.getTotalAmount(this));
 			}
 		}
 		return res;
@@ -183,7 +183,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				if (theAmount == null) {
 					theAmount = new VATAmount(new BigDecimal(0), new BigDecimal(0), "S");
 				}
-				theAmount.setBasis(theAmount.getBasis().add(currentCharge.getTotalAmount(trans)));
+				theAmount.setBasis(theAmount.getBasis().add(currentCharge.getTotalAmount(this)));
 				BigDecimal factor = currentCharge.getTaxPercent().divide(new BigDecimal(100));
 				theAmount.setCalculated(theAmount.getBasis().multiply(factor));
 				hm.put(currentCharge.getTaxPercent(), theAmount);
@@ -196,7 +196,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				if (theAmount == null) {
 					theAmount = new VATAmount(new BigDecimal(0), new BigDecimal(0), "S");
 				}
-				theAmount.setBasis(theAmount.getBasis().subtract(currentAllowance.getTotalAmount(trans)));
+				theAmount.setBasis(theAmount.getBasis().subtract(currentAllowance.getTotalAmount(this)));
 				BigDecimal factor = currentAllowance.getTaxPercent().divide(new BigDecimal(100));
 				theAmount.setCalculated(theAmount.getBasis().multiply(factor));
 
@@ -207,7 +207,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 		return hm;
 	}
-
 	@Override
 	public Profile getProfile() {
 		return profile;
@@ -466,7 +465,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ XMLTools.encodeXML(trans.getContractReferencedDocument()) + "</ram:IssuerAssignedID>\n"
 					+ "    </ram:ContractReferencedDocument>\n";
 		}
-		
+
 
 		xml = xml + "		</ram:ApplicableHeaderTradeAgreement>\n"
 				+ "		<ram:ApplicableHeaderTradeDelivery>\n";
@@ -701,4 +700,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		return paymentTermsXml;
 	}
 
+	@Override
+	public BigDecimal getValue() {
+		return getTotal();
+	}
 }

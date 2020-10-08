@@ -1,5 +1,6 @@
 package org.mustangproject;
 
+import org.mustangproject.ZUGFeRD.IAbsoluteValueProvider;
 import org.mustangproject.ZUGFeRD.IExportableTransaction;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
@@ -55,25 +56,14 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 
 
 	@Override
-	public BigDecimal getTotalAmount(IZUGFeRDExportableItem currentItem) {
+	public BigDecimal getTotalAmount(IAbsoluteValueProvider currentItem) {
 		if (totalAmount!=null) {
 			return totalAmount;
 		} else if (percent!=null) {
-			return currentItem.getPrice().multiply(getPercent().divide(new BigDecimal(100)));
+			return currentItem.getValue().multiply(getPercent().divide(new BigDecimal(100)));
 		} else {
 			throw new RuntimeException("Either totalAmount or percent must be set");
 		}
-	}
-
-	@Override
-	public BigDecimal getTotalAmount(IExportableTransaction currentTrans) {
-//		if (totalAmount!=null) {
-			return totalAmount;
-//		} else //if (percent!=null) {
-			// to be implemented return currentItem.get().multiply(getPercent().divide(new BigDecimal(100)));
-		//} else {
-//			throw new RuntimeException("Either totalAmount or percent must be set");
-//		}
 	}
 
 

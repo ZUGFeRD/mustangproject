@@ -27,12 +27,7 @@ public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
 	boolean isCharge=true;
 
 	@Override
-	public BigDecimal getTotalAmount(IZUGFeRDExportableItem currentItem) {
-		return totalAmount;
-	}
-
-	@Override
-	public BigDecimal getTotalAmount(IExportableTransaction currentTransaction) {
+	public BigDecimal getTotalAmount(IAbsoluteValueProvider currentItem) {
 		return totalAmount;
 	}
 

@@ -64,6 +64,11 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.isEqualTo("invalid");
 
+		zfv = new ZUGFeRDValidator();
+		res = zfv.validate("/does/not/exist");
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.isEqualTo("invalid");
+
 	}
 
 	/***

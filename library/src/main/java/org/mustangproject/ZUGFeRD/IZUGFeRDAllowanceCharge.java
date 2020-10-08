@@ -24,8 +24,7 @@ import java.math.BigDecimal;
  */
 public interface IZUGFeRDAllowanceCharge {
 
-	BigDecimal getTotalAmount(IZUGFeRDExportableItem currentItem);
-	BigDecimal getTotalAmount(IExportableTransaction trans);
+	BigDecimal getTotalAmount(IAbsoluteValueProvider trans);
 
 	String getReason();
 

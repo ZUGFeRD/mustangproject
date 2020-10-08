@@ -6,6 +6,7 @@
 - removed jaxb
 - pushprovider
 - new xrechnung profile
+- visualization? zugferdvisualizer?
 - german bank account numbers can no longer be specified (dropped in favor of IBAN and BIC)
 - factory for xrechnung
 - complete or discard read into push provider
@@ -15,7 +16,7 @@
 - getSellerTradePartyAddress (PR #157 ) thanks to aberndt-hub 
 - switched from eclipse to IntelliJ
 - added ph-schematron-maven-plugin so that xrechnung xslt can be generated
-- remove migration
+- removed migration feature (XSLT upgrade of ZF1)
 - be able to recursively validate directories
 - be able to ignore input pdf errors with -i
 - be able to recursively scan directories using validateExpectValid/validateExpectInvalid
@@ -34,29 +35,30 @@ switch
 - release notes
 - new tradeparty class, Contact getOwnContact superseded by TradeParty getSender
 - new invoicecorrection class
-- order-x read support
+- order-x xml read support
 - automated tests zuv/verapdf validate created library test files
 - trans.getTradeSettlementPayment() removed in favor of trans.getTradeSettlement()
+- commandline option for no notices
+- new features 
+  - additional docs, 
+  - contract id, 
+  - delivery period, 
+  - corrected invoices,
+  - contacts also for recipients 
 
 ### 2.0 still todo
 - dont show empty tax number field
-- be able to specify iban via tradeparty object
-- verapdf as prevalidation?
-- visualization? zugferdvisualizer?
 - new sample invoice
-- prompt for source file for validation has to be pdf
-- be able to disable "source pdf set to timeout"
 - *visualizer to work with Extended profile
 - *visualizer tests
 - *validator not to XR error on ZF files (only notices)
 - *from A3 does not seem tow ork see mustangreaderwriteredgetest:testedgeexport
 - xmp errors may not show correctly in log
-- switch for no log and no notices
 - confirm correct generation from pdf/a3 files zf2edgetest
 - *correctiontest exports zf1+zf2?
 - *USt 0% wird aus invoice-klasse noch nicht sauber abgefangen
-- new features additional docs, contract id, periods, corrected invoices, discounts, occurrence dates and periods
-
+- absolute and relative allowances and charges on item and document level,
+- finalize invoiceimporter
 Alpha2 2020-09-15
 Alpha1 2020-08-06
 
