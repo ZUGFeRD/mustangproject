@@ -40,7 +40,7 @@ import java.util.List;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UXTest extends TestCase {
-	final String TARGET_PDF = "./target/testout-ZF2new.pdf";
+	final String TARGET_PDF = "./target/testout-UX.pdf";
 	public void testShortExport() {
 
 		// the writing part

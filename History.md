@@ -45,6 +45,7 @@ switch
   - delivery period, 
   - corrected invoices,
   - contacts also for recipients 
+  - absolute and relative allowances and charges on item and document level,
 
 ### 2.0 still todo
 - dont show empty tax number field
@@ -57,7 +58,6 @@ switch
 - confirm correct generation from pdf/a3 files zf2edgetest
 - *correctiontest exports zf1+zf2?
 - *USt 0% wird aus invoice-klasse noch nicht sauber abgefangen
-- absolute and relative allowances and charges on item and document level,
 - finalize invoiceimporter
 Alpha2 2020-09-15
 Alpha1 2020-08-06
