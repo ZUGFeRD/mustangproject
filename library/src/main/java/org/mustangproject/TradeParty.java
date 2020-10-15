@@ -3,7 +3,10 @@ package org.mustangproject;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTradeParty;
 import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlement;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import javax.xml.xpath.XPathConstants;
 import java.util.ArrayList;
 
 public class TradeParty implements IZUGFeRDExportableTradeParty {
@@ -22,17 +25,80 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	}
 
+	public TradeParty(NodeList nodes) {
+/**
+ * <ram:SellerTradeParty>
+ *  <ram:ID>LIEF-987654321</ram:ID>
+ *  <ram:Name>Max Mustermann IT GmbH</ram:Name>
+ *  <ram:DefinedTradeContact>
+ *  <ram:PersonName>Herr Treudiener</ram:PersonName>
+ *  <ram:TelephoneUniversalCommunication>
+ *  <ram:CompleteNumber>+49 1234-98765-12</ram:CompleteNumber>
+ *  </ram:TelephoneUniversalCommunication>
+ *  <ram:EmailURIUniversalCommunication>
+ *  <ram:URIID>treudiener@max-mustermann-it.de</ram:URIID>
+ *  </ram:EmailURIUniversalCommunication>
+ *  </ram:DefinedTradeContact>
+ *  <ram:PostalTradeAddress>
+ *  <ram:PostcodeCode>12345</ram:PostcodeCode>
+ *  <ram:LineOne>Musterstraße 1</ram:LineOne>
+ *  <ram:CityName>Musterstadt</ram:CityName>
+ *  <ram:CountryID>DE</ram:CountryID>
+ *  </ram:PostalTradeAddress>
+ *  <ram:SpecifiedTaxRegistration>
+ *  <ram:ID schemeID="VA">DE123456789</ram:ID>
+ *  </ram:SpecifiedTaxRegistration>
+ *  </ram:SellerTradeParty>
+ */
+		if (nodes.getLength() > 0) {
+
+			for (int nodeIndex = 0; nodeIndex < nodes.getLength(); nodeIndex++) {
+				//nodes.item(i).getTextContent())) {
+				Node currentItemNode = nodes.item(nodeIndex);
+				NodeList itemChilds = currentItemNode.getChildNodes();
+				for (int itemChildIndex = 0; itemChildIndex < itemChilds.getLength(); itemChildIndex++) {
+					if (itemChilds.item(itemChildIndex).getNodeName().equals("ram:Name")) {
+						setName(itemChilds.item(itemChildIndex).getTextContent());
+					}
+					if (itemChilds.item(itemChildIndex).getNodeName().equals("ram:PostalTradeAddress")) {
+						NodeList postal = itemChilds.item(itemChildIndex).getChildNodes();
+						for (int postalChildIndex = 0; postalChildIndex < postal.getLength(); postalChildIndex++) {
+							if (postal.item(postalChildIndex).getNodeName().equals("ram:LineOne")) {
+								setStreet(postal.item(postalChildIndex).getTextContent());
+							}
+							if (postal.item(postalChildIndex).getNodeName().equals("ram:CityName")) {
+								setLocation(postal.item(postalChildIndex).getTextContent());
+							}
+							if (postal.item(postalChildIndex).getNodeName().equals("ram:PostcodeCode")) {
+								setZIP(postal.item(postalChildIndex).getTextContent());
+							}
+							if (postal.item(postalChildIndex).getNodeName().equals("ram:CountryID")) {
+								setCountry(postal.item(postalChildIndex).getTextContent());
+							}
+						}
+
+					}
+
+				}
+			}
+		}
+
+	}
+
 	public TradeParty setContact(Contact c) {
 		this.contact = c;
 		return this;
 	}
+
 	public TradeParty addBankDetails(BankDetails s) {
 		bankDetails.add(s);
 		return this;
 	}
+
 	public ArrayList<BankDetails> getBankDetails() {
 		return bankDetails;
 	}
+
 	public TradeParty addTaxID(String taxID) {
 		this.taxID = taxID;
 		return this;
@@ -117,7 +183,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	}
 
 	public IZUGFeRDTradeSettlement[] getAsTradeSettlement() {
-		if (bankDetails.size()==0) {
+		if (bankDetails.size() == 0) {
 			return null;
 		}
 		return bankDetails.toArray(new IZUGFeRDTradeSettlement[0]);

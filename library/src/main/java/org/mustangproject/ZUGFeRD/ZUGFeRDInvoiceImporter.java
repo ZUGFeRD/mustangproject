@@ -20,15 +20,22 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		 * dummywerte sind derzeit noch setDueDate setIssueDate setDeliveryDate setSender setRecipient setnumber
 		 * bspw. due date //ExchangedDocument//IssueDateTime//DateTimeString : due date optional
 		 */
-		Invoice zpp = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty("company", "teststr", "55232", "teststadt", "DE")).setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number);
-//.addItem(new Item(new Product("Testprodukt","","C62",new BigDecimal(0)),amount,new BigDecimal(1.0)))
-		zpp.setOwnOrganisationName(extractString("//SellerTradeParty/Name"));
-
 		XPathFactory xpathFact = XPathFactory.newInstance();
 		XPath xpath = xpathFact.newXPath();
+		Invoice zpp = null;
 		try {
-
 			XPathExpression xpr = xpath.compile(
+					"//SellerTradeParty");
+			NodeList SellerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+			xpr = xpath.compile(
+					"//BuyerTradeParty");
+			NodeList BuyerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+
+			zpp= new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number);
+//.addItem(new Item(new Product("Testprodukt","","C62",new BigDecimal(0)),amount,new BigDecimal(1.0)))
+			zpp.setOwnOrganisationName(extractString("//SellerTradeParty/Name"));
+
+			xpr = xpath.compile(
 					"//*[local-name()=\"IncludedSupplyChainTradeLineItem\"]");
 			NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 

@@ -90,4 +90,5 @@ public class Contact implements IZUGFeRDExportableContact {
 		this.country = country;
 		return this;
 	}
+
 }
