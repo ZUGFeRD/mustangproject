@@ -60,7 +60,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
+                <version>3.0.0-M1</version>
                 <configuration>
                     <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo
                     </altDeploymentRepository>
@@ -102,7 +102,7 @@
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.7</version>
+                <version>1.6.8</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>

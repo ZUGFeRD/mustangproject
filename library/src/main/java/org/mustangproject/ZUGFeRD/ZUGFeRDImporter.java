@@ -235,7 +235,7 @@ public class ZUGFeRDImporter {
 
 	/***
 	 * Wrapper for protected method extractString
-	 * @param xpathStr
+	 * @param xpathStr the xpath expression to be evaluated
 	 * @return the extracted String for the specific path in the document
 	 */
 	public String wExtractString(String xpathStr) {
