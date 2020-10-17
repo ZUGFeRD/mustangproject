@@ -134,7 +134,6 @@
                 <executions>
                 <execution>
                 <id>attach-javadoc</id>
-                <goals>
                 </execution>
                 </executions>
             </plugin>
