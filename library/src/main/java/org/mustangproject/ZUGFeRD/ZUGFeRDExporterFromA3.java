@@ -168,6 +168,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	/***
 	 * internal helper: return the name of the file attachment for the given zf/fx version
 	 * @param ver the zf/fx version
+	 * @param profile which profile to be used, e.g. Profiles.getByName("EN16931")
 	 * @return the filename of the file to be embedded
 	 */
 	public String getFilenameForVersion(int ver, Profile profile) {
@@ -192,6 +193,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * Generate ZF2.1 files with filename factur-x.xml
 	 *
 	 * @deprecated
+	 * @return this (fluent setter)
 	 */
 	public ZUGFeRDExporterFromA3 setFacturX() {
 		isFacturX = true;

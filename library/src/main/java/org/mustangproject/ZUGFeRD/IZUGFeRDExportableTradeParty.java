@@ -132,7 +132,7 @@ public interface IZUGFeRDExportableTradeParty {
 
 	/***
 	 * obligatory for sender but not for recipient
-	 * @return
+	 * @return the tax id as string
 	 */
 	default String getTaxID() {
 		return null;

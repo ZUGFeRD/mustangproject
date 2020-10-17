@@ -84,8 +84,8 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * switch type to invoice correction and refer to document number
-	 * @param number
-	 * @return
+	 * @param number the invoice number to be corrected
+	 * @return this object (fluent setter)
 	 */
 	public Invoice setCorrection(String number) {
 		setBuyerOrderReferencedDocumentID(number);
@@ -428,7 +428,7 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * checks if all required items are set in order to be able to export it
-	 * @return
+	 * @return true if all required items are set
 	 */
 	public boolean isValid() {
 		return (dueDate != null) && (sender != null) && (sender.getTaxID() != null) && (sender.getVATID() != null) && (recipient != null);

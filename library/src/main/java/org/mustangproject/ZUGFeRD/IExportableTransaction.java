@@ -301,7 +301,7 @@ public interface IExportableTransaction  {
 	 * get payment terms. if set, getPaymentTermDescription() and getDueDate() are
 	 * ignored
 	 * 
-	 * @return
+	 * @return the IZUGFeRDPaymentTerms of the invoice
 	 */
 	default IZUGFeRDPaymentTerms getPaymentTerms() {
 		return null;
@@ -310,7 +310,7 @@ public interface IExportableTransaction  {
 	/**
 	 * returns if a rebate agreements exists
 	 * 
-	 * @return
+	 * @return true if a agreement exists
 	 */
 	default boolean rebateAgreementExists() {
 		return false;
@@ -418,7 +418,7 @@ public interface IExportableTransaction  {
 	
 	/***
 	 * delivery address, i.e. ram:ShipToTradeParty (only supported for zf2)
-	 * @return
+	 * @return the IZUGFeRDExportableTradeParty delivery address
 	 */
 
 	default IZUGFeRDExportableTradeParty getDeliveryAddress() {
