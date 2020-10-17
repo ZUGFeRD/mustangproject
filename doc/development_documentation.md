@@ -79,8 +79,28 @@ As „servers“, enter the following
       <id>github</id> 
       <password>GITHUB-TOKEN</password> 
     </server> 
+    <server> 
+      <id>ossrh</id> 
+      <username>jstaerk</username> 
+      <password>JIRA-PASSWORD</password> 
+    </server> 
    </servers> 
 ```
+Add a profiles section to settings.xml
+```
+  <profiles>
+    <profile>
+      <id>ossrh</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <gpg.passphrase>PASSPHRASE</gpg.passphrase>
+      </properties>
+    </profile>
+  </profiles>
+```
+
 The whole settings.xml then looks e.g. like this
 ```xml
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
@@ -97,21 +117,39 @@ The whole settings.xml then looks e.g. like this
       	<id>github</id> 
       	<password>TOKEN</password> 
         </server> 
+    <server> 
+      <id>ossrh</id> 
+      <username>jstaerk</username> 
+      <password>JIRA-PASSWORD</password> 
+    </server> 
+
       </servers>
       <mirrors/>
       <proxies/>
-      <profiles/>
+      <profiles>
+        <profile>
+          <id>ossrh</id>
+          <activation>
+            <activeByDefault>true</activeByDefault>
+          </activation>
+          <properties>
+            <gpg.passphrase>PASSPHRASE</gpg.passphrase>
+          </properties>
+        </profile>
+      </profiles>
       <activeProfiles/>
 </settings>
 ```
 
-The password is generated on github.
+The TOKEN is generated on github.
+Deployment to maven central is described e.g. on [dzone](https://dzone.com/articles/publish-your-artifacts-to-maven-central).
 See the following screenshot:
 
 
 Sign in in GitHub and click on the profile picture -> Settings. Now just generate a new token and set the checkboxes from the screenshot.
 ![screenshot](development_documentation_screenshot_github_settings.png "Screenshot Github Settings")
  The Token-ID is the password. 
+
 
 ## Integrate before release
 
