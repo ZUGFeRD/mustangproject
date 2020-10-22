@@ -3,14 +3,14 @@
 <parent>
     <groupId>org.mustangproject</groupId>
     <artifactId>core</artifactId>
-    <version>2.0.0-alpha3</version>
+    <version>2.0.0-alpha4-SNAPSHOT</version>
 </parent>
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.mustangproject</groupId>
    <artifactId>Mustang-CLI</artifactId>
    <name>Mustang commandline tool</name>
    <packaging>jar</packaging>
-   <version>2.0.0-alpha3</version>
+   <version>2.0.0-alpha4-SNAPSHOT</version>
    <repositories>
       <repository>
          <!-- for jargs -->
@@ -31,7 +31,7 @@
       <dependency>
          <groupId>org.mustangproject</groupId>
          <artifactId>validator</artifactId>
-         <version>2.0.0-alpha3</version>
+         <version>2.0.0-alpha4-SNAPSHOT</version>
          <!-- prototypes of new mustangproject versions can be installed by referring to them and installed to the local repo from a jar file with
         mvn install:install-file -Dfile=mustang-1.5.4-SNAPSHOT.jar -DgroupId=org.mustangproject.ZUGFeRD -DartifactId=mustang -Dversion=1.5.4 -Dpackaging=jar -DgeneratePom=true
         -->
