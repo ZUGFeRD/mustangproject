@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 
 public class Charge implements IZUGFeRDAllowanceCharge {
 
-	protected BigDecimal percent;
+	protected BigDecimal percent = null;
 	protected BigDecimal totalAmount;
 	protected BigDecimal taxPercent;
 	protected String reason;
@@ -67,6 +67,7 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	}
 
 
+	@Override
 	public BigDecimal getPercent() {
 		return percent;
 	}
@@ -80,6 +81,7 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	public boolean isCharge() {
 		return true;
 	}
+
 
 
 	public Charge setCategoryCode(String categoryCode) {

@@ -96,7 +96,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 		return res;
 
 	}
-//move
+
+	//move
 	protected BigDecimal getTotalPrepaid() {
 		if (trans.getTotalPrepaidAmount() == null) {
 			return new BigDecimal(0);
@@ -207,6 +208,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 
 		return hm;
 	}
+
 	@Override
 	public Profile getProfile() {
 		return profile;
@@ -271,6 +273,22 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 		}
 		return xml;
 
+	}
+
+
+	protected String getAllowanceChargeStr(IZUGFeRDAllowanceCharge allowance, IAbsoluteValueProvider item) {
+		String percentage = "";
+		String chargeIndicator = "false";
+		if (allowance.getPercent() != null) {
+			percentage = "<ram:CalculationPercent>" + allowance.getPercent() + "</ram:CalculationPercent>";
+			percentage += "<ram:BasisAmount>" + item.getValue() + "</ram:BasisAmount>";
+		}
+		if (allowance.isCharge()) {
+			chargeIndicator = "true";
+		}
+
+		String allowanceChargeStr = "<ram:AppliedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>" + chargeIndicator + "</udt:Indicator></ram:ChargeIndicator>" + percentage + "<ram:ActualAmount>" + priceFormat(allowance.getTotalAmount(item)) + "</ram:ActualAmount></ram:AppliedTradeAllowanceCharge>";
+		return allowanceChargeStr;
 	}
 
 	@Override
@@ -376,12 +394,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 			String allowanceChargeStr = "";
 			if (currentItem.getItemAllowances() != null && currentItem.getItemAllowances().length > 0) {
 				for (IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
-					allowanceChargeStr = "<ram:AppliedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>false</udt:Indicator></ram:ChargeIndicator><ram:ActualAmount>" + priceFormat(allowance.getTotalAmount(currentItem)) + "</ram:ActualAmount></ram:AppliedTradeAllowanceCharge>";
+					allowanceChargeStr += getAllowanceChargeStr(allowance, currentItem);
 				}
 			}
 			if (currentItem.getItemCharges() != null && currentItem.getItemCharges().length > 0) {
 				for (IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
-					allowanceChargeStr += "<ram:AppliedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>true</udt:Indicator></ram:ChargeIndicator><ram:ActualAmount>" + priceFormat(charge.getTotalAmount(currentItem)) + "</ram:ActualAmount></ram:AppliedTradeAllowanceCharge>";
+					allowanceChargeStr += getAllowanceChargeStr(charge, currentItem);
+
 				}
 			}
 

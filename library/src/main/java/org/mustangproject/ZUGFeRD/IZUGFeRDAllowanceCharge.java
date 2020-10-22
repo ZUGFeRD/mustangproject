@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 public interface IZUGFeRDAllowanceCharge {
 
 	BigDecimal getTotalAmount(IAbsoluteValueProvider trans);
+	default BigDecimal getPercent() {return null;}
 
 	String getReason();
 
