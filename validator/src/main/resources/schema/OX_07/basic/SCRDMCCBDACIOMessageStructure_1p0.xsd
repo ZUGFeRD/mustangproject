@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:rsm="urn:un:unece:uncefact:data:standard:SCRDMCCBDACIOMessageStructure:1"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:103"
+    xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:103"
+    xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:103"
+    targetNamespace="urn:un:unece:uncefact:data:standard:SCRDMCCBDACIOMessageStructure:1"
+    elementFormDefault="qualified"
+    version="1.0">
+  <xsd:import namespace="urn:un:unece:uncefact:data:standard:QualifiedDataType:103" schemaLocation="SCRDMCCBDACIOMessageStructure_1p0_urn_un_unece_uncefact_data_standard_QualifiedDataType_103.xsd"/>
+  <xsd:import namespace="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:103" schemaLocation="SCRDMCCBDACIOMessageStructure_1p0_urn_un_unece_uncefact_data_standard_ReusableAggregateBusinessInformationEntity_103.xsd"/>
+  <xsd:import namespace="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:103" schemaLocation="SCRDMCCBDACIOMessageStructure_1p0_urn_un_unece_uncefact_data_standard_UnqualifiedDataType_103.xsd"/>
+  <xsd:element name="SCRDMCCBDACIOMessageStructure" type="rsm:SCRDMCCBDACIOMessageStructureType"/>
+  <xsd:complexType name="SCRDMCCBDACIOMessageStructureType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Order-X_Basic Message Structure</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ExchangedDocumentContext" type="ram:ExchangedDocumentContextType"/>
+      <xsd:element name="ExchangedDocument" type="ram:ExchangedDocumentType"/>
+      <xsd:element name="SupplyChainTradeTransaction" type="ram:SupplyChainTradeTransactionType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>
