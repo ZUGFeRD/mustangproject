@@ -9,6 +9,7 @@
 - visualization? zugferdvisualizer?
 - german bank account numbers can no longer be specified (dropped in favor of IBAN and BIC)
 - factory for xrechnung
+- moved to Maven central
 - complete or discard read into push provider
 - integrates validator
 - validator now additionally supports xrechnung 
@@ -59,6 +60,7 @@ switch
 - *correctiontest exports zf1+zf2?
 - *USt 0% wird aus invoice-klasse noch nicht sauber abgefangen
 - finalize invoiceimporter
+Alpha3 2020-10-24
 Alpha2 2020-09-15
 Alpha1 2020-08-06
 
