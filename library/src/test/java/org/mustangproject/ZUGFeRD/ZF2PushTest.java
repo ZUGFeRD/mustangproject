@@ -63,13 +63,10 @@ public class ZF2PushTest extends TestCase {
 					 .load(SOURCE_PDF)) {
 
 			try {
-				ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setContractReferencedDocument(contractID).setOccurrencePeriod(new SimpleDateFormat("yyyyMMdd").parse(occurenceFrom), new SimpleDateFormat("yyyyMMdd").parse(occurenceTo)).setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addBankDetails(new BankDetails("777666555", "DE4321"))).setOwnTaxID("4711").setOwnVATID("DE19990815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setContact(new Contact("nameRep", "phoneRep", "emailRep@test.com"))).setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0))));
+				ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setContractReferencedDocument(contractID).setOccurrencePeriod(new SimpleDateFormat("yyyyMMdd").parse(occurenceFrom), new SimpleDateFormat("yyyyMMdd").parse(occurenceTo)).setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addBankDetails(new BankDetails("777666555", "DE4321"))).setOwnTaxID("4711").setOwnVATID("DE19990815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setAdditionalAddress("Hinterhaus 3").setContact(new Contact("nameRep", "phoneRep", "emailRep@test.com"))).setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0))));
 			} catch (ParseException ex) {
 				throw new RuntimeException("Parse exception");
 			}
-			String theXML = new String(ze.getProvider().getXML());
-			assertTrue(theXML.contains("777666555")); //the iban
-			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 
 			ze.export(TARGET_PDF);
 		} catch (IOException e) {
@@ -78,11 +75,15 @@ public class ZF2PushTest extends TestCase {
 
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
+		assertTrue(zi.getUTF8().contains("777666555")); //the iban
 
-		assertTrue(zi.getUTF8().contains("EUR"));
+		assertTrue(zi.getUTF8().contains("<rsm:CrossIndustryInvoice"));
+
+		assertTrue(zi.getUTF8().contains("EUR")); //default invoice currency
 		assertTrue(zi.getUTF8().contains(occurenceFrom));
 		assertTrue(zi.getUTF8().contains(occurenceTo));
 		assertTrue(zi.getUTF8().contains(contractID));
+		assertTrue(zi.getUTF8().contains("Hinterhaus")); // lineTwo/additionalAddress
 		assertTrue(zi.getUTF8().contains("0815"));
 
 		// Reading ZUGFeRD
@@ -159,7 +160,7 @@ public class ZF2PushTest extends TestCase {
 			//					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance().setPercent(new BigDecimal(50)))));
 
 
-			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE")).setOwnTaxID("4711").setOwnVATID("DE0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number)
+			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE")).setOwnTaxID("4711").setOwnVATID("DE0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setContact(new Contact("contact testname","123456","contact.testemail@example.org" ).setFax("0911623562"))).setNumber(number)
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance(new BigDecimal("0.1"))))
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance().setPercent(new BigDecimal(50))))
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(2.0)).addCharge(new Charge(new BigDecimal(1))))
@@ -178,6 +179,7 @@ public class ZF2PushTest extends TestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_ITEMCHARGESALLOWANCESPDF);
 
 		assertTrue(zi.getUTF8().contains("EUR"));
+		assertTrue(zi.getUTF8().contains("0911623562")); // fax number
 
 		// Reading ZUGFeRD
 		assertEquals("18.33", zi.getAmount());

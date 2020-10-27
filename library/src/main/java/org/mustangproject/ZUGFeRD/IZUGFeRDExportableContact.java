@@ -51,8 +51,12 @@ public interface IZUGFeRDExportableContact {
 	default String getPhone() {
 		return null;
 	}
-	
+
 	default String getEMail() {
+		return null;
+	}
+
+	default String getFax() {
 		return null;
 	}
 

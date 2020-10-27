@@ -235,12 +235,20 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 						+ XMLTools.encodeXML(party.getContact().getPhone()) + "</ram:CompleteNumber>\n"
 						+ "     </ram:TelephoneUniversalCommunication>\n";
 			}
+
+			if (party.getContact().getFax() != null) {
+
+				xml = xml + "     <ram:FaxUniversalCommunication>\n" + "        <ram:CompleteNumber>"
+						+ XMLTools.encodeXML(party.getContact().getFax()) + "</ram:CompleteNumber>\n"
+						+ "     </ram:FaxUniversalCommunication>\n";
+			}
 			if (party.getContact().getEMail() != null) {
 
 				xml = xml + "     <ram:EmailURIUniversalCommunication>\n" + "        <ram:URIID>"
 						+ XMLTools.encodeXML(party.getContact().getEMail()) + "</ram:URIID>\n"
 						+ "     </ram:EmailURIUniversalCommunication>\n";
 			}
+
 			xml = xml + "  </ram:DefinedTradeContact>";
 
 		}

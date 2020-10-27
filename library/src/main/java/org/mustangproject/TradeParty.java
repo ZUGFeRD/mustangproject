@@ -6,13 +6,13 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlement;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.xpath.XPathConstants;
 import java.util.ArrayList;
 
 public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	protected String name, zip, street, location, country;
 	protected String taxID = null, vatID = null;
+	protected String additionalAddress = null;
 	protected ArrayList<BankDetails> bankDetails = new ArrayList<BankDetails>();
 	protected Contact contact = null;
 
@@ -65,6 +65,9 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 						for (int postalChildIndex = 0; postalChildIndex < postal.getLength(); postalChildIndex++) {
 							if (postal.item(postalChildIndex).getNodeName().equals("ram:LineOne")) {
 								setStreet(postal.item(postalChildIndex).getTextContent());
+							}
+							if (postal.item(postalChildIndex).getNodeName().equals("ram:LineTwo")) {
+								setAdditionalAddress(postal.item(postalChildIndex).getTextContent());
 							}
 							if (postal.item(postalChildIndex).getNodeName().equals("ram:CityName")) {
 								setLocation(postal.item(postalChildIndex).getTextContent());
@@ -188,4 +191,15 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		}
 		return bankDetails.toArray(new IZUGFeRDTradeSettlement[0]);
 	}
+
+	@Override
+	public String getAdditionalAddress() {
+		return additionalAddress;
+	}
+
+	public TradeParty setAdditionalAddress(String additionalAddress) {
+		this.additionalAddress = additionalAddress;
+		return this;
+	}
+
 }

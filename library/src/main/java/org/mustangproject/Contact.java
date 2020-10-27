@@ -5,6 +5,7 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
 public class Contact implements IZUGFeRDExportableContact {
 
 	protected String name,phone,email,zip,street,location,country;
+	protected String fax=null;
 
 	public Contact(String name, String phone, String email) {
 		this.name = name;
@@ -40,6 +41,16 @@ public class Contact implements IZUGFeRDExportableContact {
 
 	public Contact setPhone(String phone) {
 		this.phone = phone;
+		return this;
+	}
+
+	@Override
+	public String getFax() {
+		return fax;
+	}
+
+	public Contact setFax(String fax) {
+		this.fax = fax;
 		return this;
 	}
 

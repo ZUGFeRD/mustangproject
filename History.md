@@ -46,6 +46,7 @@ switch
   - corrected invoices,
   - contacts also for recipients 
   - absolute and relative allowances and charges on item and document level,
+  - support contact fax numbers
 
 ### 2.0 still todo
 - dont show empty tax number field
