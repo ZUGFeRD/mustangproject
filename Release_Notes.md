@@ -1,14 +1,16 @@
 
-## Context
+## Changes
 
-On it's official website you can [download](https://www.mustangproject.org/files/Mustang-CLI-2.0.0-alpha1.jar) a alpha release of Mustang 2.
+On it's official website you can [download](https://www.mustangproject.org/files/Mustang-CLI-2.0.0-alpha3.jar) a alpha release of Mustang 2.
 
 It integrates the successor of the ZUGFeRD [Validator ZUV](https://github.com/ZUGFeRD/ZUV/) in it's command line tool and can be used as library.
+
+Additionally, the default changed from ZUGFeRD 1 to ZUGFeRD 2.1.1 (previously you had to enable that, now you have to specify that you want to use ZF1 if that's the case), it's now available via Maven Central and additionally to the old Interface-style  pullProvider requiring you to implement methods there is now also a "normal", class-orientierted, halfway fluent "Push-Provider". It's describe below, if you are impatient please feel free to have a look at it's tests on https://github.com/ZUGFeRD/mustangproject/blob/master/library/src/test/java/org/mustangproject/ZUGFeRD/ZF2PushTest.java.
  
-This is a preview release, please do not (yet) use it in production
+This is a preview release, please do not (yet) use it in production.
 
 ### Use on command line
-`java -jar Mustang-CLI-2.0.0-alpha1.jar --action=combine` embedds a XML into a PDF (A-1) file and exports as PDF/A-3
+`java -jar Mustang-CLI-2.0.0-alpha3.jar --action=combine` embedds a XML into a PDF (A-1) file and exports as PDF/A-3
 
 `java -jar mustang-cli.jar --action=extract` extracts XML from a ZUGFeRD file and
 
@@ -53,11 +55,13 @@ result codes apply:
  
 ### Use as Library
 
+We're now on maven central, please remove the old github repository. Additionally, the following changed
+
 | What  | old value | new value |
 |---|---|---|
 | Group id  | org.mustangproject.zugferd | org.mustangproject|
 | Artifact ID | mustang | library  |
-| Version | 1.7.8 | 1.9.0-alpha1  |
+| Version | 1.7.8 | 2.0.0-alpha3  |
 
 If you want you can also embed the validator in your software using validator
 as artifact ID. "validator" includes the library functionality but is >20 MB 
@@ -91,19 +95,14 @@ String amount = zi.getAmount();
 but we are also working on an importer to import into the new invoice class.
 
 ### Using the library to create e-invoices
+From maven central fetch
 ```
 
-<repositories>
-    <repository>
-        <id>mustang-mvn-repo</id>
-        <url>https://raw.github.com/ZUGFeRD/mustangproject/mvn-repo/</url>
-    </repository>
-</repositories>
 <dependencies>
     <dependency>
        <groupId>org.mustangproject</groupId>
        <artifactId>library</artifactId>
-       <version>1.9.0-alpha1</version>
+       <version>2.0.0-alpha3</version>
     </dependency>
 </dependencies>
 
@@ -146,18 +145,11 @@ String theXML = new String(zf2p.getXML());
 or can also be used with setTransaction to generate invoice PDFs straight away.
 ### Embedding the validator
 ```
-
-<repositories>
-   <repository>
-     <id>mustang-mvn-repo</id>
-     <url>https://raw.github.com/ZUGFeRD/mustangproject/mvn-repo/</url>
-   </repository>
-</repositories>
 <dependencies>
    <dependency>
       <groupId>org.mustangproject</groupId>
       <artifactId>validator</artifactId>
-      <version>1.9.0-alpha1</version>
+      <version>2.0.0-alpha3</version>
    </dependency>
 </dependencies>
 
