@@ -36,7 +36,7 @@ public interface IExportableTransaction  {
 
 	/**
 	 * appears in /rsm:CrossIndustryDocument/rsm:HeaderExchangedDocument/ram:Name
-	 * 
+	 *
 	 * @return Name of document
 	 */
 	default String getDocumentName() {
@@ -113,7 +113,7 @@ public interface IExportableTransaction  {
 	/**
 	 * subject of the document e.g. invoice and order
 	 * number as human readable text
-	 * 
+	 *
 	 * @return string with document subject
 	 */
 	default String getSubjectNote() {
@@ -146,7 +146,7 @@ public interface IExportableTransaction  {
 	 * @return an array of IZUGFeRDTradeSettlementPayment
 	 */
 	@Deprecated
-	default IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {		
+	default IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
 		return null;
 	}
 	/**
@@ -300,7 +300,7 @@ public interface IExportableTransaction  {
 	/**
 	 * get payment terms. if set, getPaymentTermDescription() and getDueDate() are
 	 * ignored
-	 * 
+	 *
 	 * @return the IZUGFeRDPaymentTerms of the invoice
 	 */
 	default IZUGFeRDPaymentTerms getPaymentTerms() {
@@ -309,7 +309,7 @@ public interface IExportableTransaction  {
 
 	/**
 	 * returns if a rebate agreements exists
-	 * 
+	 *
 	 * @return true if a agreement exists
 	 */
 	default boolean rebateAgreementExists() {
@@ -388,7 +388,7 @@ public interface IExportableTransaction  {
 
 	/**
 	 * get the ID of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
-	 * 
+	 *
 	 * @return the ID of the document
 	 */
 	default String getBuyerOrderReferencedDocumentID() {
@@ -398,7 +398,7 @@ public interface IExportableTransaction  {
 
 	/**
 	 * get the issue timestamp of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
-	 * 
+	 *
 	 * @return the IssueDateTime in format CCYY-MM-DDTHH:MM:SS
 	 */
 	default String getBuyerOrderReferencedDocumentIssueDateTime() {
@@ -408,14 +408,14 @@ public interface IExportableTransaction  {
 
 	/**
 	 * get the TotalPrepaidAmount located in SpecifiedTradeSettlementMonetarySummation (v1) or SpecifiedTradeSettlementHeaderMonetarySummation (v2)
-	 * 
+	 *
 	 * @return the total sum (incl. VAT) of prepayments, i.e. the difference between GrandTotalAmount and DuePayableAmount
 	 */
 	default BigDecimal getTotalPrepaidAmount() {
 		return BigDecimal.ZERO;
 	}
 
-	
+
 	/***
 	 * delivery address, i.e. ram:ShipToTradeParty (only supported for zf2)
 	 * @return the IZUGFeRDExportableTradeParty delivery address
@@ -436,5 +436,13 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
+	/**
+	 * get additional referenced documents acccording to BG-24 XRechnung (Rechnungsbegruendende Unterlagen),
+	 * i.e. <ram:AdditionalReferencedDocument> in <ram:ApplicableHeaderTradeAgreement> (only supported for zf2)
+	 *
+	 * @return a array of objects from class FileAttachment
+	 */
+	default FileAttachment[] getAdditionalReferencedDocuments() {
+		return null;
+	}
 }

@@ -493,6 +493,20 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 					+ "    </ram:ContractReferencedDocument>\n";
 		}
 
+		// Additional Documents of XRechnung (Rechnungsbegruendende Unterlagen - BG-24 XRechnung)
+		if (trans.getAdditionalReferencedDocuments() != null) {
+			for (FileAttachment f : trans.getAdditionalReferencedDocuments()) {
+				xml = xml + "  <ram:AdditionalReferencedDocument>\n"
+						+ "    <ram:IssuerAssignedID>" + f.getFilename() + "</ram:IssuerAssignedID>\n"
+						+ "    <ram:TypeCode>916</ram:TypeCode>\n"
+						+ "    <ram:Name>" + f.getDescription() + "</ram:Name>\n"
+						+ "    <ram:AttachmentBinaryObject mimeCode=\"" + f.getMimetype() + "\"\n"
+						+ "      filename=\"" + f.getFilename() + ">" + f.getData() + "\n"
+						+ "  </ram:AdditionalReferencedDocument>\n";
+			}
+		}
+
+
 
 		xml = xml + "		</ram:ApplicableHeaderTradeAgreement>\n"
 				+ "		<ram:ApplicableHeaderTradeDelivery>\n";
