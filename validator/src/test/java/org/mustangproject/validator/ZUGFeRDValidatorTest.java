@@ -42,15 +42,32 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 		zfv = new ZUGFeRDValidator();
 
 		res = zfv.validate(tempFile.getAbsolutePath());
-		assertEquals(true, res.contains("status=\"valid\""));
-		assertEquals(false, res.contains("status=\"invalid\""));
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.isEqualTo("valid");
 
 		tempFile = getResourceAsFile("validAvoir_FR_type380_BASICWL.pdf");
 		zfv = new ZUGFeRDValidator();
 
 		res = zfv.validate(tempFile.getAbsolutePath());
-		assertEquals(true, res.contains("status=\"valid\""));
-		assertEquals(false, res.contains("status=\"invalid\""));
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.isEqualTo("valid");
+
+		tempFile = getResourceAsFile("validXRechnung.pdf");
+		zfv = new ZUGFeRDValidator();
+		res = zfv.validate(tempFile.getAbsolutePath());
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.isEqualTo("valid");
+
+		tempFile = getResourceAsFile("invalidXRechnung.pdf");
+		zfv = new ZUGFeRDValidator();
+		res = zfv.validate(tempFile.getAbsolutePath());
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.isEqualTo("invalid");
+
+		zfv = new ZUGFeRDValidator();
+		res = zfv.validate("/does/not/exist");
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.isEqualTo("invalid");
 
 	}
 

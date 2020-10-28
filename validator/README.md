@@ -189,7 +189,7 @@ Permissive Open Source APL2, see LICENSE
 
 ## History
 
-see the [history file](History.md)
+see the Mustangproject [history file](History.md)
 
 
 ## Authors

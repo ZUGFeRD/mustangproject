@@ -24,7 +24,8 @@ import java.math.BigDecimal;
  */
 public interface IZUGFeRDAllowanceCharge {
 
-	BigDecimal getTotalAmount();
+	BigDecimal getTotalAmount(IAbsoluteValueProvider trans);
+	default BigDecimal getPercent() {return null;}
 
 	String getReason();
 
@@ -34,4 +35,5 @@ public interface IZUGFeRDAllowanceCharge {
 		return TaxCategoryCodeTypeConstants.STANDARDRATE;
 	}
 
+	public boolean isCharge();
 }

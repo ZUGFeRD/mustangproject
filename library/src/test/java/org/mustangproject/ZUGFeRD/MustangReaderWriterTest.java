@@ -100,13 +100,13 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 	}
 
 	@Override
-	public IZUGFeRDExportableContact getRecipient() {
-		return new RecipientContact();
+	public IZUGFeRDExportableTradeParty getRecipient() {
+		return new RecipientTradeParty();
 	}
 	
 	@Override
-	public IZUGFeRDExportableContact getOwnContact() {
-		return new SenderContact();
+	public IZUGFeRDExportableTradeParty getSender() {
+		return new SenderTradeParty();
 	}
 
 	@Override
@@ -196,8 +196,8 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
-		assertEquals(zi.getIBAN(),getTradeSettlementPayment()[0].getOwnIBAN());
+		assertEquals(zi.getBIC(), "COBADEFFXXX");
+		assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), "RE-20170509/505");
 		assertEquals(zi.getBankName(), "Commerzbank");
@@ -304,7 +304,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
 
 
-		ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false).load(SOURCE_PDF);
+		IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setAttachZUGFeRDHeaders(false).load(SOURCE_PDF);
 
 		File tempFile = File.createTempFile("ZUGFeRD-", "-test");
 		ze.export(tempFile.getAbsolutePath());
@@ -317,7 +317,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
 
-		ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setAttachZUGFeRDHeaders(false).load(SOURCE_PDF);
+		IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setAttachZUGFeRDHeaders(false).load(SOURCE_PDF);
 
 		File tempFile = File.createTempFile("ZUGFeRD-", "-test");
 		tempFile.deleteOnExit();
@@ -358,9 +358,9 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile(Profiles.getByName("EN16931")).load(SOURCE_PDF)) {
 
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF);
 
@@ -383,9 +383,9 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
+		assertEquals(zi.getBIC(), "COBADEFFXXX");
 		assertEquals(zi.getReference(), getReferenceNumber());
-		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
+		assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 	}
@@ -402,9 +402,9 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(1).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.COMFORT).load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(1).setProfile(Profiles.getByName("COMFORT",1)).load(SOURCE_PDF)) {
 
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF);
 
@@ -430,9 +430,17 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
 
-			ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
-			ze.setFacturX();
-			ze.PDFattachZugferdFile(this);
+			 ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile(Profiles.getByName("EN16931")).load(SOURCE_PDF)) {
+			ByteArrayOutputStream result = new ByteArrayOutputStream();
+			byte[] buffer = new byte[1024];
+			int length;
+			while ((length = SOURCE_PDF.read(buffer)) != -1) {
+				result.write(buffer, 0, length);
+			}
+
+			ze.addAdditionalFile("test.pdf", result.toByteArray());
+
+			ze.setTransaction(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF);
 
@@ -451,11 +459,11 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
 		// Reading ZUGFeRD
-		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
-		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
-		assertEquals(zi.getHolder(), getOwnOrganisationName());
-		assertEquals(zi.getForeignReference(), getNumber());
+		assertEquals("571.04", zi.getAmount());
+		assertEquals("COBADEFFXXX", zi.getBIC());
+		assertEquals("DE88 2008 0000 0970 3757 00", zi.getIBAN());
+		assertEquals(getOwnOrganisationName(), zi.getHolder());
+		assertEquals(getNumber(), zi.getForeignReference());
 	}
 
 	public void testExceptionOnPDF14() {
@@ -467,9 +475,9 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDF14.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().load(SOURCE_PDF)) {
 
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			ze.export(TARGET_PDF);
 
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();

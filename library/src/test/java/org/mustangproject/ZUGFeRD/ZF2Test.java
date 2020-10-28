@@ -24,7 +24,6 @@ import junit.framework.TestSuite;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -60,28 +59,8 @@ public class ZF2Test extends MustangReaderTestCase {
 	}
 
 	@Override
-	public String getOwnCountry() {
-		return "DE";
-	}
-
-	@Override
-	public String getOwnLocation() {
-		return "Stadthausen";
-	}
-
-	@Override
-	public String getOwnOrganisationName() {
-		return "Bei Spiel GmbH";
-	}
-
-	@Override
-	public String getOwnStreet() {
-		return "Ecke 12";
-	}
-
-	@Override
-	public IZUGFeRDExportableContact getOwnContact() {
-		return new SenderContact();
+	public IZUGFeRDExportableTradeParty getSender() {
+		return new SenderTradeParty();
 
 	}
 
@@ -101,8 +80,8 @@ public class ZF2Test extends MustangReaderTestCase {
 	}
 
 	@Override
-	public IZUGFeRDExportableContact getRecipient() {
-		return new RecipientContact();
+	public IZUGFeRDExportableTradeParty getRecipient() {
+		return new RecipientTradeParty();
 	}
 
 	@Override
@@ -188,11 +167,11 @@ public class ZF2Test extends MustangReaderTestCase {
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
 
-				ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory().setProducer("My Application")
-						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).ignorePDFAErrors()
+			 ZUGFeRDExporterFromA3 ze = new ZUGFeRDExporterFromA3().setProducer("My Application")
+						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile("EN16931")
 						.load(SOURCE_PDF)) {
 			
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(TARGET_PDF);
@@ -207,14 +186,39 @@ public class ZF2Test extends MustangReaderTestCase {
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
+		assertEquals(zi.getInvoiceID(), "RE-20170509/505");
+		assertEquals(zi.getZUGFeRDProfil(), "COMFORT");
+		assertEquals(zi.getInvoiceCurrencyCode(), "EUR");
+		assertEquals(zi.getIssuerAssignedID(),"");
+		assertEquals(zi.getIssueDate(), "20170509");
+		assertEquals(zi.getTaxPointDate(), "20170507");
+		assertEquals(zi.getPaymentTerms(), "Zahlbar ohne Abzug bis zum 30.05.2017");
+		assertEquals(zi.getLineTotalAmount(), "496.00");
+		assertEquals(zi.getTaxBasisTotalAmount(), "496.00");
+		assertEquals(zi.getTaxTotalAmount(),"75.04");
+		assertEquals(zi.getRoundingAmount(), "");
+		assertEquals(zi.getPaidAmount(), "0.00");
+		assertEquals(zi.getBuyerTradePartyName(), "Theodor Est");
+		assertEquals(zi.getBuyerTradePartyGlobalID(), "");
+		assertEquals(zi.getSellerTradePartyGlobalID(), "");
+		assertEquals(zi.getBuyerTradePartyID(), "DE999999999");
+		assertEquals(zi.getBuyertradePartySpecifiedTaxRegistrationID(), "DE999999999");
+		assertEquals(zi.getIncludedNote(), "");
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getDocumentCode(),"380");
 		assertEquals(zi.getReference(),"AB321");
 		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
-		assertEquals(zi.getIBAN(),getTradeSettlementPayment()[0].getOwnIBAN());
+		assertEquals(zi.getBIC(), "COBADEFFXXX");
+		assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
+		assertEquals(zi.getBuyerTradePartyAddress().getPostcodeCode(), "88802");
+		assertEquals(zi.getBuyerTradePartyAddress().getLineOne(), "Bahnstr. 42");
+		assertEquals(zi.getBuyerTradePartyAddress().getLineTwo(), null);
+		assertEquals(zi.getBuyerTradePartyAddress().getLineThree(), null);
+		assertEquals(zi.getBuyerTradePartyAddress().getCountrySubDivisionName(), null);
+		assertEquals(zi.getBuyerTradePartyAddress().getCountryID(), "DE");
+		assertEquals(zi.getBuyerTradePartyAddress().getCityName(), "Spielkreis");
 		assertEquals(zi.getSellerTradePartyAddress().getPostcodeCode(), "12345");
 		assertEquals(zi.getSellerTradePartyAddress().getLineOne(), "Ecke 12");
 		assertEquals(zi.getSellerTradePartyAddress().getLineTwo(), null);
@@ -223,16 +227,16 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals(zi.getSellerTradePartyAddress().getCountryID(), "DE");
 		assertEquals(zi.getSellerTradePartyAddress().getCityName(), "Stadthausen");
 
-		List<org.mustangproject.ZUGFeRD.Item> li = zi.getLineItemList();
+		List<org.mustangproject.Item> li = zi.getLineItemList();
 		assertEquals(zi.getLineItemList().get(0).getId().toString(), "1");
-		assertEquals(zi.getLineItemList().get(0).product.getBuyerAssignedID(), "");
-		assertEquals(zi.getLineItemList().get(0).product.getSellerAssignedID(), "");
+		assertEquals(zi.getLineItemList().get(0).getProduct().getBuyerAssignedID(), "");
+		assertEquals(zi.getLineItemList().get(0).getProduct().getSellerAssignedID(), "");
 		assertEquals(zi.getLineItemList().get(0).getLineTotalAmount().toString(), "160.00");
 		assertEquals(zi.getLineItemList().get(0).getQuantity().toString(), "1.0000");
 		assertEquals(zi.getLineItemList().get(0).getGrossPrice().toString(), "160.0000");
-		assertEquals(zi.getLineItemList().get(0).product.getVATPercent().toString(), "7.00");
-		assertEquals(zi.getLineItemList().get(0).product.getName(), "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung");
-		assertEquals(zi.getLineItemList().get(0).product.getDescription(), "");
+		assertEquals(zi.getLineItemList().get(0).getProduct().getVATPercent().toString(), "7.00");
+		assertEquals(zi.getLineItemList().get(0).getProduct().getName(), "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung");
+		assertEquals(zi.getLineItemList().get(0).getProduct().getDescription(), "");
 
 		try {
 			assertEquals(zi.getVersion(), 2);

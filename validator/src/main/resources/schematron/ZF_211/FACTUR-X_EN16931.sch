@@ -9107,7 +9107,7 @@
   </pattern>
   <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:DesignatedProductClassification/ram:ClassCode">
-      <let name="codeValue5" value="."/>
+      <let name="codeValue5" value="@listID"/>
       <assert test="document(&apos;FACTUR-X_EN16931_codedb.xml&apos;)//cl[@id=5]/enumeration[@value=$codeValue5]">
 	Value of 'ram:ClassCode' is not allowed.</assert>
     </rule>

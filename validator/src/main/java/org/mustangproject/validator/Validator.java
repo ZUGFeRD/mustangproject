@@ -25,20 +25,37 @@ public abstract class Validator {
 	}
 	
 	//abstract method
-	
+
+	/***
+	 * prepare validation
+	 * @param filename the filename of the xml file to be examined
+	 * @throws IrrecoverableValidationError when any fatal errors arise, e.g. when the source file can not be found
+	 */
 	public abstract void setFilename(String filename) throws IrrecoverableValidationError;
+
+	/***
+	 * perform the validation
+	 * @throws IrrecoverableValidationError any fatal errors, e.g. when the source file can not be found
+	 */
 	public abstract void validate() throws IrrecoverableValidationError;
 
+	/**
+	 * get validation result
+	 * @return validation result as xml string
+	 */
 	public String getXMLResult() {
 		return context.getXMLResult();
 	}
 	
 	/***
 	 * validates a schema, which can only be needed in XML validation - and in pdf validation for additional data
-	 * @param xmlRawData
-	 * @param schemaPath
+	 * @param xmlRawData the XML to be validated
+	 * @param schemaPath the filename of the schema file
+	 * @param section the error message type code
+	 * @param part whether the error message occurs in the pdf or xml part
+	 * @throws IrrecoverableValidationError when any fatal errors arise, e.g. when the source file can not be found
 	 */
-	protected void validateSchema(byte[] xmlRawData, String schemaPath,int section, EPart part) throws IrrecoverableValidationError {
+	protected void validateSchema(byte[] xmlRawData, String schemaPath, int section, EPart part) throws IrrecoverableValidationError {
 		URL schemaFile = ClassLoader.getSystemResource("schema/" + schemaPath);
 		Source xmlData = new StreamSource(new ByteArrayInputStream(xmlRawData));
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);

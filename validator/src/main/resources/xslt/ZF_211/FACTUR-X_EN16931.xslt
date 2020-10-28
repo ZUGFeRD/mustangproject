@@ -48668,7 +48668,7 @@
 	<!--RULE -->
 <xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:DesignatedProductClassification/ram:ClassCode" mode="M1452" priority="1000">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:DesignatedProductClassification/ram:ClassCode" />
-    <xsl:variable name="codeValue5" select="." />
+    <xsl:variable name="codeValue5" select="@listID" />
 
 		<!--ASSERT -->
 <xsl:choose>

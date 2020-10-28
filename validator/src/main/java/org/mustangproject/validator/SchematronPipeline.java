@@ -20,11 +20,11 @@ import javax.xml.transform.stream.StreamSource;
 public class SchematronPipeline {
 	static final ClassLoader cl = SchematronPipeline.class.getClassLoader();
 	private static final TransformerFactory factory = getTransformerFactory();
-	private static final String xslExt = ".xsl"; //$NON-NLS-1$
-	private static final String resourcePath = "iso-schematron-xslt2/"; //$NON-NLS-1$
-	private static final String isoDsdlXsl = resourcePath + "iso_dsdl_include" + xslExt; //$NON-NLS-1$
-	private static final String isoExpXsl = resourcePath + "iso_abstract_expand" + xslExt; //$NON-NLS-1$
-	private static final String isoSvrlXsl = resourcePath + "iso_svrl_for_xslt2" + xslExt; //$NON-NLS-1$
+	private static final String xslExt = ".xsl";
+	private static final String resourcePath = "iso-schematron-xslt2/";
+	private static final String isoDsdlXsl = resourcePath + "iso_dsdl_include" + xslExt;
+	private static final String isoExpXsl = resourcePath + "iso_abstract_expand" + xslExt;
+	private static final String isoSvrlXsl = resourcePath + "iso_svrl_for_xslt2" + xslExt;
 	private static final Templates cachedIsoDsdXsl = createCachedTransform(isoDsdlXsl);
 	private static final Templates cachedExpXsl = createCachedTransform(isoExpXsl);
 	private static final Templates cachedIsoSvrlXsl = createCachedTransform(isoSvrlXsl);
@@ -39,16 +39,16 @@ public class SchematronPipeline {
 		try {
 			return factory.newTemplates(new StreamSource(cl.getResourceAsStream(transName)));
 		} catch (TransformerConfigurationException excep) {
-			throw new IllegalStateException("Policy Schematron transformer XSL " + transName + " not found.", excep); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new IllegalStateException("Policy Schematron transformer XSL " + transName + " not found.", excep); //$NON-NLS-2$
 		}
 	}
 
 	public static void processSchematron(InputStream schematronSource, OutputStream xslDest)
 			throws TransformerException, IOException {
 		File isoDsdResult = createTempFileResult(cachedIsoDsdXsl.newTransformer(), new StreamSource(schematronSource),
-				"IsoDsd"); //$NON-NLS-1$
+				"IsoDsd");
 		File isoExpResult = createTempFileResult(cachedExpXsl.newTransformer(), new StreamSource(isoDsdResult),
-				"ExpXsl"); //$NON-NLS-1$
+				"ExpXsl");
 		cachedIsoSvrlXsl.newTransformer().transform(new StreamSource(isoExpResult), new StreamResult(xslDest));
 		isoDsdResult.delete();
 		isoExpResult.delete();
@@ -56,7 +56,7 @@ public class SchematronPipeline {
 
 	private static File createTempFileResult(final Transformer transformer, final StreamSource toTransform,
 			final String suffix) throws TransformerException, IOException {
-		File result = File.createTempFile("ZUV_", suffix); //$NON-NLS-1$
+		File result = File.createTempFile("ZUV_", suffix);
 		result.deleteOnExit();
 
 		try (FileOutputStream fos = new FileOutputStream(result)) {

@@ -1,6 +1,7 @@
 <configuration>                                                                                                                                                                                                                               
                                                                                                                                                                                                                                               
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">                                                                                                                                                                        
+  <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+    <target>System.err</target>
     <encoder>                                                                                                                                                                                                                                 
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>                                                                                                                                                             
     </encoder>                                                                                                                                                                                                                                
@@ -24,6 +25,6 @@
   <!-- Configure so that it outputs to both console and log file -->                                                                                                                                                                          
   <root level="INFO">                                                                                                                                                                                                                        
     <appender-ref ref="FILE" />                                                                                                                                                                                                               
-    <appender-ref ref="STDOUT" />
+    <appender-ref ref="STDERR" />
   </root>                                                                                                                                                                                                                                     
 </configuration>   

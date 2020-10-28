@@ -30,6 +30,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 
+import org.mustangproject.Item;
+import org.mustangproject.Product;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
@@ -135,7 +137,7 @@ public class ZUGFeRDImporter {
 			/**
 			 * filenames for invoice data (ZUGFeRD v1 and v2, Factur-X)
 			 */
-			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml"))) { //$NON-NLS-1$
+			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml")) || filename.equals("xrechnung.xml") || filename.equals("order-x.xml")) {
 				containsMeta = true;
 
 				PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
@@ -231,9 +233,9 @@ public class ZUGFeRDImporter {
 		return result;
 	}
 
-
-	/**
-	 * Wrapper for protected method exracteString
+	/***
+	 * Wrapper for protected method extractString
+	 * @param xpathStr the xpath expression to be evaluated
 	 * @return the extracted String for the specific path in the document
 	 */
 	public String wExtractString(String xpathStr) {
@@ -251,6 +253,250 @@ public class ZUGFeRDImporter {
 		}
 		return result;
 	}
+
+	/**
+	 * @return the ZUGFeRD Profile
+	 */
+	public String getZUGFeRDProfil() {
+		switch (extractString("//GuidelineSpecifiedDocumentContextParameter//ID")) {
+			case "urn:cen.eu:en16931:2017":
+			case "urn:ferd:CrossIndustryDocument:invoice:1p0:comfort":
+				return "COMFORT";
+			case "urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic":
+			case "urn:ferd:CrossIndustryDocument:invoice:1p0:basic":
+				return "BASIC";
+			case "urn:factur-x.eu:1p0:basicwl":
+				return "BASIC WL";
+			case "urn:factur-x.eu:1p0:minimum":
+				return "MINIMUM";
+			case "urn:ferd:CrossIndustryDocument:invoice:1p0:extended":
+			case "urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended":
+				return "EXTENDED";
+		}
+		return "";
+	}
+
+	/**
+	 * @return the Invoice Currency Code
+	 */
+	public String getInvoiceCurrencyCode() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//ApplicableSupplyChainTradeSettlement//InvoiceCurrencyCode");
+			} else {
+				return extractString("//ApplicableHeaderTradeSettlement//InvoiceCurrencyCode");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
+	 * @return the IssuerAssigned ID
+	 */
+	public String getIssuerAssignedID() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//BuyerOrderReferencedDocument//ID");
+			} else {
+				return extractString("//BuyerOrderReferencedDocument//IssuerAssignedID");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
+	 * @return the BuyerTradeParty ID
+	 */
+	public String getBuyerTradePartyID() {
+		return extractString("//BuyerTradeParty//ID");
+	}
+
+	/**
+	 * @return the Issue Date()
+	 */
+	public String getIssueDate() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//HeaderExchangedDocument//IssueDateTime//DateTimeString");
+			} else {
+				return extractString("//ExchangedDocument//IssueDateTime//DateTimeString");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
+	 * @return the TaxBasisTotalAmount
+	 */
+	public String getTaxBasisTotalAmount() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//SpecifiedTradeSettlementMonetarySummation//TaxBasisTotalAmount");
+			} else {
+				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//TaxBasisTotalAmount");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
+	 * @return the TaxTotalAmount
+	 */
+	public String getTaxTotalAmount() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//SpecifiedTradeSettlementMonetarySummation//TaxTotalAmount");
+			} else {
+				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//TaxTotalAmount");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
+	 * @return the RoundingAmount
+	 */
+	public String getRoundingAmount() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//SpecifiedTradeSettlementMonetarySummation//RoundingAmount");
+			} else {
+				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//RoundingAmount");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
+	 * @return the TotalPrepaidAmount
+	 */
+	public String getPaidAmount() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//SpecifiedTradeSettlementMonetarySummation//TotalPrepaidAmount");
+			} else {
+				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//TotalPrepaidAmount");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
+	 * @return SellerTradeParty GlobalID
+	 */
+	public String getSellerTradePartyGlobalID() {
+		return extractString("//SellerTradeParty//GlobalID");
+	}
+
+	/**
+	 * @return the BuyerTradeParty GlobalID
+	 */
+	public String getBuyerTradePartyGlobalID() {
+		return extractString("//BuyerTradeParty//GlobalID");
+	}
+
+	/**
+	 * @return the BuyerTradeParty SpecifiedTaxRegistration ID
+	 */
+	public String getBuyertradePartySpecifiedTaxRegistrationID() {
+		return extractString("//BuyerTradeParty//SpecifiedTaxRegistration//ID");
+	}
+
+
+	/**
+	 * @return the IncludedNote
+	 */
+	public String getIncludedNote() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//HeaderExchangedDocument//IncludedNote");
+			} else {
+				return extractString("//ExchangedDocument//IncludedNote");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
+	 * @return the BuyerTradeParty Name
+	 */
+	public String getBuyerTradePartyName() {
+		return extractString("//BuyerTradeParty//Name");
+	}
+
+
+
+	/**
+	 * @return the line Total Amount
+	 */
+	public String getLineTotalAmount() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//SpecifiedTradeSettlementMonetarySummation//LineTotalAmount");
+			} else {
+				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//LineTotalAmount");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
+	 * @return the Payment Terms
+	 */
+	public String getPaymentTerms() {
+		return extractString("//SpecifiedTradePaymentTerms//Description");
+	}
+
+	/**
+	 * @return the Taxpoint Date
+	 */
+	public String getTaxPointDate() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//ActualDeliverySupplyChainEvent//OccurrenceDateTime//DateTimeString");
+			} else {
+				return extractString("//ActualDeliverySupplyChainEvent//OccurrenceDateTime//DateTimeString");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	/**
+	 * @return the Invoice ID
+	 */
+	public String getInvoiceID() {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//HeaderExchangedDocument//ID");
+			} else {
+				return extractString("//ExchangedDocument//ID");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
 
 
 	/**
@@ -442,7 +688,7 @@ public class ZUGFeRDImporter {
 		// SpecifiedExchangedDocumentContext is in the schema, so a relatively good
 		// indication if zugferd is present - better than just invoice
 		String meta = getMeta();
-		return (meta != null) && (meta.length() > 0) && ((meta.contains("SpecifiedExchangedDocumentContext") //$NON-NLS-1$
+		return (meta != null) && (meta.length() > 0) && ((meta.contains("SpecifiedExchangedDocumentContext")
 				/* ZF1 */ || meta.contains("ExchangedDocumentContext") /* ZF2 */));
 	}
 
@@ -452,6 +698,28 @@ public class ZUGFeRDImporter {
 		// https://community.oracle.com/blogs/pat/2004/10/23/stupid-scanner-tricks
 		Scanner s = new Scanner(is, "UTF-8").useDelimiter("\\A");
 		return s.hasNext() ? s.next() : "";
+	}
+
+	/**
+	 * returns an instance of PostalTradeAddress for SellerTradeParty section
+	 * @return an instance of PostalTradeAddress
+	 */
+	public PostalTradeAddress getBuyerTradePartyAddress() {
+
+		NodeList nl = null;
+
+		try {
+			if (getVersion() == 1) {
+				nl = getNodeListByPath("//CrossIndustryDocument//SpecifiedSupplyChainTradeTransaction//ApplicableSupplyChainTradeAgreement//BuyerTradeParty//PostalTradeAddress");
+			} else {
+				nl = getNodeListByPath("//CrossIndustryInvoice//SupplyChainTradeTransaction//ApplicableHeaderTradeAgreement//BuyerTradeParty//PostalTradeAddress");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return getAddressFromNodeList(nl);
 	}
 
 	/**
@@ -471,8 +739,14 @@ public class ZUGFeRDImporter {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return address;
+			return null;
 		}
+
+		return getAddressFromNodeList(nl);
+	}
+
+	private PostalTradeAddress getAddressFromNodeList(NodeList nl) {
+		PostalTradeAddress address = new PostalTradeAddress();
 
 		if (nl != null) {
 			for (int i = 0; i < nl.getLength(); i++) {
@@ -484,25 +758,46 @@ public class ZUGFeRDImporter {
 					if (nodeType==Node.ELEMENT_NODE){
 						switch (n.getNodeName()) {
 							case "ram:PostcodeCode":
-								address.setPostCodeCode(n.getFirstChild().getNodeValue());
+								address.setPostCodeCode("");
+								if (n.getFirstChild() != null) {
+									address.setPostCodeCode(n.getFirstChild().getNodeValue());
+								}
 								break;
 							case "ram:LineOne":
-								address.setLineOne(n.getFirstChild().getNodeValue());
+								address.setLineOne("");
+								if (n.getFirstChild() != null) {
+									address.setLineOne(n.getFirstChild().getNodeValue());
+								}
 								break;
 							case "ram:LineTwo":
-								address.setLineTwo(n.getFirstChild().getNodeValue());
+								address.setLineTwo("");
+								if (n.getFirstChild() != null) {
+									address.setLineTwo(n.getFirstChild().getNodeValue());
+								}
 								break;
 							case "ram:LineThree":
-								address.setLineThree(n.getFirstChild().getNodeValue());
+								address.setLineThree("");
+								if (n.getFirstChild() != null) {
+									address.setLineThree(n.getFirstChild().getNodeValue());
+								}
 								break;
 							case "ram:CityName":
-								address.setCityName(n.getFirstChild().getNodeValue());
+								address.setCityName("");
+								if (n.getFirstChild() != null) {
+									address.setCityName(n.getFirstChild().getNodeValue());
+								}
 								break;
 							case "ram:CountryID":
-								address.setCountryID(n.getFirstChild().getNodeValue());
+								address.setCountryID("");
+								if (n.getFirstChild() != null) {
+									address.setCountryID(n.getFirstChild().getNodeValue());
+								}
 								break;
 							case "ram:CountrySubDivisionName":
-								address.setCountrySubDivisionName(n.getFirstChild().getNodeValue());
+								address.setCountrySubDivisionName("");
+								if (n.getFirstChild() != null) {
+									address.setCountrySubDivisionName(n.getFirstChild().getNodeValue());
+								}
 								break;
 						}
 					}
@@ -511,7 +806,6 @@ public class ZUGFeRDImporter {
 		}
 		return address;
 	}
-
 
 	/**
 	 * returns a list of LineItems
@@ -556,16 +850,16 @@ public class ZUGFeRDImporter {
 					case "ram:SpecifiedTradeProduct":
 
 						node = getNodeByName(nn.getChildNodes(), "ram:SellerAssignedID");
-						lineItem.product.setSellerAssignedID(getNodeValue(node));
+						lineItem.getProduct().setSellerAssignedID(getNodeValue(node));
 
 						node = getNodeByName(nn.getChildNodes(), "ram:BuyerAssignedID");
-						lineItem.product.setBuyerAssignedID(getNodeValue(node));
+						lineItem.getProduct().setBuyerAssignedID(getNodeValue(node));
 
 						node = getNodeByName(nn.getChildNodes(), "ram:Name");
-						lineItem.product.setName(getNodeValue(node));
+						lineItem.getProduct().setName(getNodeValue(node));
 
 						node = getNodeByName(nn.getChildNodes(), "ram:Description");
-						lineItem.product.setDescription(getNodeValue(node));
+						lineItem.getProduct().setDescription(getNodeValue(node));
 						break;
 
 					case "ram:SpecifiedLineTradeDelivery":
@@ -579,7 +873,7 @@ public class ZUGFeRDImporter {
 						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");
 						if (node != null) {
 							node = getNodeByName(node.getChildNodes(), "ram:RateApplicablePercent");
-							lineItem.product.setVATPercent(tryBigDecimal(getNodeValue(node)));
+							lineItem.getProduct().setVATPercent(tryBigDecimal(getNodeValue(node)));
 						}
 
 						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");
@@ -600,7 +894,7 @@ public class ZUGFeRDImporter {
 						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");
 						if (node != null) {
 							node = getNodeByName(node.getChildNodes(), "ram:ApplicablePercent");
-							lineItem.product.setVATPercent(tryBigDecimal(getNodeValue(node)));
+							lineItem.getProduct().setVATPercent(tryBigDecimal(getNodeValue(node)));
 						}
 
 						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");

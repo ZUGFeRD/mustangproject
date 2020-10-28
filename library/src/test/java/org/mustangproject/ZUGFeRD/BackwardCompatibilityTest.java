@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
+import org.mustangproject.TradeParty;
 
 /***
  * This is a test to confirm the minimum steps to implement a interface are still sufficient
@@ -34,7 +35,7 @@ import junit.framework.TestCase;
  * @author jstaerk
  *
  */
-public class BackwardCompatibilityTest extends TestCase implements IZUGFeRDExportableTransaction{
+public class BackwardCompatibilityTest extends TestCase implements IExportableTransaction {
 
 	final String TARGET_PDF_ZF1 = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506zf1.pdf";
 	final String TARGET_PDF_ZF2 = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506zf2.pdf";
@@ -55,9 +56,9 @@ public class BackwardCompatibilityTest extends TestCase implements IZUGFeRDExpor
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(1).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(1).setProfile("EN16931").load(SOURCE_PDF)) {
 
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF_ZF1);
 
@@ -95,9 +96,9 @@ public class BackwardCompatibilityTest extends TestCase implements IZUGFeRDExpor
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile("EN16931").load(SOURCE_PDF)) {
 
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF_ZF2);
 
@@ -133,10 +134,9 @@ public class BackwardCompatibilityTest extends TestCase implements IZUGFeRDExpor
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setZUGFeRDVersion(2).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile("EN16931").load(SOURCE_PDF)) {
 
-			ze.setFacturX();
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF_FX);
 
@@ -196,11 +196,6 @@ public class BackwardCompatibilityTest extends TestCase implements IZUGFeRDExpor
 
 		@Override
 		public String getOwnBIC() {
-			return "bla";
-		}
-
-		@Override
-		public String getOwnBankName() {
 			return "bla";
 		}
 
@@ -307,11 +302,16 @@ public class BackwardCompatibilityTest extends TestCase implements IZUGFeRDExpor
 		return new GregorianCalendar(2019, Calendar.JUNE, 10).getTime();
 	}
 
-	
+
 
 	@Override
-	public IZUGFeRDExportableContact getRecipient() {
-		return new Contact();
+	public IZUGFeRDExportableTradeParty getRecipient() {
+		return new TradeParty("name","street","zip","city","DE");
+	}
+
+	@Override
+	public IZUGFeRDExportableTradeParty getSender() {
+		return new TradeParty("Bei Spiel GmbH","street","zip","city","DE");
 	}
 	
 		

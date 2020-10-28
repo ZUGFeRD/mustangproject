@@ -39,6 +39,7 @@ public class ZUGFeRDValidator {
 	protected boolean displayXMLValidationOutput;
 	protected long startTime;
 	protected boolean optionsRecognized;
+	protected boolean disableNotices = false;
 	protected String Signature;
 	protected boolean wasCompletelyValid = false;
 	protected String logAppend=null;
@@ -77,7 +78,7 @@ public class ZUGFeRDValidator {
 		boolean xmlValidity;
 		context.clear();
 		StringBuffer finalStringResult = new StringBuffer();
-		SimpleDateFormat isoDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //$NON-NLS-1$
+		SimpleDateFormat isoDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
 		startTime = Calendar.getInstance().getTimeInMillis();
 		try {
@@ -110,7 +111,9 @@ public class ZUGFeRDValidator {
 			} else {
 				BigFileSearcher searcher = new BigFileSearcher();
 				XMLValidator xv = new XMLValidator(context);
-
+				if (disableNotices) {
+					xv.disableNotices();
+				}
 				byte[] pdfSignature = { '%', 'P', 'D', 'F' };
 				boolean isPDF = searcher.indexOf(file, pdfSignature) == 0;
 				if (isPDF) {
@@ -250,6 +253,12 @@ public class ZUGFeRDValidator {
 		return sw.toString();
 	}
 
+	/***
+	 * don't report notices in validation report
+	 */
+	public void disableNotices() {
+		disableNotices=true;
+	}
 	/**
 	 * Read the file and calculate the SHA-1 checksum
 	 * 

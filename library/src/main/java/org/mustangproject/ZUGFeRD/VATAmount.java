@@ -56,6 +56,7 @@ public class VATAmount {
 
 	public void setBasis(BigDecimal basis) {
 		this.basis = basis;
+
 	}
 
 	public BigDecimal getCalculated() {

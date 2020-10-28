@@ -22,9 +22,7 @@ import junit.framework.TestCase;
 
 import java.math.BigDecimal;
 
-import org.mustangproject.ZUGFeRD.MustangReaderTestCase.Item;
-
-public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRDExportableTransaction {
+public abstract class MustangReaderTestCase extends TestCase implements IExportableTransaction {
 
 	public MustangReaderTestCase(String testName) {
 		super(testName);
@@ -32,7 +30,7 @@ public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRD
 	
 
 	@Override
-	public IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
+	public IZUGFeRDTradeSettlement[] getTradeSettlement() {
 		Payment[] payments = new Payment[1];
 		payments[0] = new Payment();
 		return payments;
@@ -41,23 +39,8 @@ public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRD
 	protected class Payment implements IZUGFeRDTradeSettlementPayment {
 
 		@Override
-		public String getOwnKto() {
-			return "44421800";
-		}
-
-		@Override
-		public String getOwnBLZ() {
-			return "41441604";
-		}
-
-		@Override
 		public String getOwnBIC() {
 			return "COBADEFFXXX";
-		}
-
-		@Override
-		public String getOwnBankName() {
-			return "Commerzbank";
 		}
 
 		@Override
@@ -71,7 +54,7 @@ public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRD
 		}
 	}
 
-	protected class RecipientContact implements IZUGFeRDExportableContact {
+	protected class RecipientTradeParty implements IZUGFeRDExportableTradeParty {
 
 		@Override
 		public String getCountry() {
@@ -103,7 +86,7 @@ public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRD
 			return "88802";
 		}
 	}
-	
+
 	protected class SenderContact implements IZUGFeRDExportableContact {
 
 
@@ -121,6 +104,41 @@ public abstract class MustangReaderTestCase extends TestCase implements IZUGFeRD
 		@Override
 		public String getEMail() {
 			return "info@localhost.local";
+		}
+
+	}
+
+	protected class SenderTradeParty implements IZUGFeRDExportableTradeParty {
+
+
+		@Override
+		public String getName() {
+			return "Bei Spiel GmbH";
+		}
+
+		@Override
+		public String getZIP() {
+			return "12345";
+		}
+
+		@Override
+		public String getCountry() {
+			return "DE";
+		}
+
+		@Override
+		public String getLocation() {
+			return "Stadthausen";
+		}
+
+		@Override
+		public String getStreet() {
+			return "Ecke 12";
+		}
+
+		@Override
+		public String getTaxID() {
+			return "0815";
 		}
 
 	}

@@ -31,13 +31,13 @@ import java.nio.charset.StandardCharsets;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MustangReaderWriterCustomXMLTest extends TestCase {
-
 	/**
 	 * Create the test case
 	 *
 	 * @param testName name of the test case
 	 */
 	public MustangReaderWriterCustomXMLTest(String testName) {
+
 		super(testName);
 	}
 
@@ -58,7 +58,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		try {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
-			ZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1Factory().setProducer("My Application").setCreator("Test").setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931)
+			IZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1().setProducer("My Application").setCreator("Test").setProfile(Profiles.getByName("EN16931"))
 					.load(SOURCE_PDF);
 
 			final byte[] UTF8ByteOrderMark = new byte[]{(byte) 0xef, (byte) 0xbb, (byte) 0xbf};
@@ -256,7 +256,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					"		</ram:ApplicableHeaderTradeSettlement>\n" +
 					"	</rsm:SupplyChainTradeTransaction>\n" +
 					"</rsm:CrossIndustryInvoice>";
-			zea1.setZUGFeRDXMLData(ownZUGFeRDXML.getBytes("UTF-8"));
+			zea1.setXML(ownZUGFeRDXML.getBytes("UTF-8"));
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			zea1.disableAutoClose(true);
 			zea1.export(TARGET_PDF);
@@ -297,11 +297,11 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		try {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
-			ZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1Factory()
+			IZUGFeRDExporter zea1 = new ZUGFeRDExporterFromA1()
 					.setProducer("My Application")
 					.setCreator("Test")
 					.setZUGFeRDVersion(1)
-					.setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.BASIC)
+					.setProfile(Profiles.getByName("BASIC",1))
 					.load(SOURCE_PDF);
 			/* we have much more information than just in the basic profile (comfort or extended) but it's perfectly valid to provide more information, just not less. */
 			String ownZUGFeRDXML = "<rsm:CrossIndustryDocument xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12\" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15\" xmlns:rsm=\"urn:ferd:CrossIndustryDocument:invoice:1p0\">\n"
@@ -437,7 +437,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					+ "<ram:Name>Heiße Luft pro Liter</ram:Name>\n" + "<ram:Description/>\n"
 					+ "</ram:SpecifiedTradeProduct>\n" + "</ram:IncludedSupplyChainTradeLineItem>\n"
 					+ "</rsm:SpecifiedSupplyChainTradeTransaction>\n" + "</rsm:CrossIndustryDocument>";
-			zea1.setZUGFeRDXMLData(ownZUGFeRDXML.getBytes("UTF-8"));
+			zea1.setXML(ownZUGFeRDXML.getBytes("UTF-8"));
 
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			zea1.disableAutoClose(true);

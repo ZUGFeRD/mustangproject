@@ -30,7 +30,7 @@ import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
 
 import java.math.BigDecimal;
 
-public interface IZUGFeRDExportableItem {
+public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 
 	IZUGFeRDExportableProduct getProduct();
 
@@ -46,6 +46,10 @@ public interface IZUGFeRDExportableItem {
 	 */
 	BigDecimal getPrice();
 
+	@Override
+	default BigDecimal getValue() {
+		return getPrice();
+	}
 	/**
 	 * how many get billed
 	 *

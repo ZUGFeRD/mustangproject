@@ -76,8 +76,8 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 
 
 	@Override
-	public IZUGFeRDExportableContact getOwnContact() {
-		return new SenderContact();
+	public IZUGFeRDExportableTradeParty getSender() {
+		return new SenderTradeParty();
 		
 	}
 
@@ -97,8 +97,8 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 	}
 
 	@Override
-	public IZUGFeRDExportableContact getRecipient() {
-		return new RecipientContact();
+	public IZUGFeRDExportableTradeParty getRecipient() {
+		return new RecipientTradeParty();
 	}
 
 	@Override
@@ -150,6 +150,7 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 		return "AB321";
 	}
 
+
 	/**
 	 * Create the test case
 	 *
@@ -180,8 +181,8 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
-		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
+		assertEquals(zi.getBIC(), "COBADEFFXXX");
+		assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getDueDate(), "20170530");
 		assertEquals(zi.getForeignReference(), getNumber());
@@ -202,19 +203,19 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 
 		try (InputStream SOURCE_PDF =
 					 this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
-
-			 ZUGFeRDExporter ze = new ZUGFeRDExporterFromA3Factory()
+		) {
+			ZUGFeRDExporterFromA3 ze = new ZUGFeRDExporterFromA3()
 					 .setProducer("My Application")
 					 .setCreator(System.getProperty("user.name"))
 				 	 .setZUGFeRDVersion(1)
-					 .ignorePDFAErrors()
-					 .load(SOURCE_PDF)) {
-			ze.PDFattachZugferdFile(this);
+					 .load(SOURCE_PDF);
+			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryDocument"));
 			ze.export(TARGET_PDF);
 		} catch (IOException e) {
-			fail("IOException should not happen in testEdgeExport");
+			e.printStackTrace();
+			fail("IOException should not happen in testEdgeExport ");
 		}
 
 		// now check the contents (like MustangReaderTest)
@@ -222,8 +223,8 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 
 		// Reading ZUGFeRD
 		assertEquals("571.04", zi.getAmount());
-		assertEquals(getTradeSettlementPayment()[0].getOwnBIC(), zi.getBIC());
-		assertEquals(getTradeSettlementPayment()[0].getOwnIBAN(), zi.getIBAN());
+		assertEquals("COBADEFFXXX", zi.getBIC());
+		assertEquals("DE88 2008 0000 0970 3757 00", zi.getIBAN());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 		try {

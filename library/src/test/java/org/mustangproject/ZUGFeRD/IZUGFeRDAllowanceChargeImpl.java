@@ -24,9 +24,10 @@ public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
 	private BigDecimal totalAmount;
 	private String reason;
 	private BigDecimal taxPercent;
+	boolean isCharge=true;
 
 	@Override
-	public BigDecimal getTotalAmount() {
+	public BigDecimal getTotalAmount(IAbsoluteValueProvider currentItem) {
 		return totalAmount;
 	}
 
@@ -38,6 +39,16 @@ public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
 	@Override
 	public BigDecimal getTaxPercent() {
 		return taxPercent;
+	}
+
+	@Override
+	public boolean isCharge() {
+		return isCharge;
+	}
+
+	public IZUGFeRDAllowanceChargeImpl setAllowance() {
+		isCharge = false;
+		return this;
 	}
 
 	public IZUGFeRDAllowanceChargeImpl setTotalAmount(BigDecimal totalAmount) {

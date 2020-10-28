@@ -24,6 +24,11 @@ public interface IXMLProvider {
 
 	public void setTest();
 
-	public void generateXML(IZUGFeRDExportableTransaction trans);
+	public void generateXML(IExportableTransaction trans);
+
+	public void setProfile(Profile p);
+
+	public Profile getProfile();
+
 
 }

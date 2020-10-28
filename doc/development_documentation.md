@@ -3,7 +3,7 @@
 
 1. build
 
-as excercise to check if the neccessary tools are there, the build is in a stable state and works on your platform, e.g. download and extract https://github.com/ZUGFeRD/mustangproject/archive/master.zip and run ./mvnw clean package
+To check if the necessary tools are there, the build is in a stable state and works on your platform, e.g. download and extract https://github.com/ZUGFeRD/mustangproject/archive/master.zip and run ./mvnw clean package
 
 Mvnw is a maven wrapper which will download maven.Maven is the dependency management tool which will download all libraries, their dependencies, and build the whole thing.
 
@@ -27,6 +27,20 @@ If you do a pull request, please do a feature branch, e.g. if you are working on
 Most of mustang is a library, adding (autmated junit) test cases is often not only the most sustainable but also the fastest way to see if new/changed functionality works. If something is changed so that old test cases break on purpose please do not just remove them but take the time to fix the test cases
 
 
+## Architecture
+
+Mustang contains a library to read/write e-invoices, 
+a validator library  
+(and can also read/write e-invoices, but is substantially 
+larger) and a commandline application using the latter 
+library.
+
+The validator component embeds VeraPDF, a open-source
+PDF/A-validator, via maven dependency and uses standard java
+checks against schema and ph-schematron for checks against the schematron
+to validate the XML part of the invoices.
+
+![architecture of the validator](ZUV-Architektur.svg "Graph of the architecture of the validator component")
 
 ## New build
 
@@ -46,7 +60,13 @@ can be used as debug configuration goal in Eclipse. In that case you can set bre
 
 ## Validate
 
-[ZUV](https://github.com/ZUGFeRD/ZUV/) can be used to validate generated files.
+The former ZUGFeRD VeraPDF [ZUV](https://github.com/ZUGFeRD/ZUV/) validator
+is now part of Mustangproject. 
+The JUnit tests of the validator component will also run through a couple of
+test files of the library component.
+
+
+
 
 ## Deployment
 
@@ -59,8 +79,28 @@ As „servers“, enter the following
       <id>github</id> 
       <password>GITHUB-TOKEN</password> 
     </server> 
+    <server> 
+      <id>ossrh</id> 
+      <username>jstaerk</username> 
+      <password>JIRA-PASSWORD</password> 
+    </server> 
    </servers> 
 ```
+Add a profiles section to settings.xml
+```
+  <profiles>
+    <profile>
+      <id>ossrh</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <gpg.passphrase>PASSPHRASE</gpg.passphrase>
+      </properties>
+    </profile>
+  </profiles>
+```
+
 The whole settings.xml then looks e.g. like this
 ```xml
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
@@ -77,21 +117,39 @@ The whole settings.xml then looks e.g. like this
       	<id>github</id> 
       	<password>TOKEN</password> 
         </server> 
+    <server> 
+      <id>ossrh</id> 
+      <username>jstaerk</username> 
+      <password>JIRA-PASSWORD</password> 
+    </server> 
+
       </servers>
       <mirrors/>
       <proxies/>
-      <profiles/>
+      <profiles>
+        <profile>
+          <id>ossrh</id>
+          <activation>
+            <activeByDefault>true</activeByDefault>
+          </activation>
+          <properties>
+            <gpg.passphrase>PASSPHRASE</gpg.passphrase>
+          </properties>
+        </profile>
+      </profiles>
       <activeProfiles/>
 </settings>
 ```
 
-The password is generated on github.
+The TOKEN is generated on github.
+Deployment to maven central is described e.g. on [dzone](https://dzone.com/articles/publish-your-artifacts-to-maven-central).
 See the following screenshot:
 
 
 Sign in in GitHub and click on the profile picture -> Settings. Now just generate a new token and set the checkboxes from the screenshot.
 ![screenshot](development_documentation_screenshot_github_settings.png "Screenshot Github Settings")
  The Token-ID is the password. 
+
 
 ## Integrate before release
 
@@ -113,6 +171,7 @@ Change to the project directory and run
   * clean the release with `mvn release:clean` and prepare the release with
   * `mvn release:prepare  -DignoreSnapshots=true` and enter the version numbers. 
   * After that is through you can create a new release via `mvn release:perform -Dmaven.java.skip=True`.This will also update the maven repo. 
+  * Experimental: mvn deploy -Dregistry=https://maven.pkg.github.com/ZUGFeRD -Dtoken=GH_TOKEN
   
   ![screenshot](development_documentation_screenshot_release.png "Screenshot Release")
   
