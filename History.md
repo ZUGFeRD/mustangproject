@@ -3,12 +3,12 @@
 
 - support for ZF 2.1.1, i.e. "Reference profile" Xrechnung 
 - ZF 2.1.1 now default (up to 1.7.8 ZF2 could be set but ZF1 was default)
-- removed jaxb
-- pushprovider
+- removed jaxb #87
+- fluent setter api/pushprovider #40 
 - new xrechnung profile
 - visualization? zugferdvisualizer?
 - german bank account numbers can no longer be specified (dropped in favor of IBAN and BIC)
-- factory for xrechnung
+- factory for xrechnung #86
 - moved to Maven central
 - complete or discard read into push provider
 - integrates validator
@@ -46,7 +46,7 @@ switch
   - delivery period, 
   - corrected invoices,
   - contacts also for recipients 
-  - absolute and relative allowances and charges on item and document level,
+  - absolute and relative allowances and charges on item and document level #135,
   - support contact fax numbers
 
 ### 2.0 still todo
