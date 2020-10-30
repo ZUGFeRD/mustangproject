@@ -71,6 +71,10 @@ public class Main {
 				+ "                [--profile <...>]: set ZUGFeRD profile\n"
 				+ "                        For ZUGFeRD v1: <B>ASIC, <C>OMFORT or EX<T>ENDED\n"
 				+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED "
+				+ "        upgrade   upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
+				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
+				+ "                [--source <filename>]: set input XML ZUGFeRD 1 file\n"
+				+ "                [--out <filename>]: set output XML ZUGFeRD 2 file\n"
 				+ "        validate  validate XML or PDF file \n"
 				+ "                [--no-notices]: refrain from reporting notices\n"
 				+ "                [--logAppend=<text>]: text to be added to log line\n"
@@ -221,8 +225,35 @@ public class Main {
 
 		return selectedName;
 	}
+	private static void performUpgrade(String xmlName, String outName) throws IOException, TransformerException {
 
-	// /opt/local/bin/mvn clean compile assembly:single
+		// Get params from user if not already defined
+		if (xmlName == null) {
+			xmlName = getFilenameFromUser("ZUGFeRD 1.0 XML source", "ZUGFeRD-invoice.xml", "xml", true, false);
+		} else {
+			System.out.println("ZUGFeRD 1.0 XML source set to " + xmlName);
+		}
+		if (outName == null) {
+			outName = getFilenameFromUser("ZUGFeRD 2.0 XML target", "factur-x.xml", "xml", false, true);
+		} else {
+			System.out.println("ZUGFeRD 2 XML target to " + outName);
+		}
+
+		// Verify params
+		ensureFileExists(xmlName);
+		ensureFileNotExists(outName);
+
+		// All params are good! continue...
+		XMLUpgrader zmi = new XMLUpgrader();
+		String xml = zmi.migrateFromV1ToV2(xmlName);
+		Files.write(Paths.get(outName), xml.getBytes());
+		System.out.println("Written to " + outName);
+
+	}
+	/***
+	 * the main function of the commandline tool...
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		try {
 
@@ -302,6 +333,9 @@ public class Main {
 				optionsRecognized=true;
 			} else if ((action!=null)&&(action.equals("visualize")))  {
 				performVisualization(sourceName, outName);
+				optionsRecognized=true;
+			} else if ((action!=null)&&(action.equals("upgrade")))  {
+				performUpgrade(sourceName, outName);
 				optionsRecognized=true;
 			} else if ((action!=null)&&(action.equals("validate"))) {
 				optionsRecognized=performValidate(sourceName, noNotices!=null&&noNotices, parser.getOptionValue(logAppendOption));

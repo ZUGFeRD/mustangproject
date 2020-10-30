@@ -3,12 +3,13 @@
 
 - support for ZF 2.1.1, i.e. "Reference profile" Xrechnung 
 - ZF 2.1.1 now default (up to 1.7.8 ZF2 could be set but ZF1 was default)
-- removed jaxb
-- pushprovider
+- removed jaxb #87
+- fluent setter api/pushprovider #40 
 - new xrechnung profile
 - visualization? zugferdvisualizer?
+- migration feature (XSLT upgrade of ZF1 to ZF2) has been improved and moved from the commandline into the library
 - german bank account numbers can no longer be specified (dropped in favor of IBAN and BIC)
-- factory for xrechnung
+- factory for xrechnung #86
 - moved to Maven central
 - complete or discard read into push provider
 - integrates validator
@@ -17,7 +18,6 @@
 - getSellerTradePartyAddress (PR #157 ) thanks to aberndt-hub 
 - switched from eclipse to IntelliJ
 - added ph-schematron-maven-plugin so that xrechnung xslt can be generated
-- removed migration feature (XSLT upgrade of ZF1)
 - be able to recursively validate directories
 - be able to ignore input pdf errors with -i
 - be able to recursively scan directories using validateExpectValid/validateExpectInvalid
@@ -46,7 +46,7 @@ switch
   - delivery period, 
   - corrected invoices,
   - contacts also for recipients 
-  - absolute and relative allowances and charges on item and document level,
+  - absolute and relative allowances and charges on item and document level #135,
   - support contact fax numbers
 
 ### 2.0 still todo
@@ -58,6 +58,9 @@ switch
 - *from A3 does not seem tow ork see mustangreaderwriteredgetest:testedgeexport
 - xmp errors may not show correctly in log
 - confirm correct generation from pdf/a3 files zf2edgetest
+- visualization tests
+- migration tests
+- migration documentation
 - *correctiontest exports zf1+zf2?
 - *USt 0% wird aus invoice-klasse noch nicht sauber abgefangen
 - finalize invoiceimporter
