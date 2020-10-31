@@ -27,6 +27,11 @@ import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 
 /***
  * Classname ZF2ZInvoiceImporterTest is alphabetical behind the tests which will create the file
@@ -49,6 +54,15 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 		assertEquals("Heiße Luft pro Liter", invoice.getZFItems()[2].getProduct().getName());
 		assertEquals("LTR", invoice.getZFItems()[2].getProduct().getUnit());
 		assertEquals("7.00", invoice.getZFItems()[0].getProduct().getVATPercent().toString());
+		assertEquals("RE-20170509/505", invoice.getNumber());
+
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+		assertEquals("2017-05-09",sdf.format(invoice.getIssueDate()));
+		assertEquals("2017-05-07",sdf.format(invoice.getDeliveryDate()));
+		assertEquals("2017-05-30",sdf.format(invoice.getDueDate()));
+
+
+		// name street location zip country, contact name phone email, total amount
 
 
 

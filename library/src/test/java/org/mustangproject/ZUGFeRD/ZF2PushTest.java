@@ -49,7 +49,7 @@ public class ZF2PushTest extends TestCase {
 		// the writing part
 
 		String orgname = "Test company";
-		String number = "123";
+		String number = "RE-20170509/505";
 		String amountStr = "1.00";
 		BigDecimal amount = new BigDecimal(amountStr);
 		String occurenceFrom = "20201001";
