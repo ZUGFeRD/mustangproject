@@ -29,8 +29,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Base64;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import net.sf.saxon.value.Base64BinaryValue;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -498,13 +499,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 		// Additional Documents of XRechnung (Rechnungsbegruendende Unterlagen - BG-24 XRechnung)
 		if (trans.getAdditionalReferencedDocuments() != null) {
 			for (FileAttachment f : trans.getAdditionalReferencedDocuments()) {
-				// final String documentContent = Base64.encodeBase64String(f.getData());
+				final String documentContent = new String(Base64.getEncoder().encodeToString(f.getData()));
 				xml = xml + "  <ram:AdditionalReferencedDocument>\n"
 						+ "    <ram:IssuerAssignedID>" + f.getFilename() + "</ram:IssuerAssignedID>\n"
 						+ "    <ram:TypeCode>916</ram:TypeCode>\n"
 						+ "    <ram:Name>" + f.getDescription() + "</ram:Name>\n"
 						+ "    <ram:AttachmentBinaryObject mimeCode=\"" + f.getMimetype() + "\"\n"
-//						+ "      filename=\"" + f.getFilename() + ">" + documentContent + "\n"
+						+ "      filename=\"" + f.getFilename() + ">" + documentContent + "\n"
 						+ "  </ram:AdditionalReferencedDocument>\n";
 			}
 		}
