@@ -31,7 +31,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 					"//BuyerTradeParty");
 			NodeList BuyerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
-			zpp= new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number);
+			zpp = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number);
 //.addItem(new Item(new Product("Testprodukt","","C62",new BigDecimal(0)),amount,new BigDecimal(1.0)))
 			zpp.setOwnOrganisationName(extractString("//SellerTradeParty/Name"));
 
@@ -42,11 +42,17 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			if (nodes.getLength() == 0) {
 			} else {
 				for (int i = 0; i < nodes.getLength(); i++) {
+
+					String price = "0";
+					String name = "";
+					String description = "";
+					String quantity = "0";
+					String vatPercent = "0";
+					String unitCode = "0";
+
 					//nodes.item(i).getTextContent())) {
 					Node currentItemNode = nodes.item(i);
 					NodeList itemChilds = currentItemNode.getChildNodes();
-					String price = "0";
-					String quantity = "0";
 					for (int itemChildIndex = 0; itemChildIndex < itemChilds.getLength(); itemChildIndex++) {
 						if (itemChilds.item(itemChildIndex).getNodeName().equals("ram:SpecifiedLineTradeAgreement")) {
 							NodeList tradeLineChilds = itemChilds.item(itemChildIndex).getChildNodes();
@@ -67,13 +73,35 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 							for (int tradeLineChildIndex = 0; tradeLineChildIndex < tradeLineChilds.getLength(); tradeLineChildIndex++) {
 								if (tradeLineChilds.item(tradeLineChildIndex).getNodeName().equals("ram:BilledQuantity")) {
 									quantity = tradeLineChilds.item(tradeLineChildIndex).getTextContent();
+									unitCode = tradeLineChilds.item(tradeLineChildIndex).getAttributes().getNamedItem("unitCode").getNodeValue();
 								}
 							}
 						}
+						if (itemChilds.item(itemChildIndex).getNodeName().equals("ram:SpecifiedTradeProduct")) {
+							NodeList tradeProductChilds = itemChilds.item(itemChildIndex).getChildNodes();
+							for (int tradeProductChildIndex = 0; tradeProductChildIndex < tradeProductChilds.getLength(); tradeProductChildIndex++) {
+								if (tradeProductChilds.item(tradeProductChildIndex).getNodeName().equals("ram:Name")) {
+									name = tradeProductChilds.item(tradeProductChildIndex).getTextContent();
+								}
+							}
+						}
+						if (itemChilds.item(itemChildIndex).getNodeName().equals("ram:SpecifiedLineTradeSettlement")) {
+							NodeList tradeSettlementChilds = itemChilds.item(itemChildIndex).getChildNodes();
+							for (int tradeSettlementChildIndex = 0; tradeSettlementChildIndex < tradeSettlementChilds.getLength(); tradeSettlementChildIndex++) {
+								if (tradeSettlementChilds.item(tradeSettlementChildIndex).getNodeName().equals("ram:ApplicableTradeTax")) {
+									NodeList taxChilds = tradeSettlementChilds.item(tradeSettlementChildIndex).getChildNodes();
+									for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
+										if (taxChilds.item(taxChildIndex).getNodeName().equals("ram:RateApplicablePercent")) {
+											vatPercent = taxChilds.item(taxChildIndex).getTextContent();
+										}
+									}
+								}
+							}
+						}
+
+
 					}
-//				Logger.getLogger(ZUGFeRDInvoiceImporter.class.getName()).log(Level.INFO, "deb "+price);
-// dummywerte sind derzeit noch produkname, beschreibung, unit,  VAT percent, menge
-					zpp.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), new BigDecimal(price), new BigDecimal(quantity)));
+					zpp.addItem(new Item(new Product(name, description, unitCode, new BigDecimal(vatPercent)), new BigDecimal(price), new BigDecimal(quantity)));
 				}
 
 			}

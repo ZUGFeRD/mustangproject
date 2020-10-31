@@ -45,11 +45,12 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 		assertEquals(3, invoice.getZFItems().length);
 		assertEquals("400.0000", invoice.getZFItems()[1].getQuantity().toString());
 
-	/*	assertEquals("160.0000", invoice.getZFItems()[0].getPrice().toString());
+		assertEquals("160.0000", invoice.getZFItems()[0].getPrice().toString());
 		assertEquals("Heiße Luft pro Liter", invoice.getZFItems()[2].getProduct().getName());
-		assertEquals("7", invoice.getZFItems()[0].getProduct().getVATPercent().toString());
+		assertEquals("LTR", invoice.getZFItems()[2].getProduct().getUnit());
+		assertEquals("7.00", invoice.getZFItems()[0].getProduct().getVATPercent().toString());
 
-*/
+
 
 	}
 
