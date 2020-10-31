@@ -15,10 +15,14 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		super(filename);
 	}
 
+	/***
+	 * This will parse a XML into a invoice object
+	 * @return the parsed invoice object
+	 */
 	public Invoice extractInvoice() {
 
 		String number = "";
-		/**
+		/*
 		 * dummywerte sind derzeit noch setDueDate setIssueDate setDeliveryDate setSender setRecipient setnumber
 		 * bspw. due date //ExchangedDocument//IssueDateTime//DateTimeString : due date optional
 		 */
@@ -27,14 +31,16 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		Invoice zpp = null;
 		try {
 			XPathExpression xpr = xpath.compile(
-					"//SellerTradeParty");
+					"//*[local-name()=\"SellerTradeParty\"]");
 			NodeList SellerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+
 			xpr = xpath.compile(
-					"//BuyerTradeParty");
+					"//*[local-name()=\"BuyerTradeParty\"]");
 			NodeList BuyerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			xpr = xpath.compile(
 					"//*[local-name()=\"ExchangedDocument\"]");
 			NodeList ExchangedDocumentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+
 
 			Date issueDate = null;
 			Date dueDate = null;
@@ -46,18 +52,6 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				NodeList exchangedDocumentChilds = exchangedDocumentNode.getChildNodes();
 				for (int documentChildIndex = 0; documentChildIndex < exchangedDocumentChilds.getLength(); documentChildIndex++) {
 					if (exchangedDocumentChilds.item(documentChildIndex).getNodeName().equals("ram:ID")) {
-	/*					NodeList tradeLineChilds = itemChilds.item(documentChildIndex).getChildNodes();
-						for (int tradeLineChildIndex = 0; tradeLineChildIndex < tradeLineChilds.getLength(); tradeLineChildIndex++) {
-							if (tradeLineChilds.item(tradeLineChildIndex).getNodeName().equals("ram:NetPriceProductTradePrice")) {
-								NodeList netChilds = tradeLineChilds.item(tradeLineChildIndex).getChildNodes();
-								for (int netIndex = 0; netIndex < netChilds.getLength(); netIndex++) {
-									if (netChilds.item(netIndex).getNodeName().equals("ram:ChargeAmount")) {
-										price = netChilds.item(netIndex).getTextContent();//ram:ChargeAmount
-
-									}
-								}
-							}
-						}*/
 						number = exchangedDocumentChilds.item(documentChildIndex).getTextContent();
 					}
 					if (exchangedDocumentChilds.item(documentChildIndex).getNodeName().equals("ram:IssueDateTime")) {
@@ -128,7 +122,6 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			zpp = new Invoice().setDueDate(dueDate).setDeliveryDate(deliveryDate).setIssueDate(issueDate).setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number);
 //.addItem(new Item(new Product("Testprodukt","","C62",new BigDecimal(0)),amount,new BigDecimal(1.0)))
 			zpp.setOwnOrganisationName(extractString("//SellerTradeParty/Name"));
-
 			xpr = xpath.compile(
 					"//*[local-name()=\"IncludedSupplyChainTradeLineItem\"]");
 			NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
@@ -209,4 +202,5 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 		return zpp;
 	}
+
 }

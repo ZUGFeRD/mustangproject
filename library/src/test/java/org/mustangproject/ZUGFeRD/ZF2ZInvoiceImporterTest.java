@@ -61,6 +61,15 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 		assertEquals("2017-05-07",sdf.format(invoice.getDeliveryDate()));
 		assertEquals("2017-05-30",sdf.format(invoice.getDueDate()));
 
+		assertEquals("Bahnstr. 42", invoice.getRecipient().getStreet());
+		assertEquals("88802", invoice.getRecipient().getZIP());
+		assertEquals("DE", invoice.getRecipient().getCountry());
+		assertEquals("Spielkreis", invoice.getRecipient().getLocation());
+
+		assertEquals("Ecke 12", invoice.getSender().getStreet());
+		assertEquals("12345", invoice.getSender().getZIP());
+		assertEquals("DE", invoice.getSender().getCountry());
+		assertEquals("Stadthausen", invoice.getSender().getLocation());
 
 		// name street location zip country, contact name phone email, total amount
 
