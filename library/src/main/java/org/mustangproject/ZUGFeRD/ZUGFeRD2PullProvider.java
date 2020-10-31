@@ -31,22 +31,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Base64;
 
-import net.sf.saxon.value.Base64BinaryValue;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.FileAttachment;
-import org.mustangproject.Invoice;
 import org.mustangproject.XMLTools;
 
-public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvider {
+public class ZUGFeRD2PullProvider implements IXMLProvider  {
 
 	//// MAIN CLASS
 	protected SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
 	protected byte[] zugferdData;
 	protected IExportableTransaction trans;
+	protected TransactionCalculator calc;
 	private String paymentTermsDescription;
 	protected Profile profile = Profiles.getByName("EN16931");
 
@@ -100,117 +99,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 
 	}
 
-	//move
-	protected BigDecimal getTotalPrepaid() {
-		if (trans.getTotalPrepaidAmount() == null) {
-			return new BigDecimal(0);
-		} else {
-			return trans.getTotalPrepaidAmount();
-		}
-	}
-
-	protected BigDecimal getTotalGross() {
-
-		BigDecimal res = getTaxBasis();
-		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = getVATPercentAmountMap();
-		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
-			res = res.add(amount.getCalculated());
-		}
-		return res;
-	}
-
-	protected BigDecimal getCharges() {
-		BigDecimal res = new BigDecimal(0);
-		IZUGFeRDAllowanceCharge[] charges = trans.getZFCharges();
-		if ((charges != null) && (charges.length > 0)) {
-			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
-				res = res.add(currentCharge.getTotalAmount(this));
-			}
-		}
-		return res;
-	}
-
-	protected BigDecimal getAllowances() {
-		BigDecimal res = new BigDecimal(0);
-		IZUGFeRDAllowanceCharge[] allowances = trans.getZFAllowances();
-		if ((allowances != null) && (allowances.length > 0)) {
-			for (IZUGFeRDAllowanceCharge currentAllowance : allowances) {
-				res = res.add(currentAllowance.getTotalAmount(this));
-			}
-		}
-		return res;
-	}
-
-	protected BigDecimal getTotal() {
-		BigDecimal res = new BigDecimal(0);
-		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
-			LineCalc lc = new LineCalc(currentItem);
-			res = res.add(lc.getItemTotalGrossAmount());
-		}
-		return res;
-	}
-
-	protected BigDecimal getTaxBasis() {
-		BigDecimal res = getTotal().add(getCharges()).subtract(getAllowances());
-		return res;
-	}
-
-	/**
-	 * which taxes have been used with which amounts in this transaction, empty for
-	 * no taxes, or e.g. 19:190 and 7:14 if 1000 Eur were applicable to 19% VAT
-	 * (=190 EUR VAT) and 200 EUR were applicable to 7% (=14 EUR VAT) 190 Eur
-	 *
-	 * @return which taxes have been used with which amounts in this invoice
-	 */
-	protected HashMap<BigDecimal, VATAmount> getVATPercentAmountMap() {
-		HashMap<BigDecimal, VATAmount> hm = new HashMap<>();
-
-		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
-			BigDecimal percent = currentItem.getProduct().getVATPercent();
-			LineCalc lc = new LineCalc(currentItem);
-			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(),
-					trans.getDocumentCode());
-			VATAmount current = hm.get(percent);
-			if (current == null) {
-				hm.put(percent, itemVATAmount);
-			} else {
-				hm.put(percent, current.add(itemVATAmount));
-			}
-		}
-
-
-		IZUGFeRDAllowanceCharge[] charges = trans.getZFCharges();
-		if ((charges != null) && (charges.length > 0)) {
-			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
-				VATAmount theAmount = hm.get(currentCharge.getTaxPercent());
-				if (theAmount == null) {
-					theAmount = new VATAmount(new BigDecimal(0), new BigDecimal(0), "S");
-				}
-				theAmount.setBasis(theAmount.getBasis().add(currentCharge.getTotalAmount(this)));
-				BigDecimal factor = currentCharge.getTaxPercent().divide(new BigDecimal(100));
-				theAmount.setCalculated(theAmount.getBasis().multiply(factor));
-				hm.put(currentCharge.getTaxPercent(), theAmount);
-			}
-		}
-		IZUGFeRDAllowanceCharge[] allowances = trans.getZFAllowances();
-		if ((allowances != null) && (allowances.length > 0)) {
-			for (IZUGFeRDAllowanceCharge currentAllowance : allowances) {
-				VATAmount theAmount = hm.get(currentAllowance.getTaxPercent());
-				if (theAmount == null) {
-					theAmount = new VATAmount(new BigDecimal(0), new BigDecimal(0), "S");
-				}
-				theAmount.setBasis(theAmount.getBasis().subtract(currentAllowance.getTotalAmount(this)));
-				BigDecimal factor = currentAllowance.getTaxPercent().divide(new BigDecimal(100));
-				theAmount.setCalculated(theAmount.getBasis().multiply(factor));
-
-				hm.put(currentAllowance.getTaxPercent(), theAmount);
-			}
-		}
-
-
-		return hm;
-	}
 
 	@Override
 	public Profile getProfile() {
@@ -305,6 +193,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 	@Override
 	public void generateXML(IExportableTransaction trans) {
 		this.trans = trans;
+		this.calc=new TransactionCalculator(trans);
 
 		boolean hasDueDate = false;
 		String taxCategoryCode = "";
@@ -387,7 +276,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 				exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
 
-			LineCalc lc = new LineCalc(currentItem);
+			LineCalculator lc = new LineCalculator(currentItem);
 			xml = xml + "		<ram:IncludedSupplyChainTradeLineItem>\n" +
 					"			<ram:AssociatedDocumentLineDocument>\n"
 					+ "				<ram:LineID>" + lineID + "</ram:LineID>\n" //$NON-NLS-2$
@@ -558,7 +447,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 			}
 		}
 
-		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = getVATPercentAmountMap();
+		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = calc.getVATPercentAmountMap();
 		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
 			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			if (amount != null) {
@@ -592,7 +481,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 					"        <ram:ChargeIndicator>\n" +
 					"          <udt:Indicator>true</udt:Indicator>\n" +
 					"        </ram:ChargeIndicator>\n" +
-					"        <ram:ActualAmount>" + currencyFormat(getCharges()) + "</ram:ActualAmount>\n" +
+					"        <ram:ActualAmount>" + currencyFormat(calc.getCharges()) + "</ram:ActualAmount>\n" +
 					"        <ram:Reason>Charge</ram:Reason>\n" +
 					"        <ram:CategoryTradeTax>\n" +
 					"          <ram:TypeCode>VAT</ram:TypeCode>\n" +
@@ -609,7 +498,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 					"        <ram:ChargeIndicator>\n" +
 					"          <udt:Indicator>false</udt:Indicator>\n" +
 					"        </ram:ChargeIndicator>\n" +
-					"        <ram:ActualAmount>" + currencyFormat(getAllowances()) + "</ram:ActualAmount>\n" +
+					"        <ram:ActualAmount>" + currencyFormat(calc.getAllowances()) + "</ram:ActualAmount>\n" +
 					"        <ram:Reason>Allowance</ram:Reason>\n" +
 					"        <ram:CategoryTradeTax>\n" +
 					"          <ram:TypeCode>VAT</ram:TypeCode>\n" +
@@ -645,24 +534,24 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 		}
 
 
-		String allowanceTotalLine = "<ram:AllowanceTotalAmount>" + currencyFormat(getAllowances()) + "</ram:AllowanceTotalAmount>";
+		String allowanceTotalLine = "<ram:AllowanceTotalAmount>" + currencyFormat(calc.getAllowances()) + "</ram:AllowanceTotalAmount>";
 
-		String chargesTotalLine = "<ram:ChargeTotalAmount>" + currencyFormat(getCharges()) + "</ram:ChargeTotalAmount>";
+		String chargesTotalLine = "<ram:ChargeTotalAmount>" + currencyFormat(calc.getCharges()) + "</ram:ChargeTotalAmount>";
 
 		xml = xml + "			<ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n"
-				+ "				<ram:LineTotalAmount>" + currencyFormat(getTotal()) + "</ram:LineTotalAmount>\n" //$NON-NLS-2$
+				+ "				<ram:LineTotalAmount>" + currencyFormat(calc.getTotal()) + "</ram:LineTotalAmount>\n" //$NON-NLS-2$
 				+ chargesTotalLine
 				+ allowanceTotalLine
-				+ "				<ram:TaxBasisTotalAmount>" + currencyFormat(getTaxBasis()) + "</ram:TaxBasisTotalAmount>\n" //$NON-NLS-2$
+				+ "				<ram:TaxBasisTotalAmount>" + currencyFormat(calc.getTaxBasis()) + "</ram:TaxBasisTotalAmount>\n" //$NON-NLS-2$
 				// //
 				// currencyID=\"EUR\"
 				+ "				<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
-				+ currencyFormat(getTotalGross().subtract(getTaxBasis())) + "</ram:TaxTotalAmount>\n"
-				+ "				<ram:GrandTotalAmount>" + currencyFormat(getTotalGross()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-2$
+				+ currencyFormat(calc.getTotalGross().subtract(calc.getTaxBasis())) + "</ram:TaxTotalAmount>\n"
+				+ "				<ram:GrandTotalAmount>" + currencyFormat(calc.getTotalGross()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-2$
 				// //
 				// currencyID=\"EUR\"
-				+ "             <ram:TotalPrepaidAmount>" + currencyFormat(getTotalPrepaid()) + "</ram:TotalPrepaidAmount>\n"
-				+ "				<ram:DuePayableAmount>" + currencyFormat(getTotalGross().subtract(getTotalPrepaid())) + "</ram:DuePayableAmount>\n" //$NON-NLS-2$
+				+ "             <ram:TotalPrepaidAmount>" + currencyFormat(calc.getTotalPrepaid()) + "</ram:TotalPrepaidAmount>\n"
+				+ "				<ram:DuePayableAmount>" + currencyFormat(calc.getTotalGross().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>\n" //$NON-NLS-2$
 				// //
 				// currencyID=\"EUR\"
 				+ "			</ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n"
@@ -721,7 +610,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 		if (discountTerms != null) {
 			paymentTermsXml += "<ram:ApplicableTradePaymentDiscountTerms>";
 			String currency = trans.getCurrency();
-			String basisAmount = currencyFormat(getTotalGross());
+			String basisAmount = currencyFormat(calc.getTotalGross());
 			paymentTermsXml += "<ram:BasisAmount currencyID=\"" + currency + "\">" + basisAmount + "</ram:BasisAmount>";
 			paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toString()
 					+ "</ram:CalculationPercent>";
@@ -743,8 +632,4 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 		return paymentTermsXml;
 	}
 
-	@Override
-	public BigDecimal getValue() {
-		return getTotal();
-	}
 }

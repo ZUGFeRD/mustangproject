@@ -104,6 +104,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 	@Override
 	public void generateXML(IExportableTransaction trans) {
 		this.trans = trans;
+		this.calc=new TransactionCalculator(trans);
 
 		boolean hasDueDate=false;
 		String taxCategoryCode="";
@@ -288,7 +289,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 			}
 		}
 
-		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = getVATPercentAmountMap();
+		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = calc.getVATPercentAmountMap();
 		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
 			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			if (amount != null) {
@@ -329,23 +330,23 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 		}
 
 		xml = xml + "			<ram:SpecifiedTradeSettlementMonetarySummation>\n"
-				+ "				<ram:LineTotalAmount currencyID=\""+trans.getCurrency()+"\">" + currencyFormat(getTotal()) + "</ram:LineTotalAmount>\n" //$NON-NLS-2$
+				+ "				<ram:LineTotalAmount currencyID=\""+trans.getCurrency()+"\">" + currencyFormat(calc.getTotal()) + "</ram:LineTotalAmount>\n" //$NON-NLS-2$
 				// currencyID=\"EUR\"
 				+ "				<ram:ChargeTotalAmount currencyID=\"" + trans.getCurrency() + "\">0.00</ram:ChargeTotalAmount>\n" // currencyID=\"EUR\"
 				+ "				<ram:AllowanceTotalAmount currencyID=\"" + trans.getCurrency() + "\">0.00</ram:AllowanceTotalAmount>\n" //
 				// currencyID=\"EUR\"
 				// + " <ChargeTotalAmount currencyID=\"EUR\">5.80</ChargeTotalAmount>\n"
 				// + " <AllowanceTotalAmount currencyID=\"EUR\">14.73</AllowanceTotalAmount>\n"
-				+ "				<ram:TaxBasisTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(getTotal()) + "</ram:TaxBasisTotalAmount>\n" //$NON-NLS-2$
+				+ "				<ram:TaxBasisTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotal()) + "</ram:TaxBasisTotalAmount>\n" //$NON-NLS-2$
 				// //
 				// currencyID=\"EUR\"
 				+ "				<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
-				+ currencyFormat(getTotalGross().subtract(getTotal())) + "</ram:TaxTotalAmount>\n"
-				+ "				<ram:GrandTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(getTotalGross()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-2$
+				+ currencyFormat(calc.getTotalGross().subtract(calc.getTotal())) + "</ram:TaxTotalAmount>\n"
+				+ "				<ram:GrandTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotalGross()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-2$
 				// //
 				// currencyID=\"EUR\"
-				+ "             <ram:TotalPrepaidAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(getTotalPrepaid()) + "</ram:TotalPrepaidAmount>\n"
-				+ "				<ram:DuePayableAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(getTotalGross().subtract(getTotalPrepaid())) + "</ram:DuePayableAmount>\n" //$NON-NLS-2$
+				+ "             <ram:TotalPrepaidAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotalPrepaid()) + "</ram:TotalPrepaidAmount>\n"
+				+ "				<ram:DuePayableAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotalGross().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>\n" //$NON-NLS-2$
 				// //
 				// currencyID=\"EUR\"
 				+ "			</ram:SpecifiedTradeSettlementMonetarySummation>\n"
@@ -361,7 +362,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 			}
 
 
-			LineCalc lc = new LineCalc(currentItem);
+			LineCalculator lc = new LineCalculator(currentItem);
 			xml = xml + "		<ram:IncludedSupplyChainTradeLineItem>\n" +
 					"			<ram:AssociatedDocumentLineDocument>\n"
 					+ "				<ram:LineID>" + lineID + "</ram:LineID>\n" //$NON-NLS-2$
@@ -482,7 +483,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 		if (discountTerms != null) {
 			paymentTermsXml += "<ram:ApplicableTradePaymentDiscountTerms>";
 			String currency = trans.getCurrency();
-			String basisAmount = currencyFormat(getTotalGross());
+			String basisAmount = currencyFormat(calc.getTotalGross());
 			paymentTermsXml += "<ram:BasisAmount currencyID=\"" + currency + "\">" + basisAmount + "</ram:BasisAmount>";
 			paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toString()
 					+ "</ram:CalculationPercent>";

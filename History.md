@@ -3,16 +3,17 @@
 
 - support for ZF 2.1.1, i.e. "Reference profile" Xrechnung 
 - ZF 2.1.1 now default (up to 1.7.8 ZF2 could be set but ZF1 was default)
+- integrates validator
 - removed jaxb #87
 - fluent setter api/pushprovider #40 
-- new xrechnung profile
-- visualization? zugferdvisualizer?
+- new xrechnung reference profile
+- visualization zugferdvisualizer
 - migration feature (XSLT upgrade of ZF1 to ZF2) has been improved and moved from the commandline into the library
 - german bank account numbers can no longer be specified (dropped in favor of IBAN and BIC)
 - factory for xrechnung #86
 - moved to Maven central
 - complete or discard read into push provider
-- integrates validator
+- now TransactionCalculator is a dedicated class and no longer mixed up with pullprovider
 - validator now additionally supports xrechnung 
 - modular project setup
 - getSellerTradePartyAddress (PR #157 ) thanks to aberndt-hub 

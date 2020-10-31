@@ -27,6 +27,9 @@ import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import javax.xml.xpath.XPathExpressionException;
+import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,7 +47,14 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 
 		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter(TARGET_PDF);
 
-		Invoice invoice=zii.extractInvoice();
+		boolean hasExceptions=false;
+		Invoice invoice=null;
+		try {
+			invoice=zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException e) {
+			hasExceptions=true;
+		}
+		assertFalse(hasExceptions);
 		// Reading ZUGFeRD
 		assertEquals("Bei Spiel GmbH", invoice.getOwnOrganisationName());
 		assertEquals(3, invoice.getZFItems().length);
@@ -70,6 +80,10 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 		assertEquals("12345", invoice.getSender().getZIP());
 		assertEquals("DE", invoice.getSender().getCountry());
 		assertEquals("Stadthausen", invoice.getSender().getLocation());
+
+		TransactionCalculator tc=new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("571.040000"),tc.getTotalGross());
+
 
 		// name street location zip country, contact name phone email, total amount
 
