@@ -84,7 +84,10 @@ changes to
 ```
 			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(1).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
 
-``` 
+```
+
+The old Contact class has been corrected to TradeParty. The TradeParty class
+can now refer to a (human) Contact from the new Contact() class. 
 
 The importer can still be used like
 
@@ -92,7 +95,41 @@ The importer can still be used like
 ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
 String amount = zi.getAmount();
 ``` 
-but we are also working on an importer to import into the new invoice class.
+but there is also the new invoiceImporter 
+```
+
+		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter(TARGET_PDF);
+
+		Invoice invoice=null;
+		try {
+			invoice=zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException e) {
+// handle Exceptions
+		}
+		assertFalse(hasExceptions);
+		// Reading ZUGFeRD
+		assertEquals("Bei Spiel GmbH", invoice.getOwnOrganisationName());
+		assertEquals(3, invoice.getZFItems().length);
+		assertEquals("400.0000", invoice.getZFItems()[1].getQuantity().toString());
+
+		assertEquals("160.0000", invoice.getZFItems()[0].getPrice().toString());
+		assertEquals("Heiße Luft pro Liter", invoice.getZFItems()[2].getProduct().getName());
+		assertEquals("LTR", invoice.getZFItems()[2].getProduct().getUnit());
+		assertEquals("7.00", invoice.getZFItems()[0].getProduct().getVATPercent().toString());
+		assertEquals("RE-20170509/505", invoice.getNumber());
+
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+		assertEquals("2017-05-09",sdf.format(invoice.getIssueDate()));
+
+		assertEquals("Bahnstr. 42", invoice.getRecipient().getStreet());
+		assertEquals("88802", invoice.getRecipient().getZIP());
+		assertEquals("DE", invoice.getRecipient().getCountry());
+		assertEquals("Spielkreis", invoice.getRecipient().getLocation());
+
+		TransactionCalculator tc=new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("571.040000"),tc.getTotalGross());
+
+``` 
 
 ### Using the library to create e-invoices
 From maven central fetch
@@ -143,7 +180,33 @@ zf2p.generateXML(i);
 String theXML = new String(zf2p.getXML());
 ```
 or can also be used with setTransaction to generate invoice PDFs straight away.
+### Embedding ZF1 to ZF2 migration
+The functionality is based on the XSLT file in library/src/main/resources/stylesheets/ZF1ToZF2.xsl,
+it can be accessed via 
+```
+		XMLUpgrader zmi = new XMLUpgrader();
+		String xml = zmi.migrateFromV1ToV2(xmlName);
+		Files.write(Paths.get(outName), xml.getBytes());
+
+```
+### Embedding ZF2 visualization 
+
+In case you don't want to access this functionality over the 
+commandline you can use
+```
+		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+			xml = zvi.visualize(sourceName);
+			Files.write(Paths.get("factur-x.xml"), xml.getBytes());
+```
+for the visualizer.     The output requires a CSS and a javascript file which are in the
+	    jar's resources as 
+		(/src/main/resources/)xrechnung-viewer.css
+		(/src/main/respurces/)xrechnung-viewer.js
+
+
 ### Embedding the validator
+The validator library also contains the functionality to 
+read/write ZUGFeRD-invoices like the (smaller) library module. 
 ```
 <dependencies>
    <dependency>

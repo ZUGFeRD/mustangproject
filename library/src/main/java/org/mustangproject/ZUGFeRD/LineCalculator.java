@@ -2,7 +2,11 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 
-public class LineCalc {
+/***
+ * the linecalculator does the math within an item line, and e.g. calculates quantity*price.
+ * @see TransactionCalculator
+ */
+public class LineCalculator {
 	private BigDecimal totalGross;
 	private BigDecimal price;
 	private BigDecimal priceGross;
@@ -11,7 +15,7 @@ public class LineCalc {
 	private BigDecimal allowance = new BigDecimal(0);
 	private BigDecimal charge = new BigDecimal(0);
 
-	public LineCalc(IZUGFeRDExportableItem currentItem) {
+	public LineCalculator(IZUGFeRDExportableItem currentItem) {
 
 		if (currentItem.getItemAllowances() != null && currentItem.getItemAllowances().length > 0) {
 			for (IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
