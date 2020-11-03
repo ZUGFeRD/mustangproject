@@ -25,6 +25,8 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
+import java.util.Base64.Encoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -36,6 +38,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.Invoice;
+import org.mustangproject.FileAttachment;
 import org.mustangproject.XMLTools;
 
 public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvider {
@@ -496,7 +499,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider, IAbsoluteValueProvide
 		// Additional Documents of XRechnung (Rechnungsbegruendende Unterlagen - BG-24 XRechnung)
 		if (trans.getAdditionalReferencedDocuments() != null) {
 			for (FileAttachment f : trans.getAdditionalReferencedDocuments()) {
-				final String documentContent = Base64.encodeBase64String(f.getData());
+				Encoder encoder = Base64.getEncoder();
+//				final String documentContent = Base64.encodeBase64String(f.getData());f.
+				final String documentContent = encoder.encodeToString(f.getData());
 				xml = xml + "  <ram:AdditionalReferencedDocument>\n"
 						+ "    <ram:IssuerAssignedID>" + f.getFilename() + "</ram:IssuerAssignedID>\n"
 						+ "    <ram:TypeCode>916</ram:TypeCode>\n"
