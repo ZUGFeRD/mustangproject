@@ -30,6 +30,7 @@ package org.mustangproject.ZUGFeRD;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.mustangproject.FileAttachment;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 public interface IExportableTransaction  {
