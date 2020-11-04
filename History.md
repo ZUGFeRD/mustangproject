@@ -38,6 +38,8 @@ switch
 - new tradeparty class, Contact getOwnContact superseded by TradeParty getSender
 - new invoicecorrection class
 - order-x xml read support
+- support included notes on document and item level 
+- occurence periods  setOccurrencePeriod(Date start, Date end)
 - automated tests zuv/verapdf validate created library test files
 - trans.getTradeSettlementPayment() removed in favor of trans.getTradeSettlement()
 - commandline option for no notices

@@ -236,6 +236,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider  {
 		if (trans.getDocumentCode() != null) {
 			typecode = trans.getDocumentCode();
 		}
+		String notes="";
+		if (trans.getNotes()!=null) {
+			for (String currentNote:trans.getNotes()) {
+				notes=notes+"<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
+
+			}
+		}
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 
 				+ "<rsm:CrossIndustryInvoice xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\""
@@ -259,9 +266,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider  {
 				+ "		<ram:TypeCode>" + typecode + "</ram:TypeCode>\n"
 				+ "		<ram:IssueDateTime><udt:DateTimeString format=\"102\">"
 				+ zugferdDateFormat.format(trans.getIssueDate()) + "</udt:DateTimeString></ram:IssueDateTime>\n" // date
-				// format
-				// was
-				// 20130605
+				+ notes
 				+ subjectNote
 				+ rebateAgreement
 				+ senderReg
@@ -275,13 +280,21 @@ public class ZUGFeRD2PullProvider implements IXMLProvider  {
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
+			notes="";
+			if (currentItem.getNotes()!=null) {
+				for (String currentNote:currentItem.getNotes()) {
+					notes=notes+"<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
 
+				}
+			}
 			LineCalculator lc = new LineCalculator(currentItem);
 			xml = xml + "		<ram:IncludedSupplyChainTradeLineItem>\n" +
 					"			<ram:AssociatedDocumentLineDocument>\n"
 					+ "				<ram:LineID>" + lineID + "</ram:LineID>\n" //$NON-NLS-2$
+					+ notes
 					+ "			</ram:AssociatedDocumentLineDocument>\n"
-					+ "			<ram:SpecifiedTradeProduct>\n";
+
+			+ "			<ram:SpecifiedTradeProduct>\n";
 			// + " <GlobalID schemeID=\"0160\">4012345001235</GlobalID>\n"
 			if (currentItem.getProduct().getSellerAssignedID() != null) {
 				xml = xml + "				<ram:SellerAssignedID>"

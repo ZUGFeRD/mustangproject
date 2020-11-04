@@ -10,6 +10,7 @@ public class Item implements IZUGFeRDExportableItem {
 	protected BigDecimal price, quantity, tax, grossPrice, lineTotalAmount;
 	protected String id;
 	protected Product product;
+	protected ArrayList<String> notes = null;
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<IZUGFeRDAllowanceCharge>(),
 			Charges = new ArrayList<IZUGFeRDAllowanceCharge>();
 
@@ -98,6 +99,16 @@ public class Item implements IZUGFeRDExportableItem {
 			return Charges.toArray(new IZUGFeRDAllowanceCharge[0]);
 	}
 
+
+
+	@Override
+	public String[] getNotes() {
+		if (notes==null) {
+			return null;
+		}
+		return notes.toArray(new String[0]);
+	}
+
 	public Item setProduct(Product product) {
 		this.product = product;
 		return this;
@@ -108,8 +119,19 @@ public class Item implements IZUGFeRDExportableItem {
 		Charges.add(izac);
 		return this;
 	}
+
 	public Item addAllowance(IZUGFeRDAllowanceCharge izac) {
 		Allowances.add(izac);
 		return this;
 	}
+
+	public Item addNote(String text) {
+		if (notes==null) {
+			notes=new ArrayList<String>();
+		}
+		notes.add(text);
+		return this;
+	}
+
+
 }
