@@ -39,7 +39,7 @@ import org.dom4j.io.XMLWriter;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.XMLTools;
 
-public class ZUGFeRD2PullProvider implements IXMLProvider  {
+public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 	//// MAIN CLASS
 	protected SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -193,7 +193,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider  {
 	@Override
 	public void generateXML(IExportableTransaction trans) {
 		this.trans = trans;
-		this.calc=new TransactionCalculator(trans);
+		this.calc = new TransactionCalculator(trans);
 
 		boolean hasDueDate = false;
 		String taxCategoryCode = "";
@@ -236,10 +236,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider  {
 		if (trans.getDocumentCode() != null) {
 			typecode = trans.getDocumentCode();
 		}
-		String notes="";
-		if (trans.getNotes()!=null) {
-			for (String currentNote:trans.getNotes()) {
-				notes=notes+"<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
+		String notes = "";
+		if (trans.getNotes() != null) {
+			for (String currentNote : trans.getNotes()) {
+				notes = notes + "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
 
 			}
 		}
@@ -280,10 +280,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider  {
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
-			notes="";
-			if (currentItem.getNotes()!=null) {
-				for (String currentNote:currentItem.getNotes()) {
-					notes=notes+"<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
+			notes = "";
+			if (currentItem.getNotes() != null) {
+				for (String currentNote : currentItem.getNotes()) {
+					notes = notes + "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
 
 				}
 			}
@@ -294,7 +294,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider  {
 					+ notes
 					+ "			</ram:AssociatedDocumentLineDocument>\n"
 
-			+ "			<ram:SpecifiedTradeProduct>\n";
+					+ "			<ram:SpecifiedTradeProduct>\n";
 			// + " <GlobalID schemeID=\"0160\">4012345001235</GlobalID>\n"
 			if (currentItem.getProduct().getSellerAssignedID() != null) {
 				xml = xml + "				<ram:SellerAssignedID>"
@@ -490,36 +490,46 @@ public class ZUGFeRD2PullProvider implements IXMLProvider  {
 		}
 
 		if ((trans.getZFCharges() != null) && (trans.getZFCharges().length > 0)) {
-			xml = xml + "	 <ram:SpecifiedTradeAllowanceCharge>\n" +
-					"        <ram:ChargeIndicator>\n" +
-					"          <udt:Indicator>true</udt:Indicator>\n" +
-					"        </ram:ChargeIndicator>\n" +
-					"        <ram:ActualAmount>" + currencyFormat(calc.getCharges()) + "</ram:ActualAmount>\n" +
-					"        <ram:Reason>Charge</ram:Reason>\n" +
-					"        <ram:CategoryTradeTax>\n" +
-					"          <ram:TypeCode>VAT</ram:TypeCode>\n" +
-					"          <ram:CategoryCode>S</ram:CategoryCode>\n" +
-					"          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>\n" +
-					"        </ram:CategoryTradeTax>\n" +
-					"      </ram:SpecifiedTradeAllowanceCharge>	\n";
 
+			for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
+				if (!calc.getChargesForPercent(currentTaxPercent).equals(new BigDecimal(0))) {
+
+
+					xml = xml + "	 <ram:SpecifiedTradeAllowanceCharge>\n" +
+							"        <ram:ChargeIndicator>\n" +
+							"          <udt:Indicator>true</udt:Indicator>\n" +
+							"        </ram:ChargeIndicator>\n" +
+							"        <ram:ActualAmount>" + currencyFormat(calc.getChargesForPercent(currentTaxPercent)) + "</ram:ActualAmount>\n" +
+							"        <ram:Reason>Charge</ram:Reason>\n" +
+							"        <ram:CategoryTradeTax>\n" +
+							"          <ram:TypeCode>VAT</ram:TypeCode>\n" +
+							"          <ram:CategoryCode>S</ram:CategoryCode>\n" +
+							"          <ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>\n" +
+							"        </ram:CategoryTradeTax>\n" +
+							"      </ram:SpecifiedTradeAllowanceCharge>	\n";
+
+				}
+			}
 
 		}
 
 		if ((trans.getZFAllowances() != null) && (trans.getZFAllowances().length > 0)) {
-			xml = xml + "	 <ram:SpecifiedTradeAllowanceCharge>\n" +
-					"        <ram:ChargeIndicator>\n" +
-					"          <udt:Indicator>false</udt:Indicator>\n" +
-					"        </ram:ChargeIndicator>\n" +
-					"        <ram:ActualAmount>" + currencyFormat(calc.getAllowances()) + "</ram:ActualAmount>\n" +
-					"        <ram:Reason>Allowance</ram:Reason>\n" +
-					"        <ram:CategoryTradeTax>\n" +
-					"          <ram:TypeCode>VAT</ram:TypeCode>\n" +
-					"          <ram:CategoryCode>S</ram:CategoryCode>\n" +
-					"          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>\n" +
-					"        </ram:CategoryTradeTax>\n" +
-					"      </ram:SpecifiedTradeAllowanceCharge>	\n";
-
+			for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
+				if (!calc.getAllowancesForPercent(currentTaxPercent).equals(new BigDecimal(0))) {
+					xml = xml + "	 <ram:SpecifiedTradeAllowanceCharge>\n" +
+							"        <ram:ChargeIndicator>\n" +
+							"          <udt:Indicator>false</udt:Indicator>\n" +
+							"        </ram:ChargeIndicator>\n" +
+							"        <ram:ActualAmount>" + currencyFormat(calc.getAllowancesForPercent(currentTaxPercent)) + "</ram:ActualAmount>\n" +
+							"        <ram:Reason>Allowance</ram:Reason>\n" +
+							"        <ram:CategoryTradeTax>\n" +
+							"          <ram:TypeCode>VAT</ram:TypeCode>\n" +
+							"          <ram:CategoryCode>S</ram:CategoryCode>\n" +
+							"          <ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>\n" +
+							"        </ram:CategoryTradeTax>\n" +
+							"      </ram:SpecifiedTradeAllowanceCharge>	\n";
+				}
+			}
 		}
 
 
@@ -547,9 +557,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider  {
 		}
 
 
-		String allowanceTotalLine = "<ram:AllowanceTotalAmount>" + currencyFormat(calc.getAllowances()) + "</ram:AllowanceTotalAmount>";
+		String allowanceTotalLine = "<ram:AllowanceTotalAmount>" + currencyFormat(calc.getAllowancesForPercent(null)) + "</ram:AllowanceTotalAmount>";
 
-		String chargesTotalLine = "<ram:ChargeTotalAmount>" + currencyFormat(calc.getCharges()) + "</ram:ChargeTotalAmount>";
+		String chargesTotalLine = "<ram:ChargeTotalAmount>" + currencyFormat(calc.getChargesForPercent(null)) + "</ram:ChargeTotalAmount>";
 
 		xml = xml + "			<ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n"
 				+ "				<ram:LineTotalAmount>" + currencyFormat(calc.getTotal()) + "</ram:LineTotalAmount>\n" //$NON-NLS-2$

@@ -33,23 +33,38 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		return res;
 	}
 
-	protected BigDecimal getCharges() {
+	/***
+	 * returns total of charges for this tax rate
+	 * @param percent a specific rate, or null for any rate
+	 * @return the total amount
+	 */
+	protected BigDecimal getChargesForPercent(BigDecimal percent) {
 		BigDecimal res = new BigDecimal(0);
 		IZUGFeRDAllowanceCharge[] charges = trans.getZFCharges();
 		if ((charges != null) && (charges.length > 0)) {
 			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
-				res = res.add(currentCharge.getTotalAmount(this));
+				if ((percent==null)||(currentCharge.getTaxPercent().equals(percent))) {
+					res = res.add(currentCharge.getTotalAmount(this));
+				}
 			}
 		}
 		return res;
 	}
 
-	protected BigDecimal getAllowances() {
+
+	/***
+	 * returns total of allowances for this tax rate
+	 * @param percent a specific rate, or null for any rate
+	 * @return the total amount
+	 */
+	protected BigDecimal getAllowancesForPercent(BigDecimal percent) {
 		BigDecimal res = new BigDecimal(0);
 		IZUGFeRDAllowanceCharge[] allowances = trans.getZFAllowances();
 		if ((allowances != null) && (allowances.length > 0)) {
 			for (IZUGFeRDAllowanceCharge currentAllowance : allowances) {
-				res = res.add(currentAllowance.getTotalAmount(this));
+				if ((percent==null)||(currentAllowance.getTaxPercent().equals(percent))) {
+					res = res.add(currentAllowance.getTotalAmount(this));
+				}
 			}
 		}
 		return res;
@@ -65,7 +80,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	}
 
 	protected BigDecimal getTaxBasis() {
-		BigDecimal res = getTotal().add(getCharges()).subtract(getAllowances());
+		BigDecimal res = getTotal().add(getChargesForPercent(null)).subtract(getAllowancesForPercent(null));
 		return res;
 	}
 
