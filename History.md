@@ -108,6 +108,9 @@ Validator 0.9.0
 - prevent accidental CEN EN16931 application on extended profile
 - solved issues when XML structures start with comments instead of root node
 - added Symtrax signature
+- paymenttermsdescription skonto xrechnung ?
+- occurencedate vs deliverydate
+
 
 Mustangproject 1.7.6
 =====
