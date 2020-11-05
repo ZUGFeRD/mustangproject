@@ -15,7 +15,7 @@ import java.io.*;
 public class XMLUpgrader {
 
 	static final ClassLoader CLASS_LOADER = XMLUpgrader.class.getClassLoader();
-	private static final String RESOURCE_PATH = ""; //$NON-NLS-1$
+	private static final String RESOURCE_PATH = "";
 	private TransformerFactory mFactory = null;
 	private Templates mXsltTemplate = null;
 

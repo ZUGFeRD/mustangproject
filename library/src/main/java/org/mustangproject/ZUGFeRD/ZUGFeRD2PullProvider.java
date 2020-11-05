@@ -500,7 +500,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 							"          <udt:Indicator>true</udt:Indicator>\n" +
 							"        </ram:ChargeIndicator>\n" +
 							"        <ram:ActualAmount>" + currencyFormat(calc.getChargesForPercent(currentTaxPercent)) + "</ram:ActualAmount>\n" +
-							"        <ram:Reason>Charge</ram:Reason>\n" +
+							"        <ram:Reason>"+XMLTools.encodeXML(calc.getChargeReasonForPercent(currentTaxPercent))+"</ram:Reason>\n" +
 							"        <ram:CategoryTradeTax>\n" +
 							"          <ram:TypeCode>VAT</ram:TypeCode>\n" +
 							"          <ram:CategoryCode>S</ram:CategoryCode>\n" +
@@ -521,7 +521,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 							"          <udt:Indicator>false</udt:Indicator>\n" +
 							"        </ram:ChargeIndicator>\n" +
 							"        <ram:ActualAmount>" + currencyFormat(calc.getAllowancesForPercent(currentTaxPercent)) + "</ram:ActualAmount>\n" +
-							"        <ram:Reason>Allowance</ram:Reason>\n" +
+							"        <ram:Reason>"+XMLTools.encodeXML(calc.getAllowanceReasonForPercent(currentTaxPercent))+"</ram:Reason>\n" +
 							"        <ram:CategoryTradeTax>\n" +
 							"          <ram:TypeCode>VAT</ram:TypeCode>\n" +
 							"          <ram:CategoryCode>S</ram:CategoryCode>\n" +
@@ -604,7 +604,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			}
 		} catch (UnsupportedEncodingException e) {
 			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
-		} // $NON-NLS-1$
+		}
 	}
 
 	@Override

@@ -490,7 +490,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		pdf.setProducer(fullProducer);
 		if (ensurePDFisUpgraded) {
 			try {
-				pdfaid.setConformance(conformanceLevel.getLetter());// $NON-NLS-1$
+				pdfaid.setConformance(conformanceLevel.getLetter());
 			} catch (BadFieldValueException ex) {
 				// This should be impossible, because it would occur only if an illegal
 				// conformance level is supplied,

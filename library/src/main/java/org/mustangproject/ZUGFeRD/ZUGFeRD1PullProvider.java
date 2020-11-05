@@ -454,7 +454,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 			}
 		} catch (UnsupportedEncodingException e) {
 			Logger.getLogger(ZUGFeRD1PullProvider.class.getName()).log(Level.SEVERE, null, e);
-		} // $NON-NLS-1$
+		}
 	}
 
 	@Override
