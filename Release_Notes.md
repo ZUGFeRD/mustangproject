@@ -68,10 +68,14 @@ as artifact ID. "validator" includes the library functionality but is >20 MB
 bigger due to it's dependencies. 
 
 
-### Update from 1.x to 2.0
+### Update from Mustang 1.x to 2.0
 
 ZF2 was possible with Mustang 1 but it is default in Mustang 2, so 
 you will need to `.setZUGFeRDVersion(1)` if you don't want ZUGFeRD 2 files.
+
+In the commandline, all actions will have to be invoked via --action=<theaction>, so
+--combine changes to --action=combine.
+
 `PDFattachZugferdFile` is now called `setTransaction` and instead of
 a `ZUGFeRDExporterFromA1Factory` the `ZUGFeRDExporterFromA1` will now return a
 a class implementing `IZUGFeRDExporter` instead of a `ZUGFeRDExporter`.
@@ -85,6 +89,8 @@ changes to
 			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(1).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
 
 ```
+
+Instead of `Profile.EXTENDED` use `Profiles.getByName("Extended")`.
 
 The old Contact class has been corrected to TradeParty. The TradeParty class
 can now refer to a (human) Contact from the new Contact() class. 

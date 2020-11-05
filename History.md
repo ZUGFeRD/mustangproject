@@ -110,6 +110,7 @@ Validator 0.9.0
 - added Symtrax signature
 - paymenttermsdescription skonto xrechnung ?
 - occurencedate vs deliverydate
+- exception on invoice import if wrong
 
 
 Mustangproject 1.7.6

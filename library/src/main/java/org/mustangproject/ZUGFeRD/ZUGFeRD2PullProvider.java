@@ -175,6 +175,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	}
 
 
+	/***
+	 * returns the XML for a charge or allowance on item level
+	 * @param allowance
+	 * @param item
+	 * @return
+	 */
 	protected String getAllowanceChargeStr(IZUGFeRDAllowanceCharge allowance, IAbsoluteValueProvider item) {
 		String percentage = "";
 		String chargeIndicator = "false";
@@ -186,7 +192,16 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			chargeIndicator = "true";
 		}
 
-		String allowanceChargeStr = "<ram:AppliedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>" + chargeIndicator + "</udt:Indicator></ram:ChargeIndicator>" + percentage + "<ram:ActualAmount>" + priceFormat(allowance.getTotalAmount(item)) + "</ram:ActualAmount></ram:AppliedTradeAllowanceCharge>";
+		String reason="";
+		if ((allowance.getReason()!=null)&&(profile==Profiles.getByName("Extended"))) {
+			// only in extended profile
+			reason="<ram:Reason>"+XMLTools.encodeXML(allowance.getReason())+"</ram:Reason>";
+		}
+		String allowanceChargeStr = "<ram:AppliedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>" +
+				chargeIndicator + "</udt:Indicator></ram:ChargeIndicator>" + percentage +
+				"<ram:ActualAmount>" + priceFormat(allowance.getTotalAmount(item)) + "</ram:ActualAmount>" +
+				reason+
+				"</ram:AppliedTradeAllowanceCharge>";
 		return allowanceChargeStr;
 	}
 
