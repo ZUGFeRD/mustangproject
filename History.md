@@ -60,13 +60,7 @@ switch
 - *validator not to XR error on ZF files (only notices)
 - *from A3 does not seem tow ork see mustangreaderwriteredgetest:testedgeexport
 - xmp errors may not show correctly in log
-- confirm correct generation from pdf/a3 files zf2edgetest
-- visualization tests
-- migration tests
-- migration documentation
-- *correctiontest exports zf1+zf2?
-- *USt 0% wird aus invoice-klasse noch nicht sauber abgefangen
-- finalize invoiceimporter
+- finalize invoiceimporter 
 Alpha3 2020-10-24
 Alpha2 2020-09-15
 Alpha1 2020-08-06
