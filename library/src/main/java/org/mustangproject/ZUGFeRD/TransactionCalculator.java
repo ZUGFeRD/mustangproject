@@ -1,6 +1,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 
 /***
@@ -30,7 +31,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			res = res.add(amount.getCalculated());
 		}
-		return res;
+		return res.setScale(2, RoundingMode.HALF_UP);
 	}
 
 	/***

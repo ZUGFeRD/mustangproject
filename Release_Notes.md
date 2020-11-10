@@ -145,7 +145,7 @@ but there is also the new invoiceImporter
 		assertEquals("Spielkreis", invoice.getRecipient().getLocation());
 
 		TransactionCalculator tc=new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("571.040000"),tc.getTotalGross());
+		assertEquals(new BigDecimal("571.04"),tc.getTotalGross());
 
 ``` 
 
