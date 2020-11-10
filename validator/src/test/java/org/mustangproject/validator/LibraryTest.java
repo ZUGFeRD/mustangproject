@@ -118,4 +118,21 @@ public class LibraryTest extends ResourceCase {
 
 	}
 
+	public void testZF1validity() {
+		File tempFile = new File("../library/target/testout-MustangGnuaccountingBeispielRE-20171118_506zf1.pdf");
+		assertTrue(tempFile.exists());
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+
+		assertThat(res).valueByXPath("/validation/pdf/summary/@status")
+				.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+				.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.isEqualTo("valid");
+	}
 }

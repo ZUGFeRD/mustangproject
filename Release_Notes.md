@@ -3,11 +3,21 @@
 
 On it's official website you can [download](https://www.mustangproject.org/files/Mustang-CLI-2.0.0-alpha3.jar) a alpha release of Mustang 2.
 
-It integrates the successor of the ZUGFeRD [Validator ZUV](https://github.com/ZUGFeRD/ZUV/) in it's command line tool and can be used as library.
+* Factur-X/ZUGFeRD 2 is now the default. In Mustangproject 1.x one had to select ZUGFeRD version 2 if that was desired, in Mustangproject 2 one now has to select ZUGFeRD version 1 if version 2 is not appropriate.
+* Mustang is now available via Maven Central, which makes it even easier to use the Mustang library. Apart from making it easier in Maven because there is no longer the need to mention the custom repository, it also makes it possible to use Mustang in Gradle projects
+* ZUGFeRD 2.1.1 is now supported with it's XRechnung "reference profile". The previous stable version, Mustang 1.7.8, only supported ZUGFeRD 2.1.
+* There is now an experimental visualization feature and an improved experimental upgrade functionality from ZF1 XML to ZF2 XML.
+* Mustang now supports percentual and absolute charges and allowances on both item and document level
+* Mustang can now embed additional invoice-accompanying files like plans or worklists into the PDFs
+* Additionally to the usual interface-based architecture there are now also classes for invoice, tradeparty etc., which makes it easier to develop in the Mustang library. Please feel free to have a look at it's tests on https://github.com/ZUGFeRD/mustangproject/blob/master/library/src/test/java/org/mustangproject/ZUGFeRD/ZF2PushTest.java.
+* Mustang now includes a validator, which can check the syntactical correctness of an e-invoice.
+The validator component has previously been developed under the name ZUGFeRD and VeraPDF "ZUV".
+It is now mature enought to be merged into the Mustang mainstream project. 
+ZUV already was the validator behind https://www.zugferd-community.net/de/open_community/validation with around 1,000 validations/month alone, 
+supports ZUGFeRD 1 and ZUGFeRD 2 and can be used via commandline. 
+Additionally, the Mustang validator now also supports XRechnung 2, can now also be used as library and supports validation of whole directory trees.
 
-Additionally, the default changed from ZUGFeRD 1 to ZUGFeRD 2.1.1 (previously you had to enable that, now you have to specify that you want to use ZF1 if that's the case), it's now available via Maven Central and additionally to the old Interface-style  pullProvider requiring you to implement methods there is now also a "normal", class-orientierted, halfway fluent "Push-Provider". It's describe below, if you are impatient please feel free to have a look at it's tests on https://github.com/ZUGFeRD/mustangproject/blob/master/library/src/test/java/org/mustangproject/ZUGFeRD/ZF2PushTest.java.
  
-This is a preview release, please do not (yet) use it in production.
 
 ### Use on command line
 `java -jar Mustang-CLI-2.0.0-alpha3.jar --action=combine` embedds a XML into a PDF (A-1) file and exports as PDF/A-3
@@ -68,10 +78,14 @@ as artifact ID. "validator" includes the library functionality but is >20 MB
 bigger due to it's dependencies. 
 
 
-### Update from 1.x to 2.0
+### Update from Mustang 1.x to 2.0
 
 ZF2 was possible with Mustang 1 but it is default in Mustang 2, so 
 you will need to `.setZUGFeRDVersion(1)` if you don't want ZUGFeRD 2 files.
+
+In the commandline, all actions will have to be invoked via --action=<theaction>, so
+--combine changes to --action=combine.
+
 `PDFattachZugferdFile` is now called `setTransaction` and instead of
 a `ZUGFeRDExporterFromA1Factory` the `ZUGFeRDExporterFromA1` will now return a
 a class implementing `IZUGFeRDExporter` instead of a `ZUGFeRDExporter`.
@@ -85,6 +99,10 @@ changes to
 			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(1).setZUGFeRDConformanceLevel(ZUGFeRDConformanceLevel.EN16931).load(SOURCE_PDF)) {
 
 ```
+
+Instead of `Profile.EXTENDED` use `Profiles.getByName("Extended")`.
+If you want to use Profiles from older versions, please specify the version like
+ `Profiles.getByName("Extended")` for an Extended profile of ZF1.
 
 The old Contact class has been corrected to TradeParty. The TradeParty class
 can now refer to a (human) Contact from the new Contact() class. 

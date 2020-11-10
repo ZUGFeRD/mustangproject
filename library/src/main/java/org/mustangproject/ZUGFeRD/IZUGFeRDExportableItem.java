@@ -34,8 +34,16 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 
 	IZUGFeRDExportableProduct getProduct();
 
+	/**
+	 * item level discounts
+	 * @return array of the discounts on a single item
+	 */
 	IZUGFeRDAllowanceCharge[] getItemAllowances();
 
+	/**
+	 * item level price additions
+	 * @return array of the additional charges on the item
+	 */
 	IZUGFeRDAllowanceCharge[] getItemCharges();
 
 
@@ -69,8 +77,20 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	default String getCategoryCode() {
 		return TaxCategoryCodeTypeConstants.STANDARDRATE;
 	}
-	
+
+	/***
+	 * the ID of an additionally referenced document for this item
+	 * @return the id as string
+	 */
 	default String getAdditionalReferencedDocumentID() {
+		return null;
+	}
+
+	/***
+	 * descriptive texts
+	 * @return an array of strings of item specific "includedNotes", text values
+	 */
+	default String[] getNotes() {
 		return null;
 	}
 

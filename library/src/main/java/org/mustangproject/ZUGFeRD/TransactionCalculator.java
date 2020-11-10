@@ -33,23 +33,86 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		return res;
 	}
 
-	protected BigDecimal getCharges() {
+	/***
+	 * returns total of charges for this tax rate
+	 * @param percent a specific rate, or null for any rate
+	 * @return the total amount
+	 */
+	protected BigDecimal getChargesForPercent(BigDecimal percent) {
 		BigDecimal res = new BigDecimal(0);
 		IZUGFeRDAllowanceCharge[] charges = trans.getZFCharges();
 		if ((charges != null) && (charges.length > 0)) {
 			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
-				res = res.add(currentCharge.getTotalAmount(this));
+				if ((percent==null)||(currentCharge.getTaxPercent().equals(percent))) {
+					res = res.add(currentCharge.getTotalAmount(this));
+				}
 			}
 		}
 		return res;
 	}
 
-	protected BigDecimal getAllowances() {
+	/***
+	 * returns a (potentially concatenated) string of charge reasons, or "Charges" if none are defined
+	 * @param percent a specific rate, or null for any rate
+	 * @return the space separated String
+	 */
+	protected String getChargeReasonForPercent(BigDecimal percent) {
+		String res = " ";
+		IZUGFeRDAllowanceCharge[] charges = trans.getZFCharges();
+		if ((charges != null) && (charges.length > 0)) {
+			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
+				if ((percent==null)||(currentCharge.getTaxPercent().equals(percent))) {
+					if (currentCharge.getReason()!=null) {
+						res = res+currentCharge.getReason()+" ";
+					}
+				}
+			}
+		}
+		res=res.substring(0,res.length()-1);
+		if (res.equals("")) {
+			res="Charges";
+		}
+		return res;
+	}
+
+	/***
+	 * returns a (potentially concatenated) string of allowance reasons, or "Allowances", if none are defined
+	 * @param percent a specific rate, or null for any rate
+	 * @return the space separated String
+	 */
+	protected String getAllowanceReasonForPercent(BigDecimal percent) {
+		String res = " ";
+		IZUGFeRDAllowanceCharge[] allowances = trans.getZFAllowances();
+		if ((allowances != null) && (allowances.length > 0)) {
+			for (IZUGFeRDAllowanceCharge currentAllowance : allowances) {
+				if ((percent==null)||(currentAllowance.getTaxPercent().equals(percent))) {
+					if (currentAllowance.getReason()!=null) {
+						res = res+currentAllowance.getReason()+" ";
+					}
+				}
+			}
+		}
+		res=res.substring(0,res.length()-1);
+		if (res.equals("")) {
+			res="Allowances";
+		}
+		return res;
+	}
+
+
+	/***
+	 * returns total of allowances for this tax rate
+	 * @param percent a specific rate, or null for any rate
+	 * @return the total amount
+	 */
+	protected BigDecimal getAllowancesForPercent(BigDecimal percent) {
 		BigDecimal res = new BigDecimal(0);
 		IZUGFeRDAllowanceCharge[] allowances = trans.getZFAllowances();
 		if ((allowances != null) && (allowances.length > 0)) {
 			for (IZUGFeRDAllowanceCharge currentAllowance : allowances) {
-				res = res.add(currentAllowance.getTotalAmount(this));
+				if ((percent==null)||(currentAllowance.getTaxPercent().equals(percent))) {
+					res = res.add(currentAllowance.getTotalAmount(this));
+				}
 			}
 		}
 		return res;
@@ -65,7 +128,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	}
 
 	protected BigDecimal getTaxBasis() {
-		BigDecimal res = getTotal().add(getCharges()).subtract(getAllowances());
+		BigDecimal res = getTotal().add(getChargesForPercent(null)).subtract(getAllowancesForPercent(null));
 		return res;
 	}
 
@@ -83,7 +146,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			BigDecimal percent = currentItem.getProduct().getVATPercent();
 			LineCalculator lc = new LineCalculator(currentItem);
 			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(),
-					trans.getDocumentCode());
+					currentItem.getCategoryCode());
 			VATAmount current = hm.get(percent);
 			if (current == null) {
 				hm.put(percent, itemVATAmount);

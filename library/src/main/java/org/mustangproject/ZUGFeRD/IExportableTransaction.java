@@ -33,6 +33,11 @@ import java.util.Date;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
+/***
+ * the interface of an transaction, e.g. an invoice, you want to create xml (potentially to be added to a PDF)
+ * for
+ * @see Invoice if you want to use an object rather than an interface
+ */
 public interface IExportableTransaction  {
 
 	/**
@@ -426,13 +431,26 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
+	/***
+	 * specify delivery date
+	 * @return the delivery date
+	 */
 	default Date getOccurrenceDate() {
 		return null;
 	}
 
+	/***
+	 * specify delivery period
+	 * @return the beginning of the delivery period
+	 */
 	default Date getOccurrencePeriodFrom() {
 		return null;
 	}
+
+	/***
+	 * specify delivery period
+	 * @return the end of the delivery period
+	 */
 	default Date getOccurrencePeriodTo() {
 		return null;
 	}
@@ -444,6 +462,15 @@ public interface IExportableTransaction  {
 	 * @return a array of objects from class FileAttachment
 	 */
 	default FileAttachment[] getAdditionalReferencedDocuments() {
+		return null;
+	}
+
+
+	/***
+	 * additional text description
+	 * @return an array of strings of document wide "includedNotes" (descriptive text values)
+	 */
+	default String[] getNotes() {
 		return null;
 	}
 }

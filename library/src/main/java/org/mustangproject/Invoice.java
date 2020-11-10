@@ -27,6 +27,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 
+/***
+ * An invoice, with fluent setters
+ * @see IExportableTransaction if you want to implement an interface instead
+ */
 public class Invoice implements IExportableTransaction {
 
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
@@ -34,6 +38,7 @@ public class Invoice implements IExportableTransaction {
 	protected BigDecimal totalPrepaidAmount = null;
 	protected TradeParty sender=null, recipient = null, deliveryAddress = null;
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
+	protected ArrayList<String> notes = null;
 	protected String contractReferencedDocument = null;
 
 	protected Date occurrenceDateFrom = null;
@@ -267,6 +272,14 @@ public class Invoice implements IExportableTransaction {
 
 
 	@Override
+	public String[] getNotes() {
+		if (notes==null) {
+			return null;
+		}
+		return notes.toArray(new String[0]);
+	}
+
+	@Override
 	public String getCurrency() {
 		return currency;
 	}
@@ -490,6 +503,15 @@ public class Invoice implements IExportableTransaction {
 		} else {
 			return null;
 		}
+	}
+
+
+	public Invoice addNote(String text) {
+		if (notes==null) {
+			notes=new ArrayList<String>();
+		}
+		notes.add(text);
+		return this;
 	}
 
 }

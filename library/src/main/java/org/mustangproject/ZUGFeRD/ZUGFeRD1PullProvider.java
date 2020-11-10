@@ -107,7 +107,6 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 		this.calc=new TransactionCalculator(trans);
 
 		boolean hasDueDate=false;
-		String taxCategoryCode="";
 		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 		String exemptionReason="";
 
@@ -182,51 +181,13 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 
 		}
 		xml = xml + "			<ram:SellerTradeParty>\n";
-		if (trans.getOwnForeignOrganisationID()!=null) {
-			xml = xml + "			<ram:ID>" + XMLTools.encodeXML(trans.getOwnForeignOrganisationID()) + "</ram:ID>\n";
-		}
-
-		if ((trans.getSender()!=null)&&(trans.getSender().getGlobalID()!=null)&&(trans.getSender().getGlobalIDScheme()!=null)) {
-			xml = xml + "           <ram:GlobalID schemeID=\"" + XMLTools.encodeXML(trans.getSender().getGlobalIDScheme()) + "\">"
-					+ XMLTools.encodeXML(trans.getSender().getGlobalID()) + "</ram:GlobalID>\n";
-		}
-		xml = xml + "				<ram:Name>" + XMLTools.encodeXML(trans.getOwnOrganisationName()) + "</ram:Name>\n"; //$NON-NLS-2$
-
-		if (trans.getSender().getContact() != null) {
-			xml = xml + "<ram:DefinedTradeContact>\n" + "     <ram:PersonName>" + XMLTools.encodeXML(trans.getSender().getContact().getName())
-					+ "</ram:PersonName>\n";
-			if (trans.getSender().getContact().getPhone() != null) {
-
-				xml = xml + "     <ram:TelephoneUniversalCommunication>\n" + "        <ram:CompleteNumber>"
-						+ XMLTools.encodeXML(trans.getSender().getContact().getPhone()) + "</ram:CompleteNumber>\n"
-						+ "     </ram:TelephoneUniversalCommunication>\n";
-			}
-			if (trans.getSender().getContact().getEMail() != null) {
-
-				xml = xml + "     <ram:EmailURIUniversalCommunication>\n" + "        <ram:URIID>"
-						+ XMLTools.encodeXML(trans.getSender().getContact().getEMail()) + "</ram:URIID>\n"
-						+ "     </ram:EmailURIUniversalCommunication>\n";
-			}
-			xml = xml + "  </ram:DefinedTradeContact>";
-
-		}
-		xml = xml + "				<ram:PostalTradeAddress>\n" + "					<ram:PostcodeCode>"
-				+ XMLTools.encodeXML(trans.getOwnZIP()) + "</ram:PostcodeCode>\n" + "					<ram:LineOne>"
-				+ XMLTools.encodeXML(trans.getOwnStreet()) + "</ram:LineOne>\n" + "					<ram:CityName>" + XMLTools.encodeXML(trans.getOwnLocation())
-				+ "</ram:CityName>\n" + "					<ram:CountryID>" + XMLTools.encodeXML(trans.getOwnCountry())
-				+ "</ram:CountryID>\n" + "				</ram:PostalTradeAddress>\n"
-				+ "				<ram:SpecifiedTaxRegistration>\n"
-				+ "					<ram:ID schemeID=\"FC\">" + XMLTools.encodeXML(trans.getOwnTaxID()) + "</ram:ID>\n" //$NON-NLS-2$
-				+ "				</ram:SpecifiedTaxRegistration>\n"
-				+ "				<ram:SpecifiedTaxRegistration>\n"
-				+ "					<ram:ID schemeID=\"VA\">" + XMLTools.encodeXML(trans.getOwnVATID()) + "</ram:ID>\n" //$NON-NLS-2$
-				+ "				</ram:SpecifiedTaxRegistration>\n"
-				+ "			</ram:SellerTradeParty>\n"
+		xml+= getTradePartyAsXML(trans.getSender(), true);
+		xml+= "			</ram:SellerTradeParty>\n"
 				+ "			<ram:BuyerTradeParty>\n";
 		// + " <ID>GE2020211</ID>\n"
 		// + " <GlobalID schemeID=\"0088\">4000001987658</GlobalID>\n"
 
-		xml+= getTradePartyAsXML(trans.getRecipient());
+		xml+= getTradePartyAsXML(trans.getRecipient(), false);
 		if ((trans.getOwnVATID()!=null)&&(trans.getOwnOrganisationName()!=null)) {
 			xml = xml + "            <ram:SpecifiedTaxRegistration>\n" + "               <ram:ID schemeID=\"VA\">"
 					+ XMLTools.encodeXML(trans.getOwnVATID()) + "</ram:ID>\n"
@@ -245,7 +206,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 				+ "		<ram:ApplicableSupplyChainTradeDelivery>\n" ;
 		if (this.trans.getDeliveryAddress()!=null) {
 			xml += "<ram:ShipToTradeParty>"+
-					getTradePartyAsXML(this.trans.getDeliveryAddress())+
+					getTradePartyAsXML(this.trans.getDeliveryAddress(), false)+
 					"</ram:ShipToTradeParty>";
 		}
 
@@ -299,7 +260,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 						+ "				<ram:TypeCode>VAT</ram:TypeCode>\n"
 						+ exemptionReason
 						+ "				<ram:BasisAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>\n" // currencyID=\"EUR\"
-						+ "				<ram:CategoryCode>"+taxCategoryCode+"</ram:CategoryCode>\n"
+						+ "				<ram:CategoryCode>"+amount.getCategoryCode()+"</ram:CategoryCode>\n"
 						+ "				<ram:ApplicablePercent>" + vatFormat(currentTaxPercent)
 						+ "</ram:ApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n"; //$NON-NLS-2$
 
@@ -356,7 +317,6 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 		int lineID = 0;
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			lineID++;
-			taxCategoryCode=currentItem.getProduct().getTaxCategoryCode();
 			if  (currentItem.getProduct().getTaxExemptionReason() != null) {
 				exemptionReason="<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
@@ -454,7 +414,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 			}
 		} catch (UnsupportedEncodingException e) {
 			Logger.getLogger(ZUGFeRD1PullProvider.class.getName()).log(Level.SEVERE, null, e);
-		} // $NON-NLS-1$
+		}
 	}
 
 	@Override

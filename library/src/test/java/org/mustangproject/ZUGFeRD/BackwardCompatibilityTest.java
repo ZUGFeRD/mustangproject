@@ -56,7 +56,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 
-			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(1).setProfile("EN16931").load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(1).setProfile(Profiles.getByName("Extended",1)).load(SOURCE_PDF)) {
 
 			ze.setTransaction(this);
 			ze.disableAutoClose(true);
