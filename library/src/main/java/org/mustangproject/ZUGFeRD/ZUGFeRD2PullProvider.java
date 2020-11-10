@@ -218,7 +218,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		this.calc = new TransactionCalculator(trans);
 
 		boolean hasDueDate = false;
-		String taxCategoryCode = "";
 		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 		String exemptionReason = "";
@@ -298,7 +297,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		int lineID = 0;
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			lineID++;
-			taxCategoryCode = currentItem.getProduct().getTaxCategoryCode();
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
@@ -492,7 +490,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "				<ram:TypeCode>VAT</ram:TypeCode>\n"
 						+ exemptionReason
 						+ "				<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>\n" // currencyID=\"EUR\"
-						+ "				<ram:CategoryCode>" + taxCategoryCode + "</ram:CategoryCode>\n"
+						+ "				<ram:CategoryCode>" + amount.getCategoryCode() + "</ram:CategoryCode>\n"
 						+ "				<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent)
 						+ "</ram:RateApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n"; //$NON-NLS-2$
 
