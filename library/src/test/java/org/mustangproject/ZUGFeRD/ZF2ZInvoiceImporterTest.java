@@ -41,11 +41,10 @@ import java.util.GregorianCalendar;
  * used for this import, testout-ZF2New.pdf
  */
 public class ZF2ZInvoiceImporterTest extends TestCase  {
-	final String TARGET_PDF = "./target/testout-ZF2new.pdf";
 
 	public void testInvoiceImport() {
 
-		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter(TARGET_PDF);
+		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter("./target/testout-ZF2new.pdf");
 
 		boolean hasExceptions=false;
 		Invoice invoice=null;
@@ -82,7 +81,7 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 		assertEquals("Stadthausen", invoice.getSender().getLocation());
 
 		TransactionCalculator tc=new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("571.040000"),tc.getTotalGross());
+		assertEquals(new BigDecimal("571.04"),tc.getTotalGross());
 
 
 		// name street location zip country, contact name phone email, total amount
@@ -90,5 +89,43 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 
 
 	}
+	public void testItemAllowancesChargesImport() {
+
+		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushItemChargesAllowances.pdf");
+
+		boolean hasExceptions=false;
+		Invoice invoice=null;
+		try {
+			invoice=zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException e) {
+			hasExceptions=true;
+		}
+		assertFalse(hasExceptions);
+		TransactionCalculator tc=new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("18.33"),tc.getTotalGross());
+	}
+
+	public void testAllowancesChargesImport() {
+
+		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushChargesAllowances.pdf");
+
+		boolean hasExceptions=false;
+		Invoice invoice=null;
+		try {
+			invoice=zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException e) {
+			hasExceptions=true;
+		}
+		assertFalse(hasExceptions);
+		TransactionCalculator tc=new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("11.07"),tc.getTotalGross());
+
+
+		// name street location zip country, contact name phone email, total amount
+
+
+
+	}
+
 
 }
