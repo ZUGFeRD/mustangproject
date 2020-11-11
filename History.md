@@ -51,6 +51,7 @@ switch
   - contacts also for recipients 
   - absolute and relative allowances and charges on item and document level #135,
   - support contact fax numbers
+  - closes #190 BOM not treated correctly on XML input file
 
 ### 2.0 still todo
 - dont show empty tax number field

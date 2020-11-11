@@ -615,13 +615,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		try {
 			zugferdRaw = xml.getBytes("UTF-8");
 
-			if ((zugferdRaw[0] == (byte) 0xEF) && (zugferdRaw[1] == (byte) 0xBB) && (zugferdRaw[2] == (byte) 0xBF)) {
-				// I don't like BOMs, lets remove it
-				zugferdData = new byte[zugferdRaw.length - 3];
-				System.arraycopy(zugferdRaw, 3, zugferdData, 0, zugferdRaw.length - 3);
-			} else {
-				zugferdData = zugferdRaw;
-			}
+			zugferdData=XMLTools.removeBOM(zugferdRaw);
 		} catch (UnsupportedEncodingException e) {
 			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
 		}
