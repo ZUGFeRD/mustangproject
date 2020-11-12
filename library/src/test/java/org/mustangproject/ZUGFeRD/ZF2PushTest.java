@@ -279,6 +279,8 @@ public class ZF2PushTest extends TestCase {
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PUSHEDGE);
 
+		assertTrue(zi.getUTF8().contains("0009845"));
+		assertTrue(zi.getUTF8().contains("0008734"));
 		assertTrue(zi.getUTF8().contains("item level 1/1"));
 		assertTrue(zi.getUTF8().contains("document level 2/2"));
 
