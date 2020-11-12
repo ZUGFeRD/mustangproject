@@ -1,7 +1,7 @@
 
 ## Changes
 
-On it's official website you can [download](https://www.mustangproject.org/files/Mustang-CLI-2.0.0-alpha3.jar) a alpha release of Mustang 2.
+On it's official website you can [download](https://www.mustangproject.org/deploy/Mustang-CLI-2.0.0.jar) Mustang 2.
 
 * Factur-X/ZUGFeRD 2 is now the default. In Mustangproject 1.x one had to select ZUGFeRD version 2 if that was desired, in Mustangproject 2 one now has to select ZUGFeRD version 1 if version 2 is not appropriate.
 * Mustang is now available via Maven Central, which makes it even easier to use the Mustang library. Apart from making it easier in Maven because there is no longer the need to mention the custom repository, it also makes it possible to use Mustang in Gradle projects
@@ -230,7 +230,7 @@ read/write ZUGFeRD-invoices like the (smaller) library module.
    <dependency>
       <groupId>org.mustangproject</groupId>
       <artifactId>validator</artifactId>
-      <version>2.0.0-alpha3</version>
+      <version>2.0.0</version>
    </dependency>
 </dependencies>
 

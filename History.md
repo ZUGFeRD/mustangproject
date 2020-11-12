@@ -1,4 +1,4 @@
-## 2.0 
+## 2.0.0 
 ### done
 
 - support for ZF 2.1.1, i.e. "Reference profile" Xrechnung 
@@ -53,13 +53,6 @@ switch
   - support contact fax numbers
   - closes #190 BOM not treated correctly on XML input file
 
-### 2.0 still todo
-- dont show empty tax number field
-- fail when no bankverbindung?
-- fail when xr attrs missing?
-- build xr skonto???
-- *validator not to XR error on ZF files (only notices)
-- xmp errors may not show correctly in log
 Alpha3 2020-10-24
 Alpha2 2020-09-15
 Alpha1 2020-08-06
