@@ -90,7 +90,10 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	/***
-	 * switch type to invoice correction and refer to document number
+	 * switch type to invoice correction and refer to document number.
+	 * Please note that the quantities need to be negative, if you
+	 * e.g. delivered 100 and take 50 back the quantity should be -50 in the
+	 * corrected invoice, which will result in negative VAT and a negative payment amount
 	 * @param number the invoice number to be corrected
 	 * @return this object (fluent setter)
 	 */
@@ -186,6 +189,11 @@ public class Invoice implements IExportableTransaction {
 		return buyerOrderReferencedDocumentID;
 	}
 
+	/***
+	 * usually the order number or in case of a correction the original invoice number
+	 * @param buyerOrderReferencedDocumentID
+	 * @return
+	 */
 	public Invoice setBuyerOrderReferencedDocumentID(String buyerOrderReferencedDocumentID) {
 		this.buyerOrderReferencedDocumentID = buyerOrderReferencedDocumentID;
 		return this;
@@ -196,6 +204,11 @@ public class Invoice implements IExportableTransaction {
 		return buyerOrderReferencedDocumentIssueDateTime;
 	}
 
+	/***
+	 * when the order (or whatever reference in BuyerOrderReferencedDocumentID) was issued
+	 * @param buyerOrderReferencedDocumentIssueDateTime
+	 * @return
+	 */
 	public Invoice setBuyerOrderReferencedDocumentIssueDateTime(String buyerOrderReferencedDocumentIssueDateTime) {
 		this.buyerOrderReferencedDocumentIssueDateTime = buyerOrderReferencedDocumentIssueDateTime;
 		return this;
