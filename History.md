@@ -1,5 +1,15 @@
-## 2.0.0 
-### done
+
+### 2.0.1 todo
+- dont show empty tax number field
+- fail when no bankverbindung?
+- fail when xr attrs missing?
+- build xr skonto???
+- *validator not to XR error on ZF files (only notices)
+- xmp errors may not show correctly in log
+
+2.0.0 
+=====
+2020-11-12
 
 - support for ZF 2.1.1, i.e. "Reference profile" Xrechnung 
 - ZF 2.1.1 now default (up to 1.7.8 ZF2 could be set but ZF1 was default)

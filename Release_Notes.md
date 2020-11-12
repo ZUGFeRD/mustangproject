@@ -31,38 +31,8 @@ to for non-interactive (i.e., batch) processing.
 
 
 The source file parameter for validation changed 
-from `-f` (ZUV) to the usual `--source`. The following 
-result codes apply:
+from `-f` (ZUV) to the usual `--source`. 
 
-| section  | meaning  |
-|---|---|
-| 1  | file not found  |
-| 2  | additional data schema validation fails  |
-| 3  | xml data not found  |
-| 4  | schematron rule failed  |
-| 5  | file too small  |
-| 6  | VeraPDFException |
-| 7  | IOException PDF  |
-| 8  | File does not look like PDF nor XML (contains neither %PDF nor <?xml)  |
-| 9  | IOException XML  |
-| 11  | XMP Metadata: ConformanceLevel not found  |
-| 12  | XMP Metadata: ConformanceLevel contains invalid value  |
-| 13  | XMP Metadata: DocumentType not found  |
-| 14  | XMP Metadata: DocumentType invalid  |
-| 15  | XMP Metadata: Version not found  |
-| 16  | XMP Metadata: Version contains invalid value  |
-| 18  | schema validation failed  |
-| 19  | XMP Metadata: DocumentFileName contains invalid value  |
-| 20  | not a pdf  |
-| 21  | XMP Metadata: DocumentFileName not found")  |
-| 22  | generic XML validation exception  |
-| 23  | Not a PDF/A-3  |
-| 24  | Issues in CEN EN16931 Schematron Check |
-| 25  | Unsupported profile type  |
-| 26  | No rules matched, XML to minimal?  |
-| 27  | XRechnung Schematron Check |
- 
- 
 ### Use as Library
 
 We're now on maven central, please remove the old github repository. Additionally, the following changed
