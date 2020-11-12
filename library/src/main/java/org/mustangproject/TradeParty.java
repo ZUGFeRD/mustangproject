@@ -1,8 +1,6 @@
 package org.mustangproject;
 
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTradeParty;
-import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlement;
+import org.mustangproject.ZUGFeRD.*;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -12,6 +10,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	protected String name, zip, street, location, country;
 	protected String taxID = null, vatID = null;
+	protected String ID = null;
 	protected String additionalAddress = null;
 	protected ArrayList<BankDetails> bankDetails = new ArrayList<BankDetails>();
 	protected Contact contact = null;
@@ -86,6 +85,16 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 			}
 		}
 
+	}
+
+	@Override
+	public String getID() {
+		return ID;
+	}
+
+	public TradeParty setID(String ID) {
+		this.ID = ID;
+		return this;
 	}
 
 	public TradeParty setContact(Contact c) {
@@ -201,5 +210,6 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		this.additionalAddress = additionalAddress;
 		return this;
 	}
+
 
 }
