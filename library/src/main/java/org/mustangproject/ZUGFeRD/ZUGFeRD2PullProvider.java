@@ -496,13 +496,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 			}
 		}
-		if ((trans.getOccurrencePeriodFrom() != null) || (trans.getOccurrencePeriodTo() != null)) {
+		if ((trans.getDetailedDeliveryPeriodFrom() != null) || (trans.getDetailedDeliveryPeriodTo() != null)) {
 			xml = xml + "<ram:BillingSpecifiedPeriod>";
-			if (trans.getOccurrencePeriodFrom() != null) {
-				xml = xml + "<ram:StartDateTime><udt:DateTimeString format='102'>" + zugferdDateFormat.format(trans.getOccurrencePeriodFrom()) + "</udt:DateTimeString></ram:StartDateTime>";
+			if (trans.getDetailedDeliveryPeriodFrom() != null) {
+				xml = xml + "<ram:StartDateTime><udt:DateTimeString format='102'>" + zugferdDateFormat.format(trans.getDetailedDeliveryPeriodFrom()) + "</udt:DateTimeString></ram:StartDateTime>";
 			}
-			if (trans.getOccurrencePeriodTo() != null) {
-				xml = xml + "<ram:EndDateTime><udt:DateTimeString format='102'>" + zugferdDateFormat.format(trans.getOccurrencePeriodTo()) + "</udt:DateTimeString></ram:EndDateTime>";
+			if (trans.getDetailedDeliveryPeriodTo() != null) {
+				xml = xml + "<ram:EndDateTime><udt:DateTimeString format='102'>" + zugferdDateFormat.format(trans.getDetailedDeliveryPeriodTo()) + "</udt:DateTimeString></ram:EndDateTime>";
 			}
 			xml = xml + "</ram:BillingSpecifiedPeriod>";
 

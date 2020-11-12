@@ -6,6 +6,9 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+/***
+ * describes any invoice line
+ */
 public class Item implements IZUGFeRDExportableItem {
 	protected BigDecimal price, quantity, tax, grossPrice, lineTotalAmount;
 	protected String id;
@@ -14,6 +17,12 @@ public class Item implements IZUGFeRDExportableItem {
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<IZUGFeRDAllowanceCharge>(),
 			Charges = new ArrayList<IZUGFeRDAllowanceCharge>();
 
+	/***
+	 * default constructor
+	 * @param product contains the products name, tax rate, and unit
+	 * @param price the base price of one item the product
+	 * @param quantity the number, dimensions or the weight of the delivered product or good in this context
+	 */
 	public Item(Product product, BigDecimal price, BigDecimal quantity) {
 		this.price = price;
 		this.quantity = quantity;
@@ -24,6 +33,11 @@ public class Item implements IZUGFeRDExportableItem {
 		return lineTotalAmount;
 	}
 
+	/**
+	 * should only be set by calculator classes or maybe when reading from XML
+	 * @param lineTotalAmount
+	 * @return
+	 */
 	public Item setLineTotalAmount(BigDecimal lineTotalAmount) {
 		this.lineTotalAmount = lineTotalAmount;
 		return this;
@@ -33,6 +47,11 @@ public class Item implements IZUGFeRDExportableItem {
 		return grossPrice;
 	}
 
+
+	/***
+	 * the list price without VAT (sic!), refer to EN16931-1 for definition
+	 * @return
+	 */
 	public Item setGrossPrice(BigDecimal grossPrice) {
 		this.grossPrice = grossPrice;
 		return this;
@@ -125,6 +144,11 @@ public class Item implements IZUGFeRDExportableItem {
 		return this;
 	}
 
+	/***
+	 * adds item level freetext fields (includednote)
+	 * @param text
+	 * @return
+	 */
 	public Item addNote(String text) {
 		if (notes==null) {
 			notes=new ArrayList<String>();

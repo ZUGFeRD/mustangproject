@@ -21,8 +21,8 @@ package org.mustangproject.ZUGFeRD;
  * Mustangproject's ZUGFeRD implementation
  * Neccessary interface for ZUGFeRD exporter
  * Licensed under the APLv2
- * @date 2014-05-10 to 2014-06-25
- * @version 1.2.0
+ * @date 2014-05-10 to 2020-11-12
+ * @version 2.0.0
  * @author jstaerk
  * */
 
@@ -36,7 +36,7 @@ import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 /***
  * the interface of an transaction, e.g. an invoice, you want to create xml (potentially to be added to a PDF)
  * for
- * @see Invoice if you want to use an object rather than an interface
+ * @see org.mustangproject.Invoice
  */
 public interface IExportableTransaction  {
 
@@ -431,33 +431,26 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-	/***
-	 * specify delivery date
-	 * @return the delivery date
-	 */
-	default Date getOccurrenceDate() {
-		return null;
-	}
 
 	/***
-	 * specify delivery period
+	 * specifies the document level delivery period, will be included in a BillingSpecifiedPeriod element
 	 * @return the beginning of the delivery period
 	 */
-	default Date getOccurrencePeriodFrom() {
+	default Date getDetailedDeliveryPeriodFrom() {
 		return null;
 	}
 
 	/***
-	 * specify delivery period
+	 * specifies the document level delivery period, will be included in a BillingSpecifiedPeriod element
 	 * @return the end of the delivery period
 	 */
-	default Date getOccurrencePeriodTo() {
+	default Date getDetailedDeliveryPeriodTo() {
 		return null;
 	}
 
 	/**
 	 * get additional referenced documents acccording to BG-24 XRechnung (Rechnungsbegruendende Unterlagen),
-	 * i.e. <ram:AdditionalReferencedDocument> in <ram:ApplicableHeaderTradeAgreement> (only supported for zf2)
+	 * i.e. ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument
 	 *
 	 * @return a array of objects from class FileAttachment
 	 */
