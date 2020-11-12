@@ -98,7 +98,7 @@ public class XMLTools extends XMLWriter {
 	 * @param is the ByteArrayInputStream used
 	 * @throws IOException if can not be read from is
 	 * @see <a href="https://www.w3.org/TR/xml/#sec-guessing">Autodetection of Character Encodings</a>
-	 */
+	 *
 	public static int guessBOMSize(ByteArrayInputStream is) throws IOException {
 		byte[] pad = new byte[4];
 		is.read(pad);
@@ -118,7 +118,7 @@ public class XMLTools extends XMLWriter {
 			return 2;
 		}
 		return 0;
-	}
+	}*/
 
 	/***
 	 * removes utf8 byte order marks from byte arrays, in case one is there
