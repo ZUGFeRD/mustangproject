@@ -48,7 +48,6 @@ public class Main {
 	private static String getUsage() {
 		return "Usage: --action metrics|combine|extract|a3only|validate|visualize [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] | [-h,--help] \r\n"
 				+ "        --action=metrics\n"
-				+
 				+ "          -d, --directory count ZUGFeRD files in directory to be scanned\n"
 				+ "                If it is a directory, it will recurse.\n"
 				+ "          -l, --listfromstdin     count ZUGFeRD files from a list of linefeed separated files on runtime.\n"
