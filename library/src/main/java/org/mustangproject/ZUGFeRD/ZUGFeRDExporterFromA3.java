@@ -26,16 +26,19 @@ import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
-import org.apache.pdfbox.preflight.PreflightDocument;
-import org.apache.pdfbox.preflight.exception.ValidationException;
-import org.apache.pdfbox.preflight.parser.PreflightParser;
+import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDMarkInfo;
+import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDStructureTreeRoot;
+import org.apache.pdfbox.pdmodel.graphics.color.PDOutputIntent;
 import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.AdobePDFSchema;
 import org.apache.xmpbox.schema.DublinCoreSchema;
 import org.apache.xmpbox.schema.PDFAIdentificationSchema;
 import org.apache.xmpbox.schema.XMPBasicSchema;
+import org.apache.xmpbox.type.ArrayProperty;
 import org.apache.xmpbox.type.BadFieldValueException;
+import org.apache.xmpbox.xml.DomXmpParser;
+import org.apache.xmpbox.xml.XmpParsingException;
 import org.apache.xmpbox.xml.XmpSerializer;
 import org.mustangproject.FileAttachment;
 
@@ -44,6 +47,7 @@ import javax.activation.FileDataSource;
 import javax.xml.transform.TransformerException;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,8 +60,11 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	protected PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
 	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<FileAttachment>();
 
-	protected boolean ensurePDFisUpgraded = true;
-
+	/**
+	 * This flag controls whether or not the metadata is overwritten, or kind of merged.
+	 * The merging probably needs to be overhauled, but for my purpose it was good enough.
+	 */
+	protected boolean overwrite = true;
 
 	private boolean disableAutoClose;
 	private boolean fileAttached = false;
@@ -71,7 +78,6 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * IZUGFeRDExportableTransaction for the XML to be populated.
 	 */
 	protected PDMetadata metadata = null;
-	protected PDFAIdentificationSchema pdfaid = null;
 	protected XMPMetadata xmp = null;
 	/**
 	 * Producer attribute for PDF
@@ -85,6 +91,16 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * CreatorTool
 	 */
 	protected String creatorTool = "mustangproject";
+
+	/** @deprecated author is never set yet */
+	@Deprecated
+	protected String author;
+	/** @deprecated title is never set yet */
+	@Deprecated
+	protected String title;
+	/** @deprecated subject is never set yet */
+	@Deprecated
+	protected String subject;
 
 	private PDDocument doc;
 
@@ -223,7 +239,6 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	public ZUGFeRDExporterFromA3() {
 		super();
-		ensurePDFisUpgraded = false;
 	}
 
 	public void attachFile(FileAttachment file) {
@@ -460,46 +475,23 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	}
 
 	protected void prepareDocument() throws IOException {
-		String fullProducer = producer + " (via mustangproject.org " + org.mustangproject.ZUGFeRD.Version.VERSION + ")";
 
 		PDDocumentCatalog cat = doc.getDocumentCatalog();
 		metadata = new PDMetadata(doc);
 		cat.setMetadata(metadata);
 
-		xmp = XMPMetadata.createXMPMetadata();
+		xmp = getXmpMetadata();
+		writeAdobePDFSchema(xmp);
+		writePDFAIdentificationSchema(xmp);
+		writeDublinCoreSchema(xmp);
+		writeXMLBasicSchema(xmp);
+		writeDocumentInformation();
 
-		pdfaid = new PDFAIdentificationSchema(xmp);
+		// the following three lines are intended to make the pdf more PDF/A conformant if it isn't already
+		addSRGBOutputIntend();
+		setMarked();
+		addStructureTreeRoot();
 
-		xmp.addSchema(pdfaid);
-
-		DublinCoreSchema dc = xmp.createAndAddDublinCoreSchema();
-
-		dc.addCreator(creator);
-
-		XMPBasicSchema xsb = xmp.createAndAddXMPBasicSchema();
-
-		xsb.setCreatorTool(creatorTool);
-		xsb.setCreateDate(GregorianCalendar.getInstance());
-		// PDDocumentInformation pdi=doc.getDocumentInformation();
-		PDDocumentInformation pdi = new PDDocumentInformation();
-		pdi.setProducer(fullProducer);
-		pdi.setAuthor(creator);
-		doc.setDocumentInformation(pdi);
-
-		AdobePDFSchema pdf = xmp.createAndAddAdobePDFSchema();
-		pdf.setProducer(fullProducer);
-		if (ensurePDFisUpgraded) {
-			try {
-				pdfaid.setConformance(conformanceLevel.getLetter());
-			} catch (BadFieldValueException ex) {
-				// This should be impossible, because it would occur only if an illegal
-				// conformance level is supplied,
-				// however the enum enforces that the conformance level is valid.
-				throw new Error(ex);
-			}
-
-			pdfaid.setPart(3);
-		}
 		addXMP(xmp); /*
 		 * this is the only line where we do something Zugferd-specific, i.e. add PDF
 		 * metadata specifically for Zugferd, not generically for a embedded file
@@ -544,23 +536,189 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
-	protected byte[] serializeXmpMetadata(XMPMetadata xmpMetadata) throws TransformerException {
-		XmpSerializer serializer = new XmpSerializer();
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+	/**
+	 * Reads the XMPMetadata from the PDDocument, if it exists.
+	 * Otherwise creates XMPMetadata.
+	 */
+	protected XMPMetadata getXmpMetadata() {
+		PDMetadata meta = doc.getDocumentCatalog().getMetadata();
+		if (meta != null) {
+			try {
+				DomXmpParser xmpParser = new DomXmpParser();
+				return xmpParser.parse(meta.toByteArray());
+			} catch (XmpParsingException | IOException e) {
+				// TODO use logging or handle the error somehow
+			}
+		}
+		return XMPMetadata.createXMPMetadata();
+	}
 
-		String prefix = "<?xpacket begin=\"\uFEFF\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>";
-		String suffix = "<?xpacket end=\"w\"?>";
+	protected byte[] serializeXmpMetadata(XMPMetadata xmpMetadata) throws TransformerException {
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		new XmpSerializer().serialize(xmpMetadata, buffer, true); // see https://github.com/ZUGFeRD/mustangproject/issues/44
+		return buffer.toByteArray();
+	}
+
+	/**
+	 * Sets the producer if the overwrite flag is set or the producer is not already set.
+	 * Sets the PDFVersion to 1.4 if the field is empty.
+	 */
+	protected void writeAdobePDFSchema(XMPMetadata xmp) {
+		AdobePDFSchema pdf = getAdobePDFSchema(xmp);
+		if (overwrite || isEmpty(pdf.getProducer()))
+			pdf.setProducer(producer);
+	}
+
+	/**
+	 * Returns the AdobePDFSchema from the XMPMetadata if it exists.
+	 * If the overwrite flag is set or no AdobePDFSchema exists in the XMPMetadata, it is created, added and returned.
+	 */
+	protected AdobePDFSchema getAdobePDFSchema(XMPMetadata xmp) {
+		AdobePDFSchema pdf = xmp.getAdobePDFSchema();
+		if (pdf != null)
+			if (overwrite)
+				xmp.removeSchema(pdf);
+			else
+				return pdf;
+		return xmp.createAndAddAdobePDFSchema();
+	}
+
+	protected void writePDFAIdentificationSchema(XMPMetadata xmp) {
+		PDFAIdentificationSchema pdfaid = getPDFAIdentificationSchema(xmp);
+		if (overwrite || isEmpty(pdfaid.getConformance())) {
+			try {
+				pdfaid.setConformance(conformanceLevel.getLetter());
+			} catch (BadFieldValueException ex) {
+				// This should be impossible, because it would occur only if an illegal
+				// conformance level is supplied,
+				// however the enum enforces that the conformance level is valid.
+				throw new Error(ex);
+			}
+		}
+		pdfaid.setPart(3);
+	}
+
+	protected PDFAIdentificationSchema getPDFAIdentificationSchema(XMPMetadata xmp) {
+		PDFAIdentificationSchema pdfaid = xmp.getPDFIdentificationSchema();
+		if (pdfaid != null)
+			if (overwrite)
+				xmp.removeSchema(pdfaid);
+			else
+				return pdfaid;
+		return xmp.createAndAddPFAIdentificationSchema();
+	}
+
+	protected void writeDublinCoreSchema(XMPMetadata xmp) {
+		DublinCoreSchema dc = getDublinCoreSchema(xmp);
+		if (dc.getFormat() == null)
+			dc.setFormat("application/pdf");
+		if ((overwrite || dc.getCreators() == null || dc.getCreators().isEmpty()) && creator != null)
+			dc.addCreator(creator);
+		if ((overwrite || dc.getDates() == null || dc.getDates().isEmpty()) && creator != null)
+			dc.addDate(Calendar.getInstance());
+
+		ArrayProperty titleProperty = dc.getTitleProperty();
+		if (titleProperty != null) {
+			if (overwrite && !isEmpty(title)) {
+				dc.removeProperty(titleProperty);
+				dc.setTitle(title);
+			} else if (titleProperty.getElementsAsString().stream().anyMatch("Untitled"::equalsIgnoreCase)) {
+				// remove unfitting ghostscript default
+				dc.removeProperty(titleProperty);
+			}
+		} else if (!isEmpty(title)) {
+			dc.setTitle(title);
+		}
+	}
+
+	protected DublinCoreSchema getDublinCoreSchema(XMPMetadata xmp) {
+		DublinCoreSchema dc = xmp.getDublinCoreSchema();
+		if (dc != null)
+			if (overwrite)
+				xmp.removeSchema(dc);
+			else
+				return dc;
+		return xmp.createAndAddDublinCoreSchema();
+	}
+
+	protected void writeXMLBasicSchema(XMPMetadata xmp) {
+		XMPBasicSchema xsb = getXmpBasicSchema(xmp);
+		if (overwrite || isEmpty(xsb.getCreatorTool()) || "UnknownApplication".equals(xsb.getCreatorTool()))
+			xsb.setCreatorTool(creatorTool);
+		if (overwrite || xsb.getCreateDate() == null)
+			xsb.setCreateDate(GregorianCalendar.getInstance());
+	}
+
+	protected XMPBasicSchema getXmpBasicSchema(XMPMetadata xmp) {
+		XMPBasicSchema xsb = xmp.getXMPBasicSchema();
+		if (xsb != null)
+			if (overwrite)
+				xmp.removeSchema(xsb);
+			else
+				return xsb;
+		return xmp.createAndAddXMPBasicSchema();
+	}
+
+	protected void writeDocumentInformation() {
+		String fullProducer = producer + " (via mustangproject.org " + Version.VERSION + ")";
+		PDDocumentInformation info = doc.getDocumentInformation();
+		if (overwrite || info.getCreationDate() == null)
+			info.setCreationDate(Calendar.getInstance());
+		if (overwrite || info.getModificationDate() == null)
+			info.setModificationDate(Calendar.getInstance());
+		if (overwrite || (isEmpty(info.getAuthor()) && !isEmpty(author)))
+			info.setAuthor(author);
+		if (overwrite || (isEmpty(info.getProducer()) && !isEmpty(fullProducer)))
+			info.setProducer(fullProducer);
+		if (overwrite || (isEmpty(info.getCreator()) && !isEmpty(creator)))
+			info.setCreator(creator);
+		if (overwrite || (isEmpty(info.getTitle()) && !isEmpty(title)))
+			info.setTitle(title);
+		if (overwrite || (isEmpty(info.getSubject()) && !isEmpty(subject)))
+			info.setSubject(subject);
+	}
+
+	/**
+	 * Adds an OutputIntent and the sRGB color profile if no OutputIntent exist
+	 */
+	protected void addSRGBOutputIntend() {
+		if (!doc.getDocumentCatalog().getOutputIntents().isEmpty()) {
+			return;
+		}
 
 		try {
-			buffer.write(prefix.getBytes("UTF-8")); // see https://github.com/ZUGFeRD/mustangproject/issues/44
-			serializer.serialize(xmpMetadata, buffer, false);
-			buffer.write(suffix.getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			throw new TransformerException(e);
+			InputStream colorProfile = Thread.currentThread().getContextClassLoader().getResourceAsStream("sRGB.icc");
+			if (colorProfile != null) {
+				PDOutputIntent intent = new PDOutputIntent(doc, colorProfile);
+				intent.setInfo("sRGB IEC61966-2.1");
+				intent.setOutputCondition("sRGB IEC61966-2.1");
+				intent.setOutputConditionIdentifier("sRGB IEC61966-2.1");
+				intent.setRegistryName("http://www.color.org");
+				doc.getDocumentCatalog().addOutputIntent(intent);
+			}
 		} catch (IOException e) {
-			throw new TransformerException(e);
+			// TODO use logging or handle the error somehow
 		}
-		return buffer.toByteArray();
+	}
+
+	/**
+	 * Adds a MarkInfo element to the PDF if it doesn't already exist and sets it as marked.
+	 */
+	protected void setMarked() {
+		PDDocumentCatalog catalog = doc.getDocumentCatalog();
+		if (catalog.getMarkInfo() == null) {
+			catalog.setMarkInfo(new PDMarkInfo(doc.getPages().getCOSObject()));
+		}
+		catalog.getMarkInfo().setMarked(true);
+	}
+
+	/**
+	 * Adds a StructureTreeRoot element to the PDF if it doesn't already exist.
+	 */
+	protected void addStructureTreeRoot() {
+		if (doc.getDocumentCatalog().getStructureTreeRoot() == null) {
+			doc.getDocumentCatalog().setStructureTreeRoot(new PDStructureTreeRoot());
+		}
 	}
 
 
@@ -600,5 +758,15 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		}
 
 		return this;
+	}
+
+	/**
+	 * Utility method inspired by apache commons-lang3 StringUtils.
+	 *
+	 * @param string the string to test
+	 * @return true if the string is null or empty
+	 */
+	private boolean isEmpty(String string) {
+		return string == null || string.isEmpty();
 	}
 }
