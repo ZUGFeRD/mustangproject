@@ -35,8 +35,8 @@ public class Item implements IZUGFeRDExportableItem {
 
 	/**
 	 * should only be set by calculator classes or maybe when reading from XML
-	 * @param lineTotalAmount
-	 * @return
+	 * @param lineTotalAmount price*quantity of this line
+	 * @return fluent setter
 	 */
 	public Item setLineTotalAmount(BigDecimal lineTotalAmount) {
 		this.lineTotalAmount = lineTotalAmount;
@@ -50,7 +50,8 @@ public class Item implements IZUGFeRDExportableItem {
 
 	/***
 	 * the list price without VAT (sic!), refer to EN16931-1 for definition
-	 * @return
+	 * @param grossPrice the list price without VAT
+	 * @return fluent setter
 	 */
 	public Item setGrossPrice(BigDecimal grossPrice) {
 		this.grossPrice = grossPrice;
@@ -146,8 +147,8 @@ public class Item implements IZUGFeRDExportableItem {
 
 	/***
 	 * adds item level freetext fields (includednote)
-	 * @param text
-	 * @return
+	 * @param text UTF8 plain text
+	 * @return fluent setter
 	 */
 	public Item addNote(String text) {
 		if (notes==null) {

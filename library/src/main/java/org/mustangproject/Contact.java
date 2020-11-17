@@ -15,9 +15,9 @@ public class Contact implements IZUGFeRDExportableContact {
 	/***
 	 * default constructor.
 	 * Name, phone and email of sender contact person are e.g. required by XRechnung
-	 * @param name
-	 * @param phone
-	 * @param email
+	 * @param name full name of the contact
+	 * @param phone full phone number
+	 * @param email email address of the contact
 	 */
 	public Contact(String name, String phone, String email) {
 		this.name = name;
@@ -27,13 +27,13 @@ public class Contact implements IZUGFeRDExportableContact {
 
 	/***
 	 * complete specification of a named contact with a different address
-	 * @param name
-	 * @param phone
-	 * @param email
-	 * @param street
-	 * @param zip
-	 * @param location
-	 * @param country
+	 * @param name full name
+	 * @param phone full phone number
+	 * @param email full email
+	 * @param street street+number
+	 * @param zip postcode
+	 * @param location city
+	 * @param country two-letter iso code
 	 */
 	public Contact(String name, String phone, String email, String street, String zip, String location, String country) {
 		this.name = name;
@@ -53,8 +53,8 @@ public class Contact implements IZUGFeRDExportableContact {
 
 	/**
 	 * the first and last name of the contact
-	 * @param name
-	 * @return
+	 * @param name first and last name
+	 * @return fluent setter
 	 */
 	public Contact setName(String name) {
 		this.name = name;
@@ -68,8 +68,8 @@ public class Contact implements IZUGFeRDExportableContact {
 
 	/***
 	 * complete phone number of the contact
-	 * @param phone
-	 * @return
+	 * @param phone the complete phone number
+	 * @return fluent setter
 	 */
 	public Contact setPhone(String phone) {
 		this.phone = phone;
@@ -83,8 +83,8 @@ public class Contact implements IZUGFeRDExportableContact {
 
 	/***
 	 * (optional) complete fax number
-	 * @param fax
-	 * @return
+	 * @param fax complete fax number of the contact
+	 * @return fluent setter
 	 */
 	public Contact setFax(String fax) {
 		this.fax = fax;
@@ -97,8 +97,8 @@ public class Contact implements IZUGFeRDExportableContact {
 
 	/***
 	 * personal email address of the contact person
-	 * @param email
-	 * @return
+	 * @param email the email address of the contact
+	 * @return fluent setter
 	 */
 	public Contact setEMail(String email) {
 		this.email = email;
@@ -111,8 +111,8 @@ public class Contact implements IZUGFeRDExportableContact {
 
 	/***
 	 * the postcode, if the address is different to the organisation
-	 * @param zip
-	 * @return
+	 * @param zip the postcode of the contact
+	 * @return fluent setter
 	 */
 	public Contact setZIP(String zip) {
 		this.zip = zip;
@@ -126,8 +126,8 @@ public class Contact implements IZUGFeRDExportableContact {
 
 	/**
 	 * street and number, if the address is different to the organisation
-	 * @param street
-	 * @return
+	 * @param street street and number of the contact
+	 * @return fluent setter
 	 */
 	public Contact setStreet(String street) {
 		this.street = street;
@@ -141,8 +141,8 @@ public class Contact implements IZUGFeRDExportableContact {
 
 	/***
 	 * city of the contact person, if different from organisation
-	 * @param location
-	 * @return
+	 * @param location city
+	 * @return fluent setter
 	 */
 	public Contact setLocation(String location) {
 		this.location = location;
@@ -156,8 +156,8 @@ public class Contact implements IZUGFeRDExportableContact {
 
 	/***
 	 * two-letter ISO country code of the contact, if different from organisation
-	 * @param country
-	 * @return
+	 * @param country two-letter iso code
+	 * @return fluent setter
 	 */
 	public Contact setCountry(String country) {
 		this.country = country;

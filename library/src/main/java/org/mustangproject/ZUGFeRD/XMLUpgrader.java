@@ -27,11 +27,11 @@ public class XMLUpgrader {
 
 	/***
 	 * Takes a filename of a ZF1 XML file and returns the string of ZF2 XML
-	 * @param xmlFilename
+	 * @param xmlFilename the filename of the source
 	 * @return String the updated XML
-	 * @throws FileNotFoundException
-	 * @throws TransformerException
-	 * @throws UnsupportedEncodingException
+	 * @throws FileNotFoundException if the source could not be found
+	 * @throws TransformerException if the source could not be transformed
+	 * @throws UnsupportedEncodingException if the source was not utf8
 	 */
 	public String migrateFromV1ToV2(String xmlFilename) throws FileNotFoundException, TransformerException, UnsupportedEncodingException {
 		/**

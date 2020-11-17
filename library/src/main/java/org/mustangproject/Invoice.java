@@ -191,8 +191,8 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * usually the order number or in case of a correction the original invoice number
-	 * @param buyerOrderReferencedDocumentID
-	 * @return
+	 * @param buyerOrderReferencedDocumentID string with number
+	 * @return fluent setter
 	 */
 	public Invoice setBuyerOrderReferencedDocumentID(String buyerOrderReferencedDocumentID) {
 		this.buyerOrderReferencedDocumentID = buyerOrderReferencedDocumentID;
@@ -205,9 +205,9 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	/***
-	 * when the order (or whatever reference in BuyerOrderReferencedDocumentID) was issued
-	 * @param buyerOrderReferencedDocumentIssueDateTime
-	 * @return
+	 * when the order (or whatever reference in BuyerOrderReferencedDocumentID) was issued (@todo switch to date?)
+	 * @param buyerOrderReferencedDocumentIssueDateTime  IssueDateTime in format CCYY-MM-DDTHH:MM:SS
+	 * @return fluent setter
 	 */
 	public Invoice setBuyerOrderReferencedDocumentIssueDateTime(String buyerOrderReferencedDocumentIssueDateTime) {
 		this.buyerOrderReferencedDocumentIssueDateTime = buyerOrderReferencedDocumentIssueDateTime;
@@ -374,8 +374,10 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * sets a named sender contact
-	 * @param ownContact
-	 * @return
+	 * @deprecated use setSender
+	 * @see Contact
+	 * @param ownContact the sender contact
+	 * @return fluent setter
 	 */
 	public Invoice setOwnContact(Contact ownContact) {
 		this.sender.setContact(ownContact);
@@ -389,8 +391,8 @@ public class Invoice implements IExportableTransaction {
 	/**
 	 * required.
 	 * sets the invoice receiving institution = invoicee
-	 * @param recipient
-	 * @return
+	 * @param recipient the invoicee organisation
+	 * @return fluent setter
 	 */
 	public Invoice setRecipient(TradeParty recipient) {
 		this.recipient = recipient;
@@ -400,8 +402,8 @@ public class Invoice implements IExportableTransaction {
 	/**
 	 * required.
 	 * sets the invoicing institution = invoicer
-	 * @param sender
-	 * @return
+	 * @param sender the invoicer
+	 * @return fluent setter
 	 */
 	public Invoice setSender(TradeParty sender) {
 		this.sender = sender;
@@ -468,8 +470,8 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * if the delivery address is not the recipient address, it can be specified here
-	 * @param deliveryAddress
-	 * @return
+	 * @param deliveryAddress the goods receiving organisation
+	 * @return fluent setter
 	 */
 	public Invoice setDeliveryAddress(TradeParty deliveryAddress) {
 		this.deliveryAddress = deliveryAddress;
@@ -484,8 +486,9 @@ public class Invoice implements IExportableTransaction {
 	/**
 	 * required
 	 * adds invoice "lines" :-)
-	 * @param item
-	 * @return
+	 * @see Item
+	 * @param item the invoice line
+	 * @return fluent setter
 	 */
 	public Invoice addItem(IZUGFeRDExportableItem item) {
 		ZFItems.add(item);
@@ -510,8 +513,9 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * adds a document level addition to the price
-	 * @param izac
-	 * @return
+	 * @see Charge
+	 * @param izac the charge to be applied
+	 * @return fluent setter
 	 */
 	public Invoice addCharge(IZUGFeRDAllowanceCharge izac) {
 		Charges.add(izac);
@@ -520,8 +524,9 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * adds a document level rebate
-	 * @param izac
-	 * @return
+	 * @see Allowance
+	 * @param izac the allowance to be applied
+	 * @return fluent setter
 	 */
 	public Invoice addAllowance(IZUGFeRDAllowanceCharge izac) {
 		Allowances.add(izac);
@@ -530,8 +535,8 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * adds the ID of a contract referenced in the invoice
-	 * @param s
-	 * @return
+	 * @param s the contract number
+	 * @return fluent setter
 	 */
 	public Invoice setContractReferencedDocument(String s) {
 		contractReferencedDocument = s;
@@ -543,8 +548,8 @@ public class Invoice implements IExportableTransaction {
 	 * sets a document level delivery period,
 	 * which is optional additional to the mandatory deliverydate
 	 * and which will become a BillingSpecifiedPeriod-Element
-	 * @param start
-	 * @param end
+	 * @param start the date of first delivery
+	 * @param end the date of last delivery
 	 * @return fluent setter
 	 */
 	public Invoice setDetailedDeliveryPeriod(Date start, Date end) {
@@ -568,7 +573,7 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * adds a free text paragraph, which will become a includedNote element
-	 * @param text
+	 * @param text freeform UTF8 plain text
 	 * @return fluent setter
 	 */
 	public Invoice addNote(String text) {

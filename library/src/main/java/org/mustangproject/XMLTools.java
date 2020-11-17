@@ -122,7 +122,7 @@ public class XMLTools extends XMLWriter {
 
 	/***
 	 * removes utf8 byte order marks from byte arrays, in case one is there
-	 * @param zugferdRaw
+	 * @param zugferdRaw the CII XML
 	 * @return the byte array without bom
 	 */
 	public static byte[] removeBOM(byte[] zugferdRaw) {

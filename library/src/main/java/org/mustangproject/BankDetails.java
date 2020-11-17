@@ -22,8 +22,8 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	 * identify the IBAN. Of course you will specify your own IBAN in full length but
 	 * if you deduct from a customer's account you may e.g. leave out the first or last
 	 * digits so that nobody spying on the invoice gets to know the complete number
-	 * @param IBAN
-	 * @return
+	 * @param IBAN the "IBAN ID", i.e. the IBAN or parts of it
+	 * @return fluent setter
 	 */
 	public BankDetails setIBAN(String IBAN) {
 		this.IBAN = IBAN;

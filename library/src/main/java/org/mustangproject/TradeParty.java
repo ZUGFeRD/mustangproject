@@ -37,7 +37,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	/***
 	 * XML parsing constructor
-	 * @param nodes
+	 * @param nodes the nodelist returned e.g. from xpath
 	 */
 	public TradeParty(NodeList nodes) {
 /**
@@ -109,8 +109,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	/**
 	 * if it's a customer, this can e.g. be the customer ID
-	 * @param ID
-	 * @return
+	 * @param ID customer/seller number
+	 * @return fluent setter
 	 */
 	public TradeParty setID(String ID) {
 		this.ID = ID;
@@ -119,8 +119,9 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	/***
 	 * (optional) a named contact person
-	 * @param c
-	 * @return
+	 * @see Contact
+	 * @param c the named contact person
+	 * @return fluent setter
 	 */
 	public TradeParty setContact(Contact c) {
 		this.contact = c;
@@ -129,8 +130,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	/***
 	 * required (for senders, if payment is not debit): the BIC and IBAN
-	 * @param s
-	 * @return
+	 * @param s bank credentials
+	 * @return fluent setter
 	 */
 	public TradeParty addBankDetails(BankDetails s) {
 		bankDetails.add(s);
@@ -143,8 +144,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	/***
 	 * a general tax ID
-	 * @param taxID
-	 * @return
+	 * @param taxID tax number of the organisation
+	 * @return fluent setter
 	 */
 	public TradeParty addTaxID(String taxID) {
 		this.taxID = taxID;
@@ -153,8 +154,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	/***
 	 * the USt-ID
-	 * @param vatID
-	 * @return
+	 * @param vatID Ust-ID
+	 * @return fluent setter
 	 */
 	public TradeParty addVATID(String vatID) {
 		this.vatID = vatID;
@@ -178,7 +179,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	/***
 	 * required, usually done in the constructor: the complete name of the organisation
-	 * @return
+	 * @param name complete legal name
+	 * @return fluent setter
 	 */
 	public TradeParty setName(String name) {
 		this.name = name;
@@ -192,8 +194,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	/***
 	 * usually set in the constructor, required for recipients in german invoices: postcode
-	 * @param zip
-	 * @return
+	 * @param zip postcode
+	 * @return fluent setter
 	 */
 	public TradeParty setZIP(String zip) {
 		this.zip = zip;
@@ -207,8 +209,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	/***
 	 * usually set in constructor, required in germany, street and house number
-	 * @param street
-	 * @return
+	 * @param street street name and number
+	 * @return fluent setter
 	 */
 	public TradeParty setStreet(String street) {
 		this.street = street;
@@ -222,8 +224,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	/***
 	 * usually set in constructor, usually required in germany, the city of the organisation
-	 * @param location
-	 * @return
+	 * @param location city
+	 * @return fluent setter
 	 */
 	public TradeParty setLocation(String location) {
 		this.location = location;
@@ -237,8 +239,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	/***
 	 * two-letter ISO code of the country
-	 * @param country
-	 * @return
+	 * @param country two-letter-code
+	 * @return fluent setter
 	 */
 	public TradeParty setCountry(String country) {
 		this.country = country;
@@ -275,8 +277,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	/***
 	 * additional parts of the address, e.g. which floor.
 	 * Street address will become "lineOne", this will become "lineTwo"
-	 * @param additionalAddress
-	 * @return
+	 * @param additionalAddress additional address description
+	 * @return fluent setter
 	 */
 	public TradeParty setAdditionalAddress(String additionalAddress) {
 		this.additionalAddress = additionalAddress;
