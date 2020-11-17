@@ -1,12 +1,15 @@
 
 ### 2.0.1 todo
+- confirm that VAT category code switches from S to Z on 0%VAT
+- 2.1 support kleinunternehmer, reverse charge?
 - dont show empty tax number field
 - fail when no bankverbindung?
 - fail when xr attrs missing?
 - build xr skonto???
 - *validator not to XR error on ZF files (only notices)
 - xmp errors may not show correctly in log
-
+- XR test now includes guideline ID #172
+- support zero-rated goods
 2.0.0 
 =====
 2020-11-12

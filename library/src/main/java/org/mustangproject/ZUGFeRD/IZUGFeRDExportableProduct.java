@@ -106,11 +106,12 @@ public interface IZUGFeRDExportableProduct {
 	}
 	
 	default String getTaxCategoryCode() {
-		 if (isIntraCommunitySupply()) {
+		if (getVATPercent().equals(new BigDecimal(0))) {
+			return "Z"; // zero rated goods
+		} else if (isIntraCommunitySupply()) {
 			 return "K";
 		 } else {
-			 return "S";
-			 
+			 return "S"; // one of the "standard" rates (not neccessarily a default rate, even a deducted VAT is standard calculation)
 		 }
 	 }
 	

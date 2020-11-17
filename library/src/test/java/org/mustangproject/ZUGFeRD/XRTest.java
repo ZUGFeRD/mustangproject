@@ -25,9 +25,11 @@ import junit.framework.TestCase;
 import org.mustangproject.*;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import org.mustangproject.ZUGFeRD.ZUGFeRD2PullProvider;
 
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -36,8 +38,8 @@ import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class XRTest extends TestCase {
-
-	public void testPushExport() {
+	final String TARGET_XML = "./target/testout-XR.xml";
+	public void testXRExport() {
 
 		// the writing part
 
@@ -45,10 +47,15 @@ public class XRTest extends TestCase {
 		String number = "123";
 		String amountStr = "1.00";
 		BigDecimal amount = new BigDecimal(amountStr);
-
-		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(orgname,"teststr","55232","teststadt","DE")).setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), amount, new BigDecimal(1.0)));
+		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
+				.setSender(new TradeParty(orgname,"teststr","55232","teststadt","DE").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test","+49123456789","test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890","COBADEFXXX")))
+				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
+				.setReferenceNumber("991-01484-64")//leitweg-id
+				// not using any VAT, this is also a test of zero-rated goods:
+				.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), amount, new BigDecimal(1.0)));
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML());
 		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
@@ -60,7 +67,13 @@ public class XRTest extends TestCase {
 		assertThat(theXML).valueByXPath("//*[local-name()='DuePayableAmount']")
 				.asDouble()
 				.isEqualTo(1);
-
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML));
+			writer.write(theXML);
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 	}
 

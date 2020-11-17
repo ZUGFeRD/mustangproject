@@ -147,7 +147,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			BigDecimal percent = currentItem.getProduct().getVATPercent();
 			LineCalculator lc = new LineCalculator(currentItem);
 			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(),
-					currentItem.getCategoryCode());
+					currentItem.getProduct().getTaxCategoryCode());
 			VATAmount current = hm.get(percent);
 			if (current == null) {
 				hm.put(percent, itemVATAmount);
