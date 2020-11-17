@@ -52,7 +52,7 @@ public class BaseTest extends TestCase {
 	}
 
 	public void testCorrectDigits() {
-		assertEquals("0.00", XMLTools.nDigitFormat(new BigDecimal(0),2));
+		assertEquals("0.00", XMLTools.nDigitFormat(BigDecimal.ZERO,2));
 		assertEquals("-1.10", XMLTools.nDigitFormat(new BigDecimal("-1.10"),2));
 		assertEquals("-1.10", XMLTools.nDigitFormat(new BigDecimal("-1.1"),2));
 		assertEquals("-1.01", XMLTools.nDigitFormat(new BigDecimal("-1.01"),2));
