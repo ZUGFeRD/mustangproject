@@ -512,7 +512,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if ((trans.getZFCharges() != null) && (trans.getZFCharges().length > 0)) {
 
 			for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-				if (!calc.getChargesForPercent(currentTaxPercent).equals(new BigDecimal(0))) {
+				if (calc.getChargesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO)!=0) {
 
 
 					xml = xml + "	 <ram:SpecifiedTradeAllowanceCharge>\n" +
@@ -535,7 +535,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 		if ((trans.getZFAllowances() != null) && (trans.getZFAllowances().length > 0)) {
 			for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-				if (!calc.getAllowancesForPercent(currentTaxPercent).equals(new BigDecimal(0))) {
+				if (calc.getAllowancesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO)!= 0) {
 					xml = xml + "	 <ram:SpecifiedTradeAllowanceCharge>\n" +
 							"        <ram:ChargeIndicator>\n" +
 							"          <udt:Indicator>false</udt:Indicator>\n" +

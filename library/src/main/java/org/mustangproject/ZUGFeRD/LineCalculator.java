@@ -12,8 +12,8 @@ public class LineCalculator {
 	private BigDecimal priceGross;
 	private BigDecimal itemTotalNetAmount;
 	private BigDecimal itemTotalVATAmount;
-	private BigDecimal allowance = new BigDecimal(0);
-	private BigDecimal charge = new BigDecimal(0);
+	private BigDecimal allowance = BigDecimal.ZERO;
+	private BigDecimal charge = BigDecimal.ZERO;
 
 	public LineCalculator(IZUGFeRDExportableItem currentItem) {
 

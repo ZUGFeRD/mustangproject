@@ -52,7 +52,7 @@ public class XRTest extends TestCase {
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
 				.setReferenceNumber("991-01484-64")//leitweg-id
 				// not using any VAT, this is also a test of zero-rated goods:
-				.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), amount, new BigDecimal(1.0)));
+				.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal(1.0)));
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 		zf2p.setProfile(Profiles.getByName("XRechnung"));

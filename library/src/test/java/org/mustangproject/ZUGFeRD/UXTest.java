@@ -48,7 +48,7 @@ public class UXTest extends TestCase {
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf"))
 		{
-			Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOwnOrganisationName("My company").setOwnStreet("teststr").setOwnZIP("12345").setOwnLocation("teststadt").setOwnCountry("DE").setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new Contact("Franz Müller", "0177123456", "fmueller@test.com", "teststr.12", "55232", "Entenhausen", "DE")).setNumber("INV/123").addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)), new BigDecimal(1.0), new BigDecimal(1.0)));
+			Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setOwnOrganisationName("My company").setOwnStreet("teststr").setOwnZIP("12345").setOwnLocation("teststadt").setOwnCountry("DE").setOwnTaxID("4711").setOwnVATID("0815").setRecipient(new Contact("Franz Müller", "0177123456", "fmueller@test.com", "teststr.12", "55232", "Entenhausen", "DE")).setNumber("INV/123").addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), new BigDecimal(1.0), new BigDecimal(1.0)));
 			new ZUGFeRDExporterFromA1().load("source.pdf").setTransaction(i).export(TARGET_PDF);
 		} catch (Exception e) {
 			fail("Exception should not be raised in testEdgeExport");
