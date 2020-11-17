@@ -1,5 +1,6 @@
 package org.mustangproject.validator;
 
+import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,5 +1,18 @@
-## 2.0 
-### done
+
+### 2.0.1 todo
+- confirm that VAT category code switches from S to Z on 0%VAT
+- 2.1 support kleinunternehmer, reverse charge?
+- dont show empty tax number field
+- fail when no bankverbindung?
+- fail when xr attrs missing?
+- build xr skonto???
+- *validator not to XR error on ZF files (only notices)
+- xmp errors may not show correctly in log
+- XR test now includes guideline ID #172
+- support zero-rated goods
+2.0.0 
+=====
+2020-11-12
 
 - support for ZF 2.1.1, i.e. "Reference profile" Xrechnung 
 - ZF 2.1.1 now default (up to 1.7.8 ZF2 could be set but ZF1 was default)
@@ -51,16 +64,8 @@ switch
   - contacts also for recipients 
   - absolute and relative allowances and charges on item and document level #135,
   - support contact fax numbers
+  - closes #190 BOM not treated correctly on XML input file
 
-### 2.0 still todo
-- dont show empty tax number field
-- new sample invoice
-- *visualizer to work with Extended profile
-- *visualizer tests
-- *validator not to XR error on ZF files (only notices)
-- *from A3 does not seem tow ork see mustangreaderwriteredgetest:testedgeexport
-- xmp errors may not show correctly in log
-- finalize invoiceimporter 
 Alpha3 2020-10-24
 Alpha2 2020-09-15
 Alpha1 2020-08-06

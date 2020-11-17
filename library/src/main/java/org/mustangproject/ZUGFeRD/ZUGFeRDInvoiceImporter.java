@@ -40,6 +40,13 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				"//*[local-name()=\"ExchangedDocument\"]");
 		NodeList ExchangedDocumentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
+		xpr = xpath.compile(
+				"//*[local-name()=\"GrandTotalAmount\"]");
+		BigDecimal expectedGrandTotal = null;
+		NodeList totalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (totalNodes.getLength() > 0) {
+			expectedGrandTotal = new BigDecimal(totalNodes.item(0).getTextContent());
+		}
 
 		Date issueDate = null;
 		Date dueDate = null;
@@ -192,6 +199,70 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 		}
 
+		// item level charges+allowances are not yet handled but a lower item price will be read,
+		// so the invoice remains arithmetically correct
+		// -> parse document level charges+allowances
+		xpr = xpath.compile(
+				"//*[local-name()=\"SpecifiedTradeAllowanceCharge\"]");
+		NodeList chargeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		for (int i = 0; i < chargeNodes.getLength(); i++) {
+			NodeList chargeNodeChilds = chargeNodes.item(i).getChildNodes();
+			boolean isCharge = true;
+			String chargeAmount = null;
+			String reason = null;
+			String taxPercent = null;
+			for (int chargeChildIndex = 0; chargeChildIndex < chargeNodeChilds.getLength(); chargeChildIndex++) {
+				if (chargeNodeChilds.item(chargeChildIndex).getNodeName().equals("ram:ChargeIndicator")) {
+					NodeList indicatorChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
+					for (int indicatorChildIndex = 0; indicatorChildIndex < indicatorChilds.getLength(); indicatorChildIndex++) {
+						if (indicatorChilds.item(indicatorChildIndex).getNodeName().equals("udt:Indicator")) {
+							isCharge = indicatorChilds.item(indicatorChildIndex).getTextContent().equalsIgnoreCase("true");
+						}
+					}
+				} else if (chargeNodeChilds.item(chargeChildIndex).getNodeName().equals("ram:ActualAmount")) {
+					chargeAmount = chargeNodeChilds.item(chargeChildIndex).getTextContent();
+				} else if (chargeNodeChilds.item(chargeChildIndex).getNodeName().equals("ram:Reason")) {
+					reason = chargeNodeChilds.item(chargeChildIndex).getTextContent();
+				} else if (chargeNodeChilds.item(chargeChildIndex).getNodeName().equals("ram:CategoryTradeTax")) {
+					NodeList taxChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
+					for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
+						if (taxChilds.item(taxChildIndex).getNodeName().equals("ram:RateApplicablePercent")) {
+							taxPercent = taxChilds.item(taxChildIndex).getTextContent();
+						}
+					}
+				}
+
+			}
+
+
+			if (isCharge) {
+				Charge c = new Charge(new BigDecimal(chargeAmount));
+				if (reason != null) {
+					c.setReason(reason);
+				}
+				if (taxPercent != null) {
+					c.setTaxPercent(new BigDecimal(taxPercent));
+				}
+
+				zpp.addCharge(c);
+			} else {
+				Allowance a = new Allowance(new BigDecimal(chargeAmount));
+				if (reason != null) {
+					a.setReason(reason);
+				}
+				if (taxPercent != null) {
+					a.setTaxPercent(new BigDecimal(taxPercent));
+				}
+				zpp.addAllowance(a);
+			}
+
+		}
+
+		TransactionCalculator tc = new TransactionCalculator(zpp);
+		String expectedStringTotalGross = tc.getTotalGross().toPlainString();
+		if (!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2))) {
+			throw new ParseException("Could not reproduce the invoice, this could mean that it could not be read properly", 0);
+		}
 
 		return zpp;
 	}

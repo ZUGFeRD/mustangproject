@@ -18,6 +18,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -61,7 +62,7 @@ public class XMLValidator extends Validator {
 		// file existence must have been checked before
 
 		try {
-			zfXML = new String(Files.readAllBytes(Paths.get(name)));
+			zfXML = new String(XMLTools.removeBOM(Files.readAllBytes(Paths.get(name))));
 		} catch (IOException e) {
 
 			ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(9)
@@ -112,8 +113,6 @@ public class XMLValidator extends Validator {
 		failedRules = 0;
 
 
-		ByteArrayInputStream xmlByteInputStream = new ByteArrayInputStream(zfXML.getBytes(StandardCharsets.UTF_8));
-
 		if (zfXML.isEmpty()) {
 			ValidationResultItem res = new ValidationResultItem(ESeverity.exception,
 					"XML data not found in " + filename
@@ -145,8 +144,8 @@ public class XMLValidator extends Validator {
 				// document.getElementsByTagNameNS("*",...
 
 				DocumentBuilder db = dbf.newDocumentBuilder();
-
-				Document doc = db.parse(xmlByteInputStream);
+				InputSource is = new InputSource(new StringReader(zfXML));
+				Document doc = db.parse(is);
 
 				Element root = doc.getDocumentElement();
 

@@ -218,7 +218,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		this.calc = new TransactionCalculator(trans);
 
 		boolean hasDueDate = false;
-		String taxCategoryCode = "";
 		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 		String exemptionReason = "";
@@ -298,7 +297,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		int lineID = 0;
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			lineID++;
-			taxCategoryCode = currentItem.getProduct().getTaxCategoryCode();
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
@@ -492,19 +490,19 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "				<ram:TypeCode>VAT</ram:TypeCode>\n"
 						+ exemptionReason
 						+ "				<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>\n" // currencyID=\"EUR\"
-						+ "				<ram:CategoryCode>" + taxCategoryCode + "</ram:CategoryCode>\n"
+						+ "				<ram:CategoryCode>" + amount.getCategoryCode() + "</ram:CategoryCode>\n"
 						+ "				<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent)
 						+ "</ram:RateApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n"; //$NON-NLS-2$
 
 			}
 		}
-		if ((trans.getOccurrencePeriodFrom() != null) || (trans.getOccurrencePeriodTo() != null)) {
+		if ((trans.getDetailedDeliveryPeriodFrom() != null) || (trans.getDetailedDeliveryPeriodTo() != null)) {
 			xml = xml + "<ram:BillingSpecifiedPeriod>";
-			if (trans.getOccurrencePeriodFrom() != null) {
-				xml = xml + "<ram:StartDateTime><udt:DateTimeString format='102'>" + zugferdDateFormat.format(trans.getOccurrencePeriodFrom()) + "</udt:DateTimeString></ram:StartDateTime>";
+			if (trans.getDetailedDeliveryPeriodFrom() != null) {
+				xml = xml + "<ram:StartDateTime><udt:DateTimeString format='102'>" + zugferdDateFormat.format(trans.getDetailedDeliveryPeriodFrom()) + "</udt:DateTimeString></ram:StartDateTime>";
 			}
-			if (trans.getOccurrencePeriodTo() != null) {
-				xml = xml + "<ram:EndDateTime><udt:DateTimeString format='102'>" + zugferdDateFormat.format(trans.getOccurrencePeriodTo()) + "</udt:DateTimeString></ram:EndDateTime>";
+			if (trans.getDetailedDeliveryPeriodTo() != null) {
+				xml = xml + "<ram:EndDateTime><udt:DateTimeString format='102'>" + zugferdDateFormat.format(trans.getDetailedDeliveryPeriodTo()) + "</udt:DateTimeString></ram:EndDateTime>";
 			}
 			xml = xml + "</ram:BillingSpecifiedPeriod>";
 
@@ -617,13 +615,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		try {
 			zugferdRaw = xml.getBytes("UTF-8");
 
-			if ((zugferdRaw[0] == (byte) 0xEF) && (zugferdRaw[1] == (byte) 0xBB) && (zugferdRaw[2] == (byte) 0xBF)) {
-				// I don't like BOMs, lets remove it
-				zugferdData = new byte[zugferdRaw.length - 3];
-				System.arraycopy(zugferdRaw, 3, zugferdData, 0, zugferdRaw.length - 3);
-			} else {
-				zugferdData = zugferdRaw;
-			}
+			zugferdData=XMLTools.removeBOM(zugferdRaw);
 		} catch (UnsupportedEncodingException e) {
 			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
 		}

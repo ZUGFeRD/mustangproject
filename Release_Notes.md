@@ -1,7 +1,7 @@
 
 ## Changes
 
-On it's official website you can [download](https://www.mustangproject.org/files/Mustang-CLI-2.0.0-alpha3.jar) a alpha release of Mustang 2.
+On it's official website you can [download](https://www.mustangproject.org/deploy/Mustang-CLI-2.0.0.jar) Mustang 2.
 
 * Factur-X/ZUGFeRD 2 is now the default. In Mustangproject 1.x one had to select ZUGFeRD version 2 if that was desired, in Mustangproject 2 one now has to select ZUGFeRD version 1 if version 2 is not appropriate.
 * Mustang is now available via Maven Central, which makes it even easier to use the Mustang library. Apart from making it easier in Maven because there is no longer the need to mention the custom repository, it also makes it possible to use Mustang in Gradle projects
@@ -31,38 +31,8 @@ to for non-interactive (i.e., batch) processing.
 
 
 The source file parameter for validation changed 
-from `-f` (ZUV) to the usual `--source`. The following 
-result codes apply:
+from `-f` (ZUV) to the usual `--source`. 
 
-| section  | meaning  |
-|---|---|
-| 1  | file not found  |
-| 2  | additional data schema validation fails  |
-| 3  | xml data not found  |
-| 4  | schematron rule failed  |
-| 5  | file too small  |
-| 6  | VeraPDFException |
-| 7  | IOException PDF  |
-| 8  | File does not look like PDF nor XML (contains neither %PDF nor <?xml)  |
-| 9  | IOException XML  |
-| 11  | XMP Metadata: ConformanceLevel not found  |
-| 12  | XMP Metadata: ConformanceLevel contains invalid value  |
-| 13  | XMP Metadata: DocumentType not found  |
-| 14  | XMP Metadata: DocumentType invalid  |
-| 15  | XMP Metadata: Version not found  |
-| 16  | XMP Metadata: Version contains invalid value  |
-| 18  | schema validation failed  |
-| 19  | XMP Metadata: DocumentFileName contains invalid value  |
-| 20  | not a pdf  |
-| 21  | XMP Metadata: DocumentFileName not found")  |
-| 22  | generic XML validation exception  |
-| 23  | Not a PDF/A-3  |
-| 24  | Issues in CEN EN16931 Schematron Check |
-| 25  | Unsupported profile type  |
-| 26  | No rules matched, XML to minimal?  |
-| 27  | XRechnung Schematron Check |
- 
- 
 ### Use as Library
 
 We're now on maven central, please remove the old github repository. Additionally, the following changed
@@ -145,7 +115,7 @@ but there is also the new invoiceImporter
 		assertEquals("Spielkreis", invoice.getRecipient().getLocation());
 
 		TransactionCalculator tc=new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("571.040000"),tc.getTotalGross());
+		assertEquals(new BigDecimal("571.04"),tc.getTotalGross());
 
 ``` 
 
@@ -230,7 +200,7 @@ read/write ZUGFeRD-invoices like the (smaller) library module.
    <dependency>
       <groupId>org.mustangproject</groupId>
       <artifactId>validator</artifactId>
-      <version>2.0.0-alpha3</version>
+      <version>2.0.0</version>
    </dependency>
 </dependencies>
 

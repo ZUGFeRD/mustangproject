@@ -20,13 +20,21 @@ package org.mustangproject.ZUGFeRD;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.common.PDMetadata;
+import org.apache.xmpbox.XMPMetadata;
+import org.apache.xmpbox.schema.PDFAIdentificationSchema;
+import org.apache.xmpbox.xml.DomXmpParser;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -199,24 +207,10 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 	public void testEdgeExport() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505newEdge.pdf";
-		// the writing part
+		final String SOURCE_PDF = "/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf";
 
-		try (InputStream SOURCE_PDF =
-					 this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
-		) {
-			ZUGFeRDExporterFromA3 ze = new ZUGFeRDExporterFromA3()
-					 .setProducer("My Application")
-					 .setCreator(System.getProperty("user.name"))
-				 	 .setZUGFeRDVersion(1)
-					 .load(SOURCE_PDF);
-			ze.setTransaction(this);
-			String theXML = new String(ze.getProvider().getXML());
-			assertTrue(theXML.contains("<rsm:CrossIndustryDocument"));
-			ze.export(TARGET_PDF);
-		} catch (IOException e) {
-			e.printStackTrace();
-			fail("IOException should not happen in testEdgeExport ");
-		}
+		// the writing part
+		setupPdfUnderTest(SOURCE_PDF, TARGET_PDF);
 
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
@@ -234,6 +228,55 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 			e.printStackTrace();
 		}
 
+	}
+
+	/**
+	 * This test is based on #testEdgeExport but test only that the PDFIdentificationSchema is present and identifies
+	 * the pdf as PDF/A-3 conformant.
+	 */
+	public void testEdgeExportIsPDFA3() throws Exception {
+
+		final String SOURCE_PDF = "/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf";
+		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505newEdge.pdf";
+
+		// the writing part
+		setupPdfUnderTest(SOURCE_PDF, TARGET_PDF);
+
+		// now check the contents
+		PDDocument doc = PDDocument.load(new File(TARGET_PDF));
+		PDMetadata meta = doc.getDocumentCatalog().getMetadata();
+		assertNotNull("The pdf must contain XMPMetadata", meta);
+
+		byte[] xmpBytes = meta.toByteArray();
+		assertNotNull("The xmp metadata stream must not be null", xmpBytes);
+
+		DomXmpParser xmpParser = new DomXmpParser();
+		XMPMetadata xmp = xmpParser.parse(xmpBytes);
+
+		PDFAIdentificationSchema pdfai = xmp.getPDFIdentificationSchema();
+		assertNotNull("The pdf must contain a PDFIdentificationSchema", pdfai);
+
+		assertTrue("The PDF/A conformance must be A, B or U",
+				   Arrays.asList("A", "B", "U", "a", "b", "u").contains(pdfai.getConformance()));
+
+		assertEquals("The PDF/A must be 3", (Integer) 3, pdfai.getPart());
+	}
+
+	private void setupPdfUnderTest(String sourcePath, String targetPath) {
+		try (InputStream inputStream = this.getClass().getResourceAsStream(sourcePath)) {
+			ZUGFeRDExporterFromA3 ze = new ZUGFeRDExporterFromA3()
+					 .setProducer("My Application")
+					 .setCreator(System.getProperty("user.name"))
+				 	 .setZUGFeRDVersion(1)
+					 .load(inputStream);
+			ze.setTransaction(this);
+			String theXML = new String(ze.getProvider().getXML());
+			assertTrue(theXML.contains("<rsm:CrossIndustryDocument"));
+			ze.export(targetPath);
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail("IOException should not happen in testEdgeExport ");
+		}
 	}
 
 }

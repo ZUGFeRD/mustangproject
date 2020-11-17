@@ -36,13 +36,13 @@ public class Invoice implements IExportableTransaction {
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
 	protected BigDecimal totalPrepaidAmount = null;
-	protected TradeParty sender=null, recipient = null, deliveryAddress = null;
+	protected TradeParty sender = null, recipient = null, deliveryAddress = null;
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
 	protected ArrayList<String> notes = null;
 	protected String contractReferencedDocument = null;
 
-	protected Date occurrenceDateFrom = null;
-	protected Date occurrenceDateTo = null;
+	protected Date detailedDeliveryDateStart = null;
+	protected Date detailedDeliveryPeriodEnd = null;
 
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<IZUGFeRDAllowanceCharge>(),
 			Charges = new ArrayList<IZUGFeRDAllowanceCharge>(), LogisticsServiceCharges = new ArrayList<IZUGFeRDAllowanceCharge>();
@@ -59,7 +59,9 @@ public class Invoice implements IExportableTransaction {
 		return documentName;
 	}
 
-	public String getContractReferencedDocument() { return contractReferencedDocument; }
+	public String getContractReferencedDocument() {
+		return contractReferencedDocument;
+	}
 
 	public Invoice setDocumentName(String documentName) {
 		this.documentName = documentName;
@@ -88,13 +90,16 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	/***
-	 * switch type to invoice correction and refer to document number
+	 * switch type to invoice correction and refer to document number.
+	 * Please note that the quantities need to be negative, if you
+	 * e.g. delivered 100 and take 50 back the quantity should be -50 in the
+	 * corrected invoice, which will result in negative VAT and a negative payment amount
 	 * @param number the invoice number to be corrected
 	 * @return this object (fluent setter)
 	 */
 	public Invoice setCorrection(String number) {
 		setBuyerOrderReferencedDocumentID(number);
-		documentCode= DocumentCodeTypeConstants.CORRECTEDINVOICE;
+		documentCode = DocumentCodeTypeConstants.CORRECTEDINVOICE;
 		return this;
 	}
 
@@ -144,7 +149,6 @@ public class Invoice implements IExportableTransaction {
 	}
 
 
-
 	public Invoice setShipToStreet(String shipToStreet) {
 		this.shipToStreet = shipToStreet;
 		return this;
@@ -185,6 +189,11 @@ public class Invoice implements IExportableTransaction {
 		return buyerOrderReferencedDocumentID;
 	}
 
+	/***
+	 * usually the order number or in case of a correction the original invoice number
+	 * @param buyerOrderReferencedDocumentID string with number
+	 * @return fluent setter
+	 */
 	public Invoice setBuyerOrderReferencedDocumentID(String buyerOrderReferencedDocumentID) {
 		this.buyerOrderReferencedDocumentID = buyerOrderReferencedDocumentID;
 		return this;
@@ -195,6 +204,11 @@ public class Invoice implements IExportableTransaction {
 		return buyerOrderReferencedDocumentIssueDateTime;
 	}
 
+	/***
+	 * when the order (or whatever reference in BuyerOrderReferencedDocumentID) was issued (@todo switch to date?)
+	 * @param buyerOrderReferencedDocumentIssueDateTime  IssueDateTime in format CCYY-MM-DDTHH:MM:SS
+	 * @return fluent setter
+	 */
 	public Invoice setBuyerOrderReferencedDocumentIssueDateTime(String buyerOrderReferencedDocumentIssueDateTime) {
 		this.buyerOrderReferencedDocumentIssueDateTime = buyerOrderReferencedDocumentIssueDateTime;
 		return this;
@@ -209,6 +223,7 @@ public class Invoice implements IExportableTransaction {
 	@Deprecated
 	/***
 	 * @deprecated use TradeParty::addTaxID instead
+	 * @see TradeParty
 	 */
 	public Invoice setOwnTaxID(String ownTaxID) {
 		sender.addTaxID(ownTaxID);
@@ -223,6 +238,7 @@ public class Invoice implements IExportableTransaction {
 	@Deprecated
 	/***
 	 * @deprecated use TradeParty::addVATID instead
+	 * @see TradeParty
 	 */
 	public Invoice setOwnVATID(String ownVATID) {
 		sender.addVATID(ownVATID);
@@ -234,6 +250,12 @@ public class Invoice implements IExportableTransaction {
 		return ownForeignOrganisationID;
 	}
 
+
+	@Deprecated
+	/***
+	 * @deprecated use TradeParty instead
+	 * @see TradeParty
+	 */
 	public Invoice setOwnForeignOrganisationID(String ownForeignOrganisationID) {
 		this.ownForeignOrganisationID = ownForeignOrganisationID;
 		return this;
@@ -244,6 +266,12 @@ public class Invoice implements IExportableTransaction {
 		return ownOrganisationName;
 	}
 
+
+	@Deprecated
+	/***
+	 * @deprecated use senders' TradeParty's name instead
+	 * @see TradeParty
+	 */
 	public Invoice setOwnOrganisationName(String ownOrganisationName) {
 		this.ownOrganisationName = ownOrganisationName;
 		return this;
@@ -273,7 +301,7 @@ public class Invoice implements IExportableTransaction {
 
 	@Override
 	public String[] getNotes() {
-		if (notes==null) {
+		if (notes == null) {
 			return null;
 		}
 		return notes.toArray(new String[0]);
@@ -344,6 +372,13 @@ public class Invoice implements IExportableTransaction {
 		return sender;
 	}
 
+	/***
+	 * sets a named sender contact
+	 * @deprecated use setSender
+	 * @see Contact
+	 * @param ownContact the sender contact
+	 * @return fluent setter
+	 */
 	public Invoice setOwnContact(Contact ownContact) {
 		this.sender.setContact(ownContact);
 		return this;
@@ -353,14 +388,26 @@ public class Invoice implements IExportableTransaction {
 		return recipient;
 	}
 
+	/**
+	 * required.
+	 * sets the invoice receiving institution = invoicee
+	 * @param recipient the invoicee organisation
+	 * @return fluent setter
+	 */
 	public Invoice setRecipient(TradeParty recipient) {
 		this.recipient = recipient;
 		return this;
 	}
 
+	/**
+	 * required.
+	 * sets the invoicing institution = invoicer
+	 * @param sender the invoicer
+	 * @return fluent setter
+	 */
 	public Invoice setSender(TradeParty sender) {
 		this.sender = sender;
-		if ((sender.getBankDetails()!=null)&&(sender.getBankDetails().size()>0)) {
+		if ((sender.getBankDetails() != null) && (sender.getBankDetails().size() > 0)) {
 			// convert bankdetails
 
 		}
@@ -372,7 +419,7 @@ public class Invoice implements IExportableTransaction {
 		if (Allowances.isEmpty()) {
 			return null;
 		} else
-		return Allowances.toArray(new IZUGFeRDAllowanceCharge[0]);
+			return Allowances.toArray(new IZUGFeRDAllowanceCharge[0]);
 	}
 
 
@@ -397,11 +444,11 @@ public class Invoice implements IExportableTransaction {
 	@Override
 	public IZUGFeRDTradeSettlement[] getTradeSettlement() {
 
-		if (getSender()==null) {
+		if (getSender() == null) {
 			return null;
 		}
 
-		return ((TradeParty)getSender()).getAsTradeSettlement();
+		return ((TradeParty) getSender()).getAsTradeSettlement();
 
 	}
 
@@ -421,6 +468,11 @@ public class Invoice implements IExportableTransaction {
 		return deliveryAddress;
 	}
 
+	/***
+	 * if the delivery address is not the recipient address, it can be specified here
+	 * @param deliveryAddress the goods receiving organisation
+	 * @return fluent setter
+	 */
 	public Invoice setDeliveryAddress(TradeParty deliveryAddress) {
 		this.deliveryAddress = deliveryAddress;
 		return this;
@@ -431,12 +483,17 @@ public class Invoice implements IExportableTransaction {
 		return ZFItems.toArray(new IZUGFeRDExportableItem[0]);
 	}
 
+	/**
+	 * required
+	 * adds invoice "lines" :-)
+	 * @see Item
+	 * @param item the invoice line
+	 * @return fluent setter
+	 */
 	public Invoice addItem(IZUGFeRDExportableItem item) {
 		ZFItems.add(item);
 		return this;
 	}
-
-
 
 
 	/***
@@ -454,61 +511,74 @@ public class Invoice implements IExportableTransaction {
 		//		this.country = country;
 	}
 
+	/***
+	 * adds a document level addition to the price
+	 * @see Charge
+	 * @param izac the charge to be applied
+	 * @return fluent setter
+	 */
 	public Invoice addCharge(IZUGFeRDAllowanceCharge izac) {
 		Charges.add(izac);
 		return this;
 	}
+
+	/***
+	 * adds a document level rebate
+	 * @see Allowance
+	 * @param izac the allowance to be applied
+	 * @return fluent setter
+	 */
 	public Invoice addAllowance(IZUGFeRDAllowanceCharge izac) {
 		Allowances.add(izac);
 		return this;
 	}
 
+	/***
+	 * adds the ID of a contract referenced in the invoice
+	 * @param s the contract number
+	 * @return fluent setter
+	 */
 	public Invoice setContractReferencedDocument(String s) {
-		contractReferencedDocument=s;
+		contractReferencedDocument = s;
 		return this;
 	}
 
-	public Invoice setOccurrenceDate(Date occur) {
-		occurrenceDateFrom=occur;
-		occurrenceDateTo=null;
+
+	/***
+	 * sets a document level delivery period,
+	 * which is optional additional to the mandatory deliverydate
+	 * and which will become a BillingSpecifiedPeriod-Element
+	 * @param start the date of first delivery
+	 * @param end the date of last delivery
+	 * @return fluent setter
+	 */
+	public Invoice setDetailedDeliveryPeriod(Date start, Date end) {
+		detailedDeliveryDateStart = start;
+		detailedDeliveryPeriodEnd = end;
 
 		return this;
 	}
 
-	public Invoice setOccurrencePeriod(Date start, Date end) {
-		occurrenceDateFrom=start;
-		occurrenceDateTo=end;
 
-		return this;
+	@Override
+	public Date getDetailedDeliveryPeriodFrom() {
+		return detailedDeliveryDateStart;
 	}
 
 	@Override
-	public Date getOccurrenceDate() {
-
-		return occurrenceDateFrom;
-	}
-
-	@Override
-	public Date getOccurrencePeriodFrom() {
-		if (occurrenceDateTo!=null)  {
-			return occurrenceDateFrom;
-		} else {
-			return null;
-		}
-	}
-	@Override
-	public Date getOccurrencePeriodTo() {
-		if (occurrenceDateTo!=null)  {
-			return occurrenceDateTo;
-		} else {
-			return null;
-		}
+	public Date getDetailedDeliveryPeriodTo() {
+		return detailedDeliveryPeriodEnd;
 	}
 
 
+	/***
+	 * adds a free text paragraph, which will become a includedNote element
+	 * @param text freeform UTF8 plain text
+	 * @return fluent setter
+	 */
 	public Invoice addNote(String text) {
-		if (notes==null) {
-			notes=new ArrayList<String>();
+		if (notes == null) {
+			notes = new ArrayList<String>();
 		}
 		notes.add(text);
 		return this;

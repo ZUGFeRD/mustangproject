@@ -19,24 +19,13 @@ More information in [the mustang documentation](https://github.com/ZUGFeRD/musta
 Usage
 -----
 
-If you setup a Maven project, you can grab the artifacts from this maven repository.
- 
-
-```xml
-<repositories>
-    <repository>
-        <id>mustang-mvn-repo</id>
-        <url>https://raw.github.com/ZUGFeRD/mustangproject/mvn-repo/</url>
-    </repository>
-</repositories>
-```
-
-As dependency use this
+If you setup a Maven project, you can grab the artifacts using
 
 ```xml
 <dependency>
-  <groupId>org.mustangproject.ZUGFeRD</groupId>
-  <artifactId>mustang</artifactId>
+  <groupId>org.mustangproject</groupId>
+  <artifactId>library</artifactId>
+ <version>2.0.0</version>
 </dependency>
 ```
 

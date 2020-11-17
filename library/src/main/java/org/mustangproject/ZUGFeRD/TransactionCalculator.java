@@ -1,6 +1,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 
 /***
@@ -30,7 +31,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			res = res.add(amount.getCalculated());
 		}
-		return res;
+		return res.setScale(2, RoundingMode.HALF_UP);
 	}
 
 	/***
@@ -146,7 +147,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			BigDecimal percent = currentItem.getProduct().getVATPercent();
 			LineCalculator lc = new LineCalculator(currentItem);
 			VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(),
-					trans.getDocumentCode());
+					currentItem.getProduct().getTaxCategoryCode());
 			VATAmount current = hm.get(percent.stripTrailingZeros());
 			if (current == null) {
 				hm.put(percent.stripTrailingZeros(), itemVATAmount);

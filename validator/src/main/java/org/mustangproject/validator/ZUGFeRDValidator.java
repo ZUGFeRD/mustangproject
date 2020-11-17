@@ -1,11 +1,7 @@
 package org.mustangproject.validator;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
@@ -22,11 +18,13 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.mustangproject.XMLTools;
 import org.riversun.bigdoc.bin.BigFileSearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
 
 //abstract class
@@ -165,8 +163,12 @@ public class ZUGFeRDValidator {
 
 					    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 					    DocumentBuilder db = dbf.newDocumentBuilder();
-					    
-					    Document doc = db.parse(file);
+
+						byte[] content=Files.readAllBytes(file.toPath());
+						content= XMLTools.removeBOM(content);
+						String s=new String(content);
+						InputSource is = new InputSource(new StringReader(s));
+					    Document doc = db.parse(is);
 					    
 					    Element root = doc.getDocumentElement();
 					    isXML=true;//no exception so far
@@ -176,6 +178,8 @@ public class ZUGFeRDValidator {
 						// probably no xml file, sth like SAXParseException content not allowed in prolog
 						// ignore isXML is already false
 						// in the tests, this may error-out anyway
+						//ex.printStackTrace();
+
 					}
 					if (isXML) {
 						pdfValidity = true;
