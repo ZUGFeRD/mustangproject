@@ -123,7 +123,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		BigDecimal res = BigDecimal.ZERO;
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			LineCalculator lc = new LineCalculator(currentItem);
-			res = res.add(lc.getItemTotalGrossAmount());
+			res = res.add(lc.getItemTotalNetAmount());
 		}
 		return res;
 	}
