@@ -8,7 +8,7 @@
 - *validator not to XR error on ZF files (only notices)
 - xmp errors may not show correctly in log
 ### 2.0.1 done
-
+- do not list tax numbers for shiptotradeparties
 - do not expect dueDate for corrected invoices
 - XR test now includes guideline ID #172
 - BigDecimal specific refactoring PR #192 Thanks to weclapp-dev

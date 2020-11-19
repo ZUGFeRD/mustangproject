@@ -106,14 +106,16 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		return profile;
 	}
 
+	// @todo check if the two boolean args can be refactored
 	/***
 	 * returns the UN/CEFACT CII XML for companies(tradeparties), which is actually
 	 * the same for ZF1 (v 2013b) and ZF2 (v 2016b)
 	 * @param party
 	 * @param isSender some attributes are allowed only for senders in certain profiles
+	 * @param isShipToTradeParty some attributes are allowed only for senders or recipients
 	 * @return
 	 */
-	protected String getTradePartyAsXML(IZUGFeRDExportableTradeParty party, boolean isSender) {
+	protected String getTradePartyAsXML(IZUGFeRDExportableTradeParty party, boolean isSender, boolean isShipToTradeParty) {
 		String xml = "";
 		// According EN16931 either GlobalID or seller assigned ID might be present for BuyerTradeParty
 		// and ShipToTradeParty, but not both. Prefer seller assigned ID for now.
@@ -165,13 +167,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "					<ram:CountryID>" + XMLTools.encodeXML(party.getCountry())
 				+ "</ram:CountryID>\n"
 				+ "				</ram:PostalTradeAddress>\n";
-		if (party.getVATID() != null) {
+		if ((party.getVATID() != null)&&(!isShipToTradeParty)) {
 			xml += "				<ram:SpecifiedTaxRegistration>\n"
 					+ "					<ram:ID schemeID=\"VA\">" + XMLTools.encodeXML(party.getVATID())
 					+ "</ram:ID>\n"
 					+ "				</ram:SpecifiedTaxRegistration>\n";
 		}
-		if (party.getTaxID() != null) {
+		if ((party.getTaxID() != null)&&(!isShipToTradeParty)) {
 			xml += "				<ram:SpecifiedTaxRegistration>\n"
 					+ "					<ram:ID schemeID=\"FC\">" + XMLTools.encodeXML(party.getTaxID())
 					+ "</ram:ID>\n"
@@ -397,13 +399,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 		}
 		xml = xml + "			<ram:SellerTradeParty>\n"
-				+ getTradePartyAsXML(trans.getSender(), true)
+				+ getTradePartyAsXML(trans.getSender(), true, false)
 				+ "			</ram:SellerTradeParty>\n"
 				+ "			<ram:BuyerTradeParty>\n";
 		// + " <ID>GE2020211</ID>\n"
 		// + " <GlobalID schemeID=\"0088\">4000001987658</GlobalID>\n"
 
-		xml += getTradePartyAsXML(trans.getRecipient(), false);
+		xml += getTradePartyAsXML(trans.getRecipient(), false, false);
 		xml += "			</ram:BuyerTradeParty>\n";
 
 		if (trans.getBuyerOrderReferencedDocumentID() != null) {
@@ -437,7 +439,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "		<ram:ApplicableHeaderTradeDelivery>\n";
 		if (this.trans.getDeliveryAddress() != null) {
 			xml += "<ram:ShipToTradeParty>" +
-					getTradePartyAsXML(this.trans.getDeliveryAddress(), false) +
+					getTradePartyAsXML(this.trans.getDeliveryAddress(), false, true) +
 					"</ram:ShipToTradeParty>";
 		}
 

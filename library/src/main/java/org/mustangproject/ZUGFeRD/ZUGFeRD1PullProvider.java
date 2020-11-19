@@ -184,13 +184,13 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 
 		}
 		xml = xml + "			<ram:SellerTradeParty>\n";
-		xml += getTradePartyAsXML(trans.getSender(), true);
+		xml += getTradePartyAsXML(trans.getSender(), true, false);
 		xml += "			</ram:SellerTradeParty>\n"
 				+ "			<ram:BuyerTradeParty>\n";
 		// + " <ID>GE2020211</ID>\n"
 		// + " <GlobalID schemeID=\"0088\">4000001987658</GlobalID>\n"
 
-		xml += getTradePartyAsXML(trans.getRecipient(), false);
+		xml += getTradePartyAsXML(trans.getRecipient(), false, false);
 		if ((trans.getOwnVATID() != null) && (trans.getOwnOrganisationName() != null)) {
 			xml = xml + "            <ram:SpecifiedTaxRegistration>\n" + "               <ram:ID schemeID=\"VA\">"
 					+ XMLTools.encodeXML(trans.getOwnVATID()) + "</ram:ID>\n"
@@ -209,7 +209,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 				+ "		<ram:ApplicableSupplyChainTradeDelivery>\n";
 		if (this.trans.getDeliveryAddress() != null) {
 			xml += "<ram:ShipToTradeParty>" +
-					getTradePartyAsXML(this.trans.getDeliveryAddress(), false) +
+					getTradePartyAsXML(this.trans.getDeliveryAddress(), false, true) +
 					"</ram:ShipToTradeParty>";
 		}
 
