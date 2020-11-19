@@ -38,6 +38,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.XMLTools;
+import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 public class ZUGFeRD2PullProvider implements IXMLProvider {
 
@@ -226,7 +227,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			paymentTermsDescription = trans.getPaymentTermDescription();
 		}
 
-		if (paymentTermsDescription == null) {
+		if ((paymentTermsDescription == null)&&(trans.getDocumentCode()!= org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants.CORRECTEDINVOICE)) {
 			paymentTermsDescription = "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
 
 		}
@@ -478,6 +479,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml += payment.getSettlementXML();
 				}
 			}
+		}
+		if (trans.getDocumentCode()== DocumentCodeTypeConstants.CORRECTEDINVOICE) {
+			hasDueDate=false;
 		}
 
 		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = calc.getVATPercentAmountMap();

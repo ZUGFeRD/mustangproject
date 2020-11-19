@@ -9,6 +9,7 @@
 - xmp errors may not show correctly in log
 ### 2.0.1 done
 
+- do not expect dueDate for corrected invoices
 - XR test now includes guideline ID #172
 - BigDecimal specific refactoring PR #192 Thanks to weclapp-dev
 - Preserving metadata PR #193 Thanks to mr-stephan
