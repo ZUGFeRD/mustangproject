@@ -1,6 +1,5 @@
 
 ### 2.0.1 todo
-- confirm that VAT category code switches from S to Z on 0%VAT
 - 2.1 support kleinunternehmer, reverse charge?
 - dont show empty tax number field
 - fail when no bankverbindung?
@@ -8,8 +7,14 @@
 - build xr skonto???
 - *validator not to XR error on ZF files (only notices)
 - xmp errors may not show correctly in log
+### 2.0.1 done
+- do not list tax numbers for shiptotradeparties
+- do not expect dueDate for corrected invoices
 - XR test now includes guideline ID #172
-- support zero-rated goods
+- BigDecimal specific refactoring PR #192 Thanks to weclapp-dev
+- Preserving metadata PR #193 Thanks to mr-stephan
+- support zero-rated goods: confirm that VAT category code switches from S to Z on 0%VAT
+ 
 2.0.0 
 =====
 2020-11-12

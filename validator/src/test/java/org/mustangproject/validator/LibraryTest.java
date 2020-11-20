@@ -135,6 +135,24 @@ public class LibraryTest extends ResourceCase {
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.isEqualTo("valid");
 	}
+	public void testPDFA3Exporter() {
+		// testout-MustangGnuaccountingBeispielRE-20170509_505newEdge.pdf was a A3 file
+		// already in import (MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf),
+		// so it's important to check that we did not screw anythig up in that scenario
+
+		File tempFile = new File("../library/target/testout-MustangGnuaccountingBeispielRE-20170509_505newEdge.pdf");
+		assertTrue(tempFile.exists());
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+		assertThat(res).valueByXPath("/validation/pdf/summary/@status")
+				.isEqualTo("valid");
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+				.isEqualTo("valid");
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.isEqualTo("valid");
+	}
+
 	/**
 	 * automatically test the xrechnung
 	 */
