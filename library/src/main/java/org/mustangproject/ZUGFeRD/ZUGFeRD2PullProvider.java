@@ -529,7 +529,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 							"        <ram:Reason>"+XMLTools.encodeXML(calc.getChargeReasonForPercent(currentTaxPercent))+"</ram:Reason>\n" +
 							"        <ram:CategoryTradeTax>\n" +
 							"          <ram:TypeCode>VAT</ram:TypeCode>\n" +
-							"          <ram:CategoryCode>S</ram:CategoryCode>\n" +
+							"          <ram:CategoryCode>" + VATPercentAmountMap.get(currentTaxPercent).getCategoryCode() + "</ram:CategoryCode>\n" +
 							"          <ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>\n" +
 							"        </ram:CategoryTradeTax>\n" +
 							"      </ram:SpecifiedTradeAllowanceCharge>	\n";
@@ -550,7 +550,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 							"        <ram:Reason>"+XMLTools.encodeXML(calc.getAllowanceReasonForPercent(currentTaxPercent))+"</ram:Reason>\n" +
 							"        <ram:CategoryTradeTax>\n" +
 							"          <ram:TypeCode>VAT</ram:TypeCode>\n" +
-							"          <ram:CategoryCode>S</ram:CategoryCode>\n" +
+							"          <ram:CategoryCode>" + VATPercentAmountMap.get(currentTaxPercent).getCategoryCode() + "</ram:CategoryCode>\n" +
 							"          <ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>\n" +
 							"        </ram:CategoryTradeTax>\n" +
 							"      </ram:SpecifiedTradeAllowanceCharge>	\n";
