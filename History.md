@@ -9,6 +9,7 @@
 - xmp errors may not show correctly in log
 ### 2.0.1 done
 - corrected VAT calculation on prices with >2 decimals (PR#195 thanks to weclapp-dev)
+- have fax numbers only in appropriate profiles, i.e., extended
 - do not list tax numbers for shiptotradeparties
 - do not expect dueDate for corrected invoices
 - XR test now includes guideline ID #172

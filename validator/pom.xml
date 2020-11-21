@@ -75,10 +75,7 @@
         <dependency>
             <groupId>org.mustangproject</groupId>
             <artifactId>library</artifactId>
-            <version>2.0.0-alpha4-SNAPSHOT</version>
-            <!-- prototypes of new mustangproject versions can be installed by referring to them and installed to the local repo from a jar file with
-           mvn install:install-file -Dfile=mustang-1.5.4-SNAPSHOT.jar -DgroupId=org.mustangproject.ZUGFeRD -DartifactId=mustang -Dversion=1.5.4 -Dpackaging=jar -DgeneratePom=true
-           -->
+            <version>2.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>

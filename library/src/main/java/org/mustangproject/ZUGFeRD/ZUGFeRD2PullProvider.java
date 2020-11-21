@@ -137,8 +137,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "     </ram:TelephoneUniversalCommunication>\n";
 			}
 
-			if (party.getContact().getFax() != null) {
-
+			if ((party.getContact().getFax() != null)&&(profile==Profiles.getByName("Extended"))) {
 				xml = xml + "     <ram:FaxUniversalCommunication>\n" + "        <ram:CompleteNumber>"
 						+ XMLTools.encodeXML(party.getContact().getFax()) + "</ram:CompleteNumber>\n"
 						+ "     </ram:FaxUniversalCommunication>\n";
