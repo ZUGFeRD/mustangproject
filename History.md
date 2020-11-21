@@ -8,6 +8,7 @@
 - *validator not to XR error on ZF files (only notices)
 - xmp errors may not show correctly in log
 ### 2.0.1 done
+- corrected VAT calculation on prices with >2 decimals (PR#195 thanks to weclapp-dev)
 - do not list tax numbers for shiptotradeparties
 - do not expect dueDate for corrected invoices
 - XR test now includes guideline ID #172
