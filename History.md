@@ -14,6 +14,8 @@
 - new sample invoice
 - delivery period also on item level
 - corrected more than 100 javadoc entries
+- support specification of account (holder) names
+- new sample invoice (20201121_508) 
  
 2.0.0 
 =====

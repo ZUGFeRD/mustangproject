@@ -12,7 +12,7 @@ import static org.xmlunit.assertj.XmlAssert.assertThat;
 public class LibraryTest extends ResourceCase {
 
 	public void testLibraryPush() {
-		File tempFile = new File("../library/target/testout-ZF2Push.pdf");
+		File tempFile = new File("../library/target/testout-MustangGnuaccountingBeispielRE-20201121_508.pdf");
 		assertTrue(tempFile.exists());
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
 
