@@ -12,7 +12,7 @@
 - have fax numbers only in appropriate profiles, i.e., extended
 - do not list tax numbers for shiptotradeparties
 - do not expect dueDate for corrected invoices
-- XR test now includes guideline ID #172
+- XR test now includes guideline ID (of XRechnung 1.2.2) #172
 - BigDecimal specific refactoring PR #192 Thanks to weclapp-dev
 - Preserving metadata PR #193 Thanks to mr-stephan
 - support zero-rated goods: confirm that VAT category code switches from S to Z on 0%VAT
