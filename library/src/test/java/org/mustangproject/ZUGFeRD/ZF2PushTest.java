@@ -242,6 +242,9 @@ public class ZF2PushTest extends TestCase {
 
 	}
 
+	/***
+	 * test the edge cases of the invoice class
+	 */
 	public void testPushEdge() {
 
 		String orgname = "Test company";
@@ -262,7 +265,7 @@ public class ZF2PushTest extends TestCase {
 						.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID(taxID).setID("0009845"))
 						.setDeliveryAddress(new TradeParty("just the other side of the street", "teststr.12a", "55232", "Entenhausen", "DE").addVATID("DE47110"))
 						.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setID("0008734").addVATID("DE4711").setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE").setFax("++49555123456")))
-						.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(16)), price, new BigDecimal(1.0)).addNote("item level 1/1").addAllowance(new Allowance(new BigDecimal(0.02)).setReason("item discount").setTaxPercent(new BigDecimal(16))))
+						.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(16)), price, new BigDecimal(1.0)).addNote("item level 1/1").addAllowance(new Allowance(new BigDecimal(0.02)).setReason("item discount").setTaxPercent(new BigDecimal(16))).setDetailedDeliveryPeriod(sdf.parse("2020-01-13"),sdf.parse("2020-01-15")))
 						.addCharge(new Charge(new BigDecimal(0.5)).setReason("quick delivery charge").setTaxPercent(new BigDecimal(16)))
 						.addAllowance(new Allowance(new BigDecimal(0.2)).setReason("discount").setTaxPercent(new BigDecimal(16)))
 						.setDetailedDeliveryPeriod(sdf.parse("2020-01-01"),sdf.parse("2020-01-31"))
@@ -284,6 +287,10 @@ public class ZF2PushTest extends TestCase {
 
 		assertTrue(zi.getUTF8().contains("0009845"));
 		assertTrue(zi.getUTF8().contains("0008734"));
+
+		assertTrue(zi.getUTF8().contains("20200113")); // to contain item delivery periods
+		assertTrue(zi.getUTF8().contains("20200115")); // to contain item delivery periods
+
 		assertTrue(zi.getUTF8().contains("item level 1/1"));
 		assertTrue(zi.getUTF8().contains("DE4711")); // the VAT ID should be there...
 		assertFalse(zi.getUTF8().contains("DE47110")); // but not the VAT ID of the shiptotradeparty
