@@ -1,7 +1,7 @@
 
 2.0.1
 =====
-2020-11-12
+2020-11-21
 
 - corrected VAT calculation on prices with >2 decimals (PR#195 thanks to weclapp-dev)
 - have fax numbers only in appropriate profiles, i.e., extended
