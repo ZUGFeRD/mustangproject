@@ -442,7 +442,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "    <ram:TypeCode>916</ram:TypeCode>\n"
 						+ "    <ram:Name>" + f.getDescription() + "</ram:Name>\n"
 						+ "    <ram:AttachmentBinaryObject mimeCode=\"" + f.getMimetype() + "\"\n"
-						+ "      filename=\"" + f.getFilename() + ">" + documentContent + "\n"
+						+ "      filename=\"" + f.getFilename() + "\">" + documentContent + "\n"
 						+ "  </ram:AdditionalReferencedDocument>\n";
 			}
 		}
