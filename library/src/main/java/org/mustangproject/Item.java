@@ -5,12 +5,14 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 
 /***
  * describes any invoice line
  */
 public class Item implements IZUGFeRDExportableItem {
 	protected BigDecimal price, quantity, tax, grossPrice, lineTotalAmount;
+	protected Date detailedDeliveryPeriodFrom=null, detailedDeliveryPeriodTo=null;
 	protected String id;
 	protected Product product;
 	protected ArrayList<String> notes = null;
@@ -57,6 +59,7 @@ public class Item implements IZUGFeRDExportableItem {
 		this.grossPrice = grossPrice;
 		return this;
 	}
+
 
 	public BigDecimal getTax() {
 		return tax;
@@ -135,11 +138,23 @@ public class Item implements IZUGFeRDExportableItem {
 	}
 
 
+	/***
+	 * Adds a item level addition to the price (will be multiplied by quantity)
+	 * @see org.mustangproject.Charge
+	 * @param izac a relative or absolute charge
+	 * @return fluent setter
+	 */
 	public Item addCharge(IZUGFeRDAllowanceCharge izac) {
 		Charges.add(izac);
 		return this;
 	}
 
+	/***
+	 * Adds a item level reduction the price (will be multiplied by quantity)
+	 * @see org.mustangproject.Allowance
+	 * @param izac a relative or absolute allowance
+	 * @return fluent setter
+	 */
 	public Item addAllowance(IZUGFeRDAllowanceCharge izac) {
 		Allowances.add(izac);
 		return this;
@@ -158,5 +173,37 @@ public class Item implements IZUGFeRDExportableItem {
 		return this;
 	}
 
+	/***
+	 * specify a item level delivery period
+	 * (apart from the document level delivery period, and the document level
+	 * delivery day, which is probably anyway required)
+	 *
+	 * @param from start date
+	 * @param to end date
+	 * @return fluent setter
+	 */
+	public Item setDetailedDeliveryPeriod(Date from, Date to) {
+		detailedDeliveryPeriodFrom=from;
+		detailedDeliveryPeriodTo=to;
+		return this;
+	}
+
+	/***
+	 * specifies the item level delivery period (there is also one on document level),
+	 * this will be included in a BillingSpecifiedPeriod element
+	 * @return the beginning of the delivery period
+	 */
+	public Date getDetailedDeliveryPeriodFrom() {
+		return detailedDeliveryPeriodFrom;
+	}
+
+	/***
+	 * specifies the item level delivery period (there is also one on document level),
+	 * this will be included in a BillingSpecifiedPeriod element
+	 * @return the end of the delivery period
+	 */
+	public Date getDetailedDeliveryPeriodTo() {
+		return detailedDeliveryPeriodTo;
+	}
 
 }

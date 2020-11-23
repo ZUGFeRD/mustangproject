@@ -141,6 +141,11 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 			return "0815";
 		}
 
+		@Override
+		public String getVATID() {
+			return "DE0815";
+		}
+
 	}
 
 	protected class Item implements IZUGFeRDExportableItem {

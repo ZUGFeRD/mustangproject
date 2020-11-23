@@ -1,19 +1,21 @@
 
-### 2.0.1 todo
-- 2.1 support kleinunternehmer, reverse charge?
-- dont show empty tax number field
-- fail when no bankverbindung?
-- fail when xr attrs missing?
-- build xr skonto???
-- *validator not to XR error on ZF files (only notices)
-- xmp errors may not show correctly in log
-### 2.0.1 done
+2.0.1
+=====
+2020-11-21
+
+- corrected VAT calculation on prices with >2 decimals (PR#195 thanks to weclapp-dev)
+- have fax numbers only in appropriate profiles, i.e., extended
 - do not list tax numbers for shiptotradeparties
 - do not expect dueDate for corrected invoices
-- XR test now includes guideline ID #172
+- XR test now includes guideline ID (of XRechnung 1.2.2) #172
 - BigDecimal specific refactoring PR #192 Thanks to weclapp-dev
 - Preserving metadata PR #193 Thanks to mr-stephan
 - support zero-rated goods: confirm that VAT category code switches from S to Z on 0%VAT
+- new sample invoice
+- delivery period also on item level
+- corrected more than 100 javadoc entries
+- support specification of account (holder) names
+- new sample invoice (20201121_508) 
  
 2.0.0 
 =====

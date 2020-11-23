@@ -27,6 +27,7 @@ package org.mustangproject.ZUGFeRD;
  * */
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 
@@ -85,6 +86,26 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 * @return an array of strings of item specific "includedNotes", text values
 	 */
 	default String[] getNotes() {
+		return null;
+	}
+
+
+
+	/***
+	 * specifies the item level delivery period (there is also one on document level),
+	 * this will be included in a BillingSpecifiedPeriod element
+	 * @return the beginning of the delivery period
+	 */
+	default Date getDetailedDeliveryPeriodFrom() {
+		return null;
+	}
+
+	/***
+	 * specifies the item level delivery period (there is also one on document level),
+	 * this will be included in a BillingSpecifiedPeriod element
+	 * @return the end of the delivery period
+	 */
+	default Date getDetailedDeliveryPeriodTo() {
 		return null;
 	}
 

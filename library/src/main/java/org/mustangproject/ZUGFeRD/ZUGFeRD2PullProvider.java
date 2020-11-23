@@ -107,6 +107,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	}
 
 	// @todo check if the two boolean args can be refactored
+
 	/***
 	 * returns the UN/CEFACT CII XML for companies(tradeparties), which is actually
 	 * the same for ZF1 (v 2013b) and ZF2 (v 2016b)
@@ -127,7 +128,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 		xml += "	<ram:Name>" + XMLTools.encodeXML(party.getName()) + "</ram:Name>\n"; //$NON-NLS-2$
 
-		if ((party.getContact() != null)&&(isSender||profile==Profiles.getByName("Extended"))) {
+		if ((party.getContact() != null) && (isSender || profile == Profiles.getByName("Extended"))) {
 			xml = xml + "<ram:DefinedTradeContact>\n" + "     <ram:PersonName>" + XMLTools.encodeXML(party.getContact().getName())
 					+ "</ram:PersonName>\n";
 			if (party.getContact().getPhone() != null) {
@@ -137,8 +138,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "     </ram:TelephoneUniversalCommunication>\n";
 			}
 
-			if (party.getContact().getFax() != null) {
-
+			if ((party.getContact().getFax() != null) && (profile == Profiles.getByName("Extended"))) {
 				xml = xml + "     <ram:FaxUniversalCommunication>\n" + "        <ram:CompleteNumber>"
 						+ XMLTools.encodeXML(party.getContact().getFax()) + "</ram:CompleteNumber>\n"
 						+ "     </ram:FaxUniversalCommunication>\n";
@@ -167,13 +167,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "					<ram:CountryID>" + XMLTools.encodeXML(party.getCountry())
 				+ "</ram:CountryID>\n"
 				+ "				</ram:PostalTradeAddress>\n";
-		if ((party.getVATID() != null)&&(!isShipToTradeParty)) {
+		if ((party.getVATID() != null) && (!isShipToTradeParty)) {
 			xml += "				<ram:SpecifiedTaxRegistration>\n"
 					+ "					<ram:ID schemeID=\"VA\">" + XMLTools.encodeXML(party.getVATID())
 					+ "</ram:ID>\n"
 					+ "				</ram:SpecifiedTaxRegistration>\n";
 		}
-		if ((party.getTaxID() != null)&&(!isShipToTradeParty)) {
+		if ((party.getTaxID() != null) && (!isShipToTradeParty)) {
 			xml += "				<ram:SpecifiedTaxRegistration>\n"
 					+ "					<ram:ID schemeID=\"FC\">" + XMLTools.encodeXML(party.getTaxID())
 					+ "</ram:ID>\n"
@@ -194,7 +194,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	protected String getAllowanceChargeStr(IZUGFeRDAllowanceCharge allowance, IAbsoluteValueProvider item) {
 		String percentage = "";
 		String chargeIndicator = "false";
-		if ((allowance.getPercent() != null)&&(profile==Profiles.getByName("Extended"))) {
+		if ((allowance.getPercent() != null) && (profile == Profiles.getByName("Extended"))) {
 			percentage = "<ram:CalculationPercent>" + vatFormat(allowance.getPercent()) + "</ram:CalculationPercent>";
 			percentage += "<ram:BasisAmount>" + item.getValue() + "</ram:BasisAmount>";
 		}
@@ -202,15 +202,15 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			chargeIndicator = "true";
 		}
 
-		String reason="";
-		if ((allowance.getReason()!=null)&&(profile==Profiles.getByName("Extended"))) {
+		String reason = "";
+		if ((allowance.getReason() != null) && (profile == Profiles.getByName("Extended"))) {
 			// only in extended profile
-			reason="<ram:Reason>"+XMLTools.encodeXML(allowance.getReason())+"</ram:Reason>";
+			reason = "<ram:Reason>" + XMLTools.encodeXML(allowance.getReason()) + "</ram:Reason>";
 		}
 		String allowanceChargeStr = "<ram:AppliedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>" +
 				chargeIndicator + "</udt:Indicator></ram:ChargeIndicator>" + percentage +
 				"<ram:ActualAmount>" + priceFormat(allowance.getTotalAmount(item)) + "</ram:ActualAmount>" +
-				reason+
+				reason +
 				"</ram:AppliedTradeAllowanceCharge>";
 		return allowanceChargeStr;
 	}
@@ -229,7 +229,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			paymentTermsDescription = trans.getPaymentTermDescription();
 		}
 
-		if ((paymentTermsDescription == null)&&(trans.getDocumentCode()!= org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants.CORRECTEDINVOICE)) {
+		if ((paymentTermsDescription == null) && (trans.getDocumentCode() != org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants.CORRECTEDINVOICE)) {
 			paymentTermsDescription = "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
 
 		}
@@ -379,8 +379,20 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 					+ "					<ram:RateApplicablePercent>"
 					+ vatFormat(currentItem.getProduct().getVATPercent()) + "</ram:RateApplicablePercent>\n"
-					+ "				</ram:ApplicableTradeTax>\n"
-					+ "				<ram:SpecifiedTradeSettlementLineMonetarySummation>\n"
+					+ "				</ram:ApplicableTradeTax>\n";
+			if ((currentItem.getDetailedDeliveryPeriodFrom() != null) || (currentItem.getDetailedDeliveryPeriodTo() != null)) {
+				xml = xml + "<ram:BillingSpecifiedPeriod>";
+				if (currentItem.getDetailedDeliveryPeriodFrom() != null) {
+					xml = xml + "<ram:StartDateTime><udt:DateTimeString format='102'>" + zugferdDateFormat.format(currentItem.getDetailedDeliveryPeriodFrom()) + "</udt:DateTimeString></ram:StartDateTime>";
+				}
+				if (currentItem.getDetailedDeliveryPeriodTo() != null) {
+					xml = xml + "<ram:EndDateTime><udt:DateTimeString format='102'>" + zugferdDateFormat.format(currentItem.getDetailedDeliveryPeriodTo()) + "</udt:DateTimeString></ram:EndDateTime>";
+				}
+				xml = xml + "</ram:BillingSpecifiedPeriod>";
+
+			}
+
+			xml = xml + "				<ram:SpecifiedTradeSettlementLineMonetarySummation>\n"
 					+ "					<ram:LineTotalAmount>" + currencyFormat(lc.getItemTotalNetAmount())
 					+ "</ram:LineTotalAmount>\n" // currencyID=\"EUR\"
 					+ "				</ram:SpecifiedTradeSettlementLineMonetarySummation>\n";
@@ -430,7 +442,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "    <ram:TypeCode>916</ram:TypeCode>\n"
 						+ "    <ram:Name>" + f.getDescription() + "</ram:Name>\n"
 						+ "    <ram:AttachmentBinaryObject mimeCode=\"" + f.getMimetype() + "\"\n"
-						+ "      filename=\"" + f.getFilename() + ">" + documentContent + "\n"
+						+ "      filename=\"" + f.getFilename() + "\">" + documentContent + "\n"
 						+ "  </ram:AdditionalReferencedDocument>\n";
 			}
 		}
@@ -482,8 +494,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 			}
 		}
-		if (trans.getDocumentCode()== DocumentCodeTypeConstants.CORRECTEDINVOICE) {
-			hasDueDate=false;
+		if (trans.getDocumentCode() == DocumentCodeTypeConstants.CORRECTEDINVOICE) {
+			hasDueDate = false;
 		}
 
 		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = calc.getVATPercentAmountMap();
@@ -518,7 +530,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if ((trans.getZFCharges() != null) && (trans.getZFCharges().length > 0)) {
 
 			for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-				if (calc.getChargesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO)!=0) {
+				if (calc.getChargesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO) != 0) {
 
 
 					xml = xml + "	 <ram:SpecifiedTradeAllowanceCharge>\n" +
@@ -526,7 +538,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 							"          <udt:Indicator>true</udt:Indicator>\n" +
 							"        </ram:ChargeIndicator>\n" +
 							"        <ram:ActualAmount>" + currencyFormat(calc.getChargesForPercent(currentTaxPercent)) + "</ram:ActualAmount>\n" +
-							"        <ram:Reason>"+XMLTools.encodeXML(calc.getChargeReasonForPercent(currentTaxPercent))+"</ram:Reason>\n" +
+							"        <ram:Reason>" + XMLTools.encodeXML(calc.getChargeReasonForPercent(currentTaxPercent)) + "</ram:Reason>\n" +
 							"        <ram:CategoryTradeTax>\n" +
 							"          <ram:TypeCode>VAT</ram:TypeCode>\n" +
 							"          <ram:CategoryCode>" + VATPercentAmountMap.get(currentTaxPercent).getCategoryCode() + "</ram:CategoryCode>\n" +
@@ -541,13 +553,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 		if ((trans.getZFAllowances() != null) && (trans.getZFAllowances().length > 0)) {
 			for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-				if (calc.getAllowancesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO)!= 0) {
+				if (calc.getAllowancesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO) != 0) {
 					xml = xml + "	 <ram:SpecifiedTradeAllowanceCharge>\n" +
 							"        <ram:ChargeIndicator>\n" +
 							"          <udt:Indicator>false</udt:Indicator>\n" +
 							"        </ram:ChargeIndicator>\n" +
 							"        <ram:ActualAmount>" + currencyFormat(calc.getAllowancesForPercent(currentTaxPercent)) + "</ram:ActualAmount>\n" +
-							"        <ram:Reason>"+XMLTools.encodeXML(calc.getAllowanceReasonForPercent(currentTaxPercent))+"</ram:Reason>\n" +
+							"        <ram:Reason>" + XMLTools.encodeXML(calc.getAllowanceReasonForPercent(currentTaxPercent)) + "</ram:Reason>\n" +
 							"        <ram:CategoryTradeTax>\n" +
 							"          <ram:TypeCode>VAT</ram:TypeCode>\n" +
 							"          <ram:CategoryCode>" + VATPercentAmountMap.get(currentTaxPercent).getCategoryCode() + "</ram:CategoryCode>\n" +
@@ -621,7 +633,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		try {
 			zugferdRaw = xml.getBytes("UTF-8");
 
-			zugferdData=XMLTools.removeBOM(zugferdRaw);
+			zugferdData = XMLTools.removeBOM(zugferdRaw);
 		} catch (UnsupportedEncodingException e) {
 			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
 		}

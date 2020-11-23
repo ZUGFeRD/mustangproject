@@ -52,14 +52,28 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 		return null;
 	}
 
+	/***
+	 * Account name
+	 *
+	 * @return the name of the account holder (if not identical to sender)
+	 */
+	default String getAccountName() { return null; }
+
 
 	default String getSettlementXML() {
+		String accountNameStr="";
+		if (getAccountName()!=null) {
+			accountNameStr="<ram:AccountName>" + XMLTools.encodeXML(getAccountName()) + "</ram:AccountName>\n"; //$NON-NLS-2$
+
+		}
+
 		String xml = "			<ram:SpecifiedTradeSettlementPaymentMeans>\n"
 				+ "				<ram:TypeCode>42</ram:TypeCode>\n"
-				+ "				<ram:Information>Überweisung</ram:Information>\n"
+				+ "				<ram:Information>Bank transfer</ram:Information>\n"
 				+ "				<ram:PayeePartyCreditorFinancialAccount>\n"
 				+ "					<ram:IBANID>" + XMLTools.encodeXML(getOwnIBAN()) + "</ram:IBANID>\n"; //$NON-NLS-2$
-				xml+= "				</ram:PayeePartyCreditorFinancialAccount>\n"
+		xml+= accountNameStr;
+		xml+= "				</ram:PayeePartyCreditorFinancialAccount>\n"
 				+ "				<ram:PayeeSpecifiedCreditorFinancialInstitution>\n"
 				+ "					<ram:BICID>" + XMLTools.encodeXML(getOwnBIC()) + "</ram:BICID>\n" //$NON-NLS-2$
 				// + " <ram:Name>"+trans.getOwnBankName()+"</ram:Name>\n"

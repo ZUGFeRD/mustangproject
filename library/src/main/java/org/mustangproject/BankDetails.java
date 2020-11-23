@@ -6,7 +6,7 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlementPayment;
  * provides e.g. the IBAN to transfer money to :-)
  */
 public class BankDetails implements IZUGFeRDTradeSettlementPayment {
-	protected String IBAN, BIC;
+	protected String IBAN, BIC, accountName=null;
 
 	public BankDetails(String IBAN, String BIC) {
 		this.IBAN = IBAN;
@@ -34,6 +34,11 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 		return BIC;
 	}
 
+	/***
+	 * The bank identifier. Bank name is no longer neccessary in SEPA.
+	 * @param BIC the bic code
+	 * @return fluent setter
+	 */
 	public BankDetails setBIC(String BIC) {
 		this.BIC = BIC;
 		return this;
@@ -54,6 +59,21 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 		return getIBAN();
 	}
 
+
+	/**
+	 * set Holder
+	 * @param name account name (usually account holder if != sender)
+	 * @return fluent setter
+	 */
+	public BankDetails setAccountName(String name) {
+		accountName=name;
+		return this;
+	}
+
+	@Override
+	public String getAccountName() {
+		return accountName;
+	}
 
 
 
