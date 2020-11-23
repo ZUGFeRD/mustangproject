@@ -162,7 +162,8 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
 				VATAmount theAmount = hm.get(currentCharge.getTaxPercent().stripTrailingZeros());
 				if (theAmount == null) {
-					theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO, "S");
+					theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO, 
+					    currentCharge.getCategoryCode()!=null?currentCharge.getCategoryCode():"S");
 				}
 				theAmount.setBasis(theAmount.getBasis().add(currentCharge.getTotalAmount(this)));
 				BigDecimal factor = currentCharge.getTaxPercent().divide(new BigDecimal(100));
@@ -175,7 +176,8 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			for (IZUGFeRDAllowanceCharge currentAllowance : allowances) {
 				VATAmount theAmount = hm.get(currentAllowance.getTaxPercent().stripTrailingZeros());
 				if (theAmount == null) {
-					theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO, "S");
+					theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO, 
+					    currentAllowance.getCategoryCode()!=null?currentAllowance.getCategoryCode():"S");
 				}
 				theAmount.setBasis(theAmount.getBasis().subtract(currentAllowance.getTotalAmount(this)));
 				BigDecimal factor = currentAllowance.getTaxPercent().divide(new BigDecimal(100));
