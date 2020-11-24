@@ -1,3 +1,7 @@
+2.0.2
+=====
+
+- #197 xml attachment errors
 
 2.0.1
 =====
