@@ -31,7 +31,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			res = res.add(amount.getCalculated());
 		}
-		return res.setScale(2, RoundingMode.HALF_UP);
+		return res;
 	}
 
 	/***

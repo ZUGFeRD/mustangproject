@@ -20,6 +20,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import org.mustangproject.Invoice;
+import org.mustangproject.XMLTools;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
@@ -81,7 +82,7 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 		assertEquals("Stadthausen", invoice.getSender().getLocation());
 
 		TransactionCalculator tc=new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("571.04"),tc.getTotalGross());
+		assertEquals("571.04", XMLTools.nDigitFormat(tc.getTotalGross(),2));
 
 
 		// name street location zip country, contact name phone email, total amount
@@ -102,7 +103,7 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 		}
 		assertFalse(hasExceptions);
 		TransactionCalculator tc=new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("18.33"),tc.getTotalGross());
+		assertEquals("18.33", XMLTools.nDigitFormat(tc.getTotalGross(),2));
 	}
 
 	public void testAllowancesChargesImport() {
@@ -118,7 +119,7 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 		}
 		assertFalse(hasExceptions);
 		TransactionCalculator tc=new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("11.07"),tc.getTotalGross());
+		assertEquals("11.07", XMLTools.nDigitFormat(tc.getTotalGross(),2));
 
 
 		// name street location zip country, contact name phone email, total amount
