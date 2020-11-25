@@ -2,6 +2,8 @@
 =======
 - #197 file attachments
 - Charges/Allowances CategoryCode improvement PR #198 Thanks to weclapp-dev
+- support reverse charge
+- support intra community supply also in product class, not only interface
 
 2.0.1
 =====

@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 public class Product implements IZUGFeRDExportableProduct {
 	protected String unit, name, description, sellerAssignedID, buyerAssignedID;
 	protected BigDecimal VATPercent;
+	protected boolean isReverseCharge=false;
+	protected boolean isIntraCommunitySupply=false;
 
 	/***
 	 * default constructor
@@ -51,6 +53,37 @@ public class Product implements IZUGFeRDExportableProduct {
 	 */
 	public Product setBuyerAssignedID(String buyerAssignedID) {
 		this.buyerAssignedID = buyerAssignedID;
+		return this;
+	}
+
+	@Override
+	public boolean isReverseCharge() {
+		return isReverseCharge;
+	}
+
+	@Override
+	public boolean isIntraCommunitySupply() {
+		return isIntraCommunitySupply;
+	}
+
+	/***
+	 * sets reverse charge(=delivery to outside EU)
+	 * @return fluent setter
+	 */
+	public Product setReverseCharge() {
+		isReverseCharge=true;
+		setVATPercent(BigDecimal.ZERO);
+		return this;
+	}
+
+
+	/***
+	 * sets intra community supply(=delivery outside the country inside the EU)
+	 * @return fluent setter
+	 */
+	public Product setIntraCommunitySupply() {
+		isIntraCommunitySupply=true;
+		setVATPercent(BigDecimal.ZERO);
 		return this;
 	}
 
