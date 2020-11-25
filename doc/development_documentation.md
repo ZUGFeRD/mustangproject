@@ -171,7 +171,6 @@ Change to the project directory and run
   * clean the release with `mvn release:clean` and prepare the release with
   * `mvn release:prepare  -DignoreSnapshots=true` and enter the version numbers. 
   * After that is through you can create a new release via `mvn release:perform -Dmaven.java.skip=True`.This will also update the maven repo. 
-  * Experimental: mvn deploy -Dregistry=https://maven.pkg.github.com/ZUGFeRD -Dtoken=GH_TOKEN
   
   ![screenshot](development_documentation_screenshot_release.png "Screenshot Release")
   
