@@ -6,6 +6,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -259,7 +260,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		}
 
 		TransactionCalculator tc = new TransactionCalculator(zpp);
-		String expectedStringTotalGross = tc.getTotalGross().toPlainString();
+		String expectedStringTotalGross = tc.getTotalGross().setScale(2, RoundingMode.HALF_UP).toPlainString();
 		if (!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2))) {
 			throw new ParseException("Could not reproduce the invoice, this could mean that it could not be read properly", 0);
 		}
