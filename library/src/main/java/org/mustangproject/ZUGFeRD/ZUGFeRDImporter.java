@@ -48,7 +48,7 @@ public class ZUGFeRDImporter {
 	/**
 	 * if metadata has been found
 	 */
-	private boolean containsMeta = false;
+	protected boolean containsMeta = false;
 	/**
 	 * map filenames of additional XML files to their contents
 	 */
@@ -67,6 +67,10 @@ public class ZUGFeRDImporter {
 	private Document document;
 
 
+	protected ZUGFeRDImporter() {
+	    //constructor for extending classes
+	}
+	
 	public ZUGFeRDImporter(String pdfFilename) {
 		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
 			extractLowLevel(bis);
