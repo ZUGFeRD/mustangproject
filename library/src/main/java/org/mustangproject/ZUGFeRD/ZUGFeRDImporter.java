@@ -48,7 +48,7 @@ public class ZUGFeRDImporter {
 	/**
 	 * if metadata has been found
 	 */
-	protected boolean containsMeta = false;
+	private boolean containsMeta = false;
 	/**
 	 * map filenames of additional XML files to their contents
 	 */
@@ -67,10 +67,6 @@ public class ZUGFeRDImporter {
 	private Document document;
 
 
-	protected ZUGFeRDImporter() {
-	    //constructor for extending classes
-	}
-	
 	public ZUGFeRDImporter(String pdfFilename) {
 		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
 			extractLowLevel(bis);
@@ -792,7 +788,8 @@ public class ZUGFeRDImporter {
 		List<Node> nodeList = getLineItemNodes();
 		List<Item> lineItemList = new ArrayList<>();
 
-		for (Node n: nodeList) {
+		for (Node n: nodeList
+		) {
 			Item lineItem = new Item(null, null, null);
 			lineItem.setProduct(new Product(null,null,null,null));
 
@@ -806,21 +803,13 @@ public class ZUGFeRDImporter {
 
 						node = getNodeByName(nn.getChildNodes(), "ram:NetPriceProductTradePrice");
 						if (node != null) {
-						    NodeList tradeAgreementChildren = node.getChildNodes();
-						    node = getNodeByName(tradeAgreementChildren, "ram:ChargeAmount");
-						    lineItem.setPrice(tryBigDecimal(getNodeValue(node)));
-						    node = getNodeByName(tradeAgreementChildren, "ram:BasisQuantity");
-						    if(node.getAttributes()!=null) {
-						    Node unitCodeAttribute = node.getAttributes().getNamedItem("unitCode");
-						    if(unitCodeAttribute != null) {
-							lineItem.getProduct().setUnit(unitCodeAttribute.getNodeValue());
-						    }
-						    }
+							node = getNodeByName(node.getChildNodes(), "ram:ChargeAmount");
+							lineItem.setPrice(tryBigDecimal(getNodeValue(node)));
 						}
- 
+
 						node = getNodeByName(nn.getChildNodes(), "ram:GrossPriceProductTradePrice");
 						if (node != null) {
-						    node = getNodeByName(node.getChildNodes(), "ram:ChargeAmount");
+							node = getNodeByName(node.getChildNodes(), "ram:ChargeAmount");
 							lineItem.setGrossPrice(tryBigDecimal(getNodeValue(node)));
 						}
 						break;
