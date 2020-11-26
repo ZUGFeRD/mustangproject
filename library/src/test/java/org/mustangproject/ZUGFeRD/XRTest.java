@@ -39,6 +39,7 @@ import static org.xmlunit.assertj.XmlAssert.assertThat;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class XRTest extends TestCase {
 	final String TARGET_XML = "./target/testout-XR.xml";
+	final String TARGET_EDGE_XML = "./target/testout-XR-Edge.xml";
 	public void testXRExport() {
 
 		// the writing part
@@ -69,6 +70,49 @@ public class XRTest extends TestCase {
 				.isEqualTo(1);
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML));
+			writer.write(theXML);
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+	public void testXREdgeExport() {
+
+		// the writing part
+
+		String orgname = "Test company";
+		String number = "123";
+		String amountStr = "1.00";
+		BigDecimal amount = new BigDecimal(amountStr);
+		byte[] b = {12, 13};
+		FileAttachment fe1=new FileAttachment("one.pdf", "application/pdf", "Alternative", b);
+		FileAttachment fe2=new FileAttachment("two.pdf", "application/pdf", "Alternative", b);
+		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
+				.setSender(new TradeParty(orgname,"teststr","55232","teststadt","DE").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test","+49123456789","test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890","COBADEFXXX")))
+				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
+				.setReferenceNumber("991-01484-64")//leitweg-id
+				// not using any VAT, this is also a test of zero-rated goods:
+				.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal(1.0)))
+				.embedFileInXML(fe1).embedFileInXML(fe2);
+
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(i);
+		String theXML = new String(zf2p.getXML());
+		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
+				.asInt()
+				.isEqualTo(1); //2 errors are OK because there is a known bug
+
+
+		assertThat(theXML).valueByXPath("//*[local-name()='DuePayableAmount']")
+				.asDouble()
+				.isEqualTo(1);
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_EDGE_XML));
 			writer.write(theXML);
 			writer.close();
 		} catch (IOException e) {

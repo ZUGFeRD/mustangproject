@@ -157,7 +157,7 @@ public class LibraryTest extends ResourceCase {
 	 * automatically test the xrechnung
 	 */
 	public void testXRValidation() {
-		File tempFile = new File("../library/target/testout-XR.xml");
+		File tempFile = new File("../library/target/testout-XR-Edge.xml");
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
 
 		String res = zfv.validate(tempFile.getAbsolutePath());
