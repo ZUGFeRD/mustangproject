@@ -810,12 +810,12 @@ public class ZUGFeRDImporter {
 						    node = getNodeByName(tradeAgreementChildren, "ram:ChargeAmount");
 						    lineItem.setPrice(tryBigDecimal(getNodeValue(node)));
 						    node = getNodeByName(tradeAgreementChildren, "ram:BasisQuantity");
-						    if(node.getAttributes()!=null) {
-						    Node unitCodeAttribute = node.getAttributes().getNamedItem("unitCode");
-						    if(unitCodeAttribute != null) {
-							lineItem.getProduct().setUnit(unitCodeAttribute.getNodeValue());
-						    }
-						    }
+							if(node != null && node.getAttributes()!=null) {
+								Node unitCodeAttribute = node.getAttributes().getNamedItem("unitCode");
+								if(unitCodeAttribute != null) {
+									lineItem.getProduct().setUnit(unitCodeAttribute.getNodeValue());
+								}
+							}
 						}
  
 						node = getNodeByName(nn.getChildNodes(), "ram:GrossPriceProductTradePrice");
