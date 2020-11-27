@@ -108,10 +108,16 @@ public interface IZUGFeRDExportableProduct {
 		return false;
 	}
 
+	default boolean isReverseCharge() {
+		return false;
+	}
+
 	default String getTaxCategoryCode() {
 		if (isIntraCommunitySupply()) {
-			return "K";
-		} else if (getVATPercent().equals(new BigDecimal(0))) {
+			return "K"; // within europe
+		} else if (isReverseCharge()) {
+			return "AE"; // to out of europe...
+		} else if (getVATPercent().equals(BigDecimal.ZERO)) {
 			return "Z"; // zero rated goods
 		} else {
 			return "S"; // one of the "standard" rates (not neccessarily a default rate, even a deducted VAT is standard calculation)
@@ -119,8 +125,11 @@ public interface IZUGFeRDExportableProduct {
 	}
 
 	default String getTaxExemptionReason() {
-		if (isIntraCommunitySupply())
+		if (isIntraCommunitySupply()) {
 			return "Intra-community supply";
+		} else if (isReverseCharge()) {
+			return "Reverse Charge";
+		}
 		return null;
 	}
 }
