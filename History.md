@@ -1,8 +1,8 @@
 2.0.3
 =======
 
-
 - #201 correct embedded files in XRechnung
+- transaction calculator getGrandTotal now public
 
 2.0.2
 =======

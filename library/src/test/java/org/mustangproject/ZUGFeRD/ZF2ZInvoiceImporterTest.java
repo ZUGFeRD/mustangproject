@@ -20,20 +20,13 @@
 package org.mustangproject.ZUGFeRD;
 
 import org.mustangproject.Invoice;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 
 import junit.framework.TestCase;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 
 /***
@@ -81,7 +74,7 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 		assertEquals("Stadthausen", invoice.getSender().getLocation());
 
 		TransactionCalculator tc=new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("571.04"),tc.getTotalGross());
+		assertEquals(new BigDecimal("571.04"),tc.getGrandTotal());
 
 
 		// name street location zip country, contact name phone email, total amount
@@ -102,7 +95,7 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 		}
 		assertFalse(hasExceptions);
 		TransactionCalculator tc=new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("18.33"),tc.getTotalGross());
+		assertEquals(new BigDecimal("18.33"),tc.getGrandTotal());
 	}
 
 	public void testAllowancesChargesImport() {
@@ -118,7 +111,7 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 		}
 		assertFalse(hasExceptions);
 		TransactionCalculator tc=new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("11.07"),tc.getTotalGross());
+		assertEquals(new BigDecimal("11.07"),tc.getGrandTotal());
 
 
 		// name street location zip country, contact name phone email, total amount
