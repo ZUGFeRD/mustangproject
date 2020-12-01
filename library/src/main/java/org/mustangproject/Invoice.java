@@ -40,6 +40,7 @@ public class Invoice implements IExportableTransaction {
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
 	protected ArrayList<String> notes = null;
 	protected String contractReferencedDocument = null;
+	protected ArrayList<FileAttachment> xmlEmbeddedFiles=null;
 
 	protected Date detailedDeliveryDateStart = null;
 	protected Date detailedDeliveryPeriodEnd = null;
@@ -76,6 +77,22 @@ public class Invoice implements IExportableTransaction {
 	public Invoice setDocumentCode(String documentCode) {
 		this.documentCode = documentCode;
 		return this;
+	}
+
+	public Invoice embedFileInXML(FileAttachment fa) {
+		if (xmlEmbeddedFiles == null) {
+			xmlEmbeddedFiles=new ArrayList<FileAttachment>();
+		}
+		xmlEmbeddedFiles.add(fa);
+		return this;
+	}
+
+	public FileAttachment[] getAdditionalReferencedDocuments() {
+		if (xmlEmbeddedFiles == null) {
+			return null;
+		}
+		return xmlEmbeddedFiles.toArray(new FileAttachment[0]);
+
 	}
 
 
