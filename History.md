@@ -3,6 +3,8 @@
 
 - #201 correct embedded files in XRechnung
 - transaction calculator getGrandTotal now public
+- corrected sample in docs thanks to tweimer PR #204
+- don't write "null" as paymentDescription if no Bank account is specified
 
 2.0.2
 =======

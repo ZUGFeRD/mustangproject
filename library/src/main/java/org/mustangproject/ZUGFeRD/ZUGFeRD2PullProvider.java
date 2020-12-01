@@ -571,9 +571,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 
 
-		if (trans.getPaymentTerms() == null) {
-			xml = xml + "			<ram:SpecifiedTradePaymentTerms>\n"
-					+ "				<ram:Description>" + paymentTermsDescription + "</ram:Description>\n";
+		if ((trans.getPaymentTerms() == null)&&((paymentTermsDescription!=null)||(trans.getTradeSettlement()!=null)||(hasDueDate))) {
+			xml = xml + "<ram:SpecifiedTradePaymentTerms>\n";
+
+			if (paymentTermsDescription!=null) {
+				xml = xml + "<ram:Description>" + paymentTermsDescription + "</ram:Description>\n";
+			}
 
 			if (trans.getTradeSettlement() != null) {
 				for (IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
@@ -645,9 +648,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	}
 
 	private String buildPaymentTermsXml() {
-		String paymentTermsXml = "<ram:SpecifiedTradePaymentTerms>";
 
 		IZUGFeRDPaymentTerms paymentTerms = trans.getPaymentTerms();
+		if (paymentTerms==null) {
+			return "";
+		}
+		String paymentTermsXml = "<ram:SpecifiedTradePaymentTerms>";
+
 		IZUGFeRDPaymentDiscountTerms discountTerms = paymentTerms.getDiscountTerms();
 		Date dueDate = paymentTerms.getDueDate();
 		if (dueDate != null && discountTerms != null && discountTerms.getBaseDate() != null) {
