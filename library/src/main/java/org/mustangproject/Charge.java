@@ -82,6 +82,13 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 		return true;
 	}
 
+	@Override
+	public String getCategoryCode() {
+		if(categoryCode != null){
+		    return categoryCode;
+		}
+		return IZUGFeRDAllowanceCharge.super.getCategoryCode();
+	}
 
 
 	public Charge setCategoryCode(String categoryCode) {

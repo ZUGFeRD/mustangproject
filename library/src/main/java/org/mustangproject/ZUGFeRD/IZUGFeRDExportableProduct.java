@@ -119,7 +119,7 @@ public interface IZUGFeRDExportableProduct {
 		    return TaxCategoryCodeTypeConstants.INTRACOMMUNITY;// "K"; // within europe
 		} else if (isReverseCharge()) {
 		    return TaxCategoryCodeTypeConstants.REVERSECHARGE;// "AE"; // to out of europe...
-		} else if (getVATPercent().equals(BigDecimal.ZERO)) {
+		} else if (getVATPercent().compareTo(BigDecimal.ZERO) == 0) {
 		    return TaxCategoryCodeTypeConstants.ZEROTAXPRODUCTS; // "Z"; // zero rated goods
 		} else {
 		    return TaxCategoryCodeTypeConstants.STANDARDRATE;// "S"; // one of the "standard" rates (not
