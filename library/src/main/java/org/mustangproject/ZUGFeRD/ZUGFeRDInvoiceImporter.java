@@ -260,7 +260,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		}
 
 		TransactionCalculator tc = new TransactionCalculator(zpp);
-		String expectedStringTotalGross = tc.getTotalGross().setScale(2, RoundingMode.HALF_UP).toPlainString();
+		String expectedStringTotalGross = tc.getGrandTotal().toPlainString();
 		if (!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2))) {
 			throw new ParseException("Could not reproduce the invoice, this could mean that it could not be read properly", 0);
 		}

@@ -11,10 +11,18 @@ import java.util.HashMap;
 public class TransactionCalculator implements IAbsoluteValueProvider {
 	protected IExportableTransaction trans;
 
+	/***
+	 *
+	 * @param trans the invoice (or IExportableTransaction) to be calculated
+	 */
 	public TransactionCalculator(IExportableTransaction trans) {
 		this.trans=trans;
 	}
 
+	/***
+	 * if something had already been paid in advance, this will get it from the transaction
+	 * @return prepaid amount
+	 */
 	protected BigDecimal getTotalPrepaid() {
 		if (trans.getTotalPrepaidAmount() == null) {
 			return BigDecimal.ZERO;
@@ -23,7 +31,11 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		}
 	}
 
-	protected BigDecimal getTotalGross() {
+	/***
+	 * the invoice total with VAT, corrected by prepaid amount, allowances and charges
+	 * @return the invoice total including taxes
+	 */
+	public BigDecimal getGrandTotal() {
 
 		BigDecimal res = getTaxBasis();
 		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = getVATPercentAmountMap();
@@ -31,7 +43,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			res = res.add(amount.getCalculated());
 		}
-		return res;
+		return res.setScale(2, RoundingMode.HALF_UP);
 	}
 
 	/***
@@ -119,6 +131,10 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		return res;
 	}
 
+	/***
+	 * returns the total net value of all items, without document level charges/allowances
+	 * @return item sum
+	 */
 	protected BigDecimal getTotal() {
 		BigDecimal res = BigDecimal.ZERO;
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
@@ -128,6 +144,11 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		return res;
 	}
 
+	/***
+	 * returns the total net value of the invoice, including charges/allowances on document
+	 * level
+	 * @return item sum +- charges/allowances
+	 */
 	protected BigDecimal getTaxBasis() {
 		BigDecimal res = getTotal().add(getChargesForPercent(null)).subtract(getAllowancesForPercent(null));
 		return res;
