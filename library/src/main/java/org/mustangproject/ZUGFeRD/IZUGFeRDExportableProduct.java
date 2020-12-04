@@ -22,6 +22,8 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
+
 /**
  * Mustangproject's ZUGFeRD implementation
  * Necessary interface for ZUGFeRD exporter
@@ -114,13 +116,15 @@ public interface IZUGFeRDExportableProduct {
 
 	default String getTaxCategoryCode() {
 		if (isIntraCommunitySupply()) {
-			return "K"; // within europe
+		    return TaxCategoryCodeTypeConstants.INTRACOMMUNITY;// "K"; // within europe
 		} else if (isReverseCharge()) {
-			return "AE"; // to out of europe...
-		} else if (getVATPercent().equals(BigDecimal.ZERO)) {
-			return "Z"; // zero rated goods
+		    return TaxCategoryCodeTypeConstants.REVERSECHARGE;// "AE"; // to out of europe...
+		} else if (getVATPercent().compareTo(BigDecimal.ZERO) == 0) {
+		    return TaxCategoryCodeTypeConstants.ZEROTAXPRODUCTS; // "Z"; // zero rated goods
 		} else {
-			return "S"; // one of the "standard" rates (not neccessarily a default rate, even a deducted VAT is standard calculation)
+		    return TaxCategoryCodeTypeConstants.STANDARDRATE;// "S"; // one of the "standard" rates (not
+								     // neccessarily a default rate, even a deducted VAT
+								     // is standard calculation)
 		}
 	}
 

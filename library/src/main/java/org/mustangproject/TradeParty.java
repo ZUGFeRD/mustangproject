@@ -1,10 +1,16 @@
 package org.mustangproject;
 
-import org.mustangproject.ZUGFeRD.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
+import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTradeParty;
+import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlement;
+import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlementDebit;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import java.util.ArrayList;
 
 /***
  * A organisation, i.e. usually a company
@@ -15,7 +21,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	protected String taxID = null, vatID = null;
 	protected String ID = null;
 	protected String additionalAddress = null;
-	protected ArrayList<BankDetails> bankDetails = new ArrayList<BankDetails>();
+	protected List<BankDetails> bankDetails = new ArrayList<>();
+	protected List<IZUGFeRDTradeSettlementDebit> debitDetails = new ArrayList<>();
 	protected Contact contact = null;
 
 	/***
@@ -137,8 +144,17 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		bankDetails.add(s);
 		return this;
 	}
+	/**
+	 * (optional)
+	 * @param debitDetail
+	 * @return fluent setter
+	 */
+	public TradeParty addDebitDetails(IZUGFeRDTradeSettlementDebit debitDetail) {
+	    debitDetails.add(debitDetail);
+	    return this;
+	}
 
-	public ArrayList<BankDetails> getBankDetails() {
+	public List<BankDetails> getBankDetails() {
 		return bankDetails;
 	}
 
@@ -262,10 +278,19 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	}
 
 	public IZUGFeRDTradeSettlement[] getAsTradeSettlement() {
-		if (bankDetails.size() == 0) {
+		if (bankDetails.isEmpty() && debitDetails.isEmpty()) {
 			return null;
 		}
-		return bankDetails.toArray(new IZUGFeRDTradeSettlement[0]);
+		List<IZUGFeRDTradeSettlement> tradeSettlements = Stream.concat(bankDetails.stream(), debitDetails.stream())
+			.map(IZUGFeRDTradeSettlement.class::cast)
+			.collect(Collectors.toList());
+		
+		IZUGFeRDTradeSettlement[] result = new IZUGFeRDTradeSettlement[tradeSettlements.size()];
+		for (int i = 0; i < tradeSettlements.size(); i++) {
+		    IZUGFeRDTradeSettlement izugFeRDTradeSettlement = tradeSettlements.get(i);
+		    result[i]=izugFeRDTradeSettlement;
+		}
+		return result;
 	}
 
 	@Override
