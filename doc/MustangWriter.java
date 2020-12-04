@@ -6,15 +6,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.mustangproject.ZUGFeRD.IExportableTransaction;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTransaction;
-import org.mustangproject.ZUGFeRD.ZUGFeRDExporter;
-import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1Factory;
+import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTradeParty;
+import org.mustangproject.ZUGFeRD.IZUGFeRDExporter;
+import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1;
 
-class Contact implements IZUGFeRDExportableContact {
+class Contact implements IZUGFeRDExportableTradeParty {
 
 	public String getCountry() {
 		return "DE";
@@ -132,16 +132,16 @@ class Product implements IZUGFeRDExportableProduct {
 	}
 }
 
-public class MustangWriter implements IZUGFeRDExportableTransaction {
+public class MustangWriter implements IExportableTransaction {
 
 	private void apply() {
 		try {
 			System.out.println("Reading Blanko-PDF");
-			ZUGFeRDExporter ze = new ZUGFeRDExporterFromA1Factory().setProducer("My Application")
+			IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setProducer("My Application")
 					.setCreator(System.getProperty("user.name"))
 					.load("./MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 			System.out.println("Generating and attaching ZUGFeRD-Data");
-			ze.PDFattachZugferdFile(this);
+			ze.setTransaction(this);
 			System.out.println("Writing ZUGFeRD-PDF");
 			ze.export("./MustangGnuaccountingBeispielRE-20170509_505new.pdf");
 			System.out.println("Done.");
@@ -238,7 +238,7 @@ public class MustangWriter implements IZUGFeRDExportableTransaction {
 		return null;
 	}
 
-	public IZUGFeRDExportableContact getRecipient() {
+	public IZUGFeRDExportableTradeParty getRecipient() {
 		return new Contact();
 	}
 

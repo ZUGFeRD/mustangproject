@@ -571,9 +571,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 
 
-		if (trans.getPaymentTerms() == null) {
-			xml = xml + "			<ram:SpecifiedTradePaymentTerms>\n"
-					+ "				<ram:Description>" + paymentTermsDescription + "</ram:Description>\n";
+		if ((trans.getPaymentTerms() == null)&&((paymentTermsDescription!=null)||(trans.getTradeSettlement()!=null)||(hasDueDate))) {
+			xml = xml + "<ram:SpecifiedTradePaymentTerms>\n";
+
+			if (paymentTermsDescription!=null) {
+				xml = xml + "<ram:Description>" + paymentTermsDescription + "</ram:Description>\n";
+			}
 
 			if (trans.getTradeSettlement() != null) {
 				for (IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
@@ -607,12 +610,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				// //
 				// currencyID=\"EUR\"
 				+ "				<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
-				+ currencyFormat(calc.getTotalGross().subtract(calc.getTaxBasis())) + "</ram:TaxTotalAmount>\n"
-				+ "				<ram:GrandTotalAmount>" + currencyFormat(calc.getTotalGross()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-2$
+				+ currencyFormat(calc.getGrandTotal().subtract(calc.getTaxBasis())) + "</ram:TaxTotalAmount>\n"
+				+ "				<ram:GrandTotalAmount>" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-2$
 				// //
 				// currencyID=\"EUR\"
 				+ "             <ram:TotalPrepaidAmount>" + currencyFormat(calc.getTotalPrepaid()) + "</ram:TotalPrepaidAmount>\n"
-				+ "				<ram:DuePayableAmount>" + currencyFormat(calc.getTotalGross().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>\n" //$NON-NLS-2$
+				+ "				<ram:DuePayableAmount>" + currencyFormat(calc.getGrandTotal().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>\n" //$NON-NLS-2$
 				// //
 				// currencyID=\"EUR\"
 				+ "			</ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n"
@@ -645,9 +648,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	}
 
 	private String buildPaymentTermsXml() {
-		String paymentTermsXml = "<ram:SpecifiedTradePaymentTerms>";
 
 		IZUGFeRDPaymentTerms paymentTerms = trans.getPaymentTerms();
+		if (paymentTerms==null) {
+			return "";
+		}
+		String paymentTermsXml = "<ram:SpecifiedTradePaymentTerms>";
+
 		IZUGFeRDPaymentDiscountTerms discountTerms = paymentTerms.getDiscountTerms();
 		Date dueDate = paymentTerms.getDueDate();
 		if (dueDate != null && discountTerms != null && discountTerms.getBaseDate() != null) {
@@ -665,7 +672,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if (discountTerms != null) {
 			paymentTermsXml += "<ram:ApplicableTradePaymentDiscountTerms>";
 			String currency = trans.getCurrency();
-			String basisAmount = currencyFormat(calc.getTotalGross());
+			String basisAmount = currencyFormat(calc.getGrandTotal());
 			paymentTermsXml += "<ram:BasisAmount currencyID=\"" + currency + "\">" + basisAmount + "</ram:BasisAmount>";
 			paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toString()
 					+ "</ram:CalculationPercent>";
