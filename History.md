@@ -6,6 +6,8 @@
 - corrected sample in docs thanks to tweimer PR #204
 - don't write "null" as paymentDescription if no Bank account is specified
 - generic and unitcode/categorycode improvements (thanks to weclapp-dev) PR #207
+- programmatically switch to XRechnung 2.0 if invoked next year
+- support Credit Notes (additionally to corrected invoices)
 
 2.0.2
 =======

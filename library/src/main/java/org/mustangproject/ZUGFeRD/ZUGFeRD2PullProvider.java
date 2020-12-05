@@ -40,6 +40,8 @@ import org.mustangproject.FileAttachment;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
+import static org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants.CORRECTEDINVOICE;
+
 public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 	//// MAIN CLASS
@@ -229,7 +231,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			paymentTermsDescription = trans.getPaymentTermDescription();
 		}
 
-		if ((paymentTermsDescription == null) && (trans.getDocumentCode() != org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants.CORRECTEDINVOICE)) {
+		if ((paymentTermsDescription == null) && (trans.getDocumentCode() != CORRECTEDINVOICE)/* && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)*/) {
 			paymentTermsDescription = "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
 
 		}
@@ -494,7 +496,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 			}
 		}
-		if (trans.getDocumentCode() == DocumentCodeTypeConstants.CORRECTEDINVOICE) {
+		if ((trans.getDocumentCode() == CORRECTEDINVOICE)/*||(trans.getDocumentCode() == DocumentCodeTypeConstants.CREDITNOTE)*/) {
 			hasDueDate = false;
 		}
 

@@ -119,6 +119,10 @@ public class Invoice implements IExportableTransaction {
 		documentCode = DocumentCodeTypeConstants.CORRECTEDINVOICE;
 		return this;
 	}
+	public Invoice setCreditNote() {
+		documentCode = DocumentCodeTypeConstants.CREDITNOTE;
+		return this;
+	}
 
 	@Override
 	public String getOwnOrganisationFullPlaintextInfo() {
