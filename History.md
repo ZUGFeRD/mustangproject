@@ -1,5 +1,6 @@
 2.0.3
 =======
+2020-12-06
 
 - #201 correct embedded files in XRechnung
 - transaction calculator getGrandTotal now public
