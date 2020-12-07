@@ -39,6 +39,7 @@ import junit.framework.TestCase;
 public class ZF2PushTest extends TestCase {
 	final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20201121_508.pdf";
 	final String TARGET_ALLOWANCESPDF = "./target/testout-ZF2PushAllowances.pdf";
+	final String TARGET_CREDITNOTEPDF = "./target/testout-ZF2PushCreditNote.pdf";
 	final String TARGET_CORRECTIONPDF = "./target/testout-ZF2PushCorrection.pdf";
 	final String TARGET_ITEMCHARGESALLOWANCESPDF = "./target/testout-ZF2PushItemChargesAllowances.pdf";
 	final String TARGET_CHARGESALLOWANCESPDF = "./target/testout-ZF2PushChargesAllowances.pdf";
@@ -501,6 +502,11 @@ public class ZF2PushTest extends TestCase {
 	}
 
 
+	/***
+	 * German Stornorechnung/Rechnungskorrektur:
+	 * quantities have to be negative!
+	 * official example: zugferd_2p1_EXTENDED_Rechnungskorrektur.pdf
+	 */
 	public void testCorrectionExport() {
 
 		String orgname = "Test company";
@@ -534,6 +540,55 @@ public class ZF2PushTest extends TestCase {
 //totest: typecode 384, BuyerOrderReferencedDocument
 		// Reading ZUGFeRD
 		assertEquals("-3.57", zi.getAmount());
+		assertEquals(zi.getHolder(), orgname);
+		assertEquals(zi.getForeignReference(), number);
+		try {
+			assertEquals(zi.getVersion(), 2);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
+	}
+
+	/***
+	 * UNTDID 1001 says 381 as typecode for credit notes and
+	 * the Factur-X 1.0.50 has examples like Avoir_FR_type381_EN16931.pdf
+	 * along with a documentation in chapter 7.1.6 (where they also tackle
+	 * negative TypeCode 380 invoices)
+	 */
+	public void testCreditNoteExport() {
+
+		String orgname = "Test company";
+		String number = "123";
+		String priceStr = "1.00";
+		BigDecimal price = new BigDecimal(priceStr);
+		BigDecimal qty = new BigDecimal(1.0);
+		try (InputStream SOURCE_PDF = this.getClass()
+				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
+
+			 ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("My Application")
+					 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
+					 .load(SOURCE_PDF)) {
+			Invoice i = new Invoice().setIssueDate(new Date()).setDueDate(new Date()).setDetailedDeliveryPeriod(new Date(), new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815").addBankDetails(new BankDetails("DE88200800000970375700", "COBADEFFXXX"))).setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE0815")).setNumber(number)
+					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), price, qty))
+					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), price, qty))
+					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), price, qty)).setCreditNote();
+			ze.setTransaction(i);
+			String theXML = new String(ze.getProvider().getXML());
+			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+			ze.export(TARGET_CREDITNOTEPDF);
+		} catch (IOException e) {
+			fail("IOException should not be raised in testEdgeExport");
+		}
+
+		// now check the contents (like MustangReaderTest)
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_CREDITNOTEPDF);
+
+		assertTrue(zi.getUTF8().contains("EUR"));
+//totest: typecode 384, BuyerOrderReferencedDocument
+		// Reading ZUGFeRD
+		assertEquals("3.57", zi.getAmount());
 		assertEquals(zi.getHolder(), orgname);
 		assertEquals(zi.getForeignReference(), number);
 		try {
