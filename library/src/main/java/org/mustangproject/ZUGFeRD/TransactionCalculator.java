@@ -1,8 +1,11 @@
 package org.mustangproject.ZUGFeRD;
 
+import static java.math.BigDecimal.ZERO;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 /***
  * The Transactioncalculator e.g. adds the line totals and applies VAT on whole invoices
@@ -27,7 +30,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		if (trans.getTotalPrepaidAmount() == null) {
 			return BigDecimal.ZERO;
 		} else {
-			return trans.getTotalPrepaidAmount();
+		    return trans.getTotalPrepaidAmount().setScale(2, RoundingMode.HALF_UP);
 		}
 	}
 
@@ -37,13 +40,11 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	 */
 	public BigDecimal getGrandTotal() {
 
-		BigDecimal res = getTaxBasis();
-		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = getVATPercentAmountMap();
-		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
-			res = res.add(amount.getCalculated());
-		}
-		return res.setScale(2, RoundingMode.HALF_UP);
+		final BigDecimal res = getTaxBasis();
+		return getVATPercentAmountMap().values().stream()
+		.map(VATAmount::getCalculated)
+		.map(p -> p.setScale(2, RoundingMode.HALF_UP))
+		.reduce(BigDecimal.ZERO, BigDecimal::add).add(res);
 	}
 
 	/***
@@ -86,11 +87,10 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	    String res = " ";
 	    if ((charges != null) && (charges.length > 0)) {
 	    	for (IZUGFeRDAllowanceCharge currentCharge : charges) {
-	    		if ((percent==null)||(currentCharge.getTaxPercent().compareTo(percent)==0)) {
-	    			if (currentCharge.getReason()!=null) {
-	    				res = res+currentCharge.getReason()+" ";
-	    			}
-	    		}
+	    		if ((percent==null)||(currentCharge.getTaxPercent().compareTo(percent)==0)
+	    			&& currentCharge.getReason()!=null) {
+    				res += currentCharge.getReason()+" ";
+    			}
 	    	}
 	    }
 	    res=res.substring(0,res.length()-1);
@@ -127,12 +127,10 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	 * @return item sum
 	 */
 	protected BigDecimal getTotal() {
-		BigDecimal res = BigDecimal.ZERO;
-		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
-			LineCalculator lc = new LineCalculator(currentItem);
-			res = res.add(lc.getItemTotalNetAmount());
-		}
-		return res;
+		return Stream.of(trans.getZFItems())
+			.map(LineCalculator::new)
+			.map(LineCalculator::getItemTotalNetAmount)
+			.reduce(ZERO, BigDecimal::add);
 	}
 
 	/***
@@ -142,7 +140,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	 */
 	protected BigDecimal getTaxBasis() {
 		BigDecimal res = getTotal().add(getChargesForPercent(null)).subtract(getAllowancesForPercent(null));
-		return res;
+		return res.setScale(2, RoundingMode.HALF_UP);
 	}
 
 	/**
@@ -198,7 +196,6 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 				hm.put(currentAllowance.getTaxPercent().stripTrailingZeros(), theAmount);
 			}
 		}
-
 
 		return hm;
 	}

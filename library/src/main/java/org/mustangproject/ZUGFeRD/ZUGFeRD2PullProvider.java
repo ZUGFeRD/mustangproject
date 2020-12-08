@@ -613,10 +613,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				// //
 				// currencyID=\"EUR\"
 				+ "				<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
-				+ currencyFormat(VATPercentAmountMap.values().stream()
-					.map(VATAmount::getCalculated)
-					.map(p -> p.setScale(2, RoundingMode.HALF_UP))
-					.reduce(BigDecimal.ZERO, BigDecimal::add)) + "</ram:TaxTotalAmount>\n"
+				+ currencyFormat(calc.getGrandTotal().subtract(calc.getTaxBasis()))+ "</ram:TaxTotalAmount>\n"
 				+ "				<ram:GrandTotalAmount>" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-2$
 				// //
 				// currencyID=\"EUR\"
