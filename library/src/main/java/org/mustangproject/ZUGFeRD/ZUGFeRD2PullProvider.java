@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -612,7 +613,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				// //
 				// currencyID=\"EUR\"
 				+ "				<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
-				+ currencyFormat(calc.getGrandTotal().subtract(calc.getTaxBasis())) + "</ram:TaxTotalAmount>\n"
+				+ currencyFormat(VATPercentAmountMap.values().stream()
+					.map(VATAmount::getCalculated)
+					.map(p -> p.setScale(2, RoundingMode.HALF_UP))
+					.reduce(BigDecimal.ZERO, BigDecimal::add)) + "</ram:TaxTotalAmount>\n"
 				+ "				<ram:GrandTotalAmount>" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-2$
 				// //
 				// currencyID=\"EUR\"
