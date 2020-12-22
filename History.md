@@ -1,3 +1,9 @@
+2.1.0
+=======
+
+
+- Corrected intra community supply tax exemption category code
+
 2.0.3
 =======
 2020-12-06

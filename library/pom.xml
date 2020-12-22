@@ -11,8 +11,8 @@
 	<artifactId>library</artifactId>
 	<version>2.0.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>Library to write and read FacturX and ZUGFeRD e-invoices.  </name>
-	<description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs. To write files, a provided PDF/A will be combined with generated or provided XML.
+	<name>Library to write, read and validate e-invoices (Factur-X, ZUGFeRD and to a limited extend XRechnung/CII).  </name>
+	<description>The Mustang project is a java library to read, write and validate Factur-X/ZUGFeRD meta data inside your invoice PDFs. To write files, a provided PDF/A will be combined with generated or provided XML.
     </description>
 	<url>http://www.mustangproject.org/</url>
 	<scm>
@@ -83,6 +83,14 @@
 			<version>4.13.1</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- CII to UBL conversion -->
+		<dependency>
+			<groupId>com.helger</groupId>
+			<artifactId>en16931-cii2ubl</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.helger</groupId>
 			<artifactId>ph-schematron</artifactId>
@@ -100,6 +108,12 @@
 			<groupId>org.xmlunit</groupId>
 			<artifactId>xmlunit-assertj</artifactId>
 			<version>2.6.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.helger</groupId>
+			<artifactId>ph-commons</artifactId>
+			<version>9.1.1</version>
+			<scope>compile</scope>
 		</dependency>
 
 	</dependencies>
