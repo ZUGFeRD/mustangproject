@@ -19,6 +19,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Mustangproject's ZUGFeRD implementation
@@ -55,7 +56,7 @@ public class VATAmount {
 	}
 
 	public void setBasis(BigDecimal basis) {
-		this.basis = basis;
+		this.basis = basis.setScale(2, RoundingMode.HALF_UP);
 
 	}
 

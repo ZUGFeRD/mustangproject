@@ -1,7 +1,7 @@
 2.1.0
 =======
 
-
+- fixed a charge/allowance rounding error #212 
 - Corrected intra community supply tax exemption category code
 
 2.0.3
