@@ -37,13 +37,17 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 * item level discounts
 	 * @return array of the discounts on a single item
 	 */
-	IZUGFeRDAllowanceCharge[] getItemAllowances();
+	default IZUGFeRDAllowanceCharge[] getItemAllowances() {
+		return null;
+	}
 
 	/**
 	 * item level price additions
 	 * @return array of the additional charges on the item
 	 */
-	IZUGFeRDAllowanceCharge[] getItemCharges();
+	default IZUGFeRDAllowanceCharge[] getItemCharges() {
+		return null;
+	}
 
 
 	/**

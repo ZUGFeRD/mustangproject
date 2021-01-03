@@ -68,17 +68,13 @@ public interface IZUGFeRDExportableTradeParty {
 	 *
 	 * @return First and last name of the recipient
 	 */
-	default String getName() {
-		return null;
-	}
+	String getName();
 	/**
 	 * Postal code of the recipient
 	 *
 	 * @return Postal code of the recipient
 	 */
-	default String getZIP() {
-		return null;
-	}
+	String getZIP();
 
 
 	/**
@@ -96,9 +92,7 @@ public interface IZUGFeRDExportableTradeParty {
 	 *
 	 * @return two-letter iso country code of the contact
 	 */
-	default String getCountry() {
-		return null;
-	}
+	String getCountry();
 
 
 	/**
@@ -106,9 +100,7 @@ public interface IZUGFeRDExportableTradeParty {
 	 *
 	 * @return Returns the city of the recipient
 	 */
-	default String getLocation() {
-		return null;
-	}
+	String getLocation();
 
 
 	/**
@@ -116,9 +108,7 @@ public interface IZUGFeRDExportableTradeParty {
 	 *
 	 * @return street address (street+number) of the contact
 	 */
-	default String getStreet() {
-		return null;
-	}
+	String getStreet();
 
 	/**
 	 * returns additional address information which is display in xml tag "LineTwo"

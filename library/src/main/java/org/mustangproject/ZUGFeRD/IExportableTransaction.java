@@ -126,13 +126,19 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-	IZUGFeRDAllowanceCharge[] getZFAllowances();
+	default IZUGFeRDAllowanceCharge[] getZFAllowances() {
+		return null;
+	}
 
 
-	IZUGFeRDAllowanceCharge[] getZFCharges();
+	default IZUGFeRDAllowanceCharge[] getZFCharges() {
+		return null;
+	}
 
 
-	IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges();
+	default IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
+		return null;
+	}
 
 
 	IZUGFeRDExportableItem[] getZFItems();
@@ -290,7 +296,7 @@ public interface IExportableTransaction  {
 	 * @return three character currency of this invoice
 	 */
 	default String getCurrency() {
-		return null;
+		return "EUR";
 	}
 
 
