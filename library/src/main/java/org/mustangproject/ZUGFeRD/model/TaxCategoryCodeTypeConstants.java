@@ -24,5 +24,5 @@ public class TaxCategoryCodeTypeConstants {
 	public static final String TAXEXEMPT = "E";
 	public static final String ZEROTAXPRODUCTS = "Z";
 	public static final String UNTAXEDSERVICE = "O";
-	public static final String INTRACOMMUNITY = "IC";
+	public static final String INTRACOMMUNITY = "K";
 }

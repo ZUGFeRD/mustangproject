@@ -19,7 +19,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	 * @param trans the invoice (or IExportableTransaction) to be calculated
 	 */
 	public TransactionCalculator(IExportableTransaction trans) {
-		this.trans=trans;
+		this.trans = trans;
 	}
 
 	/***
@@ -30,7 +30,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		if (trans.getTotalPrepaidAmount() == null) {
 			return BigDecimal.ZERO;
 		} else {
-		    return trans.getTotalPrepaidAmount().setScale(2, RoundingMode.HALF_UP);
+			return trans.getTotalPrepaidAmount().setScale(2, RoundingMode.HALF_UP);
 		}
 	}
 
@@ -42,9 +42,9 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 
 		final BigDecimal res = getTaxBasis();
 		return getVATPercentAmountMap().values().stream()
-		.map(VATAmount::getCalculated)
-		.map(p -> p.setScale(2, RoundingMode.HALF_UP))
-		.reduce(BigDecimal.ZERO, BigDecimal::add).add(res);
+				.map(VATAmount::getCalculated)
+				.map(p -> p.setScale(2, RoundingMode.HALF_UP))
+				.reduce(BigDecimal.ZERO, BigDecimal::add).add(res);
 	}
 
 	/***
@@ -58,15 +58,15 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	}
 
 	private BigDecimal sumAllowanceCharge(BigDecimal percent, IZUGFeRDAllowanceCharge[] charges) {
-	    BigDecimal res = BigDecimal.ZERO;
-	    if ((charges != null) && (charges.length > 0)) {
-	    	for (IZUGFeRDAllowanceCharge currentCharge : charges) {
-	    		if ((percent==null)||(currentCharge.getTaxPercent().compareTo(percent)==0)) {
-	    			res = res.add(currentCharge.getTotalAmount(this));
-	    		}
-	    	}
-	    }
-	    return res;
+		BigDecimal res = BigDecimal.ZERO;
+		if ((charges != null) && (charges.length > 0)) {
+			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
+				if ((percent == null) || (currentCharge.getTaxPercent().compareTo(percent) == 0)) {
+					res = res.add(currentCharge.getTotalAmount(this));
+				}
+			}
+		}
+		return res;
 	}
 
 	/***
@@ -78,23 +78,23 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		IZUGFeRDAllowanceCharge[] charges = trans.getZFCharges();
 		String res = getAllowanceChargeReasonForPercent(percent, charges);
 		if ("".equals(res)) {
-			res="Charges";
+			res = "Charges";
 		}
 		return res;
 	}
 
 	private String getAllowanceChargeReasonForPercent(BigDecimal percent, IZUGFeRDAllowanceCharge[] charges) {
-	    String res = " ";
-	    if ((charges != null) && (charges.length > 0)) {
-	    	for (IZUGFeRDAllowanceCharge currentCharge : charges) {
-	    		if ((percent==null)||(currentCharge.getTaxPercent().compareTo(percent)==0)
-	    			&& currentCharge.getReason()!=null) {
-    				res += currentCharge.getReason()+" ";
-    			}
-	    	}
-	    }
-	    res=res.substring(0,res.length()-1);
-	    return res;
+		String res = " ";
+		if ((charges != null) && (charges.length > 0)) {
+			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
+				if ((percent == null) || (currentCharge.getTaxPercent().compareTo(percent) == 0)
+						&& currentCharge.getReason() != null) {
+					res += currentCharge.getReason() + " ";
+				}
+			}
+		}
+		res = res.substring(0, res.length() - 1);
+		return res;
 	}
 
 	/***
@@ -106,7 +106,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		IZUGFeRDAllowanceCharge[] allowances = trans.getZFAllowances();
 		String res = getAllowanceChargeReasonForPercent(percent, allowances);
 		if ("".equals(res)) {
-			res="Allowances";
+			res = "Allowances";
 		}
 		return res;
 	}
@@ -127,10 +127,11 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	 * @return item sum
 	 */
 	protected BigDecimal getTotal() {
-		return Stream.of(trans.getZFItems())
-			.map(LineCalculator::new)
-			.map(LineCalculator::getItemTotalNetAmount)
-			.reduce(ZERO, BigDecimal::add);
+		BigDecimal dec = Stream.of(trans.getZFItems())
+				.map(LineCalculator::new)
+				.map(LineCalculator::getItemTotalNetAmount)
+				.reduce(ZERO, BigDecimal::add);
+		return dec;
 	}
 
 	/***
@@ -139,8 +140,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	 * @return item sum +- charges/allowances
 	 */
 	protected BigDecimal getTaxBasis() {
-		BigDecimal res = getTotal().add(getChargesForPercent(null)).subtract(getAllowancesForPercent(null));
-		return res.setScale(2, RoundingMode.HALF_UP);
+		return getTotal().add(getChargesForPercent(null).setScale(2, RoundingMode.HALF_UP)).subtract(getAllowancesForPercent(null).setScale(2, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP);
 	}
 
 	/**
@@ -172,8 +172,8 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
 				VATAmount theAmount = hm.get(currentCharge.getTaxPercent().stripTrailingZeros());
 				if (theAmount == null) {
-					theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO, 
-					    currentCharge.getCategoryCode()!=null?currentCharge.getCategoryCode():"S");
+					theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO,
+							currentCharge.getCategoryCode() != null ? currentCharge.getCategoryCode() : "S");
 				}
 				theAmount.setBasis(theAmount.getBasis().add(currentCharge.getTotalAmount(this)));
 				BigDecimal factor = currentCharge.getTaxPercent().divide(new BigDecimal(100));
@@ -186,8 +186,8 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			for (IZUGFeRDAllowanceCharge currentAllowance : allowances) {
 				VATAmount theAmount = hm.get(currentAllowance.getTaxPercent().stripTrailingZeros());
 				if (theAmount == null) {
-					theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO, 
-					    currentAllowance.getCategoryCode()!=null?currentAllowance.getCategoryCode():"S");
+					theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO,
+							currentAllowance.getCategoryCode() != null ? currentAllowance.getCategoryCode() : "S");
 				}
 				theAmount.setBasis(theAmount.getBasis().subtract(currentAllowance.getTotalAmount(this)));
 				BigDecimal factor = currentAllowance.getTaxPercent().divide(new BigDecimal(100));
