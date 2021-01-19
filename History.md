@@ -1,8 +1,10 @@
 2.1.0
 =======
-
+- make  IExportableTransaction.getZFAllowances() getZFCharges() and getZFLogisticsServiceCharges() and item.getItemAllowances, item.getItemCharges optional, correct getCurrency optionality
+  make IZUGFeRDExportableTradeParty name id zip location street mandatory
 - fixed a charge/allowance rounding error #212 
 - Corrected intra community supply tax exemption category code
+- removal of Tradeparty.getZip in favor of getZIP (as it's also setZIP) to avoid jackson errors
 
 2.0.3
 =======
