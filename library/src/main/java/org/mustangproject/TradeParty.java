@@ -268,10 +268,6 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		return vatID;
 	}
 
-	public String getZip() {
-		return zip;
-	}
-
 	@Override
 	public IZUGFeRDExportableContact getContact() {
 		return contact;

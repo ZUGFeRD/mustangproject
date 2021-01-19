@@ -94,6 +94,8 @@ public class Main {
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "					-d, --directory to check recursively\n"
 				+ "        --action=visualize  convert XML to HTML \n"
+				+ "                [--source <filename>]: set input XML file\n"
+				+ "                [--out <filename>]: set output HTML file\n"
 				;
 	}
 

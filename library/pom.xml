@@ -88,7 +88,7 @@
 		<dependency>
 			<groupId>com.helger</groupId>
 			<artifactId>en16931-cii2ubl</artifactId>
-			<version>1.2.5</version>
+			<version>1.3.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
 		<dependency>
