@@ -20,6 +20,7 @@ package org.mustangproject.commandline;
 
 import com.sanityinc.jargs.CmdLineParser;
 import com.sanityinc.jargs.CmdLineParser.Option;
+import org.mustangproject.CII.CIIToUBL;
 import org.mustangproject.ZUGFeRD.*;
 import org.mustangproject.validator.Validator;
 import org.mustangproject.validator.ZUGFeRDValidator;
@@ -46,7 +47,7 @@ public class Main {
 	}
 
 	private static String getUsage() {
-		return "Usage: --action metrics|combine|extract|a3only|validate|visualize [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] | [-h,--help] \r\n"
+		return "Usage: --action metrics|combine|extract|a3only|ubl|validate|visualize [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] | [-h,--help] \r\n"
 				+ "        --action=metrics\n"
 				+ "          -d, --directory count ZUGFeRD files in directory to be scanned\n"
 				+ "                If it is a directory, it will recurse.\n"
@@ -85,11 +86,16 @@ public class Main {
 				+ "                [--no-notices]: refrain from reporting notices\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "					-d, --directory to check recursively \n"
+				+ "        --action=ubl   convert UN/CEFACT 2016b CII XML to UBL XML\n"
+				+ "                [--source <filename>]: set input XML file\n"
+				+ "                [--out <filename>]: set output XML file\n"
 				+ "        --action=validateExpectInvalid  validate directory expecting negative results \n"
 				+ "                [--no-notices]: refrain from reporting notices\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "					-d, --directory to check recursively\n"
 				+ "        --action=visualize  convert XML to HTML \n"
+				+ "                [--source <filename>]: set input XML file\n"
+				+ "                [--out <filename>]: set output HTML file\n"
 				;
 	}
 
@@ -251,6 +257,38 @@ public class Main {
 		System.out.println("Written to " + outName);
 
 	}
+
+	/***
+	 * converts from CII to UBL
+	 * @param xmlName
+	 * @param outName
+	 * @throws IOException
+	 * @throws TransformerException
+	 */
+	private static void performUBL(String xmlName, String outName) throws IOException, TransformerException {
+
+		// Get params from user if not already defined
+		if (xmlName == null) {
+			xmlName = getFilenameFromUser("Factur-X XML source", "factur-x.xml", "xml", true, false);
+		} else {
+			System.out.println("Factur-X XML source set to " + xmlName);
+		}
+		if (outName == null) {
+			outName = getFilenameFromUser("UBL target", "ubl-invoice.xml", "xml", false, true);
+		} else {
+			System.out.println("UBL target to " + outName);
+		}
+
+		// Verify params
+		ensureFileExists(xmlName);
+		ensureFileNotExists(outName);
+
+		// All params are good! continue...
+		CIIToUBL c2u = new CIIToUBL();
+		c2u.convert(new File(xmlName), new File(outName));
+		System.out.println("Written to " + outName);
+
+	}
 	/***
 	 * the main function of the commandline tool...
 	 * @param args
@@ -337,6 +375,9 @@ public class Main {
 				optionsRecognized=true;
 			} else if ((action!=null)&&(action.equals("upgrade")))  {
 				performUpgrade(sourceName, outName);
+				optionsRecognized=true;
+			} else if ((action!=null)&&(action.equals("ubl")))  {
+				performUBL(sourceName, outName);
 				optionsRecognized=true;
 			} else if ((action!=null)&&(action.equals("validate"))) {
 				optionsRecognized=performValidate(sourceName, noNotices!=null&&noNotices, parser.getOptionValue(logAppendOption));

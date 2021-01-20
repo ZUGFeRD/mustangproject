@@ -1,8 +1,12 @@
 2.1.0
 =======
-
+2020-01-19
+- support CII to UBL conversion (thanks to https://github.com/phax/en16931-cii2ubl)
+- make  IExportableTransaction.getZFAllowances() getZFCharges() and getZFLogisticsServiceCharges() and item.getItemAllowances, item.getItemCharges optional, correct getCurrency optionality
+  make IZUGFeRDExportableTradeParty name id zip location street mandatory
 - fixed a charge/allowance rounding error #212 
 - Corrected intra community supply tax exemption category code
+- removal of Tradeparty.getZip in favor of getZIP (as it's also setZIP) to avoid jackson errors
 
 2.0.3
 =======
