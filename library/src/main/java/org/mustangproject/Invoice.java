@@ -39,6 +39,7 @@ public class Invoice implements IExportableTransaction {
 	protected TradeParty sender = null, recipient = null, deliveryAddress = null;
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
 	protected ArrayList<String> notes = null;
+  private String sellerOrderReferencedDocumentID;
 	protected String contractReferencedDocument = null;
 	protected ArrayList<FileAttachment> xmlEmbeddedFiles=null;
 
@@ -50,7 +51,7 @@ public class Invoice implements IExportableTransaction {
 	protected IZUGFeRDPaymentTerms paymentTerms = null;
 
 
-	public Invoice() {
+  public Invoice() {
 		ZFItems = new ArrayList<IZUGFeRDExportableItem>();
 		setCurrency("EUR");
 	}
@@ -60,7 +61,8 @@ public class Invoice implements IExportableTransaction {
 		return documentName;
 	}
 
-	public String getContractReferencedDocument() {
+	@Override
+  public String getContractReferencedDocument() {
 		return contractReferencedDocument;
 	}
 
@@ -81,13 +83,14 @@ public class Invoice implements IExportableTransaction {
 
 	public Invoice embedFileInXML(FileAttachment fa) {
 		if (xmlEmbeddedFiles == null) {
-			xmlEmbeddedFiles=new ArrayList<FileAttachment>();
+			xmlEmbeddedFiles= new ArrayList<>();
 		}
 		xmlEmbeddedFiles.add(fa);
 		return this;
 	}
 
-	public FileAttachment[] getAdditionalReferencedDocuments() {
+	@Override
+  public FileAttachment[] getAdditionalReferencedDocuments() {
 		if (xmlEmbeddedFiles == null) {
 			return null;
 		}
@@ -209,7 +212,16 @@ public class Invoice implements IExportableTransaction {
 	public String getBuyerOrderReferencedDocumentID() {
 		return buyerOrderReferencedDocumentID;
 	}
+	@Override
+	public String getSellerOrderReferencedDocumentID() {
+		return sellerOrderReferencedDocumentID;
+	}
 
+
+  public Invoice setSellerOrderReferencedDocumentID(String sellerOrderReferencedDocumentID) {
+    this.sellerOrderReferencedDocumentID = sellerOrderReferencedDocumentID;
+    return this;
+  }
 	/***
 	 * usually the order number or in case of a correction the original invoice number
 	 * @param buyerOrderReferencedDocumentID string with number
@@ -310,12 +322,14 @@ public class Invoice implements IExportableTransaction {
 	}
 
 
-	public String getOwnLocation() {
+	@Override
+  public String getOwnLocation() {
 		return sender.getLocation();
 	}
 
 
-	public String getOwnCountry() {
+	@Override
+  public String getOwnCountry() {
 		return sender.getCountry();
 	}
 
@@ -405,7 +419,8 @@ public class Invoice implements IExportableTransaction {
 		return this;
 	}
 
-	public IZUGFeRDExportableTradeParty getRecipient() {
+	@Override
+  public IZUGFeRDExportableTradeParty getRecipient() {
 		return recipient;
 	}
 
@@ -439,8 +454,9 @@ public class Invoice implements IExportableTransaction {
 	public IZUGFeRDAllowanceCharge[] getZFAllowances() {
 		if (Allowances.isEmpty()) {
 			return null;
-		} else
-			return Allowances.toArray(new IZUGFeRDAllowanceCharge[0]);
+		} else {
+      return Allowances.toArray(new IZUGFeRDAllowanceCharge[0]);
+    }
 	}
 
 
@@ -448,8 +464,9 @@ public class Invoice implements IExportableTransaction {
 	public IZUGFeRDAllowanceCharge[] getZFCharges() {
 		if (Charges.isEmpty()) {
 			return null;
-		} else
-			return Charges.toArray(new IZUGFeRDAllowanceCharge[0]);
+		} else {
+      return Charges.toArray(new IZUGFeRDAllowanceCharge[0]);
+    }
 	}
 
 
@@ -457,8 +474,9 @@ public class Invoice implements IExportableTransaction {
 	public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
 		if (LogisticsServiceCharges.isEmpty()) {
 			return null;
-		} else
-			return LogisticsServiceCharges.toArray(new IZUGFeRDAllowanceCharge[0]);
+		} else {
+      return LogisticsServiceCharges.toArray(new IZUGFeRDAllowanceCharge[0]);
+    }
 	}
 
 
@@ -599,7 +617,7 @@ public class Invoice implements IExportableTransaction {
 	 */
 	public Invoice addNote(String text) {
 		if (notes == null) {
-			notes = new ArrayList<String>();
+			notes = new ArrayList<>();
 		}
 		notes.add(text);
 		return this;

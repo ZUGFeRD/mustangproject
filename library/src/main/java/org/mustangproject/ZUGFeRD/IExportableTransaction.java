@@ -399,6 +399,14 @@ public interface IExportableTransaction  {
 
 
 	/**
+	 * get the ID of the SellerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement/ApplicableHeaderTradeAgreement
+	 *
+	 * @return the ID of the document
+	 */
+	default String getSellerOrderReferencedDocumentID() {
+		return null;
+	}
+	/**
 	 * get the ID of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
 	 *
 	 * @return the ID of the document
