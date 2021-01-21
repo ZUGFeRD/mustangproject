@@ -1,3 +1,8 @@
+2.1.1
+=======
+
+- PR #217 seller order referenced document
+
 2.1.0
 =======
 2020-01-19
