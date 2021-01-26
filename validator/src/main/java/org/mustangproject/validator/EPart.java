@@ -1,5 +1,5 @@
 package org.mustangproject.validator;
 
 public enum EPart {
-	fx, xr, pdf, none
+	fx, ox, xr, pdf, none
 }
