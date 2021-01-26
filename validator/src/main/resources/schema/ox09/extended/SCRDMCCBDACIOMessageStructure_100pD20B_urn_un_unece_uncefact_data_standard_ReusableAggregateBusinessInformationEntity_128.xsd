@@ -1,0 +1,1453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:128"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:128"
+    xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:128"
+    targetNamespace="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:128"
+    elementFormDefault="qualified"
+    version="128.0">
+  <xsd:import namespace="urn:un:unece:uncefact:data:standard:QualifiedDataType:128" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_data_standard_QualifiedDataType_128.xsd"/>
+  <xsd:import namespace="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:128" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_data_standard_UnqualifiedDataType_128.xsd"/>
+  <xsd:complexType name="DocumentContextParameterType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Document Context Parameter</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ID" type="udt:IDType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="DocumentLineDocumentType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Document Line</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="LineID" type="udt:IDType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Line ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="LineStatusCode" type="qdt:LineStatusCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Status Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="IncludedNote" type="ram:NoteType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Note</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ExchangedDocumentContextType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Exchanged Document Context</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="TestIndicator" type="udt:IndicatorType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Test Indicator</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BusinessProcessSpecifiedDocumentContextParameter" type="ram:DocumentContextParameterType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Business Process</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="GuidelineSpecifiedDocumentContextParameter" type="ram:DocumentContextParameterType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Guideline</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ExchangedDocumentType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Exchanged Document</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ID" type="udt:IDType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Name" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="TypeCode" type="qdt:DocumentCodeType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Type Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="StatusCode" type="qdt:DocumentStatusCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Status Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="IssueDateTime" type="udt:DateTimeType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Issue Date Time</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="CopyIndicator" type="udt:IndicatorType" minOccurs="0">
+        <xsd:annotation/>
+      </xsd:element>
+      <xsd:element name="LanguageID" type="udt:IDType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Language Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="PurposeCode" type="qdt:MessageFunctionCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Purpose Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="RequestedResponseTypeCode" type="udt:CodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Response Request Type Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="IncludedNote" type="ram:NoteType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Note</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="EffectiveSpecifiedPeriod" type="ram:SpecifiedPeriodType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Effective Period</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="HeaderTradeAgreementType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Header Trade Agreement</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="BuyerReference" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Buyer Reference Text</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SellerTradeParty" type="ram:TradePartyType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Seller</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BuyerTradeParty" type="ram:TradePartyType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Buyer</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BuyerRequisitionerTradeParty" type="ram:TradePartyType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Buyer Requisitioner</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ProductEndUserTradeParty" type="ram:TradePartyType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">End User</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ApplicableTradeDeliveryTerms" type="ram:TradeDeliveryTermsType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Trade Delivery Terms</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SellerOrderReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Seller Order Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BuyerOrderReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Buyer Order Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="QuotationReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Quotation Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ContractReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Contract Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="RequisitionReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Requisition Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="AdditionalReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Additional Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BuyerAgentTradeParty" type="ram:TradePartyType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Buyer Agent</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="CatalogueReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Catalogue Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BlanketOrderReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Blanket Order Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="PreviousOrderReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Previous Order Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="PreviousOrderChangeReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Previous Order Change Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="PreviousOrderResponseReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Previous Order Response Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SpecifiedProcuringProject" type="ram:ProcuringProjectType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Procuring Project</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="UltimateCustomerOrderReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Ultimate Customer Order Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="HeaderTradeDeliveryType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Header Trade Delivery</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ShipToTradeParty" type="ram:TradePartyType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Ship To Party</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="UltimateShipToTradeParty" type="ram:TradePartyType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Ultimate Ship To Party</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ShipFromTradeParty" type="ram:TradePartyType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Ship From Party</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="RequestedDeliverySupplyChainEvent" type="ram:SupplyChainEventType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Requested Delivery Event</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="RequestedDespatchSupplyChainEvent" type="ram:SupplyChainEventType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Requested Despatch Event</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="HeaderTradeSettlementType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Header Trade Settlement</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="TaxCurrencyCode" type="qdt:CurrencyCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Tax Currency Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="OrderCurrencyCode" type="qdt:CurrencyCodeType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Order Currency Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="InvoiceCurrencyCode" type="qdt:CurrencyCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Invoice Currency Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="InvoicerTradeParty" type="ram:TradePartyType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Invoicer</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="InvoiceeTradeParty" type="ram:TradePartyType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Invoicee</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SpecifiedTradeSettlementPaymentMeans" type="ram:TradeSettlementPaymentMeansType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Payment Means</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ApplicableTradeTax" type="ram:TradeTaxType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Trade Tax</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SpecifiedTradeAllowanceCharge" type="ram:TradeAllowanceChargeType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Allowance/Charge</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SpecifiedLogisticsServiceCharge" type="ram:LogisticsServiceChargeType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Logistics Service Charge</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SpecifiedTradePaymentTerms" type="ram:TradePaymentTermsType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Payment Terms</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SpecifiedTradeSettlementHeaderMonetarySummation" type="ram:TradeSettlementHeaderMonetarySummationType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Monetary Summation</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ReceivableSpecifiedTradeAccountingAccount" type="ram:TradeAccountingAccountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Accounts Receivable</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="LegalOrganizationType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Legal Organization</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="TradingBusinessName" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Trading Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="PostalTradeAddress" type="ram:TradeAddressType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Postal Address</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="LineTradeAgreementType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Line Trade Agreement</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="MinimumProductOrderableQuantity" type="udt:QuantityType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Minimum Product Orderable Quantity</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="MaximumProductOrderableQuantity" type="udt:QuantityType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Maximum Product Orderable Quantity</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BuyerRequisitionerTradeParty" type="ram:TradePartyType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Buyer Requisitioner</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BuyerOrderReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Buyer Order Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="QuotationReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Quotation Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ContractReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Contract Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="AdditionalReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Additional Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="GrossPriceProductTradePrice" type="ram:TradePriceType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Product Gross Price</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="NetPriceProductTradePrice" type="ram:TradePriceType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Product Net Price</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="CatalogueReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Catalogue Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BlanketOrderReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Blanket Order Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="UltimateCustomerOrderReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Ultimate Customer Order Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="LineTradeDeliveryType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Line Trade Delivery</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="PartialDeliveryAllowedIndicator" type="udt:IndicatorType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Partial Delivery Allowed Indicator</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="RequestedQuantity" type="udt:QuantityType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Requested Quantity</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="AgreedQuantity" type="udt:QuantityType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Agreed Quantity</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="PackageQuantity" type="udt:QuantityType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Package Quantity</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="PerPackageUnitQuantity" type="udt:QuantityType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Per Package Unit Quantity</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ShipToTradeParty" type="ram:TradePartyType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Ship To Party</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="UltimateShipToTradeParty" type="ram:TradePartyType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Ultimate Ship To Party</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ShipFromTradeParty" type="ram:TradePartyType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Ship From Party</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="RequestedDespatchSupplyChainEvent" type="ram:SupplyChainEventType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Requested Despatch Event</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="RequestedDeliverySupplyChainEvent" type="ram:SupplyChainEventType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Requested Delivery Event</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="LineTradeSettlementType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Line Trade Settlement</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ApplicableTradeTax" type="ram:TradeTaxType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Trade Tax</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SpecifiedTradeAllowanceCharge" type="ram:TradeAllowanceChargeType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Allowance/Charge</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SpecifiedTradeSettlementLineMonetarySummation" type="ram:TradeSettlementLineMonetarySummationType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Monetary Summation</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ReceivableSpecifiedTradeAccountingAccount" type="ram:TradeAccountingAccountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Accounts Receivable</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="LogisticsServiceChargeType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Logistics Service Charge</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Description" type="udt:TextType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Description</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="AppliedAmount" type="udt:AmountType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Applied Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="AppliedTradeTax" type="ram:TradeTaxType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Trade Tax</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="NoteType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Note</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ContentCode" type="udt:CodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Content Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Content" type="udt:TextType" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Content Text</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SubjectCode" type="udt:CodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Subject Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ProcuringProjectType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Procuring Project</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ID" type="udt:IDType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Name" type="udt:TextType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ProductCharacteristicType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Product Characteristic</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="TypeCode" type="udt:CodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Type Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Description" type="udt:TextType" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Description</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ValueMeasure" type="udt:MeasureType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Value Measure</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Value" type="udt:TextType" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Value Text</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ProductClassificationType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Product Classification</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ClassCode" type="udt:CodeType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Class Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ClassName" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Class Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ReferencedDocumentType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Referenced Document</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="IssuerAssignedID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Issuer Assigned ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="URIID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">URI</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="LineID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Line ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="TypeCode" type="qdt:DocumentCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Type Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Name" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="AttachmentBinaryObject" type="udt:BinaryObjectType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Attached Binary Object</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ReferenceTypeCode" type="qdt:ReferenceCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Reference Type Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="FormattedIssueDateTime" type="qdt:FormattedDateTimeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Formatted Issue Date Time</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ReferencedProductType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Referenced Product</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="GlobalID" type="udt:IDType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Global ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SellerAssignedID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Seller Assigned ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BuyerAssignedID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Buyer Assigned ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="IndustryAssignedID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Industry Assigned ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Name" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Description" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Description</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="UnitQuantity" type="udt:QuantityType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Unit Quantity</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="SpatialDimensionType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Spatial Dimensions</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="WidthMeasure" type="udt:MeasureType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Width</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="LengthMeasure" type="udt:MeasureType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Length</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="HeightMeasure" type="udt:MeasureType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Height</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="SpecifiedPeriodType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Period</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="StartDateTime" type="udt:DateTimeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Start Date Time</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="EndDateTime" type="udt:DateTimeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">End Date Time</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="SupplyChainEventType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Supply Chain Event</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="OccurrenceDateTime" type="udt:DateTimeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Occurrence Date Time</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="UnitQuantity" type="udt:QuantityType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Unit Quantity</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="OccurrenceSpecifiedPeriod" type="ram:SpecifiedPeriodType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Occurrence Period</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="SupplyChainPackagingType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Supply Chain Packaging</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="TypeCode" type="qdt:PackageTypeCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Type Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="LinearSpatialDimension" type="ram:SpatialDimensionType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Dimensions</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="SupplyChainTradeLineItemType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Supply Chain Trade Line Item</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="AssociatedDocumentLineDocument" type="ram:DocumentLineDocumentType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Associated Document Line</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SpecifiedTradeProduct" type="ram:TradeProductType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Trade Product</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SubstitutedReferencedProduct" type="ram:ReferencedProductType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Substituted Product</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SpecifiedLineTradeAgreement" type="ram:LineTradeAgreementType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Line Trade Agreement</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SpecifiedLineTradeDelivery" type="ram:LineTradeDeliveryType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Line Trade Delivery</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SpecifiedLineTradeSettlement" type="ram:LineTradeSettlementType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Line Trade Settlement</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="SupplyChainTradeTransactionType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Supply Chain Trade Transaction</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="IncludedSupplyChainTradeLineItem" type="ram:SupplyChainTradeLineItemType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Included Trade Line Item</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ApplicableHeaderTradeAgreement" type="ram:HeaderTradeAgreementType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Header Trade Agreement</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ApplicableHeaderTradeDelivery" type="ram:HeaderTradeDeliveryType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Header Trade Delivery</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ApplicableHeaderTradeSettlement" type="ram:HeaderTradeSettlementType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Header Trade Settlement</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TaxRegistrationType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Tax Registration</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ID" type="udt:IDType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradeAccountingAccountType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Accounting Account</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ID" type="udt:IDType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="TypeCode" type="qdt:AccountingAccountTypeCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Type Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradeAddressType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Address</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="PostcodeCode" type="udt:CodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Postcode</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="LineOne" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Line One</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="LineTwo" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Line Two</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="LineThree" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Line Three</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="CityName" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">City Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="CountryID" type="qdt:CountryIDType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Country Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="CountrySubDivisionName" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Country Sub-Division Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradeAllowanceChargeType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Allowance/Charge</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ChargeIndicator" type="udt:IndicatorType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Charge Indicator</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SequenceNumeric" type="udt:NumericType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Sequence Number</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="CalculationPercent" type="udt:PercentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Calculation Percent</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BasisAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Basis Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BasisQuantity" type="udt:QuantityType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Basis Quantity</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ActualAmount" type="udt:AmountType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Actual Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ReasonCode" type="qdt:AllowanceChargeReasonCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Reason Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Reason" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Reason Text</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="CategoryTradeTax" type="ram:TradeTaxType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Tax Category</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradeContactType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Contact</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="PersonName" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Person Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="DepartmentName" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Department Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="TypeCode" type="qdt:ContactTypeCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Type Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="TelephoneUniversalCommunication" type="ram:UniversalCommunicationType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Telephone</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="FaxUniversalCommunication" type="ram:UniversalCommunicationType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Fax</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="EmailURIUniversalCommunication" type="ram:UniversalCommunicationType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Email Address</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradeCountryType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Country</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ID" type="qdt:CountryIDType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradeDeliveryTermsType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Delivery Terms</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="DeliveryTypeCode" type="qdt:DeliveryTermsCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Description" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Description</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="FunctionCode" type="qdt:DeliveryTermsFunctionCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Function Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="RelevantTradeLocation" type="ram:TradeLocationType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Relevant Location</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradeLocationType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Location</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Name" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradePartyType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Party</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="GlobalID" type="udt:IDType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Global ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Name" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Description" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Description</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SpecifiedLegalOrganization" type="ram:LegalOrganizationType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Legal Organization</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="DefinedTradeContact" type="ram:TradeContactType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Defined Contact Details</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="PostalTradeAddress" type="ram:TradeAddressType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Postal Address</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="URIUniversalCommunication" type="ram:UniversalCommunicationType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">URI</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SpecifiedTaxRegistration" type="ram:TaxRegistrationType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Tax Registration</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradePaymentTermsType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Payment Terms</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Description" type="udt:TextType" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Description</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradePriceType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Price</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ChargeAmount" type="udt:AmountType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Charge Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BasisQuantity" type="udt:QuantityType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Basis Quantity</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="MinimumQuantity" type="udt:QuantityType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Minimum Quantity</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="MaximumQuantity" type="udt:QuantityType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Maximum Quantity</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="AppliedTradeAllowanceCharge" type="ram:TradeAllowanceChargeType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Applied Allowance/Charge</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="IncludedTradeTax" type="ram:TradeTaxType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Included Tax</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradeProductInstanceType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Product Instance</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="BatchID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Batch ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SerialID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Serial ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradeProductType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Product</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="ID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="GlobalID" type="udt:IDType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Global ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="SellerAssignedID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Seller Assigned ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BuyerAssignedID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Buyer Assigned ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="IndustryAssignedID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Industry Assigned ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ModelID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Model ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Name" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Description" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Description</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BatchID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Batch ID</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BrandName" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Brand Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ModelName" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Model Name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ApplicableProductCharacteristic" type="ram:ProductCharacteristicType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Characteristic</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="DesignatedProductClassification" type="ram:ProductClassificationType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Classification</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="IndividualTradeProductInstance" type="ram:TradeProductInstanceType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Individual Product Instance</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ApplicableSupplyChainPackaging" type="ram:SupplyChainPackagingType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Packaging</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="OriginTradeCountry" type="ram:TradeCountryType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Origin Country</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="AdditionalReferenceReferencedDocument" type="ram:ReferencedDocumentType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Additional Document</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="IncludedReferencedProduct" type="ram:ReferencedProductType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Included Product</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradeSettlementHeaderMonetarySummationType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Settlement Header Monetary Summation</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="LineTotalAmount" type="udt:AmountType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Line Total Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ChargeTotalAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Charge Total Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="AllowanceTotalAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Allowance Total Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="TaxBasisTotalAmount" type="udt:AmountType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Tax Basis Total Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="TaxTotalAmount" type="udt:AmountType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Tax Total Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="RoundingAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Rounding Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="GrandTotalAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Grand Total Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="TotalPrepaidAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Total Prepaid Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="DuePayableAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Due Payable Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradeSettlementLineMonetarySummationType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Settlement Line Monetary Summation</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="LineTotalAmount" type="udt:AmountType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Line Total Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ChargeTotalAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Charge Total Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="AllowanceTotalAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Allowance Total Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="TaxTotalAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Tax Total Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="TotalAllowanceChargeAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Total Allowance/Charge Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradeSettlementPaymentMeansType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Settlement Payment Means</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="TypeCode" type="qdt:PaymentMeansCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Type Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Information" type="udt:TextType" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Information</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="TradeTaxType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Trade Tax</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="CalculatedAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Calculated Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="TypeCode" type="qdt:TaxTypeCodeType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Type Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ExemptionReason" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Exemption Reason Text</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="BasisAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Basis Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="LineTotalBasisAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Line Total Basis Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="AllowanceChargeBasisAmount" type="udt:AmountType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Allowance/Charge Basis Amount</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="CategoryCode" type="qdt:TaxCategoryCodeType">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Category Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ExemptionReasonCode" type="udt:CodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Exemption Reason Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="DueDateTypeCode" type="qdt:TimeReferenceCodeType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Due Date Type Code</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="RateApplicablePercent" type="udt:PercentType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Applicable Rate Percent</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="UniversalCommunicationType">
+    <xsd:annotation>
+      <xsd:documentation source="BN/BN">Communication</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="URIID" type="udt:IDType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">URI</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="CompleteNumber" type="udt:TextType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="BN/BN">Complete Number</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>
