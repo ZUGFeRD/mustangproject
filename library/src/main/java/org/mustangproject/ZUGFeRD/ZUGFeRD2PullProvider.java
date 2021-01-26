@@ -610,23 +610,28 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		final String chargesTotalLine = "<ram:ChargeTotalAmount>" + currencyFormat(calc.getChargesForPercent(null)) + "</ram:ChargeTotalAmount>";
 
 		xml = xml + "			<ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n"
-				+ "				<ram:LineTotalAmount>" + currencyFormat(calc.getTotal()) + "</ram:LineTotalAmount>\n" //$NON-NLS-2$
+				+ "				<ram:LineTotalAmount>" + currencyFormat(calc.getTotal()) + "</ram:LineTotalAmount>\n"
 				+ chargesTotalLine
 				+ allowanceTotalLine
-				+ "				<ram:TaxBasisTotalAmount>" + currencyFormat(calc.getTaxBasis()) + "</ram:TaxBasisTotalAmount>\n" //$NON-NLS-2$
+				+ "				<ram:TaxBasisTotalAmount>" + currencyFormat(calc.getTaxBasis()) + "</ram:TaxBasisTotalAmount>\n"
 				// //
 				// currencyID=\"EUR\"
 				+ "				<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
-				+ currencyFormat(calc.getGrandTotal().subtract(calc.getTaxBasis()))+ "</ram:TaxTotalAmount>\n"
-				+ "				<ram:GrandTotalAmount>" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-2$
+				+ currencyFormat(calc.getGrandTotal().subtract(calc.getTaxBasis())) + "</ram:TaxTotalAmount>\n"
+				+ "				<ram:GrandTotalAmount>" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>\n"
 				// //
 				// currencyID=\"EUR\"
 				+ "             <ram:TotalPrepaidAmount>" + currencyFormat(calc.getTotalPrepaid()) + "</ram:TotalPrepaidAmount>\n"
-				+ "				<ram:DuePayableAmount>" + currencyFormat(calc.getGrandTotal().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>\n" //$NON-NLS-2$
-				// //
-				// currencyID=\"EUR\"
-				+ "			</ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n"
-				+ "		</ram:ApplicableHeaderTradeSettlement>\n";
+				+ "				<ram:DuePayableAmount>" + currencyFormat(calc.getGrandTotal().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>\n"
+				+ "			</ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n";
+		if (trans.getInvoiceReferencedDocumentID() != null) {
+			xml = xml + "   <ram:InvoiceReferencedDocument>\n"
+					+ "       <ram:IssuerAssignedID>"
+					+ XMLTools.encodeXML(trans.getInvoiceReferencedDocumentID()) + "</ram:IssuerAssignedID>\n"
+					+ "   </ram:InvoiceReferencedDocument>\n";
+		}
+
+		xml = xml + "		</ram:ApplicableHeaderTradeSettlement>\n";
 		// + " <IncludedSupplyChainTradeLineItem>\n"
 		// + " <AssociatedDocumentLineDocument>\n"
 		// + " <IncludedNote>\n"

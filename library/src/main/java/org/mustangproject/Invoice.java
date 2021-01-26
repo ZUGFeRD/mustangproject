@@ -33,7 +33,7 @@ import java.util.Date;
  */
 public class Invoice implements IExportableTransaction {
 
-	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
+	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, invoiceReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
 	protected BigDecimal totalPrepaidAmount = null;
 	protected TradeParty sender = null, recipient = null, deliveryAddress = null;
@@ -118,7 +118,7 @@ public class Invoice implements IExportableTransaction {
 	 * @return this object (fluent setter)
 	 */
 	public Invoice setCorrection(String number) {
-		setBuyerOrderReferencedDocumentID(number);
+		setInvoiceReferencedDocumentID(number);
 		documentCode = DocumentCodeTypeConstants.CORRECTEDINVOICE;
 		return this;
 	}
@@ -223,13 +223,27 @@ public class Invoice implements IExportableTransaction {
     return this;
   }
 	/***
-	 * usually the order number or in case of a correction the original invoice number
+	 * usually the order number
 	 * @param buyerOrderReferencedDocumentID string with number
 	 * @return fluent setter
 	 */
 	public Invoice setBuyerOrderReferencedDocumentID(String buyerOrderReferencedDocumentID) {
 		this.buyerOrderReferencedDocumentID = buyerOrderReferencedDocumentID;
 		return this;
+	}
+
+	/***
+	 * usually in case of a correction the original invoice number
+	 * @param invoiceReferencedDocumentID string with number
+	 * @return fluent setter
+	 */
+	public Invoice setInvoiceReferencedDocumentID(String invoiceReferencedDocumentID) {
+		this.invoiceReferencedDocumentID = invoiceReferencedDocumentID;
+		return this;
+	}
+	@Override
+	public String getInvoiceReferencedDocumentID() {
+		return invoiceReferencedDocumentID;
 	}
 
 	@Override
