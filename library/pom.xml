@@ -48,6 +48,8 @@
 		<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.deploy.skip>true</maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
+
 	</properties>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE -->

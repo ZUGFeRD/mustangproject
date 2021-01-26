@@ -27,6 +27,8 @@
     </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.deploy.skip>false</maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
+
     </properties>
     <dependencies>
         <!-- for java9 -->
