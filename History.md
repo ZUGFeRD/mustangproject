@@ -2,6 +2,8 @@
 =======
 
 - PR #217 seller order referenced document
+- only deploy library and validator to maven central, not core nor cli
+- a correction should reference the original invoice via invoiceReferencedDocument, not buyerOrderReferencedDocument
 
 2.1.0
 =======

@@ -127,7 +127,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml = xml + "           <ram:GlobalID schemeID=\"" + XMLTools.encodeXML(party.getGlobalIDScheme()) + "\">"
 					+ XMLTools.encodeXML(party.getGlobalID()) + "</ram:GlobalID>\n";
 		}
-		xml += "	<ram:Name>" + XMLTools.encodeXML(party.getName()) + "</ram:Name>\n"; //$NON-NLS-2$
+		xml += "	<ram:Name>" + XMLTools.encodeXML(party.getName()) + "</ram:Name>\n";
 
 		if ((party.getContact() != null) && (isSender || profile == Profiles.getByName("Extended"))) {
 			xml = xml + "<ram:DefinedTradeContact>\n" + "     <ram:PersonName>" + XMLTools.encodeXML(party.getContact().getName())
@@ -285,7 +285,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "		</ram:GuidelineSpecifiedDocumentContextParameter>\n"
 				+ "	</rsm:ExchangedDocumentContext>\n"
 				+ "	<rsm:ExchangedDocument>\n"
-				+ "		<ram:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:ID>\n" //$NON-NLS-2$
+				+ "		<ram:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:ID>\n"
 				// + " <ram:Name>RECHNUNG</ram:Name>\n"
 				// + "		<ram:TypeCode>380</ram:TypeCode>\n"
 				+ "		<ram:TypeCode>" + typecode + "</ram:TypeCode>\n"
@@ -314,7 +314,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			final LineCalculator lc = new LineCalculator(currentItem);
 			xml = xml + "		<ram:IncludedSupplyChainTradeLineItem>\n" +
 					"			<ram:AssociatedDocumentLineDocument>\n"
-					+ "				<ram:LineID>" + lineID + "</ram:LineID>\n" //$NON-NLS-2$
+					+ "				<ram:LineID>" + lineID + "</ram:LineID>\n"
 					+ notes
 					+ "			</ram:AssociatedDocumentLineDocument>\n"
 
@@ -342,7 +342,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			}
 
 
-			xml = xml + "					<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>\n" //$NON-NLS-2$
+			xml = xml + "					<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>\n"
 					+ "				<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription())
 					+ "</ram:Description>\n"
 					+ "			</ram:SpecifiedTradeProduct>\n"
@@ -369,7 +369,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "			</ram:SpecifiedLineTradeAgreement>\n"
 
 					+ "			<ram:SpecifiedLineTradeDelivery>\n"
-					+ "				<ram:BilledQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">" //$NON-NLS-2$
+					+ "				<ram:BilledQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">"
 					+ quantityFormat(currentItem.getQuantity()) + "</ram:BilledQuantity>\n"
 					+ "			</ram:SpecifiedLineTradeDelivery>\n"
 					+ "			<ram:SpecifiedLineTradeSettlement>\n"
@@ -479,8 +479,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				 * "				<ID>2013-51112</ID>\n" +
 				 * "			</DeliveryNoteReferencedDocument>\n"
 				 */
-				+ "		</ram:ApplicableHeaderTradeDelivery>\n" + "		<ram:ApplicableHeaderTradeSettlement>\n" //$NON-NLS-2$
-				+ "			<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>\n" //$NON-NLS-2$
+				+ "		</ram:ApplicableHeaderTradeDelivery>\n" + "		<ram:ApplicableHeaderTradeSettlement>\n"
+				+ "			<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>\n"
 				+ "			<ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>\n";
 
 		if (trans.getTradeSettlementPayment() != null) {
@@ -517,7 +517,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "				<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>\n" // currencyID=\"EUR\"
 						+ "				<ram:CategoryCode>" + amount.getCategoryCode() + "</ram:CategoryCode>\n"
 						+ "				<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent)
-						+ "</ram:RateApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n"; //$NON-NLS-2$
+						+ "</ram:RateApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n";
 
 			}
 		}
@@ -578,10 +578,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 
 
-		if ((trans.getPaymentTerms() == null)&&((paymentTermsDescription!=null)||(trans.getTradeSettlement()!=null)||(hasDueDate))) {
+		if ((trans.getPaymentTerms() == null) && ((paymentTermsDescription != null) || (trans.getTradeSettlement() != null) || (hasDueDate))) {
 			xml = xml + "<ram:SpecifiedTradePaymentTerms>\n";
 
-			if (paymentTermsDescription!=null) {
+			if (paymentTermsDescription != null) {
 				xml = xml + "<ram:Description>" + paymentTermsDescription + "</ram:Description>\n";
 			}
 
@@ -662,7 +662,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	private String buildPaymentTermsXml() {
 
 		final IZUGFeRDPaymentTerms paymentTerms = trans.getPaymentTerms();
-		if (paymentTerms==null) {
+		if (paymentTerms == null) {
 			return "";
 		}
 		String paymentTermsXml = "<ram:SpecifiedTradePaymentTerms>";

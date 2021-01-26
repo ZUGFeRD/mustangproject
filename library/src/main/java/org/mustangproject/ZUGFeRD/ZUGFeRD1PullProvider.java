@@ -164,7 +164,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 				+ "		</ram:GuidelineSpecifiedDocumentContextParameter>\n"
 				+ "	</rsm:SpecifiedExchangedDocumentContext>\n"
 				+ "	<rsm:HeaderExchangedDocument>\n"
-				+ "		<ram:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:ID>\n" //$NON-NLS-2$
+				+ "		<ram:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:ID>\n"
 				+ "     <ram:Name>RECHNUNG</ram:Name>\n"
 				+ "		<ram:TypeCode>" + typecode + "</ram:TypeCode>\n"
 				+ "		<ram:IssueDateTime><udt:DateTimeString format=\"102\">"
@@ -236,8 +236,8 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 				 * "				<ID>2013-51112</ID>\n" +
 				 * "			</DeliveryNoteReferencedDocument>\n"
 				 */
-				+ "		</ram:ApplicableSupplyChainTradeDelivery>\n" + "		<ram:ApplicableSupplyChainTradeSettlement>\n" //$NON-NLS-2$
-				+ "			<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>\n" //$NON-NLS-2$
+				+ "		</ram:ApplicableSupplyChainTradeDelivery>\n" + "		<ram:ApplicableSupplyChainTradeSettlement>\n"
+				+ "			<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>\n"
 				+ "			<ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>\n";
 
 		if (trans.getTradeSettlementPayment() != null) {
@@ -271,7 +271,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 						+ "				<ram:BasisAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>\n" // currencyID=\"EUR\"
 						+ "				<ram:CategoryCode>" + amount.getCategoryCode() + "</ram:CategoryCode>\n"
 						+ "				<ram:ApplicablePercent>" + vatFormat(currentTaxPercent)
-						+ "</ram:ApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n"; //$NON-NLS-2$
+						+ "</ram:ApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n";
 
 			}
 		}
@@ -300,23 +300,23 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 		}
 
 		xml = xml + "			<ram:SpecifiedTradeSettlementMonetarySummation>\n"
-				+ "				<ram:LineTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotal()) + "</ram:LineTotalAmount>\n" //$NON-NLS-2$
+				+ "				<ram:LineTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotal()) + "</ram:LineTotalAmount>\n"
 				// currencyID=\"EUR\"
 				+ "				<ram:ChargeTotalAmount currencyID=\"" + trans.getCurrency() + "\">0.00</ram:ChargeTotalAmount>\n" // currencyID=\"EUR\"
 				+ "				<ram:AllowanceTotalAmount currencyID=\"" + trans.getCurrency() + "\">0.00</ram:AllowanceTotalAmount>\n" //
 				// currencyID=\"EUR\"
 				// + " <ChargeTotalAmount currencyID=\"EUR\">5.80</ChargeTotalAmount>\n"
 				// + " <AllowanceTotalAmount currencyID=\"EUR\">14.73</AllowanceTotalAmount>\n"
-				+ "				<ram:TaxBasisTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotal()) + "</ram:TaxBasisTotalAmount>\n" //$NON-NLS-2$
+				+ "				<ram:TaxBasisTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotal()) + "</ram:TaxBasisTotalAmount>\n"
 				// //
 				// currencyID=\"EUR\"
 				+ "				<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
 				+ currencyFormat(calc.getGrandTotal().subtract(calc.getTotal())) + "</ram:TaxTotalAmount>\n"
-				+ "				<ram:GrandTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-2$
+				+ "				<ram:GrandTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>\n"
 				// //
 				// currencyID=\"EUR\"
 				+ "             <ram:TotalPrepaidAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotalPrepaid()) + "</ram:TotalPrepaidAmount>\n"
-				+ "				<ram:DuePayableAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getGrandTotal().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>\n" //$NON-NLS-2$
+				+ "				<ram:DuePayableAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getGrandTotal().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>\n"
 				// //
 				// currencyID=\"EUR\"
 				+ "			</ram:SpecifiedTradeSettlementMonetarySummation>\n"
@@ -334,7 +334,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 			final LineCalculator lc = new LineCalculator(currentItem);
 			xml = xml + "		<ram:IncludedSupplyChainTradeLineItem>\n" +
 					"			<ram:AssociatedDocumentLineDocument>\n"
-					+ "				<ram:LineID>" + lineID + "</ram:LineID>\n" //$NON-NLS-2$
+					+ "				<ram:LineID>" + lineID + "</ram:LineID>\n"
 					+ "			</ram:AssociatedDocumentLineDocument>\n"
 					+ "			<ram:SpecifiedSupplyChainTradeAgreement>\n"
 					+ "				<ram:GrossPriceProductTradePrice>\n"
@@ -358,7 +358,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 
 
 					+ "			<ram:SpecifiedSupplyChainTradeDelivery>\n"
-					+ "				<ram:BilledQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">" //$NON-NLS-2$
+					+ "				<ram:BilledQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">"
 					+ quantityFormat(currentItem.getQuantity()) + "</ram:BilledQuantity>\n"
 					+ "			</ram:SpecifiedSupplyChainTradeDelivery>\n"
 					+ "			<ram:SpecifiedSupplyChainTradeSettlement>\n"
@@ -389,7 +389,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 				xml = xml + "				<ram:BuyerAssignedID>"
 						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>\n";
 			}
-			xml = xml + "					<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>\n" //$NON-NLS-2$
+			xml = xml + "					<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>\n"
 					+ "				<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription())
 					+ "</ram:Description>\n"
 					+ "			</ram:SpecifiedTradeProduct>\n"
