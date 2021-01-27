@@ -2,6 +2,7 @@
 =======
 
 - PR #217 seller order referenced document
+- PR #218 allow recipient contact in XRechnung thanks to seeeeew
 - only deploy library and validator to maven central, not core nor cli
 - a correction should reference the original invoice via invoiceReferencedDocument, not buyerOrderReferencedDocument
 
