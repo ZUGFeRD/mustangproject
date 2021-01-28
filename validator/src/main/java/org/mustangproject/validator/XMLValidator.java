@@ -172,6 +172,7 @@ public class XMLValidator extends Validator {
 
 					context.setProfile(booking.getNodeValue());
 				}
+				boolean isOrderX = false;
 				boolean isMiniumum = false;
 				boolean isBasic = false;
 				boolean isBasicWithoutLines = false;
@@ -185,6 +186,15 @@ public class XMLValidator extends Validator {
 
 				// urn:cen.eu:en16931:2017
 				// urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:basic
+				if (root.getNodeName().equalsIgnoreCase("rsm:SCRDMCCBDACIOMessageStructure")) {
+					context.setVersion("1");
+					isOrderX=true;
+					isBasic = context.getProfile().contains("basic");
+					isEN16931 = context.getProfile().contains("comfort");
+					isExtended = context.getProfile().contains("extended");
+					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ox09/comfort/SCRDMCCBDACIOMessageStructure_100pD20B.xsd", 99, EPart.ox);
+
+				}
 				if (root.getNodeName().equalsIgnoreCase("rsm:CrossIndustryInvoice")) { // ZUGFeRD 2.0 or Factur-X
 					context.setVersion("2");
 

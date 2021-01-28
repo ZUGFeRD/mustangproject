@@ -20,13 +20,6 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
-import org.mustangproject.XMLTools;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -36,6 +29,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
+import org.mustangproject.XMLTools;
 
 public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLProvider {
 
@@ -82,20 +82,20 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 
 		byte[] res = zugferdData;
 
-		StringWriter sw = new StringWriter();
+		final StringWriter sw = new StringWriter();
 		Document document = null;
 		try {
 			document = DocumentHelper.parseText(new String(zugferdData));
-		} catch (DocumentException e1) {
+		} catch (final DocumentException e1) {
 			Logger.getLogger(ZUGFeRD1PullProvider.class.getName()).log(Level.SEVERE, null, e1);
 		}
 		try {
-			OutputFormat format = OutputFormat.createPrettyPrint();
-			XMLWriter writer = new XMLWriter(sw, format);
+			final OutputFormat format = OutputFormat.createPrettyPrint();
+			final XMLWriter writer = new XMLWriter(sw, format);
 			writer.write(document);
 			res = sw.toString().getBytes("UTF-8");
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			Logger.getLogger(ZUGFeRD1PullProvider.class.getName()).log(Level.SEVERE, null, e);
 		}
 
@@ -110,7 +110,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 		this.calc = new TransactionCalculator(trans);
 
 		boolean hasDueDate = false;
-		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+		final SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 		String exemptionReason = "";
 
 		if (trans.getPaymentTermDescription() != null) {
@@ -164,7 +164,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 				+ "		</ram:GuidelineSpecifiedDocumentContextParameter>\n"
 				+ "	</rsm:SpecifiedExchangedDocumentContext>\n"
 				+ "	<rsm:HeaderExchangedDocument>\n"
-				+ "		<ram:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:ID>\n" //$NON-NLS-2$
+				+ "		<ram:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:ID>\n"
 				+ "     <ram:Name>RECHNUNG</ram:Name>\n"
 				+ "		<ram:TypeCode>" + typecode + "</ram:TypeCode>\n"
 				+ "		<ram:IssueDateTime><udt:DateTimeString format=\"102\">"
@@ -199,6 +199,12 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 
 		xml += "			</ram:BuyerTradeParty>\n";
 
+		if (trans.getSellerOrderReferencedDocumentID() != null) {
+			xml = xml + "   <ram:SellerOrderReferencedDocument>\n"
+					+ "       <ram:IssuerAssignedID>"
+					+ XMLTools.encodeXML(trans.getSellerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>\n"
+					+ "   </ram:SellerOrderReferencedDocument>\n";
+		}
 		if (trans.getBuyerOrderReferencedDocumentID() != null) {
 			xml = xml + "   <ram:BuyerOrderReferencedDocument>\n"
 					+ "       <ram:IssuerAssignedID>"
@@ -230,12 +236,12 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 				 * "				<ID>2013-51112</ID>\n" +
 				 * "			</DeliveryNoteReferencedDocument>\n"
 				 */
-				+ "		</ram:ApplicableSupplyChainTradeDelivery>\n" + "		<ram:ApplicableSupplyChainTradeSettlement>\n" //$NON-NLS-2$
-				+ "			<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>\n" //$NON-NLS-2$
+				+ "		</ram:ApplicableSupplyChainTradeDelivery>\n" + "		<ram:ApplicableSupplyChainTradeSettlement>\n"
+				+ "			<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>\n"
 				+ "			<ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>\n";
 
 		if (trans.getTradeSettlementPayment() != null) {
-			for (IZUGFeRDTradeSettlementPayment payment : trans.getTradeSettlementPayment()) {
+			for (final IZUGFeRDTradeSettlementPayment payment : trans.getTradeSettlementPayment()) {
 				if (payment != null) {
 					hasDueDate = true;
 					xml += payment.getSettlementXML();
@@ -243,7 +249,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 			}
 		}
 		if (trans.getTradeSettlement() != null) {
-			for (IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
+			for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
 				if (payment != null) {
 					if (payment instanceof IZUGFeRDTradeSettlementPayment) {
 						hasDueDate = true;
@@ -253,9 +259,9 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 			}
 		}
 
-		HashMap<BigDecimal, VATAmount> VATPercentAmountMap = calc.getVATPercentAmountMap();
-		for (BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-			VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
+		final HashMap<BigDecimal, VATAmount> VATPercentAmountMap = calc.getVATPercentAmountMap();
+		for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
+			final VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			if (amount != null) {
 				xml += "			<ram:ApplicableTradeTax>\n"
 						+ "				<ram:CalculatedAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(amount.getCalculated())
@@ -265,7 +271,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 						+ "				<ram:BasisAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>\n" // currencyID=\"EUR\"
 						+ "				<ram:CategoryCode>" + amount.getCategoryCode() + "</ram:CategoryCode>\n"
 						+ "				<ram:ApplicablePercent>" + vatFormat(currentTaxPercent)
-						+ "</ram:ApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n"; //$NON-NLS-2$
+						+ "</ram:ApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n";
 
 			}
 		}
@@ -275,7 +281,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 					+ "				<ram:Description>" + paymentTermsDescription + "</ram:Description>\n";
 
 			if (trans.getTradeSettlement() != null) {
-				for (IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
+				for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
 					if ((payment != null) && (payment instanceof IZUGFeRDTradeSettlementDebit)) {
 						xml += payment.getPaymentXML();
 					}
@@ -294,23 +300,23 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 		}
 
 		xml = xml + "			<ram:SpecifiedTradeSettlementMonetarySummation>\n"
-				+ "				<ram:LineTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotal()) + "</ram:LineTotalAmount>\n" //$NON-NLS-2$
+				+ "				<ram:LineTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotal()) + "</ram:LineTotalAmount>\n"
 				// currencyID=\"EUR\"
 				+ "				<ram:ChargeTotalAmount currencyID=\"" + trans.getCurrency() + "\">0.00</ram:ChargeTotalAmount>\n" // currencyID=\"EUR\"
 				+ "				<ram:AllowanceTotalAmount currencyID=\"" + trans.getCurrency() + "\">0.00</ram:AllowanceTotalAmount>\n" //
 				// currencyID=\"EUR\"
 				// + " <ChargeTotalAmount currencyID=\"EUR\">5.80</ChargeTotalAmount>\n"
 				// + " <AllowanceTotalAmount currencyID=\"EUR\">14.73</AllowanceTotalAmount>\n"
-				+ "				<ram:TaxBasisTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotal()) + "</ram:TaxBasisTotalAmount>\n" //$NON-NLS-2$
+				+ "				<ram:TaxBasisTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotal()) + "</ram:TaxBasisTotalAmount>\n"
 				// //
 				// currencyID=\"EUR\"
 				+ "				<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
 				+ currencyFormat(calc.getGrandTotal().subtract(calc.getTotal())) + "</ram:TaxTotalAmount>\n"
-				+ "				<ram:GrandTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>\n" //$NON-NLS-2$
+				+ "				<ram:GrandTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>\n"
 				// //
 				// currencyID=\"EUR\"
 				+ "             <ram:TotalPrepaidAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotalPrepaid()) + "</ram:TotalPrepaidAmount>\n"
-				+ "				<ram:DuePayableAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getGrandTotal().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>\n" //$NON-NLS-2$
+				+ "				<ram:DuePayableAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getGrandTotal().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>\n"
 				// //
 				// currencyID=\"EUR\"
 				+ "			</ram:SpecifiedTradeSettlementMonetarySummation>\n"
@@ -318,17 +324,17 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 
 
 		int lineID = 0;
-		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
+		for (final IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			lineID++;
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
 
 
-			LineCalculator lc = new LineCalculator(currentItem);
+			final LineCalculator lc = new LineCalculator(currentItem);
 			xml = xml + "		<ram:IncludedSupplyChainTradeLineItem>\n" +
 					"			<ram:AssociatedDocumentLineDocument>\n"
-					+ "				<ram:LineID>" + lineID + "</ram:LineID>\n" //$NON-NLS-2$
+					+ "				<ram:LineID>" + lineID + "</ram:LineID>\n"
 					+ "			</ram:AssociatedDocumentLineDocument>\n"
 					+ "			<ram:SpecifiedSupplyChainTradeAgreement>\n"
 					+ "				<ram:GrossPriceProductTradePrice>\n"
@@ -352,7 +358,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 
 
 					+ "			<ram:SpecifiedSupplyChainTradeDelivery>\n"
-					+ "				<ram:BilledQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">" //$NON-NLS-2$
+					+ "				<ram:BilledQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">"
 					+ quantityFormat(currentItem.getQuantity()) + "</ram:BilledQuantity>\n"
 					+ "			</ram:SpecifiedSupplyChainTradeDelivery>\n"
 					+ "			<ram:SpecifiedSupplyChainTradeSettlement>\n"
@@ -383,7 +389,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 				xml = xml + "				<ram:BuyerAssignedID>"
 						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>\n";
 			}
-			xml = xml + "					<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>\n" //$NON-NLS-2$
+			xml = xml + "					<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>\n"
 					+ "				<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription())
 					+ "</ram:Description>\n"
 					+ "			</ram:SpecifiedTradeProduct>\n"
@@ -404,11 +410,11 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 		xml = xml + "	</rsm:SpecifiedSupplyChainTradeTransaction>\n"
 				+ "</rsm:CrossIndustryDocument>";
 
-		byte[] zugferdRaw;
+		final byte[] zugferdRaw;
 		try {
 			zugferdRaw = xml.getBytes("UTF-8");
 			zugferdData = XMLTools.removeBOM(zugferdRaw);
-		} catch (UnsupportedEncodingException e) {
+		} catch (final UnsupportedEncodingException e) {
 			Logger.getLogger(ZUGFeRD1PullProvider.class.getName()).log(Level.SEVERE, null, e);
 		}
 	}
@@ -421,9 +427,9 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 	private String buildPaymentTermsXml() {
 		String paymentTermsXml = "<ram:SpecifiedTradePaymentTerms>";
 
-		IZUGFeRDPaymentTerms paymentTerms = trans.getPaymentTerms();
-		IZUGFeRDPaymentDiscountTerms discountTerms = paymentTerms.getDiscountTerms();
-		Date dueDate = paymentTerms.getDueDate();
+		final IZUGFeRDPaymentTerms paymentTerms = trans.getPaymentTerms();
+		final IZUGFeRDPaymentDiscountTerms discountTerms = paymentTerms.getDiscountTerms();
+		final Date dueDate = paymentTerms.getDueDate();
 		if (dueDate != null && discountTerms != null && discountTerms.getBaseDate() != null) {
 			throw new IllegalStateException(
 					"if paymentTerms.dueDate is specified, paymentTerms.discountTerms.baseDate has not to be specified");
@@ -438,14 +444,14 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 
 		if (discountTerms != null) {
 			paymentTermsXml += "<ram:ApplicableTradePaymentDiscountTerms>";
-			String currency = trans.getCurrency();
-			String basisAmount = currencyFormat(calc.getGrandTotal());
+			final String currency = trans.getCurrency();
+			final String basisAmount = currencyFormat(calc.getGrandTotal());
 			paymentTermsXml += "<ram:BasisAmount currencyID=\"" + currency + "\">" + basisAmount + "</ram:BasisAmount>";
 			paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toString()
 					+ "</ram:CalculationPercent>";
 
 			if (discountTerms.getBaseDate() != null) {
-				Date baseDate = discountTerms.getBaseDate();
+				final Date baseDate = discountTerms.getBaseDate();
 				paymentTermsXml += "<ram:BasisDateTime>";
 				paymentTermsXml += "<udt:DateTimeString format=\"102\">" + zugferdDateFormat.format(baseDate) + "</udt:DateTimeString>";
 				paymentTermsXml += "</ram:BasisDateTime>";

@@ -39,7 +39,7 @@ public class SchematronPipeline {
 		try {
 			return factory.newTemplates(new StreamSource(cl.getResourceAsStream(transName)));
 		} catch (TransformerConfigurationException excep) {
-			throw new IllegalStateException("Policy Schematron transformer XSL " + transName + " not found.", excep); //$NON-NLS-2$
+			throw new IllegalStateException("Policy Schematron transformer XSL " + transName + " not found.", excep);
 		}
 	}
 

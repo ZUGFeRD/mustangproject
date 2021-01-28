@@ -158,6 +158,8 @@
         <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.deploy.skip>true</maven.deploy.skip><!-- prevent this to be deployed to maven central as "core",
+        we only want submodules, see also https://stackoverflow.com/questions/7446599/how-to-deploy-only-the-sub-modules-using-maven-deploy-->
     </properties>
 
     <mailingLists>

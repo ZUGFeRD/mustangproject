@@ -63,7 +63,7 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 	default String getSettlementXML() {
 		String accountNameStr="";
 		if (getAccountName()!=null) {
-			accountNameStr="<ram:AccountName>" + XMLTools.encodeXML(getAccountName()) + "</ram:AccountName>\n"; //$NON-NLS-2$
+			accountNameStr="<ram:AccountName>" + XMLTools.encodeXML(getAccountName()) + "</ram:AccountName>\n";
 
 		}
 
@@ -71,13 +71,13 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 				+ "				<ram:TypeCode>42</ram:TypeCode>\n"
 				+ "				<ram:Information>Bank transfer</ram:Information>\n"
 				+ "				<ram:PayeePartyCreditorFinancialAccount>\n"
-				+ "					<ram:IBANID>" + XMLTools.encodeXML(getOwnIBAN()) + "</ram:IBANID>\n"; //$NON-NLS-2$
+				+ "					<ram:IBANID>" + XMLTools.encodeXML(getOwnIBAN()) + "</ram:IBANID>\n";
 		xml+= accountNameStr;
 		xml+= "				</ram:PayeePartyCreditorFinancialAccount>\n"
 				+ "				<ram:PayeeSpecifiedCreditorFinancialInstitution>\n"
-				+ "					<ram:BICID>" + XMLTools.encodeXML(getOwnBIC()) + "</ram:BICID>\n" //$NON-NLS-2$
+				+ "					<ram:BICID>" + XMLTools.encodeXML(getOwnBIC()) + "</ram:BICID>\n"
 				// + " <ram:Name>"+trans.getOwnBankName()+"</ram:Name>\n"
-				// //$NON-NLS-2$
+				//
 				+ "				</ram:PayeeSpecifiedCreditorFinancialInstitution>\n"
 				+ "			</ram:SpecifiedTradeSettlementPaymentMeans>\n";
 		return xml;

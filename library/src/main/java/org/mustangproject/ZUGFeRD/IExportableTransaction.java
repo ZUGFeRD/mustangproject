@@ -399,6 +399,14 @@ public interface IExportableTransaction  {
 
 
 	/**
+	 * get the ID of the SellerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement/ApplicableHeaderTradeAgreement
+	 *
+	 * @return the ID of the document
+	 */
+	default String getSellerOrderReferencedDocumentID() {
+		return null;
+	}
+	/**
 	 * get the ID of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
 	 *
 	 * @return the ID of the document
@@ -407,6 +415,14 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
+	/**
+	 * get the ID of the prceding invoice, which is e.g. to be corrected if this is a correction
+	 *
+	 * @return the ID of the document
+	 */
+	default String getInvoiceReferencedDocumentID() {
+		return null;
+	}
 
 	/**
 	 * get the issue timestamp of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
