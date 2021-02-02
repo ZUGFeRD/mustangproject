@@ -26,6 +26,8 @@ import org.mustangproject.validator.Validator;
 import org.mustangproject.validator.ZUGFeRDValidator;
 
 import java.io.*;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,6 +50,7 @@ public class Main {
 
 	private static String getUsage() {
 		return "Usage: --action metrics|combine|extract|a3only|ubl|validate|visualize [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] | [-h,--help] \r\n"
+				+ "        --action=license   display open source license and notice\n"
 				+ "        --action=metrics\n"
 				+ "          -d, --directory count ZUGFeRD files in directory to be scanned\n"
 				+ "                If it is a directory, it will recurse.\n"
@@ -289,14 +292,45 @@ public class Main {
 		System.out.println("Written to " + outName);
 
 	}
+
+	public static void printLicense() {
+		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("LICENSE");
+		System.out.println(convertInputStreamToString(is));
+		is = Thread.currentThread().getContextClassLoader().getResourceAsStream("NOTICE");
+		System.out.println(convertInputStreamToString(is));
+
+	}
+
+	// Plain Java
+	// based on https://mkyong.com/java/how-to-convert-inputstream-to-string-in-java/
+	private static String convertInputStreamToString(InputStream is) {
+		int DEFAULT_BUFFER_SIZE = 8192;
+		ByteArrayOutputStream result = new ByteArrayOutputStream();
+		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+		int length;
+		try {
+			while ((length = is.read(buffer)) != -1) {
+				result.write(buffer, 0, length);
+			}
+
+			// Java 1.1
+			return result.toString(StandardCharsets.UTF_8.name());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+		// Java 10
+		// return result.toString(StandardCharsets.UTF_8);
+
+	}
 	/***
 	 * the main function of the commandline tool...
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		try {
-
 			CmdLineParser parser = new CmdLineParser();
+
 
 			// Option: Help
 			Option<Boolean> helpOption = parser.addBooleanOption('h', "help");
@@ -344,8 +378,9 @@ public class Main {
 			String action = parser.getOptionValue(actionOption);
 			String directoryName = parser.getOptionValue(dirnameOption);
 			Boolean filesFromStdIn = parser.getOptionValue(filesFromStdInOption, Boolean.FALSE);
-			Boolean helpRequested = parser.getOptionValue(helpOption, Boolean.FALSE)  || ((action!=null)&&(action.equals("help")));
 			Boolean ignoreFileExt = parser.getOptionValue(ignoreFileExtOption, Boolean.FALSE);
+			Boolean helpRequested = parser.getOptionValue(helpOption, Boolean.FALSE)  || ((action!=null)&&(action.equals("help")));
+
 			String sourceName = parser.getOptionValue(sourceOption);
 			String sourceXMLName = parser.getOptionValue(sourceXmlOption);
 			String outName = parser.getOptionValue(outOption);
@@ -358,7 +393,10 @@ public class Main {
 			if (helpRequested) {
 				printHelp();
 				optionsRecognized=true;
-			} else if ((action!=null)&&(action.equals("metrics"))) {
+			} /* else if ((action!=null)&&(action.equals("license"))) {
+				printLicense();
+				optionsRecognized=true;
+			} */ else if ((action!=null)&&(action.equals("metrics"))) {
 				performMetrics(directoryName, filesFromStdIn, ignoreFileExt);
 				optionsRecognized=true;
 			} else if ((action!=null)&&(action.equals("combine")))  {
