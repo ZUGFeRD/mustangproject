@@ -62,7 +62,7 @@ public class XMLValidator extends Validator {
 		// file existence must have been checked before
 
 		try {
-			zfXML = new String(XMLTools.removeBOM(Files.readAllBytes(Paths.get(name))));
+			zfXML = new String(XMLTools.removeBOM(Files.readAllBytes(Paths.get(name))), StandardCharsets.UTF_8);
 		} catch (IOException e) {
 
 			ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(9)

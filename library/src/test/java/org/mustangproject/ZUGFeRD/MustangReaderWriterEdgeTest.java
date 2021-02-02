@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -270,7 +271,7 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 				 	 .setZUGFeRDVersion(1)
 					 .load(inputStream);
 			ze.setTransaction(this);
-			String theXML = new String(ze.getProvider().getXML());
+			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryDocument"));
 			ze.export(targetPath);
 		} catch (IOException e) {

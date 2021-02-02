@@ -18,6 +18,8 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import java.nio.charset.StandardCharsets;
+
 public class CustomXMLProvider implements IXMLProvider {
 
 	protected byte[] zugferdData;
@@ -29,7 +31,7 @@ public class CustomXMLProvider implements IXMLProvider {
 	}
 
 	public void setXML(byte[] newData) {
-		String zf = new String(newData);
+		String zf = new String(newData, StandardCharsets.UTF_8);
 		if (!zf.contains("CrossIndustry")) {
 			throw new RuntimeException("ZUGFeRD XML does not contain (<rsm:)CrossIndustry and can thus not be valid");
 		}
