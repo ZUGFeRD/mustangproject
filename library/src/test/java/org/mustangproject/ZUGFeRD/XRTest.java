@@ -44,17 +44,8 @@ public class XRTest extends TestCase {
 	public void testXRExport() {
 
 		// the writing part
-
-		String orgname = "Test company";
-		String number = "123";
-		String amountStr = "1.00";
-		BigDecimal amount = new BigDecimal(amountStr);
-		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
-				.setSender(new TradeParty(orgname,"teststr","55232","teststadt","DE").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test","+49123456789","test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890","COBADEFXXX")))
-				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
-				.setReferenceNumber("991-01484-64")//leitweg-id
-				// not using any VAT, this is also a test of zero-rated goods:
-				.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal(1.0)));
+		TradeParty recipient = new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE");
+		Invoice i = createInvoice(recipient);
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 		zf2p.setProfile(Profiles.getByName("XRechnung"));
@@ -78,6 +69,7 @@ public class XRTest extends TestCase {
 		}
 
 	}
+
 	public void testXREdgeExport() {
 
 		// the writing part
@@ -120,6 +112,48 @@ public class XRTest extends TestCase {
 			e.printStackTrace();
 		}
 
+	}
+
+	public void testXRExportWithoutStreet() {
+
+		// the writing part
+		TradeParty recipient = new TradeParty("Franz Müller", null, "55232", "Entenhausen", "DE");
+		Invoice i = createInvoice(recipient);
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(i);
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
+				.asInt()
+				.isEqualTo(1); //2 errors are OK because there is a known bug
+
+
+		assertThat(theXML).valueByXPath("//*[local-name()='DuePayableAmount']")
+				.asDouble()
+				.isEqualTo(1);
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML));
+			writer.write(theXML);
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private org.mustangproject.Invoice createInvoice(TradeParty recipient) {
+		String orgname = "Test company";
+		String number = "123";
+		String amountStr = "1.00";
+		BigDecimal amount = new BigDecimal(amountStr);
+		return new Invoice().setDueDate(new java.util.Date()).setIssueDate(new java.util.Date()).setDeliveryDate(new java.util.Date())
+				.setSender(new TradeParty(orgname,"teststr","55232","teststadt","DE").addTaxID("DE4711").addVATID("DE0815").setContact(new org.mustangproject.Contact("Hans Test","+49123456789","test@example.org")).addBankDetails(new org.mustangproject.BankDetails("DE12500105170648489890","COBADEFXXX")))
+				.setRecipient(recipient)
+				.setReferenceNumber("991-01484-64")//leitweg-id
+				// not using any VAT, this is also a test of zero-rated goods:
+				.setNumber(number).addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "C62", java.math.BigDecimal.ZERO), amount, new java.math.BigDecimal(1.0)));
 	}
 
 }
