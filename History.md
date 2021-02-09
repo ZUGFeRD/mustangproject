@@ -4,8 +4,8 @@
 
 - PR #217 seller order referenced document thanks to weclapp-dev
 - PR #218 allow recipient contact in XRechnung thanks to seeeeew
-- RE #221 remove outdated dependency thanks to heisej
-- RE #223 allow XRechnung without street thanks to murygin
+- PR #221 remove outdated dependency thanks to heisej
+- PR #223 allow XRechnung without street thanks to murygin
 - only deploy library and validator to maven central, not core nor cli
 - a correction should reference the original invoice via invoiceReferencedDocument, not buyerOrderReferencedDocument
 - upgraded CEN Schematron validation (codes 24) to v1.3.4
