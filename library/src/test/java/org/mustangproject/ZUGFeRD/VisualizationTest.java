@@ -45,10 +45,14 @@ public class VisualizationTest extends ResourceCase {
 		String result = null;
 		try {
 			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
-			result = zvi.visualize(input.getAbsolutePath());
+			/* remove file endings so that tests can also pass after checking
+			   out from git with arbitrary options (which may include CSRF changes)
+			 */
+			result = zvi.visualize(input.getAbsolutePath()).replace("\r","").replace("\n","");
 
 			File expectedResult=getResourceAsFile("factur-x.html");
-			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8);
+			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r","").replace("\n","");
+			// remove linebreaks as well...
 
 			BufferedWriter writer = new BufferedWriter(new FileWriter("C:\\Users\\jstaerk\\Desktop\\factur-x.html"));
 			writer.write(result);
