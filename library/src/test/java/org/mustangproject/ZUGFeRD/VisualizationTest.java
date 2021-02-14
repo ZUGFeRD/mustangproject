@@ -54,10 +54,6 @@ public class VisualizationTest extends ResourceCase {
 			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r","").replace("\n","");
 			// remove linebreaks as well...
 
-			BufferedWriter writer = new BufferedWriter(new FileWriter("C:\\Users\\jstaerk\\Desktop\\factur-x.html"));
-			writer.write(result);
-			writer.close();
-
 		} catch (TransformerException e) {
 			fail("Exception should not happen: "+e.getMessage());
 		} catch (IOException e) {
