@@ -23,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -266,7 +267,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
 						.load(SOURCE_PDF)) {
 			ze.setTransaction(this);
-			String theXML = new String(ze.getProvider().getXML());
+			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(TARGET_PDF);
 		} catch (IOException e) {
@@ -314,7 +315,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).disableFacturX()
 						.load(SOURCE_PDF)) {
 			ze.setTransaction(this);
-			String theXML = new String(ze.getProvider().getXML());
+			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(bos);
 		} catch (IOException e) {

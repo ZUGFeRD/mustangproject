@@ -1,6 +1,7 @@
 package org.mustangproject.validator;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -166,7 +167,7 @@ public class ZUGFeRDValidator {
 
 						byte[] content=Files.readAllBytes(file.toPath());
 						content= XMLTools.removeBOM(content);
-						String s=new String(content);
+						String s=new String(content, StandardCharsets.UTF_8);
 						InputSource is = new InputSource(new StringReader(s));
 					    Document doc = db.parse(is);
 					    

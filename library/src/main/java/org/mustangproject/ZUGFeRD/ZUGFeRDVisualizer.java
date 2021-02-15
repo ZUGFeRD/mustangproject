@@ -23,6 +23,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -77,7 +78,7 @@ public class ZUGFeRDVisualizer {
 		FileInputStream fis=new FileInputStream(xmlFilename);
 		String fileContent="";
 		try {
-			fileContent = new String(Files.readAllBytes(Paths.get(xmlFilename)));
+			fileContent = new String(Files.readAllBytes(Paths.get(xmlFilename)), StandardCharsets.UTF_8);
 		} catch (IOException e2) {
 			LOG.log(Level.SEVERE, null, e2);
 		}
