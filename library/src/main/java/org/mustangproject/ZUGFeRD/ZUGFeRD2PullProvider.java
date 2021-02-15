@@ -21,6 +21,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import static org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants.CORRECTEDINVOICE;
+import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATEGORY_CODES_WITH_EXEMPTION_REASON;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -29,7 +30,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -507,20 +508,21 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			hasDueDate = false;
 		}
 
-		final HashMap<BigDecimal, VATAmount> VATPercentAmountMap = calc.getVATPercentAmountMap();
+		final Map<BigDecimal, VATAmount> VATPercentAmountMap = calc.getVATPercentAmountMap();
 		for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
 			final VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			if (amount != null) {
-				xml += "			<ram:ApplicableTradeTax>\n"
-						+ "				<ram:CalculatedAmount>" + currencyFormat(amount.getCalculated())
-						+ "</ram:CalculatedAmount>\n" //currencyID=\"EUR\"
-						+ "				<ram:TypeCode>VAT</ram:TypeCode>\n"
-						+ exemptionReason
-						+ "				<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>\n" // currencyID=\"EUR\"
-						+ "				<ram:CategoryCode>" + amount.getCategoryCode() + "</ram:CategoryCode>\n"
-						+ "				<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent)
-						+ "</ram:RateApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n";
-
+			final String amountCategoryCode = amount.getCategoryCode();
+			final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(amountCategoryCode);
+			xml += "			<ram:ApplicableTradeTax>\n"
+				+ "				<ram:CalculatedAmount>" + currencyFormat(amount.getCalculated())
+				+ "</ram:CalculatedAmount>\n" //currencyID=\"EUR\"
+				+ "				<ram:TypeCode>VAT</ram:TypeCode>\n"
+				+ (displayExemptionReason ? exemptionReason : "")
+				+ "				<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>\n" // currencyID=\"EUR\"
+				+ "				<ram:CategoryCode>" + amountCategoryCode + "</ram:CategoryCode>\n" 
+				+ "				<ram:RateApplicablePercent>" 
+				+ vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n" ;
 			}
 		}
 		if ((trans.getDetailedDeliveryPeriodFrom() != null) || (trans.getDetailedDeliveryPeriodTo() != null)) {
