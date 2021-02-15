@@ -18,6 +18,10 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD.model;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class TaxCategoryCodeTypeConstants {
 	public static final String STANDARDRATE = "S";
 	public static final String REVERSECHARGE = "AE";
@@ -25,4 +29,6 @@ public class TaxCategoryCodeTypeConstants {
 	public static final String ZEROTAXPRODUCTS = "Z";
 	public static final String UNTAXEDSERVICE = "O";
 	public static final String INTRACOMMUNITY = "K";
+	
+	public static Set<String> CATEGORY_CODES_WITH_EXEMPTION_REASON = Stream.of(INTRACOMMUNITY, REVERSECHARGE).collect(Collectors.toSet());
 }

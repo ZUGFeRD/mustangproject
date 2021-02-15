@@ -20,6 +20,8 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATEGORY_CODES_WITH_EXEMPTION_REASON;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -263,16 +265,17 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 		for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
 			final VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			if (amount != null) {
+				final String amountCategoryCode = amount.getCategoryCode();
+				final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(amountCategoryCode);
 				xml += "			<ram:ApplicableTradeTax>\n"
 						+ "				<ram:CalculatedAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(amount.getCalculated())
 						+ "</ram:CalculatedAmount>\n" //currencyID=\"EUR\"
 						+ "				<ram:TypeCode>VAT</ram:TypeCode>\n"
-						+ exemptionReason
+						+ (displayExemptionReason ? exemptionReason : "")
 						+ "				<ram:BasisAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>\n" // currencyID=\"EUR\"
 						+ "				<ram:CategoryCode>" + amount.getCategoryCode() + "</ram:CategoryCode>\n"
 						+ "				<ram:ApplicablePercent>" + vatFormat(currentTaxPercent)
 						+ "</ram:ApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n";
-
 			}
 		}
 
