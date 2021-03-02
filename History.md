@@ -1,3 +1,6 @@
+- PR #225 exemption reasons only for certain tax category codes thanks to weclapp-dev
+- allow 1.2 and 2.0 in RDF versions for XRechnung 2.0 Referenzprofil 
+
 2.1.1
 =======
 2020-02-09
