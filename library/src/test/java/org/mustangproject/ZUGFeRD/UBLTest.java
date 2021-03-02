@@ -21,13 +21,13 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-import org.mustangproject.CII.CIIToUBL;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import org.mustangproject.CII.CIIToUBL;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UBLTest extends ResourceCase {
@@ -35,18 +35,18 @@ public class UBLTest extends ResourceCase {
 	public void testUBLBasic() {
 
 		// the writing part
-		CIIToUBL c2u = new CIIToUBL();
-		String sourceFilename = "factur-x.xml";
-		File input = getResourceAsFile(sourceFilename);
-		File expectedFile = getResourceAsFile("ubl-conv-ubl-output-factur-x.xml");
+		final CIIToUBL c2u = new CIIToUBL();
+		final String sourceFilename = "factur-x.xml";
+		final File input = getResourceAsFile(sourceFilename);
+		final File expectedFile = getResourceAsFile("ubl-conv-ubl-output-factur-x.xml");
 		String expected = null;
 		String result = null;
 		try {
-			File tempFile = File.createTempFile("ZUGFeRD-UBL-", "-test");
+			final File tempFile = File.createTempFile("ZUGFeRD-UBL-", "-test");
 			c2u.convert(input, tempFile);
 			expected = ResourceUtilities.readFile(StandardCharsets.UTF_8, expectedFile.getAbsolutePath());
-			result = ResourceUtilities.readFile(StandardCharsets.UTF_8, tempFile.getAbsolutePath());
-		} catch (IOException e) {
+			result = ResourceUtilities.readFile(StandardCharsets.UTF_8, tempFile.getAbsolutePath()).replaceAll("\r\n", "\n");
+		} catch (final IOException e) {
 			fail("Exception should not happen: "+e.getMessage());
 		}
 

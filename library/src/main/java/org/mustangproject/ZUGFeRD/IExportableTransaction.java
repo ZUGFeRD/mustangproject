@@ -416,7 +416,7 @@ public interface IExportableTransaction  {
 	}
 
 	/**
-	 * get the ID of the prceding invoice, which is e.g. to be corrected if this is a correction
+	 * get the ID of the preceding invoice, which is e.g. to be corrected if this is a correction
 	 *
 	 * @return the ID of the document
 	 */
