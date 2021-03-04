@@ -424,6 +424,7 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
+  default Date getInvoiceReferencedIssueDate(){return null;}
 	/**
 	 * get the issue timestamp of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
 	 *

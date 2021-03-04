@@ -46,13 +46,13 @@ public class Invoice implements IExportableTransaction {
 	protected Date detailedDeliveryDateStart = null;
 	protected Date detailedDeliveryPeriodEnd = null;
 
-	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<IZUGFeRDAllowanceCharge>(),
-			Charges = new ArrayList<IZUGFeRDAllowanceCharge>(), LogisticsServiceCharges = new ArrayList<IZUGFeRDAllowanceCharge>();
+	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
+			Charges = new ArrayList<>(), LogisticsServiceCharges = new ArrayList<>();
 	protected IZUGFeRDPaymentTerms paymentTerms = null;
-
+  private Date invoiceReferencedIssueDate;
 
   public Invoice() {
-		ZFItems = new ArrayList<IZUGFeRDExportableItem>();
+		ZFItems = new ArrayList<>();
 		setCurrency("EUR");
 	}
 
@@ -246,7 +246,17 @@ public class Invoice implements IExportableTransaction {
 		return invoiceReferencedDocumentID;
 	}
 
-	@Override
+  @Override
+  public Date getInvoiceReferencedIssueDate() {
+    return invoiceReferencedIssueDate;
+  }
+
+  public Invoice setInvoiceReferencedIssueDate(Date issueDate) {
+	  this.invoiceReferencedIssueDate = issueDate;
+	  return this;
+  }
+  
+  @Override
 	public String getBuyerOrderReferencedDocumentIssueDateTime() {
 		return buyerOrderReferencedDocumentIssueDateTime;
 	}
