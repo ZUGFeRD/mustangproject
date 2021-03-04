@@ -464,7 +464,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if(trans.getSpecifiedProcuringProjectName()!= null) {
 				xml += "       <ram:Name >" + XMLTools.encodeXML(trans.getSpecifiedProcuringProjectName()) + "</ram:Name>\n";
 			}
-			xml += "    </ram:ContractReferencedDocument>\n";
+			xml += "    </ram:SpecifiedProcuringProject>\n";
 		}
 		xml = xml + "		</ram:ApplicableHeaderTradeAgreement>\n"
 				+ "		<ram:ApplicableHeaderTradeDelivery>\n";
