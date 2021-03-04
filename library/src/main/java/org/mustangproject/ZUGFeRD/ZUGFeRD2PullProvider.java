@@ -457,6 +457,15 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			}
 		}
 
+		if (trans.getSpecifiedProcuringProjectID() != null) {
+			xml = xml + "   <ram:SpecifiedProcuringProject>\n"
+			+ "       <ram:ID>"
+			+ XMLTools.encodeXML(trans.getSpecifiedProcuringProjectID()) + "</ram:ID>\n";
+			if(trans.getSpecifiedProcuringProjectName()!= null) {
+				xml += "       <ram:Name >" + XMLTools.encodeXML(trans.getSpecifiedProcuringProjectName()) + "</ram:Name>\n";
+			}
+			xml += "    </ram:ContractReferencedDocument>\n";
+		}
 		xml = xml + "		</ram:ApplicableHeaderTradeAgreement>\n"
 				+ "		<ram:ApplicableHeaderTradeDelivery>\n";
 		if (this.trans.getDeliveryAddress() != null) {

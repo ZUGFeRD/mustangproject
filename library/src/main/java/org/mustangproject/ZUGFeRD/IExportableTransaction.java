@@ -489,4 +489,12 @@ public interface IExportableTransaction  {
 	default String[] getNotes() {
 		return null;
 	}
+
+	default String getSpecifiedProcuringProjectName(){
+		return null;
+	}
+
+	default String getSpecifiedProcuringProjectID(){
+		return null;
+	}
 }
