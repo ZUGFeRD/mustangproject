@@ -1,17 +1,17 @@
 package org.mustangproject.validator;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.print.attribute.standard.Severity;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.*;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -25,13 +25,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import com.helger.schematron.ISchematronResource;
+import com.helger.schematron.svrl.SVRLHelper;
 import com.helger.schematron.svrl.jaxb.FailedAssert;
 import com.helger.schematron.svrl.jaxb.FiredRule;
 import com.helger.schematron.svrl.jaxb.SchematronOutputType;
-import com.helger.schematron.ISchematronResource;
 import com.helger.schematron.xslt.SchematronResourceXSLT;
-import com.helger.schematron.svrl.SVRLHelper;
-import org.xml.sax.InputSource;
 
 public class XMLValidator extends Validator {
 
@@ -57,18 +58,19 @@ public class XMLValidator extends Validator {
 	 * @param name
 	 * @throws IrrecoverableValidationError
 	 */
-	public void setFilename(String name) throws IrrecoverableValidationError { // from XML Filename
+	@Override
+  public void setFilename(String name) throws IrrecoverableValidationError { // from XML Filename
 		filename = name;
 		// file existence must have been checked before
 
 		try {
 			zfXML = new String(XMLTools.removeBOM(Files.readAllBytes(Paths.get(name))), StandardCharsets.UTF_8);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 
-			ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(9)
+			final ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(9)
 					.setPart(EPart.fx);
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
+			final StringWriter sw = new StringWriter();
+			final PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
 			vri.setStacktrace(sw.toString());
 			context.addResultItem(vri);
@@ -108,13 +110,13 @@ public class XMLValidator extends Validator {
 	 */
 	@Override
 	public void validate() throws IrrecoverableValidationError {
-		long startXMLTime = Calendar.getInstance().getTimeInMillis();
+		final long startXMLTime = Calendar.getInstance().getTimeInMillis();
 		firedRules = 0;
 		failedRules = 0;
 
 
 		if (zfXML.isEmpty()) {
-			ValidationResultItem res = new ValidationResultItem(ESeverity.exception,
+			final ValidationResultItem res = new ValidationResultItem(ESeverity.exception,
 					"XML data not found in " + filename
 							+ ": did you specify a pdf or xml file and does the xml file contain an embedded XML file?")
 					.setSection(3);
@@ -139,33 +141,33 @@ public class XMLValidator extends Validator {
 				 *
 				 */
 
-				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+				final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 				dbf.setNamespaceAware(true); // otherwise we can not act namespace independently, i.e. use
 				// document.getElementsByTagNameNS("*",...
 
-				DocumentBuilder db = dbf.newDocumentBuilder();
-				InputSource is = new InputSource(new StringReader(zfXML));
-				Document doc = db.parse(is);
+				final DocumentBuilder db = dbf.newDocumentBuilder();
+				final InputSource is = new InputSource(new StringReader(zfXML));
+				final Document doc = db.parse(is);
 
-				Element root = doc.getDocumentElement();
+				final Element root = doc.getDocumentElement();
 
-				NodeList ndList;
+				final NodeList ndList;
 
 				// rootNode = document.getDocumentElement();
 				// ApplicableSupplyChainTradeSettlement
 
 				// Create XPathFactory object
-				XPathFactory xpathFactory = XPathFactory.newInstance();
+				final XPathFactory xpathFactory = XPathFactory.newInstance();
 
 				// Create XPath object
-				XPath xpath = xpathFactory.newXPath();
-				XPathExpression expr = xpath.compile(
+				final XPath xpath = xpathFactory.newXPath();
+				final XPathExpression expr = xpath.compile(
 						"//*[local-name()=\"GuidelineSpecifiedDocumentContextParameter\"]/*[local-name()=\"ID\"]/text()");
 				// evaluate expression result on XML document
 				ndList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
 
 				for (int bookingIndex = 0; bookingIndex < ndList.getLength(); bookingIndex++) {
-					Node booking = ndList.item(bookingIndex);
+					final Node booking = ndList.item(bookingIndex);
 					// if there is a attribute in the tag number:value
 					// urn:ferd:CrossIndustryDocument:invoice:1p0:extended
 					// setForeignReference(booking.getTextContent());
@@ -301,24 +303,24 @@ public class XMLValidator extends Validator {
 				}
 
 
-			} catch (IrrecoverableValidationError er) {
+			} catch (final IrrecoverableValidationError er) {
 				throw er;
-			} catch (Exception e) {
-				ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(22)
+			} catch (final Exception e) {
+				final ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(22)
 						.setPart(EPart.fx);
-				StringWriter sw = new StringWriter();
-				PrintWriter pw = new PrintWriter(sw);
+				final StringWriter sw = new StringWriter();
+				final PrintWriter pw = new PrintWriter(sw);
 				e.printStackTrace(pw);
 				vri.setStacktrace(sw.toString());
 				context.addResultItem(vri);
 			}
 
 		}
-		long endTime = Calendar.getInstance().getTimeInMillis();
+		final long endTime = Calendar.getInstance().getTimeInMillis();
 
 		context.addCustomXML("<info><version>" + ((context.getVersion() != null) ? context.getVersion() : "invalid")
 				+ "</version><profile>" + ((context.getProfile() != null) ? context.getProfile() : "invalid") +
-				"</profile><validator version=\"" + XMLValidator.class.getPackage().getImplementationVersion() + "\"></validator><rules><fired>" + firedRules + "</fired><failed>" + failedRules + "</failed></rules>" + "<duration unit='ms'>" + (endTime - startXMLTime) + "</duration></info>");
+				"</profile><validator version=\"" + XMLValidator.class.getPackage().getImplementationVersion() + "\"></validator><rules><fired>" + firedRules + "</fired><failed>" + failedRules + "</failed></rules>" + "<duration unit=\"ms\">" + (endTime - startXMLTime) + "</duration></info>");
 
 	}
 
@@ -352,20 +354,20 @@ public class XMLValidator extends Validator {
 				throw new IllegalArgumentException(xsltFilename + " is invalid Schematron!");
 			}
 
-			SchematronOutputType sout;
+			final SchematronOutputType sout;
 			try {
 				sout = aResSCH
 						.applySchematronValidationToSVRL(new StreamSource(new StringReader(xml)));
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				throw new IrrecoverableValidationError(e.getMessage());
 			}
 
-			List<Object> failedAsserts = sout.getActivePatternAndFiredRuleAndFailedAssert();
+			final List<Object> failedAsserts = sout.getActivePatternAndFiredRuleAndFailedAssert();
 			if (failedAsserts.size() > 0) {
-				for (Object object : failedAsserts) {
+				for (final Object object : failedAsserts) {
 					if (object instanceof FailedAssert) {
 
-						FailedAssert failedAssert = (FailedAssert) object;
+						final FailedAssert failedAssert = (FailedAssert) object;
 						LOGGER.info("FailedAssert ", failedAssert);
 
 						context.addResultItem(new ValidationResultItem(severity, SVRLHelper.getAsString(failedAssert.getText()))

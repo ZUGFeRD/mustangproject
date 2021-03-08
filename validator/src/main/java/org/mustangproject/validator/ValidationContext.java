@@ -17,7 +17,7 @@ public class ValidationContext {
 
 	public ValidationContext(Logger log) {
 		logger = log;
-		results = new Vector<ValidationResultItem>();
+		results = new Vector<>();
 	}
 
 	public void addResultItem(ValidationResultItem vr) throws IrrecoverableValidationError {
@@ -105,14 +105,14 @@ public class ValidationContext {
 			res += "<messages>";
 		}
 
-		for (ValidationResultItem validationResultItem : results) {
+		for (final ValidationResultItem validationResultItem : results) {
 			// xml and pdf are handled in their respective sections
 			res += validationResultItem.getXMLOnce() + "\n";	
 		}
 		if (results.size() > 0) {
 			res += "</messages>";
 		}
-		res += "<summary status='" + (isValid ? "valid" : "invalid") + "'/>";
+		res += "<summary status=\"" + (isValid ? "valid" : "invalid") + "\"/>";
 		return res;
 	}
 
@@ -121,9 +121,9 @@ public class ValidationContext {
 	 * @return the unique error types as comma separated string
 	 */
 	public String getCSVResult() {
-		ArrayList<String> errorcodes = new ArrayList<String>();
-		for (ValidationResultItem validationResultItem : results) {
-			String errorCodeStr=Integer.toString(validationResultItem.getSection());
+		final ArrayList<String> errorcodes = new ArrayList<>();
+		for (final ValidationResultItem validationResultItem : results) {
+			final String errorCodeStr=Integer.toString(validationResultItem.getSection());
 			errorcodes.add(errorCodeStr);
 		}
 		return String.join(",", errorcodes);
