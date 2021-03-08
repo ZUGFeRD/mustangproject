@@ -20,6 +20,7 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
 import static org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants.CORRECTEDINVOICE;
 import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATEGORY_CODES_WITH_EXEMPTION_REASON;
 
@@ -44,9 +45,7 @@ import org.mustangproject.XMLTools;
 
 public class ZUGFeRD2PullProvider implements IXMLProvider {
 
-	//// MAIN CLASS
-	protected SimpleDateFormat zugferdDateFormat = new SimpleDateFormat("yyyyMMdd");
-	protected byte[] zugferdData;
+  protected byte[] zugferdData;
 	protected IExportableTransaction trans;
 	protected TransactionCalculator calc;
 	private String paymentTermsDescription;
@@ -292,8 +291,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				// + " <ram:Name>RECHNUNG</ram:Name>\n"
 				// + "		<ram:TypeCode>380</ram:TypeCode>\n"
 				+ "		<ram:TypeCode>" + typecode + "</ram:TypeCode>\n"
-				+ "		<ram:IssueDateTime><udt:DateTimeString format=\"102\">"
-				+ zugferdDateFormat.format(trans.getIssueDate()) + "</udt:DateTimeString></ram:IssueDateTime>\n" // date
+				+ "		<ram:IssueDateTime>"
+				+ DATE.udtFormat(trans.getIssueDate()) + "</ram:IssueDateTime>\n" // date
 				+ notes
 				+ subjectNote
 				+ rebateAgreement
@@ -387,10 +386,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if ((currentItem.getDetailedDeliveryPeriodFrom() != null) || (currentItem.getDetailedDeliveryPeriodTo() != null)) {
 				xml = xml + "<ram:BillingSpecifiedPeriod>";
 				if (currentItem.getDetailedDeliveryPeriodFrom() != null) {
-					xml = xml + "<ram:StartDateTime><udt:DateTimeString format='102'>" + zugferdDateFormat.format(currentItem.getDetailedDeliveryPeriodFrom()) + "</udt:DateTimeString></ram:StartDateTime>";
+					xml = xml + "<ram:StartDateTime>>" + DATE.udtFormat(currentItem.getDetailedDeliveryPeriodFrom()) + "</ram:StartDateTime>";
 				}
 				if (currentItem.getDetailedDeliveryPeriodTo() != null) {
-					xml = xml + "<ram:EndDateTime><udt:DateTimeString format='102'>" + zugferdDateFormat.format(currentItem.getDetailedDeliveryPeriodTo()) + "</udt:DateTimeString></ram:EndDateTime>";
+					xml = xml + "<ram:EndDateTime>" + DATE.udtFormat(currentItem.getDetailedDeliveryPeriodTo()) + "</ram:EndDateTime>";
 				}
 				xml = xml + "</ram:BillingSpecifiedPeriod>";
 
@@ -478,8 +477,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "				<ram:OccurrenceDateTime>";
 
 		if (trans.getDeliveryDate() != null) {
-			xml += "<udt:DateTimeString format=\"102\">" + zugferdDateFormat.format(trans.getDeliveryDate())
-					+ "</udt:DateTimeString>";
+			xml +=  DATE.udtFormat(trans.getDeliveryDate());
 		} else {
 			throw new IllegalStateException("No delivery date provided");
 		}
@@ -537,10 +535,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if ((trans.getDetailedDeliveryPeriodFrom() != null) || (trans.getDetailedDeliveryPeriodTo() != null)) {
 			xml = xml + "<ram:BillingSpecifiedPeriod>";
 			if (trans.getDetailedDeliveryPeriodFrom() != null) {
-				xml = xml + "<ram:StartDateTime><udt:DateTimeString format='102'>" + zugferdDateFormat.format(trans.getDetailedDeliveryPeriodFrom()) + "</udt:DateTimeString></ram:StartDateTime>";
+				xml = xml + "<ram:StartDateTime>" + DATE.udtFormat(trans.getDetailedDeliveryPeriodFrom()) + "</ram:StartDateTime>";
 			}
 			if (trans.getDetailedDeliveryPeriodTo() != null) {
-				xml = xml + "<ram:EndDateTime><udt:DateTimeString format='102'>" + zugferdDateFormat.format(trans.getDetailedDeliveryPeriodTo()) + "</udt:DateTimeString></ram:EndDateTime>";
+				xml = xml + "<ram:EndDateTime>" + DATE.udtFormat(trans.getDetailedDeliveryPeriodTo()) + "</ram:EndDateTime>";
 			}
 			xml = xml + "</ram:BillingSpecifiedPeriod>";
 
@@ -607,9 +605,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			}
 
 			if (hasDueDate && (trans.getDueDate() != null)) {
-				xml = xml + "				<ram:DueDateDateTime><udt:DateTimeString format=\"102\">" // $NON-NLS-2$
-						+ zugferdDateFormat.format(trans.getDueDate())
-						+ "</udt:DateTimeString></ram:DueDateDateTime>\n";// 20130704
+				xml = xml + "				<ram:DueDateDateTime>" // $NON-NLS-2$
+						+ DATE.udtFormat(trans.getDueDate())
+						+ "</ram:DueDateDateTime>\n";// 20130704
 
 			}
 			xml = xml + "			</ram:SpecifiedTradePaymentTerms>\n";
@@ -643,7 +641,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ XMLTools.encodeXML(trans.getInvoiceReferencedDocumentID()) + "</ram:IssuerAssignedID>\n";
 			if(trans.getInvoiceReferencedIssueDate()!= null){
 				xml += "<ram:FormattedIssueDateTime>" 
-				+ zugferdDateFormat.format(trans.getInvoiceReferencedIssueDate())
+				+ DATE.qdtFormat(trans.getInvoiceReferencedIssueDate())
 				+ "</ram:FormattedIssueDateTime>\n";
 			}
 			xml += "   </ram:InvoiceReferencedDocument>\n";
@@ -694,8 +692,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		paymentTermsXml += "<ram:Description>" + paymentTerms.getDescription() + "</ram:Description>";
 		if (dueDate != null) {
 			paymentTermsXml += "<ram:DueDateDateTime>";
-			paymentTermsXml += "<udt:DateTimeString format=\"102\">"
-					+ zugferdDateFormat.format(dueDate) + "</udt:DateTimeString>";
+			paymentTermsXml += DATE.udtFormat(dueDate) ;
 			paymentTermsXml += "</ram:DueDateDateTime>";
 		}
 
@@ -710,7 +707,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if (discountTerms.getBaseDate() != null) {
 				final Date baseDate = discountTerms.getBaseDate();
 				paymentTermsXml += "<ram:BasisDateTime>";
-				paymentTermsXml += "<udt:DateTimeString format=\"102\">" + zugferdDateFormat.format(baseDate) + "</udt:DateTimeString>";
+				paymentTermsXml +=  DATE.udtFormat(baseDate);
 				paymentTermsXml += "</ram:BasisDateTime>";
 
 				paymentTermsXml += "<ram:BasisPeriodMeasure unitCode=\"" + discountTerms.getBasePeriodUnitCode() + "\">"
