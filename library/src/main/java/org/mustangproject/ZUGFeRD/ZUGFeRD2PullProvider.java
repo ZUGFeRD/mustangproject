@@ -277,7 +277,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				// xsi:schemaLocation=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100
 				// ../Schema/ZUGFeRD1p0.xsd\""
 				+ " xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100\""
-				+ " xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100\">\n"
+				+ " xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100\""
+				+ " xmlns:qdt=\"urn:un:unece:uncefact:data:standard:QualifiedDataType:100\">\n"
 				+ "	<rsm:ExchangedDocumentContext>\n"
 				// + "
 				// <ram:TestIndicator><udt:Indicator>"+testBooleanStr+"</udt:Indicator></ram:TestIndicator>\n"
