@@ -586,7 +586,7 @@ public class Main {
 			if (zfProfile == null) {
 				try {
 					if (format.equals("zf") && (zfIntVersion == 1)) {
-						zfProfile = getStringFromUser("Profile b)asic, c)omfort or e)xtended", "e", "B|b|C|c|E|e");
+						zfProfile = getStringFromUser("Profile (b)asic, (c)omfort or ex(t)ended", "t", "B|b|C|c|T|t");
 					} else {
 						zfProfile = getStringFromUser(
 								"Profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" + "[C]IUS, [E]N16931, EX[T]ENDED or [X]RECHNUNG", "E",
@@ -614,7 +614,7 @@ public class Main {
 					zfConformanceLevelProfile = Profiles.getByName("BASIC", zfIntVersion);
 				} else if (zfProfile.equals("c")) {
 					zfConformanceLevelProfile = Profiles.getByName("COMFORT", zfIntVersion);
-				} else if (zfProfile.equals("e")) {
+				} else if (zfProfile.equals("t")) {
 					zfConformanceLevelProfile = Profiles.getByName("EXTENDED", zfIntVersion);
 				} else {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
