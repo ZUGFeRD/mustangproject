@@ -4,7 +4,7 @@
 
 2.1.1
 =======
-2020-02-09
+2021-02-09
 
 - PR #217 seller order referenced document thanks to weclapp-dev
 - PR #218 allow recipient contact in XRechnung thanks to seeeeew
@@ -17,7 +17,7 @@
 
 2.1.0
 =======
-2020-01-19
+2021-01-19
 - support CII to UBL conversion (thanks to https://github.com/phax/en16931-cii2ubl)
 - make  IExportableTransaction.getZFAllowances() getZFCharges() and getZFLogisticsServiceCharges() and item.getItemAllowances, item.getItemCharges optional, correct getCurrency optionality
   make IZUGFeRDExportableTradeParty name id zip location street mandatory
