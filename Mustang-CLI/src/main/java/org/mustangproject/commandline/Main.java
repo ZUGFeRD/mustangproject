@@ -642,14 +642,15 @@ public class Main {
 			}
 
 			// All params are good! continue...
-			ZUGFeRDExporterFromA1 ze = (ZUGFeRDExporterFromA1) new ZUGFeRDExporterFromA1().setProducer("Mustang-cli")
+			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("Mustang-cli")
 					.setZUGFeRDVersion(zfIntVersion)
-					.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile)
-					.load(pdfName);
+					.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile);
+
 			if (ignoreInputErrors) {
 				ze.ignorePDFAErrors();
-
 			}
+
+			ze = ze.load(pdfName);
 
 			if (!format.equals("fx")) {
 				ze.disableFacturX();
