@@ -797,7 +797,7 @@ public class Main {
 
 	private static void ensureFileNotExists(String fileName) throws IOException {
 		if (fileExists(fileName)) {
-			throw new IOException(String.format("File %s does not exists", fileName));
+			throw new IOException(String.format("File %s already exists", fileName));
 		}
 	}
 
