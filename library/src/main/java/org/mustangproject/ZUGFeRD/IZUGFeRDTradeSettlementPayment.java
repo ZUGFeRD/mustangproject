@@ -68,8 +68,8 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 		}
 
 		String xml = "			<ram:SpecifiedTradeSettlementPaymentMeans>\n"
-				+ "				<ram:TypeCode>42</ram:TypeCode>\n"
-				+ "				<ram:Information>Bank transfer</ram:Information>\n"
+				+ "				<ram:TypeCode>58</ram:TypeCode>\n"
+				+ "				<ram:Information>SEPA credit transfer</ram:Information>\n"
 				+ "				<ram:PayeePartyCreditorFinancialAccount>\n"
 				+ "					<ram:IBANID>" + XMLTools.encodeXML(getOwnIBAN()) + "</ram:IBANID>\n";
 		xml+= accountNameStr;
