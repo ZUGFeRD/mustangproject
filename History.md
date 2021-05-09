@@ -4,6 +4,7 @@
 - falscher Text in Exception #237
 - pr 240 ignore input pdf errors when specfied on command line https://github.com/ZUGFeRD/mustangproject/pull/240
 - pr 241 use sepa transfer instead of bank transfer https://github.com/ZUGFeRD/mustangproject/pull/241
+- be able to validate Order-X files
 
 2.1.1
 =======

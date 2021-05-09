@@ -199,7 +199,7 @@ public class PDFValidator extends Validator {
 
 			boolean documentTypeValid=false;
 			for (int i = 0; i < nodes.getLength(); i++) {
-				if (nodes.item(i).getTextContent().equals("INVOICE")||nodes.item(i).getTextContent().equals("ORDER")) {
+				if (nodes.item(i).getTextContent().equals("INVOICE")||nodes.item(i).getTextContent().equals("ORDER")||nodes.item(i).getTextContent().equals("ORDER_RESPONSE")||nodes.item(i).getTextContent().equals("ORDER_CHANGE")) {
 					documentTypeValid=true;
 				}
 			}
