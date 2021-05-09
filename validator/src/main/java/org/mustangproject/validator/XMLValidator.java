@@ -7,11 +7,8 @@ import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.print.attribute.standard.Severity;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.*;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -187,16 +184,16 @@ public class XMLValidator extends Validator {
 				// urn:cen.eu:en16931:2017
 				// urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:basic
 				if (root.getNodeName().equalsIgnoreCase("rsm:SCRDMCCBDACIOMessageStructure")) {
-					context.setVersion("1");
+					context.setGeneration("1");
 					isOrderX=true;
 					isBasic = context.getProfile().contains("basic");
 					isEN16931 = context.getProfile().contains("comfort");
 					isExtended = context.getProfile().contains("extended");
-					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ox09/comfort/SCRDMCCBDACIOMessageStructure_100pD20B.xsd", 99, EPart.ox);
+					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B.xsd", 99, EPart.ox);
+					xsltFilename = "/xslt/OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B_COMFORT.xslt";
 
-				}
-				if (root.getNodeName().equalsIgnoreCase("rsm:CrossIndustryInvoice")) { // ZUGFeRD 2.0 or Factur-X
-					context.setVersion("2");
+				} else if (root.getNodeName().equalsIgnoreCase("rsm:CrossIndustryInvoice")) { // ZUGFeRD 2.0 or Factur-X
+					context.setGeneration("2");
 
 					isMiniumum = context.getProfile().contains("minimum");
 					isBasic = context.getProfile().contains("basic");
@@ -215,27 +212,27 @@ public class XMLValidator extends Validator {
 					}
 					if (isMiniumum) {
 						LOGGER.debug("is Minimum");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/MINIMUM/FACTUR-X_MINIMUM.xsd", 18, EPart.fx);
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/MINIMUM/FACTUR-X_MINIMUM.xsd", 18, EPart.fx);
 						xsltFilename = "/xslt/ZF_211/FACTUR-X_MINIMUM.xslt";
 					} else if (isBasicWithoutLines) {
 						LOGGER.debug("is Basic/WL");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/BASIC-WL/FACTUR-X_BASIC-WL.xsd", 18, EPart.fx);
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/BASIC-WL/FACTUR-X_BASIC-WL.xsd", 18, EPart.fx);
 						xsltFilename = "/xslt/ZF_211/FACTUR-X_BASIC-WL.xslt";
 					} else if (isBasic) {
 						LOGGER.debug("is Basic");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/BASIC/FACTUR-X_BASIC.xsd", 18, EPart.fx);
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/BASIC/FACTUR-X_BASIC.xsd", 18, EPart.fx);
 						xsltFilename = "/xslt/ZF_211/FACTUR-X_BASIC.xslt";
 					} else if (isEN16931) {
 						LOGGER.debug("is EN16931");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
 						xsltFilename = "/xslt/ZF_211/FACTUR-X_EN16931.xslt";
 					} else if (isExtended) {
 						LOGGER.debug("is EXTENDED");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
 						xsltFilename = "/xslt/ZF_211/FACTUR-X_EXTENDED.xslt";
 					} else if (isXRechnung) {
 						LOGGER.debug("is XRechnung");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf2/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
 						xsltFilename = "/xslt/ZF_211/FACTUR-X_EN16931.xslt";
 						XrechnungSeverity = ESeverity.error;
 					} /*
@@ -250,8 +247,16 @@ public class XMLValidator extends Validator {
 					// saxon java net.sf.saxon.Transform -o tcdl2.0.tsdtf.sch.tmp.xsl -s
 					// tcdl2.0.tsdtf.sch iso_svrl.xsl
 
+				} else if (root.getNodeName().equalsIgnoreCase("Invoice")) {
+					context.setGeneration("2");
+					context.setFormat("UBL");
+					// UBL
+					LOGGER.debug("UBL");
+					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "UBL_21/maindoc/UBL-Invoice-2.1.xsd", 18, EPart.fx);
+					xsltFilename = "/xslt/UBL_21/EN16931-UBL-validation.xsl";
+					XrechnungSeverity = ESeverity.error;
 				} else { // ZUGFeRD 1.0
-					context.setVersion("1");
+					context.setGeneration("1");
 					//
 					if ((!matchesURI(context.getProfile(), "urn:ferd:CrossIndustryDocument:invoice:1p0:basic"))
 							&& (!matchesURI(context.getProfile(), "urn:ferd:CrossIndustryDocument:invoice:1p0:comfort"))
@@ -259,44 +264,62 @@ public class XMLValidator extends Validator {
 						context.addResultItem(new ValidationResultItem(ESeverity.error, "Unsupported profile type")
 								.setSection(25).setPart(EPart.fx));
 					}
-					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "zf1/ZUGFeRD1p0.xsd", 18, EPart.fx);
+					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_10/ZUGFeRD1p0.xsd", 18, EPart.fx);
 
 					xsltFilename = "/xslt/ZUGFeRD_1p0.xslt";
 				}
-				if (context.getVersion().equals("2")) {
-					if ((!matchesURI(context.getProfile(), "urn:factur-x.eu:1p0:minimum"))
-							&& (!matchesURI(context.getProfile(), "urn:zugferd.de:2p0:minimum"))
-							&& (!matchesURI(context.getProfile(), "urn:factur-x.eu:1p0:basicwl"))
-							&& (!matchesURI(context.getProfile(), "urn:zugferd.de:2p0:basicwl"))
-							&& (!matchesURI(context.getProfile(), "urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic"))
-							&& (!matchesURI(context.getProfile(), "urn:cen.eu:en16931:2017#compliant#urn:zugferd.de:2p0:basic"))
-							&& (!matchesURI(context.getProfile(), "urn:cen.eu:en16931:2017"))
-							&& (!matchesURI(context.getProfile(), "urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended"))
-							&& (!matchesURI(context.getProfile(), "urn:cen.eu:en16931:2017#conformant#urn:zugferd.de:2p0:extended"))) {
-						context.addResultItem(
-								new ValidationResultItem(ESeverity.error, "Unsupported profile type " + context.getProfile())
+				if (context.getFormat().equals("CII")) {
+
+					if (context.getGeneration().equals("2")) {
+						if ((!matchesURI(context.getProfile(), "urn:factur-x.eu:1p0:minimum"))
+								&& (!matchesURI(context.getProfile(), "urn:zugferd.de:2p0:minimum"))
+								&& (!matchesURI(context.getProfile(), "urn:factur-x.eu:1p0:basicwl"))
+								&& (!matchesURI(context.getProfile(), "urn:zugferd.de:2p0:basicwl"))
+								&& (!matchesURI(context.getProfile(), "urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic"))
+								&& (!matchesURI(context.getProfile(), "urn:cen.eu:en16931:2017#compliant#urn:zugferd.de:2p0:basic"))
+								&& (!matchesURI(context.getProfile(), "urn:cen.eu:en16931:2017"))
+								&& (!matchesURI(context.getProfile(), "urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended"))
+								&& (!matchesURI(context.getProfile(), "urn:cen.eu:en16931:2017#conformant#urn:zugferd.de:2p0:extended"))) {
+							context.addResultItem(
+									new ValidationResultItem(ESeverity.error, "Unsupported profile type " + context.getProfile())
+											.setSection(25).setPart(EPart.fx));
+
+						}
+					} else /** v1 */ {
+						if (isOrderX) {
+							//order-x 1.0
+							if ((!matchesURI(context.getProfile(), "urn:order-x.eu:1p0:basic"))
+									&& (!matchesURI(context.getProfile(), "urn:order-x.eu:1p0:comfort"))
+									&& (!matchesURI(context.getProfile(), "urn:order-x.eu:1p0:extended"))) {
+								//zf 1.0
+								context.addResultItem(new ValidationResultItem(ESeverity.error, "Unsupported profile type")
 										.setSection(25).setPart(EPart.fx));
 
-					}
-				} else /** v1 */ {//urn:ferd:invoice:rc:comfort
-					if ((!matchesURI(context.getProfile(), "urn:ferd:CrossIndustryDocument:invoice:1p0:basic"))
-							&& (!matchesURI(context.getProfile(), "urn:ferd:CrossIndustryDocument:invoice:1p0:comfort"))
-							&& (!matchesURI(context.getProfile(), "urn:ferd:CrossIndustryDocument:invoice:1p0:extended"))) {
-						context.addResultItem(new ValidationResultItem(ESeverity.error, "Unsupported profile type")
-								.setSection(25).setPart(EPart.fx));
+							}
+						} else
+						if ((!matchesURI(context.getProfile(), "urn:ferd:CrossIndustryDocument:invoice:1p0:basic"))
+								&& (!matchesURI(context.getProfile(), "urn:ferd:CrossIndustryDocument:invoice:1p0:comfort"))
+								&& (!matchesURI(context.getProfile(), "urn:ferd:CrossIndustryDocument:invoice:1p0:extended"))) {
+							//zf 1.0
+							context.addResultItem(new ValidationResultItem(ESeverity.error, "Unsupported profile type")
+									.setSection(25).setPart(EPart.fx));
 
+						}
 					}
 				}
 
 				// main schematron validation
 				validateSchematron(zfXML, xsltFilename, 4, ESeverity.error);
 
-				if (context.getVersion().equals("2")
-						&& (isEN16931 || isXRechnung)) {
-					//additionally validate against CEN
-					validateSchematron(zfXML, "/xslt/cii16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
-					if (!disableNotices || XrechnungSeverity != ESeverity.notice) {
-						validateXR(zfXML, XrechnungSeverity);
+				if (context.getFormat().equals("CII")) {
+
+					if (context.getGeneration().equals("2")
+							&& (isEN16931 || isXRechnung)) {
+						//additionally validate against CEN
+						validateSchematron(zfXML, "/xslt/cii16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
+						if (!disableNotices || XrechnungSeverity != ESeverity.notice) {
+							validateXR(zfXML, XrechnungSeverity);
+						}
 					}
 				}
 
@@ -316,7 +339,7 @@ public class XMLValidator extends Validator {
 		}
 		long endTime = Calendar.getInstance().getTimeInMillis();
 
-		context.addCustomXML("<info><version>" + ((context.getVersion() != null) ? context.getVersion() : "invalid")
+		context.addCustomXML("<info><version>" + ((context.getGeneration() != null) ? context.getGeneration() : "invalid")
 				+ "</version><profile>" + ((context.getProfile() != null) ? context.getProfile() : "invalid") +
 				"</profile><validator version=\"" + XMLValidator.class.getPackage().getImplementationVersion() + "\"></validator><rules><fired>" + firedRules + "</fired><failed>" + failedRules + "</failed></rules>" + "<duration unit='ms'>" + (endTime - startXMLTime) + "</duration></info>");
 

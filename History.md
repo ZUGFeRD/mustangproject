@@ -2,6 +2,8 @@
 - allow 1.2 and 2.0 in RDF versions for XRechnung 2.0 Referenzprofil 
 - also use shortcut "t" for extended in zf1 #230
 - falscher Text in Exception #237
+- pr 240 ignore input pdf errors when specfied on command line https://github.com/ZUGFeRD/mustangproject/pull/240
+- pr 241 use sepa transfer instead of bank transfer https://github.com/ZUGFeRD/mustangproject/pull/241
 
 2.1.1
 =======

@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXParseException;
 
 //abstract class
 public class ZUGFeRDValidator {
@@ -253,7 +252,7 @@ public class ZUGFeRDValidator {
 
 		LOGGER.info("Parsed PDF:" + (pdfValidity ? "valid" : "invalid") + " XML:" + (xmlValidity ? "valid" : "invalid")
 				+ " Signature:" + Signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
-				+ " Version:" + context.getVersion() + " Took:" + duration + "ms Errors:["+context.getCSVResult()+"] "+toBeAppended);
+				+ " Version:" + context.getGeneration() + " Took:" + duration + "ms Errors:["+context.getCSVResult()+"] "+toBeAppended);
 		wasCompletelyValid = ((pdfValidity) && (xmlValidity));
 		return sw.toString();
 	}

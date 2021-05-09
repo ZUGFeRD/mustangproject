@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:128" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:clm210AccountingE501="urn:un:unece:uncefact:codelist:standard:EDIFICAS-EU:AccountingAccountType:D11A" xmlns:clm5ISO42173A="urn:un:unece:uncefact:codelist:standard:ISO:ISO3AlphaCurrencyCode:2012-08-31" xmlns:clm61229LineStatusCode="urn:un:unece:uncefact:codelist:standard:UNECE:ActionCode:D20A" xmlns:clm64465AllowanceChargeReasonCode="urn:un:unece:uncefact:codelist:standard:UNECE:AllowanceChargeReasonCode:D20A" xmlns:clm63139ContactTypeCode="urn:un:unece:uncefact:codelist:standard:UNECE:ContactFunctionCode:D20A" xmlns:clm64053="urn:un:unece:uncefact:codelist:standard:UNECE:DeliveryTermsCode:2010" xmlns:clm64055DeliveryTermsFunctionCode="urn:un:unece:uncefact:codelist:standard:UNECE:DeliveryTermsFunctionCode:D20A" xmlns:clm61001="urn:un:unece:uncefact:codelist:standard:UNECE:DocumentNameCode:D20A" xmlns:clm61373="urn:un:unece:uncefact:codelist:standard:UNECE:DocumentStatusCode:D20A" xmlns:clm65153="urn:un:unece:uncefact:codelist:standard:UNECE:DutyTaxFeeTypeCode:D20A" xmlns:clm65305="urn:un:unece:uncefact:codelist:standard:UNECE:DutyorTaxorFeeCategoryCode:D20A" xmlns:clm61225MessageFunctionTypeCode="urn:un:unece:uncefact:codelist:standard:UNECE:MessageFunctionCode:D20A" xmlns:clm67065="urn:un:unece:uncefact:codelist:standard:UNECE:PackageTypeCode:2006" xmlns:clm64461="urn:un:unece:uncefact:codelist:standard:UNECE:PaymentMeansCode:D20A" xmlns:clm61153ReferenceTypeCode="urn:un:unece:uncefact:codelist:standard:UNECE:ReferenceTypeCode:D20A" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:128" xmlns:ids5ISO316612A="urn:un:unece:uncefact:identifierlist:standard:ISO:ISOTwo-letterCountryCode:SecondEdition2006" targetNamespace="urn:un:unece:uncefact:data:standard:QualifiedDataType:128" elementFormDefault="qualified" version="128.0">
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:EDIFICAS-EU:AccountingAccountType:D11A" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_EDIFICAS-EU_AccountingAccountType_D11A.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:ISO:ISO3AlphaCurrencyCode:2012-08-31" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_ISO_ISO3AlphaCurrencyCode_2012-08-31.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:UNECE:ActionCode:D20A" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_UNECE_ActionCode_D20A.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:UNECE:AllowanceChargeReasonCode:D20A" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_EN16931_AllowanceChargeReasonCode_D20A.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:UNECE:ContactFunctionCode:D20A" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_UNECE_ContactFunctionCode_D20A.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:UNECE:DeliveryTermsCode:2010" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_UNECE_DeliveryTermsCode_2010.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:UNECE:DeliveryTermsFunctionCode:D20A" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_UNECE_DeliveryTermsFunctionCode_D20A.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:UNECE:DocumentNameCode:D20A" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_UNECE_DocumentNameCode_D20A.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:UNECE:DocumentStatusCode:D20A" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_UNECE_DocumentStatusCode_D20A.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:UNECE:DutyTaxFeeTypeCode:D20A" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_UNECE_DutyTaxFeeTypeCode_D20A.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:UNECE:DutyorTaxorFeeCategoryCode:D20A" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_UNECE_DutyorTaxorFeeCategoryCode_D20A.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:UNECE:MessageFunctionCode:D20A" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_UNECE_MessageFunctionCode_D20A.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:UNECE:PackageTypeCode:2006" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_UNECE_PackageTypeCode_2006.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:UNECE:PaymentMeansCode:D20A" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_UNECE_PaymentMeansCode_D20A.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:codelist:standard:UNECE:ReferenceTypeCode:D20A" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_codelist_standard_UNECE_ReferenceTypeCode_D20A.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:128" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_data_standard_UnqualifiedDataType_128.xsd"/>
+	<xsd:import namespace="urn:un:unece:uncefact:identifierlist:standard:ISO:ISOTwo-letterCountryCode:SecondEdition2006" schemaLocation="SCRDMCCBDACIOMessageStructure_100pD20B_urn_un_unece_uncefact_identifierlist_standard_ISO_ISOTwo-letterCountryCode_SecondEdition2006.xsd"/>
+	<xsd:complexType name="AccountingAccountTypeCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm210AccountingE501:AccountingAccountTypeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="AllowanceChargeReasonCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm64465AllowanceChargeReasonCode:AllowanceChargeReasonCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="ContactTypeCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm63139ContactTypeCode:ContactFunctionCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="CountryIDType">
+		<xsd:simpleContent>
+			<xsd:extension base="ids5ISO316612A:ISOTwoletterCountryCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="CurrencyCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm5ISO42173A:ISO3AlphaCurrencyCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="DeliveryTermsCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm64053:DeliveryTermsCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="DeliveryTermsFunctionCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm64055DeliveryTermsFunctionCode:DeliveryTermsFunctionCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="DocumentCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm61001:DocumentNameCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="DocumentStatusCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm61373:DocumentStatusCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="LineStatusCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm61229LineStatusCode:ActionCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="MessageFunctionCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm61225MessageFunctionTypeCode:MessageFunctionCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="PackageTypeCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm67065:PackageTypeCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="PaymentMeansCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm64461:PaymentMeansCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="ReferenceCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm61153ReferenceTypeCode:ReferenceTypeCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="TaxCategoryCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm65305:DutyorTaxorFeeCategoryCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="TaxTypeCodeType">
+		<xsd:simpleContent>
+			<xsd:extension base="clm65153:DutyTaxFeeTypeCodeContentType"/>
+		</xsd:simpleContent>
+	</xsd:complexType>
+</xsd:schema>
