@@ -1,3 +1,6 @@
+- OX Schema incompat is now type 10
+- Upgrade to PDFBox 2.0.23 #233
+
 2.2.0
 =======
 2021-05-20
