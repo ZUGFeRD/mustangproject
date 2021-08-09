@@ -14,6 +14,7 @@ public class Item implements IZUGFeRDExportableItem {
 	protected BigDecimal price, quantity, tax, grossPrice, lineTotalAmount;
 	protected Date detailedDeliveryPeriodFrom=null, detailedDeliveryPeriodTo=null;
 	protected String id;
+	protected String referencedLineID=null;
 	protected Product product;
 	protected ArrayList<String> notes = null;
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<IZUGFeRDAllowanceCharge>(),
@@ -29,6 +30,21 @@ public class Item implements IZUGFeRDExportableItem {
 		this.price = price;
 		this.quantity = quantity;
 		this.product = product;
+	}
+
+
+	public Item addReferencedLineID(String s) {
+		referencedLineID=s;
+		return this;
+	}
+
+	/***
+	 * BT 132 (issue https://github.com/ZUGFeRD/mustangproject/issues/247)
+	 * @return
+	 */
+	@Override
+	public String getBuyerOrderReferencedDocumentLineID() {
+		return referencedLineID;
 	}
 
 	public BigDecimal getLineTotalAmount() {
