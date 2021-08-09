@@ -50,6 +50,15 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	}
 
 
+	/***
+	 * BT 132 (issue https://github.com/ZUGFeRD/mustangproject/issues/247)
+	 * @return
+	 */
+	default String getBuyerOrderReferencedDocumentLineID() {
+		return null;
+	}
+
+
 	/**
 	 * The price of one item excl. taxes
 	 *
