@@ -1,3 +1,4 @@
+- Now supporting specifying ram:BuyerOrderReferencedDocument/LineID in items field BT-132 issue #247
 - OX Schema incompat is now type 10
 - Upgrade to PDFBox 2.0.23 #233
 
