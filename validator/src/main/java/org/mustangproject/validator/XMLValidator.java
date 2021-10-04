@@ -51,7 +51,7 @@ public class XMLValidator extends Validator {
 
 	/***
 	 * set source file
-	 * @param name
+	 * @param name the absolute filename of an xml file to validate
 	 * @throws IrrecoverableValidationError
 	 */
 	public void setFilename(String name) throws IrrecoverableValidationError { // from XML Filename
@@ -82,8 +82,8 @@ public class XMLValidator extends Validator {
 
 	/**
 	 * whether uri1 has the same meaning like uri1 (it has, if it only differs in the fragment, i.e. uri1#1==uri1#2 )
-	 * @param uri1
-	 * @param uri2
+	 * @param uri1 basis guideline ID
+	 * @param uri2 guideline ID to be checked
 	 * @return true if semantically identical
 	 */
 	public static boolean matchesURI(String uri1, String uri2) {

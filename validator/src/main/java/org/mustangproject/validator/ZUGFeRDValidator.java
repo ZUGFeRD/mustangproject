@@ -46,6 +46,7 @@ public class ZUGFeRDValidator {
 	 * within the validation it turned out something in the options was wrong, e.g.
 	 * the file did not exist. recommendation to show the help text again. Should be
 	 * false if XML or PDF file was found
+	 * @return false if any valid option was picked up
 	 */
 	public boolean hasOptionsError() {
 		return !optionsRecognized;
@@ -59,7 +60,7 @@ public class ZUGFeRDValidator {
 	/***
 	 * in case the result was not valid the error code of the app will be set to -1
 	 * 
-	 * @return
+	 * @return true if both xml and pdf were valid (contained no errors, notices are ignored)
 	 */
 	public boolean wasCompletelyValid() {
 		return wasCompletelyValid;
@@ -69,8 +70,8 @@ public class ZUGFeRDValidator {
 	/***
 	 * performs a validation on the file filename
 	 * 
-	 * @param filename
-	 * @return
+	 * @param filename the complete absolute filename of a PDF or XML
+	 * @return a xml string with the validation result
 	 */
 	public String validate(String filename) {
 		boolean xmlValidity;
