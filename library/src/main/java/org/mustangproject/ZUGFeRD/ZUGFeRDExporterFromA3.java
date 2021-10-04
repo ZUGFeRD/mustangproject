@@ -28,6 +28,10 @@ import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecifica
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDMarkInfo;
 import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDStructureTreeRoot;
+import org.apache.pdfbox.pdmodel.font.PDCIDFontType2;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDFontDescriptor;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.graphics.color.PDOutputIntent;
 import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
 import org.apache.xmpbox.XMPMetadata;
@@ -46,11 +50,7 @@ import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.xml.transform.TransformerException;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporter, IExporter, Closeable {
 	private boolean isFacturX = true;
@@ -92,13 +92,19 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 */
 	protected String creatorTool = "mustangproject";
 
-	/** @deprecated author is never set yet */
+	/**
+	 * @deprecated author is never set yet
+	 */
 	@Deprecated
 	protected String author;
-	/** @deprecated title is never set yet */
+	/**
+	 * @deprecated title is never set yet
+	 */
 	@Deprecated
 	protected String title;
-	/** @deprecated subject is never set yet */
+	/**
+	 * @deprecated subject is never set yet
+	 */
 	@Deprecated
 	protected String subject;
 
@@ -129,17 +135,17 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	}
 
 	public ZUGFeRDExporterFromA3 setProfile(Profile p) {
-		this.profile=p;
-		if (xmlProvider!=null) {
+		this.profile = p;
+		if (xmlProvider != null) {
 			xmlProvider.setProfile(p);
 		}
 		return this;
 	}
 
 	public ZUGFeRDExporterFromA3 setProfile(String profilename) {
-		this.profile=Profiles.getByName(profilename);
+		this.profile = Profiles.getByName(profilename);
 
-		if (xmlProvider!=null) {
+		if (xmlProvider != null) {
 			xmlProvider.setProfile(this.profile);
 		}
 		return this;
@@ -208,8 +214,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * Factur-X is now set by default since ZF 2.1, you have to disable it if you dont wont it
 	 * Generate ZF2.1 files with filename factur-x.xml
 	 *
-	 * @deprecated
 	 * @return this (fluent setter)
+	 * @deprecated
 	 */
 	public ZUGFeRDExporterFromA3 setFacturX() {
 		isFacturX = true;
@@ -244,8 +250,9 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	public void attachFile(FileAttachment file) {
 		fileAttachments.add(file);
 	}
+
 	public void attachFile(String filename, byte[] data, String mimetype, String relation) {
-		FileAttachment fa=new FileAttachment(filename, mimetype, relation, data);
+		FileAttachment fa = new FileAttachment(filename, mimetype, relation, data);
 		fileAttachments.add(fa);
 	}
 
@@ -474,12 +481,48 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		metadata.addSchema(pdfaex);
 	}
 
+	private void removeCidSet(PDDocumentCatalog catalog, PDDocument doc) {
+
+		// https://github.com/ZUGFeRD/mustangproject/issues/249
+
+		COSName cidSet = COSName.getPDFName("CIDSet");
+
+		// iterate over all pdf pages
+
+		for (Object object : doc.getPages()) {
+			if (object instanceof PDPage) {
+
+				PDPage page = (PDPage) object;
+				PDResources res = page.getResources();
+				for (COSName fontName : res.getFontNames()) {
+					try {
+						PDFont pdFont = res.getFont(fontName);
+						if (pdFont instanceof PDType0Font) {
+							PDType0Font typedFont = (PDType0Font) pdFont;
+
+							if (typedFont.getDescendantFont() instanceof PDCIDFontType2) {
+								PDCIDFontType2 f = (PDCIDFontType2) typedFont.getDescendantFont();
+								PDFontDescriptor fontDescriptor = pdFont.getFontDescriptor();
+								
+								fontDescriptor.getCOSObject().removeItem(cidSet);
+							}
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					// do stuff with the font
+				}
+			}
+		}
+	}
+
 	protected void prepareDocument() throws IOException {
 
 		PDDocumentCatalog cat = doc.getDocumentCatalog();
 		metadata = new PDMetadata(doc);
 		cat.setMetadata(metadata);
 
+		removeCidSet(cat, doc);
 		xmp = getXmpMetadata();
 		writeAdobePDFSchema(xmp);
 		writePDFAIdentificationSchema(xmp);
@@ -521,7 +564,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return prepare();
 	}
 
-	public IExporter prepare() throws IOException{
+	public IExporter prepare() throws IOException {
 		prepareDocument();
 		xmlProvider.generateXML(trans);
 		String filename = getFilenameForVersion(ZFVersion, xmlProvider.getProfile());
@@ -529,7 +572,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 				"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
 				"text/xml", xmlProvider.getXML());
 
-		for (FileAttachment  attachment: fileAttachments) {
+		for (FileAttachment attachment : fileAttachments) {
 			PDFAttachGenericFile(doc, attachment.getFilename(), attachment.getRelation(), attachment.getDescription(), attachment.getMimetype(), attachment.getData());
 		}
 
@@ -739,10 +782,11 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	protected void setXMLProvider(IXMLProvider p) {
 		this.xmlProvider = p;
-		if (profile!=null) {
+		if (profile != null) {
 			xmlProvider.setProfile(profile);
 		}
 	}
+
 	@Override
 	public ZUGFeRDExporterFromA3 setZUGFeRDVersion(int version) {
 		this.ZFVersion = version;

@@ -272,7 +272,8 @@ public class ZUGFeRDImporter {
 				return extractString("//ApplicableHeaderTradeSettlement//InvoiceCurrencyCode");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+
 			return "";
 		}
 	}
@@ -306,7 +307,7 @@ public class ZUGFeRDImporter {
 				return extractString("//BuyerOrderReferencedDocument//IssuerAssignedID");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return "";
 		}
 	}
@@ -329,7 +330,7 @@ public class ZUGFeRDImporter {
 				return extractString("//ExchangedDocument//IssueDateTime//DateTimeString");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return "";
 		}
 	}
@@ -345,7 +346,7 @@ public class ZUGFeRDImporter {
 				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//TaxBasisTotalAmount");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return "";
 		}
 	}
@@ -361,7 +362,7 @@ public class ZUGFeRDImporter {
 				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//TaxTotalAmount");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return "";
 		}
 	}
@@ -377,7 +378,7 @@ public class ZUGFeRDImporter {
 				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//RoundingAmount");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return "";
 		}
 	}
@@ -393,7 +394,7 @@ public class ZUGFeRDImporter {
 				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//TotalPrepaidAmount");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return "";
 		}
 	}
@@ -431,7 +432,7 @@ public class ZUGFeRDImporter {
 				return extractString("//ExchangedDocument//IncludedNote");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return "";
 		}
 	}
@@ -456,7 +457,7 @@ public class ZUGFeRDImporter {
 				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//LineTotalAmount");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return "";
 		}
 	}
@@ -479,7 +480,7 @@ public class ZUGFeRDImporter {
 				return extractString("//ActualDeliverySupplyChainEvent//OccurrenceDateTime//DateTimeString");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return "";
 		}
 	}
@@ -495,7 +496,7 @@ public class ZUGFeRDImporter {
 				return extractString("//ExchangedDocument//ID");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return "";
 		}
 	}
@@ -513,7 +514,7 @@ public class ZUGFeRDImporter {
 				return extractString("//ExchangedDocument/TypeCode");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return "";
 		}
 	}
@@ -530,7 +531,7 @@ public class ZUGFeRDImporter {
 				return extractString("//ApplicableHeaderTradeAgreement/BuyerReference");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return "";
 		}
 	}
@@ -718,7 +719,7 @@ public class ZUGFeRDImporter {
 				nl = getNodeListByPath("//CrossIndustryInvoice//SupplyChainTradeTransaction//ApplicableHeaderTradeAgreement//BuyerTradeParty//PostalTradeAddress");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return null;
 		}
 
@@ -741,7 +742,7 @@ public class ZUGFeRDImporter {
 				nl = getNodeListByPath("//CrossIndustryInvoice//SupplyChainTradeTransaction//ApplicableHeaderTradeAgreement//SellerTradeParty//PostalTradeAddress");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return null;
 		}
 
@@ -940,7 +941,7 @@ public class ZUGFeRDImporter {
 				nl = getNodeListByPath("//CrossIndustryInvoice//SupplyChainTradeTransaction//IncludedSupplyChainTradeLineItem");
 			}
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 		}
 
 		for (int i = 0; i < nl.getLength(); i++) {
@@ -985,7 +986,7 @@ public class ZUGFeRDImporter {
 			final XPathExpression xpr = xPath.compile(s);
 			return (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		} catch (final Exception e) {
-			e.printStackTrace();
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 			return null;
 		}
 	}

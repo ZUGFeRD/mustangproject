@@ -1,4 +1,11 @@
-- support XR 2.1 (UN/CEFACT)
+2.3.0
+=======
+2021-10-04
+
+- support validating XR 2.1 (UN/CEFACT)
+- invalid output PDF for input with incomplete CIDsets #249
+To prevent regressions it is recommended to re-validate your PDF output after upgrading to 2.3.0
+- Upgrade to PDFBox 2.0.24
 
 2.2.1
 =======
