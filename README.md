@@ -25,7 +25,7 @@ If you setup a Maven project, you can grab the artifacts using
 <dependency>
   <groupId>org.mustangproject</groupId>
   <artifactId>library</artifactId>
- <version>2.1.1</version>
+ <version>2.3.0</version>
 </dependency>
 ```
 
