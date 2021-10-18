@@ -1,19 +1,39 @@
 package org.mustangproject.ZUGFeRD;
 
+import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.mustangproject.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.*;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDInvoiceImporter.class.getCanonicalName()); // log
+
+	public ZUGFeRDInvoiceImporter() {
+		super();
+	}
+
 	public ZUGFeRDInvoiceImporter(String filename) {
 		super(filename);
+	}
+
+	public void fromXML(String XML) {
+		try {
+			containsMeta = true;
+			setRawXML(XML.getBytes(StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
 
 	/***
@@ -58,13 +78,13 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			Node exchangedDocumentNode = ExchangedDocumentNodes.item(i);
 			NodeList exchangedDocumentChilds = exchangedDocumentNode.getChildNodes();
 			for (int documentChildIndex = 0; documentChildIndex < exchangedDocumentChilds.getLength(); documentChildIndex++) {
-				if (exchangedDocumentChilds.item(documentChildIndex).getNodeName().equals("ram:ID")) {
+				if ((exchangedDocumentChilds.item(documentChildIndex).getLocalName() != null) && (exchangedDocumentChilds.item(documentChildIndex).getLocalName().equals("ID"))) {
 					number = exchangedDocumentChilds.item(documentChildIndex).getTextContent();
 				}
-				if (exchangedDocumentChilds.item(documentChildIndex).getNodeName().equals("ram:IssueDateTime")) {
+				if ((exchangedDocumentChilds.item(documentChildIndex).getLocalName() != null) && (exchangedDocumentChilds.item(documentChildIndex).getLocalName().equals("IssueDateTime"))) {
 					NodeList issueDateTimeChilds = exchangedDocumentChilds.item(documentChildIndex).getChildNodes();
 					for (int issueDateChildIndex = 0; issueDateChildIndex < issueDateTimeChilds.getLength(); issueDateChildIndex++) {
-						if (issueDateTimeChilds.item(issueDateChildIndex).getNodeName().equals("udt:DateTimeString")) {
+						if ((issueDateTimeChilds.item(issueDateChildIndex).getLocalName()!=null)&&(issueDateTimeChilds.item(issueDateChildIndex).getLocalName().equals("DateTimeString"))) {
 							issueDate = new SimpleDateFormat("yyyyMMdd").parse(issueDateTimeChilds.item(issueDateChildIndex).getTextContent());
 						}
 					}
@@ -82,15 +102,14 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			Node headerTradeDeliveryNode = headerTradeDeliveryNodes.item(i);
 			NodeList headerTradeDeliveryChilds = headerTradeDeliveryNode.getChildNodes();
 			for (int deliveryChildIndex = 0; deliveryChildIndex < headerTradeDeliveryChilds.getLength(); deliveryChildIndex++) {
-				if (headerTradeDeliveryChilds.item(deliveryChildIndex).getNodeName().equals("ram:ActualDeliverySupplyChainEvent")) {
+				if ((headerTradeDeliveryChilds.item(deliveryChildIndex).getLocalName() != null) && (headerTradeDeliveryChilds.item(deliveryChildIndex).getLocalName().equals("ActualDeliverySupplyChainEvent"))) {
 					NodeList actualDeliveryChilds = headerTradeDeliveryChilds.item(deliveryChildIndex).getChildNodes();
 					for (int actualDeliveryChildIndex = 0; actualDeliveryChildIndex < actualDeliveryChilds.getLength(); actualDeliveryChildIndex++) {
-						if (actualDeliveryChilds.item(actualDeliveryChildIndex).getNodeName().equals("ram:OccurrenceDateTime")) {
+						if ((actualDeliveryChilds.item(actualDeliveryChildIndex).getLocalName() != null) && (actualDeliveryChilds.item(actualDeliveryChildIndex).getLocalName().equals("OccurrenceDateTime"))) {
 							NodeList occurenceChilds = actualDeliveryChilds.item(actualDeliveryChildIndex).getChildNodes();
 							for (int occurenceChildIndex = 0; occurenceChildIndex < occurenceChilds.getLength(); occurenceChildIndex++) {
-								if (occurenceChilds.item(occurenceChildIndex).getNodeName().equals("udt:DateTimeString")) {
+								if ((occurenceChilds.item(occurenceChildIndex).getLocalName() != null) && (occurenceChilds.item(occurenceChildIndex).getLocalName().equals("DateTimeString"))) {
 									deliveryDate = new SimpleDateFormat("yyyyMMdd").parse(occurenceChilds.item(occurenceChildIndex).getTextContent());
-
 								}
 							}
 						}
@@ -109,15 +128,14 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			Node headerTradeSettlementNode = headerTradeSettlementNodes.item(i);
 			NodeList headerTradeSettlementChilds = headerTradeSettlementNode.getChildNodes();
 			for (int settlementChildIndex = 0; settlementChildIndex < headerTradeSettlementChilds.getLength(); settlementChildIndex++) {
-				if (headerTradeSettlementChilds.item(settlementChildIndex).getNodeName().equals("ram:SpecifiedTradePaymentTerms")) {
+				if ((headerTradeSettlementChilds.item(settlementChildIndex).getLocalName() != null) && (headerTradeSettlementChilds.item(settlementChildIndex).getLocalName().equals("SpecifiedTradePaymentTerms"))) {
 					NodeList paymentTermChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
 					for (int paymentTermChildIndex = 0; paymentTermChildIndex < paymentTermChilds.getLength(); paymentTermChildIndex++) {
-						if (paymentTermChilds.item(paymentTermChildIndex).getNodeName().equals("ram:DueDateDateTime")) {
+						if ((paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("DueDateDateTime"))) {
 							NodeList dueDateChilds = paymentTermChilds.item(paymentTermChildIndex).getChildNodes();
 							for (int dueDateChildIndex = 0; dueDateChildIndex < dueDateChilds.getLength(); dueDateChildIndex++) {
-								if (dueDateChilds.item(dueDateChildIndex).getNodeName().equals("udt:DateTimeString")) {
+								if ((dueDateChilds.item(dueDateChildIndex).getLocalName() != null) && (dueDateChilds.item(dueDateChildIndex).getLocalName().equals("DateTimeString"))) {
 									dueDate = new SimpleDateFormat("yyyyMMdd").parse(dueDateChilds.item(dueDateChildIndex).getTextContent());
-
 								}
 							}
 						}
@@ -128,7 +146,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 		zpp = new Invoice().setDueDate(dueDate).setDeliveryDate(deliveryDate).setIssueDate(issueDate).setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number);
 //.addItem(new Item(new Product("Testprodukt","","C62",BigDecimal.ZERO),amount,new BigDecimal(1.0)))
-		zpp.setOwnOrganisationName(extractString("//SellerTradeParty/Name"));
+		zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]"));
 		xpr = xpath.compile(
 				"//*[local-name()=\"IncludedSupplyChainTradeLineItem\"]");
 		NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
@@ -148,44 +166,45 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				Node currentItemNode = nodes.item(i);
 				NodeList itemChilds = currentItemNode.getChildNodes();
 				for (int itemChildIndex = 0; itemChildIndex < itemChilds.getLength(); itemChildIndex++) {
-					if (itemChilds.item(itemChildIndex).getNodeName().equals("ram:SpecifiedLineTradeAgreement")) {
+					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLineTradeAgreement"))) {
 						NodeList tradeLineChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeLineChildIndex = 0; tradeLineChildIndex < tradeLineChilds.getLength(); tradeLineChildIndex++) {
-							if (tradeLineChilds.item(tradeLineChildIndex).getNodeName().equals("ram:NetPriceProductTradePrice")) {
+							if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName()!=null)&&tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("NetPriceProductTradePrice")) {
 								NodeList netChilds = tradeLineChilds.item(tradeLineChildIndex).getChildNodes();
 								for (int netIndex = 0; netIndex < netChilds.getLength(); netIndex++) {
-									if (netChilds.item(netIndex).getNodeName().equals("ram:ChargeAmount")) {
-										price = netChilds.item(netIndex).getTextContent();//ram:ChargeAmount
+									if ((netChilds.item(netIndex).getLocalName() != null) && (netChilds.item(netIndex).getLocalName().equals("ChargeAmount"))) {
+										price = netChilds.item(netIndex).getTextContent();//ChargeAmount
 
 									}
 								}
 							}
 						}
 					}
-					if (itemChilds.item(itemChildIndex).getNodeName().equals("ram:SpecifiedLineTradeDelivery")) {
+					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLineTradeDelivery"))) {
 						NodeList tradeLineChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeLineChildIndex = 0; tradeLineChildIndex < tradeLineChilds.getLength(); tradeLineChildIndex++) {
-							if (tradeLineChilds.item(tradeLineChildIndex).getNodeName().equals("ram:BilledQuantity")) {
+							if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && (tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("BilledQuantity"))) {
 								quantity = tradeLineChilds.item(tradeLineChildIndex).getTextContent();
 								unitCode = tradeLineChilds.item(tradeLineChildIndex).getAttributes().getNamedItem("unitCode").getNodeValue();
 							}
 						}
 					}
-					if (itemChilds.item(itemChildIndex).getNodeName().equals("ram:SpecifiedTradeProduct")) {
+					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedTradeProduct"))) {
 						NodeList tradeProductChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeProductChildIndex = 0; tradeProductChildIndex < tradeProductChilds.getLength(); tradeProductChildIndex++) {
-							if (tradeProductChilds.item(tradeProductChildIndex).getNodeName().equals("ram:Name")) {
+							if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null) && (tradeProductChilds.item(tradeProductChildIndex).getLocalName().equals("Name")))
+							{
 								name = tradeProductChilds.item(tradeProductChildIndex).getTextContent();
 							}
 						}
 					}
-					if (itemChilds.item(itemChildIndex).getNodeName().equals("ram:SpecifiedLineTradeSettlement")) {
+					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLineTradeSettlement"))) {
 						NodeList tradeSettlementChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeSettlementChildIndex = 0; tradeSettlementChildIndex < tradeSettlementChilds.getLength(); tradeSettlementChildIndex++) {
-							if (tradeSettlementChilds.item(tradeSettlementChildIndex).getNodeName().equals("ram:ApplicableTradeTax")) {
+							if ((tradeSettlementChilds.item(tradeSettlementChildIndex).getLocalName() != null) && (tradeSettlementChilds.item(tradeSettlementChildIndex).getLocalName().equals("ApplicableTradeTax"))) {
 								NodeList taxChilds = tradeSettlementChilds.item(tradeSettlementChildIndex).getChildNodes();
 								for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
-									if (taxChilds.item(taxChildIndex).getNodeName().equals("ram:RateApplicablePercent")) {
+									if ((taxChilds.item(taxChildIndex).getLocalName() != null) && (taxChilds.item(taxChildIndex).getLocalName().equals("RateApplicablePercent"))) {
 										vatPercent = taxChilds.item(taxChildIndex).getTextContent();
 									}
 								}
@@ -195,7 +214,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 
 				}
-				zpp.addItem(new Item(new Product(name, description, unitCode, new BigDecimal(vatPercent)), new BigDecimal(price), new BigDecimal(quantity)));
+				zpp.addItem(new Item(new Product(name, description, unitCode, new BigDecimal(vatPercent.trim())), new BigDecimal(price.trim()), new BigDecimal(quantity.trim())));
 			}
 
 		}
@@ -213,25 +232,30 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			String reason = null;
 			String taxPercent = null;
 			for (int chargeChildIndex = 0; chargeChildIndex < chargeNodeChilds.getLength(); chargeChildIndex++) {
-				if (chargeNodeChilds.item(chargeChildIndex).getNodeName().equals("ram:ChargeIndicator")) {
-					NodeList indicatorChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
-					for (int indicatorChildIndex = 0; indicatorChildIndex < indicatorChilds.getLength(); indicatorChildIndex++) {
-						if (indicatorChilds.item(indicatorChildIndex).getNodeName().equals("udt:Indicator")) {
-							isCharge = indicatorChilds.item(indicatorChildIndex).getTextContent().equalsIgnoreCase("true");
+				if (chargeNodeChilds.item(chargeChildIndex).getLocalName() != null) {
+
+					if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("ChargeIndicator")) {
+						NodeList indicatorChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
+						for (int indicatorChildIndex = 0; indicatorChildIndex < indicatorChilds.getLength(); indicatorChildIndex++) {
+							if (indicatorChilds.item(indicatorChildIndex).getLocalName().equals("Indicator")) {
+								isCharge = indicatorChilds.item(indicatorChildIndex).getTextContent().equalsIgnoreCase("true");
+							}
 						}
-					}
-				} else if (chargeNodeChilds.item(chargeChildIndex).getNodeName().equals("ram:ActualAmount")) {
-					chargeAmount = chargeNodeChilds.item(chargeChildIndex).getTextContent();
-				} else if (chargeNodeChilds.item(chargeChildIndex).getNodeName().equals("ram:Reason")) {
-					reason = chargeNodeChilds.item(chargeChildIndex).getTextContent();
-				} else if (chargeNodeChilds.item(chargeChildIndex).getNodeName().equals("ram:CategoryTradeTax")) {
-					NodeList taxChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
-					for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
-						if (taxChilds.item(taxChildIndex).getNodeName().equals("ram:RateApplicablePercent")) {
-							taxPercent = taxChilds.item(taxChildIndex).getTextContent();
+					} else if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("ActualAmount")) {
+						chargeAmount = chargeNodeChilds.item(chargeChildIndex).getTextContent();
+					} else if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("Reason")) {
+						reason = chargeNodeChilds.item(chargeChildIndex).getTextContent();
+					} else if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("CategoryTradeTax")) {
+						NodeList taxChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
+						for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
+							if ((taxChilds.item(taxChildIndex).getLocalName() != null) && (taxChilds.item(taxChildIndex).getLocalName().equals("RateApplicablePercent")))
+							{
+								taxPercent = taxChilds.item(taxChildIndex).getTextContent();
+							}
 						}
 					}
 				}
+
 
 			}
 

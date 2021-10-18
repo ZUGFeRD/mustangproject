@@ -1,3 +1,6 @@
+- ZugferdInvoideImporter to be able to read XML, not only PDF
+- ignore whitespace around numbers in invoiceimporter
+
 2.3.0
 =======
 2021-10-04

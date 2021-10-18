@@ -19,12 +19,23 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.mustangproject.Invoice;
 
 import junit.framework.TestCase;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+import java.io.IOException;
+import java.io.StringReader;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -33,7 +44,7 @@ import java.text.SimpleDateFormat;
  * Classname ZF2ZInvoiceImporterTest is alphabetical behind the tests which will create the file
  * used for this import, testout-ZF2New.pdf
  */
-public class ZF2ZInvoiceImporterTest extends TestCase  {
+public class ZF2ZInvoiceImporterTest extends ResourceCase  {
 
 	public void testInvoiceImport() {
 
@@ -117,6 +128,24 @@ public class ZF2ZInvoiceImporterTest extends TestCase  {
 		// name street location zip country, contact name phone email, total amount
 
 
+
+	}
+	public void testItemReferencedDocumentsImport() {
+		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter();
+
+		DocumentBuilderFactory db = DocumentBuilderFactory.newInstance();
+
+		boolean hasExceptions=false;
+		Invoice invoice=null;
+		try {
+			zii.fromXML(new String(Files.readAllBytes(Paths.get(getResourceAsFile("factur-x-testImport.xml").getAbsolutePath())), StandardCharsets.UTF_8));
+			invoice=zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | IOException e) {
+			hasExceptions=true;
+		}
+		assertFalse(hasExceptions);
+		TransactionCalculator tc=new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("1284.66"),tc.getGrandTotal());
 
 	}
 

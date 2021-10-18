@@ -180,7 +180,7 @@ public class ZUGFeRDImporter {
 
 	private void setDocument() throws ParserConfigurationException, IOException, SAXException {
 		final DocumentBuilderFactory xmlFact = DocumentBuilderFactory.newInstance();
-		xmlFact.setNamespaceAware(false);
+		xmlFact.setNamespaceAware(true);
 		final DocumentBuilder builder = xmlFact.newDocumentBuilder();
 		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
 	///	is.skip(guessBOMSize(is));
@@ -232,9 +232,9 @@ public class ZUGFeRDImporter {
 	 * @return the reference (purpose) the sender specified for this invoice
 	 */
 	public String getForeignReference() {
-		String result = extractString("//ApplicableHeaderTradeSettlement/PaymentReference");
+		String result = extractString("//*[local-name() = 'ApplicableHeaderTradeSettlement']/*[local-name() = 'PaymentReference']");
 		if (result == null || result.isEmpty()) {
-			result = extractString("//ApplicableSupplyChainTradeSettlement/PaymentReference");
+			result = extractString("//*[local-name() = 'ApplicableSupplyChainTradeSettlement']/*[local-name() = 'PaymentReference']");
 		}
 		return result;
 	}
@@ -243,7 +243,7 @@ public class ZUGFeRDImporter {
 	 * @return the ZUGFeRD Profile
 	 */
 	public String getZUGFeRDProfil() {
-		switch (extractString("//GuidelineSpecifiedDocumentContextParameter//ID")) {
+		switch (extractString("//*[local-name() = 'GuidelineSpecifiedDocumentContextParameter']//*[local-name() = 'ID']")) {
 			case "urn:cen.eu:en16931:2017":
 			case "urn:ferd:CrossIndustryDocument:invoice:1p0:comfort":
 				return "COMFORT";
@@ -267,9 +267,9 @@ public class ZUGFeRDImporter {
 	public String getInvoiceCurrencyCode() {
 		try {
 			if (getVersion() == 1) {
-				return extractString("//ApplicableSupplyChainTradeSettlement//InvoiceCurrencyCode");
+				return extractString("//*[local-name() = 'ApplicableSupplyChainTradeSettlement']//*[local-name() = 'InvoiceCurrencyCode']");
 			} else {
-				return extractString("//ApplicableHeaderTradeSettlement//InvoiceCurrencyCode");
+				return extractString("//*[local-name() = 'ApplicableHeaderTradeSettlement']//*[local-name() = 'InvoiceCurrencyCode']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -302,9 +302,9 @@ public class ZUGFeRDImporter {
 	private String extractIssuerAssignedID(String propertyName) {
 		try {
 			if (getVersion() == 1) {
-				return extractString("//BuyerOrderReferencedDocument//ID");
+				return extractString("//*[local-name() = 'BuyerOrderReferencedDocument']//*[local-name() = 'ID']");
 			} else {
-				return extractString("//BuyerOrderReferencedDocument//IssuerAssignedID");
+				return extractString("//*[local-name() = 'BuyerOrderReferencedDocument']//*[local-name() = 'IssuerAssignedID']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -316,7 +316,7 @@ public class ZUGFeRDImporter {
 	 * @return the BuyerTradeParty ID
 	 */
 	public String getBuyerTradePartyID() {
-		return extractString("//BuyerTradeParty//ID");
+		return extractString("//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'ID']");
 	}
 
 	/**
@@ -325,9 +325,9 @@ public class ZUGFeRDImporter {
 	public String getIssueDate() {
 		try {
 			if (getVersion() == 1) {
-				return extractString("//HeaderExchangedDocument//IssueDateTime//DateTimeString");
+				return extractString("//*[local-name() = 'HeaderExchangedDocument']//*[local-name() = 'IssueDateTime']//*[local-name() = 'DateTimeString']");
 			} else {
-				return extractString("//ExchangedDocument//IssueDateTime//DateTimeString");
+				return extractString("//*[local-name() = 'ExchangedDocument']//*[local-name() = 'IssueDateTime']//*[local-name() = 'DateTimeString']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -341,9 +341,9 @@ public class ZUGFeRDImporter {
 	public String getTaxBasisTotalAmount() {
 		try {
 			if (getVersion() == 1) {
-				return extractString("//SpecifiedTradeSettlementMonetarySummation//TaxBasisTotalAmount");
+				return extractString("//*[local-name() = 'SpecifiedTradeSettlementMonetarySummation']//*[local-name() = 'TaxBasisTotalAmount']");
 			} else {
-				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//TaxBasisTotalAmount");
+				return extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']//*[local-name() = 'TaxBasisTotalAmount']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -357,9 +357,9 @@ public class ZUGFeRDImporter {
 	public String getTaxTotalAmount() {
 		try {
 			if (getVersion() == 1) {
-				return extractString("//SpecifiedTradeSettlementMonetarySummation//TaxTotalAmount");
+				return extractString("//*[local-name() = 'SpecifiedTradeSettlementMonetarySummation']//*[local-name() = 'TaxTotalAmount']");
 			} else {
-				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//TaxTotalAmount");
+				return extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']//*[local-name() = 'TaxTotalAmount']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -373,9 +373,9 @@ public class ZUGFeRDImporter {
 	public String getRoundingAmount() {
 		try {
 			if (getVersion() == 1) {
-				return extractString("//SpecifiedTradeSettlementMonetarySummation//RoundingAmount");
+				return extractString("//*[local-name() = 'SpecifiedTradeSettlementMonetarySummation']//*[local-name() = 'RoundingAmount']");
 			} else {
-				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//RoundingAmount");
+				return extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']//*[local-name() = 'RoundingAmount']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -389,9 +389,9 @@ public class ZUGFeRDImporter {
 	public String getPaidAmount() {
 		try {
 			if (getVersion() == 1) {
-				return extractString("//SpecifiedTradeSettlementMonetarySummation//TotalPrepaidAmount");
+				return extractString("//*[local-name() = 'SpecifiedTradeSettlementMonetarySummation']//*[local-name() = 'TotalPrepaidAmount']");
 			} else {
-				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//TotalPrepaidAmount");
+				return extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']//*[local-name() = 'TotalPrepaidAmount']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -403,21 +403,21 @@ public class ZUGFeRDImporter {
 	 * @return SellerTradeParty GlobalID
 	 */
 	public String getSellerTradePartyGlobalID() {
-		return extractString("//SellerTradeParty//GlobalID");
+		return extractString("//*[local-name() = 'SellerTradeParty']//*[local-name() = 'GlobalID']");
 	}
 
 	/**
 	 * @return the BuyerTradeParty GlobalID
 	 */
 	public String getBuyerTradePartyGlobalID() {
-		return extractString("//BuyerTradeParty//GlobalID");
+		return extractString("//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'GlobalID']");
 	}
 
 	/**
 	 * @return the BuyerTradeParty SpecifiedTaxRegistration ID
 	 */
 	public String getBuyertradePartySpecifiedTaxRegistrationID() {
-		return extractString("//BuyerTradeParty//SpecifiedTaxRegistration//ID");
+		return extractString("//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'SpecifiedTaxRegistration']//*[local-name() = 'ID']");
 	}
 
 
@@ -427,9 +427,9 @@ public class ZUGFeRDImporter {
 	public String getIncludedNote() {
 		try {
 			if (getVersion() == 1) {
-				return extractString("//HeaderExchangedDocument//IncludedNote");
+				return extractString("//*[local-name() = 'HeaderExchangedDocument']//*[local-name() = 'IncludedNote']");
 			} else {
-				return extractString("//ExchangedDocument//IncludedNote");
+				return extractString("//*[local-name() = 'ExchangedDocument']//*[local-name() = 'IncludedNote']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -441,7 +441,7 @@ public class ZUGFeRDImporter {
 	 * @return the BuyerTradeParty Name
 	 */
 	public String getBuyerTradePartyName() {
-		return extractString("//BuyerTradeParty//Name");
+		return extractString("//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'Name']");
 	}
 
 
@@ -452,9 +452,9 @@ public class ZUGFeRDImporter {
 	public String getLineTotalAmount() {
 		try {
 			if (getVersion() == 1) {
-				return extractString("//SpecifiedTradeSettlementMonetarySummation//LineTotalAmount");
+				return extractString("//*[local-name() = 'SpecifiedTradeSettlementMonetarySummation']//*[local-name() = 'LineTotalAmount']");
 			} else {
-				return extractString("//SpecifiedTradeSettlementHeaderMonetarySummation//LineTotalAmount");
+				return extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']//*[local-name() = 'LineTotalAmount']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -466,7 +466,7 @@ public class ZUGFeRDImporter {
 	 * @return the Payment Terms
 	 */
 	public String getPaymentTerms() {
-		return extractString("//SpecifiedTradePaymentTerms//Description");
+		return extractString("//*[local-name() = 'SpecifiedTradePaymentTerms']//*[local-name() = 'Description']");
 	}
 
 	/**
@@ -475,9 +475,9 @@ public class ZUGFeRDImporter {
 	public String getTaxPointDate() {
 		try {
 			if (getVersion() == 1) {
-				return extractString("//ActualDeliverySupplyChainEvent//OccurrenceDateTime//DateTimeString");
+				return extractString("//*[local-name() = 'ActualDeliverySupplyChainEvent']//*[local-name() = 'OccurrenceDateTime']//*[local-name() = 'DateTimeString']");
 			} else {
-				return extractString("//ActualDeliverySupplyChainEvent//OccurrenceDateTime//DateTimeString");
+				return extractString("//*[local-name() = 'ActualDeliverySupplyChainEvent']//*[local-name() = 'OccurrenceDateTime']//*[local-name() = 'DateTimeString']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -491,9 +491,9 @@ public class ZUGFeRDImporter {
 	public String getInvoiceID() {
 		try {
 			if (getVersion() == 1) {
-				return extractString("//HeaderExchangedDocument//ID");
+				return extractString("//*[local-name() = 'HeaderExchangedDocument']//*[local-name() = 'ID']");
 			} else {
-				return extractString("//ExchangedDocument//ID");
+				return extractString("//*[local-name() = 'ExchangedDocument']//*[local-name() = 'ID']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -509,9 +509,9 @@ public class ZUGFeRDImporter {
 	public String getDocumentCode() {
 		try {
 			if (getVersion() == 1) {
-				return extractString("//HeaderExchangedDocument/TypeCode");
+				return extractString("//*[local-name() = 'HeaderExchangedDocument']/*[local-name() = 'TypeCode']");
 			} else {
-				return extractString("//ExchangedDocument/TypeCode");
+				return extractString("//*[local-name() = 'ExchangedDocument']/*[local-name() = 'TypeCode']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -526,9 +526,9 @@ public class ZUGFeRDImporter {
 	public String getReference() {
 		try {
 			if (getVersion() == 1) {
-				return extractString("//ApplicableSupplyChainTradeAgreement/BuyerReference");
+				return extractString("//*[local-name() = 'ApplicableSupplyChainTradeAgreement']/*[local-name() = 'BuyerReference']");
 			} else {
-				return extractString("//ApplicableHeaderTradeAgreement/BuyerReference");
+				return extractString("//*[local-name() = 'ApplicableHeaderTradeAgreement']/*[local-name() = 'BuyerReference']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -541,7 +541,7 @@ public class ZUGFeRDImporter {
 	 * @return the sender's bank's BIC code
 	 */
 	public String getBIC() {
-		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/BICID");
+		return extractString("//*[local-name() = 'PayeeSpecifiedCreditorFinancialInstitution']/*[local-name() = 'BICID']");
 	}
 
 
@@ -549,7 +549,7 @@ public class ZUGFeRDImporter {
 	 * @return the sender's bank name
 	 */
 	public String getBankName() {
-		return extractString("//PayeeSpecifiedCreditorFinancialInstitution/Name");
+		return extractString("//*[local-name() = 'PayeeSpecifiedCreditorFinancialInstitution']/*[local-name() = 'Name']");
 	}
 
 
@@ -557,12 +557,12 @@ public class ZUGFeRDImporter {
 	 * @return the sender's account IBAN code
 	 */
 	public String getIBAN() {
-		return extractString("//PayeePartyCreditorFinancialAccount/IBANID");
+		return extractString("//*[local-name() = 'PayeePartyCreditorFinancialAccount']/*[local-name() = 'IBANID']");
 	}
 
 
 	public String getHolder() {
-		return extractString("//SellerTradeParty/Name");
+		return extractString("//*[local-name() = 'SellerTradeParty']/*[local-name() = 'Name']");
 	}
 
 
@@ -570,9 +570,9 @@ public class ZUGFeRDImporter {
 	 * @return the total payable amount
 	 */
 	public String getAmount() {
-		String result = extractString("//SpecifiedTradeSettlementHeaderMonetarySummation/DuePayableAmount");
+		String result = extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']/*[local-name() = 'DuePayableAmount']");
 		if (result == null || result.isEmpty()) {
-			result = extractString("//SpecifiedTradeSettlementMonetarySummation/GrandTotalAmount");
+			result = extractString("//*[local-name() = 'SpecifiedTradeSettlementMonetarySummation']/*[local-name() = 'GrandTotalAmount']");
 		}
 		return result;
 	}
@@ -582,7 +582,7 @@ public class ZUGFeRDImporter {
 	 * @return when the payment is due
 	 */
 	public String getDueDate() {
-		return extractString("//SpecifiedTradePaymentTerms/DueDateDateTime/DateTimeString");
+		return extractString("//*[local-name() = 'SpecifiedTradePaymentTerms']/*[local-name() = 'DueDateDateTime']/*[local-name() = 'DateTimeString']");
 	}
 
 
@@ -714,9 +714,9 @@ public class ZUGFeRDImporter {
 
 		try {
 			if (getVersion() == 1) {
-				nl = getNodeListByPath("//CrossIndustryDocument//SpecifiedSupplyChainTradeTransaction//ApplicableSupplyChainTradeAgreement//BuyerTradeParty//PostalTradeAddress");
+				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryDocument']//*[local-name() = 'SpecifiedSupplyChainTradeTransaction/']/*[local-name() = 'ApplicableSupplyChainTradeAgreement']//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'PostalTradeAddress']");
 			} else {
-				nl = getNodeListByPath("//CrossIndustryInvoice//SupplyChainTradeTransaction//ApplicableHeaderTradeAgreement//BuyerTradeParty//PostalTradeAddress");
+				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'PostalTradeAddress']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -737,9 +737,9 @@ public class ZUGFeRDImporter {
 
 		try {
 			if (getVersion() == 1) {
-				nl = getNodeListByPath("//CrossIndustryDocument//SpecifiedSupplyChainTradeTransaction//ApplicableSupplyChainTradeAgreement//SellerTradeParty//PostalTradeAddress");
+				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryDocument']//*[local-name() = 'SpecifiedSupplyChainTradeTransaction']//*[local-name() = 'ApplicableSupplyChainTradeAgreement']//*[local-name() = 'SellerTradeParty']//*[local-name() = 'PostalTradeAddress']");
 			} else {
-				nl = getNodeListByPath("//CrossIndustryInvoice//SupplyChainTradeTransaction//ApplicableHeaderTradeAgreement//SellerTradeParty//PostalTradeAddress");
+				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'SellerTradeParty']//*[local-name() = 'PostalTradeAddress']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
@@ -936,9 +936,9 @@ public class ZUGFeRDImporter {
 		NodeList nl = null;
 		try {
 			if (getVersion() == 1) {
-				nl = getNodeListByPath("//CrossIndustryDocument//SpecifiedSupplyChainTradeTransaction//IncludedSupplyChainTradeLineItem");
+				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryDocument']//*[local-name() = 'SpecifiedSupplyChainTradeTransaction']//*[local-name() = 'IncludedSupplyChainTradeLineItem']");
 			} else {
-				nl = getNodeListByPath("//CrossIndustryInvoice//SupplyChainTradeTransaction//IncludedSupplyChainTradeLineItem");
+				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'IncludedSupplyChainTradeLineItem']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
