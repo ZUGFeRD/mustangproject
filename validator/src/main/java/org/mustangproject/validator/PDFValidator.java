@@ -214,7 +214,7 @@ public class PDFValidator extends Validator {
 			}
 			boolean documentFilenameValid=false;
 			for (int i = 0; i < nodes.getLength(); i++) {
-				String[] valueArray = { "factur-x.xml", "ZUGFeRD-invoice.xml", "zugferd-invoice.xml", "xrechnung.xml" , "order-x.xml" };
+				final String[] valueArray = { "factur-x.xml", "ZUGFeRD-invoice.xml", "zugferd-invoice.xml", "xrechnung.xml" , "order-x.xml" };
 				if (stringArrayContains(valueArray, nodes.item(i).getTextContent())) {
 					documentFilenameValid=true;
 				}

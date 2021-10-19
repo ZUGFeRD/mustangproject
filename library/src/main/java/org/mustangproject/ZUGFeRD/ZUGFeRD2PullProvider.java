@@ -393,7 +393,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if ((currentItem.getDetailedDeliveryPeriodFrom() != null) || (currentItem.getDetailedDeliveryPeriodTo() != null)) {
 				xml = xml + "<ram:BillingSpecifiedPeriod>";
 				if (currentItem.getDetailedDeliveryPeriodFrom() != null) {
-					xml = xml + "<ram:StartDateTime>>" + DATE.udtFormat(currentItem.getDetailedDeliveryPeriodFrom()) + "</ram:StartDateTime>";
+					xml = xml + "<ram:StartDateTime>" + DATE.udtFormat(currentItem.getDetailedDeliveryPeriodFrom()) + "</ram:StartDateTime>";
 				}
 				if (currentItem.getDetailedDeliveryPeriodTo() != null) {
 					xml = xml + "<ram:EndDateTime>" + DATE.udtFormat(currentItem.getDetailedDeliveryPeriodTo()) + "</ram:EndDateTime>";
