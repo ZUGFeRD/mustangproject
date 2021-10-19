@@ -35,12 +35,14 @@ a validator library
 larger) and a commandline application using the latter 
 library.
 
+![Architecture of mustangproject](Mustang-Architecture.svg "Graph of the architecture of Mustangproject")
+
 The validator component embeds VeraPDF, a open-source
 PDF/A-validator, via maven dependency and uses standard java
 checks against schema and ph-schematron for checks against the schematron
 to validate the XML part of the invoices.
 
-![architecture of the validator](ZUV-Architektur.svg "Graph of the architecture of the validator component")
+![Architecture of the validator](ZUV-Architektur.svg "Graph of the architecture of the validator component")
 
 ## New build
 
@@ -170,7 +172,7 @@ Change to the project directory and run
   * `mvn javadoc:javadoc`. If that works you can 
   * clean the release with `mvn release:clean` and prepare the release with
   * `mvn release:prepare  -DignoreSnapshots=true` and enter the version numbers. 
-  * After that is through you can create a new release via `mvn release:perform -Dmaven.java.skip=True`.This will also update the maven repo. 
+  * After that is through you can create a new release via `mvn release:perform`.This will also update the maven repo. 
   
   ![screenshot](development_documentation_screenshot_release.png "Screenshot Release")
   
@@ -191,4 +193,5 @@ Afterwards you can access the release page and update the documentation, e.g. up
   * put announcement on usegroup
   * email the mailing list
   * freshcode.club
+  * Submit on openpr.de/.com, https://www.einpresswire.com/
  

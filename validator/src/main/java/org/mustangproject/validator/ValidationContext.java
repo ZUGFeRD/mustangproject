@@ -8,7 +8,8 @@ import org.slf4j.Logger;
 public class ValidationContext {
 	protected Vector<ValidationResultItem> results;
 	protected String customXML = "";
-	private String version = null;
+	private String format = "CII";// CII or UBL
+	private String generation = null; // generation 1 is ZF1, gen 2 is ZF2, XRechnung, Factur-X or UBL
 	private String profile = null;
 	private String signature = null;
 	private boolean isValid = true;
@@ -58,8 +59,12 @@ public class ValidationContext {
 		return customXML;
 	}
 
-	public ValidationContext setVersion(String version) {
-		this.version = version;
+	public void setFormat(String format) {
+		this.format=format;
+	}
+
+	public ValidationContext setGeneration(String version) {
+		this.generation = version;
 		return this;
 	}
 
@@ -73,8 +78,8 @@ public class ValidationContext {
 		return this;
 	}
 
-	public String getVersion() {
-		return version;
+	public String getGeneration() {
+		return generation;
 	}
 
 	public String getProfile() {
@@ -93,7 +98,7 @@ public class ValidationContext {
 		results.clear();
 		isValid = true;
 		clearCustomXML();
-		version = null;
+		generation = null;
 		profile = null;
 		signature = null;
 
@@ -142,5 +147,9 @@ public class ValidationContext {
 		} else {
 			return filename;			
 		}
+	}
+
+	public String getFormat() {
+		return format;
 	}
 }

@@ -1,9 +1,35 @@
+2.3.0
+=======
+2021-10-04
+
+- support validating XR 2.1 (UN/CEFACT)
+- invalid output PDF for input with incomplete CIDsets #249
+To prevent regressions it is recommended to re-validate your PDF output after upgrading to 2.3.0
+- Upgrade to PDFBox 2.0.24
+
+2.2.1
+=======
+2021-08-26
+
+- Now supporting specifying ram:BuyerOrderReferencedDocument/LineID in items field BT-132 issue #247
+- OX Schema incompat is now type 10
+- Upgrade to PDFBox 2.0.23 #233
+
+2.2.0
+=======
+2021-05-20
+
 - PR #225 exemption reasons only for certain tax category codes thanks to weclapp-dev
 - allow 1.2 and 2.0 in RDF versions for XRechnung 2.0 Referenzprofil 
+- also use shortcut "t" for extended in zf1 #230
+- falscher Text in Exception #237
+- pr 240 ignore input pdf errors when specfied on command line https://github.com/ZUGFeRD/mustangproject/pull/240
+- pr 241 use sepa transfer instead of bank transfer https://github.com/ZUGFeRD/mustangproject/pull/241
+- be able to validate Order-X files
 
 2.1.1
 =======
-2020-02-09
+2021-02-09
 
 - PR #217 seller order referenced document thanks to weclapp-dev
 - PR #218 allow recipient contact in XRechnung thanks to seeeeew
@@ -16,7 +42,7 @@
 
 2.1.0
 =======
-2020-01-19
+2021-01-19
 - support CII to UBL conversion (thanks to https://github.com/phax/en16931-cii2ubl)
 - make  IExportableTransaction.getZFAllowances() getZFCharges() and getZFLogisticsServiceCharges() and item.getItemAllowances, item.getItemCharges optional, correct getCurrency optionality
   make IZUGFeRDExportableTradeParty name id zip location street mandatory

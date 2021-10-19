@@ -350,8 +350,14 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "</ram:Description>\n"
 					+ "			</ram:SpecifiedTradeProduct>\n"
 
-					+ "			<ram:SpecifiedLineTradeAgreement>\n"
-					+ "				<ram:GrossPriceProductTradePrice>\n"
+					+ "			<ram:SpecifiedLineTradeAgreement>\n";
+			if (currentItem.getBuyerOrderReferencedDocumentLineID() != null) {
+				xml = xml + "				<ram:BuyerOrderReferencedDocument> \n"
+						+ "					<ram:LineID>"+XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentLineID())+"</ram:LineID>\n"
+						+ "				</ram:BuyerOrderReferencedDocument>\n";
+
+			}
+			xml = xml + "				<ram:GrossPriceProductTradePrice>\n"
 					+ "					<ram:ChargeAmount>" + priceFormat(lc.getPriceGross())
 					+ "</ram:ChargeAmount>\n" //currencyID=\"EUR\"
 					+ "<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
@@ -520,17 +526,17 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
 			final VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			if (amount != null) {
-			final String amountCategoryCode = amount.getCategoryCode();
-			final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(amountCategoryCode);
-			xml += "			<ram:ApplicableTradeTax>\n"
-				+ "				<ram:CalculatedAmount>" + currencyFormat(amount.getCalculated())
-				+ "</ram:CalculatedAmount>\n" //currencyID=\"EUR\"
-				+ "				<ram:TypeCode>VAT</ram:TypeCode>\n"
-				+ (displayExemptionReason ? exemptionReason : "")
-				+ "				<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>\n" // currencyID=\"EUR\"
-				+ "				<ram:CategoryCode>" + amountCategoryCode + "</ram:CategoryCode>\n" 
-				+ "				<ram:RateApplicablePercent>" 
-				+ vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n" ;
+				final String amountCategoryCode = amount.getCategoryCode();
+				final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(amountCategoryCode);
+				xml += "			<ram:ApplicableTradeTax>\n"
+						+ "				<ram:CalculatedAmount>" + currencyFormat(amount.getCalculated())
+						+ "</ram:CalculatedAmount>\n" //currencyID=\"EUR\"
+						+ "				<ram:TypeCode>VAT</ram:TypeCode>\n"
+						+ (displayExemptionReason ? exemptionReason : "")
+						+ "				<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>\n" // currencyID=\"EUR\"
+						+ "				<ram:CategoryCode>" + amountCategoryCode + "</ram:CategoryCode>\n"
+						+ "				<ram:RateApplicablePercent>"
+						+ vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>\n" + "			</ram:ApplicableTradeTax>\n";
 			}
 		}
 		if ((trans.getDetailedDeliveryPeriodFrom() != null) || (trans.getDetailedDeliveryPeriodTo() != null)) {

@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXParseException;
 
 //abstract class
 public class ZUGFeRDValidator {
@@ -47,6 +46,7 @@ public class ZUGFeRDValidator {
 	 * within the validation it turned out something in the options was wrong, e.g.
 	 * the file did not exist. recommendation to show the help text again. Should be
 	 * false if XML or PDF file was found
+	 * @return false if any valid option was picked up
 	 */
 	public boolean hasOptionsError() {
 		return !optionsRecognized;
@@ -60,7 +60,7 @@ public class ZUGFeRDValidator {
 	/***
 	 * in case the result was not valid the error code of the app will be set to -1
 	 * 
-	 * @return
+	 * @return true if both xml and pdf were valid (contained no errors, notices are ignored)
 	 */
 	public boolean wasCompletelyValid() {
 		return wasCompletelyValid;
@@ -70,8 +70,8 @@ public class ZUGFeRDValidator {
 	/***
 	 * performs a validation on the file filename
 	 * 
-	 * @param filename
-	 * @return
+	 * @param filename the complete absolute filename of a PDF or XML
+	 * @return a xml string with the validation result
 	 */
 	public String validate(String filename) {
 		boolean xmlValidity;
@@ -253,7 +253,7 @@ public class ZUGFeRDValidator {
 
 		LOGGER.info("Parsed PDF:" + (pdfValidity ? "valid" : "invalid") + " XML:" + (xmlValidity ? "valid" : "invalid")
 				+ " Signature:" + Signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
-				+ " Version:" + context.getVersion() + " Took:" + duration + "ms Errors:["+context.getCSVResult()+"] "+toBeAppended);
+				+ " Version:" + context.getGeneration() + " Took:" + duration + "ms Errors:["+context.getCSVResult()+"] "+toBeAppended);
 		wasCompletelyValid = ((pdfValidity) && (xmlValidity));
 		return sw.toString();
 	}

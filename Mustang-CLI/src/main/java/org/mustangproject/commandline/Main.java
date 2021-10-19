@@ -58,7 +58,7 @@ public class Main {
 				+ "                It will start once a blank line has been entered.\n" + "\n"
 				+ "        Additional parameter for both count operations\n"
 				+ "        [-i, --ignorefileextension]     Check for all files (*.*) instead of PDF files only (*.pdf) in metrics, ignore PDF/A input file errors in combine\n"
-				+ "        --action=extract   extract ZUGFeRD PDF to XML file\n"
+				+ "        --action=extract   extract Factur-X PDF to XML file\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source=<filename>]: set input PDF file\n"
 				+ "                [--out=<filename>]: set output XML file\n"
@@ -66,7 +66,7 @@ public class Main {
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source=<filename>]: set input PDF file\n"
 				+ "                [--out=<filename>]: set output PDF file\n"
-				+ "        --action=combine   combine XML and PDF file to ZUGFeRD PDF file\n"
+				+ "        --action=combine   combine XML and PDF file to Factur-X PDF file\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source=<filename>]: set input PDF file\n"
 				+ "                [--source-xml=<filename>]: set input XML file\n"
@@ -586,7 +586,7 @@ public class Main {
 			if (zfProfile == null) {
 				try {
 					if (format.equals("zf") && (zfIntVersion == 1)) {
-						zfProfile = getStringFromUser("Profile b)asic, c)omfort or e)xtended", "e", "B|b|C|c|E|e");
+						zfProfile = getStringFromUser("Profile (b)asic, (c)omfort or ex(t)ended", "t", "B|b|C|c|T|t");
 					} else {
 						zfProfile = getStringFromUser(
 								"Profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" + "[C]IUS, [E]N16931, EX[T]ENDED or [X]RECHNUNG", "E",
@@ -614,7 +614,7 @@ public class Main {
 					zfConformanceLevelProfile = Profiles.getByName("BASIC", zfIntVersion);
 				} else if (zfProfile.equals("c")) {
 					zfConformanceLevelProfile = Profiles.getByName("COMFORT", zfIntVersion);
-				} else if (zfProfile.equals("e")) {
+				} else if (zfProfile.equals("t")) {
 					zfConformanceLevelProfile = Profiles.getByName("EXTENDED", zfIntVersion);
 				} else {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
@@ -642,14 +642,15 @@ public class Main {
 			}
 
 			// All params are good! continue...
-			ZUGFeRDExporterFromA1 ze = (ZUGFeRDExporterFromA1) new ZUGFeRDExporterFromA1().setProducer("Mustang-cli")
+			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("Mustang-cli")
 					.setZUGFeRDVersion(zfIntVersion)
-					.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile)
-					.load(pdfName);
+					.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile);
+
 			if (ignoreInputErrors) {
 				ze.ignorePDFAErrors();
-
 			}
+
+			ze = ze.load(pdfName);
 
 			if (!format.equals("fx")) {
 				ze.disableFacturX();
@@ -797,7 +798,7 @@ public class Main {
 
 	private static void ensureFileNotExists(String fileName) throws IOException {
 		if (fileExists(fileName)) {
-			throw new IOException(String.format("File %s does not exists", fileName));
+			throw new IOException(String.format("File %s already exists", fileName));
 		}
 	}
 

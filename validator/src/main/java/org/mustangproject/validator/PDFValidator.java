@@ -193,7 +193,7 @@ public class PDFValidator extends Validator {
 
 			boolean documentTypeValid=false;
 			for (int i = 0; i < nodes.getLength(); i++) {
-				if (nodes.item(i).getTextContent().equals("INVOICE")) {
+				if (nodes.item(i).getTextContent().equals("INVOICE")||nodes.item(i).getTextContent().equals("ORDER")||nodes.item(i).getTextContent().equals("ORDER_RESPONSE")||nodes.item(i).getTextContent().equals("ORDER_CHANGE")) {
 					documentTypeValid=true;
 				}
 			}
@@ -214,7 +214,7 @@ public class PDFValidator extends Validator {
 			}
 			boolean documentFilenameValid=false;
 			for (int i = 0; i < nodes.getLength(); i++) {
-				final String[] valueArray = { "factur-x.xml", "ZUGFeRD-invoice.xml", "zugferd-invoice.xml", "xrechnung.xml" };
+				String[] valueArray = { "factur-x.xml", "ZUGFeRD-invoice.xml", "zugferd-invoice.xml", "xrechnung.xml" , "order-x.xml" };
 				if (stringArrayContains(valueArray, nodes.item(i).getTextContent())) {
 					documentFilenameValid=true;
 				}
