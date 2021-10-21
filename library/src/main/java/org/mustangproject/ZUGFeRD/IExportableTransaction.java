@@ -416,7 +416,7 @@ public interface IExportableTransaction  {
 	}
 
 	/**
-	 * get the ID of the prceding invoice, which is e.g. to be corrected if this is a correction
+	 * get the ID of the preceding invoice, which is e.g. to be corrected if this is a correction
 	 *
 	 * @return the ID of the document
 	 */
@@ -424,6 +424,7 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
+  default Date getInvoiceReferencedIssueDate(){return null;}
 	/**
 	 * get the issue timestamp of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
 	 *
@@ -486,6 +487,14 @@ public interface IExportableTransaction  {
 	 * @return an array of strings of document wide "includedNotes" (descriptive text values)
 	 */
 	default String[] getNotes() {
+		return null;
+	}
+
+	default String getSpecifiedProcuringProjectName(){
+		return null;
+	}
+
+	default String getSpecifiedProcuringProjectID(){
 		return null;
 	}
 }

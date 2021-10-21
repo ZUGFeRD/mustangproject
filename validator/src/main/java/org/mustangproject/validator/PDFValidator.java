@@ -1,6 +1,5 @@
 package org.mustangproject.validator;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +7,6 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -16,14 +14,9 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -75,46 +68,47 @@ public class PDFValidator extends Validator {
 		return Arrays.asList(arr).contains(targetValue);
 	}
 
-	public void validate() throws IrrecoverableValidationError {
+	@Override
+  public void validate() throws IrrecoverableValidationError {
 
 		zfXML = null;
-		File file = new File(pdfFilename);
+		final File file = new File(pdfFilename);
 		// file existence must have been checked before
-		BigFileSearcher searcher = new BigFileSearcher();
+		final BigFileSearcher searcher = new BigFileSearcher();
 
-		byte[] pdfSignature = { '%', 'P', 'D', 'F' };
+		final byte[] pdfSignature = { '%', 'P', 'D', 'F' };
 		if (searcher.indexOf(file, pdfSignature) != 0) {
 			context.addResultItem(
 					new ValidationResultItem(ESeverity.fatal, "Not a PDF file "+pdfFilename).setSection(20).setPart(EPart.pdf));
 
 		}
 
-		long startPDFTime = Calendar.getInstance().getTimeInMillis();
+		final long startPDFTime = Calendar.getInstance().getTimeInMillis();
 
 		// Step 1 Validate PDF
 
 		VeraGreenfieldFoundryProvider.initialise();
 		// Default validator config
-		ValidatorConfig validatorConfig = ValidatorFactory.defaultConfig();
+		final ValidatorConfig validatorConfig = ValidatorFactory.defaultConfig();
 		// Default features config
-		FeatureExtractorConfig featureConfig = FeatureFactory.defaultConfig();
+		final FeatureExtractorConfig featureConfig = FeatureFactory.defaultConfig();
 		// Default plugins config
-		PluginsCollectionConfig pluginsConfig = PluginsCollectionConfig.defaultConfig();
+		final PluginsCollectionConfig pluginsConfig = PluginsCollectionConfig.defaultConfig();
 		// Default fixer config
-		MetadataFixerConfig fixerConfig = FixerFactory.defaultConfig();
+		final MetadataFixerConfig fixerConfig = FixerFactory.defaultConfig();
 		// Tasks configuring
-		EnumSet tasks = EnumSet.noneOf(TaskType.class);
+		final EnumSet tasks = EnumSet.noneOf(TaskType.class);
 		tasks.add(TaskType.VALIDATE);
 		// tasks.add(TaskType.EXTRACT_FEATURES);
 		// tasks.add(TaskType.FIX_METADATA);
 		// Creating processor config
-		ProcessorConfig processorConfig = ProcessorFactory.fromValues(validatorConfig, featureConfig, pluginsConfig,
+		final ProcessorConfig processorConfig = ProcessorFactory.fromValues(validatorConfig, featureConfig, pluginsConfig,
 				fixerConfig, tasks);
 		// Creating processor and output stream.
-		ByteArrayOutputStream reportStream = new ByteArrayOutputStream();
+		final ByteArrayOutputStream reportStream = new ByteArrayOutputStream();
 		try (BatchProcessor processor = ProcessorFactory.fileBatchProcessor(processorConfig)) {
 			// Generating list of files for processing
-			List<File> files = new ArrayList<>();
+			final List<File> files = new ArrayList<>();
 			files.add(new File(pdfFilename));
 			// starting the processor
 			processor.process(files, ProcessorFactory.getHandler(FormatOption.MRR, true, reportStream, 100,
@@ -122,25 +116,25 @@ public class PDFValidator extends Validator {
 
 			pdfReport = reportStream.toString("utf-8").replaceAll("<\\?xml version=\"1\\.0\" encoding=\"utf-8\"\\?>",
 					"");
-		} catch (VeraPDFException e) {
-			ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(6)
+		} catch (final VeraPDFException e) {
+			final ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(6)
 					.setPart(EPart.pdf);
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
+			final StringWriter sw = new StringWriter();
+			final PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
 			vri.setStacktrace(sw.toString());
 			context.addResultItem(vri);
-		} catch (IOException excep) {
+		} catch (final IOException excep) {
 			context.addResultItem(new ValidationResultItem(ESeverity.exception, excep.getMessage()).setSection(7)
 					.setPart(EPart.pdf).setStacktrace(excep.getStackTrace().toString()));
 		}
 
 		// step 2 validate XMP
-		ZUGFeRDImporter zi = new ZUGFeRDImporter(pdfFilename);
-		String xmp = zi.getXMP();
+		final ZUGFeRDImporter zi = new ZUGFeRDImporter(pdfFilename);
+		final String xmp = zi.getXMP();
 
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		Document docXMP;
+		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		final Document docXMP;
 
 		if (xmp.length() == 0) {
 			context.addResultItem(new ValidationResultItem(ESeverity.error, "Invalid XMP Metadata not found")
@@ -153,15 +147,15 @@ public class PDFValidator extends Validator {
 		 * <zf:Version>1.0</zf:Version>
 		 */
 		try {
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			InputSource is = new InputSource(new StringReader(xmp));
+			final DocumentBuilder builder = factory.newDocumentBuilder();
+			final InputSource is = new InputSource(new StringReader(xmp));
 			docXMP = builder.parse(is);
 
-			XPathFactory xpathFactory = XPathFactory.newInstance();
+			final XPathFactory xpathFactory = XPathFactory.newInstance();
 
 			// Create XPath object XPath xpath = xpathFactory.newXPath(); XPathExpression
 
-			XPath xpath = xpathFactory.newXPath();
+			final XPath xpath = xpathFactory.newXPath();
 			// xpath.compile("//*[local-name()=\"GuidelineSpecifiedDocumentContextParameter\"]/[local-name()=\"ID\"]");
 			// evaluate expression result on XML document ndList = (NodeList)
 
@@ -179,7 +173,7 @@ public class PDFValidator extends Validator {
 			boolean conformanceLevelValid=false;
 			for (int i = 0; i < nodes.getLength(); i++) {
 
-				String[] valueArray = { "BASIC WL", "BASIC", "MINIMUM", "EN 16931", "COMFORT", "CIUS", "EXTENDED", "XRECHNUNG" };
+				final String[] valueArray = { "BASIC WL", "BASIC", "MINIMUM", "EN 16931", "COMFORT", "CIUS", "EXTENDED", "XRECHNUNG" };
 				if (stringArrayContains(valueArray, nodes.item(i).getTextContent())) {
 					conformanceLevelValid=true;
 				}
@@ -220,7 +214,7 @@ public class PDFValidator extends Validator {
 			}
 			boolean documentFilenameValid=false;
 			for (int i = 0; i < nodes.getLength(); i++) {
-				String[] valueArray = { "factur-x.xml", "ZUGFeRD-invoice.xml", "zugferd-invoice.xml", "xrechnung.xml" , "order-x.xml" };
+				final String[] valueArray = { "factur-x.xml", "ZUGFeRD-invoice.xml", "zugferd-invoice.xml", "xrechnung.xml" , "order-x.xml" };
 				if (stringArrayContains(valueArray, nodes.item(i).getTextContent())) {
 					documentFilenameValid=true;
 				}
@@ -246,7 +240,7 @@ public class PDFValidator extends Validator {
 
 			boolean versionValid=false;
 			for (int i = 0; i < nodes.getLength(); i++) {
-				String[] valueArray = { "1.0", "2p0", "1.2", "2.0" }; //1.2 and 2.0 are for xrechnung 1.2, 2p0 can be ZF 2.0, 2.1, 2.1.1
+				final String[] valueArray = { "1.0", "2p0", "1.2", "2.0" }; //1.2 and 2.0 are for xrechnung 1.2, 2p0 can be ZF 2.0, 2.1, 2.1.1
 				if (stringArrayContains(valueArray, nodes.item(i).getTextContent())) {
 					versionValid=true;
 				} // e.g. 1.0
@@ -258,26 +252,26 @@ public class PDFValidator extends Validator {
 
 			}
 
-		} catch (SAXException e) {
+		} catch (final SAXException e) {
 			LOGGER.error(e.getMessage(), e);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			LOGGER.error(e.getMessage(), e);
-		} catch (ParserConfigurationException e) {
+		} catch (final ParserConfigurationException e) {
 			LOGGER.error(e.getMessage(), e);
-		} catch (XPathExpressionException e) {
+		} catch (final XPathExpressionException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		zfXML = zi.getUTF8();
 
 		// step 3 find signatures
 		try {
-			byte[] symtraxSignature = "Symtrax".getBytes("UTF-8");
-			byte[] mustangSignature = "via mustangproject".getBytes("UTF-8");
-			byte[] facturxpythonSignature = "by Alexis de Lattre".getBytes("UTF-8");
-			byte[] intarsysSignature = "intarsys ".getBytes("UTF-8");
-			byte[] konikSignature = "Konik".getBytes("UTF-8");
-			byte[] pdfMachineSignature = "pdfMachine from Broadgun Software".getBytes("UTF-8");
-			byte[] ghostscriptSignature = "%%Invocation:".getBytes("UTF-8");
+			final byte[] symtraxSignature = "Symtrax".getBytes("UTF-8");
+			final byte[] mustangSignature = "via mustangproject".getBytes("UTF-8");
+			final byte[] facturxpythonSignature = "by Alexis de Lattre".getBytes("UTF-8");
+			final byte[] intarsysSignature = "intarsys ".getBytes("UTF-8");
+			final byte[] konikSignature = "Konik".getBytes("UTF-8");
+			final byte[] pdfMachineSignature = "pdfMachine from Broadgun Software".getBytes("UTF-8");
+			final byte[] ghostscriptSignature = "%%Invocation:".getBytes("UTF-8");
 
 			if (searcher.indexOf(file, symtraxSignature) != -1) {
 				Signature = "Symtrax";
@@ -297,13 +291,13 @@ public class PDFValidator extends Validator {
 
 			context.setSignature(Signature);
 
-		} catch (UnsupportedEncodingException e) {
+		} catch (final UnsupportedEncodingException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 
 		// step 4:validate additional data
-		HashMap<String, byte[]> additionalData=zi.getAdditionalData();
-		for (String filename : additionalData.keySet()) {
+		final HashMap<String, byte[]> additionalData=zi.getAdditionalData();
+		for (final String filename : additionalData.keySet()) {
 			// validating xml in byte[]	additionalData.get(filename)
 			LOGGER.info("validating additionalData " + filename);
 			validateSchema(additionalData.get(filename), "ad/basic/additional_data_base_schema.xsd", 2, EPart.pdf);
@@ -312,7 +306,7 @@ public class PDFValidator extends Validator {
 		
 		//end
 
-		long endTime = Calendar.getInstance().getTimeInMillis();
+		final long endTime = Calendar.getInstance().getTimeInMillis();
 		if (!pdfReport.contains("validationReports compliant=\"1\"")) {
 			context.setInvalid();
 		}
@@ -323,7 +317,7 @@ public class PDFValidator extends Validator {
 		}
 		context.addCustomXML(pdfReport + "<info><signature>"
 				+ ((context.getSignature() != null) ? context.getSignature() : "unknown")
-				+ "</signature><duration unit='ms'>" + (endTime - startPDFTime) + "</duration></info>");
+				+ "</signature><duration unit=\"ms\">" + (endTime - startPDFTime) + "</duration></info>");
 
 	}
 

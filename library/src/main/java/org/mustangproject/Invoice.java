@@ -46,13 +46,18 @@ public class Invoice implements IExportableTransaction {
 	protected Date detailedDeliveryDateStart = null;
 	protected Date detailedDeliveryPeriodEnd = null;
 
-	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<IZUGFeRDAllowanceCharge>(),
-			Charges = new ArrayList<IZUGFeRDAllowanceCharge>(), LogisticsServiceCharges = new ArrayList<IZUGFeRDAllowanceCharge>();
+	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
+			Charges = new ArrayList<>(), LogisticsServiceCharges = new ArrayList<>();
 	protected IZUGFeRDPaymentTerms paymentTerms = null;
+	private Date invoiceReferencedIssueDate;
+	private String specifiedProcuringProjectID = null;
 
+  
+
+	private String specifiedProcuringProjectName = null;
 
   public Invoice() {
-		ZFItems = new ArrayList<IZUGFeRDExportableItem>();
+		ZFItems = new ArrayList<>();
 		setCurrency("EUR");
 	}
 
@@ -246,7 +251,17 @@ public class Invoice implements IExportableTransaction {
 		return invoiceReferencedDocumentID;
 	}
 
-	@Override
+  @Override
+  public Date getInvoiceReferencedIssueDate() {
+    return invoiceReferencedIssueDate;
+  }
+
+  public Invoice setInvoiceReferencedIssueDate(Date issueDate) {
+	  this.invoiceReferencedIssueDate = issueDate;
+	  return this;
+  }
+  
+  @Override
 	public String getBuyerOrderReferencedDocumentIssueDateTime() {
 		return buyerOrderReferencedDocumentIssueDateTime;
 	}
@@ -637,4 +652,23 @@ public class Invoice implements IExportableTransaction {
 		return this;
 	}
 
+	@Override
+	public String getSpecifiedProcuringProjectID() {
+		return specifiedProcuringProjectID;
+	}
+
+	public Invoice setSpecifiedProcuringProjectID(String specifiedProcuringProjectID) {
+		this.specifiedProcuringProjectID = specifiedProcuringProjectID;
+		return this;
+	}
+
+	@Override
+	public String getSpecifiedProcuringProjectName() {
+		return specifiedProcuringProjectName;
+	}
+
+	public Invoice setSpecifiedProcuringProjectName(String specifiedProcuringProjectName) {
+		this.specifiedProcuringProjectName = specifiedProcuringProjectName;
+		return this;
+	}
 }

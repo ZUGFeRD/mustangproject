@@ -9,8 +9,8 @@ public class PDFValidatorTest extends ResourceCase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDValidator.class.getCanonicalName()); // log
 
 	public void testPDFValidation() {
-		ValidationContext vc = new ValidationContext(null);
-		PDFValidator pv = new PDFValidator(vc);
+		final ValidationContext vc = new ValidationContext(null);
+		final PDFValidator pv = new PDFValidator(vc);
 
 		try {
 
@@ -25,10 +25,10 @@ public class PDFValidatorTest extends ResourceCase {
 			pv.setFilename(tempFile.getAbsolutePath());
 			pv.validate();
 			String actual = pv.getXMLResult();
-			assertEquals(true, actual.contains("summary status='valid"));
-			assertEquals(false, actual.contains("summary status='invalid"));
+			assertEquals(true, actual.contains("summary status=\"valid"));
+			assertEquals(false, actual.contains("summary status=\"invalid"));
 
-			XMLValidator xv = new XMLValidator(vc);
+			final XMLValidator xv = new XMLValidator(vc);
 			xv.setStringContent(pv.getRawXML());
 			xv.validate();
 			actual = vc.getXMLResult();
@@ -58,16 +58,16 @@ public class PDFValidatorTest extends ResourceCase {
 					actual.contains("validationReports compliant=\"1\" nonCompliant=\"0\" failedJobs=\"0\">"));
 
 			assertEquals(false, actual.contains("<error"));
-		} catch (IrrecoverableValidationError e) {
+		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
 		}
 
 	}
 
 	public void testPDFXMLValidation() {
-		ValidationContext vc = new ValidationContext(null);
+		final ValidationContext vc = new ValidationContext(null);
 		try {
-			PDFValidator pv = new PDFValidator(vc);
+			final PDFValidator pv = new PDFValidator(vc);
 
 			File tempFile = getResourceAsFile("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf");// need a more
 																									// invalid file here
@@ -99,7 +99,7 @@ public class PDFValidatorTest extends ResourceCase {
 			xmlvres = xv.getXMLResult();
 			assertEquals(true, pdfvres.contains("valid") && !pdfvres.contains("invalid"));
 			assertEquals(true, xmlvres.contains("valid") && !xmlvres.contains("invalid"));
-		} catch (IrrecoverableValidationError e) {
+		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
 		}
 
@@ -107,8 +107,8 @@ public class PDFValidatorTest extends ResourceCase {
 
 	public void testXMPValidation() {
 
-		ValidationContext vc = new ValidationContext(null);
-		PDFValidator pv = new PDFValidator(vc);
+		final ValidationContext vc = new ValidationContext(null);
+		final PDFValidator pv = new PDFValidator(vc);
 		try {
 
 			File tempFile = getResourceAsFile("invalidXMP.pdf");
@@ -130,7 +130,7 @@ public class PDFValidatorTest extends ResourceCase {
 
 			assertEquals(false, actual.contains("<error"));// issue 18: "ConformanceLevel not found" should not be
 															// reported since it's actually there
-		} catch (IrrecoverableValidationError e) {
+		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
 		}
 
