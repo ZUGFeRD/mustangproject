@@ -14,6 +14,7 @@ import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
@@ -165,6 +166,8 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				String lineTotal = "0";
 				String unitCode = "0";
 
+				ArrayList<ReferencedDocument> rdocs=null;
+
 				//nodes.item(i).getTextContent())) {
 				Node currentItemNode = nodes.item(i);
 				NodeList itemChilds = currentItemNode.getChildNodes();
@@ -172,6 +175,33 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLineTradeAgreement"))) {
 						NodeList tradeLineChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeLineChildIndex = 0; tradeLineChildIndex < tradeLineChilds.getLength(); tradeLineChildIndex++) {
+
+							if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("AdditionalReferencedDocument")) {
+								String IssuerAssignedID="";
+								String TypeCode="";
+								String ReferenceTypeCode="";
+
+								NodeList refDocChilds = tradeLineChilds.item(tradeLineChildIndex).getChildNodes();
+								for (int refDocIndex = 0; refDocIndex < refDocChilds.getLength(); refDocIndex++) {
+									if ((refDocChilds.item(refDocIndex).getLocalName() != null) && (refDocChilds.item(refDocIndex).getLocalName().equals("IssuerAssignedID"))) {
+										IssuerAssignedID = refDocChilds.item(refDocIndex).getTextContent();
+									}
+									if ((refDocChilds.item(refDocIndex).getLocalName() != null) && (refDocChilds.item(refDocIndex).getLocalName().equals("TypeCode"))) {
+										TypeCode = refDocChilds.item(refDocIndex).getTextContent();
+									}
+									if ((refDocChilds.item(refDocIndex).getLocalName() != null) && (refDocChilds.item(refDocIndex).getLocalName().equals("ReferenceTypeCode"))) {
+										ReferenceTypeCode = refDocChilds.item(refDocIndex).getTextContent();
+									}
+								}
+
+								ReferencedDocument rd=new ReferencedDocument(IssuerAssignedID, TypeCode, ReferenceTypeCode);
+								if (rdocs==null) {
+									rdocs=new ArrayList<ReferencedDocument>();
+								}
+								rdocs.add(rd);
+
+							}
+
 							if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("NetPriceProductTradePrice")) {
 								NodeList netChilds = tradeLineChilds.item(tradeLineChildIndex).getChildNodes();
 								for (int netIndex = 0; netIndex < netChilds.getLength(); netIndex++) {
@@ -231,7 +261,13 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				if ((recalcPrice) && (!qty.equals(BigDecimal.ZERO))) {
 					prc = new BigDecimal(lineTotal.trim()).divide(qty,4, RoundingMode.HALF_UP);
 				}
-				zpp.addItem(new Item(new Product(name, description, unitCode, new BigDecimal(vatPercent.trim())), prc, qty));
+				Item it=new Item(new Product(name, description, unitCode, new BigDecimal(vatPercent.trim())), prc, qty);
+				if (rdocs!=null) {
+					for (ReferencedDocument rdoc: rdocs) {
+						it.addReferencedDocument(rdoc);
+					}
+				}
+				zpp.addItem(it);
 
 
 			}

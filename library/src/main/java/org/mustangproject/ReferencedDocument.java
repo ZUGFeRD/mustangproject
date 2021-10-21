@@ -4,10 +4,15 @@ import org.mustangproject.ZUGFeRD.IReferencedDocument;
 
 public class ReferencedDocument implements IReferencedDocument {
 
-
 	String issuerAssignedID;
 	String typeCode;
 	String referenceTypeCode;
+
+	public ReferencedDocument(String issuerAssignedID, String typeCode, String referenceTypeCode) {
+		this.issuerAssignedID = issuerAssignedID;
+		this.typeCode = typeCode;
+		this.referenceTypeCode = referenceTypeCode;
+	}
 
 	public void setIssuerAssignedID(String issuerAssignedID) {
 		this.issuerAssignedID = issuerAssignedID;
