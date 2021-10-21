@@ -1,5 +1,6 @@
 package org.mustangproject;
 
+import org.mustangproject.ZUGFeRD.IReferencedDocument;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
 
@@ -17,6 +18,7 @@ public class Item implements IZUGFeRDExportableItem {
 	protected String referencedLineID=null;
 	protected Product product;
 	protected ArrayList<String> notes = null;
+	protected ArrayList<ReferencedDocument> referencedDocuments = null;
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<IZUGFeRDAllowanceCharge>(),
 			Charges = new ArrayList<IZUGFeRDAllowanceCharge>();
 
@@ -189,6 +191,26 @@ public class Item implements IZUGFeRDExportableItem {
 		return this;
 	}
 
+	/***
+	 * adds item level Referenced documents along with their typecodes and issuerassignedIDs
+	 * @param doc the ReferencedDocument to add
+	 * @return fluent setter
+	 */
+	public Item addReferencedDocument(ReferencedDocument doc) {
+		if (referencedDocuments==null) {
+			referencedDocuments=new ArrayList<ReferencedDocument>();
+		}
+		referencedDocuments.add(doc);
+		return this;
+	}
+
+	@Override
+	public IReferencedDocument[] getReferencedDocuments() {
+		if (referencedDocuments==null) {
+			return null;
+		}
+		return referencedDocuments.toArray(new IReferencedDocument[0]);
+	}
 	/***
 	 * specify a item level delivery period
 	 * (apart from the document level delivery period, and the document level

@@ -18,6 +18,8 @@ import java.util.Date;
 
 public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDInvoiceImporter.class.getCanonicalName()); // log
+	private boolean recalcPrice = false;
+	private boolean ignoreCalculationErrors = false;
 
 	public ZUGFeRDInvoiceImporter() {
 		super();
@@ -84,7 +86,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				if ((exchangedDocumentChilds.item(documentChildIndex).getLocalName() != null) && (exchangedDocumentChilds.item(documentChildIndex).getLocalName().equals("IssueDateTime"))) {
 					NodeList issueDateTimeChilds = exchangedDocumentChilds.item(documentChildIndex).getChildNodes();
 					for (int issueDateChildIndex = 0; issueDateChildIndex < issueDateTimeChilds.getLength(); issueDateChildIndex++) {
-						if ((issueDateTimeChilds.item(issueDateChildIndex).getLocalName()!=null)&&(issueDateTimeChilds.item(issueDateChildIndex).getLocalName().equals("DateTimeString"))) {
+						if ((issueDateTimeChilds.item(issueDateChildIndex).getLocalName() != null) && (issueDateTimeChilds.item(issueDateChildIndex).getLocalName().equals("DateTimeString"))) {
 							issueDate = new SimpleDateFormat("yyyyMMdd").parse(issueDateTimeChilds.item(issueDateChildIndex).getTextContent());
 						}
 					}
@@ -160,6 +162,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				String description = "";
 				String quantity = "0";
 				String vatPercent = "0";
+				String lineTotal = "0";
 				String unitCode = "0";
 
 				//nodes.item(i).getTextContent())) {
@@ -169,7 +172,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLineTradeAgreement"))) {
 						NodeList tradeLineChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeLineChildIndex = 0; tradeLineChildIndex < tradeLineChilds.getLength(); tradeLineChildIndex++) {
-							if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName()!=null)&&tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("NetPriceProductTradePrice")) {
+							if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("NetPriceProductTradePrice")) {
 								NodeList netChilds = tradeLineChilds.item(tradeLineChildIndex).getChildNodes();
 								for (int netIndex = 0; netIndex < netChilds.getLength(); netIndex++) {
 									if ((netChilds.item(netIndex).getLocalName() != null) && (netChilds.item(netIndex).getLocalName().equals("ChargeAmount"))) {
@@ -192,8 +195,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedTradeProduct"))) {
 						NodeList tradeProductChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeProductChildIndex = 0; tradeProductChildIndex < tradeProductChilds.getLength(); tradeProductChildIndex++) {
-							if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null) && (tradeProductChilds.item(tradeProductChildIndex).getLocalName().equals("Name")))
-							{
+							if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null) && (tradeProductChilds.item(tradeProductChildIndex).getLocalName().equals("Name"))) {
 								name = tradeProductChilds.item(tradeProductChildIndex).getTextContent();
 							}
 						}
@@ -201,95 +203,116 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLineTradeSettlement"))) {
 						NodeList tradeSettlementChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeSettlementChildIndex = 0; tradeSettlementChildIndex < tradeSettlementChilds.getLength(); tradeSettlementChildIndex++) {
-							if ((tradeSettlementChilds.item(tradeSettlementChildIndex).getLocalName() != null) && (tradeSettlementChilds.item(tradeSettlementChildIndex).getLocalName().equals("ApplicableTradeTax"))) {
-								NodeList taxChilds = tradeSettlementChilds.item(tradeSettlementChildIndex).getChildNodes();
-								for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
-									if ((taxChilds.item(taxChildIndex).getLocalName() != null) && (taxChilds.item(taxChildIndex).getLocalName().equals("RateApplicablePercent"))) {
-										vatPercent = taxChilds.item(taxChildIndex).getTextContent();
+
+							if (tradeSettlementChilds.item(tradeSettlementChildIndex).getLocalName() != null) {
+								if (tradeSettlementChilds.item(tradeSettlementChildIndex).getLocalName().equals("ApplicableTradeTax")) {
+									NodeList taxChilds = tradeSettlementChilds.item(tradeSettlementChildIndex).getChildNodes();
+									for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
+										if ((taxChilds.item(taxChildIndex).getLocalName() != null) && (taxChilds.item(taxChildIndex).getLocalName().equals("RateApplicablePercent"))) {
+											vatPercent = taxChilds.item(taxChildIndex).getTextContent();
+										}
+									}
+								}
+
+								if (tradeSettlementChilds.item(tradeSettlementChildIndex).getLocalName().equals("SpecifiedTradeSettlementLineMonetarySummation")) {
+									NodeList totalChilds = tradeSettlementChilds.item(tradeSettlementChildIndex).getChildNodes();
+									for (int totalChildIndex = 0; totalChildIndex < totalChilds.getLength(); totalChildIndex++) {
+										if ((totalChilds.item(totalChildIndex).getLocalName() != null) && (totalChilds.item(totalChildIndex).getLocalName().equals("LineTotalAmount"))) {
+											lineTotal = totalChilds.item(totalChildIndex).getTextContent();
+										}
 									}
 								}
 							}
 						}
 					}
-
-
 				}
-				zpp.addItem(new Item(new Product(name, description, unitCode, new BigDecimal(vatPercent.trim())), new BigDecimal(price.trim()), new BigDecimal(quantity.trim())));
+				BigDecimal prc = new BigDecimal(price.trim());
+				BigDecimal qty = new BigDecimal(quantity.trim());
+				if ((recalcPrice) && (!qty.equals(BigDecimal.ZERO))) {
+					prc = new BigDecimal(lineTotal.trim()).divide(qty,4, RoundingMode.HALF_UP);
+				}
+				zpp.addItem(new Item(new Product(name, description, unitCode, new BigDecimal(vatPercent.trim())), prc, qty));
+
+
 			}
 
-		}
+			// item level charges+allowances are not yet handled but a lower item price will be read,
+			// so the invoice remains arithmetically correct
+			// -> parse document level charges+allowances
+			xpr = xpath.compile(
+					"//*[local-name()=\"SpecifiedTradeAllowanceCharge\"]");
+			NodeList chargeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+			for (int i = 0; i < chargeNodes.getLength(); i++) {
+				NodeList chargeNodeChilds = chargeNodes.item(i).getChildNodes();
+				boolean isCharge = true;
+				String chargeAmount = null;
+				String reason = null;
+				String taxPercent = null;
+				for (int chargeChildIndex = 0; chargeChildIndex < chargeNodeChilds.getLength(); chargeChildIndex++) {
+					if (chargeNodeChilds.item(chargeChildIndex).getLocalName() != null) {
 
-		// item level charges+allowances are not yet handled but a lower item price will be read,
-		// so the invoice remains arithmetically correct
-		// -> parse document level charges+allowances
-		xpr = xpath.compile(
-				"//*[local-name()=\"SpecifiedTradeAllowanceCharge\"]");
-		NodeList chargeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-		for (int i = 0; i < chargeNodes.getLength(); i++) {
-			NodeList chargeNodeChilds = chargeNodes.item(i).getChildNodes();
-			boolean isCharge = true;
-			String chargeAmount = null;
-			String reason = null;
-			String taxPercent = null;
-			for (int chargeChildIndex = 0; chargeChildIndex < chargeNodeChilds.getLength(); chargeChildIndex++) {
-				if (chargeNodeChilds.item(chargeChildIndex).getLocalName() != null) {
-
-					if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("ChargeIndicator")) {
-						NodeList indicatorChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
-						for (int indicatorChildIndex = 0; indicatorChildIndex < indicatorChilds.getLength(); indicatorChildIndex++) {
-							if (indicatorChilds.item(indicatorChildIndex).getLocalName().equals("Indicator")) {
-								isCharge = indicatorChilds.item(indicatorChildIndex).getTextContent().equalsIgnoreCase("true");
+						if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("ChargeIndicator")) {
+							NodeList indicatorChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
+							for (int indicatorChildIndex = 0; indicatorChildIndex < indicatorChilds.getLength(); indicatorChildIndex++) {
+								if (indicatorChilds.item(indicatorChildIndex).getLocalName().equals("Indicator")) {
+									isCharge = indicatorChilds.item(indicatorChildIndex).getTextContent().equalsIgnoreCase("true");
+								}
 							}
-						}
-					} else if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("ActualAmount")) {
-						chargeAmount = chargeNodeChilds.item(chargeChildIndex).getTextContent();
-					} else if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("Reason")) {
-						reason = chargeNodeChilds.item(chargeChildIndex).getTextContent();
-					} else if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("CategoryTradeTax")) {
-						NodeList taxChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
-						for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
-							if ((taxChilds.item(taxChildIndex).getLocalName() != null) && (taxChilds.item(taxChildIndex).getLocalName().equals("RateApplicablePercent")))
-							{
-								taxPercent = taxChilds.item(taxChildIndex).getTextContent();
+						} else if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("ActualAmount")) {
+							chargeAmount = chargeNodeChilds.item(chargeChildIndex).getTextContent();
+						} else if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("Reason")) {
+							reason = chargeNodeChilds.item(chargeChildIndex).getTextContent();
+						} else if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("CategoryTradeTax")) {
+							NodeList taxChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
+							for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
+								if ((taxChilds.item(taxChildIndex).getLocalName() != null) && (taxChilds.item(taxChildIndex).getLocalName().equals("RateApplicablePercent"))) {
+									taxPercent = taxChilds.item(taxChildIndex).getTextContent();
+								}
 							}
 						}
 					}
 				}
 
 
+				if (isCharge) {
+					Charge c = new Charge(new BigDecimal(chargeAmount));
+					if (reason != null) {
+						c.setReason(reason);
+					}
+					if (taxPercent != null) {
+						c.setTaxPercent(new BigDecimal(taxPercent));
+					}
+
+					zpp.addCharge(c);
+				} else {
+					Allowance a = new Allowance(new BigDecimal(chargeAmount));
+					if (reason != null) {
+						a.setReason(reason);
+					}
+					if (taxPercent != null) {
+						a.setTaxPercent(new BigDecimal(taxPercent));
+					}
+					zpp.addAllowance(a);
+				}
+
 			}
 
-
-			if (isCharge) {
-				Charge c = new Charge(new BigDecimal(chargeAmount));
-				if (reason != null) {
-					c.setReason(reason);
-				}
-				if (taxPercent != null) {
-					c.setTaxPercent(new BigDecimal(taxPercent));
-				}
-
-				zpp.addCharge(c);
-			} else {
-				Allowance a = new Allowance(new BigDecimal(chargeAmount));
-				if (reason != null) {
-					a.setReason(reason);
-				}
-				if (taxPercent != null) {
-					a.setTaxPercent(new BigDecimal(taxPercent));
-				}
-				zpp.addAllowance(a);
+			TransactionCalculator tc = new TransactionCalculator(zpp);
+			String expectedStringTotalGross = tc.getGrandTotal().toPlainString();
+			if ((!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2)))&&(!ignoreCalculationErrors)) {
+				throw new ParseException("Could not reproduce the invoice, this could mean that it could not be read properly", 0);
 			}
-
 		}
-
-		TransactionCalculator tc = new TransactionCalculator(zpp);
-		String expectedStringTotalGross = tc.getGrandTotal().toPlainString();
-		if (!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2))) {
-			throw new ParseException("Could not reproduce the invoice, this could mean that it could not be read properly", 0);
-		}
-
 		return zpp;
+
+
 	}
 
+	public void doRecalculateItemPricesFromLineTotals() {
+		recalcPrice = true;
+	}
+
+	public void doIgnoreCalculationErrors() {
+		ignoreCalculationErrors = true;
+	}
 }

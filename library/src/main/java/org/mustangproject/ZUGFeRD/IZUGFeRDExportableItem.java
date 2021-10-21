@@ -94,6 +94,14 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 		return null;
 	}
 
+
+	/***
+	 * allows to specify multiple(!) referenced documents along with e.g. their typecodes
+	 * @return
+	 */
+	default IReferencedDocument[] getReferencedDocuments() {
+		return null;
+	}
 	/***
 	 * descriptive texts
 	 * @return an array of strings of item specific "includedNotes", text values

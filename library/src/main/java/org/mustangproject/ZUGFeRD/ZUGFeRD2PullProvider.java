@@ -351,9 +351,21 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "			</ram:SpecifiedTradeProduct>\n"
 
 					+ "			<ram:SpecifiedLineTradeAgreement>\n";
+			if (currentItem.getReferencedDocuments() != null) {
+				for (IReferencedDocument currentReferencedDocument : currentItem.getReferencedDocuments()) {
+					xml = xml + "<ram:AdditionalReferencedDocument>\n" +
+							"<ram:IssuerAssignedID>" + XMLTools.encodeXML(currentReferencedDocument.getIssuerAssignedID()) + "</ram:IssuerAssignedID>\n" +
+							"<ram:TypeCode>" + XMLTools.encodeXML(currentReferencedDocument.getTypeCode()) + "</ram:TypeCode>\n" +
+							"<ram:ReferenceTypeCode>" + XMLTools.encodeXML(currentReferencedDocument.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>\n" +
+							"</ram:AdditionalReferencedDocument>\n";
+
+
+				}
+
+			}
 			if (currentItem.getBuyerOrderReferencedDocumentLineID() != null) {
 				xml = xml + "				<ram:BuyerOrderReferencedDocument> \n"
-						+ "					<ram:LineID>"+XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentLineID())+"</ram:LineID>\n"
+						+ "					<ram:LineID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentLineID()) + "</ram:LineID>\n"
 						+ "				</ram:BuyerOrderReferencedDocument>\n";
 
 			}
