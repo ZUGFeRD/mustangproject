@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.mustangproject</groupId>
         <artifactId>core</artifactId>
-        <version>2.3.1</version>
+        <version>2.3.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
@@ -11,7 +11,7 @@
     <name>Library to validate e-invoices (ZUGFeRD, Factur-X and Xrechnung)</name>
 
     <packaging>jar</packaging>
-    <version>2.3.1</version>
+    <version>2.3.2-SNAPSHOT</version>
     <repositories>
         <repository>
             <!-- for jargs -->
@@ -77,7 +77,7 @@
         <dependency>
             <groupId>org.mustangproject</groupId>
             <artifactId>library</artifactId>
-            <version>2.3.1</version>
+            <version>2.3.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
