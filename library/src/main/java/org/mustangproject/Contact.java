@@ -51,21 +51,22 @@ public class Contact implements IZUGFeRDExportableContact {
 	/***
 	 * XML parsing constructor
 	 * @param nodes the nodelist returned e.g. from xpath
-	 *
-	 *              e.g. sth like
-	 *              	<ram:DefinedTradeContact>
-	 * 					<ram:PersonName>Name</ram:PersonName>
-	 * 					<ram:TelephoneUniversalCommunication>
-	 * 						<ram:CompleteNumber>069 100-0</ram:CompleteNumber>
-	 * 					</ram:TelephoneUniversalCommunication>
-	 * 					<ram:EmailURIUniversalCommunication>
-	 * 						<ram:URIID>test@example.com</ram:URIID>
-	 * 					</ram:EmailURIUniversalCommunication>
-	 * 				</ram:DefinedTradeContact>
 	 */
 	public Contact(NodeList nodes) {
 		if (nodes.getLength() > 0) {
 
+	/*
+	               will parse sth like
+	               	<ram:DefinedTradeContact>
+	  					<ram:PersonName>Name</ram:PersonName>
+	  					<ram:TelephoneUniversalCommunication>
+	  						<ram:CompleteNumber>069 100-0</ram:CompleteNumber>
+	  					</ram:TelephoneUniversalCommunication>
+	  					<ram:EmailURIUniversalCommunication>
+	  						<ram:URIID>test@example.com</ram:URIID>
+	  					</ram:EmailURIUniversalCommunication>
+	  				</ram:DefinedTradeContact>
+	 */
 			for (int nodeIndex = 0; nodeIndex < nodes.getLength(); nodeIndex++) {
 				//nodes.item(i).getTextContent())) {
 				Node currentItemNode = nodes.item(nodeIndex);

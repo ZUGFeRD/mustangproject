@@ -14,14 +14,32 @@ public class ReferencedDocument implements IReferencedDocument {
 		this.referenceTypeCode = referenceTypeCode;
 	}
 
+	public ReferencedDocument(String issuerAssignedID, String referenceTypeCode) {
+		this.issuerAssignedID = issuerAssignedID;
+		this.typeCode = "916"; // additional invoice related document
+		this.referenceTypeCode = referenceTypeCode;
+	}
+
+	/***
+	 * sets an ID assigned by the sender
+	 * @param issuerAssignedID
+	 */
 	public void setIssuerAssignedID(String issuerAssignedID) {
 		this.issuerAssignedID = issuerAssignedID;
 	}
 
+	/**
+	 * which type is the document? e.g. "916" for additional invoice related
+	 * @param typeCode
+	 */
 	public void setTypeCode(String typeCode) {
 		this.typeCode = typeCode;
 	}
 
+	/**
+	 * type of the reference of this line, a UNTDID 1153 code
+	 * @param referenceTypeCode
+	 */
 	public void setReferenceTypeCode(String referenceTypeCode) {
 		this.referenceTypeCode = referenceTypeCode;
 	}
