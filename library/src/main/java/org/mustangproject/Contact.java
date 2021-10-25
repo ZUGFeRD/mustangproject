@@ -1,6 +1,8 @@
 package org.mustangproject;
 
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /***
  * a named contact person in an organisation
@@ -9,8 +11,8 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
  */
 public class Contact implements IZUGFeRDExportableContact {
 
-	protected String name,phone,email,zip,street,location,country;
-	protected String fax=null;
+	protected String name, phone, email, zip, street, location, country;
+	protected String fax = null;
 
 	/***
 	 * default constructor.
@@ -46,6 +48,58 @@ public class Contact implements IZUGFeRDExportableContact {
 
 	}
 
+	/***
+	 * XML parsing constructor
+	 * @param nodes the nodelist returned e.g. from xpath
+	 *
+	 *              e.g. sth like
+	 *              	<ram:DefinedTradeContact>
+	 * 					<ram:PersonName>Name</ram:PersonName>
+	 * 					<ram:TelephoneUniversalCommunication>
+	 * 						<ram:CompleteNumber>069 100-0</ram:CompleteNumber>
+	 * 					</ram:TelephoneUniversalCommunication>
+	 * 					<ram:EmailURIUniversalCommunication>
+	 * 						<ram:URIID>test@example.com</ram:URIID>
+	 * 					</ram:EmailURIUniversalCommunication>
+	 * 				</ram:DefinedTradeContact>
+	 */
+	public Contact(NodeList nodes) {
+		if (nodes.getLength() > 0) {
+
+			for (int nodeIndex = 0; nodeIndex < nodes.getLength(); nodeIndex++) {
+				//nodes.item(i).getTextContent())) {
+				Node currentItemNode = nodes.item(nodeIndex);
+				if (currentItemNode.getLocalName() != null) {
+
+					if (currentItemNode.getLocalName().equals("PersonName")) {
+						setName(currentItemNode.getFirstChild().getNodeValue());
+					}
+					if (currentItemNode.getLocalName().equals("TelephoneUniversalCommunication")) {
+						NodeList tel = currentItemNode.getChildNodes();
+						for (int telChildIndex = 0; telChildIndex < tel.getLength(); telChildIndex++) {
+							if (tel.item(telChildIndex).getLocalName() != null) {
+								if (tel.item(telChildIndex).getLocalName().equals("CompleteNumber")) {
+									setPhone(tel.item(telChildIndex).getTextContent());
+								}
+							}
+						}
+					}
+					if (currentItemNode.getLocalName().equals("EmailURIUniversalCommunication")) {
+						NodeList email = currentItemNode.getChildNodes();
+						for (int emailChildIndex = 0; emailChildIndex < email.getLength(); emailChildIndex++) {
+							if (email.item(emailChildIndex).getLocalName() != null) {
+								if (email.item(emailChildIndex).getLocalName().equals("URIID")) {
+									setEMail(email.item(emailChildIndex).getTextContent());
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+
 	@Override
 	public String getName() {
 		return name;
@@ -53,6 +107,7 @@ public class Contact implements IZUGFeRDExportableContact {
 
 	/**
 	 * the first and last name of the contact
+	 *
 	 * @param name first and last name
 	 * @return fluent setter
 	 */
@@ -126,6 +181,7 @@ public class Contact implements IZUGFeRDExportableContact {
 
 	/**
 	 * street and number, if the address is different to the organisation
+	 *
 	 * @param street street and number of the contact
 	 * @return fluent setter
 	 */

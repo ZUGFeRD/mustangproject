@@ -78,35 +78,64 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 				Node currentItemNode = nodes.item(nodeIndex);
 				NodeList itemChilds = currentItemNode.getChildNodes();
 				for (int itemChildIndex = 0; itemChildIndex < itemChilds.getLength(); itemChildIndex++) {
-					if (itemChilds.item(itemChildIndex).getNodeName().equals("ram:Name")) {
-						setName(itemChilds.item(itemChildIndex).getTextContent());
-					}
-					if (itemChilds.item(itemChildIndex).getNodeName().equals("ram:PostalTradeAddress")) {
-						NodeList postal = itemChilds.item(itemChildIndex).getChildNodes();
-						for (int postalChildIndex = 0; postalChildIndex < postal.getLength(); postalChildIndex++) {
-							if (postal.item(postalChildIndex).getNodeName().equals("ram:LineOne")) {
-								setStreet(postal.item(postalChildIndex).getTextContent());
-							}
-							if (postal.item(postalChildIndex).getNodeName().equals("ram:LineTwo")) {
-								setAdditionalAddress(postal.item(postalChildIndex).getTextContent());
-							}
-							if (postal.item(postalChildIndex).getNodeName().equals("ram:CityName")) {
-								setLocation(postal.item(postalChildIndex).getTextContent());
-							}
-							if (postal.item(postalChildIndex).getNodeName().equals("ram:PostcodeCode")) {
-								setZIP(postal.item(postalChildIndex).getTextContent());
-							}
-							if (postal.item(postalChildIndex).getNodeName().equals("ram:CountryID")) {
-								setCountry(postal.item(postalChildIndex).getTextContent());
-							}
+					if (itemChilds.item(itemChildIndex).getLocalName() != null) {
+
+						if (itemChilds.item(itemChildIndex).getLocalName().equals("Name")) {
+							setName(itemChilds.item(itemChildIndex).getTextContent());
+						}
+						if (itemChilds.item(itemChildIndex).getLocalName().equals("DefinedTradeContact")) {
+							NodeList contact = itemChilds.item(itemChildIndex).getChildNodes();
+							setContact(new Contact(contact));
 						}
 
-					}
+						if (itemChilds.item(itemChildIndex).getLocalName().equals("PostalTradeAddress")) {
+							NodeList postal = itemChilds.item(itemChildIndex).getChildNodes();
+							for (int postalChildIndex = 0; postalChildIndex < postal.getLength(); postalChildIndex++) {
+								if (postal.item(postalChildIndex).getLocalName() != null) {
+									if (postal.item(postalChildIndex).getLocalName().equals("LineOne")) {
+										setStreet(postal.item(postalChildIndex).getTextContent());
+									}
+									if (postal.item(postalChildIndex).getLocalName().equals("LineTwo")) {
+										setAdditionalAddress(postal.item(postalChildIndex).getTextContent());
+									}
+									if (postal.item(postalChildIndex).getLocalName().equals("CityName")) {
+										setLocation(postal.item(postalChildIndex).getTextContent());
+									}
+									if (postal.item(postalChildIndex).getLocalName().equals("PostcodeCode")) {
+										setZIP(postal.item(postalChildIndex).getTextContent());
+									}
+									if (postal.item(postalChildIndex).getLocalName().equals("CountryID")) {
+										setCountry(postal.item(postalChildIndex).getTextContent());
+									}
 
+								}
+							}
+
+						}
+
+						if (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedTaxRegistration")) {
+							NodeList taxChilds = itemChilds.item(itemChildIndex).getChildNodes();
+							for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
+								if (taxChilds.item(taxChildIndex).getLocalName() != null) {
+									if ((taxChilds.item(taxChildIndex).getLocalName().equals("ID"))) {
+										if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID")!=null) {
+											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("VA"))
+											{
+												setVATID(taxChilds.item(taxChildIndex).getFirstChild().getNodeValue());
+											}
+											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("FC"))
+											{
+												setTaxID(taxChilds.item(taxChildIndex).getFirstChild().getNodeValue());
+											}
+										}
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		}
-
 	}
 
 	@Override
@@ -116,6 +145,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	/**
 	 * if it's a customer, this can e.g. be the customer ID
+	 *
 	 * @param ID customer/seller number
 	 * @return fluent setter
 	 */
@@ -144,14 +174,16 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		bankDetails.add(s);
 		return this;
 	}
+
 	/**
 	 * (optional)
+	 *
 	 * @param debitDetail
 	 * @return fluent setter
 	 */
 	public TradeParty addDebitDetails(IZUGFeRDTradeSettlementDebit debitDetail) {
-	    debitDetails.add(debitDetail);
-	    return this;
+		debitDetails.add(debitDetail);
+		return this;
 	}
 
 	public List<BankDetails> getBankDetails() {
@@ -183,9 +215,19 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		return vatID;
 	}
 
+	public TradeParty setVATID(String VATid) {
+		this.vatID = VATid;
+		return this;
+	}
+
 	@Override
 	public String getTaxID() {
 		return taxID;
+	}
+
+	public TradeParty setTaxID(String tax) {
+		this.taxID = tax;
+		return this;
 	}
 
 	public String getName() {
@@ -278,13 +320,13 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 			return null;
 		}
 		List<IZUGFeRDTradeSettlement> tradeSettlements = Stream.concat(bankDetails.stream(), debitDetails.stream())
-			.map(IZUGFeRDTradeSettlement.class::cast)
-			.collect(Collectors.toList());
-		
+				.map(IZUGFeRDTradeSettlement.class::cast)
+				.collect(Collectors.toList());
+
 		IZUGFeRDTradeSettlement[] result = new IZUGFeRDTradeSettlement[tradeSettlements.size()];
 		for (int i = 0; i < tradeSettlements.size(); i++) {
-		    IZUGFeRDTradeSettlement izugFeRDTradeSettlement = tradeSettlements.get(i);
-		    result[i]=izugFeRDTradeSettlement;
+			IZUGFeRDTradeSettlement izugFeRDTradeSettlement = tradeSettlements.get(i);
+			result[i] = izugFeRDTradeSettlement;
 		}
 		return result;
 	}

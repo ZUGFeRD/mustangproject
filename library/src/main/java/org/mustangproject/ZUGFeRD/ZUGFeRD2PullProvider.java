@@ -130,8 +130,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		xml += "	<ram:Name>" + XMLTools.encodeXML(party.getName()) + "</ram:Name>\n";
 
 		if ((party.getContact() != null) && (isSender || profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung"))) {
-			xml = xml + "<ram:DefinedTradeContact>\n" + "     <ram:PersonName>" + XMLTools.encodeXML(party.getContact().getName())
-					+ "</ram:PersonName>\n";
+			xml = xml + "<ram:DefinedTradeContact>\n";
+			if (party.getContact().getPhone() != null) {
+				xml = xml + "<ram:PersonName>" + XMLTools.encodeXML(party.getContact().getName())
+						+ "</ram:PersonName>\n";
+			}
 			if (party.getContact().getPhone() != null) {
 
 				xml = xml + "     <ram:TelephoneUniversalCommunication>\n" + "        <ram:CompleteNumber>"
