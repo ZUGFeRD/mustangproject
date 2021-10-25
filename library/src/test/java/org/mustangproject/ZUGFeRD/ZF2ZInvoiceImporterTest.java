@@ -124,30 +124,6 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase  {
 		TransactionCalculator tc=new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("11.07"),tc.getGrandTotal());
 
-
-		// name street location zip country, contact name phone email, total amount
-
-
-
 	}
-	public void testItemReferencedDocumentsImport() {
-		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter();
-
-		DocumentBuilderFactory db = DocumentBuilderFactory.newInstance();
-
-		boolean hasExceptions=false;
-		Invoice invoice=null;
-		try {
-			zii.fromXML(new String(Files.readAllBytes(Paths.get(getResourceAsFile("factur-x-testImport.xml").getAbsolutePath())), StandardCharsets.UTF_8));
-			invoice=zii.extractInvoice();
-		} catch (XPathExpressionException | ParseException | IOException e) {
-			hasExceptions=true;
-		}
-		assertFalse(hasExceptions);
-		TransactionCalculator tc=new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("1284.66"),tc.getGrandTotal());
-
-	}
-
 
 }
