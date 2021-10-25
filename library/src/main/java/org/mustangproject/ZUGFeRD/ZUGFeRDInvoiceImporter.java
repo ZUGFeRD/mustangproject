@@ -290,7 +290,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 						if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("ChargeIndicator")) {
 							NodeList indicatorChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
 							for (int indicatorChildIndex = 0; indicatorChildIndex < indicatorChilds.getLength(); indicatorChildIndex++) {
-								if (indicatorChilds.item(indicatorChildIndex).getLocalName().equals("Indicator")) {
+								if ((indicatorChilds.item(indicatorChildIndex).getLocalName()!=null)&&(indicatorChilds.item(indicatorChildIndex).getLocalName().equals("Indicator"))) {
 									isCharge = indicatorChilds.item(indicatorChildIndex).getTextContent().equalsIgnoreCase("true");
 								}
 							}
