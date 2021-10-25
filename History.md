@@ -1,8 +1,13 @@
+2.3.1
+=======
+2021-10-25
+
 - Add a document type and additional fields #252 (Add documentType PARTIAL_BILLING,  Add invoiceReferencedIssueDate
   Add specifiedProcuringProject) Thanks to Weclapp-dev!
 - Added possibility to have multiple referenced documents per line item, also in parser 
 - ZugferdInvoideImporter to be able to read XML, not only PDF
 - ignore whitespace around numbers in invoiceimporter
+- better namespace prefix agnostics in importers
 
 2.3.0
 =======
