@@ -18,6 +18,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import com.helger.schematron.svrl.jaxb.ActivePattern;
 import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -406,7 +407,7 @@ public class XMLValidator extends Validator {
 								.setLocation(failedAssert.getLocation()).setCriterion(failedAssert.getTest()).setSection(section)
 								.setPart(EPart.fx));
 						failedRules++;
-					} else if (object instanceof FiredRule) {
+					} else if ((object instanceof FiredRule)||(object instanceof ActivePattern)) {
 						firedRules++;
 					}
 				}

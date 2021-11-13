@@ -253,7 +253,7 @@ public class XMLValidatorTest extends ResourceCase {
 
 			Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
 			String content = xpath.evaluate("/validation/summary/@status", source);
-	//		assertEquals("valid", content);
+			assertEquals("valid", content);
 
 
 		} catch (IrrecoverableValidationError e) {

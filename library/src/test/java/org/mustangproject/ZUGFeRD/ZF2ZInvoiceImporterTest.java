@@ -128,42 +128,5 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase  {
 
 	}
 
-	public void testItemReferencedDocumentsImport() {
-		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter();
-
-		DocumentBuilderFactory db = DocumentBuilderFactory.newInstance();
-
-		boolean hasExceptions=false;
-		Invoice invoice=null;
-		try {
-			zii.doRecalculateItemPricesFromLineTotals();
-			zii.doIgnoreCalculationErrors();
-			zii.fromXML(new String(Files.readAllBytes(Paths.get(getResourceAsFile("factur-x-testImport-corrected.xml").getAbsolutePath())), StandardCharsets.UTF_8));
-			invoice=zii.extractInvoice();
-		} catch (XPathExpressionException | ParseException | IOException e) {
-			hasExceptions=true;
-		}
-		assertFalse(hasExceptions);
-		assertNotNull(invoice.getZFItems()[0].getReferencedDocuments());
-		assertEquals(2, invoice.getZFItems()[0].getReferencedDocuments().length);
-		assertEquals("33807818630-5",  invoice.getZFItems()[0].getReferencedDocuments()[0].getIssuerAssignedID());
-		assertEquals("PL", invoice.getZFItems()[0].getReferencedDocuments()[1].getReferenceTypeCode());
-
-		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
-		zf2p.setProfile(Profiles.getByName("Extended"));
-		zf2p.generateXML(invoice);
-		String theXML = new String(zf2p.getXML());
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter("c:\\Users\\jstaerk\\Desktop\\xrechnung-written.xml"));
-			writer.write(theXML);
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		TransactionCalculator tc=new TransactionCalculator(invoice);
-//    assertEquals(new BigDecimal("1284.66"),tc.getGrandTotal());
-		assertEquals(new BigDecimal("1284.40"),tc.getGrandTotal());
-	}
 
 }
