@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.xml.transform.Source;
 
@@ -25,6 +27,7 @@ public class XMLValidatorTest extends ResourceCase {
 		File tempFile = getResourceAsFile("invalidV2.xml");
 		Source source;
 		String content;
+		boolean noException = true;
 
 		try {
 			xv.setFilename(tempFile.getAbsolutePath());
@@ -70,8 +73,10 @@ public class XMLValidatorTest extends ResourceCase {
 
 			xv.validate();
 		} catch (IrrecoverableValidationError e) {
-			// ignore, will be in XML output anyway
+			noException = false; //expecting a fatal error, i.e. an exception
 		}
+		assertFalse(noException);
+		noException=true;// moving on...
 		assertTrue(xv.getXMLResult().contains("<error type=\"25\""));
 		ctx.clear();
 
@@ -83,7 +88,7 @@ public class XMLValidatorTest extends ResourceCase {
 
 			xv.validate();
 		} catch (IrrecoverableValidationError e) {
-			// ignore, will be in XML output anyway
+			noException = false;
 		}
 		String res = xv.getXMLResult();
 		/*OutputStream os = null;
@@ -161,10 +166,23 @@ public class XMLValidatorTest extends ResourceCase {
 			source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
 			content = xpath.evaluate("/validation/summary/@status", source);
 			assertEquals("invalid", content);
-
 		} catch (IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
+			noException = false;
 		}
+		assertTrue(noException);
+		try {
+			ctx.clear();
+			tempFile = getResourceAsFile("invalidV2Root.xml");
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+		} catch (IrrecoverableValidationError e) {
+			// do expect this!
+			noException = false;
+		}
+		assertFalse(noException);
+		noException=true;
 
 	}
 
@@ -219,6 +237,30 @@ public class XMLValidatorTest extends ResourceCase {
 		} catch (IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
 		}
+
+	}
+
+	public void testXRValidationUBL() {
+		ValidationContext ctx = new ValidationContext(null);
+		XMLValidator xv = new XMLValidator(ctx);
+		XPathEngine xpath = new JAXPXPathEngine();
+
+		boolean noExceptions = true;
+		File tempFile = getResourceAsFile("01.01a-INVOICE_ubl.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+	//		assertEquals("valid", content);
+
+
+		} catch (IrrecoverableValidationError e) {
+
+			noExceptions = false;
+		}
+		assertTrue(noExceptions);
 
 	}
 

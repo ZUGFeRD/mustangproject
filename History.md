@@ -1,3 +1,8 @@
+
+- Fixed an error validation UBL files
+- unknown root elements will now throw type 3 errors
+- added some tests
+
 2.3.1
 =======
 2021-10-25

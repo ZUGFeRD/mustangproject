@@ -759,45 +759,45 @@ public class ZUGFeRDImporter {
 				for (int j = 0; j < nodes.getLength(); j++) {
 					n = nodes.item(j);
 					final short nodeType = n.getNodeType();
-					if (nodeType==Node.ELEMENT_NODE){
-						switch (n.getNodeName()) {
-							case "ram:PostcodeCode":
+					if ((nodeType==Node.ELEMENT_NODE)&&(n.getLocalName()!=null)){
+						switch (n.getLocalName()) {
+							case "PostcodeCode":
 								address.setPostCodeCode("");
 								if (n.getFirstChild() != null) {
 									address.setPostCodeCode(n.getFirstChild().getNodeValue());
 								}
 								break;
-							case "ram:LineOne":
+							case "LineOne":
 								address.setLineOne("");
 								if (n.getFirstChild() != null) {
 									address.setLineOne(n.getFirstChild().getNodeValue());
 								}
 								break;
-							case "ram:LineTwo":
+							case "LineTwo":
 								address.setLineTwo("");
 								if (n.getFirstChild() != null) {
 									address.setLineTwo(n.getFirstChild().getNodeValue());
 								}
 								break;
-							case "ram:LineThree":
+							case "LineThree":
 								address.setLineThree("");
 								if (n.getFirstChild() != null) {
 									address.setLineThree(n.getFirstChild().getNodeValue());
 								}
 								break;
-							case "ram:CityName":
+							case "CityName":
 								address.setCityName("");
 								if (n.getFirstChild() != null) {
 									address.setCityName(n.getFirstChild().getNodeValue());
 								}
 								break;
-							case "ram:CountryID":
+							case "CountryID":
 								address.setCountryID("");
 								if (n.getFirstChild() != null) {
 									address.setCountryID(n.getFirstChild().getNodeValue());
 								}
 								break;
-							case "ram:CountrySubDivisionName":
+							case "CountrySubDivisionName":
 								address.setCountrySubDivisionName("");
 								if (n.getFirstChild() != null) {
 									address.setCountrySubDivisionName(n.getFirstChild().getNodeValue());
@@ -827,99 +827,100 @@ public class ZUGFeRDImporter {
 			for (int i = 0; i < nl.getLength(); i++) {
 				final Node nn = nl.item(i);
 				Node node = null;
-				switch (nn.getNodeName()) {
-					case "ram:SpecifiedLineTradeAgreement":
-					case "ram:SpecifiedSupplyChainTradeAgreement":
+				if (nn.getLocalName()!=null) {
+					switch (nn.getLocalName()) {
+						case "SpecifiedLineTradeAgreement":
+						case "SpecifiedSupplyChainTradeAgreement":
 
-						node = getNodeByName(nn.getChildNodes(), "ram:NetPriceProductTradePrice");
-						if (node != null) {
-						    final NodeList tradeAgreementChildren = node.getChildNodes();
-						    node = getNodeByName(tradeAgreementChildren, "ram:ChargeAmount");
-						    lineItem.setPrice(tryBigDecimal(getNodeValue(node)));
-						    node = getNodeByName(tradeAgreementChildren, "ram:BasisQuantity");
-							if(node != null && node.getAttributes()!=null) {
-								final Node unitCodeAttribute = node.getAttributes().getNamedItem("unitCode");
-								if(unitCodeAttribute != null) {
-									lineItem.getProduct().setUnit(unitCodeAttribute.getNodeValue());
+							node = getNodeByName(nn.getChildNodes(), "NetPriceProductTradePrice");
+							if (node != null) {
+								final NodeList tradeAgreementChildren = node.getChildNodes();
+								node = getNodeByName(tradeAgreementChildren, "ChargeAmount");
+								lineItem.setPrice(tryBigDecimal(getNodeValue(node)));
+								node = getNodeByName(tradeAgreementChildren, "BasisQuantity");
+								if (node != null && node.getAttributes() != null) {
+									final Node unitCodeAttribute = node.getAttributes().getNamedItem("unitCode");
+									if (unitCodeAttribute != null) {
+										lineItem.getProduct().setUnit(unitCodeAttribute.getNodeValue());
+									}
 								}
 							}
-						}
- 
-						node = getNodeByName(nn.getChildNodes(), "ram:GrossPriceProductTradePrice");
-						if (node != null) {
-						    node = getNodeByName(node.getChildNodes(), "ram:ChargeAmount");
-							lineItem.setGrossPrice(tryBigDecimal(getNodeValue(node)));
-						}
-						break;
 
-					case "ram:AssociatedDocumentLineDocument":
+							node = getNodeByName(nn.getChildNodes(), "GrossPriceProductTradePrice");
+							if (node != null) {
+								node = getNodeByName(node.getChildNodes(), "ChargeAmount");
+								lineItem.setGrossPrice(tryBigDecimal(getNodeValue(node)));
+							}
+							break;
 
-						node = getNodeByName(nn.getChildNodes(), "ram:LineID");
-						lineItem.setId(getNodeValue(node));
-						break;
+						case "AssociatedDocumentLineDocument":
 
-					case "ram:SpecifiedTradeProduct":
+							node = getNodeByName(nn.getChildNodes(), "LineID");
+							lineItem.setId(getNodeValue(node));
+							break;
 
-						node = getNodeByName(nn.getChildNodes(), "ram:SellerAssignedID");
-						lineItem.getProduct().setSellerAssignedID(getNodeValue(node));
+						case "SpecifiedTradeProduct":
 
-						node = getNodeByName(nn.getChildNodes(), "ram:BuyerAssignedID");
-						lineItem.getProduct().setBuyerAssignedID(getNodeValue(node));
+							node = getNodeByName(nn.getChildNodes(), "SellerAssignedID");
+							lineItem.getProduct().setSellerAssignedID(getNodeValue(node));
 
-						node = getNodeByName(nn.getChildNodes(), "ram:Name");
-						lineItem.getProduct().setName(getNodeValue(node));
+							node = getNodeByName(nn.getChildNodes(), "BuyerAssignedID");
+							lineItem.getProduct().setBuyerAssignedID(getNodeValue(node));
 
-						node = getNodeByName(nn.getChildNodes(), "ram:Description");
-						lineItem.getProduct().setDescription(getNodeValue(node));
-						break;
+							node = getNodeByName(nn.getChildNodes(), "Name");
+							lineItem.getProduct().setName(getNodeValue(node));
 
-					case "ram:SpecifiedLineTradeDelivery":
-					case "ram:SpecifiedSupplyChainTradeDelivery":
-						node = getNodeByName(nn.getChildNodes(), "ram:BilledQuantity");
-						lineItem.setQuantity(tryBigDecimal(getNodeValue(node)));
-						break;
+							node = getNodeByName(nn.getChildNodes(), "Description");
+							lineItem.getProduct().setDescription(getNodeValue(node));
+							break;
 
-					case "ram:SpecifiedLineTradeSettlement":
+						case "SpecifiedLineTradeDelivery":
+						case "SpecifiedSupplyChainTradeDelivery":
+							node = getNodeByName(nn.getChildNodes(), "BilledQuantity");
+							lineItem.setQuantity(tryBigDecimal(getNodeValue(node)));
+							break;
 
-						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");
-						if (node != null) {
-							node = getNodeByName(node.getChildNodes(), "ram:RateApplicablePercent");
-							lineItem.getProduct().setVATPercent(tryBigDecimal(getNodeValue(node)));
-						}
+						case "SpecifiedLineTradeSettlement":
+							node = getNodeByName(nn.getChildNodes(), "ApplicableTradeTax");
+							if (node != null) {
+								node = getNodeByName(node.getChildNodes(), "RateApplicablePercent");
+								lineItem.getProduct().setVATPercent(tryBigDecimal(getNodeValue(node)));
+							}
 
-						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");
-						if (node != null) {
-							node = getNodeByName(node.getChildNodes(), "ram:CalculatedAmount");
-							lineItem.setTax(tryBigDecimal(getNodeValue(node)));
-						}
+							node = getNodeByName(nn.getChildNodes(), "ApplicableTradeTax");
+							if (node != null) {
+								node = getNodeByName(node.getChildNodes(), "CalculatedAmount");
+								lineItem.setTax(tryBigDecimal(getNodeValue(node)));
+							}
 
-						node = getNodeByName(nn.getChildNodes(), "ram:SpecifiedTradeSettlementLineMonetarySummation");
-						if (node != null) {
-							node = getNodeByName(node.getChildNodes(), "ram:LineTotalAmount");
-							lineItem.setLineTotalAmount(tryBigDecimal(getNodeValue(node)));
-						}
-						break;
-					case "ram:SpecifiedSupplyChainTradeSettlement":
-						//ZF 1!
+							node = getNodeByName(nn.getChildNodes(), "SpecifiedTradeSettlementLineMonetarySummation");
+							if (node != null) {
+								node = getNodeByName(node.getChildNodes(), "LineTotalAmount");
+								lineItem.setLineTotalAmount(tryBigDecimal(getNodeValue(node)));
+							}
+							break;
+						case "SpecifiedSupplyChainTradeSettlement":
+							//ZF 1!
 
-						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");
-						if (node != null) {
-							node = getNodeByName(node.getChildNodes(), "ram:ApplicablePercent");
-							lineItem.getProduct().setVATPercent(tryBigDecimal(getNodeValue(node)));
-						}
+							node = getNodeByName(nn.getChildNodes(), "ApplicableTradeTax");
+							if (node != null) {
+								node = getNodeByName(node.getChildNodes(), "ApplicablePercent");
+								lineItem.getProduct().setVATPercent(tryBigDecimal(getNodeValue(node)));
+							}
 
-						node = getNodeByName(nn.getChildNodes(), "ram:ApplicableTradeTax");
-						if (node != null) {
-							node = getNodeByName(node.getChildNodes(), "ram:CalculatedAmount");
-							lineItem.setTax(tryBigDecimal(getNodeValue(node)));
-						}
+							node = getNodeByName(nn.getChildNodes(), "ApplicableTradeTax");
+							if (node != null) {
+								node = getNodeByName(node.getChildNodes(), "CalculatedAmount");
+								lineItem.setTax(tryBigDecimal(getNodeValue(node)));
+							}
 
-						node = getNodeByName(nn.getChildNodes(), "ram:SpecifiedTradeSettlementMonetarySummation");
-						if (node != null) {
-							node = getNodeByName(node.getChildNodes(), "ram:LineTotalAmount");
-							lineItem.setLineTotalAmount(tryBigDecimal(getNodeValue(node)));
-						}
-						break;
+							node = getNodeByName(nn.getChildNodes(), "SpecifiedTradeSettlementMonetarySummation");
+							if (node != null) {
+								node = getNodeByName(node.getChildNodes(), "LineTotalAmount");
+								lineItem.setLineTotalAmount(tryBigDecimal(getNodeValue(node)));
+							}
+							break;
+					}
 				}
 			}
 			lineItemList.add(lineItem);
@@ -959,7 +960,7 @@ public class ZUGFeRDImporter {
 	 */
 	private Node getNodeByName(NodeList nl, String name) {
 		for (int i = 0; i < nl.getLength(); i++) {
-			if (nl.item(i).getNodeName() == name) {
+			if ((nl.item(i).getLocalName()!=null)&&(nl.item(i).getLocalName().equals(name))) {
 				return nl.item(i);
 			} else if (nl.item(i).getChildNodes().getLength() > 0) {
 				final Node node = getNodeByName(nl.item(i).getChildNodes(), name);

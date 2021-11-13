@@ -181,6 +181,7 @@ public class XMLValidator extends Validator {
 				boolean isEN16931 = false;
 				boolean isExtended = false;
 				boolean isXRechnung = false;
+
 				String xsltFilename = null;
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:extended,
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:comfort,
@@ -188,7 +189,7 @@ public class XMLValidator extends Validator {
 
 				// urn:cen.eu:en16931:2017
 				// urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:basic
-				if (root.getNodeName().equalsIgnoreCase("rsm:SCRDMCCBDACIOMessageStructure")) {
+				if (root.getLocalName().equalsIgnoreCase("SCRDMCCBDACIOMessageStructure")) {
 					context.setGeneration("1");
 					isOrderX=true;
 					isBasic = context.getProfile().contains("basic");
@@ -197,7 +198,7 @@ public class XMLValidator extends Validator {
 					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B.xsd", 99, EPart.ox);
 					xsltFilename = "/xslt/OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B_COMFORT.xslt";
 
-				} else if (root.getNodeName().equalsIgnoreCase("rsm:CrossIndustryInvoice")) { // ZUGFeRD 2.0 or Factur-X
+				} else if (root.getLocalName().equalsIgnoreCase("CrossIndustryInvoice")) { // ZUGFeRD 2.0 or Factur-X
 					context.setGeneration("2");
 
 					isMiniumum = context.getProfile().contains("minimum");
@@ -252,7 +253,7 @@ public class XMLValidator extends Validator {
 					// saxon java net.sf.saxon.Transform -o tcdl2.0.tsdtf.sch.tmp.xsl -s
 					// tcdl2.0.tsdtf.sch iso_svrl.xsl
 
-				} else if (root.getNodeName().equalsIgnoreCase("Invoice")) {
+				} else if (root.getLocalName().equalsIgnoreCase("Invoice")) {
 					context.setGeneration("2");
 					context.setFormat("UBL");
 					// UBL
@@ -260,7 +261,7 @@ public class XMLValidator extends Validator {
 					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "UBL_21/maindoc/UBL-Invoice-2.1.xsd", 18, EPart.fx);
 					xsltFilename = "/xslt/UBL_21/EN16931-UBL-validation.xsl";
 					XrechnungSeverity = ESeverity.error;
-				} else { // ZUGFeRD 1.0
+				} else if (root.getLocalName().equalsIgnoreCase("CrossIndustryDocument")) { // ZUGFeRD 1.0
 					context.setGeneration("1");
 					//
 					if ((!matchesURI(context.getProfile(), "urn:ferd:CrossIndustryDocument:invoice:1p0:basic"))
@@ -272,6 +273,9 @@ public class XMLValidator extends Validator {
 					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_10/ZUGFeRD1p0.xsd", 18, EPart.fx);
 
 					xsltFilename = "/xslt/ZUGFeRD_1p0.xslt";
+				} else { // unknown document root
+					context.addResultItem(new ValidationResultItem(ESeverity.fatal, "Unsupported root element")
+							.setSection(3).setPart(EPart.fx));
 				}
 				if (context.getFormat().equals("CII")) {
 
