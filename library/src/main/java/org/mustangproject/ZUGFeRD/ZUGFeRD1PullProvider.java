@@ -47,7 +47,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 
 	protected byte[] zugferdData;
 	private String paymentTermsDescription;
-  protected Profile profile = Profiles.getByName("COMFORT", 1);
+	protected Profile profile = Profiles.getByName("COMFORT", 1);
 
 
 	/**
@@ -93,6 +93,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 		}
 		try {
 			final OutputFormat format = OutputFormat.createPrettyPrint();
+			format.setTrimText(false);
 			final XMLWriter writer = new XMLWriter(sw, format);
 			writer.write(document);
 			res = sw.toString().getBytes("UTF-8");
@@ -439,7 +440,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 		paymentTermsXml += "<ram:Description>" + paymentTerms.getDescription() + "</ram:Description>";
 		if (dueDate != null) {
 			paymentTermsXml += "<ram:DueDateDateTime>";
-			paymentTermsXml += DATE.udtFormat(dueDate) ;
+			paymentTermsXml += DATE.udtFormat(dueDate);
 			paymentTermsXml += "</ram:DueDateDateTime>";
 		}
 
@@ -454,7 +455,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 			if (discountTerms.getBaseDate() != null) {
 				final Date baseDate = discountTerms.getBaseDate();
 				paymentTermsXml += "<ram:BasisDateTime>";
-				paymentTermsXml +=  DATE.udtFormat(baseDate) ;
+				paymentTermsXml += DATE.udtFormat(baseDate);
 				paymentTermsXml += "</ram:BasisDateTime>";
 
 				paymentTermsXml += "<ram:BasisPeriodMeasure unitCode=\"" + discountTerms.getBasePeriodUnitCode() + "\">"

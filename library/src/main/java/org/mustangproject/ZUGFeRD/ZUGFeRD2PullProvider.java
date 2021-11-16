@@ -89,6 +89,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 		try {
 			final OutputFormat format = OutputFormat.createPrettyPrint();
+			format.setTrimText(false);
 			final XMLWriter writer = new XMLWriter(sw, format);
 			writer.write(document);
 			res = sw.toString().getBytes("UTF-8");

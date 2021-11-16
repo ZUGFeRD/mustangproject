@@ -2,6 +2,7 @@
 - Fixed an error validation UBL files
 - unknown root elements will now throw type 3 errors
 - added some tests
+- Do not trim trailing whitespace in XML submitted by the user, e.g. for XRechnung Skonto in PaymenttermsDescription
 
 2.3.1
 =======
