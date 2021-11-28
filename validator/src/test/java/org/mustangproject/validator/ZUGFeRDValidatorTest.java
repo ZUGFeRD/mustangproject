@@ -75,6 +75,28 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 	 * the XMLValidatorTests only cover the <xml></xml> part, this one includes the root element and
 	 * the global <summary></summary> part as well
 	 */
+	public void testV1XMLValidation() {
+		File tempFile = getResourceAsFile("invalidV1addition.xml");
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+		assertThat(res).valueByXPath("count(//error)")
+				.asInt()
+				.isNotEqualTo(0);
+
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.asString()
+				.isEqualTo("invalid");// expect to be valid because XR notices are, well, only notices
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+				.asString()
+				.isEqualTo("invalid");
+
+	}
+	/***
+	 * the XMLValidatorTests only cover the <xml></xml> part, this one includes the root element and
+	 * the global <summary></summary> part as well
+	 */
 	public void testXMLValidation() {
 		File tempFile = getResourceAsFile("validV2.xml");
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
