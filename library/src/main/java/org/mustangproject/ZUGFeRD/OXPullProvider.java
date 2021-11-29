@@ -20,9 +20,13 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
-import static org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants.CORRECTEDINVOICE;
-import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATEGORY_CODES_WITH_EXEMPTION_REASON;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
+import org.mustangproject.FileAttachment;
+import org.mustangproject.XMLTools;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -35,192 +39,20 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
-import org.mustangproject.FileAttachment;
-import org.mustangproject.XMLTools;
+import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
+import static org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants.CORRECTEDINVOICE;
+import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATEGORY_CODES_WITH_EXEMPTION_REASON;
 
-public class ZUGFeRD2PullProvider implements IXMLProvider {
+public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider {
 
-  protected byte[] zugferdData;
 	protected IExportableTransaction trans;
 	protected TransactionCalculator calc;
 	private String paymentTermsDescription;
 	protected Profile profile = Profiles.getByName("EN16931");
 
 
-	/**
-	 * enables the flag to indicate a test invoice in the XML structure
-	 */
-	@Override
-	public void setTest() {
-	}
-
-	protected String vatFormat(BigDecimal value) {
-		return XMLTools.nDigitFormat(value, 2);
-	}
-
-	protected String currencyFormat(BigDecimal value) {
-		return XMLTools.nDigitFormat(value, 2);
-	}
-
-	protected String priceFormat(BigDecimal value) {
-		return XMLTools.nDigitFormat(value, 4);
-	}
-
-	protected String quantityFormat(BigDecimal value) {
-		return XMLTools.nDigitFormat(value, 4);
-	}
-
-	@Override
-	public byte[] getXML() {
-
-		byte[] res = zugferdData;
-
-		final StringWriter sw = new StringWriter();
-		Document document = null;
-		try {
-			document = DocumentHelper.parseText(new String(zugferdData));
-		} catch (final DocumentException e1) {
-			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e1);
-		}
-		try {
-			final OutputFormat format = OutputFormat.createPrettyPrint();
-			format.setTrimText(false);
-			final XMLWriter writer = new XMLWriter(sw, format);
-			writer.write(document);
-			res = sw.toString().getBytes("UTF-8");
-
-		} catch (final IOException e) {
-			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
-		}
-
-		return res;
-
-	}
 
 
-	@Override
-	public Profile getProfile() {
-		return profile;
-	}
-
-	// @todo check if the two boolean args can be refactored
-
-	/***
-	 * returns the UN/CEFACT CII XML for companies(tradeparties), which is actually
-	 * the same for ZF1 (v 2013b) and ZF2 (v 2016b)
-	 * @param party
-	 * @param isSender some attributes are allowed only for senders in certain profiles
-	 * @param isShipToTradeParty some attributes are allowed only for senders or recipients
-	 * @return
-	 */
-	protected String getTradePartyAsXML(IZUGFeRDExportableTradeParty party, boolean isSender, boolean isShipToTradeParty) {
-		String xml = "";
-		// According EN16931 either GlobalID or seller assigned ID might be present for BuyerTradeParty
-		// and ShipToTradeParty, but not both. Prefer seller assigned ID for now.
-		if (party.getID() != null) {
-			xml += "	<ram:ID>" + XMLTools.encodeXML(party.getID()) + "</ram:ID>\n";
-		} else if ((party.getGlobalIDScheme() != null) && (party.getGlobalID() != null)) {
-			xml = xml + "           <ram:GlobalID schemeID=\"" + XMLTools.encodeXML(party.getGlobalIDScheme()) + "\">"
-					+ XMLTools.encodeXML(party.getGlobalID()) + "</ram:GlobalID>\n";
-		}
-		xml += "	<ram:Name>" + XMLTools.encodeXML(party.getName()) + "</ram:Name>\n";
-
-		if ((party.getContact() != null) && (isSender || profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung"))) {
-			xml = xml + "<ram:DefinedTradeContact>\n";
-			if (party.getContact().getPhone() != null) {
-				xml = xml + "<ram:PersonName>" + XMLTools.encodeXML(party.getContact().getName())
-						+ "</ram:PersonName>\n";
-			}
-			if (party.getContact().getPhone() != null) {
-
-				xml = xml + "     <ram:TelephoneUniversalCommunication>\n" + "        <ram:CompleteNumber>"
-						+ XMLTools.encodeXML(party.getContact().getPhone()) + "</ram:CompleteNumber>\n"
-						+ "     </ram:TelephoneUniversalCommunication>\n";
-			}
-
-			if ((party.getContact().getFax() != null) && (profile == Profiles.getByName("Extended"))) {
-				xml = xml + "     <ram:FaxUniversalCommunication>\n" + "        <ram:CompleteNumber>"
-						+ XMLTools.encodeXML(party.getContact().getFax()) + "</ram:CompleteNumber>\n"
-						+ "     </ram:FaxUniversalCommunication>\n";
-			}
-			if (party.getContact().getEMail() != null) {
-
-				xml = xml + "     <ram:EmailURIUniversalCommunication>\n" + "        <ram:URIID>"
-						+ XMLTools.encodeXML(party.getContact().getEMail()) + "</ram:URIID>\n"
-						+ "     </ram:EmailURIUniversalCommunication>\n";
-			}
-
-			xml = xml + "  </ram:DefinedTradeContact>";
-
-		}
-		xml += "				<ram:PostalTradeAddress>\n"
-				+ "					<ram:PostcodeCode>" + XMLTools.encodeXML(party.getZIP())
-				+ "</ram:PostcodeCode>\n";
-		if (party.getStreet() != null) {
-			xml += "					<ram:LineOne>" + XMLTools.encodeXML(party.getStreet())
-					+ "</ram:LineOne>\n";
-		}
-		if (party.getAdditionalAddress() != null) {
-			xml += "				<ram:LineTwo>" + XMLTools.encodeXML(party.getAdditionalAddress())
-					+ "</ram:LineTwo>\n";
-		}
-		xml += "					<ram:CityName>" + XMLTools.encodeXML(party.getLocation())
-				+ "</ram:CityName>\n"
-				+ "					<ram:CountryID>" + XMLTools.encodeXML(party.getCountry())
-				+ "</ram:CountryID>\n"
-				+ "				</ram:PostalTradeAddress>\n";
-		if ((party.getVATID() != null) && (!isShipToTradeParty)) {
-			xml += "				<ram:SpecifiedTaxRegistration>\n"
-					+ "					<ram:ID schemeID=\"VA\">" + XMLTools.encodeXML(party.getVATID())
-					+ "</ram:ID>\n"
-					+ "				</ram:SpecifiedTaxRegistration>\n";
-		}
-		if ((party.getTaxID() != null) && (!isShipToTradeParty)) {
-			xml += "				<ram:SpecifiedTaxRegistration>\n"
-					+ "					<ram:ID schemeID=\"FC\">" + XMLTools.encodeXML(party.getTaxID())
-					+ "</ram:ID>\n"
-					+ "				</ram:SpecifiedTaxRegistration>\n";
-
-		}
-		return xml;
-
-	}
-
-
-	/***
-	 * returns the XML for a charge or allowance on item level
-	 * @param allowance
-	 * @param item
-	 * @return
-	 */
-	protected String getAllowanceChargeStr(IZUGFeRDAllowanceCharge allowance, IAbsoluteValueProvider item) {
-		String percentage = "";
-		String chargeIndicator = "false";
-		if ((allowance.getPercent() != null) && (profile == Profiles.getByName("Extended"))) {
-			percentage = "<ram:CalculationPercent>" + vatFormat(allowance.getPercent()) + "</ram:CalculationPercent>";
-			percentage += "<ram:BasisAmount>" + item.getValue() + "</ram:BasisAmount>";
-		}
-		if (allowance.isCharge()) {
-			chargeIndicator = "true";
-		}
-
-		String reason = "";
-		if ((allowance.getReason() != null) && (profile == Profiles.getByName("Extended"))) {
-			// only in extended profile
-			reason = "<ram:Reason>" + XMLTools.encodeXML(allowance.getReason()) + "</ram:Reason>";
-		}
-		final String allowanceChargeStr = "<ram:AppliedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>" +
-				chargeIndicator + "</udt:Indicator></ram:ChargeIndicator>" + percentage +
-				"<ram:ActualAmount>" + priceFormat(allowance.getTotalAmount(item)) + "</ram:ActualAmount>" +
-				reason +
-				"</ram:AppliedTradeAllowanceCharge>";
-		return allowanceChargeStr;
-	}
 
 	@Override
 	public void generateXML(IExportableTransaction trans) {
@@ -276,7 +108,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 
-				+ "<rsm:CrossIndustryInvoice xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\""
+				+"<rsm:SCRDMCCBDACIOMessageStructure\n" +
+				"xmlns:rsm=\"urn:un:unece:uncefact:data:SCRDMCCBDACIOMessageStructure:100\"\n" +
+				"xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:128\"\n" +
+				"xmlns:qdt=\"urn:un:unece:uncefact:data:standard:QualifiedDataType:128\"\n" +
+				"xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:128\"\n" +
+				"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n"
 				// + "
 				// xsi:schemaLocation=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100
 				// ../Schema/ZUGFeRD1p0.xsd\""
@@ -681,7 +518,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		// + " </IncludedSupplyChainTradeLineItem>\n";
 
 		xml = xml + "	</rsm:SupplyChainTradeTransaction>\n"
-				+ "</rsm:CrossIndustryInvoice>";
+				+ "</rsm:SCRDMCCBDACIOMessageStructure>";
 
 		final byte[] zugferdRaw;
 		try {
@@ -689,9 +526,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 			zugferdData = XMLTools.removeBOM(zugferdRaw);
 		} catch (final UnsupportedEncodingException e) {
-			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
+			Logger.getLogger(OXPullProvider.class.getName()).log(Level.SEVERE, null, e);
 		}
 	}
+
 
 	@Override
 	public void setProfile(Profile p) {

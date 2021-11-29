@@ -135,8 +135,7 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 
 	@Override
 	public String getPaymentTermDescription() {
-		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-		return "Zahlbar ohne Abzug bis zum " + germanDateFormat.format(getDueDate());
+		return "#SKONTO#TAGE=7#PROZENT=3.00#BASISBETRAG=571.04#\n";
 	}
 
 	@Override
