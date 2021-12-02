@@ -69,7 +69,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	private boolean disableAutoClose;
 	private boolean fileAttached = false;
 	private Profile profile = null;
-	protected boolean documentPrepared = false;
+	private boolean documentPrepared = false;
 
 	/**
 	 * Data (XML invoice) to be added to the ZUGFeRD PDF. It may be externally set,
@@ -108,7 +108,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	@Deprecated
 	protected String subject;
 
-	protected PDDocument doc;
+	private PDDocument doc;
 
 	private HashMap<String, byte[]> additionalXMLs = new HashMap<String, byte[]>();
 
@@ -481,7 +481,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		metadata.addSchema(pdfaex);
 	}
 
-	protected void removeCidSet(PDDocumentCatalog catalog, PDDocument doc) {
+	private void removeCidSet(PDDocumentCatalog catalog, PDDocument doc) {
 
 		// https://github.com/ZUGFeRD/mustangproject/issues/249
 
