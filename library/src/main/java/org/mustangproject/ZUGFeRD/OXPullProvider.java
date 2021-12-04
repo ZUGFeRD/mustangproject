@@ -25,6 +25,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.XMLTools;
 
@@ -48,10 +49,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 	protected IExportableTransaction trans;
 	protected TransactionCalculator calc;
 	private String paymentTermsDescription;
-	protected Profile profile = Profiles.getByName("EN16931");
-
-
-
+	protected Profile profile = Profiles.getByName(EStandard.orderx,"basic", 1);
 
 
 	@Override
@@ -108,7 +106,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 		}
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 
-				+"<rsm:SCRDMCCBDACIOMessageStructure\n" +
+				+ "<rsm:SCRDMCCBDACIOMessageStructure\n" +
 				"xmlns:rsm=\"urn:un:unece:uncefact:data:SCRDMCCBDACIOMessageStructure:100\"\n" +
 				"xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:128\"\n" +
 				"xmlns:qdt=\"urn:un:unece:uncefact:data:standard:QualifiedDataType:128\"\n" +
@@ -124,6 +122,9 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 				// + "
 				// <ram:TestIndicator><udt:Indicator>"+testBooleanStr+"</udt:Indicator></ram:TestIndicator>\n"
 				//
+				+ "<ram:BusinessProcessSpecifiedDocumentContextParameter>\n"
+				+ "<ram:ID>A1</ram:ID>\n"
+				+ "</ram:BusinessProcessSpecifiedDocumentContextParameter>\n"
 				+ "		<ram:GuidelineSpecifiedDocumentContextParameter>\n"
 				+ "			<ram:ID>" + getProfile().getID() + "</ram:ID>\n"
 				+ "		</ram:GuidelineSpecifiedDocumentContextParameter>\n"
@@ -318,9 +319,9 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 
 		if (trans.getSpecifiedProcuringProjectID() != null) {
 			xml = xml + "   <ram:SpecifiedProcuringProject>\n"
-			+ "       <ram:ID>"
-			+ XMLTools.encodeXML(trans.getSpecifiedProcuringProjectID()) + "</ram:ID>\n";
-			if(trans.getSpecifiedProcuringProjectName()!= null) {
+					+ "       <ram:ID>"
+					+ XMLTools.encodeXML(trans.getSpecifiedProcuringProjectID()) + "</ram:ID>\n";
+			if (trans.getSpecifiedProcuringProjectName() != null) {
 				xml += "       <ram:Name >" + XMLTools.encodeXML(trans.getSpecifiedProcuringProjectName()) + "</ram:Name>\n";
 			}
 			xml += "    </ram:SpecifiedProcuringProject>\n";
@@ -337,7 +338,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 				+ "				<ram:OccurrenceDateTime>";
 
 		if (trans.getDeliveryDate() != null) {
-			xml +=  DATE.udtFormat(trans.getDeliveryDate());
+			xml += DATE.udtFormat(trans.getDeliveryDate());
 		} else {
 			throw new IllegalStateException("No delivery date provided");
 		}
@@ -499,10 +500,10 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 			xml = xml + "   <ram:InvoiceReferencedDocument>\n"
 					+ "       <ram:IssuerAssignedID>"
 					+ XMLTools.encodeXML(trans.getInvoiceReferencedDocumentID()) + "</ram:IssuerAssignedID>\n";
-			if(trans.getInvoiceReferencedIssueDate()!= null){
-				xml += "<ram:FormattedIssueDateTime>" 
-				+ DATE.qdtFormat(trans.getInvoiceReferencedIssueDate())
-				+ "</ram:FormattedIssueDateTime>\n";
+			if (trans.getInvoiceReferencedIssueDate() != null) {
+				xml += "<ram:FormattedIssueDateTime>"
+						+ DATE.qdtFormat(trans.getInvoiceReferencedIssueDate())
+						+ "</ram:FormattedIssueDateTime>\n";
 			}
 			xml += "   </ram:InvoiceReferencedDocument>\n";
 		}
@@ -536,6 +537,11 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 		profile = p;
 	}
 
+	@Override
+	public Profile getProfile() {
+		return profile;
+	}
+
 	private String buildPaymentTermsXml() {
 
 		final IZUGFeRDPaymentTerms paymentTerms = trans.getPaymentTerms();
@@ -553,7 +559,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 		paymentTermsXml += "<ram:Description>" + paymentTerms.getDescription() + "</ram:Description>";
 		if (dueDate != null) {
 			paymentTermsXml += "<ram:DueDateDateTime>";
-			paymentTermsXml += DATE.udtFormat(dueDate) ;
+			paymentTermsXml += DATE.udtFormat(dueDate);
 			paymentTermsXml += "</ram:DueDateDateTime>";
 		}
 
@@ -568,7 +574,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 			if (discountTerms.getBaseDate() != null) {
 				final Date baseDate = discountTerms.getBaseDate();
 				paymentTermsXml += "<ram:BasisDateTime>";
-				paymentTermsXml +=  DATE.udtFormat(baseDate);
+				paymentTermsXml += DATE.udtFormat(baseDate);
 				paymentTermsXml += "</ram:BasisDateTime>";
 
 				paymentTermsXml += "<ram:BasisPeriodMeasure unitCode=\"" + discountTerms.getBasePeriodUnitCode() + "\">"

@@ -20,6 +20,8 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import org.mustangproject.EStandard;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,18 +43,41 @@ public class Profiles {
 
 
 	}).collect(Collectors.toMap(data -> (String) data[0], data -> (Profile) data[1]));
+	static Map<String, Profile> ox1Map = Stream.of(new Object[][]{
+			{"BASIC", new Profile("BASIC", "urn:order-x.eu:1p0:basic")},
+			{"COMFORT", new Profile("COMFORT", "urn:order-x.eu:1p0:comfort")},
+			{"EXTENDED", new Profile("EXTENDED", "urn:order-x.eu:1p0:extended")},
 
+
+	}).collect(Collectors.toMap(data -> (String) data[0], data -> (Profile) data[1]));
+
+
+	public static Profile getByName(EStandard standard, String name, int version) {
+		if (standard != EStandard.orderx) {
+			return getByName(name, version);
+		} else {
+			Profile result = null;
+			result = ox1Map.get(name.toUpperCase());
+			if (result == null) {
+				throw new RuntimeException("Profile not found");
+			}
+			return result;
+		}
+	}
 
 	public static Profile getByName(String name, int version) {
-		Profile result=null;
-		if (version==1) {
-			result=zf1Map.get(name.toUpperCase());
+		Profile result = null;
+		if (version == 1) {
+			result = zf1Map.get(name.toUpperCase());
 		} else {
-			result=zf2Map.get(name.toUpperCase());
+			result = zf2Map.get(name.toUpperCase());
 		}
-		if (result==null) { throw new RuntimeException("Profile not found"); }
+		if (result == null) {
+			throw new RuntimeException("Profile not found");
+		}
 		return result;
 	}
+
 	public static Profile getByName(String name) {
 		return getByName(name, ZUGFeRDExporterFromA3.DefaultZUGFeRDVersion);
 	}

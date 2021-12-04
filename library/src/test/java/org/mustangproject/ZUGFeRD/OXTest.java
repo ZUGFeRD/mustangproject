@@ -288,11 +288,7 @@ public class OXTest extends MustangReaderTestCase implements IExportableTransact
 		assertEquals("496.00", zi.getAmount());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
-		try {
-			assertEquals(zi.getVersion(), 2);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
 
 	}
 
