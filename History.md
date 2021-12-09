@@ -2,6 +2,8 @@
 - Fixed an error validation UBL files
 - unknown root elements will now throw type 3 errors
 - added some tests
+- Remove faulty '/' from getNodeListByPath call. PR #256, Thanks again to Weclapp-dev
+- Issue 238 Validierungsproblem mit Skonto/do nnot remove linebreaks in XML
 - Do not trim trailing whitespace in XML submitted by the user, e.g. for XRechnung Skonto in PaymenttermsDescription
 
 2.3.1

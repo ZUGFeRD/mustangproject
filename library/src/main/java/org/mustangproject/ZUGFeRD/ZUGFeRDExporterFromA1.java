@@ -78,7 +78,7 @@ public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 implements IZUG
 
 	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
 		if (!ignorePDFAErrors && !isValidA1(dataSource)) {
-			throw new IOException("File is not a valid PDF/A input file");
+			throw new IOException("File is not a valid PDF/A-1 input file");
 		}
 		return true;
 	}
