@@ -20,6 +20,8 @@
  */
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.mustangproject.ZUGFeRD.*;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
@@ -31,15 +33,17 @@ import java.util.Date;
  * An invoice, with fluent setters
  * @see IExportableTransaction if you want to implement an interface instead
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Invoice implements IExportableTransaction {
 
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, invoiceReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
 	protected BigDecimal totalPrepaidAmount = null;
 	protected TradeParty sender = null, recipient = null, deliveryAddress = null;
+	@JsonDeserialize(contentAs=Item.class)
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
 	protected ArrayList<String> notes = null;
-  private String sellerOrderReferencedDocumentID;
+  	protected String sellerOrderReferencedDocumentID;
 	protected String contractReferencedDocument = null;
 	protected ArrayList<FileAttachment> xmlEmbeddedFiles=null;
 
@@ -49,12 +53,9 @@ public class Invoice implements IExportableTransaction {
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
 			Charges = new ArrayList<>(), LogisticsServiceCharges = new ArrayList<>();
 	protected IZUGFeRDPaymentTerms paymentTerms = null;
-	private Date invoiceReferencedIssueDate;
-	private String specifiedProcuringProjectID = null;
-
-  
-
-	private String specifiedProcuringProjectName = null;
+	protected Date invoiceReferencedIssueDate;
+	protected String specifiedProcuringProjectID = null;
+	protected String specifiedProcuringProjectName = null;
 
   public Invoice() {
 		ZFItems = new ArrayList<>();
@@ -549,6 +550,10 @@ public class Invoice implements IExportableTransaction {
 	@Override
 	public IZUGFeRDExportableItem[] getZFItems() {
 		return ZFItems.toArray(new IZUGFeRDExportableItem[0]);
+	}
+
+	public void setZFItems(ArrayList<IZUGFeRDExportableItem>  ims) {
+		ZFItems=ims;
 	}
 
 	/**

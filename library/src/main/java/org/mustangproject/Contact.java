@@ -1,5 +1,6 @@
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -9,6 +10,7 @@ import org.w3c.dom.NodeList;
  * for the organisation/company itsel please
  * @see TradeParty
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Contact implements IZUGFeRDExportableContact {
 
 	protected String name, phone, email, zip, street, location, country;
@@ -25,6 +27,13 @@ public class Contact implements IZUGFeRDExportableContact {
 		this.name = name;
 		this.phone = phone;
 		this.email = email;
+	}
+
+	/***
+	 * empty constructor.
+	 * as always, not recommended, for jackson...
+	 */
+	public Contact() {
 	}
 
 	/***

@@ -6,6 +6,7 @@
 To check if the necessary tools are there, the build is in a stable state and works on your platform, e.g. download and extract https://github.com/ZUGFeRD/mustangproject/archive/master.zip and run ./mvnw clean package
 
 Mvnw is a maven wrapper which will download maven.Maven is the dependency management tool which will download all libraries, their dependencies, and build the whole thing.
+Mvnw is a maven wrapper which will download maven.Maven is the dependency management tool which will download all libraries, their dependencies, and build the whole thing.
 
 You will need a Java JDK, e.g. https://www.azul.com/downloads/zulu-community/?architecture=x86-64-bit&package=jdk
 
@@ -159,7 +160,11 @@ If you added functionality which you need to test in another project before a ne
 install the jar you just generated in your target branch in your local maven cache so it gets picked *instead* of the
 maybe not yet even existing new release version:
 
-`mvn install:install-file -Dfile=mustang-1.7.6-SNAPSHOT.jar -DgroupId=org.mustangproject.ZUGFeRD -DartifactId=mustang -Dversion=1.7.6 -Dpackaging=jar -DgeneratePom=true`
+```
+cd validator/target
+mvn install:install-file -Dfile=validator-2.3.2-SNAPSHOT-shaded.jar -DgroupId=org.mustangproject -DartifactId=validator -Dversion=2.3.2 -Dpackaging=jar -DgeneratePom=true
+```
+This will also work in Gradle given you have the `mavenLocal()` repository activated.
 
 
 ## Release

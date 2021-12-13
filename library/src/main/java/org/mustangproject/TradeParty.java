@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTradeParty;
 import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlement;
@@ -15,6 +16,7 @@ import org.w3c.dom.NodeList;
 /***
  * A organisation, i.e. usually a company
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	protected String name, zip, street, location, country;
@@ -24,6 +26,15 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	protected List<BankDetails> bankDetails = new ArrayList<>();
 	protected List<IZUGFeRDTradeSettlementDebit> debitDetails = new ArrayList<>();
 	protected Contact contact = null;
+
+	/**
+	 * Default constructor.
+	 * Probably a bad idea but might be needed by jackson or similar
+	 */
+	public TradeParty() {
+
+	}
+
 
 	/***
 	 *
@@ -118,13 +129,11 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 							for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
 								if (taxChilds.item(taxChildIndex).getLocalName() != null) {
 									if ((taxChilds.item(taxChildIndex).getLocalName().equals("ID"))) {
-										if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID")!=null) {
-											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("VA"))
-											{
+										if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID") != null) {
+											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("VA")) {
 												setVATID(taxChilds.item(taxChildIndex).getFirstChild().getNodeValue());
 											}
-											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("FC"))
-											{
+											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("FC")) {
 												setTaxID(taxChilds.item(taxChildIndex).getFirstChild().getNodeValue());
 											}
 										}

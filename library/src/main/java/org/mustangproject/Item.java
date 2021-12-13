@@ -1,5 +1,6 @@
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.mustangproject.ZUGFeRD.IReferencedDocument;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
@@ -11,6 +12,8 @@ import java.util.Date;
 /***
  * describes any invoice line
  */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Item implements IZUGFeRDExportableItem {
 	protected BigDecimal price, quantity, tax, grossPrice, lineTotalAmount;
 	protected Date detailedDeliveryPeriodFrom=null, detailedDeliveryPeriodTo=null;
@@ -34,6 +37,13 @@ public class Item implements IZUGFeRDExportableItem {
 		this.product = product;
 	}
 
+
+	/***
+	 * empty constructor
+	 * do not use, but might be used e.g. by jackson
+	 * */
+	public Item() {
+	}
 
 	public Item addReferencedLineID(String s) {
 		referencedLineID=s;

@@ -1,5 +1,6 @@
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 
 import java.math.BigDecimal;
@@ -7,6 +8,7 @@ import java.math.BigDecimal;
 /***
  * describes a product, good or service used in an invoice item line
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Product implements IZUGFeRDExportableProduct {
 	protected String unit, name, description, sellerAssignedID, buyerAssignedID;
 	protected BigDecimal VATPercent;
@@ -25,6 +27,15 @@ public class Product implements IZUGFeRDExportableProduct {
 		this.name = name;
 		this.description = description;
 		this.VATPercent = VATPercent;
+	}
+
+
+	/***
+	 * empty constructor
+	 * just for jackson etc
+	 */
+	public Product() {
+
 	}
 
 

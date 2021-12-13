@@ -1,4 +1,4 @@
-
+- Jacksonability: Invoice can now be Stringified to / restored from a JSON using Jackson
 - Fixed an error validation UBL files
 - unknown root elements will now throw type 3 errors
 - added some tests
