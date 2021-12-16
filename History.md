@@ -1,9 +1,12 @@
-- Jacksonability: Invoice can now be Stringified to / restored from a JSON using Jackson
-- Fixed an error validation UBL files
-- unknown root elements will now throw type 3 errors
-- added some tests
+2.3.2
+=======
+2021-12-16
+
+- Jacksonability: Invoice and dependent objects can now be Stringified to / restored from a JSON (persistence? XML?) using e.g. Jackson
+- unknown root elements will now throw separate errors (type 3)
+- added some automated tests
 - Remove faulty '/' from getNodeListByPath call. PR #256, Thanks again to Weclapp-dev
-- Issue 238 Validierungsproblem mit Skonto/do nnot remove linebreaks in XML
+- Issue 238 Validierungsproblem mit Skonto/do not remove linebreaks in XML
 - Do not trim trailing whitespace in XML submitted by the user, e.g. for XRechnung Skonto in PaymenttermsDescription
 
 2.3.1
