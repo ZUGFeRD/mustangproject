@@ -57,7 +57,7 @@ public class XMLValidator extends Validator {
 	/***
 	 * set source file
 	 * @param name the absolute filename of an xml file to validate
-	 * @throws IrrecoverableValidationError
+	 * @throws IrrecoverableValidationError if e.g. the file can not be found, or does not contain XML, so no further validation can take place
 	 */
 	@Override
   public void setFilename(String name) throws IrrecoverableValidationError { // from XML Filename
