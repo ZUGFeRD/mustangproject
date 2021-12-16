@@ -407,7 +407,7 @@ public class XMLValidator extends Validator {
 								.setLocation(failedAssert.getLocation()).setCriterion(failedAssert.getTest()).setSection(section)
 								.setPart(EPart.fx));
 						failedRules++;
-					} else if ((object instanceof FiredRule)||(object instanceof ActivePattern)) {
+					} else if (object instanceof FiredRule) {
 						firedRules++;
 					}
 				}
