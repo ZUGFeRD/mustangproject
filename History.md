@@ -3,6 +3,7 @@
 2021-12-16
 
 - Jacksonability: Invoice and dependent objects can now be Stringified to / restored from a JSON (persistence? XML?) using e.g. Jackson
+- Please note Mustang was *not* affected by log4j CVE-2021-44228 or CVE-2021-45046: this is *not* a security update
 - unknown root elements will now throw separate errors (type 3)
 - added some automated tests
 - Remove faulty '/' from getNodeListByPath call. PR #256, Thanks again to Weclapp-dev
