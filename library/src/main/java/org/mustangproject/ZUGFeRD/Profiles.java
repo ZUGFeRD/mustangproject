@@ -57,4 +57,31 @@ public class Profiles {
 		return getByName(name, ZUGFeRDExporterFromA3.DefaultZUGFeRDVersion);
 	}
 
+
+	/**
+	 * Obtains a profile by name, disregarding version. First searches among
+	 * 1.x profiles and fatre that among 2.x profiles.
+	 *
+	 * @param name profile name to search for
+	 *
+	 * @return a profile matching the requested name
+	 */
+	public static Profile getByNameDisregardingVersion(String name)
+	{
+		Profile result = null;
+
+		result = zf1Map.get(name.toUpperCase());
+
+		if (result == null)
+		{
+			result = zf2Map.get(name.toUpperCase());
+		}
+
+		if (result==null)
+		{
+			throw new RuntimeException("Profile " + name + " not found");
+		}
+
+		return result;
+	}
 }
