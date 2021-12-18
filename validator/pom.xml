@@ -75,6 +75,11 @@
             <version>5.6.0</version>
         </dependency>
         <dependency>
+            <groupId>com.helger</groupId>
+            <artifactId>ph-jaxb</artifactId>
+            <version>9.5.4</version>
+        </dependency>
+        <dependency>
             <groupId>org.mustangproject</groupId>
             <artifactId>library</artifactId>
             <version>2.3.2-SNAPSHOT</version>
@@ -83,6 +88,7 @@
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
             <version>2.6.3</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>

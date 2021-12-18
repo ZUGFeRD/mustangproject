@@ -6,6 +6,7 @@ target/
 pom.xml.*
 bin/
 /.gradle/
+log/
 
 # ignore intelliJ foobar
 *.iml
