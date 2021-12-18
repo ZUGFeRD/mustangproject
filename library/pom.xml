@@ -122,6 +122,7 @@
 			<groupId>org.xmlunit</groupId>
 			<artifactId>xmlunit-assertj</artifactId>
 			<version>2.6.3</version>
+			<scope>test</scope>
 		</dependency>
 		<!-- API -->
 		<dependency>
@@ -153,7 +154,7 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.2.1</version>
 				<configuration>
-					<shadedArtifactAttached>false</shadedArtifactAttached>
+					<shadedArtifactAttached>true</shadedArtifactAttached>
 					<minimizeJar>false</minimizeJar><!-- no longer java 11 compatible if set to true because it removes e.g. javax/xml/bind/annotation/XmlSchema-->
 					<filters>
 
