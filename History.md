@@ -1,3 +1,6 @@
+add signature comment into xml
+upgraded en16931 validation to 1.3.7 
+
 2.3.2
 =======
 2021-12-16
