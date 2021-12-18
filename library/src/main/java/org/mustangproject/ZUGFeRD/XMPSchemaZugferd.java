@@ -40,8 +40,10 @@ public class XMPSchemaZugferd extends XMPSchema {
 	 * @param URN the xml URI for the XMP
 	 * @param prefix the xml namespace prefix for the XMP, zf for ZUGFeRD, fx for Factur-X
 	 * @param filename the filename of the invoice
+	 * @param version meta-data version to set. May be null, and then it is set automatically
 	 */
-	public XMPSchemaZugferd(XMPMetadata metadata, int zfVersion, boolean isFacturX, Profile conformanceLevel, String URN, String prefix, String filename) {
+	public XMPSchemaZugferd(XMPMetadata metadata, int zfVersion, boolean isFacturX, Profile conformanceLevel,
+			                String URN, String prefix, String filename, String version) {
 		super(metadata, URN, prefix, "ZUGFeRD Schema");
 
 		setAboutAsSimple("");
@@ -50,9 +52,12 @@ public class XMPSchemaZugferd extends XMPSchema {
 		setTextPropertyValue("ConformanceLevel", conformanceLevelValue);
 		setTextPropertyValue("DocumentType", "INVOICE");
 		setTextPropertyValue("DocumentFileName", filename);
-		String version="1.0";
-		if ((zfVersion==2)&&(!isFacturX)) {
-			version="2p0";
+
+		if (version == null) {
+		    version = "1.0";
+		    if ((zfVersion==2)&&(!isFacturX)) {
+				version="2p0";
+			}
 		}
 		setTextPropertyValue("Version", version);
 	}
