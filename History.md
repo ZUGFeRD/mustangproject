@@ -1,5 +1,6 @@
 add signature comment into xml
-upgraded en16931 validation to 1.3.7 
+upgraded en16931 validation to 1.3.7
+xrechnung schematron 1.6.1
 
 2.3.2
 =======
