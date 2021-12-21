@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,6 +39,7 @@ import java.util.GregorianCalendar;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class OXTest extends MustangReaderTestCase implements IExportableTransaction {
 	final String TARGET_PDF = "./target/testout-OX.pdf";
+	final String TARGET_XML = "./target/testout-OX.xml";
 
 	protected class EdgeProduct implements IZUGFeRDExportableProduct {
 		private String description, name, unit;
@@ -268,6 +271,7 @@ public class OXTest extends MustangReaderTestCase implements IExportableTransact
 			oe.setTransaction(this);
 			String theXML = new String(oe.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:SCRDMCCBDACIOMessageStructure"));
+			Files.write(Paths.get(TARGET_XML), theXML.getBytes(StandardCharsets.UTF_8));
 			oe.export(TARGET_PDF);
 		} catch (IOException e) {
 			fail("IOException should not be raised in testEdgeExport");
