@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
     <artifactId>core</artifactId>
-    <version>2.3.3-SNAPSHOT</version>
+    <version>2.3.3</version>
     <packaging>pom</packaging>
     <name>Mustang</name>
 
@@ -20,7 +20,7 @@
         <connection>scm:git:git://github.com/dexecutor/dependent-tasks-executor.git</connection>
         <developerConnection>scm:git:git@github.com:dexecutor/dexecutor.git</developerConnection>
         <url>https://github.com/dexecutor/dependent-tasks-executor</url>
-      <tag>HEAD</tag>
+      <tag>core-2.3.3</tag>
   </scm>
     <build>
         <pluginManagement>
