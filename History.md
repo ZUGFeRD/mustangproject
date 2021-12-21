@@ -1,7 +1,14 @@
 add signature comment into xml
 upgraded en16931 validation to 1.3.7
 xrechnung schematron 1.6.1
-updated logback from 1.2.3 to 1.2.9 https://github.com/ZUGFeRD/mustangproject/security/dependabot/validator/pom.xml/ch.qos.logback:logback-core/open
+
+2.3.3
+=======
+2021-12-21
+
+- updated logback from 1.2.3 to 1.2.9 https://github.com/ZUGFeRD/mustangproject/security/dependabot/validator/pom.xml/ch.qos.logback:logback-core/open
+- nor 2021-12-13 nor 2021-12-20 of https://github.com/mergebase/log4j-detector have complained so far
+
 
 2.3.2
 =======
