@@ -47,12 +47,12 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.3</version>
+            <version>1.2.9</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.2.3</version>
+            <version>1.2.9</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.googlecode.slf4j-maven-plugin-log/slf4j-maven-plugin-log -->
         <dependency>
