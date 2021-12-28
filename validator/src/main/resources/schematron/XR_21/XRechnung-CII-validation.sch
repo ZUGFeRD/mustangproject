@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://purl.oclc.org/dsdl/schematron"
+        xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"
+        xmlns:ccts="urn:un:unece:uncefact:documentation:standard:CoreComponentsTechnicalSpecification:2"
+        xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100"
+        xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100"
+        xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100"
+        queryBinding="xslt2"
+        defaultPhase="xrechnung-model">
+  <title>Schematron Version 1.6.0 - XRechnung 2.1.1 compatible - CII</title>
+  <ns prefix="rsm"  uri="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" />
+  <ns prefix="ccts" uri="urn:un:unece:uncefact:documentation:standard:CoreComponentsTechnicalSpecification:2" />
+  <ns prefix="udt"  uri="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100" />
+  <ns prefix="qdt"  uri="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" />
+  <ns prefix="ram"  uri="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" />
+
+  <phase id="xrechnung-model">
+    <active pattern="variable-pattern" />
+    <active pattern="cii-pattern" />
+  </phase>
+
+<pattern xmlns="http://purl.oclc.org/dsdl/schematron" id="variable-pattern">
+    <!-- This pattern solely serves for declaring global variables (in XSLT speak) -->
+    
+    <let name="XR-MAJOR-MINOR-VERSION" value="'2.1'"/>
+    <let name="XR-CIUS-ID" value="concat('urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_', $XR-MAJOR-MINOR-VERSION )"/>
+    <let name="XR-EXTENSION-ID" value="concat($XR-CIUS-ID, '#conformant#urn:xoev-de:kosit:extension:xrechnung_' ,$XR-MAJOR-MINOR-VERSION )"/>
+    <let name="XR-SKONTO-REGEX"  value="'#(SKONTO|VERZUG)#TAGE=([0-9]+#PROZENT=[0-9]+\.[0-9]{2})(#BASISBETRAG=-?[0-9]+\.[0-9]{2})?#$'" />
+    <let name="BT-81" value="'rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:TypeCode'"/>
+</pattern>
+
+  <pattern id="cii-pattern">
+    <rule context="/rsm:CrossIndustryInvoice">
+      <assert test="rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans"
+              flag="fatal"
+              id="BR-DE-1"
+          >[BR-DE-1] Eine Rechnung (INVOICE) muss Angaben zu "PAYMENT INSTRUCTIONS" (BG-16) enthalten.</assert>
+      <assert test="rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerReference[boolean(normalize-space(.))]"
+              flag="fatal"
+              id="BR-DE-15"
+          >[BR-DE-15] Das Element "Buyer reference" (BT-10) muss übermittelt werden.</assert>
+      <assert test="not((rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:TypeCode = 'VAT' and
+                         rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode = ('S', 'Z', 'E', 'AE', 'K', 'G', 'L', 'M')) or
+                        (rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge/ram:CategoryTradeTax = 'VAT' and
+                         rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge/ram:CategoryTradeTax/ram:CategoryCode = ('S', 'Z', 'E', 'AE', 'K', 'G', 'L', 'M')) or
+                        (rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:TypeCode = 'VAT' and
+                         rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode = ('S', 'Z', 'E', 'AE', 'K', 'G', 'L', 'M'))) or
+                    ((rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA' or
+                                                                                                                                                  @schemeID='VAT' or
+                                                                                                                                                  @schemeID='FC'][boolean(normalize-space(.))], rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty))"
+              flag="fatal"
+              id="BR-DE-16"
+          >[BR-DE-16] In der Rechnung muss mindestens eines der Elemente "Seller VAT identifier" (BT-31), "Seller tax registration identifier" (BT-32) oder "SELLER TAX REPRESENTATIVE PARTY" (BG-11) übermittelt werden.</assert>
+      <assert test="rsm:ExchangedDocument/ram:TypeCode = ('326', '380', '384', '389', '381', '875', '876', '877')"
+              flag="warning"
+              id="BR-DE-17"
+          >[BR-DE-17] Mit dem Element "Invoice type code" (BT-3) sollen ausschließlich folgende Codes aus der Codeliste UNTDID 1001 übermittelt werden: 326 (Partial invoice), 380 (Commercial invoice), 384 (Corrected invoice), 389 (Self-billed invoice) und 381 (Credit note),875 (Partial construction invoice), 876 (Partial final construction invoice), 877 (Final construction invoice).</assert>
+      <assert test="every $line 
+                      in rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:Description/tokenize(. , '(\r?\n)')[starts-with( normalize-space(.) , '#')] 
+                      satisfies matches ( normalize-space ($line), $XR-SKONTO-REGEX ) and
+                    matches( rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:Description/tokenize(. ,  '#.+#')[last()], '^\s*\n' )"                    
+              flag="fatal"
+              id="BR-DE-18"
+          >[BR-DE-18] Skonto/Verzug Zeilen in <name/> muessen diesem regulärem Ausdruck entsprechen: <value-of select="$XR-SKONTO-REGEX"/>. Die Informationen zur Gewährung von Skonto oder zur Berechnung von Verzugszinsen müssen wie folgt im Element "Payment terms" (BT-20) übermittelt werden: Anzugeben ist im ersten Segment "SKONTO" oder "VERZUG", im zweiten "TAGE=n", im dritten "PROZENT=n". Prozentzahlen sind ohne Vorzeichen sowie mit Punkt getrennt von zwei Nachkommastellen anzugeben. Liegt dem zu berechnenden Betrag nicht BT-115, "fälliger Betrag" zugrunde, sondern nur ein Teil des fälligen Betrags der Rechnung, ist der Grundwert zur Berechnung von Skonto oder Verzugszins als viertes Segment "BASISBETRAG=n" gemäß dem semantischen Datentypen Amount anzugeben. Jeder Eintrag beginnt mit einer #, die Segmente sind mit einer # getrennt und eine Zeile schließt mit einer # ab. Am Ende einer vollständigen Skonto oder Verzugsangabe muss ein XML-konformer Zeilenumbruch folgen. Alle Angaben zur Gewährung von Skonto oder zur Berechnung von Verzugszinsen müssen in Großbuchstaben gemacht werden. Zusätzliches Whitespace (Leerzeichen, Tabulatoren oder Zeilenumbrüche) ist nicht zulässig. Andere Zeichen oder Texte als in den oberen Vorgaben genannt sind nicht zulässig.</assert>
+      <assert test="count(//ram:AdditionalReferencedDocument) = count(//ram:AdditionalReferencedDocument[not(./ram:AttachmentBinaryObject/@filename = preceding-sibling::ram:AdditionalReferencedDocument/ram:AttachmentBinaryObject/@filename)])"
+              flag="fatal"
+              id="BR-DE-22"
+          >[BR-DE-22] Not all filename attributes of the embeddedDocumentBinaryObject elements are unique</assert>
+      <assert test="not(rsm:ExchangedDocument/ram:TypeCode = 384) or
+                    (rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument)"
+              flag="warning"
+              id="BR-DE-26"
+          >[BR-DE-26] Wenn im Element Invoice type code (BT-3) der Code 384 (Corrected invoice) übergeben wird, soll PRECEDING INVOICE REFERENCE BG-3 mind. einmal vorhanden sein.</assert>
+    </rule>
+  
+    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext">
+      <assert test="ram:GuidelineSpecifiedDocumentContextParameter/ram:ID = $XR-CIUS-ID"
+              flag="warning"
+              id="BR-DE-21"
+          >[BR-DE-21] Das Element "Specification identifier" (BT-24) soll syntaktisch der Kennung des Standards XRechnung entsprechen.</assert>
+    </rule>
+  
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty">
+      <assert test="ram:DefinedTradeContact"
+              flag="fatal"
+              id="BR-DE-2"
+          >[BR-DE-2] Die Gruppe "SELLER CONTACT" (BG-6) muss übermittelt werden.</assert>
+    </rule>
+  
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:PostalTradeAddress">
+      <assert test="ram:CityName[boolean(normalize-space(.))]"
+              flag="fatal"
+              id="BR-DE-3"
+          >[BR-DE-3] Das Element "Seller city" (BT-37) muss übermittelt werden.</assert>
+      <assert test="ram:PostcodeCode[boolean(normalize-space(.))]"
+              flag="fatal"
+              id="BR-DE-4"
+          >[BR-DE-4] Das Element "Seller post code" (BT-38) muss übermittelt werden.</assert>
+    </rule>
+  
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:DefinedTradeContact">
+      <assert test="(ram:PersonName,ram:DepartmentName)[boolean(normalize-space(.))]"
+              flag="fatal"
+              id="BR-DE-5"
+          >[BR-DE-5] Das Element "Seller contact point" (BT-41) muss übermittelt werden.</assert>
+      <assert test="ram:TelephoneUniversalCommunication/ram:CompleteNumber[boolean(normalize-space(.))]"
+              flag="fatal"
+              id="BR-DE-6"
+          >[BR-DE-6] Das Element "Seller contact telephone number" (BT-42) muss übermittelt werden.</assert>
+      <assert test="ram:EmailURIUniversalCommunication/ram:URIID[boolean(normalize-space(.))]"
+              flag="fatal"
+              id="BR-DE-7"
+          >[BR-DE-7] Das Element "Seller contact email address" (BT-43) muss übermittelt werden.</assert>
+    </rule>
+  
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:PostalTradeAddress">
+      <assert test="ram:CityName[boolean(normalize-space(.))]"
+              flag="fatal"
+              id="BR-DE-8"
+          >[BR-DE-8] Das Element "Buyer city" (BT-52) muss übermittelt werden.</assert>
+      <assert test="ram:PostcodeCode[boolean(normalize-space(.))]"
+              flag="fatal"
+              id="BR-DE-9"
+          >[BR-DE-9] Das Element "Buyer post code" (BT-53) muss übermittelt werden.</assert>
+    </rule>
+  
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress">
+      <assert test="ram:CityName[boolean(normalize-space(.))]"
+              flag="fatal"
+              id="BR-DE-10"
+          >[BR-DE-10] Das Element "Deliver to city" (BT-77) muss übermittelt werden, wenn die Gruppe "DELIVER TO ADDRESS" (BG-15) übermittelt wird.</assert>
+      <assert test="ram:PostcodeCode[boolean(normalize-space(.))]"
+              flag="fatal"
+              id="BR-DE-11"
+          >[BR-DE-11] Das Element "Deliver to post code" (BT-78) muss übermittelt werden, wenn die Gruppe "DELIVER TO ADDRESS" (BG-15) übermittelt wird.</assert>
+    </rule>
+    
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode = (30,58)]">
+      <assert test="not(ram:TypeCode = '58') or
+                    matches(normalize-space(replace(ram:PayeePartyCreditorFinancialAccount/ram:IBANID, '([ \n\r\t\s])', '')), '^[A-Z]{2}[0-9]{2}[a-zA-Z0-9]{0,30}$') and
+                    xs:integer(string-join(for $cp in string-to-codepoints(concat(substring(normalize-space(replace(ram:PayeePartyCreditorFinancialAccount/ram:IBANID, '([ \n\r\t\s])', '')),5),upper-case(substring(normalize-space(replace(ram:PayeePartyCreditorFinancialAccount/ram:IBANID, '([ \n\r\t\s])', '')),1,2)),substring(normalize-space(replace(ram:PayeePartyCreditorFinancialAccount/ram:IBANID, '([ \n\r\t\s])', '')),3,2))) return  (if($cp > 64) then $cp - 55 else  $cp - 48),'')) mod 97 = 1"
+              flag="warning"
+              id="BR-DE-19"
+        >[BR-DE-19] "Payment account identifier" (BT-84) soll eine korrekte IBAN enthalten, wenn in "Payment means type code" (BT-81) mit dem Code 58 SEPA als Zahlungsmittel gefordert wird.</assert>
+      <assert test="ram:PayeePartyCreditorFinancialAccount"
+              flag="fatal"
+              id="BR-DE-23-a"
+        >[BR-DE-23-a] Wenn BT-81 "Payment means type code" einen Schlüssel für Überweisungen enthält (30, 58), muss BG-17 "CREDIT TRANSFER" übermittelt werden.</assert>
+      <assert test="not(ram:ApplicableTradeSettlementFinancialCard) and
+                    not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DirectDebitMandateID or
+                        /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:CreditorReferenceID or
+                        ram:PayerPartyDebtorFinancialAccount/ram:IBANID)"
+              flag="fatal"
+              id="BR-DE-23-b"
+        >[BR-DE-23-b] Wenn BT-81 "Payment means type code" einen Schlüssel für Überweisungen enthält (30, 58), dürfen BG-18 und BG-19 nicht übermittelt werden.</assert>
+    </rule>
+  
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode = (48,54,55)]">
+      <assert test="ram:ApplicableTradeSettlementFinancialCard"
+              flag="fatal"
+              id="BR-DE-24-a"
+        >[BR-DE-24-a] Wenn BT-81 "Payment means type code" einen Schlüssel für Kartenzahlungen enthält (48, 54, 55), muss genau BG-18 "PAYMENT CARD INFORMATION" übermittelt werden.</assert>
+      <assert test="not(ram:PayeePartyCreditorFinancialAccount) and
+                    not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DirectDebitMandateID or
+                        /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:CreditorReferenceID or
+                        ram:PayerPartyDebtorFinancialAccount/ram:IBANID)"
+              flag="fatal"
+              id="BR-DE-24-b"
+        >[BR-DE-24-b] Wenn BT-81 "Payment means type code" einen Schlüssel für Kartenzahlungen enthält (48, 54, 55), dürfen BG-17 und BG-19 nicht übermittelt werden.</assert>
+    </rule>
+  
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode = 59]">
+      <assert test="not(ram:TypeCode = '59') or
+                    matches(normalize-space(replace(ram:PayerPartyDebtorFinancialAccount/ram:IBANID, '([ \n\r\t\s])', '')), '^[A-Z]{2}[0-9]{2}[a-zA-Z0-9]{0,30}$') and
+                    xs:integer(string-join(for $cp in string-to-codepoints(concat(substring(normalize-space(replace(ram:PayerPartyDebtorFinancialAccount/ram:IBANID, '([ \n\r\t\s])', '')),5),upper-case(substring(normalize-space(replace(ram:PayerPartyDebtorFinancialAccount/ram:IBANID, '([ \n\r\t\s])', '')),1,2)),substring(normalize-space(replace(ram:PayerPartyDebtorFinancialAccount/ram:IBANID, '([ \n\r\t\s])', '')),3,2))) return  (if($cp > 64) then $cp - 55 else  $cp - 48),'')) mod 97 = 1"
+              flag="warning"
+              id="BR-DE-20"
+        >[BR-DE-20] "Debited account identifier" (BT-91) soll eine korrekte IBAN enthalten, wenn in "Payment means type code" (BT-81) mit dem Code 59 SEPA als Zahlungsmittel gefordert wird.</assert>
+      <assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DirectDebitMandateID or
+                    /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:CreditorReferenceID or
+                    ram:PayerPartyDebtorFinancialAccount/ram:IBANID"
+              flag="fatal"
+              id="BR-DE-25-a"
+        >[BR-DE-25-a] Wenn BT-81 "Payment means type code" einen Schlüssel für Lastschriften enthält (59), muss genau BG-19 "DIRECT DEBIT" übermittelt werden.</assert>        
+      <assert test="not(ram:PayeePartyCreditorFinancialAccount) and
+                    not(ram:ApplicableTradeSettlementFinancialCard)"
+              flag="fatal"
+              id="BR-DE-25-b"
+        >[BR-DE-25-b] Wenn BT-81 "Payment means type code" einen Schlüssel für Lastschriften enthält (59), dürfen BG-17 und BG-18 nicht übermittelt werden.</assert>        
+    </rule>
+    
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax">
+      <assert test="ram:RateApplicablePercent[boolean(normalize-space(.))]"
+              flag="fatal"
+              id="BR-DE-14"
+          >[BR-DE-14] Das Element "VAT category rate" (BT-119) muss übermittelt werden.</assert>
+    </rule>
+  </pattern>
+</schema>

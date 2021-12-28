@@ -1,6 +1,11 @@
-add signature comment into xml
-upgraded en16931 validation to 1.3.7
-xrechnung schematron 1.6.1
+2.3.3
+=======
+
+- PR 257 issue #227 shaded/lightweight jars (thanks a lot to quadrik!)
+- PR 258 Multiple XRechnung improvements like the possibility to set it's version in the PDF metadata (thanks a lot to ivaklinov) 
+- add signature comment into xml
+- upgraded en16931 validation to 1.3.7
+- upgraded xrechnung schematron 1.6.1
 
 2.3.3
 =======
