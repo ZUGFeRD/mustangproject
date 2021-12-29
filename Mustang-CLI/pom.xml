@@ -43,11 +43,6 @@
          <version>2.0-SNAPSHOT</version>
       </dependency>
       <dependency>
-         <groupId>org.codehaus.janino</groupId>
-         <artifactId>janino</artifactId>
-         <version>3.1.6</version>
-      </dependency>
-      <dependency>
          <groupId>org.riversun</groupId>
          <artifactId>bigdoc</artifactId>
          <version>0.3.0</version>

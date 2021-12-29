@@ -1,4 +1,4 @@
-2.3.3
+2.3.4
 =======
 
 - PR 257 issue #227 shaded/lightweight jars (thanks a lot to quadrik!)
