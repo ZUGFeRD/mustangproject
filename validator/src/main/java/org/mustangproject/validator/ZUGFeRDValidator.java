@@ -29,7 +29,7 @@ import org.xml.sax.InputSource;
 
 //abstract class
 public class ZUGFeRDValidator {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDValidator.class.getCanonicalName()); // log
+	private static Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDValidator.class.getCanonicalName()); // log
 																												// output
 	protected ValidationContext context = new ValidationContext(LOGGER);
 	protected String sha1Checksum;
@@ -41,6 +41,15 @@ public class ZUGFeRDValidator {
 	protected String Signature;
 	protected boolean wasCompletelyValid = false;
 	protected String logAppend=null;
+
+
+	public ZUGFeRDValidator() {
+
+	}
+	public ZUGFeRDValidator(Logger customLogger) {
+		LOGGER=customLogger;
+
+	}
 
 	/***
 	 * within the validation it turned out something in the options was wrong, e.g.

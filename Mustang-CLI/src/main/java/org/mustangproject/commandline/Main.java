@@ -400,7 +400,7 @@ former logback.xml:
 
 		logger.addAppender(logFileAppender);
 		logger.setLevel(Level.WARN);
-		logger.setAdditive(false); /* set to true if root should log too */
+		logger.setAdditive(true); /* set to true if root should log too */
 
 		return logger;
 	}
@@ -476,10 +476,10 @@ former logback.xml:
 			String zugferdVersion = parser.getOptionValue(zugferdVersionOption);
 			String zugferdProfile = parser.getOptionValue(zugferdProfileOption);
 			boolean optionsRecognized=false;
+
 			if (!nolog) {
 				LOGGER.setLevel(Level.OFF);
 			}
-			LOGGER.error("deb just a test");
 			if (helpRequested) {
 				printHelp();
 				optionsRecognized=true;
@@ -530,7 +530,7 @@ former logback.xml:
 		if (sourceName == null) {
 			sourceName = getFilenameFromUser("Source PDF or XML", "invoice.pdf", "pdf|xml", true, false);
 		}
-		ZUGFeRDValidator zfv=new ZUGFeRDValidator();
+		ZUGFeRDValidator zfv=new ZUGFeRDValidator(LOGGER);
 		if ((logAppend!=null)&&(logAppend.length()>0)) {
 			zfv.setLogAppend(logAppend);
 		}
