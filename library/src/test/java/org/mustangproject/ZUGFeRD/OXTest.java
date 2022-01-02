@@ -280,18 +280,14 @@ public class OXTest extends MustangReaderTestCase implements IExportableTransact
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
-		assertTrue(zi.getUTF8().contains("<ram:TypeCode>59</ram:TypeCode>"));
+		assertTrue(zi.getUTF8().contains("<ram:TypeCode>220</ram:TypeCode>"));
 		assertTrue(zi.getUTF8().contains("<ram:ShipToTradeParty>"));
-		assertTrue(zi.getUTF8().contains("<ram:IBANID>DE540815</ram:IBANID>"));
-		assertTrue(zi.getUTF8().contains("<ram:DirectDebitMandateID>DE99XX12345</ram:DirectDebitMandateID>"));
-		assertFalse(zi.getUTF8().contains("<ram:DueDateDateTime>"));
 		assertFalse(zi.getUTF8().contains("EUR"));
 		assertTrue(zi.getUTF8().contains("USD"));//currency should be USD, test for #150
 
 		// Reading ZUGFeRD
 		assertEquals("496.00", zi.getAmount());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
-		assertEquals(zi.getForeignReference(), getNumber());
 
 
 	}

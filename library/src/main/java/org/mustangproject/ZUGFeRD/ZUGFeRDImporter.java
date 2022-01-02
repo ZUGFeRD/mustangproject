@@ -572,7 +572,7 @@ public class ZUGFeRDImporter {
 	public String getAmount() {
 		String result = extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']/*[local-name() = 'DuePayableAmount']");
 		if (result == null || result.isEmpty()) {
-			result = extractString("//*[local-name() = 'SpecifiedTradeSettlementMonetarySummation']/*[local-name() = 'GrandTotalAmount']");
+			result = extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']/*[local-name() = 'GrandTotalAmount']");
 		}
 		return result;
 	}

@@ -59,19 +59,19 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	public void setTest() {
 	}
 
-	private String vatFormat(BigDecimal value) {
+	protected String vatFormat(BigDecimal value) {
 		return XMLTools.nDigitFormat(value, 2);
 	}
 
-	private String currencyFormat(BigDecimal value) {
+	protected String currencyFormat(BigDecimal value) {
 		return XMLTools.nDigitFormat(value, 2);
 	}
 
-	private String priceFormat(BigDecimal value) {
+	protected String priceFormat(BigDecimal value) {
 		return XMLTools.nDigitFormat(value, 4);
 	}
 
-	private String quantityFormat(BigDecimal value) {
+	protected String quantityFormat(BigDecimal value) {
 		return XMLTools.nDigitFormat(value, 4);
 	}
 
