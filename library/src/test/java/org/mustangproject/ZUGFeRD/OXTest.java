@@ -23,7 +23,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.mustangproject.Invoice;
 
+import javax.xml.xpath.XPathExpressionException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +33,7 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -285,9 +288,26 @@ public class OXTest extends MustangReaderTestCase implements IExportableTransact
 		assertFalse(zi.getUTF8().contains("EUR"));
 		assertTrue(zi.getUTF8().contains("USD"));//currency should be USD, test for #150
 
-		// Reading ZUGFeRD
+		// Now also check the "invoice"Importer
 		assertEquals("496.00", zi.getAmount());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_PDF);
+		try {
+			Invoice i=zii.extractInvoice();
+
+			assertEquals(new BigDecimal("400.0000"), i.getZFItems()[1].getQuantity());
+			/* getting the Quantity is more difficult than usual because in OrderX it's
+			called requestedQuantity, not BilledQuantity
+			 */
+
+
+		} catch (XPathExpressionException e) {
+			fail("XPathExpressionException should not be raised in testEdgeExport");
+		} catch (ParseException e) {
+			fail("ParseException should not be raised in testEdgeExport");
+			/* a parseException would also be fired if the calculated grand total does not
+			match the read grand total */
+		}
 
 
 	}
