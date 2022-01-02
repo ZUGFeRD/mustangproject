@@ -57,7 +57,19 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 		res = zfv.validate(tempFile.getAbsolutePath());
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.isEqualTo("valid");
+/*
+		tempFile = getResourceAsFile("testout-OX.pdf");
+		zfv = new ZUGFeRDValidator();
+		res = zfv.validate(tempFile.getAbsolutePath());
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.isEqualTo("valid");
 
+		tempFile = getResourceAsFile("testout-OX.xml");
+		zfv = new ZUGFeRDValidator();
+		res = zfv.validate(tempFile.getAbsolutePath());
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.isEqualTo("valid");
+*/
 		tempFile = getResourceAsFile("invalidXRechnung.pdf");
 		zfv = new ZUGFeRDValidator();
 		res = zfv.validate(tempFile.getAbsolutePath());
