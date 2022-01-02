@@ -49,7 +49,8 @@ import java.nio.file.Paths;
 import javax.xml.transform.TransformerException;
 
 public class Main {
-	private static Logger LOGGER = null; // log output
+	protected static Logger LOGGER = null; // log output
+	protected static RollingFileAppender logFileAppender = null;
 
 	private static void printUsage() {
 		System.err.println(getUsage());
@@ -378,7 +379,7 @@ former logback.xml:
 		logConsoleAppender.setEncoder(ple);
 		logConsoleAppender.start();
 
-		RollingFileAppender logFileAppender = new RollingFileAppender();
+		logFileAppender = new RollingFileAppender();
 		logFileAppender.setContext(lc);
 		logFileAppender.setName("logFile");
 		logFileAppender.setEncoder(ple);
@@ -392,11 +393,13 @@ former logback.xml:
 		logFilePolicy.start();
 
 		logFileAppender.setRollingPolicy(logFilePolicy);
+
 		logFileAppender.start();
 		Logger logger = (Logger) LoggerFactory.getLogger(Validator.class.getCanonicalName());
 		logger.addAppender(logConsoleAppender);
+
 		logger.addAppender(logFileAppender);
-		logger.setLevel(Level.INFO);
+		logger.setLevel(Level.WARN);
 		logger.setAdditive(false); /* set to true if root should log too */
 
 		return logger;
@@ -473,9 +476,10 @@ former logback.xml:
 			String zugferdVersion = parser.getOptionValue(zugferdVersionOption);
 			String zugferdProfile = parser.getOptionValue(zugferdProfileOption);
 			boolean optionsRecognized=false;
-			if (nolog) {
+			if (!nolog) {
 				LOGGER.setLevel(Level.OFF);
 			}
+			LOGGER.error("deb just a test");
 			if (helpRequested) {
 				printHelp();
 				optionsRecognized=true;
