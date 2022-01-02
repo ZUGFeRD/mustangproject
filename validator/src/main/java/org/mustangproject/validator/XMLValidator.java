@@ -401,7 +401,7 @@ public class XMLValidator extends Validator {
 					if (object instanceof FailedAssert) {
 
 						final FailedAssert failedAssert = (FailedAssert) object;
-						LOGGER.info("FailedAssert ", failedAssert);
+						LOGGER.debug("FailedAssert ", failedAssert);
 
 						context.addResultItem(new ValidationResultItem(severity, SVRLHelper.getAsString(failedAssert.getText()))
 								.setLocation(failedAssert.getLocation()).setCriterion(failedAssert.getTest()).setSection(section)

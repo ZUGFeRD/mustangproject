@@ -23,9 +23,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
-import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
-import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import com.sanityinc.jargs.CmdLineParser;
@@ -37,7 +35,6 @@ import org.mustangproject.validator.ZUGFeRDValidator;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,7 +49,7 @@ import java.nio.file.Paths;
 import javax.xml.transform.TransformerException;
 
 public class Main {
-	private static final org.slf4j.Logger LOGGER = null; // log output
+	private static Logger LOGGER = null; // log output
 
 	private static void printUsage() {
 		System.err.println(getUsage());
@@ -91,6 +88,7 @@ public class Main {
 				+ "                [--source <filename>]: set input XML ZUGFeRD 1 file\n"
 				+ "                [--out <filename>]: set output XML ZUGFeRD 2 file\n"
 				+ "        --action=validate  validate XML or PDF file \n"
+				+ "                [--no-log]: do not create logfile\n"
 				+ "                [--no-notices]: refrain from reporting notices\n"
 				+ "                [--logAppend=<text>]: text to be added to log line\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
@@ -336,6 +334,8 @@ public class Main {
 	private static Logger createLogger() {
 		/*
 https://stackoverflow.com/questions/16910955/programmatically-configure-logback-appender
+
+former logback.xml:
 		<appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
     <target>System.err</target>
     <encoder>
@@ -383,12 +383,11 @@ https://stackoverflow.com/questions/16910955/programmatically-configure-logback-
 		logFileAppender.setName("logFile");
 		logFileAppender.setEncoder(ple);
 		logFileAppender.setAppend(true);
-		logFileAppender.setFile("logs/logfile.log");
 
 		TimeBasedRollingPolicy logFilePolicy = new TimeBasedRollingPolicy();
 		logFilePolicy.setContext(lc);
 		logFilePolicy.setParent(logFileAppender);
-		logFilePolicy.setFileNamePattern("logs/logfile-%d{yyyy-MM-dd_HH}.log");
+		logFilePolicy.setFileNamePattern("log/ZUV-%d{yyyy-MM}.log");
 		logFilePolicy.setMaxHistory(60);
 		logFilePolicy.start();
 
@@ -397,8 +396,7 @@ https://stackoverflow.com/questions/16910955/programmatically-configure-logback-
 		Logger logger = (Logger) LoggerFactory.getLogger(Validator.class.getCanonicalName());
 		logger.addAppender(logConsoleAppender);
 		logger.addAppender(logFileAppender);
-//		logger.setLevel(Level.DEBUG);
-//		logger.setLevel(Level.OFF);
+		logger.setLevel(Level.INFO);
 		logger.setAdditive(false); /* set to true if root should log too */
 
 		return logger;
@@ -444,7 +442,7 @@ https://stackoverflow.com/questions/16910955/programmatically-configure-logback-
 			// (--ignorefileextension)
 			Option<String> dirnameOption = parser.addStringOption('d', "directory");
 			Option<Boolean> ignoreFileExtOption = parser.addBooleanOption('i', "ignorefileextension");
-
+			Option<Boolean> nologOption = parser.addBooleanOption('n', "no-log");
 			// Command: Show metrics from list from stdin
 			// --listfromstdin
 			Option<Boolean> filesFromStdInOption = parser.addBooleanOption('l', "listfromstdin");
@@ -461,6 +459,9 @@ https://stackoverflow.com/questions/16910955/programmatically-configure-logback-
 			String directoryName = parser.getOptionValue(dirnameOption);
 			Boolean filesFromStdIn = parser.getOptionValue(filesFromStdInOption, Boolean.FALSE);
 			Boolean ignoreFileExt = parser.getOptionValue(ignoreFileExtOption, Boolean.FALSE);
+			Boolean nolog = parser.getOptionValue(nologOption, Boolean.FALSE);
+
+
 			Boolean helpRequested = parser.getOptionValue(helpOption, Boolean.FALSE)  || ((action!=null)&&(action.equals("help")));
 
 			String sourceName = parser.getOptionValue(sourceOption);
@@ -472,6 +473,9 @@ https://stackoverflow.com/questions/16910955/programmatically-configure-logback-
 			String zugferdVersion = parser.getOptionValue(zugferdVersionOption);
 			String zugferdProfile = parser.getOptionValue(zugferdProfileOption);
 			boolean optionsRecognized=false;
+			if (nolog) {
+				LOGGER.setLevel(Level.OFF);
+			}
 			if (helpRequested) {
 				printHelp();
 				optionsRecognized=true;

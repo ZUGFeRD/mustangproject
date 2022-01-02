@@ -53,6 +53,11 @@ public class ZUGFeRDValidator {
 
 	}
 
+	/****
+	 * when performing a validation the user can specify a custom string to be added
+	 * to the logmessage, detailling e.g. which user has commenced this operation
+	 * @param tobeappended the String to be added to the message
+	 */
 	public void setLogAppend(String tobeappended) {
 		logAppend = tobeappended;
 	}
