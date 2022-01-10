@@ -1,7 +1,8 @@
 =======
 
 - issue #255 support order-x
-
+- xr now checks en16931 profile not extended
+- Validation errors now contain the filename of the failed xslt~schematron
 
 2.3.4
 =======
