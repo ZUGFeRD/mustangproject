@@ -234,7 +234,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 				"          <pdfaExtension:schemas>\n" +
 				"            <rdf:Bag>\n" +
 				"              <rdf:li rdf:parseType=\"Resource\">\n" +
-				"                <pdfaSchema:schema>Factur-X PDFA Extension Schema</pdfaSchema:schema>\n" +
+				"                <pdfaSchema:schema>ZUGFeRD PDFA Extension Schema</pdfaSchema:schema>\n" +
 				"                <pdfaSchema:namespaceURI>urn:ferd:pdfa:CrossIndustryDocument:invoice:1p0#</pdfaSchema:namespaceURI>\n" +
 				"                <pdfaSchema:prefix>zf</pdfaSchema:prefix>\n" +
 				"                <pdfaSchema:property>\n" +
