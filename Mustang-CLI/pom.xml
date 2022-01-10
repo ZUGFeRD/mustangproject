@@ -113,8 +113,8 @@
                <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven 
 						mvn clean compile assembly:single -->
                <!-- or whatever version you use -->
-               <source>1.7</source>
-               <target>1.7</target>
+               <source>8</source>
+               <target>8</target>
             </configuration>
          </plugin>
          <!-- /ZUV -->

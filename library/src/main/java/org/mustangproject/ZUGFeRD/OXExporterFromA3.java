@@ -393,13 +393,15 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, 1, true, xmlProvider.getProfile(),
 					"urn:factur-x:pdfa:CrossIndustryDocument:1p0#", "fx",
 					"order-x.xml");
+			zf.setType("ORDER");
 
 			metadata.addSchema(zf);
+			// also add the schema extensions...
+			XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(this, metadata, 1, attachZUGFeRDHeaders);
+			pdfaex.setZUGFeRDVersion(1);
+			metadata.addSchema(pdfaex);
 		}
 
-		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(this, metadata, 1, attachZUGFeRDHeaders);
-		pdfaex.setZUGFeRDVersion(1);
-		metadata.addSchema(pdfaex);
 	}
 
 

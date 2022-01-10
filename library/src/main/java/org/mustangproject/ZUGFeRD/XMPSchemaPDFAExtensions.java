@@ -116,7 +116,7 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 		addProperty(newBag);
 		if (withZF) {
 			TextType pdfa1 = new TextType(metadata, xmlns_pdfaSchema, prefix_pdfaSchema, PDFASchemaType.SCHEMA,
-					"ZUGFeRD PDFA Extension Schema");
+					"Factur-X PDFA Extension Schema");
 			li.addProperty(pdfa1);
 
 			pdfa1 = new TextType(metadata, xmlns_pdfaSchema, prefix_pdfaSchema, PDFASchemaType.NAMESPACE_URI,

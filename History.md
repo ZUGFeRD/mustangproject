@@ -10,6 +10,8 @@
 - add signature comment into xml
 - upgraded en16931 validation to 1.3.7
 - upgraded xrechnung schematron to 1.6.1
+- changed PDF/A extension scheme name from ZUGFeRD to Factur-X
+- corrected a possible nullpointerexception in contact.getPhone() vs. getName() (thanks to Chritoph W.)
 
 2.3.3
 =======

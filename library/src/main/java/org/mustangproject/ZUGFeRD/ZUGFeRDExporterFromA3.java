@@ -168,7 +168,6 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 			return "urn:ferd:pdfa:CrossIndustryDocument:invoice:1p0#";
 		} else if (ver == 2) {
 			return "urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#";
-
 		} else {
 			throw new IllegalArgumentException("Version not supported");
 		}
