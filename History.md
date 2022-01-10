@@ -1,17 +1,15 @@
+2.4.0
 =======
+2022-01-10
 
 - issue #255 support order-x
 - xr now checks en16931 profile not extended
 - Validation errors now contain the filename of the failed xslt~schematron
-
-2.3.4
-=======
-
 - PR 257 issue #227 shaded/lightweight jars (thanks a lot to quadrik!)
 - PR 258 Multiple XRechnung improvements like the possibility to set it's version in the PDF metadata (thanks a lot to ivaklinov) 
 - add signature comment into xml
 - upgraded en16931 validation to 1.3.7
-- upgraded xrechnung schematron 1.6.1
+- upgraded xrechnung schematron to 1.6.1
 
 2.3.3
 =======
