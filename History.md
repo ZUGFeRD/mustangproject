@@ -3,6 +3,7 @@
 2022-01-13
 
 - issue #255 support order-x
+- switched xrechnung signature to 2.1(.1) as required as of February 
 - xr now checks en16931 profile not extended
 - Validation errors now contain the filename of the failed xslt~schematron
 - PR 257 issue #227 shaded/lightweight jars (thanks a lot to quadrik!)
