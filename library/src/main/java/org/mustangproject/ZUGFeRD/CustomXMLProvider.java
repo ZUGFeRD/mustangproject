@@ -32,8 +32,11 @@ public class CustomXMLProvider implements IXMLProvider {
 
 	public void setXML(byte[] newData) {
 		String zf = new String(newData, StandardCharsets.UTF_8);
-		if (!zf.contains("CrossIndustry")) {
-			throw new RuntimeException("ZUGFeRD XML does not contain (<rsm:)CrossIndustry and can thus not be valid");
+		/**
+		 * rsm:CrossIndustry is ZF/FX/XR (CII 2016b) and rsm:SCRDMCCBDACIOMessageStructure is of course Order-X (CIO 2021)
+		 */
+		if ((!zf.contains("rsm:CrossIndustry")) && (!zf.contains("rsm:SCRDMCCBDACIOMessageStructure"))) {
+			throw new RuntimeException("ZUGFeRD XML does not contain <rsm:CrossIndustry or <rsm:SCRDMCCBDACIOMessageStructure and can thus not be valid");
 		}
 
 		zugferdData = newData;

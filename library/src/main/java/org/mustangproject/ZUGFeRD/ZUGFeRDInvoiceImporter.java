@@ -216,7 +216,8 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLineTradeDelivery"))) {
 						NodeList tradeLineChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeLineChildIndex = 0; tradeLineChildIndex < tradeLineChilds.getLength(); tradeLineChildIndex++) {
-							if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && (tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("BilledQuantity"))) {
+							if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && (tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("BilledQuantity")||tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("RequestedQuantity"))) {
+								//RequestedQuantity is for Order-X, BilledQuantity for FX and ZF
 								quantity = tradeLineChilds.item(tradeLineChildIndex).getTextContent();
 								unitCode = tradeLineChilds.item(tradeLineChildIndex).getAttributes().getNamedItem("unitCode").getNodeValue();
 							}

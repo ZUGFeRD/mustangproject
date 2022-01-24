@@ -60,7 +60,7 @@ public class XMLValidator extends Validator {
 	 * @throws IrrecoverableValidationError if e.g. the file can not be found, or does not contain XML, so no further validation can take place
 	 */
 	@Override
-  public void setFilename(String name) throws IrrecoverableValidationError { // from XML Filename
+	public void setFilename(String name) throws IrrecoverableValidationError { // from XML Filename
 		filename = name;
 		// file existence must have been checked before
 
@@ -88,6 +88,7 @@ public class XMLValidator extends Validator {
 
 	/**
 	 * whether uri1 has the same meaning like uri1 (it has, if it only differs in the fragment, i.e. uri1#1==uri1#2 )
+	 *
 	 * @param uri1 basis guideline ID
 	 * @param uri2 guideline ID to be checked
 	 * @return true if semantically identical
@@ -192,7 +193,7 @@ public class XMLValidator extends Validator {
 				// urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:basic
 				if (root.getLocalName().equalsIgnoreCase("SCRDMCCBDACIOMessageStructure")) {
 					context.setGeneration("1");
-					isOrderX=true;
+					isOrderX = true;
 					isBasic = context.getProfile().contains("basic");
 					isEN16931 = context.getProfile().contains("comfort");
 					isExtended = context.getProfile().contains("extended");
@@ -233,20 +234,20 @@ public class XMLValidator extends Validator {
 						LOGGER.debug("is EN16931");
 						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
 						xsltFilename = "/xslt/ZF_211/FACTUR-X_EN16931.xslt";
+					} else if (isXRechnung) {
+						LOGGER.debug("is XRechnung");
+						/*
+						the validation against the XRechnung Schematron will happen below but a
+						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.xslt=schematron also has to pass
+						* */
+						//validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
+						xsltFilename = "/xslt/ZF_211/FACTUR-X_EN16931.xslt";
+						XrechnungSeverity = ESeverity.error;
 					} else if (isExtended) {
 						LOGGER.debug("is EXTENDED");
 						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
 						xsltFilename = "/xslt/ZF_211/FACTUR-X_EXTENDED.xslt";
-					} else if (isXRechnung) {
-						LOGGER.debug("is XRechnung");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/ZF_211/FACTUR-X_EN16931.xslt";
-						XrechnungSeverity = ESeverity.error;
-					} /*
-					 * ISchematronResource aResSCH = SchematronResourceXSLT.fromFile(new File(
-					 * "/Users/jstaerk/workspace/ZUV/src/main/resources/ZUGFeRDSchematronStylesheet.xsl"
-					 * ));
-					 */
+					}
 
 					// takes around 10 Seconds. //
 					// http://www.bentoweb.org/refs/TCDL2.0/tsdtf_schematron.html // explains that
@@ -306,8 +307,7 @@ public class XMLValidator extends Validator {
 										.setSection(25).setPart(EPart.fx));
 
 							}
-						} else
-						if ((!matchesURI(context.getProfile(), "urn:ferd:CrossIndustryDocument:invoice:1p0:basic"))
+						} else if ((!matchesURI(context.getProfile(), "urn:ferd:CrossIndustryDocument:invoice:1p0:basic"))
 								&& (!matchesURI(context.getProfile(), "urn:ferd:CrossIndustryDocument:invoice:1p0:comfort"))
 								&& (!matchesURI(context.getProfile(), "urn:ferd:CrossIndustryDocument:invoice:1p0:extended"))) {
 							//zf 1.0
@@ -403,7 +403,7 @@ public class XMLValidator extends Validator {
 						final FailedAssert failedAssert = (FailedAssert) object;
 						LOGGER.debug("FailedAssert ", failedAssert);
 
-						context.addResultItem(new ValidationResultItem(severity, SVRLHelper.getAsString(failedAssert.getText()))
+						context.addResultItem(new ValidationResultItem(severity, SVRLHelper.getAsString(failedAssert.getText())+" (From "+xsltFilename+")")
 								.setLocation(failedAssert.getLocation()).setCriterion(failedAssert.getTest()).setSection(section)
 								.setPart(EPart.fx));
 						failedRules++;

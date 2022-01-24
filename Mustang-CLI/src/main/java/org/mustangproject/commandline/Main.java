@@ -29,6 +29,7 @@ import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import com.sanityinc.jargs.CmdLineParser;
 import com.sanityinc.jargs.CmdLineParser.Option;
 import org.mustangproject.CII.CIIToUBL;
+import org.mustangproject.EStandard;
 import org.mustangproject.ZUGFeRD.*;
 import org.mustangproject.validator.Validator;
 import org.mustangproject.validator.ZUGFeRDValidator;
@@ -654,7 +655,7 @@ former logback.xml:
 
 			if (format == null) {
 				try {
-					format = getStringFromUser("Format (fx=Factur-X, zf=ZUGFeRD)", "zf", "fx|zf");
+					format = getStringFromUser("Format (fx=Factur-X, zf=ZUGFeRD, ox=Order-X)", "zf", "fx|zf|ox");
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);
 				}
@@ -675,7 +676,7 @@ former logback.xml:
 
 			if (zfProfile == null) {
 				try {
-					if (format.equals("zf") && (zfIntVersion == 1)) {
+					if (format.equals("zf") && (zfIntVersion == 1) || (format.equals("ox"))) {
 						zfProfile = getStringFromUser("Profile (b)asic, (c)omfort or ex(t)ended", "t", "B|b|C|c|T|t");
 					} else {
 						zfProfile = getStringFromUser(
@@ -699,13 +700,18 @@ former logback.xml:
 				throw new Exception("Factur-X is only available in version 1 (roughly corresponding to ZF2)");
 			}
 
-			if ((format.equals("zf")) && (zfIntVersion == 1)) {
+			if (((format.equals("zf")) && (zfIntVersion == 1))||(format.equals("ox"))) {
+				EStandard standard=EStandard.facturx;
+				if (format.equals("ox")) {
+					standard=EStandard.orderx;
+				}
+
 				if (zfProfile.equals("b")) {
-					zfConformanceLevelProfile = Profiles.getByName("BASIC", zfIntVersion);
+					zfConformanceLevelProfile = Profiles.getByName(standard, "BASIC", zfIntVersion);
 				} else if (zfProfile.equals("c")) {
-					zfConformanceLevelProfile = Profiles.getByName("COMFORT", zfIntVersion);
+					zfConformanceLevelProfile = Profiles.getByName(standard, "COMFORT", zfIntVersion);
 				} else if (zfProfile.equals("t")) {
-					zfConformanceLevelProfile = Profiles.getByName("EXTENDED", zfIntVersion);
+					zfConformanceLevelProfile = Profiles.getByName(standard, "EXTENDED", zfIntVersion);
 				} else {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}
@@ -731,25 +737,33 @@ former logback.xml:
 				throw new Exception(String.format("Unknown version '%i'", zfIntVersion));
 			}
 
+			IZUGFeRDExporter ze=null;
 			// All params are good! continue...
-			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("Mustang-cli")
-					.setZUGFeRDVersion(zfIntVersion)
-					.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile);
+			if (format.equals("ox")) {
+				ze = new OXExporterFromA1().setProducer("Mustang-cli")
+						.setZUGFeRDVersion(zfIntVersion)
+						.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile);
+				if (ignoreInputErrors) {
+					((OXExporterFromA1)ze).ignorePDFAErrors();
+				}
 
-			if (ignoreInputErrors) {
-				ze.ignorePDFAErrors();
+			} else {
+				ze = new ZUGFeRDExporterFromA1().setProducer("Mustang-cli")
+						.setZUGFeRDVersion(zfIntVersion)
+						.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile);
+				if (ignoreInputErrors) {
+					((ZUGFeRDExporterFromA1)ze).ignorePDFAErrors();
+				}
 			}
 
 			ze = ze.load(pdfName);
 
-			if (!format.equals("fx")) {
+			if (format.equals("zf")) {
 				ze.disableFacturX();
 			}
 
 			ze.setXML(Files.readAllBytes(Paths.get(xmlName)));
-
 			ze.export(outName);
-
 			System.out.println("Written to " + outName);
 
 		} catch (IOException e) {

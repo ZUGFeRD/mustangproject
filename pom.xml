@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
     <artifactId>core</artifactId>
-    <version>2.3.4-SNAPSHOT</version>
+    <version>2.4.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Mustang</name>
 
@@ -107,7 +107,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>

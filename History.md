@@ -1,11 +1,18 @@
-2.3.3
+2.4.0
 =======
+2022-01-13
 
+- issue #255 support order-x
+- switched xrechnung signature to 2.1(.1) as required as of February 
+- xr now checks en16931 profile not extended
+- Validation errors now contain the filename of the failed xslt~schematron
 - PR 257 issue #227 shaded/lightweight jars (thanks a lot to quadrik!)
 - PR 258 Multiple XRechnung improvements like the possibility to set it's version in the PDF metadata (thanks a lot to ivaklinov) 
 - add signature comment into xml
 - upgraded en16931 validation to 1.3.7
-- upgraded xrechnung schematron 1.6.1
+- upgraded xrechnung schematron to 1.6.1
+- changed PDF/A extension scheme name from ZUGFeRD to Factur-X
+- corrected a possible nullpointerexception in contact.getPhone() vs. getName() (thanks to Chritoph W.)
 
 2.3.3
 =======
