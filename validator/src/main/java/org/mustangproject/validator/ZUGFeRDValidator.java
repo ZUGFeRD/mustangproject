@@ -90,6 +90,7 @@ public class ZUGFeRDValidator {
 		finalStringResult
 				.append("<validation filename='" + context.getFilename() + "' datetime='" + isoDF.format(date) + "'>");
 
+		boolean isPDF=false;
 		try {
 
 			if (filename == null) {
@@ -114,7 +115,7 @@ public class ZUGFeRDValidator {
 					xv.disableNotices();
 				}
 				byte[] pdfSignature = { '%', 'P', 'D', 'F' };
-				boolean isPDF = searcher.indexOf(file, pdfSignature) == 0;
+				isPDF = searcher.indexOf(file, pdfSignature) == 0;
 				if (isPDF) {
 					pdfv.setFilename(filename);
 
@@ -250,8 +251,15 @@ public class ZUGFeRDValidator {
 		}
 
 
+		String pdfResult="invalid";
+		if (!isPDF) {
+			pdfResult="absent";
+		} else if (pdfValidity) {
+			pdfResult="valid";
+		}
 
-		LOGGER.info("Parsed PDF:" + (pdfValidity ? "valid" : "invalid") + " XML:" + (xmlValidity ? "valid" : "invalid")
+
+		LOGGER.info("Parsed PDF:" + pdfResult + " XML:" + (xmlValidity ? "valid" : "invalid")
 				+ " Signature:" + Signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
 				+ " Version:" + context.getGeneration() + " Took:" + duration + "ms Errors:["+context.getCSVResult()+"] "+toBeAppended);
 		wasCompletelyValid = ((pdfValidity) && (xmlValidity));

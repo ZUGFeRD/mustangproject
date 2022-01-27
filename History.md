@@ -1,3 +1,5 @@
+- log whether a XML or a PDF file was validated
+
 2.4.0
 =======
 2022-01-13
