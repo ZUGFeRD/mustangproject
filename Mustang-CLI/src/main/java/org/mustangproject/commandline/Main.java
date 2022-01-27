@@ -18,14 +18,7 @@
  *********************************************************************** */
 package org.mustangproject.commandline;
 
-import ch.qos.logback.classic.Level;
-
 import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
-import ch.qos.logback.core.ConsoleAppender;
-import ch.qos.logback.core.rolling.RollingFileAppender;
-import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import com.sanityinc.jargs.CmdLineParser;
 import com.sanityinc.jargs.CmdLineParser.Option;
 import org.mustangproject.CII.CIIToUBL;
@@ -33,7 +26,6 @@ import org.mustangproject.EStandard;
 import org.mustangproject.ZUGFeRD.*;
 import org.mustangproject.validator.Validator;
 import org.mustangproject.validator.ZUGFeRDValidator;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -51,7 +43,6 @@ import javax.xml.transform.TransformerException;
 
 public class Main {
 	protected static Logger LOGGER = null; // log output
-	protected static boolean createLogFile = false;
 
 	private static void printUsage() {
 		System.err.println(getUsage());
@@ -333,63 +324,13 @@ public class Main {
 		// return result.toString(StandardCharsets.UTF_8);
 
 	}
-	private static Logger createLogger() {
-		/*
-https://stackoverflow.com/questions/16910955/programmatically-configure-logback-appender
-		 */
-		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
-		PatternLayoutEncoder ple = new PatternLayoutEncoder();
-
-		ple.setPattern("%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n");
-		ple.setContext(lc);
-		ple.start();
-
-		ConsoleAppender logConsoleAppender = new ConsoleAppender();
-		logConsoleAppender.setContext(lc);
-		logConsoleAppender.setName("console");
-		logConsoleAppender.setEncoder(ple);
-		logConsoleAppender.start();
-
-		RollingFileAppender logFileAppender = new RollingFileAppender();
-
-
-
-
-		logFileAppender.setContext(lc);
-		logFileAppender.setName("logFile");
-		logFileAppender.setEncoder(ple);
-		logFileAppender.setAppend(true);
-
-		TimeBasedRollingPolicy logFilePolicy = new TimeBasedRollingPolicy();
-		logFilePolicy.setContext(lc);
-		logFilePolicy.setParent(logFileAppender);
-		logFilePolicy.setFileNamePattern("log/ZUV-%d{yyyy-MM}.log");
-		logFilePolicy.setMaxHistory(60);
-		logFilePolicy.start();
-
-		logFileAppender.setRollingPolicy(logFilePolicy);
-
-		Logger logger = (Logger) LoggerFactory.getLogger(Validator.class.getCanonicalName());
-		logger.addAppender(logConsoleAppender);
-
-		logger.setLevel(Level.WARN);
-		logger.setAdditive(true); /* set to true if root should log too */
-		if (createLogFile) {
-			logFileAppender.start();
-		}
-
-		logger.addAppender(logFileAppender);
-
-
-		return logger;
-	}
 
 	/***
 	 * the main function of the commandline tool...
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		LOGGER=createLogger(); /* might be replaced with a logger with log file later, after it's clear
+		LOGGER= LoggerFactory.getLogger(Main.class.getCanonicalName()); /* might be replaced with a logger with log file later, after it's clear
 		if --no-log has been specified */
 
 		try {
@@ -459,8 +400,8 @@ https://stackoverflow.com/questions/16910955/programmatically-configure-logback-
 			boolean optionsRecognized=false;
 
 			if (!nolog) {
-				createLogFile=true;
-				LOGGER=createLogger();
+				LoggerFactory.setCreateFile(true);
+				LOGGER= LoggerFactory.getLogger(Main.class.getCanonicalName());
 			}
 
 			if (helpRequested) {
