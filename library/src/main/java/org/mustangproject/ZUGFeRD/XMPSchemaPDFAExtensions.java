@@ -31,6 +31,7 @@ import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.XmpConstants;
 import org.apache.xmpbox.schema.PDFAExtensionSchema;
 import org.apache.xmpbox.type.*;
+import org.mustangproject.EStandard;
 
 /**
  * Additionally to adding a RDF namespace with a indication which file
@@ -52,7 +53,7 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 	public final String prefix_pdfaProperty = "pdfaProperty";
 	public String namespace = null;
 	public String prefix = null;
-	
+
 	protected IZUGFeRDExporter exporter;
 
 
@@ -90,20 +91,21 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 	}
 
 	public XMPSchemaPDFAExtensions(IZUGFeRDExporter ze, XMPMetadata metadata, int ZFVersion) {
-		super(metadata);
-		exporter=ze;
-		setZUGFeRDVersion(ZFVersion);
-		attachExtensions(metadata, true);
+		this(ze, metadata, ZFVersion, true);
 	}
 
 	public XMPSchemaPDFAExtensions(IZUGFeRDExporter ze, XMPMetadata metadata, int ZFVersion, boolean withZF) {
+		this(ze, metadata, ZFVersion, withZF, null);
+	}
+
+	public XMPSchemaPDFAExtensions(IZUGFeRDExporter ze, XMPMetadata metadata, int ZFVersion, boolean withZF, EStandard eStandard) {
 		super(metadata);
 		exporter=ze;
 		setZUGFeRDVersion(ZFVersion);
-		attachExtensions(metadata, withZF);
+		attachExtensions(metadata, withZF, eStandard);
 	}
 
-	public void attachExtensions(XMPMetadata metadata, boolean withZF) {
+	public void attachExtensions(XMPMetadata metadata, boolean withZF, EStandard eStandard) {
 
 		addNamespace(xmlns_pdfaSchema, prefix_pdfaSchema);
 		addNamespace(xmlns_pdfaProperty, prefix_pdfaProperty);
@@ -130,11 +132,21 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 					PDFASchemaType.PROPERTY, Cardinality.Seq);
 			li.addProperty(newSeq);
 
-			addProperty(newSeq, "DocumentFileName", "Text", "external", "name of the embedded XML invoice file");
-			addProperty(newSeq, "DocumentType", "Text", "external", "INVOICE");
-			addProperty(newSeq, "Version", "Text", "external", "The actual version of the ZUGFeRD XML schema");
-			addProperty(newSeq, "ConformanceLevel", "Text", "external",
-					"The selected ZUGFeRD profile completeness");
+			if ((eStandard != null) && (eStandard == EStandard.orderx))
+			{
+				addProperty(newSeq, "DocumentFileName", "Text", "external", "Name of the embedded XML Order (or related) file");
+				addProperty(newSeq, "DocumentType", "Text", "external", "ORDER, ORDER_RESPONSE, or ORDER_CHANGE");
+				addProperty(newSeq, "Version", "Text", "external", "The actual version of the Order-X XML schema");
+				addProperty(newSeq, "ConformanceLevel", "Text", "external",
+								    "The selected Order-X profile completeness");
+			} else
+			{
+				addProperty(newSeq, "DocumentFileName", "Text", "external", "name of the embedded XML invoice file");
+				addProperty(newSeq, "DocumentType", "Text", "external", "INVOICE");
+				addProperty(newSeq, "Version", "Text", "external", "The actual version of the ZUGFeRD XML schema");
+				addProperty(newSeq, "ConformanceLevel", "Text", "external",
+								    "The selected ZUGFeRD profile completeness");
+			}
 		}
 	}
 }
