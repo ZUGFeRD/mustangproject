@@ -44,6 +44,7 @@ import org.apache.xmpbox.type.BadFieldValueException;
 import org.apache.xmpbox.xml.DomXmpParser;
 import org.apache.xmpbox.xml.XmpParsingException;
 import org.apache.xmpbox.xml.XmpSerializer;
+import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
 
 import javax.activation.DataSource;
@@ -103,6 +104,12 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 */
 	@Deprecated
 	protected String subject;
+
+	/**
+	 * OrderX document type. As of version 1.0 it may be
+	 * ORDER, ORDER_RESPONSE, or ORDER_CHANGE
+	 */
+	protected String orderXDocumentType = "ORDER";
 
 
 	private HashMap<String, byte[]> additionalXMLs = new HashMap<String, byte[]>();
@@ -222,6 +229,24 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 			close();
 		}
 	}
+
+
+	/**
+	 * Embeds an external file (generic - any type allowed) in the PDF.
+	 * The embedding is done in the default PDF document.
+	 *
+	 * @param filename     name of the file that will become attachment name in the PDF
+	 * @param relationship how the file relates to the content, e.g. "Alternative"
+	 * @param description  Human-readable description of the file content
+	 * @param subType      type of the data e.g. could be "text/xml" - mime like
+	 * @param data         the binary data of the file/attachment
+	 * @throws java.io.IOException if anything is wrong with filename
+	 */
+	public void PDFAttachGenericFile(String filename, String relationship, String description,
+									 String subType, byte[] data) throws IOException {
+		PDFAttachGenericFile(this.doc, filename, relationship, description, subType, data);
+	}
+
 
 	/**
 	 * Embeds an external file (generic - any type allowed) in the PDF.
@@ -374,6 +399,20 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		return this;
 	}
 
+	/**
+	 * Sets the property orderXDocumentType.
+	 *
+	 * @param orderXDocumentType new value. Expected: ORDER, ORDER_RESPONSE, or ORDER_CHANGE
+	 *
+	 * @return this exporter
+	 */
+	public OXExporterFromA3 setOrderXDocumentType(String orderXDocumentType)
+	{
+		this.orderXDocumentType = orderXDocumentType;
+
+		return this;
+	}
+
 	protected OXExporterFromA3 setAttachZUGFeRDHeaders(boolean attachHeaders) {
 		this.attachZUGFeRDHeaders = attachHeaders;
 		return this;
@@ -393,11 +432,11 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, 1, true, xmlProvider.getProfile(),
 					"urn:factur-x:pdfa:CrossIndustryDocument:1p0#", "fx",
 					"order-x.xml");
-			zf.setType("ORDER");
+			zf.setType(this.orderXDocumentType);
 
 			metadata.addSchema(zf);
 			// also add the schema extensions...
-			XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(this, metadata, 1, attachZUGFeRDHeaders);
+			XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(this, metadata, 1, attachZUGFeRDHeaders, EStandard.orderx);
 			pdfaex.setZUGFeRDVersion(1);
 			metadata.addSchema(pdfaex);
 		}
@@ -424,7 +463,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		xmlProvider.generateXML(trans);
 		String filename = "order-x.xml";
 		PDFAttachGenericFile(doc, filename, "Alternative",
-				"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
+				"Order metadata conforming to the Order-X standard (https://www.ferd-net.de/standards/order-x/index.html)",
 				"text/xml", xmlProvider.getXML());
 
 		for (FileAttachment attachment : fileAttachments) {
@@ -438,14 +477,14 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * Reads the XMPMetadata from the PDDocument, if it exists.
 	 * Otherwise creates XMPMetadata.
 	 */
-	protected XMPMetadata getXmpMetadata() {
+	protected XMPMetadata getXmpMetadata() throws IOException {
 		PDMetadata meta = doc.getDocumentCatalog().getMetadata();
-		if (meta != null) {
+		if ((meta != null) && (meta.getLength() > 0)) {
 			try {
 				DomXmpParser xmpParser = new DomXmpParser();
 				return xmpParser.parse(meta.toByteArray());
 			} catch (XmpParsingException | IOException e) {
-				// TODO use logging or handle the error somehow
+				throw new IOException(e);
 			}
 		}
 		return XMPMetadata.createXMPMetadata();
@@ -490,7 +529,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 				// This should be impossible, because it would occur only if an illegal
 				// conformance level is supplied,
 				// however the enum enforces that the conformance level is valid.
-				throw new Error(ex);
+				throw new RuntimeException(ex);
 			}
 		}
 		pdfaid.setPart(3);
@@ -579,7 +618,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	/**
 	 * Adds an OutputIntent and the sRGB color profile if no OutputIntent exist
 	 */
-	protected void addSRGBOutputIntend() {
+	protected void addSRGBOutputIntend() throws IOException {
 		if (!doc.getDocumentCatalog().getOutputIntents().isEmpty()) {
 			return;
 		}
@@ -595,7 +634,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 				doc.getDocumentCatalog().addOutputIntent(intent);
 			}
 		} catch (IOException e) {
-			// TODO use logging or handle the error somehow
+			throw e;
 		}
 	}
 
