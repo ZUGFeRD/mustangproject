@@ -115,8 +115,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	protected int ZFVersion = DefaultZUGFeRDVersion;
 	private boolean attachZUGFeRDHeaders = true;
-	
-	
+
+
 	// Specific metaData version in case of XRechnung. We need it to be settable
 	// by the caller if necessary.
 	protected String XRechnungVersion = null; // Default XRechnung as of late 2021 is 2p0
@@ -225,8 +225,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		isFacturX = true;
 		return this;
 	}
-	
-	
+
+
 	/**
 	 * Sets a specific XRechnung version from outside. This version needs to be present in the
 	 * meta-data as well. The caller may wish to generate a specific version of XRechnung
@@ -238,7 +238,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
     {
     	this.XRechnungVersion = XRechnungVersion;
     }
-	
+
 
 	/***
 	 * Generate ZF2.0/2.1 files with filename zugferd-invoice.xml instead of factur-x.xml
@@ -619,7 +619,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
         // ZUGFeRD 2.1.1 Technical Supplement | Part A | 2.2.2. Data Relationship
         // See documentation ZUGFeRD211_EN/Documentation/ZUGFeRD-2.1.1 - Specification_TA_Part-A.pdf
         // https://www.ferd-net.de/standards/zugferd-2.1.1/index.html
-        if (ZFVersion >= 2)
+        if ((this.profile != null) && (ZFVersion >= 2))
         {
         	if (this.profile.getName().equalsIgnoreCase(Profiles.getByName("MINIMUM").getName()) ||
         		this.profile.getName().equalsIgnoreCase(Profiles.getByName("BASICWL").getName()))
