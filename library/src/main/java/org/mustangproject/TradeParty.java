@@ -6,10 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTradeParty;
-import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlement;
-import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlementDebit;
+import org.mustangproject.ZUGFeRD.*;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -26,6 +23,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	protected List<BankDetails> bankDetails = new ArrayList<>();
 	protected List<IZUGFeRDTradeSettlementDebit> debitDetails = new ArrayList<>();
 	protected Contact contact = null;
+	protected LegalOrganisation legalOrg = null;
 
 	/**
 	 * Default constructor.
@@ -192,6 +190,16 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	 */
 	public TradeParty addDebitDetails(IZUGFeRDTradeSettlementDebit debitDetail) {
 		debitDetails.add(debitDetail);
+		return this;
+	}
+
+	@Override
+	public IZUGFeRDLegalOrganisation getLegalOrganisation() {
+		return legalOrg;
+	}
+
+	public TradeParty setLegalOrganisation(LegalOrganisation legalOrganisation) {
+		legalOrg=legalOrganisation;
 		return this;
 	}
 

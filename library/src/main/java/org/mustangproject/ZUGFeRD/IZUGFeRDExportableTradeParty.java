@@ -49,6 +49,13 @@ public interface IZUGFeRDExportableTradeParty {
 		return null;
 	}
 
+	/***
+	 * gets the official representation
+	 * @return the interface with the attributes of the legal organisation
+	 */
+	default IZUGFeRDLegalOrganisation getLegalOrganisation()  {
+		return null;
+	}
 	/**
 	 * customer global identification scheme
 	 *

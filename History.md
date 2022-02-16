@@ -1,5 +1,6 @@
 - log whether a XML or a PDF file was validated
-
+- XR improvements PR 261 e.g.  Allowing the XRechnung version to be explicitly set in the PDF
+- allow to specify a tradeparties' legalorganisation i.e. allow to write Factur-X invoices to french authorities 
 2.4.0
 =======
 2022-01-13
