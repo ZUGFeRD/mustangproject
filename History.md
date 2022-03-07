@@ -1,9 +1,18 @@
-- allow 2.1 in RDF metadata in validation for Referenzprofil XRechnung's v 2.1.1
-- log whether a XML or a PDF file was validated
-- XR improvements PR 261 e.g. allowing the XRechnung version to be explicitly set in the PDF
-- allow to specify a tradeparties' legalorganisation i.e. allow to write Factur-X invoices to french authorities 
+2.4.1
+=======
 
-- 2.4.0
+- allow to specify legalorganisation ID+scheme ID
+- allow to specify additional files to be attached in command line
+- update to zf 2.2
+- update to verapdf 1.20.1 
+- log whether a XML or a PDF file was validated
+- allow 2.1 in RDF metadata in validation for Referenzprofil XRechnung's v 2.1.1
+- XR improvements PR 261 e.g. allowing the XRechnung version to be explicitly set in the PDF
+- allow to specify a tradeparties' legalorganisation i.e. allow to write Factur-X invoices to french authorities
+- allow to add attachments in CLI
+- replaced jargs with apache commons cli as command line parser
+
+2.4.0
 =======
 2022-01-13
 

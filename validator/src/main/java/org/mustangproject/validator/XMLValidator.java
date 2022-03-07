@@ -220,20 +220,20 @@ public class XMLValidator extends Validator {
 					}
 					if (isMiniumum) {
 						LOGGER.debug("is Minimum");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/MINIMUM/FACTUR-X_MINIMUM.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/ZF_211/FACTUR-X_MINIMUM.xslt";
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_220/MINIMUM/FACTUR-X_MINIMUM.xsd", 18, EPart.fx);
+						xsltFilename = "/xslt/ZF_220/FACTUR-X_MINIMUM.xslt";
 					} else if (isBasicWithoutLines) {
 						LOGGER.debug("is Basic/WL");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/BASIC-WL/FACTUR-X_BASIC-WL.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/ZF_211/FACTUR-X_BASIC-WL.xslt";
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_220/BASIC-WL/FACTUR-X_BASIC-WL.xsd", 18, EPart.fx);
+						xsltFilename = "/xslt/ZF_220/FACTUR-X_BASIC-WL.xslt";
 					} else if (isBasic) {
 						LOGGER.debug("is Basic");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/BASIC/FACTUR-X_BASIC.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/ZF_211/FACTUR-X_BASIC.xslt";
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_220/BASIC/FACTUR-X_BASIC.xsd", 18, EPart.fx);
+						xsltFilename = "/xslt/ZF_220/FACTUR-X_BASIC.xslt";
 					} else if (isEN16931) {
 						LOGGER.debug("is EN16931");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/ZF_211/FACTUR-X_EN16931.xslt";
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_220/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
+						xsltFilename = "/xslt/ZF_220/FACTUR-X_EN16931.xslt";
 					} else if (isXRechnung) {
 						LOGGER.debug("is XRechnung");
 						/*
@@ -241,12 +241,12 @@ public class XMLValidator extends Validator {
 						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.xslt=schematron also has to pass
 						* */
 						//validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/ZF_211/FACTUR-X_EN16931.xslt";
+						xsltFilename = "/xslt/ZF_220/FACTUR-X_EN16931.xslt";
 						XrechnungSeverity = ESeverity.error;
 					} else if (isExtended) {
 						LOGGER.debug("is EXTENDED");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/ZF_211/FACTUR-X_EXTENDED.xslt";
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_220/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
+						xsltFilename = "/xslt/ZF_220/FACTUR-X_EXTENDED.xslt";
 					}
 
 					// takes around 10 Seconds. //
