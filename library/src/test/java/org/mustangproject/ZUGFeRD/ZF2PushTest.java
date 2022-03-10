@@ -371,6 +371,7 @@ public class ZF2PushTest extends TestCase {
 
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			try {
+
 				ze.setTransaction(new Invoice().setCurrency("CHF").addNote("document level 1/2").addNote("document level 2/2").setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 						.setDetailedDeliveryPeriod(new SimpleDateFormat("yyyyMMdd").parse(occurrenceFrom), new SimpleDateFormat("yyyyMMdd").parse(occurrenceTo))
 						.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID(taxID).setID("0009845"))
@@ -396,6 +397,7 @@ public class ZF2PushTest extends TestCase {
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PUSHEDGE);
 
+		assertFalse(zi.getUTF8().contains("<ram:IBANID>")); // maybe add a direct debit mandate to the class in the future then this would fail
 		assertTrue(zi.getUTF8().contains("Hinterhaus"));
 		assertTrue(zi.getUTF8().contains("0009845"));
 		assertTrue(zi.getUTF8().contains("0008734"));

@@ -45,7 +45,7 @@ import org.mustangproject.XMLTools;
 
 public class ZUGFeRD2PullProvider implements IXMLProvider {
 
-  protected byte[] zugferdData;
+	protected byte[] zugferdData;
 	protected IExportableTransaction trans;
 	protected TransactionCalculator calc;
 	private String paymentTermsDescription;
@@ -130,10 +130,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 		xml += "	<ram:Name>" + XMLTools.encodeXML(party.getName()) + "</ram:Name>\n";
 
-		if (party.getLegalOrganisation()!=null) {
-			xml +=     "<ram:SpecifiedLegalOrganization> ";
-			xml +=     "  <ram:ID schemeID=\""+XMLTools.encodeXML(party.getLegalOrganisation().getSchemeID())+"\">"+XMLTools.encodeXML(party.getLegalOrganisation().getID())+"</ram:ID>";
-			xml +=    "</ram:SpecifiedLegalOrganization>";
+		if (party.getLegalOrganisation() != null) {
+			xml += "<ram:SpecifiedLegalOrganization> ";
+			xml += "  <ram:ID schemeID=\"" + XMLTools.encodeXML(party.getLegalOrganisation().getSchemeID()) + "\">" + XMLTools.encodeXML(party.getLegalOrganisation().getID()) + "</ram:ID>";
+			xml += "</ram:SpecifiedLegalOrganization>";
 		}
 
 		if ((party.getContact() != null) && (isSender || profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung"))) {
@@ -488,9 +488,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 		if (trans.getSpecifiedProcuringProjectID() != null) {
 			xml = xml + "   <ram:SpecifiedProcuringProject>\n"
-			+ "       <ram:ID>"
-			+ XMLTools.encodeXML(trans.getSpecifiedProcuringProjectID()) + "</ram:ID>\n";
-			if(trans.getSpecifiedProcuringProjectName()!= null) {
+					+ "       <ram:ID>"
+					+ XMLTools.encodeXML(trans.getSpecifiedProcuringProjectID()) + "</ram:ID>\n";
+			if (trans.getSpecifiedProcuringProjectName() != null) {
 				xml += "       <ram:Name >" + XMLTools.encodeXML(trans.getSpecifiedProcuringProjectName()) + "</ram:Name>\n";
 			}
 			xml += "    </ram:SpecifiedProcuringProject>\n";
@@ -507,7 +507,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "				<ram:OccurrenceDateTime>";
 
 		if (trans.getDeliveryDate() != null) {
-			xml +=  DATE.udtFormat(trans.getDeliveryDate());
+			xml += DATE.udtFormat(trans.getDeliveryDate());
 		} else {
 			throw new IllegalStateException("No delivery date provided");
 		}
@@ -669,10 +669,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml = xml + "   <ram:InvoiceReferencedDocument>\n"
 					+ "       <ram:IssuerAssignedID>"
 					+ XMLTools.encodeXML(trans.getInvoiceReferencedDocumentID()) + "</ram:IssuerAssignedID>\n";
-			if(trans.getInvoiceReferencedIssueDate()!= null){
-				xml += "<ram:FormattedIssueDateTime>" 
-				+ DATE.qdtFormat(trans.getInvoiceReferencedIssueDate())
-				+ "</ram:FormattedIssueDateTime>\n";
+			if (trans.getInvoiceReferencedIssueDate() != null) {
+				xml += "<ram:FormattedIssueDateTime>"
+						+ DATE.qdtFormat(trans.getInvoiceReferencedIssueDate())
+						+ "</ram:FormattedIssueDateTime>\n";
 			}
 			xml += "   </ram:InvoiceReferencedDocument>\n";
 		}
@@ -706,7 +706,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	}
 
 	private String buildPaymentTermsXml() {
-
 		final IZUGFeRDPaymentTerms paymentTerms = trans.getPaymentTerms();
 		if (paymentTerms == null) {
 			return "";
@@ -714,16 +713,25 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		String paymentTermsXml = "<ram:SpecifiedTradePaymentTerms>";
 
 		final IZUGFeRDPaymentDiscountTerms discountTerms = paymentTerms.getDiscountTerms();
-		final Date dueDate = paymentTerms.getDueDate();
+		Date dueDate = paymentTerms.getDueDate();
 		if (dueDate != null && discountTerms != null && discountTerms.getBaseDate() != null) {
 			throw new IllegalStateException(
 					"if paymentTerms.dueDate is specified, paymentTerms.discountTerms.baseDate has not to be specified");
 		}
 		paymentTermsXml += "<ram:Description>" + paymentTerms.getDescription() + "</ram:Description>";
+
 		if (dueDate != null) {
 			paymentTermsXml += "<ram:DueDateDateTime>";
-			paymentTermsXml += DATE.udtFormat(dueDate) ;
+			paymentTermsXml += DATE.udtFormat(dueDate);
 			paymentTermsXml += "</ram:DueDateDateTime>";
+		}
+
+		if (trans.getTradeSettlement() != null) {
+			for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
+				if ((payment != null) && (payment instanceof IZUGFeRDTradeSettlementDebit)) {
+					paymentTermsXml += payment.getPaymentXML();
+				}
+			}
 		}
 
 		if (discountTerms != null) {
@@ -737,7 +745,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if (discountTerms.getBaseDate() != null) {
 				final Date baseDate = discountTerms.getBaseDate();
 				paymentTermsXml += "<ram:BasisDateTime>";
-				paymentTermsXml +=  DATE.udtFormat(baseDate);
+				paymentTermsXml += DATE.udtFormat(baseDate);
 				paymentTermsXml += "</ram:BasisDateTime>";
 
 				paymentTermsXml += "<ram:BasisPeriodMeasure unitCode=\"" + discountTerms.getBasePeriodUnitCode() + "\">"

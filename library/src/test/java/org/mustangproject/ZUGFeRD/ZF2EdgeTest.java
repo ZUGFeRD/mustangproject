@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -172,7 +173,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 	public IZUGFeRDExportableTradeParty getRecipient() {
 		return new RecipientTradeParty();
 	}
-	
+
 	@Override
 	public IZUGFeRDExportableTradeParty getDeliveryAddress() {
 		return new RecipientTradeParty();
@@ -194,7 +195,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 		EdgeProduct designProduct = new EdgeProduct("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung",
 				"HUR");
 		EdgeProduct balloonProduct = new EdgeProduct("", "Bestellerweiterung für E&F Umbau", "C62");// test for issue
-																									// 103
+		// 103
 		EdgeProduct airProduct = new EdgeProduct("", "Heiße Luft pro Liter", "LTR");
 
 		Item design=new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
@@ -209,6 +210,31 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 	public String getPaymentTermDescription() {
 		SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 		return "Zahlbar ohne Abzug bis zum " + germanDateFormat.format(getDueDate());
+	}
+
+	@Override
+	public IZUGFeRDPaymentTerms getPaymentTerms() {
+		PaymentDiscountTerms paymentDiscountTerms =
+				new PaymentDiscountTerms(
+						new BigDecimal(2), // skonto prozent
+						null, // kein basedate
+						14, // anzahl tage
+						"DAYS");
+
+		Date due  = null;
+		try {
+			due = new SimpleDateFormat("yyyyMMdd").parse("20220228");
+		} catch (ParseException e) {
+			e.printStackTrace();
+
+		}
+		return
+				new PaymentTerms(
+						"14 Tage 2% Skonto, 30 Tage rein netto",
+						due,// fälligkeitsdatum
+						paymentDiscountTerms //PaymentDiscountTerms
+				);
+
 	}
 
 	@Override
@@ -264,8 +290,8 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
 			 ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("My Application")
-						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).ignorePDFAErrors()
-						.load(SOURCE_PDF)) {
+					 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile(Profiles.getByName("Extended")).ignorePDFAErrors()
+					 .load(SOURCE_PDF)) {
 			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
@@ -276,14 +302,15 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
-
-		assertTrue(zi.getUTF8().contains("<ram:TypeCode>59</ram:TypeCode>"));
-		assertTrue(zi.getUTF8().contains("<ram:ShipToTradeParty>"));
-		assertTrue(zi.getUTF8().contains("<ram:IBANID>DE540815</ram:IBANID>"));
-		assertTrue(zi.getUTF8().contains("<ram:DirectDebitMandateID>DE99XX12345</ram:DirectDebitMandateID>"));
-		assertFalse(zi.getUTF8().contains("<ram:DueDateDateTime>"));
-		assertFalse(zi.getUTF8().contains("EUR"));
-		assertTrue(zi.getUTF8().contains("USD"));//currency should be USD, test for #150
+		String resultXML=zi.getUTF8();
+		assertTrue(resultXML.contains("<ram:TypeCode>59</ram:TypeCode>"));
+		assertTrue(resultXML.contains("<ram:ShipToTradeParty>"));
+		assertTrue(resultXML.contains("<ram:IBANID>DE540815</ram:IBANID>"));
+		assertTrue(resultXML.contains("<ram:ApplicableTradePaymentDiscountTerms"));
+		assertTrue(resultXML.contains("<ram:DirectDebitMandateID>DE99XX12345</ram:DirectDebitMandateID>"));
+		assertTrue(resultXML.contains("<ram:DueDateDateTime>"));
+		assertFalse(resultXML.contains("EUR"));
+		assertTrue(resultXML.contains("USD"));//currency should be USD, test for #150
 
 		// Reading ZUGFeRD
 		assertEquals("496.00", zi.getAmount());
@@ -311,9 +338,9 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
 
-				IZUGFeRDExporter ze = new ZUGFeRDExporterFromA3().setProducer("My Application")
-						.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).disableFacturX()
-						.load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA3().setProducer("My Application")
+					 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).disableFacturX()
+					 .load(SOURCE_PDF)) {
 			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
@@ -323,5 +350,68 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 		}
 
 	}
+
+	private class PaymentDiscountTerms implements IZUGFeRDPaymentDiscountTerms {
+
+		protected BigDecimal percent;
+		protected Date baseDate;
+		protected int periodMeasure;
+		protected String periodCode;
+
+		public PaymentDiscountTerms(BigDecimal percent, Date baseDate, int periodMeasure, String periodCode) {
+			this.percent = percent;
+			this.baseDate = baseDate;
+			this.periodMeasure = periodMeasure;
+			this.periodCode = periodCode;
+		}
+
+		@Override
+		public BigDecimal getCalculationPercentage() {
+			return percent;
+		}
+
+		@Override
+		public Date getBaseDate() {
+			return baseDate;
+		}
+
+		@Override
+		public int getBasePeriodMeasure() {
+			return periodMeasure;
+		}
+
+		@Override
+		public String getBasePeriodUnitCode() {
+			return periodCode;
+		}
+	}
+	private class PaymentTerms implements IZUGFeRDPaymentTerms {
+
+		protected String description;
+		protected Date duedate;
+		protected IZUGFeRDPaymentDiscountTerms disco;
+
+		public PaymentTerms(String description, Date duedate, IZUGFeRDPaymentDiscountTerms disco) {
+			this.description = description;
+			this.duedate = duedate;
+			this.disco = disco;
+		}
+
+		@Override
+		public String getDescription() {
+			return description;
+		}
+
+		@Override
+		public Date getDueDate() {
+			return duedate;
+		}
+
+		@Override
+		public IZUGFeRDPaymentDiscountTerms getDiscountTerms() {
+			return disco;
+		}
+	}
+
 
 }

@@ -122,7 +122,7 @@
             </plugins>
         </pluginManagement>
         <plugins>
-            <!-- be able to generate XSLT from XRechnung Schematron: uncomment this and "mvn generate-resources" if you have 20min to spare-->
+            <!-- be able to generate XSLT from XRechnung Schematron: uncomment this and "mvn generate-resources" if you have 20min to spare
             <plugin>
                 <groupId>com.helger.maven</groupId>
                 <artifactId>ph-schematron-maven-plugin</artifactId>
@@ -139,6 +139,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
 
             <!-- allow getImplementationVersion for the pom.xml -->
             <plugin>

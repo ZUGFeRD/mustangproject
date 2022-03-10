@@ -461,7 +461,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 			if (trans.getTradeSettlement() != null) {
 				for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
 					if ((payment != null) && (payment instanceof IZUGFeRDTradeSettlementDebit)) {
-		//				xml += payment.getPaymentXML();
+		//not in order-x				xml += payment.getPaymentXML();
 					}
 				}
 			}
