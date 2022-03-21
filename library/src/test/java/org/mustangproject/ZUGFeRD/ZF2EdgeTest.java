@@ -257,6 +257,11 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 		return "AB321";
 	}
 
+	@Override
+	public String getDespatchAdviceReferencedDocumentID() {
+		return "123";
+	}
+
 	/**
 	 * Create the test case
 	 *
@@ -311,6 +316,8 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 		assertTrue(resultXML.contains("<ram:DueDateDateTime>"));
 		assertFalse(resultXML.contains("EUR"));
 		assertTrue(resultXML.contains("USD"));//currency should be USD, test for #150
+		assertTrue(resultXML.contains("<ram:DespatchAdviceReferencedDocument>"));
+		assertTrue(resultXML.contains("<ram:IssuerAssignedID>123</ram:IssuerAssignedID>"));
 
 		// Reading ZUGFeRD
 		assertEquals("496.00", zi.getAmount());

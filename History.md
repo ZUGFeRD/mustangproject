@@ -1,6 +1,8 @@
 2.4.1
 =======
 
+DespatchAdviceReferencedDocument/IssuerAssignedID
+
 - allow to specify legalorganisation ID+scheme ID
 - allow to specify additional files to be attached in command line
 - update to zf 2.2

@@ -512,16 +512,23 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			throw new IllegalStateException("No delivery date provided");
 		}
 		xml += "</ram:OccurrenceDateTime>\n";
-		xml += "			</ram:ActualDeliverySupplyChainEvent>\n"
+		xml += "            </ram:ActualDeliverySupplyChainEvent>\n";
+
 				/*
-				 * + "			<DeliveryNoteReferencedDocument>\n" +
-				 * "				<IssueDateTime format=\"102\">20130603</IssueDateTime>\n" +
-				 * "				<ID>2013-51112</ID>\n" +
-				 * "			</DeliveryNoteReferencedDocument>\n"
+				 * + "            <DeliveryNoteReferencedDocument>\n" +
+				 * "                <IssueDateTime format=\"102\">20130603</IssueDateTime>\n" +
+				 * "                <ID>2013-51112</ID>\n" +
+				 * "            </DeliveryNoteReferencedDocument>\n"
 				 */
-				+ "		</ram:ApplicableHeaderTradeDelivery>\n" + "		<ram:ApplicableHeaderTradeSettlement>\n"
-				+ "			<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>\n"
-				+ "			<ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>\n";
+		if (trans.getDespatchAdviceReferencedDocumentID() != null) {
+			xml += "<ram:DespatchAdviceReferencedDocument>";
+			xml += "<ram:IssuerAssignedID>"+XMLTools.encodeXML(trans.getDespatchAdviceReferencedDocumentID())+"</ram:IssuerAssignedID>";
+			xml += "</ram:DespatchAdviceReferencedDocument>";
+
+		}
+		xml +=	  "        </ram:ApplicableHeaderTradeDelivery>\n" + "        <ram:ApplicableHeaderTradeSettlement>\n"
+				+ "            <ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>\n"
+				+ "            <ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>\n";
 
 		if (trans.getTradeSettlementPayment() != null) {
 			for (final IZUGFeRDTradeSettlementPayment payment : trans.getTradeSettlementPayment()) {

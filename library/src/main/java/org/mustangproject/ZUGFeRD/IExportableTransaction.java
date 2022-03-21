@@ -481,7 +481,9 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
+	default String getDespatchAdviceReferencedDocumentID() {
+		return null;
+	}
 	/***
 	 * additional text description
 	 * @return an array of strings of document wide "includedNotes" (descriptive text values)
