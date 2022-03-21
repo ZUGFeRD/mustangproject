@@ -31,11 +31,11 @@ public interface IZUGFeRDTradeSettlementDebit extends IZUGFeRDTradeSettlement {
 		
 		String xml = "<ram:SpecifiedTradeSettlementPaymentMeans>"
 				+ "<ram:TypeCode>59</ram:TypeCode>"
-				+ "	<ram:PayerPartyDebtorFinancialAccount>"
+				+ "<ram:PayerPartyDebtorFinancialAccount>"
       		    + "<ram:IBANID>"+XMLTools.encodeXML(getIBAN())+"</ram:IBANID>"
       		    + "</ram:PayerPartyDebtorFinancialAccount>";
 		
-		xml = xml + "</ram:SpecifiedTradeSettlementPaymentMeans>";
+		xml += "</ram:SpecifiedTradeSettlementPaymentMeans>";
 		return xml;
 	}
 	

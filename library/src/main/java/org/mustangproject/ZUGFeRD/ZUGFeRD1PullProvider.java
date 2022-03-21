@@ -25,8 +25,8 @@ import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATE
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -186,12 +186,12 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 
 				+ "</rsm:HeaderExchangedDocument>"
 				+ "<rsm:SpecifiedSupplyChainTradeTransaction>";
-		xml = xml + "<ram:ApplicableSupplyChainTradeAgreement>";
+		xml += "<ram:ApplicableSupplyChainTradeAgreement>";
 		if (trans.getReferenceNumber() != null) {
-			xml = xml + "<ram:BuyerReference>" + XMLTools.encodeXML(trans.getReferenceNumber()) + "</ram:BuyerReference>";
+			xml += "<ram:BuyerReference>" + XMLTools.encodeXML(trans.getReferenceNumber()) + "</ram:BuyerReference>";
 
 		}
-		xml = xml + "<ram:SellerTradeParty>";
+		xml += "<ram:SellerTradeParty>";
 		xml += getTradePartyAsXML(trans.getSender(), true, false);
 		xml += "</ram:SellerTradeParty>"
 				+ "<ram:BuyerTradeParty>";
@@ -200,7 +200,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 
 		xml += getTradePartyAsXML(trans.getRecipient(), false, false);
 		if ((trans.getOwnVATID() != null) && (trans.getOwnOrganisationName() != null)) {
-			xml = xml + "<ram:SpecifiedTaxRegistration>\n<ram:ID schemeID=\"VA\">"
+			xml += "<ram:SpecifiedTaxRegistration><ram:ID schemeID=\"VA\">"
 					+ XMLTools.encodeXML(trans.getOwnVATID()) + "</ram:ID>"
 					+ "</ram:SpecifiedTaxRegistration>";
 		}
@@ -208,18 +208,18 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 		xml += "</ram:BuyerTradeParty>";
 
 		if (trans.getSellerOrderReferencedDocumentID() != null) {
-			xml = xml + "<ram:SellerOrderReferencedDocument>"
+			xml += "<ram:SellerOrderReferencedDocument>"
 					+ "<ram:IssuerAssignedID>"
 					+ XMLTools.encodeXML(trans.getSellerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
 					+ "</ram:SellerOrderReferencedDocument>";
 		}
 		if (trans.getBuyerOrderReferencedDocumentID() != null) {
-			xml = xml + "<ram:BuyerOrderReferencedDocument>"
+			xml += "<ram:BuyerOrderReferencedDocument>"
 					+ "<ram:IssuerAssignedID>"
 					+ XMLTools.encodeXML(trans.getBuyerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
 					+ "</ram:BuyerOrderReferencedDocument>";
 		}
-		xml = xml + "</ram:ApplicableSupplyChainTradeAgreement>"
+		xml += "</ram:ApplicableSupplyChainTradeAgreement>"
 				+ "<ram:ApplicableSupplyChainTradeDelivery>";
 		if (this.trans.getDeliveryAddress() != null) {
 			xml += "<ram:ShipToTradeParty>" +
@@ -243,7 +243,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 				 * "<ID>2013-51112</ID>" +
 				 * "</DeliveryNoteReferencedDocument>"
 				 */
-				+ "</ram:ApplicableSupplyChainTradeDelivery>\n<ram:ApplicableSupplyChainTradeSettlement>"
+				+ "</ram:ApplicableSupplyChainTradeDelivery><ram:ApplicableSupplyChainTradeSettlement>"
 				+ "<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>"
 				+ "<ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>";
 
@@ -280,12 +280,12 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 						+ "<ram:BasisAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>" // currencyID=\"EUR\"
 						+ "<ram:CategoryCode>" + amount.getCategoryCode() + "</ram:CategoryCode>"
 						+ "<ram:ApplicablePercent>" + vatFormat(currentTaxPercent)
-						+ "</ram:ApplicablePercent>\n</ram:ApplicableTradeTax>";
+						+ "</ram:ApplicablePercent></ram:ApplicableTradeTax>";
 			}
 		}
 
 		if (trans.getPaymentTerms() == null) {
-			xml = xml + "<ram:SpecifiedTradePaymentTerms>"
+			xml += "<ram:SpecifiedTradePaymentTerms>"
 					+ "<ram:Description>" + paymentTermsDescription + "</ram:Description>";
 
 			if (trans.getTradeSettlement() != null) {
@@ -297,17 +297,17 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 			}
 
 			if (hasDueDate && (trans.getDueDate() != null)) {
-				xml = xml + "<ram:DueDateDateTime>" // $NON-NLS-2$
+				xml += "<ram:DueDateDateTime>" // $NON-NLS-2$
 						+ DATE.udtFormat(trans.getDueDate())
 						+ "</ram:DueDateDateTime>";// 20130704
 
 			}
-			xml = xml + "</ram:SpecifiedTradePaymentTerms>";
+			xml += "</ram:SpecifiedTradePaymentTerms>";
 		} else {
-			xml = xml + buildPaymentTermsXml();
+			xml += buildPaymentTermsXml();
 		}
 
-		xml = xml + "<ram:SpecifiedTradeSettlementMonetarySummation>"
+		xml += "<ram:SpecifiedTradeSettlementMonetarySummation>"
 				+ "<ram:LineTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotal()) + "</ram:LineTotalAmount>"
 				// currencyID=\"EUR\"
 				+ "<ram:ChargeTotalAmount currencyID=\"" + trans.getCurrency() + "\">0.00</ram:ChargeTotalAmount>" // currencyID=\"EUR\"
@@ -340,7 +340,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 
 
 			final LineCalculator lc = new LineCalculator(currentItem);
-			xml = xml + "<ram:IncludedSupplyChainTradeLineItem>" +
+			xml += "<ram:IncludedSupplyChainTradeLineItem>" +
 					"<ram:AssociatedDocumentLineDocument>"
 					+ "<ram:LineID>" + lineID + "</ram:LineID>"
 					+ "</ram:AssociatedDocumentLineDocument>"
@@ -383,27 +383,25 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 					+ "</ram:LineTotalAmount>"
 					+ "</ram:SpecifiedTradeSettlementMonetarySummation>";
 			if (currentItem.getAdditionalReferencedDocumentID() != null) {
-				xml = xml + "<ram:AdditionalReferencedDocument><ram:ID>" + currentItem.getAdditionalReferencedDocumentID() + "</ram:ID><ram:TypeCode>130</ram:TypeCode></ram:AdditionalReferencedDocument>";
+				xml += "<ram:AdditionalReferencedDocument><ram:ID>" + currentItem.getAdditionalReferencedDocumentID() + "</ram:ID><ram:TypeCode>130</ram:TypeCode></ram:AdditionalReferencedDocument>";
 
 			}
-			xml = xml + "</ram:SpecifiedSupplyChainTradeSettlement>"
+			xml += "</ram:SpecifiedSupplyChainTradeSettlement>"
 					+ "<ram:SpecifiedTradeProduct>";
 			// + " <GlobalID schemeID=\"0160\">4012345001235</GlobalID>"
 			if (currentItem.getProduct().getSellerAssignedID() != null) {
-				xml = xml + "<ram:SellerAssignedID>"
+				xml += "<ram:SellerAssignedID>"
 						+ XMLTools.encodeXML(currentItem.getProduct().getSellerAssignedID()) + "</ram:SellerAssignedID>";
 			}
 			if (currentItem.getProduct().getBuyerAssignedID() != null) {
-				xml = xml + "<ram:BuyerAssignedID>"
+				xml += "<ram:BuyerAssignedID>"
 						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>";
 			}
-			xml = xml + "<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>"
+			xml += "<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>"
 					+ "<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription())
 					+ "</ram:Description>"
 					+ "</ram:SpecifiedTradeProduct>"
-
 					+ "</ram:IncludedSupplyChainTradeLineItem>";
-
 		}
 
 		// + " <IncludedSupplyChainTradeLineItem>\n"
@@ -415,17 +413,13 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 		// + " </AssociatedDocumentLineDocument>\n"
 		// + " </IncludedSupplyChainTradeLineItem>\n";
 
-		xml = xml + "</rsm:SpecifiedSupplyChainTradeTransaction>"
+		xml += "</rsm:SpecifiedSupplyChainTradeTransaction>"
 				+ "</rsm:CrossIndustryDocument>";
 
 		final byte[] zugferdRaw;
-		try {
-			zugferdRaw = xml.getBytes("UTF-8");
-			zugferdData = XMLTools.removeBOM(zugferdRaw);
-		} catch (final UnsupportedEncodingException e) {
-			Logger.getLogger(ZUGFeRD1PullProvider.class.getName()).log(Level.SEVERE, null, e);
-		}
-	}
+    zugferdRaw = xml.getBytes(StandardCharsets.UTF_8);
+    zugferdData = XMLTools.removeBOM(zugferdRaw);
+  }
 
 	@Override
 	public void setProfile(Profile p) {
