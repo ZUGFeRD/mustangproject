@@ -24,6 +24,7 @@ public interface IZUGFeRDTradeSettlementDebit extends IZUGFeRDTradeSettlement {
 
 	
 
+	@Override
 	default String getSettlementXML() {
 		
 	
@@ -38,6 +39,7 @@ public interface IZUGFeRDTradeSettlementDebit extends IZUGFeRDTradeSettlement {
 		return xml;
 	}
 	
+	@Override
 	default String getPaymentXML() {
 		return "<ram:DirectDebitMandateID>"+XMLTools.encodeXML(getMandate())+"</ram:DirectDebitMandateID>";
 	}

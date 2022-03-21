@@ -66,19 +66,19 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 
 		}
 
-		String xml = "			<ram:SpecifiedTradeSettlementPaymentMeans>"
-				+ "				<ram:TypeCode>58</ram:TypeCode>"
-				+ "				<ram:Information>SEPA credit transfer</ram:Information>"
-				+ "				<ram:PayeePartyCreditorFinancialAccount>"
-				+ "					<ram:IBANID>" + XMLTools.encodeXML(getOwnIBAN()) + "</ram:IBANID>";
+		String xml = "<ram:SpecifiedTradeSettlementPaymentMeans>"
+				+ "<ram:TypeCode>58</ram:TypeCode>"
+				+ "<ram:Information>SEPA credit transfer</ram:Information>"
+				+ "<ram:PayeePartyCreditorFinancialAccount>"
+				+ "<ram:IBANID>" + XMLTools.encodeXML(getOwnIBAN()) + "</ram:IBANID>";
 		xml+= accountNameStr;
-		xml+= "				</ram:PayeePartyCreditorFinancialAccount>"
-				+ "				<ram:PayeeSpecifiedCreditorFinancialInstitution>"
-				+ "					<ram:BICID>" + XMLTools.encodeXML(getOwnBIC()) + "</ram:BICID>"
+		xml+= "</ram:PayeePartyCreditorFinancialAccount>"
+				+ "<ram:PayeeSpecifiedCreditorFinancialInstitution>"
+				+ "<ram:BICID>" + XMLTools.encodeXML(getOwnBIC()) + "</ram:BICID>"
 				// + " <ram:Name>"+trans.getOwnBankName()+"</ram:Name>"
 				//
-				+ "				</ram:PayeeSpecifiedCreditorFinancialInstitution>"
-				+ "			</ram:SpecifiedTradeSettlementPaymentMeans>";
+				+ "</ram:PayeeSpecifiedCreditorFinancialInstitution>"
+				+ "</ram:SpecifiedTradeSettlementPaymentMeans>";
 		return xml;
 	}
 	
