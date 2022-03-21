@@ -18,8 +18,6 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import java.text.SimpleDateFormat;
-
 import org.mustangproject.XMLTools;
 
 public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement {
@@ -60,26 +58,27 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 	default String getAccountName() { return null; }
 
 
-	default String getSettlementXML() {
+	@Override
+  default String getSettlementXML() {
 		String accountNameStr="";
 		if (getAccountName()!=null) {
-			accountNameStr="<ram:AccountName>" + XMLTools.encodeXML(getAccountName()) + "</ram:AccountName>\n";
+			accountNameStr="<ram:AccountName>" + XMLTools.encodeXML(getAccountName()) + "</ram:AccountName>";
 
 		}
 
-		String xml = "			<ram:SpecifiedTradeSettlementPaymentMeans>\n"
-				+ "				<ram:TypeCode>58</ram:TypeCode>\n"
-				+ "				<ram:Information>SEPA credit transfer</ram:Information>\n"
-				+ "				<ram:PayeePartyCreditorFinancialAccount>\n"
-				+ "					<ram:IBANID>" + XMLTools.encodeXML(getOwnIBAN()) + "</ram:IBANID>\n";
+		String xml = "			<ram:SpecifiedTradeSettlementPaymentMeans>"
+				+ "				<ram:TypeCode>58</ram:TypeCode>"
+				+ "				<ram:Information>SEPA credit transfer</ram:Information>"
+				+ "				<ram:PayeePartyCreditorFinancialAccount>"
+				+ "					<ram:IBANID>" + XMLTools.encodeXML(getOwnIBAN()) + "</ram:IBANID>";
 		xml+= accountNameStr;
-		xml+= "				</ram:PayeePartyCreditorFinancialAccount>\n"
-				+ "				<ram:PayeeSpecifiedCreditorFinancialInstitution>\n"
-				+ "					<ram:BICID>" + XMLTools.encodeXML(getOwnBIC()) + "</ram:BICID>\n"
-				// + " <ram:Name>"+trans.getOwnBankName()+"</ram:Name>\n"
+		xml+= "				</ram:PayeePartyCreditorFinancialAccount>"
+				+ "				<ram:PayeeSpecifiedCreditorFinancialInstitution>"
+				+ "					<ram:BICID>" + XMLTools.encodeXML(getOwnBIC()) + "</ram:BICID>"
+				// + " <ram:Name>"+trans.getOwnBankName()+"</ram:Name>"
 				//
-				+ "				</ram:PayeeSpecifiedCreditorFinancialInstitution>\n"
-				+ "			</ram:SpecifiedTradeSettlementPaymentMeans>\n";
+				+ "				</ram:PayeeSpecifiedCreditorFinancialInstitution>"
+				+ "			</ram:SpecifiedTradeSettlementPaymentMeans>";
 		return xml;
 	}
 	
