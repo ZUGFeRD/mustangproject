@@ -86,7 +86,8 @@ public class XRTest extends TestCase {
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
 				.setReferenceNumber("991-01484-64")//leitweg-id
 				// not using any VAT, this is also a test of zero-rated goods:
-				.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal(1.0)))
+				.setNumber(number).setPaymentTermDescription("#SKONTO#TAGE=14#PROZENT=2.25#\n" +
+						"#SKONTO#TAGE=28#PROZENT=1.00#\n").addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal(1.0)))
 				.embedFileInXML(fe1).embedFileInXML(fe2);
 
 

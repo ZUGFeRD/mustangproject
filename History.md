@@ -1,7 +1,7 @@
 2.4.1
 =======
 
-DespatchAdviceReferencedDocument/IssuerAssignedID
+DespatchAdviceReferencedDocument/IssuerAssignedID #253 
 
 - allow to specify legalorganisation ID+scheme ID
 - allow to specify additional files to be attached in command line
@@ -13,6 +13,8 @@ DespatchAdviceReferencedDocument/IssuerAssignedID
 - allow to specify a tradeparties' legalorganisation i.e. allow to write Factur-X invoices to french authorities
 - allow to add attachments in CLI
 - replaced jargs with apache commons cli as command line parser
+- nicer XML  https://github.com/ZUGFeRD/mustangproject/issues/266 thanks to weclapp-dev
+- XR now also tests paymenttermdescription(#238)
 
 2.4.0
 =======
