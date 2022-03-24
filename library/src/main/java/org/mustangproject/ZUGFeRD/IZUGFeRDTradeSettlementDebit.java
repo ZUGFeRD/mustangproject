@@ -24,20 +24,22 @@ public interface IZUGFeRDTradeSettlementDebit extends IZUGFeRDTradeSettlement {
 
 	
 
+	@Override
 	default String getSettlementXML() {
 		
 	
 		
-		String xml = "			<ram:SpecifiedTradeSettlementPaymentMeans>\n"
-				+ "				<ram:TypeCode>59</ram:TypeCode>\n"
-				+ "          	<ram:PayerPartyDebtorFinancialAccount>\n"
-      		    + "               <ram:IBANID>"+XMLTools.encodeXML(getIBAN())+"</ram:IBANID>\n"
-      		    + "             </ram:PayerPartyDebtorFinancialAccount>\n";
+		String xml = "<ram:SpecifiedTradeSettlementPaymentMeans>"
+				+ "<ram:TypeCode>59</ram:TypeCode>"
+				+ "<ram:PayerPartyDebtorFinancialAccount>"
+      		    + "<ram:IBANID>"+XMLTools.encodeXML(getIBAN())+"</ram:IBANID>"
+      		    + "</ram:PayerPartyDebtorFinancialAccount>";
 		
-		xml = xml + "			</ram:SpecifiedTradeSettlementPaymentMeans>\n";
+		xml += "</ram:SpecifiedTradeSettlementPaymentMeans>";
 		return xml;
 	}
 	
+	@Override
 	default String getPaymentXML() {
 		return "<ram:DirectDebitMandateID>"+XMLTools.encodeXML(getMandate())+"</ram:DirectDebitMandateID>";
 	}
