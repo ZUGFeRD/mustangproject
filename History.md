@@ -1,20 +1,21 @@
-2.4.1
+2.5.0
 =======
 
-DespatchAdviceReferencedDocument/IssuerAssignedID #253 
 
 - allow to specify legalorganisation ID+scheme ID
 - allow to specify additional files to be attached in command line
-- update to zf 2.2
+- update to zf 2.2, apparently this also fixes #268
 - update to verapdf 1.20.1 
 - log whether a XML or a PDF file was validated
 - allow 2.1 in RDF metadata in validation for Referenzprofil XRechnung's v 2.1.1
 - XR improvements PR 261 e.g. allowing the XRechnung version to be explicitly set in the PDF
 - allow to specify a tradeparties' legalorganisation i.e. allow to write Factur-X invoices to french authorities
-- allow to add attachments in CLI
+- allow to add attachments in CLI. Thanks to AlexGeller1 RE #270
 - replaced jargs with apache commons cli as command line parser
 - nicer XML  https://github.com/ZUGFeRD/mustangproject/issues/266 thanks to weclapp-dev
 - XR now also tests paymenttermdescription(#238)
+- allow XRechnung to the Deutsche Bahn: allow to reference a shipping note DespatchAdviceReferencedDocument/IssuerAssignedID #253
+
 
 2.4.0
 =======
