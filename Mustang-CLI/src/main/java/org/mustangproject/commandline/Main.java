@@ -72,11 +72,12 @@ public class Main {
 				+ "                [--source=<filename>]: set input PDF file\n"
 				+ "                [--source-xml=<filename>]: set input XML file\n"
 				+ "                [--out=<filename>]: set output PDF file\n"
-				+ "                [--format <fx|zf>]: set ZUGFeRD or FacturX\n"
+				+ "                [--format <fx|zf|ox>]: set Factur-X, ZUGFeRD or Order-X\n"
 				+ "                [--version <1|2>]: set ZUGFeRD version\n"
 				+ "                [--profile <...>]: set ZUGFeRD profile\n"
 				+ "                        For ZUGFeRD v1: <B>ASIC, <C>OMFORT or EX<T>ENDED\n"
-				+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED \n"
+				+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED\n"
+				+ "                [--attachments=<filenames>]: list of file attachments (passing a single empty file name prevents prompting)\n"
 				+ "        --action=ubl   convert UN/CEFACT 2016b CII XML to UBL XML\n"
 				+ "                [--source <filename>]: set input XML file\n"
 				+ "                [--out <filename>]: set output XML file\n"
@@ -161,7 +162,7 @@ public class Main {
 	 * Prompts the user for a input or output filename
 	 *
 	 * @param prompt the text the user is asked
-	 * @param defaultFilename a default Filename
+	 * @param defaultFilename a default Filename. Passing an empty string indicates that specifying a file is optional
 	 * @param expectedExtension will warn if filename does not match expected file extension, "or" possible with e.g. pdf|xml
 	 * @param ensureFileExists will warn if file does NOT exist (for input files)
 	 * @param ensureFileNotExists will warn if file DOES exist (for output files)
@@ -174,7 +175,7 @@ public class Main {
 		do {
 			// for a more sophisticated dialogue maybe https://github.com/mabe02/lanterna/
 			// could be taken into account
-			System.out.print(prompt + " (default: " + defaultFilename + "):");
+			System.out.print(prompt + (defaultFilename.isEmpty() ? ":" : " (default: " + defaultFilename + "):"));
 			BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
 			try {
 				selectedName = buffer.readLine();
@@ -185,6 +186,9 @@ public class Main {
 
 			if (selectedName.isEmpty()) {
 				// pressed return without entering anything
+				if(defaultFilename.isEmpty()) {
+					return "";  //no default -> this is an optional filename
+				}
 				selectedName = defaultFilename;
 			}
 
@@ -342,9 +346,10 @@ public class Main {
 			options.addOption(new Option("f", "format",true, "which format to output"));
 			options.addOption(new Option("", "version",true, "which version of the standard to use"));
 			options.addOption(new Option("", "profile",true, "which profile of the standard to use"));
-			Option attachmentOpt=new Option("", "attachment", true, "File attachments");
+			Option attachmentOpt=new Option("", "attachments", true, "File attachments");
 			attachmentOpt.setValueSeparator(',');
 			attachmentOpt.setArgs(Option.UNLIMITED_VALUES);
+			options.addOption(attachmentOpt);
 			options.addOption(new Option("", "source",true, "which source file to use"));
 			options.addOption(new Option("", "source-xml",true, "which source file to use"));
 			options.addOption(new Option("", "out",true, "which output file to write to"));
@@ -374,6 +379,8 @@ public class Main {
 			String zugferdVersion = cmd.getOptionValue("version");
 			String zugferdProfile = cmd.getOptionValue("profile");
 
+			String[] attachmentFilenames = cmd.hasOption("attachments") ? cmd.getOptionValues("attachments") : null;
+
 			ArrayList<FileAttachment> attachments=new ArrayList <>();
 
 			boolean optionsRecognized=false;
@@ -387,7 +394,7 @@ public class Main {
 				performMetrics(directoryName, filesFromStdIn, ignoreFileExt);
 				optionsRecognized=true;
 			} else if ((action!=null)&&(action.equals("combine")))  {
-				performCombine(sourceName, sourceXMLName, outName, format, zugferdVersion, zugferdProfile, ignoreFileExt, attachments);
+				performCombine(sourceName, sourceXMLName, outName, format, zugferdVersion, zugferdProfile, ignoreFileExt, attachmentFilenames, attachments);
 				optionsRecognized=true;
 			} else if ((action!=null)&&(action.equals("extract"))) {
 				performExtract(sourceName, outName);
@@ -522,7 +529,7 @@ public class Main {
 	}
 
 	private static void performCombine(String pdfName, String xmlName, String outName, String format, String zfVersion,
-			String zfProfile, Boolean ignoreInputErrors, ArrayList <FileAttachment> attachments) throws Exception {
+			String zfProfile, Boolean ignoreInputErrors, String[] attachmentFilenames, ArrayList <FileAttachment> attachments) throws Exception {
 		/*
 		 * ZUGFeRDExporter ze= new ZUGFeRDExporterFromA1Factory()
 		 * .setProducer("toecount") .setCreator(System.getProperty("user.name"))
@@ -550,16 +557,25 @@ public class Main {
 				System.out.println("Output PDF set to " + outName);
 			}
 
-			byte attachmentContents[]=null;
-			String attachmentFilename, attachmentMime, attachmentDescription;
-			attachmentFilename = getFilenameFromUser("Attachment filename (empty for none)", "", "pdf", true, false);
-			if (attachmentFilename.length()!=0) {
-				attachmentContents=Files.readAllBytes(Paths.get(attachmentFilename));
-				attachmentMime= Files.probeContentType(Paths.get(attachmentFilename));
-				attachments.add(new FileAttachment(attachmentFilename, attachmentMime, "Data", attachmentContents));
- 			}
-
-
+			if (attachmentFilenames == null) {
+				byte attachmentContents[]=null;
+				String attachmentFilename, attachmentMime, attachmentDescription;
+				attachmentFilename = getFilenameFromUser("Attachment filename (empty for none)", "", "pdf", true, false);
+				if (attachmentFilename.length()!=0) {
+					attachmentContents=Files.readAllBytes(Paths.get(attachmentFilename));
+					attachmentMime= Files.probeContentType(Paths.get(attachmentFilename));
+					attachments.add(new FileAttachment(attachmentFilename, attachmentMime, "Data", attachmentContents));
+				}
+			} else {
+				for (int i = 0; i < attachmentFilenames.length; i++) {
+					String attachmentFilename = attachmentFilenames[i];
+					if (!attachmentFilename.isEmpty()) {
+						byte[] attachmentContents = Files.readAllBytes(Paths.get(attachmentFilename));
+						String attachmentMime = Files.probeContentType(Paths.get(attachmentFilename));
+						attachments.add(new FileAttachment(attachmentFilename, attachmentMime, "Data", attachmentContents));
+					}
+				}
+			}
 
 
 			if (format == null) {
