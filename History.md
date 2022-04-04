@@ -2,7 +2,6 @@
 =======
 
 
-- allow to specify legalorganisation ID+scheme ID
 - allow to specify additional files to be attached in command line
 - update to zf 2.2, apparently this also fixes #268
 - update to verapdf 1.20.1 
