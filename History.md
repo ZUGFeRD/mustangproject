@@ -1,6 +1,6 @@
 2.5.0
 =======
-
+2022-04-07
 
 - allow to specify additional files to be attached in command line
 - update to zf 2.2, apparently this also fixes #268
