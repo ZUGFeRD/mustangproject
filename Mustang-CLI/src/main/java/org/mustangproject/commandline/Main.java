@@ -560,7 +560,7 @@ public class Main {
 			if (attachmentFilenames == null) {
 				byte attachmentContents[]=null;
 				String attachmentFilename, attachmentMime, attachmentDescription;
-				attachmentFilename = getFilenameFromUser("Attachment filename (empty for none)", "", "pdf", true, false);
+				attachmentFilename = getFilenameFromUser("Additional file attachments filename (empty for none)", "", "pdf", true, false);
 				if (attachmentFilename.length()!=0) {
 					attachmentContents=Files.readAllBytes(Paths.get(attachmentFilename));
 					attachmentMime= Files.probeContentType(Paths.get(attachmentFilename));
@@ -580,7 +580,7 @@ public class Main {
 
 			if (format == null) {
 				try {
-					format = getStringFromUser("Format (fx=Factur-X, zf=ZUGFeRD, ox=Order-X)", "zf", "fx|zf|ox");
+					format = getStringFromUser("Format (fx=Factur-X, zf=ZUGFeRD, ox=Order-X)", "zf", "fx|zf|ox|dx");
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);
 				}
@@ -601,7 +601,7 @@ public class Main {
 
 			if (zfProfile == null) {
 				try {
-					if (format.equals("zf") && (zfIntVersion == 1) || (format.equals("ox"))) {
+					if ((format.equals("zf") && (zfIntVersion == 1)) || (format.equals("ox") || (format.equals("dx")))) {
 						zfProfile = getStringFromUser("Profile (b)asic, (c)omfort or ex(t)ended", "t", "B|b|C|c|T|t");
 					} else {
 						zfProfile = getStringFromUser(
@@ -627,10 +627,13 @@ public class Main {
 				throw new Exception("Factur-X is only available in version 1 (roughly corresponding to ZF2)");
 			}
 
-			if (((format.equals("zf")) && (zfIntVersion == 1))||(format.equals("ox"))) {
+			if (((format.equals("zf")) && (zfIntVersion == 1))||(format.equals("ox")||(format.equals("dx")))) {
 				EStandard standard=EStandard.facturx;
 				if (format.equals("ox")) {
 					standard=EStandard.orderx;
+				}
+				if (format.equals("dx")) {
+					standard=EStandard.deliverx;
 				}
 
 				if (zfProfile.equals("b")) {
@@ -672,6 +675,14 @@ public class Main {
 						.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile);
 				if (ignoreInputErrors) {
 					((OXExporterFromA1)ze).ignorePDFAErrors();
+				}
+
+			} else if (format.equals("dx")) {
+				ze = new DXExporterFromA1().setProducer("Mustang-cli")
+						.setZUGFeRDVersion(zfIntVersion)
+						.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile);
+				if (ignoreInputErrors) {
+					((DXExporterFromA1)ze).ignorePDFAErrors();
 				}
 
 			} else {

@@ -50,18 +50,33 @@ public class Profiles {
 
 
 	}).collect(Collectors.toMap(data -> (String) data[0], data -> (Profile) data[1]));
+	static Map<String, Profile> dx1Map = Stream.of(new Object[][]{
+			{"BASIC", new Profile("BASIC", "urn:order-x.eu:1p0:basic")},
+			{"COMFORT", new Profile("COMFORT", "urn:order-x.eu:1p0:comfort")},
+			{"EXTENDED", new Profile("EXTENDED", "urn:order-x.eu:1p0:extended")},
+
+
+	}).collect(Collectors.toMap(data -> (String) data[0], data -> (Profile) data[1]));
 
 
 	public static Profile getByName(EStandard standard, String name, int version) {
-		if (standard != EStandard.orderx) {
-			return getByName(name, version);
-		} else {
+		if (standard == EStandard.orderx) {
 			Profile result = null;
 			result = ox1Map.get(name.toUpperCase());
 			if (result == null) {
 				throw new RuntimeException("Profile not found");
 			}
 			return result;
+		} else if (standard == EStandard.deliverx) {
+			Profile result = null;
+			result = dx1Map.get(name.toUpperCase());
+			if (result == null) {
+				throw new RuntimeException("Profile not found");
+			}
+			return result;
+		} else {
+			return getByName(name, version);
+
 		}
 	}
 

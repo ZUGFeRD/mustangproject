@@ -1,6 +1,6 @@
 package org.mustangproject;
 
 public enum EStandard {
-	facturx, orderx, zugferd, cii, ubl
+	facturx, orderx, deliverx, zugferd, cii, ubl
 
 }

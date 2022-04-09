@@ -177,6 +177,7 @@ public class XMLValidator extends Validator {
 					context.setProfile(booking.getNodeValue());
 				}
 				boolean isOrderX = false;
+				boolean isDeliverX = false;
 				boolean isMiniumum = false;
 				boolean isBasic = false;
 				boolean isBasicWithoutLines = false;
@@ -197,6 +198,12 @@ public class XMLValidator extends Validator {
 					isBasic = context.getProfile().contains("basic");
 					isEN16931 = context.getProfile().contains("comfort");
 					isExtended = context.getProfile().contains("extended");
+					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B.xsd", 99, EPart.ox);
+					xsltFilename = "/xslt/OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B_COMFORT.xslt";
+
+				} else if (root.getLocalName().equalsIgnoreCase("SCRDMCCBDACIOMessageStructure")) {
+					context.setGeneration("1");
+					isOrderX = true;
 					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B.xsd", 99, EPart.ox);
 					xsltFilename = "/xslt/OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B_COMFORT.xslt";
 
