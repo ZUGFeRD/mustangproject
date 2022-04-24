@@ -601,8 +601,10 @@ public class Main {
 
 			if (zfProfile == null) {
 				try {
-					if ((format.equals("zf") && (zfIntVersion == 1)) || (format.equals("ox") || (format.equals("dx")))) {
+					if ((format.equals("zf") && (zfIntVersion == 1)) || (format.equals("ox") )) {
 						zfProfile = getStringFromUser("Profile (b)asic, (c)omfort or ex(t)ended", "t", "B|b|C|c|T|t");
+					} else if ( (format.equals("dx"))) {
+						zfProfile = getStringFromUser("Profile (p)ilot", "p", "P|p");
 					} else {
 						zfProfile = getStringFromUser(
 								"Profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" + "[C]IUS, [E]N16931, EX[T]ENDED or [X]RECHNUNG", "E",
@@ -627,14 +629,17 @@ public class Main {
 				throw new Exception("Factur-X is only available in version 1 (roughly corresponding to ZF2)");
 			}
 
-			if (((format.equals("zf")) && (zfIntVersion == 1))||(format.equals("ox")||(format.equals("dx")))) {
-				EStandard standard=EStandard.facturx;
+			EStandard standard=EStandard.facturx;
+			if (format.equals("dx")) {
+				standard=EStandard.deliverx;
+
+				zfConformanceLevelProfile = Profiles.getByName(standard, "PILOT", 1);
+			}
+			else if (((format.equals("zf")) && (zfIntVersion == 1))||(format.equals("ox"))) {
 				if (format.equals("ox")) {
 					standard=EStandard.orderx;
 				}
-				if (format.equals("dx")) {
-					standard=EStandard.deliverx;
-				}
+
 
 				if (zfProfile.equals("b")) {
 					zfConformanceLevelProfile = Profiles.getByName(standard, "BASIC", zfIntVersion);
@@ -681,6 +686,7 @@ public class Main {
 				ze = new DXExporterFromA1().setProducer("Mustang-cli")
 						.setZUGFeRDVersion(zfIntVersion)
 						.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile);
+
 				if (ignoreInputErrors) {
 					((DXExporterFromA1)ze).ignorePDFAErrors();
 				}
@@ -704,11 +710,13 @@ public class Main {
 			}
 
 			ze.setXML(Files.readAllBytes(Paths.get(xmlName)));
+
 			ze.export(outName);
 			System.out.println("Written to " + outName);
 
-		} catch (IOException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
+			System.err.println(e.getMessage());
 		}
 	}
 

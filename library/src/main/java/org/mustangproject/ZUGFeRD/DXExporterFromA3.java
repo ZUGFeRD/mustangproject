@@ -105,7 +105,7 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * OrderX document type. As of version 1.0 it may be
 	 * ORDER, ORDER_RESPONSE, or ORDER_CHANGE
 	 */
-	protected String orderXDocumentType = "ORDER";
+	protected String deliverXDocumentType = "DESPATCHADVICE";
 
 
 	private HashMap<String, byte[]> additionalXMLs = new HashMap<String, byte[]>();
@@ -396,15 +396,15 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	}
 
 	/**
-	 * Sets the property orderXDocumentType.
+	 * Sets the property for DocumentType.
 	 *
-	 * @param orderXDocumentType new value. Expected: ORDER, ORDER_RESPONSE, or ORDER_CHANGE
+	 * @param
 	 *
 	 * @return this exporter
 	 */
-	public DXExporterFromA3 setOrderXDocumentType(String orderXDocumentType)
+	public DXExporterFromA3 setDocumentType(String DocumentType)
 	{
-		this.orderXDocumentType = orderXDocumentType;
+		this.deliverXDocumentType = DocumentType;
 
 		return this;
 	}
@@ -426,9 +426,9 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 		if (attachZUGFeRDHeaders) {
 			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, 1, true, xmlProvider.getProfile(),
-					"urn:factur-x:pdfa:CrossIndustryDocument:1p0#", "fx",
-					"deliver-x.xml");
-			zf.setType(this.orderXDocumentType);
+					"urn:facturx:pdfa:CrossIndustryDocument:despatchadvice:1p0#", "fx",
+					"cida.xml");
+			zf.setType(this.deliverXDocumentType);
 
 			metadata.addSchema(zf);
 			// also add the schema extensions...
@@ -457,9 +457,9 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	public IExporter prepare() throws IOException {
 		prepareDocument();
 		xmlProvider.generateXML(trans);
-		String filename = "deliver-x.xml";
+		String filename = "cida.xml";
 		PDFAttachGenericFile(doc, filename, "Alternative",
-				"Order metadata conforming to the Order-X standard (https://www.ferd-net.de/standards/order-x/index.html)",
+				"Delivery metadata",
 				"text/xml", xmlProvider.getXML());
 
 		for (FileAttachment attachment : fileAttachments) {

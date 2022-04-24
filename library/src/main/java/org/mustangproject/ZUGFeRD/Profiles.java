@@ -51,11 +51,7 @@ public class Profiles {
 
 	}).collect(Collectors.toMap(data -> (String) data[0], data -> (Profile) data[1]));
 	static Map<String, Profile> dx1Map = Stream.of(new Object[][]{
-			{"BASIC", new Profile("BASIC", "urn:order-x.eu:1p0:basic")},
-			{"COMFORT", new Profile("COMFORT", "urn:order-x.eu:1p0:comfort")},
-			{"EXTENDED", new Profile("EXTENDED", "urn:order-x.eu:1p0:extended")},
-
-
+			{"PILOT", new Profile("PILOT", "urn:facturx:pdfa:CrossIndustryDocument:despatchadvice:1p0#")}
 	}).collect(Collectors.toMap(data -> (String) data[0], data -> (Profile) data[1]));
 
 

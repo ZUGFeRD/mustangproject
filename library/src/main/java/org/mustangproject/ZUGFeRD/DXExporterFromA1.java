@@ -44,7 +44,7 @@ public class DXExporterFromA1 extends DXExporterFromA3 implements IZUGFeRDExport
 	 * @return the URN of the namespace
 	 */
 	public String getNamespaceForVersion(int ver) {
-		return "urn:factur-x:pdfa:CrossIndustryDocument:1p0#";
+		return "urn:facturx:pdfa:CrossIndustryDocument:despatchadvice:1p0#";
 	}
 	/***
 	 * internal helper: returns the namespace prefix for the given order-x version number
