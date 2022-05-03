@@ -177,7 +177,7 @@ public class XMLValidator extends Validator {
 					context.setProfile(booking.getNodeValue());
 				}
 				boolean isOrderX = false;
-				boolean isDeliverX = false;
+				boolean isDespatchAdvice = false;
 				boolean isMiniumum = false;
 				boolean isBasic = false;
 				boolean isBasicWithoutLines = false;

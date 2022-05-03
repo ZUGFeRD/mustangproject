@@ -105,7 +105,7 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * OrderX document type. As of version 1.0 it may be
 	 * ORDER, ORDER_RESPONSE, or ORDER_CHANGE
 	 */
-	protected String deliverXDocumentType = "DESPATCHADVICE";
+	protected String despatchAdviceDocumentType = "DESPATCHADVICE";
 
 
 	private HashMap<String, byte[]> additionalXMLs = new HashMap<String, byte[]>();
@@ -404,7 +404,7 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 */
 	public DXExporterFromA3 setDocumentType(String DocumentType)
 	{
-		this.deliverXDocumentType = DocumentType;
+		this.despatchAdviceDocumentType = DocumentType;
 
 		return this;
 	}
@@ -428,7 +428,7 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, 1, true, xmlProvider.getProfile(),
 					"urn:facturx:pdfa:CrossIndustryDocument:despatchadvice:1p0#", "fx",
 					"cida.xml");
-			zf.setType(this.deliverXDocumentType);
+			zf.setType(this.despatchAdviceDocumentType);
 
 			metadata.addSchema(zf);
 			// also add the schema extensions...
@@ -679,7 +679,7 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 	@Override
 	public DXExporterFromA3 setZUGFeRDVersion(int version) {
-		OXPullProvider z2p = new OXPullProvider();
+		DAPullProvider z2p = new DAPullProvider();
 		setXMLProvider(z2p);
 		return this;
 	}

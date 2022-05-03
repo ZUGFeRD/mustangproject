@@ -580,7 +580,7 @@ public class Main {
 
 			if (format == null) {
 				try {
-					format = getStringFromUser("Format (fx=Factur-X, zf=ZUGFeRD, ox=Order-X)", "zf", "fx|zf|ox|dx");
+					format = getStringFromUser("Format (fx=Factur-X, zf=ZUGFeRD, ox=Order-X, da=Cross Industry Despatch Advice)", "zf", "fx|zf|ox|da");
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);
 				}
@@ -603,7 +603,7 @@ public class Main {
 				try {
 					if ((format.equals("zf") && (zfIntVersion == 1)) || (format.equals("ox") )) {
 						zfProfile = getStringFromUser("Profile (b)asic, (c)omfort or ex(t)ended", "t", "B|b|C|c|T|t");
-					} else if ( (format.equals("dx"))) {
+					} else if ( (format.equals("da"))) {
 						zfProfile = getStringFromUser("Profile (p)ilot", "p", "P|p");
 					} else {
 						zfProfile = getStringFromUser(
@@ -630,8 +630,8 @@ public class Main {
 			}
 
 			EStandard standard=EStandard.facturx;
-			if (format.equals("dx")) {
-				standard=EStandard.deliverx;
+			if (format.equals("da")) {
+				standard=EStandard.deliveradvice;
 
 				zfConformanceLevelProfile = Profiles.getByName(standard, "PILOT", 1);
 			}
@@ -682,7 +682,7 @@ public class Main {
 					((OXExporterFromA1)ze).ignorePDFAErrors();
 				}
 
-			} else if (format.equals("dx")) {
+			} else if (format.equals("da")) {
 				ze = new DXExporterFromA1().setProducer("Mustang-cli")
 						.setZUGFeRDVersion(zfIntVersion)
 						.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile);

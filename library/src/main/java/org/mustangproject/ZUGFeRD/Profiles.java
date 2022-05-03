@@ -33,7 +33,7 @@ public class Profiles {
 			{"BASIC", new Profile("BASIC", "urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic")},
 			{"EN16931", new Profile("EN16931", "urn:cen.eu:en16931:2017")},
 			{"EXTENDED", new Profile("EXTENDED", "urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended")},
-			{"XRECHNUNG", new Profile("XRECHNUNG", "urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.1")} 
+			{"XRECHNUNG", new Profile("XRECHNUNG", "urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.2")}
 
 	}).collect(Collectors.toMap(data -> (String) data[0], data -> (Profile) data[1]));
 	static Map<String, Profile> zf1Map = Stream.of(new Object[][]{
@@ -51,7 +51,7 @@ public class Profiles {
 
 	}).collect(Collectors.toMap(data -> (String) data[0], data -> (Profile) data[1]));
 	static Map<String, Profile> dx1Map = Stream.of(new Object[][]{
-			{"PILOT", new Profile("PILOT", "urn:facturx:pdfa:CrossIndustryDocument:despatchadvice:1p0#")}
+			{"PILOT", new Profile("PILOT", "urn:awv-net.de:CIDA:1.0:pilot")}
 	}).collect(Collectors.toMap(data -> (String) data[0], data -> (Profile) data[1]));
 
 
@@ -63,7 +63,7 @@ public class Profiles {
 				throw new RuntimeException("Profile not found");
 			}
 			return result;
-		} else if (standard == EStandard.deliverx) {
+		} else if (standard == EStandard.deliveradvice) {
 			Profile result = null;
 			result = dx1Map.get(name.toUpperCase());
 			if (result == null) {
