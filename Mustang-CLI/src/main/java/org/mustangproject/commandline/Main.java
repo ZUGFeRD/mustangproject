@@ -51,54 +51,54 @@ public class Main {
 
 	private static String getUsage() {
 		return "Usage: --action metrics|combine|extract|a3only|ubl|validate|validateExpectInvalid|validateExpectValid|visualize [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] | [-h,--help] \r\n"
-				+ "        --action=license   display open source license and notice\n"
-				+ "        --action=metrics\n"
+				+ "        --action license   display open source license and notice\n"
+				+ "        --action metrics\n"
 				+ "          -d, --directory count ZUGFeRD files in directory to be scanned\n"
 				+ "                If it is a directory, it will recurse.\n"
 				+ "          -l, --listfromstdin     count ZUGFeRD files from a list of linefeed separated files on runtime.\n"
 				+ "                It will start once a blank line has been entered.\n" + "\n"
 				+ "        Additional parameter for both count operations\n"
 				+ "        [-i, --ignorefileextension]     Check for all files (*.*) instead of PDF files only (*.pdf) in metrics, ignore PDF/A input file errors in combine\n"
-				+ "        --action=extract   extract Factur-X PDF to XML file\n"
+				+ "        --action extract   extract Factur-X PDF to XML file\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "                [--source=<filename>]: set input PDF file\n"
-				+ "                [--out=<filename>]: set output XML file\n"
-				+ "        --action=a3only    upgrade from PDF/A1 to A3 only (no ZUGFeRD data attached)\n"
+				+ "                [--source <filename>]: set input PDF file\n"
+				+ "                [--out <filename>]: set output XML file\n"
+				+ "        --action a3only    upgrade from PDF/A1 to A3 only (no ZUGFeRD data attached)\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "                [--source=<filename>]: set input PDF file\n"
-				+ "                [--out=<filename>]: set output PDF file\n"
-				+ "        --action=combine   combine XML and PDF file to Factur-X PDF file\n"
+				+ "                [--source <filename>]: set input PDF file\n"
+				+ "                [--out <filename>]: set output PDF file\n"
+				+ "        --action combine   combine XML and PDF file to Factur-X PDF file\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "                [--source=<filename>]: set input PDF file\n"
-				+ "                [--source-xml=<filename>]: set input XML file\n"
-				+ "                [--out=<filename>]: set output PDF file\n"
+				+ "                [--source <filename>]: set input PDF file\n"
+				+ "                [--source-xml <filename>]: set input XML file\n"
+				+ "                [--out <filename>]: set output PDF file\n"
 				+ "                [--format <fx|zf|ox>]: set Factur-X, ZUGFeRD or Order-X\n"
 				+ "                [--version <1|2>]: set ZUGFeRD version\n"
 				+ "                [--profile <...>]: set ZUGFeRD profile\n"
-				+ "                        For ZUGFeRD v1: <B>ASIC, <C>OMFORT or EX<T>ENDED\n"
+				+ "                        For ZUGFeRD v1 or Order-X: <B>ASIC, <C>OMFORT or EX<T>ENDED\n"
 				+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED\n"
-				+ "                [--attachments=<filenames>]: list of file attachments (passing a single empty file name prevents prompting)\n"
-				+ "        --action=ubl   convert UN/CEFACT 2016b CII XML to UBL XML\n"
+				+ "                [--attachments <filenames>]: list of file attachments (passing a single empty file name prevents prompting)\n"
+				+ "        --action ubl   convert UN/CEFACT 2016b CII XML to UBL XML\n"
 				+ "                [--source <filename>]: set input XML file\n"
 				+ "                [--out <filename>]: set output XML file\n"
-				+ "        --action=upgrade   upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
+				+ "        --action upgrade   upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source <filename>]: set input XML ZUGFeRD 1 file\n"
 				+ "                [--out <filename>]: set output XML ZUGFeRD 2 file\n"
-				+ "        --action=validate  validate XML or PDF file \n"
+				+ "        --action validate  validate XML or PDF file \n"
 				+ "                [--no-notices]: refrain from reporting notices\n"
-				+ "                [--logAppend=<text>]: text to be added to log line\n"
+				+ "                [--logAppend <text>]: text to be added to log line\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "                [--source=<filename>]: input PDF or XML file\n"
-				+ "        --action=validateExpectInvalid  validate directory expecting negative results \n"
+				+ "                [--source <filename>]: input PDF or XML file\n"
+				+ "        --action validateExpectInvalid  validate directory expecting negative results \n"
 				+ "                [--no-notices]: refrain from reporting notices\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "					-d, --directory to check recursively\n"
-				+ "        --action=validateExpectValid  validate directory expecting positive results \n"
+				+ "        --action validateExpectValid  validate directory expecting positive results \n"
 				+ "                [--no-notices]: refrain from reporting notices\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "					-d, --directory to check recursively \n"
-				+ "        --action=visualize  convert XML to HTML \n"
+				+ "        --action visualize  convert XML to HTML \n"
 				+ "                [--source <filename>]: set input XML file\n"
 				+ "                [--out <filename>]: set output HTML file\n"
 				;
@@ -340,7 +340,6 @@ public class Main {
 			// create Options object
 			Options options = new Options();
 
-
 			options.addOption(new Option("h", "help",false, "display usage"));
 			options.addOption(new Option("a", "action",true, "which action to perform"));
 			options.addOption(new Option("f", "format",true, "which format to output"));
@@ -358,66 +357,72 @@ public class Main {
 			options.addOption(new Option("", "directory",true, "which directory to operate on"));
 			options.addOption(new Option("i", "ignorefileextension",false, "ignore non-matching file extensions"));
 			options.addOption(new Option("l", "listfromstdin",false, "take list of files from commandline"));
-
-
-			cmd = parser.parse(options, args);
-
-
-			// Retrieve all options
-			String action = cmd.getOptionValue("action");
-			String directoryName = cmd.getOptionValue("directory");
-			Boolean filesFromStdIn = cmd.hasOption("listfromstdin");//((Number)cmdLine.getParsedOptionValue("integer-option")).intValue();
-			Boolean ignoreFileExt = cmd.hasOption("ignorefileextension");
-			Boolean helpRequested = cmd.hasOption("help")  || ((action!=null)&&(action.equals("help")));
-
-			String sourceName = cmd.getOptionValue("source");
-			String sourceXMLName = cmd.getOptionValue("source-xml");
-			String outName = cmd.getOptionValue("out");
-			String format = cmd.getOptionValue("format");
-			Boolean noNotices = cmd.hasOption("no-notices");
-
-			String zugferdVersion = cmd.getOptionValue("version");
-			String zugferdProfile = cmd.getOptionValue("profile");
-
-			String[] attachmentFilenames = cmd.hasOption("attachments") ? cmd.getOptionValues("attachments") : null;
-
-			ArrayList<FileAttachment> attachments=new ArrayList <>();
-
 			boolean optionsRecognized=false;
-			if (helpRequested) {
-				printHelp();
-				optionsRecognized=true;
-			} /* else if ((action!=null)&&(action.equals("license"))) {
+			String action = "";
+			try {
+				cmd = parser.parse(options, args);
+
+				// Retrieve all options
+				action = cmd.getOptionValue("action");
+				String directoryName = cmd.getOptionValue("directory");
+				Boolean filesFromStdIn = cmd.hasOption("listfromstdin");//((Number)cmdLine.getParsedOptionValue("integer-option")).intValue();
+				Boolean ignoreFileExt = cmd.hasOption("ignorefileextension");
+				Boolean helpRequested = cmd.hasOption("help")  || ((action!=null)&&(action.equals("help")));
+
+				String sourceName = cmd.getOptionValue("source");
+				String sourceXMLName = cmd.getOptionValue("source-xml");
+				String outName = cmd.getOptionValue("out");
+				String format = cmd.getOptionValue("format");
+				Boolean noNotices = cmd.hasOption("no-notices");
+
+				String zugferdVersion = cmd.getOptionValue("version");
+				String zugferdProfile = cmd.getOptionValue("profile");
+
+				String[] attachmentFilenames = cmd.hasOption("attachments") ? cmd.getOptionValues("attachments") : null;
+
+
+
+
+				ArrayList<FileAttachment> attachments=new ArrayList <>();
+				if (helpRequested) {
+					printHelp();
+					optionsRecognized=true;
+				} /* else if ((action!=null)&&(action.equals("license"))) {
 				printLicense();
 				optionsRecognized=true;
 			} */ else if ((action!=null)&&(action.equals("metrics"))) {
-				performMetrics(directoryName, filesFromStdIn, ignoreFileExt);
-				optionsRecognized=true;
-			} else if ((action!=null)&&(action.equals("combine")))  {
-				performCombine(sourceName, sourceXMLName, outName, format, zugferdVersion, zugferdProfile, ignoreFileExt, attachmentFilenames, attachments);
-				optionsRecognized=true;
-			} else if ((action!=null)&&(action.equals("extract"))) {
-				performExtract(sourceName, outName);
-				optionsRecognized=true;
-			} else if ((action!=null)&&(action.equals("a3only")))  {
-				performConvert(sourceName, outName);
-				optionsRecognized=true;
-			} else if ((action!=null)&&(action.equals("visualize")))  {
-				performVisualization(sourceName, outName);
-				optionsRecognized=true;
-			} else if ((action!=null)&&(action.equals("upgrade")))  {
-				performUpgrade(sourceName, outName);
-				optionsRecognized=true;
-			} else if ((action!=null)&&(action.equals("ubl")))  {
-				performUBL(sourceName, outName);
-				optionsRecognized=true;
-			} else if ((action!=null)&&(action.equals("validate"))) {
-				optionsRecognized=performValidate(sourceName, noNotices!=null&&noNotices, cmd.getOptionValue("logAppend"));
-			} else if ((action!=null)&&(action.equals("validateExpectValid"))) {
-				optionsRecognized=performValidateExpect(true, directoryName);
-			} else if ((action!=null)&&(action.equals("validateExpectInvalid"))) {
-				optionsRecognized=performValidateExpect(false, directoryName);
+					performMetrics(directoryName, filesFromStdIn, ignoreFileExt);
+					optionsRecognized=true;
+				} else if ((action!=null)&&(action.equals("combine")))  {
+					performCombine(sourceName, sourceXMLName, outName, format, zugferdVersion, zugferdProfile, ignoreFileExt, attachmentFilenames, attachments);
+					optionsRecognized=true;
+				} else if ((action!=null)&&(action.equals("extract"))) {
+					performExtract(sourceName, outName);
+					optionsRecognized=true;
+				} else if ((action!=null)&&(action.equals("a3only")))  {
+					performConvert(sourceName, outName);
+					optionsRecognized=true;
+				} else if ((action!=null)&&(action.equals("visualize")))  {
+					performVisualization(sourceName, outName);
+					optionsRecognized=true;
+				} else if ((action!=null)&&(action.equals("upgrade")))  {
+					performUpgrade(sourceName, outName);
+					optionsRecognized=true;
+				} else if ((action!=null)&&(action.equals("ubl")))  {
+					performUBL(sourceName, outName);
+					optionsRecognized=true;
+				} else if ((action!=null)&&(action.equals("validate"))) {
+					optionsRecognized=performValidate(sourceName, noNotices!=null&&noNotices, cmd.getOptionValue("logAppend"));
+				} else if ((action!=null)&&(action.equals("validateExpectValid"))) {
+					optionsRecognized=performValidateExpect(true, directoryName);
+				} else if ((action!=null)&&(action.equals("validateExpectInvalid"))) {
+					optionsRecognized=performValidateExpect(false, directoryName);
+				}
+
+			} catch (UnrecognizedOptionException ex) {
+				optionsRecognized=false;
 			}
+
 			if (!optionsRecognized){
 				// no argument or argument unknown
 				printUsage();
