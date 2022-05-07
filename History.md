@@ -1,6 +1,8 @@
 - upgraded en16931 validation to 1.3.8
 - Be able to embed Cross Industry Delivery Advice
 - update xr to v. 2.2
+- logging output now stderr again, since 2.4.0 it had mistakenly been on stdout
+
 2.5.0
 =======
 2022-04-07

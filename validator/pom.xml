@@ -54,6 +54,13 @@
             <artifactId>logback-core</artifactId>
             <version>1.2.10</version>
         </dependency>
+
+        <dependency>
+            <!-- This library is needed so that logback stderr output is sent to, well, stderr, otherwise it lands in stdout -->
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>3.1.7</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.googlecode.slf4j-maven-plugin-log/slf4j-maven-plugin-log -->
         <dependency>
             <groupId>com.googlecode.slf4j-maven-plugin-log</groupId>
