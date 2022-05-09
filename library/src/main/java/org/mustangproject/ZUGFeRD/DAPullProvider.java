@@ -39,7 +39,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 
 	protected IExportableTransaction trans;
 	private String paymentTermsDescription;
-	protected Profile profile = Profiles.getByName(EStandard.deliveradvice,"pilot", 1);
+	protected Profile profile = Profiles.getByName(EStandard.despatchadvice,"pilot", 1);
 
 
 	@Override

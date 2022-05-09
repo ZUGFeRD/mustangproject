@@ -63,7 +63,7 @@ public class Profiles {
 				throw new RuntimeException("Profile not found");
 			}
 			return result;
-		} else if (standard == EStandard.deliveradvice) {
+		} else if (standard == EStandard.despatchadvice) {
 			Profile result = null;
 			result = dx1Map.get(name.toUpperCase());
 			if (result == null) {

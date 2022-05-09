@@ -21,16 +21,24 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Date;
 
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.mustangproject.*;
 import org.mustangproject.CII.CIIToUBL;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UBLTest extends ResourceCase {
+	final String TARGET_XML = "./target/testout-1Lieferschein.xml";
 
 	public void testUBLBasic() {
 
@@ -47,11 +55,39 @@ public class UBLTest extends ResourceCase {
 			expected = ResourceUtilities.readFile(StandardCharsets.UTF_8, expectedFile.getAbsolutePath()).replaceAll("\r\n", "\n");
 			result = ResourceUtilities.readFile(StandardCharsets.UTF_8, tempFile.getAbsolutePath()).replaceAll("\r\n", "\n");
 		} catch (final IOException e) {
-			fail("Exception should not happen: "+e.getMessage());
+			fail("Exception should not happen: " + e.getMessage());
 		}
 
 
 		assertNotNull(result);
 		assertEquals(expected, result);
+	}
+
+	public void test1Lieferschein() {
+
+		EinLieferscheinExporter oe = new EinLieferscheinExporter();
+		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
+				.setSender(new TradeParty("Test company", "teststr", "55232", "teststadt", "DE").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890", "COBADEFXXX")))
+				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
+				.setReferenceNumber("991-01484-64")//leitweg-id
+				.setNumber("123").addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), /*price*/ new BigDecimal("1.0"),  /*qty*/ new BigDecimal("1.0")).addReferencedLineID("A12"));
+
+		UBLDAPullProvider zf2p = new UBLDAPullProvider();
+		zf2p.setProfile(Profiles.getByName(EStandard.despatchadvice, "Pilot", 1));
+		zf2p.generateXML(i);
+
+		try {
+			oe.setTransaction(i);
+			ByteArrayOutputStream baos=new ByteArrayOutputStream();
+			oe.export(baos);
+
+			String theXML = baos.toString("UTF-8");
+			assertTrue(theXML.contains("<DespatchAdvice"));
+			Files.write(Paths.get(TARGET_XML), theXML.getBytes(StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
 	}
 }
