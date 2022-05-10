@@ -72,7 +72,7 @@ public class Main {
 				+ "                [--source <filename>]: set input PDF file\n"
 				+ "                [--source-xml <filename>]: set input XML file\n"
 				+ "                [--out <filename>]: set output PDF file\n"
-				+ "                [--format <fx|zf|ox>]: set Factur-X, ZUGFeRD or Order-X\n"
+				+ "                [--format <fx|zf|ox|da>]: set Factur-X, ZUGFeRD, Order-X or Cross Industry Despatch Advice\n"
 				+ "                [--version <1|2>]: set ZUGFeRD version\n"
 				+ "                [--profile <...>]: set ZUGFeRD profile\n"
 				+ "                        For ZUGFeRD v1 or Order-X: <B>ASIC, <C>OMFORT or EX<T>ENDED\n"
@@ -636,7 +636,7 @@ public class Main {
 
 			EStandard standard=EStandard.facturx;
 			if (format.equals("da")) {
-				standard=EStandard.deliveradvice;
+				standard=EStandard.despatchadvice;
 
 				zfConformanceLevelProfile = Profiles.getByName(standard, "PILOT", 1);
 			}
