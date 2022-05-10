@@ -278,7 +278,7 @@ public class DXTest extends MustangReaderTestCase implements IExportableTransact
 					 .load(SOURCE_PDF)) {
 			oe.setTransaction(this);
 			String theXML = new String(oe.getProvider().getXML(), StandardCharsets.UTF_8);
-			assertTrue(theXML.contains("<rsm:SCRDMCCBDACIOMessageStructure"));
+			assertTrue(theXML.contains("<SCRDMCCBDACIDAMessageStructure"));
 			Files.write(Paths.get(TARGET_XML), theXML.getBytes(StandardCharsets.UTF_8));
 			oe.export(TARGET_PDF);
 		} catch (IOException e) {
@@ -291,10 +291,8 @@ public class DXTest extends MustangReaderTestCase implements IExportableTransact
 		assertTrue(zi.getUTF8().contains("<ram:TypeCode>220</ram:TypeCode>"));
 		assertTrue(zi.getUTF8().contains("<ram:ShipToTradeParty>"));
 		assertFalse(zi.getUTF8().contains("EUR"));
-		assertTrue(zi.getUTF8().contains("USD"));//currency should be USD, test for #150
 
-		// Now also check the "invoice"Importer
-		assertEquals("496.00", zi.getAmount());
+		assertEquals(zi.getLineItemList().size(),3);
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_PDF);
 		try {

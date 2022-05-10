@@ -44,6 +44,7 @@ import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
+import org.mustangproject.EStandard;
 import org.mustangproject.Item;
 import org.mustangproject.Product;
 import org.w3c.dom.Document;
@@ -633,11 +634,28 @@ public class ZUGFeRDImporter {
 	}
 
 
-	public int getVersion() throws Exception {
+	public EStandard getStandard() throws Exception {
 		if (!containsMeta) {
 			throw new Exception("Not yet parsed");
 		}
 		if (getUTF8().contains("<rsm:CrossIndustryDocument")) {
+			return EStandard.zugferd;
+		} else if (getUTF8().contains("<rsm:CrossIndustryInvoice")) {
+			return EStandard.facturx;
+		} else if (getUTF8().contains("<SCRDMCCBDACIDAMessageStructure")) {
+			return EStandard.despatchadvice;
+		} else if (getUTF8().contains("<rsm:SCRDMCCBDACIOMessageStructure")) {
+			return EStandard.orderx;
+		}
+
+		throw new Exception("ZUGFeRD version could not be determined");
+
+	}
+	public int getVersion() throws Exception {
+		if (!containsMeta) {
+			throw new Exception("Not yet parsed");
+		}
+		if (getUTF8().contains("<rsm:CrossIndustryDocument")||getUTF8().contains("<SCRDMCCBDACIDAMessageStructure")||getUTF8().contains("<rsm:SCRDMCCBDACIOMessageStructure")) {
 			return 1;
 		} else if (getUTF8().contains("<rsm:CrossIndustryInvoice")) {
 			return 2;
@@ -939,11 +957,8 @@ public class ZUGFeRDImporter {
 		final List<Node> lineItemNodes = new ArrayList<>();
 		NodeList nl = null;
 		try {
-			if (getVersion() == 1) {
-				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryDocument']//*[local-name() = 'SpecifiedSupplyChainTradeTransaction']//*[local-name() = 'IncludedSupplyChainTradeLineItem']");
-			} else {
-				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'IncludedSupplyChainTradeLineItem']");
-			}
+				nl = getNodeListByPath("//*[local-name() = 'IncludedSupplyChainTradeLineItem']");
+
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
 		}

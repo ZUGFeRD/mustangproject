@@ -216,7 +216,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLineTradeDelivery"))) {
 						NodeList tradeLineChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeLineChildIndex = 0; tradeLineChildIndex < tradeLineChilds.getLength(); tradeLineChildIndex++) {
-							if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && (tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("BilledQuantity")||tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("RequestedQuantity"))) {
+							if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && (tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("BilledQuantity")||tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("RequestedQuantity")||tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("DespatchedQuantity"))) {
 								//RequestedQuantity is for Order-X, BilledQuantity for FX and ZF
 								quantity = tradeLineChilds.item(tradeLineChildIndex).getTextContent();
 								unitCode = tradeLineChilds.item(tradeLineChildIndex).getAttributes().getNamedItem("unitCode").getNodeValue();
@@ -336,7 +336,15 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 			TransactionCalculator tc = new TransactionCalculator(zpp);
 			String expectedStringTotalGross = tc.getGrandTotal().toPlainString();
-			if ((!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2)))&&(!ignoreCalculationErrors)) {
+			EStandard whichType;
+			try {
+				whichType=getStandard();
+			} catch(Exception e) {
+				throw new ParseException("Could not find out if it's an invoice, order, or delivery advice", 0);
+
+			}
+
+			if ((whichType!=EStandard.despatchadvice) && ((!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2)))&&(!ignoreCalculationErrors))) {
 				throw new ParseException("Could not reproduce the invoice, this could mean that it could not be read properly", 0);
 			}
 		}
