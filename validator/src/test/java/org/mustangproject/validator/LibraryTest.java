@@ -180,19 +180,23 @@ public class LibraryTest extends ResourceCase {
 
 		String res = zfv.validate(tempFile.getAbsolutePath());
 
+		/** We're releasing XR in the (published) version 2.2, unfortunately as of 2022-05-10 the validating schematrons only support 1.1, thus throw this error:*/
 		assertThat(res).valueByXPath("count(//error)")
 				.asInt()
-				.isEqualTo(0);
+				.isEqualTo(1);
+		assertThat(res).valueByXPath("//error").asString().isEqualTo("[BR-DE-21] Das Element \"Specification identifier\" (BT-24) soll syntaktisch der Kennung des Standards XRechnung entsprechen. (From /xslt/XR_21/XRechnung-CII-validation.xslt)");
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.asString()
+				.isEqualTo("invalid");// expect to be valid because XR notices are, well, only notices
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+				.asString()
+				.isEqualTo("invalid");
+		/** end of errors due to version mismatch*/
+
 
 		assertThat(res).valueByXPath("count(//notice)")
 				.asInt()
 				.isEqualTo(0);
-		assertThat(res).valueByXPath("/validation/summary/@status")
-				.asString()
-				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
-		assertThat(res).valueByXPath("/validation/xml/summary/@status")
-				.asString()
-				.isEqualTo("valid");
 
 	}
 }
