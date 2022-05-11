@@ -27,6 +27,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
+import org.mustangproject.TradeParty;
 import org.mustangproject.XMLTools;
 
 import java.io.IOException;
@@ -63,11 +64,18 @@ public class UBLDAPullProvider implements IXMLProvider {
 
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 				"<DespatchAdvice xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2\" xmlns:cac=\"urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2\" xmlns:cbc=\"urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2\" xmlns:cec=\"urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2\" xmlns:csc=\"urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2\">\n" +
+				"  <cbc:UBLVersionID>2.2</cbc:UBLVersionID>\n" +
+				"  <cbc:CustomizationID>1Lieferschein</cbc:CustomizationID>\n" +
+				"  <cbc:ProfileID>ubl-xml-only</cbc:ProfileID>\n" +
 				"  <cbc:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</cbc:ID>\n" +
-				"  <cbc:IssueDate>"+ublDateFormat.format(trans.getIssueDate())+"</cbc:IssueDate>\n" +
-				"  <cac:DespatchSupplierParty/>\n" +
-				"  <cac:DeliveryCustomerParty/>\n";
+				"  <cbc:IssueDate>" + ublDateFormat.format(trans.getIssueDate()) + "</cbc:IssueDate>\n" +
+				"  <cbc:DespatchAdviceTypeCode>900</cbc:DespatchAdviceTypeCode>\n";
+		if (trans.getReferenceNumber() != null) {
+			xml += "<cac:OrderReference>  <cbc:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</cbc:ID></cac:OrderReference>\n";
 
+		}
+		xml += "  <cac:DespatchSupplierParty>" + getPartyXML(trans.getSender()) + "</cac:DespatchSupplierParty>\n" +
+				"  <cac:DeliveryCustomerParty>" + getPartyXML(trans.getRecipient()) + "</cac:DeliveryCustomerParty>\n";
 		int i = 1;
 		for (IZUGFeRDExportableItem item : trans.getZFItems()) {
 			xml +=
@@ -89,6 +97,23 @@ public class UBLDAPullProvider implements IXMLProvider {
 		} catch (final UnsupportedEncodingException e) {
 			Logger.getLogger(UBLDAPullProvider.class.getName()).log(Level.SEVERE, null, e);
 		}
+	}
+
+	public String getPartyXML(IZUGFeRDExportableTradeParty tp) {
+		return "<cac:Party>\n" +
+				"      <cac:PostalAddress>\n" +
+				"        <cbc:CityName>" + XMLTools.encodeXML(tp.getLocation()) + "</cbc:CityName>\n" +
+				"        <cac:AddressLine>\n" +
+				"          <cbc:Line>" + XMLTools.encodeXML(tp.getName()) + "</cbc:Line>\n" +
+				"        </cac:AddressLine>\n" +
+				"        <cac:AddressLine>\n" +
+				"          <cbc:Line>" + XMLTools.encodeXML(tp.getStreet()) + "</cbc:Line>\n" +
+				"        </cac:AddressLine>\n" +
+				"        <cac:Country>\n" +
+				"          <cbc:IdentificationCode>" + XMLTools.encodeXML(tp.getCountry()) + "</cbc:IdentificationCode>\n" +
+				"        </cac:Country>\n" +
+				"      </cac:PostalAddress>\n" +
+				"    </cac:Party>";
 	}
 
 

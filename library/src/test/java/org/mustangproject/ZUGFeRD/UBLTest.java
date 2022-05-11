@@ -72,9 +72,6 @@ public class UBLTest extends ResourceCase {
 				.setReferenceNumber("991-01484-64")//leitweg-id
 				.setNumber("123").addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), /*price*/ new BigDecimal("1.0"),  /*qty*/ new BigDecimal("1.0")).addReferencedLineID("A12"));
 
-		UBLDAPullProvider zf2p = new UBLDAPullProvider();
-		zf2p.setProfile(Profiles.getByName(EStandard.despatchadvice, "Pilot", 1));
-		zf2p.generateXML(i);
 
 		try {
 			oe.setTransaction(i);
