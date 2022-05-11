@@ -76,15 +76,21 @@ public class UBLDAPullProvider implements IXMLProvider {
 		}
 		xml += "  <cac:DespatchSupplierParty>" + getPartyXML(trans.getSender()) + "</cac:DespatchSupplierParty>\n" +
 				"  <cac:DeliveryCustomerParty>" + getPartyXML(trans.getRecipient()) + "</cac:DeliveryCustomerParty>\n";
+		if (trans.getDeliveryDate() != null) {
+			xml += "   <cac:Shipment><cbc:ID>1</cbc:ID><cac:Delivery><cbc:ActualDeliveryDate>" + ublDateFormat.format(trans.getDeliveryDate()) + "</cbc:ActualDeliveryDate></cac:Delivery></cac:Shipment>";
+		}
 		int i = 1;
 		for (IZUGFeRDExportableItem item : trans.getZFItems()) {
 			xml +=
 					"  <cac:DespatchLine>\n" +
 							"    <cbc:ID>" + XMLTools.encodeXML(Integer.toString(i++)) + "</cbc:ID>\n" +
+							"    <cbc:DeliveredQuantity unitCode=\"" + XMLTools.encodeXML(item.getProduct().getUnit()) + "\">" + item.getQuantity() + "</cbc:DeliveredQuantity>\n" +
 							"    <cac:OrderLineReference>\n" +
 							"      <cbc:LineID>" + XMLTools.encodeXML(item.getBuyerOrderReferencedDocumentLineID()) + "</cbc:LineID>\n" +
 							"    </cac:OrderLineReference>\n" +
-							"    <cac:Item/>\n" +
+							"    <cac:Item>\n" +
+							"      <cbc:Name>" + XMLTools.encodeXML(item.getProduct().getName()) + "</cbc:Name>\n" +
+							"    </cac:Item>\n" +
 							"  </cac:DespatchLine>\n";
 
 		}
