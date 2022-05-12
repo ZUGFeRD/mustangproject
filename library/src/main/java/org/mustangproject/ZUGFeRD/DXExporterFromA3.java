@@ -398,7 +398,7 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	/**
 	 * Sets the property for DocumentType.
 	 *
-	 * @param
+	 * @param DocumentType String, usually DESPATCHADVICE
 	 *
 	 * @return this exporter
 	 */
