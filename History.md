@@ -1,6 +1,11 @@
+2.5.1
+=======
+2022-05-12
+
 - upgraded en16931 validation to 1.3.8
-- Be able to embed Cross Industry Delivery Advice
-- update xr to v. 2.2
+- Be able to embed/write/read Cross Industry Delivery Advice https://www.gs1-germany.de/gs1-standards/umsetzung/fachpublikationen/detailansicht/der-digitale-lieferschein-dls-die-digitale-abloesung-des-papier-lieferscheins/
+- Be able to write UBL 1Lieferschein https://www.bobbie.de/maschinenraum/1lieferschein
+- update xr to v. 2.2 (mandatory as of August)
 - logging output now stderr again, since 2.4.0 it had mistakenly been on stdout
 
 2.5.0

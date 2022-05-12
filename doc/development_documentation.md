@@ -176,7 +176,7 @@ Change to the project directory and run
   * `mvn clean install` confirm javadoc is OK with
   * `mvn javadoc:javadoc`. If that works you can 
   * clean the release with `mvn release:clean` and prepare the release with
-  * `mvn release:prepare  -DignoreSnapshots=true` and enter the version numbers. 
+  * `mvn release:prepare` and enter the version numbers. 
   * After that is through you can create a new release via `mvn release:perform`.This will also update the maven repo. 
   
   ![screenshot](development_documentation_screenshot_release.png "Screenshot Release")
