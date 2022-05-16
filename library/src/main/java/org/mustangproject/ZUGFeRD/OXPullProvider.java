@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
+import org.mustangproject.TradeParty;
 import org.mustangproject.XMLTools;
 
 public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider {
@@ -318,11 +319,13 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 		}
 		xml += "</ram:ApplicableHeaderTradeAgreement>"
 				+ "<ram:ApplicableHeaderTradeDelivery>";
-		if (this.trans.getDeliveryAddress() != null) {
-			xml += "<ram:ShipToTradeParty>" +
-					getTradePartyAsXML(this.trans.getDeliveryAddress(), false, true) +
-					"</ram:ShipToTradeParty>";
+		IZUGFeRDExportableTradeParty deliveryAddress=this.trans.getDeliveryAddress();
+		if (deliveryAddress == null) {
+			deliveryAddress = this.trans.getRecipient();
 		}
+		xml += "<ram:ShipToTradeParty>" +
+				getTradePartyAsXML(deliveryAddress, false, true) +
+				"</ram:ShipToTradeParty>";
 /*
 		xml += "<ram:ActualDeliverySupplyChainEvent>"
 				+ "<ram:OccurrenceDateTime>";
@@ -459,12 +462,6 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 				}
 			}
 
-			if (hasDueDate && (trans.getDueDate() != null)) {
-				xml += "<ram:DueDateDateTime>" // $NON-NLS-2$
-						+ DATE.udtFormat(trans.getDueDate())
-						+ "</ram:DueDateDateTime>";// 20130704
-
-			}
 			xml += "</ram:SpecifiedTradePaymentTerms>";
 		} else {
 			xml += buildPaymentTermsXml();
@@ -545,18 +542,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 		String paymentTermsXml = "<ram:SpecifiedTradePaymentTerms>";
 
 		final IZUGFeRDPaymentDiscountTerms discountTerms = paymentTerms.getDiscountTerms();
-		final Date dueDate = paymentTerms.getDueDate();
-		if (dueDate != null && discountTerms != null && discountTerms.getBaseDate() != null) {
-			throw new IllegalStateException(
-					"if paymentTerms.dueDate is specified, paymentTerms.discountTerms.baseDate has not to be specified");
-		}
 		paymentTermsXml += "<ram:Description>" + paymentTerms.getDescription() + "</ram:Description>";
-		if (dueDate != null) {
-			paymentTermsXml += "<ram:DueDateDateTime>";
-			paymentTermsXml += DATE.udtFormat(dueDate);
-			paymentTermsXml += "</ram:DueDateDateTime>";
-		}
-
 		if (discountTerms != null) {
 			paymentTermsXml += "<ram:ApplicableTradePaymentDiscountTerms>";
 			final String currency = trans.getCurrency();

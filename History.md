@@ -1,3 +1,5 @@
+- OXPullprovider to no longer generate invsalid XML if a duedate is set
+
 2.5.1
 =======
 2022-05-12
