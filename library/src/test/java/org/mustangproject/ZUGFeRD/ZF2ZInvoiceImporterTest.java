@@ -128,5 +128,28 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase  {
 
 	}
 
+	public void testXRImport() {
+		boolean hasExceptions=false;
+
+		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter();
+		try {
+			zii.fromXML(new String(Files.readAllBytes(Paths.get("./target/testout-XR-Edge.xml")), StandardCharsets.UTF_8));
+
+		} catch (IOException e) {
+			hasExceptions=true;
+		}
+
+		Invoice invoice=null;
+		try {
+			invoice=zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException e) {
+			hasExceptions=true;
+		}
+		assertFalse(hasExceptions);
+		TransactionCalculator tc=new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("1.00"),tc.getGrandTotal());
+
+	}
+
 
 }
