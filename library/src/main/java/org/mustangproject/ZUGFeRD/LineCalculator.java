@@ -13,6 +13,7 @@ public class LineCalculator {
 	private BigDecimal itemTotalVATAmount;
 	private BigDecimal allowance = BigDecimal.ZERO;
 	private BigDecimal charge = BigDecimal.ZERO;
+	private BigDecimal allowanceItemTotal = BigDecimal.ZERO;
 
 	public LineCalculator(IZUGFeRDExportableItem currentItem) {
 
@@ -26,11 +27,17 @@ public class LineCalculator {
 				addCharge(charge.getTotalAmount(currentItem));
 			}
 		}
+		if (currentItem.getItemTotalAllowances() != null && currentItem.getItemTotalAllowances().length > 0) {
+			for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getItemTotalAllowances()) {
+				addAllowanceItemTotal(itemTotalAllowance.getTotalAmount(currentItem));
+			}
+		}
+		
 		BigDecimal multiplicator = currentItem.getProduct().getVATPercent().divide(BigDecimal.valueOf(100));
 		priceGross = currentItem.getPrice(); // see https://github.com/ZUGFeRD/mustangproject/issues/159
 		price = priceGross.subtract(allowance).add(charge);
 		itemTotalNetAmount = currentItem.getQuantity().multiply(getPrice()).divide(currentItem.getBasisQuantity())
-				.setScale(2, BigDecimal.ROUND_HALF_UP);
+				.subtract(allowanceItemTotal).setScale(2, BigDecimal.ROUND_HALF_UP);
 		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);
 
 	}
@@ -63,5 +70,8 @@ public class LineCalculator {
 		charge = charge.add(b);
 	}
 
+	public void addAllowanceItemTotal(BigDecimal b) {
+		allowanceItemTotal = allowanceItemTotal.add(b);
+	}
 
 }

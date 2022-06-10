@@ -228,6 +228,31 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				"</ram:AppliedTradeAllowanceCharge>";
 		return allowanceChargeStr;
 	}
+	
+	/***
+	 * returns the XML for a charge or allowance on item total level
+	 * @param allowance
+	 * @param item
+	 * @return
+	 */
+	protected String getItemTotalAllowanceChargeStr(IZUGFeRDAllowanceCharge allowance, IAbsoluteValueProvider item) {
+		String percentage = "";
+		String chargeIndicator = "false";
+		if ((allowance.getPercent() != null) && (profile == Profiles.getByName("Extended"))) {
+			percentage = "<ram:CalculationPercent>" + vatFormat(allowance.getPercent()) + "</ram:CalculationPercent>";
+			percentage += "<ram:BasisAmount>" + item.getValue() + "</ram:BasisAmount>";
+		}
+		if (allowance.isCharge()) {
+			chargeIndicator = "true";
+		}
+		
+		final String itemTotalAllowanceChargeStr = "<ram:SpecifiedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>" +
+				chargeIndicator + "</udt:Indicator></ram:ChargeIndicator>" + percentage +
+				"<ram:ActualAmount>" + currencyFormat(allowance.getTotalAmount(item)) + "</ram:ActualAmount>" +
+				"<ram:Reason>" + XMLTools.encodeXML(allowance.getReason()) + "</ram:Reason>" +
+				"</ram:SpecifiedTradeAllowanceCharge>";
+		return itemTotalAllowanceChargeStr;
+	}
 
 	@Override
 	public void generateXML(IExportableTransaction trans) {
@@ -356,7 +381,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 			}
 
-
+			String itemTotalAllowanceChargeStr = "";
+			if (currentItem.getItemTotalAllowances() != null && currentItem.getItemTotalAllowances().length > 0) {
+				for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getItemTotalAllowances()) {
+					itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalAllowance, currentItem);
+				}
+			}
+			
 			xml += "<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>"
 					+ "<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription())
 					+ "</ram:Description>"
@@ -422,7 +453,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 				xml += "</ram:BillingSpecifiedPeriod>";
 			}
-
+			
+			xml += itemTotalAllowanceChargeStr;
+			
 			xml += "<ram:SpecifiedTradeSettlementLineMonetarySummation>"
 					+ "<ram:LineTotalAmount>" + currencyFormat(lc.getItemTotalNetAmount())
 					+ "</ram:LineTotalAmount>" // currencyID=\"EUR\"
