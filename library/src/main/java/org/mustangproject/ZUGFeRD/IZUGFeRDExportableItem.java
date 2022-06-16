@@ -132,5 +132,14 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	default Date getDetailedDeliveryPeriodTo() {
 		return null;
 	}
+	
+	/***
+	 * specify allowances amount for the line item total, i.e. after item price is multiplied
+	 * by amount
+	 * @return
+	 */
+	default IZUGFeRDAllowanceCharge[] getItemTotalAllowances() {
+		return null;
+	};
 
 }
