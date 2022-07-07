@@ -56,6 +56,13 @@ The package can be build with
 mvnw clean package
 ```
 
+In case you also want to generate  XSLT files from new schematron files for the validator please run the profile "generateXSLTFromSchematron"
+(which takes around 20min on my machine)
+
+```
+mvnw clean package -P generateXSLTFromSchematron
+```
+
 ## Test
 
 `package -Dmaven.surefire.debug="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8001 -Xnoagent -Djava.compiler=NONE"`
