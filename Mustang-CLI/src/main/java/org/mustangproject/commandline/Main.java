@@ -635,6 +635,9 @@ public class Main {
 			}
 
 			EStandard standard=EStandard.facturx;
+			if (format.equals("zf")) {
+				standard=EStandard.zugferd;
+			}
 			if (format.equals("da")) {
 				standard=EStandard.despatchadvice;
 
@@ -644,8 +647,6 @@ public class Main {
 				if (format.equals("ox")) {
 					standard=EStandard.orderx;
 				}
-
-
 				if (zfProfile.equals("b")) {
 					zfConformanceLevelProfile = Profiles.getByName(standard, "BASIC", zfIntVersion);
 				} else if (zfProfile.equals("c")) {
@@ -657,19 +658,19 @@ public class Main {
 				}
 			} else if (((format.equals("zf")) && (zfIntVersion == 2)) || (format.equals("fx"))) {
 				if (zfProfile.equals("m")) {
-					zfConformanceLevelProfile = Profiles.getByName("MINIMUM", zfIntVersion);
+					zfConformanceLevelProfile = Profiles.getByName(standard, "MINIMUM", zfIntVersion);
 				} else if (zfProfile.equals("w")) {
-					zfConformanceLevelProfile = Profiles.getByName("BASICWL", zfIntVersion);
+					zfConformanceLevelProfile = Profiles.getByName(standard, "BASICWL", zfIntVersion);
 				} else if (zfProfile.equals("b")) {
-					zfConformanceLevelProfile = Profiles.getByName("BASIC", zfIntVersion);
+					zfConformanceLevelProfile = Profiles.getByName(standard, "BASIC", zfIntVersion);
 				} else if (zfProfile.equals("c")) {
-					zfConformanceLevelProfile = Profiles.getByName("CIUS", zfIntVersion);
+					zfConformanceLevelProfile = Profiles.getByName(standard, "CIUS", zfIntVersion);
 				} else if (zfProfile.equals("e")) {
-					zfConformanceLevelProfile = Profiles.getByName("EN16931", zfIntVersion);
+					zfConformanceLevelProfile = Profiles.getByName(standard, "EN16931", zfIntVersion);
 				} else if (zfProfile.equals("t")) {
-					zfConformanceLevelProfile = Profiles.getByName("EXTENDED", zfIntVersion);
+					zfConformanceLevelProfile = Profiles.getByName(standard, "EXTENDED", zfIntVersion);
 				} else if (zfProfile.equals("x")) {
-					zfConformanceLevelProfile = Profiles.getByName("XRECHNUNG", zfIntVersion);
+					zfConformanceLevelProfile = Profiles.getByName(standard, "XRECHNUNG", zfIntVersion);
 				} else {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}
@@ -698,7 +699,7 @@ public class Main {
 
 			} else {
 				ze = new ZUGFeRDExporterFromA1().setProducer("Mustang-cli")
-						.setZUGFeRDVersion(zfIntVersion)
+						.setZUGFeRDVersion(standard, zfIntVersion)
 						.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile);
 				if (ignoreInputErrors) {
 					((ZUGFeRDExporterFromA1)ze).ignorePDFAErrors();

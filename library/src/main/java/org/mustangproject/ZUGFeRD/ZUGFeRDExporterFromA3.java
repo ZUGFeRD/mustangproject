@@ -44,6 +44,7 @@ import org.apache.xmpbox.type.BadFieldValueException;
 import org.apache.xmpbox.xml.DomXmpParser;
 import org.apache.xmpbox.xml.XmpParsingException;
 import org.apache.xmpbox.xml.XmpSerializer;
+import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
 
 import javax.activation.DataSource;
@@ -849,6 +850,28 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		if (profile != null) {
 			xmlProvider.setProfile(profile);
 		}
+	}
+
+	public ZUGFeRDExporterFromA3 setZUGFeRDVersion(EStandard est, int version) {
+		this.ZFVersion = version;
+		if ((version<1) || (version>2)) {
+			throw new IllegalArgumentException("Version not supported");
+		}
+		int generation=version;
+		if ((est==EStandard.facturx)&&(version==1)) {
+			generation=2;
+		}
+		if (generation == 1) {
+			ZUGFeRD1PullProvider z1p = new ZUGFeRD1PullProvider();
+			disableFacturX();
+			setXMLProvider(z1p);
+		} else if (generation == 2) {
+			ZUGFeRD2PullProvider z2p = new ZUGFeRD2PullProvider();
+			setXMLProvider(z2p);
+		}
+
+
+		return this;
 	}
 
 	@Override

@@ -1,3 +1,4 @@
+- allow to create fx 1 files with command line again
 - is maven build profile to gen xslt, mvn clean package -P generateXSLTFromSchematron
 - OXPullprovider to no longer generate invsalid XML if a duedate is set
 

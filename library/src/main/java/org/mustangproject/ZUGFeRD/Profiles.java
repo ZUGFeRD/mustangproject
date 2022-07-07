@@ -71,7 +71,11 @@ public class Profiles {
 			}
 			return result;
 		} else {
-			return getByName(name, version);
+			int generation = version;
+			if ((standard==EStandard.facturx) && (version==1)) {
+				generation = 2;
+			}
+			return getByName(name, generation);
 
 		}
 	}

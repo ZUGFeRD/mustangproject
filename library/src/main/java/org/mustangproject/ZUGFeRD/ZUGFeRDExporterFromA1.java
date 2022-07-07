@@ -22,6 +22,7 @@ package org.mustangproject.ZUGFeRD;
 import org.apache.pdfbox.preflight.PreflightDocument;
 import org.apache.pdfbox.preflight.exception.ValidationException;
 import org.apache.pdfbox.preflight.parser.PreflightParser;
+import org.mustangproject.EStandard;
 
 import javax.activation.DataSource;
 import java.io.IOException;
@@ -105,6 +106,9 @@ public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 implements IZUG
 	}
 	public ZUGFeRDExporterFromA1 setProducer(String producer){
 		return (ZUGFeRDExporterFromA1) super.setProducer(producer);
+	}
+	public ZUGFeRDExporterFromA1 setZUGFeRDVersion(EStandard est, int version){
+		return (ZUGFeRDExporterFromA1) super.setZUGFeRDVersion(est, version);
 	}
 	public ZUGFeRDExporterFromA1 setZUGFeRDVersion(int version){
 		return (ZUGFeRDExporterFromA1) super.setZUGFeRDVersion(version);
