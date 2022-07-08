@@ -265,7 +265,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		String exemptionReason = "";
 
 		if (trans.getPaymentTermDescription() != null) {
-			paymentTermsDescription = trans.getPaymentTermDescription();
+      paymentTermsDescription = XMLTools.encodeXML(trans.getPaymentTermDescription());
 		}
 
 		if ((paymentTermsDescription == null) && (trans.getDocumentCode() != CORRECTEDINVOICE)/* && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)*/) {
@@ -746,7 +746,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		String paymentTermsXml = "<ram:SpecifiedTradePaymentTerms>";
 
 		final IZUGFeRDPaymentDiscountTerms discountTerms = paymentTerms.getDiscountTerms();
-		Date dueDate = paymentTerms.getDueDate();
+		final Date dueDate = paymentTerms.getDueDate();
 		if (dueDate != null && discountTerms != null && discountTerms.getBaseDate() != null) {
 			throw new IllegalStateException(
 					"if paymentTerms.dueDate is specified, paymentTerms.discountTerms.baseDate has not to be specified");

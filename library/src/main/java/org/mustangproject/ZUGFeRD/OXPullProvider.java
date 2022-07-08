@@ -35,7 +35,6 @@ import java.util.logging.Logger;
 
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
-import org.mustangproject.TradeParty;
 import org.mustangproject.XMLTools;
 
 public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider {
@@ -57,7 +56,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 		final String exemptionReason = "";
 
 		if (trans.getPaymentTermDescription() != null) {
-			paymentTermsDescription = trans.getPaymentTermDescription();
+      paymentTermsDescription = XMLTools.encodeXML(trans.getPaymentTermDescription());
 		}
 
 		if ((paymentTermsDescription == null) && (trans.getDocumentCode() != CORRECTEDINVOICE)/* && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)*/) {
