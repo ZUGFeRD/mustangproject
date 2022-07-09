@@ -370,9 +370,12 @@ public class XMLValidator extends Validator {
 		} else if (xml.contains(":xrechnung_2.0")) {
 			// urn:cen.eu:en16931:2017#compliant#urn:xoev-dede:kosit:standard:xrechnung_2.0#conformant#urn:xoev-de:kosit:extension:xrechnung_2.0
 			validateSchematron(xml, "/xslt/XR_20/XRechnung-CII-validation.xslt", 27, errorImpact);
-		} else { // This is the default check which is also run on en16931 files to generate notices.
+		} else if (xml.contains(":xrechnung_2.1")) { // This is the default check which is also run on en16931 files to generate notices.
 			// As of the next version this should probably if (xml.contains(":xrechnung_2.1"))
 			validateSchematron(xml, "/xslt/XR_21/XRechnung-CII-validation.xslt", 27, errorImpact);
+		} else { // This is the default check which is also run on en16931 files to generate notices.
+			// As of the next version this should probably if (xml.contains(":xrechnung_2.2"))
+			validateSchematron(xml, "/xslt/XR_22/XRechnung-CII-validation.xslt", 27, errorImpact);
 		}
 
 	}
