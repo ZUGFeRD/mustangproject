@@ -12,8 +12,9 @@ import java.math.BigDecimal;
 public class Product implements IZUGFeRDExportableProduct {
 	protected String unit, name, description, sellerAssignedID, buyerAssignedID;
 	protected BigDecimal VATPercent;
-	protected boolean isReverseCharge=false;
-	protected boolean isIntraCommunitySupply=false;
+	protected boolean isReverseCharge = false;
+	protected boolean isIntraCommunitySupply = false;
+	protected SchemedID globalId = null;
 
 	/***
 	 * default constructor
@@ -36,6 +37,29 @@ public class Product implements IZUGFeRDExportableProduct {
 	 */
 	public Product() {
 
+	}
+
+	@Override
+	public String getGlobalID() {
+		if (globalId == null) {
+			return null;
+		} else {
+			return globalId.getID();
+		}
+	}
+
+	@Override
+	public String getGlobalIDScheme() {
+		if (globalId == null) {
+			return null;
+		} else {
+			return globalId.getScheme();
+		}
+	}
+
+	public Product addGlobalID(SchemedID schemedID) {
+		globalId = schemedID;
+		return this;
 	}
 
 
@@ -82,7 +106,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @return fluent setter
 	 */
 	public Product setReverseCharge() {
-		isReverseCharge=true;
+		isReverseCharge = true;
 		setVATPercent(BigDecimal.ZERO);
 		return this;
 	}
@@ -93,7 +117,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @return fluent setter
 	 */
 	public Product setIntraCommunitySupply() {
-		isIntraCommunitySupply=true;
+		isIntraCommunitySupply = true;
 		setVATPercent(BigDecimal.ZERO);
 		return this;
 	}
@@ -120,6 +144,7 @@ public class Product implements IZUGFeRDExportableProduct {
 
 	/**
 	 * name of the product
+	 *
 	 * @param name short name
 	 * @return fluent setter
 	 */
@@ -135,6 +160,7 @@ public class Product implements IZUGFeRDExportableProduct {
 
 	/**
 	 * description of the product (required)
+	 *
 	 * @param description long name
 	 * @return fluent setter
 	 */

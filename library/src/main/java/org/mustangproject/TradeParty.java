@@ -24,6 +24,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	protected List<IZUGFeRDTradeSettlementDebit> debitDetails = new ArrayList<>();
 	protected Contact contact = null;
 	protected LegalOrganisation legalOrg = null;
+	protected SchemedID globalId=null;
 
 	/**
 	 * Default constructor.
@@ -150,6 +151,26 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		return ID;
 	}
 
+	@Override
+	public String getGlobalID() {
+		if (globalId!=null) {
+			return globalId.getID();
+		}
+		return null;
+	}
+
+
+
+	@Override
+	public String getGlobalIDScheme() {
+		if (globalId!=null) {
+			return globalId.getScheme();
+		}
+		return null;
+
+	}
+
+
 	/**
 	 * if it's a customer, this can e.g. be the customer ID
 	 *
@@ -169,6 +190,11 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	 */
 	public TradeParty setContact(Contact c) {
 		this.contact = c;
+		return this;
+	}
+
+	public TradeParty addGlobalID(SchemedID schemedID) {
+		globalId=schemedID;
 		return this;
 	}
 

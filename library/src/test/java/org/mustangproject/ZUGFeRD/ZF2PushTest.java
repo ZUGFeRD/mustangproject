@@ -33,6 +33,11 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
 import junit.framework.TestCase;
+import org.xmlunit.builder.Input;
+import org.xmlunit.xpath.JAXPXPathEngine;
+import org.xmlunit.xpath.XPathEngine;
+
+import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -372,13 +377,15 @@ public class ZF2PushTest extends TestCase {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			try {
 
+				SchemedID gtin=new SchemedID("0160","2001015001325");
+				SchemedID gln=new SchemedID("0088","4304171000002");
 				ze.setTransaction(new Invoice().setCurrency("CHF").addNote("document level 1/2").addNote("document level 2/2").setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 						.setDetailedDeliveryPeriod(new SimpleDateFormat("yyyyMMdd").parse(occurrenceFrom), new SimpleDateFormat("yyyyMMdd").parse(occurrenceTo))
 						.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID(taxID).setID("0009845"))
 						.setDeliveryAddress(new TradeParty("just the other side of the street", "teststr.12a", "55232", "Entenhausen", "DE").addVATID("DE47110"))
 						.setContractReferencedDocument(contractID)
-						.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setID("0008734").addVATID("DE4711").setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE").setFax("++49555123456")).setAdditionalAddress("Hinterhaus 3"))
-						.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(16)), price, new BigDecimal(1.0)).addReferencedLineID("xxx").addNote("item level 1/1").addAllowance(new Allowance(new BigDecimal(0.02)).setReason("item discount").setTaxPercent(new BigDecimal(16))).setDetailedDeliveryPeriod(sdf.parse("2020-01-13"), sdf.parse("2020-01-15")))
+						.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addGlobalID(gln).addVATID("DE4711").setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE").setFax("++49555123456")).setAdditionalAddress("Hinterhaus 3"))
+						.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(16)).addGlobalID(gtin), price, new BigDecimal(1.0)).addReferencedLineID("xxx").addNote("item level 1/1").addAllowance(new Allowance(new BigDecimal(0.02)).setReason("item discount").setTaxPercent(new BigDecimal(16))).setDetailedDeliveryPeriod(sdf.parse("2020-01-13"), sdf.parse("2020-01-15")))
 						.addCharge(new Charge(new BigDecimal(0.5)).setReason("quick delivery charge").setTaxPercent(new BigDecimal(16)))
 						.addAllowance(new Allowance(new BigDecimal(0.2)).setReason("discount").setTaxPercent(new BigDecimal(16)))
 						.setDeliveryDate(sdf.parse("2020-11-02")).setOwnVATID("DE0815").setNumber(number)
@@ -399,6 +406,13 @@ public class ZF2PushTest extends TestCase {
 
 		assertFalse(zi.getUTF8().contains("<ram:IBANID>")); // maybe add a direct debit mandate to the class in the future then this would fail
 		assertTrue(zi.getUTF8().contains("Hinterhaus"));
+		assertThat(zi.getUTF8()).valueByXPath("//ram:BuyerTradeParty/ram:GlobalID[@schemeID=0088]/text()")
+				.isEqualTo("4304171000002");
+		assertThat(zi.getUTF8()).valueByXPath("/BuyerTradeParty//GlobalID[@schemeID=0160]")
+				.isEqualTo("2001015001325");
+		assertTrue(zi.getUTF8().contains("2001015001325"));
+		assertTrue(zi.getUTF8().contains("4304171000002"));
+		assertTrue(zi.getUTF8().contains("0088"));
 		assertTrue(zi.getUTF8().contains("0009845"));
 		assertTrue(zi.getUTF8().contains("0008734"));
 		assertTrue(zi.getUTF8().contains("ram:BuyerOrderReferencedDocument"));

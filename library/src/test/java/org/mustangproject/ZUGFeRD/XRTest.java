@@ -32,6 +32,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 
 import static org.xmlunit.assertj.XmlAssert.assertThat;
@@ -78,9 +81,16 @@ public class XRTest extends TestCase {
 		String number = "123";
 		String amountStr = "1.00";
 		BigDecimal amount = new BigDecimal(amountStr);
-		byte[] b = {12, 13};
+		byte[] b = null;
+		Path path = Paths.get("c:\\users\\jstaerk\\temp\\ef1710en.pdf");
+		try {
+			b = Files.readAllBytes(path);
+
+		} catch(IOException ex) {
+			ex.printStackTrace();
+		}
+
 		FileAttachment fe1=new FileAttachment("one.pdf", "application/pdf", "Alternative", b);
-		FileAttachment fe2=new FileAttachment("two.pdf", "application/pdf", "Alternative", b);
 		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 				.setSender(new TradeParty(orgname,"teststr","55232","teststadt","DE").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test","+49123456789","test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890","COBADEFXXX")))
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
@@ -88,7 +98,7 @@ public class XRTest extends TestCase {
 				// not using any VAT, this is also a test of zero-rated goods:
 				.setNumber(number).setPaymentTermDescription("#SKONTO#TAGE=14#PROZENT=2.25#\n" +
 						"#SKONTO#TAGE=28#PROZENT=1.00#\n").addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal(1.0)))
-				.embedFileInXML(fe1).embedFileInXML(fe2);
+				.embedFileInXML(fe1);
 
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();

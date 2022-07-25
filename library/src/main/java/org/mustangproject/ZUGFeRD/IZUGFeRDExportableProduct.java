@@ -128,6 +128,26 @@ public interface IZUGFeRDExportableProduct {
 		}
 	}
 
+
+	/**
+	 * customer global identification assigned by the seller
+	 *
+	 * @return customer identification
+	 */
+	default String getGlobalID() {
+		return null;
+	}
+	/**
+	 * customer global identification scheme
+	 *
+	 * @return customer identification
+	 */
+	default String getGlobalIDScheme() {
+		return null;
+	}
+
+
+
 	default String getTaxExemptionReason() {
 		if (isIntraCommunitySupply()) {
 			return "Intra-community supply";

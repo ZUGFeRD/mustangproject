@@ -359,7 +359,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "</ram:AssociatedDocumentLineDocument>"
 
 					+ "<ram:SpecifiedTradeProduct>";
-			// + " <GlobalID schemeID=\"0160\">4012345001235</GlobalID>"
+			if ((currentItem.getProduct().getGlobalIDScheme() != null) && (currentItem.getProduct().getGlobalID() != null)) {
+					xml += "<ram:GlobalID schemeID=\""+XMLTools.encodeXML(currentItem.getProduct().getGlobalIDScheme())+"\">"+XMLTools.encodeXML(currentItem.getProduct().getGlobalID())+"</ram:GlobalID>";
+			}
+
 			if (currentItem.getProduct().getSellerAssignedID() != null) {
 				xml += "<ram:SellerAssignedID>"
 						+ XMLTools.encodeXML(currentItem.getProduct().getSellerAssignedID()) + "</ram:SellerAssignedID>";
