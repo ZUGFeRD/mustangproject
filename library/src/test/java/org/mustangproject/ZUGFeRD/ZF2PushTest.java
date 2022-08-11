@@ -37,6 +37,8 @@ import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
 
+import javax.xml.xpath.XPathExpressionException;
+
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 
@@ -427,6 +429,24 @@ public class ZF2PushTest extends TestCase {
 		assertFalse(zi.getUTF8().contains("DE47110")); // but not the VAT ID of the shiptotradeparty
 		assertTrue(zi.getUTF8().contains("document level 2/2"));
 		assertFalse(zi.getUTF8().contains("++49555123456")); // in profile EN16931 contact fax number is not allowed
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_PUSHEDGE);
+		try {
+			Invoice i = zii.extractInvoice();
+
+			assertEquals("4304171000002", i.getRecipient().getGlobalID());
+			assertEquals("2001015001325", i.getZFItems()[0].getProduct().getGlobalID());
+
+
+		} catch (XPathExpressionException e) {
+			fail("XPathExpressionException should not be raised in testEdgeExport");
+		} catch (ParseException e) {
+			fail("ParseException should not be raised in testEdgeExport");
+			/* a parseException would also be fired if the calculated grand total does not
+			match the read grand total */
+		}
+
+
 
 	}
 

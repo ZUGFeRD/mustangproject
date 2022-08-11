@@ -161,12 +161,13 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				String price = "0";
 				String name = "";
 				String description = "";
+				SchemedID gid = null;
 				String quantity = "0";
 				String vatPercent = "0";
 				String lineTotal = "0";
 				String unitCode = "0";
 
-				ArrayList<ReferencedDocument> rdocs=null;
+				ArrayList<ReferencedDocument> rdocs = null;
 
 				//nodes.item(i).getTextContent())) {
 				Node currentItemNode = nodes.item(i);
@@ -177,9 +178,9 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 						for (int tradeLineChildIndex = 0; tradeLineChildIndex < tradeLineChilds.getLength(); tradeLineChildIndex++) {
 
 							if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("AdditionalReferencedDocument")) {
-								String IssuerAssignedID="";
-								String TypeCode="";
-								String ReferenceTypeCode="";
+								String IssuerAssignedID = "";
+								String TypeCode = "";
+								String ReferenceTypeCode = "";
 
 								NodeList refDocChilds = tradeLineChilds.item(tradeLineChildIndex).getChildNodes();
 								for (int refDocIndex = 0; refDocIndex < refDocChilds.getLength(); refDocIndex++) {
@@ -194,9 +195,9 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 									}
 								}
 
-								ReferencedDocument rd=new ReferencedDocument(IssuerAssignedID, TypeCode, ReferenceTypeCode);
-								if (rdocs==null) {
-									rdocs=new ArrayList<ReferencedDocument>();
+								ReferencedDocument rd = new ReferencedDocument(IssuerAssignedID, TypeCode, ReferenceTypeCode);
+								if (rdocs == null) {
+									rdocs = new ArrayList<ReferencedDocument>();
 								}
 								rdocs.add(rd);
 
@@ -216,7 +217,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLineTradeDelivery"))) {
 						NodeList tradeLineChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeLineChildIndex = 0; tradeLineChildIndex < tradeLineChilds.getLength(); tradeLineChildIndex++) {
-							if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && (tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("BilledQuantity")||tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("RequestedQuantity")||tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("DespatchedQuantity"))) {
+							if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && (tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("BilledQuantity") || tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("RequestedQuantity") || tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("DespatchedQuantity"))) {
 								//RequestedQuantity is for Order-X, BilledQuantity for FX and ZF
 								quantity = tradeLineChilds.item(tradeLineChildIndex).getTextContent();
 								unitCode = tradeLineChilds.item(tradeLineChildIndex).getAttributes().getNamedItem("unitCode").getNodeValue();
@@ -228,6 +229,12 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 						for (int tradeProductChildIndex = 0; tradeProductChildIndex < tradeProductChilds.getLength(); tradeProductChildIndex++) {
 							if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null) && (tradeProductChilds.item(tradeProductChildIndex).getLocalName().equals("Name"))) {
 								name = tradeProductChilds.item(tradeProductChildIndex).getTextContent();
+							}
+							if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null) && (tradeProductChilds.item(tradeProductChildIndex).getLocalName().equals("GlobalID"))) {
+								if (tradeProductChilds.item(tradeProductChildIndex).getAttributes().getNamedItem("schemeID") != null) {
+									gid = new SchemedID().setScheme(tradeProductChilds.item(tradeProductChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue()).setId(tradeProductChilds.item(tradeProductChildIndex).getTextContent());
+								}
+
 							}
 						}
 					}
@@ -260,11 +267,15 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				BigDecimal prc = new BigDecimal(price.trim());
 				BigDecimal qty = new BigDecimal(quantity.trim());
 				if ((recalcPrice) && (!qty.equals(BigDecimal.ZERO))) {
-					prc = new BigDecimal(lineTotal.trim()).divide(qty,4, RoundingMode.HALF_UP);
+					prc = new BigDecimal(lineTotal.trim()).divide(qty, 4, RoundingMode.HALF_UP);
 				}
-				Item it=new Item(new Product(name, description, unitCode, new BigDecimal(vatPercent.trim())), prc, qty);
-				if (rdocs!=null) {
-					for (ReferencedDocument rdoc: rdocs) {
+				Product p = new Product(name, description, unitCode, new BigDecimal(vatPercent.trim()));
+				if (gid != null) {
+					p.addGlobalID(gid);
+				}
+				Item it = new Item(p, prc, qty);
+				if (rdocs != null) {
+					for (ReferencedDocument rdoc : rdocs) {
 						it.addReferencedDocument(rdoc);
 					}
 				}
@@ -291,7 +302,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 						if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("ChargeIndicator")) {
 							NodeList indicatorChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
 							for (int indicatorChildIndex = 0; indicatorChildIndex < indicatorChilds.getLength(); indicatorChildIndex++) {
-								if ((indicatorChilds.item(indicatorChildIndex).getLocalName()!=null)&&(indicatorChilds.item(indicatorChildIndex).getLocalName().equals("Indicator"))) {
+								if ((indicatorChilds.item(indicatorChildIndex).getLocalName() != null) && (indicatorChilds.item(indicatorChildIndex).getLocalName().equals("Indicator"))) {
 									isCharge = indicatorChilds.item(indicatorChildIndex).getTextContent().equalsIgnoreCase("true");
 								}
 							}
@@ -338,13 +349,13 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			String expectedStringTotalGross = tc.getGrandTotal().toPlainString();
 			EStandard whichType;
 			try {
-				whichType=getStandard();
-			} catch(Exception e) {
+				whichType = getStandard();
+			} catch (Exception e) {
 				throw new ParseException("Could not find out if it's an invoice, order, or delivery advice", 0);
 
 			}
 
-			if ((whichType!=EStandard.despatchadvice) && ((!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2)))&&(!ignoreCalculationErrors))) {
+			if ((whichType != EStandard.despatchadvice) && ((!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2))) && (!ignoreCalculationErrors))) {
 				throw new ParseException("Could not reproduce the invoice, this could mean that it could not be read properly", 0);
 			}
 		}

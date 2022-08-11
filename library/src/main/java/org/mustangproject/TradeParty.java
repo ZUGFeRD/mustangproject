@@ -93,6 +93,13 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("Name")) {
 							setName(itemChilds.item(itemChildIndex).getTextContent());
 						}
+						if (itemChilds.item(itemChildIndex).getLocalName().equals("GlobalID")) {
+							if (itemChilds.item(itemChildIndex).getAttributes().getNamedItem("schemeID") != null) {
+								SchemedID gid=new SchemedID().setScheme(itemChilds.item(itemChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue()).setId(itemChilds.item(itemChildIndex).getTextContent());
+								addGlobalID(gid);
+							}
+
+						}
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("DefinedTradeContact")) {
 							NodeList contact = itemChilds.item(itemChildIndex).getChildNodes();
 							setContact(new Contact(contact));
