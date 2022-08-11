@@ -81,15 +81,8 @@ public class XRTest extends TestCase {
 		String number = "123";
 		String amountStr = "1.00";
 		BigDecimal amount = new BigDecimal(amountStr);
-		byte[] b = null;
-		Path path = Paths.get("c:\\users\\jstaerk\\temp\\ef1710en.pdf");
-		try {
-			b = Files.readAllBytes(path);
-
-		} catch(IOException ex) {
-			ex.printStackTrace();
-		}
-
+		byte[] b = {12, 13};
+		
 		FileAttachment fe1=new FileAttachment("one.pdf", "application/pdf", "Alternative", b);
 		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 				.setSender(new TradeParty(orgname,"teststr","55232","teststadt","DE").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test","+49123456789","test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890","COBADEFXXX")))
