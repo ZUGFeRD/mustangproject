@@ -1,8 +1,16 @@
+
+2.5.3
+=======
+2022-08-11
+
+- Support GlobalIDs(schemedIDs) for Tradeparties and products #280
+- Dependency update #273
+
 2.5.2
 =======
 2022-07-09
 
-- Support validation of XRechnung (CII) 2.2 
+- Support validation of XRechnung (CII) 2.2
 - allow to create fx 1 files with command line again
 - is maven build profile to gen xslt, mvn clean package -P generateXSLTFromSchematron
 - OXPullprovider to no longer generate invalid XML if a duedate is set

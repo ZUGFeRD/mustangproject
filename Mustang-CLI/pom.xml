@@ -45,12 +45,12 @@
       <dependency>
          <groupId>org.xmlunit</groupId>
          <artifactId>xmlunit-core</artifactId>
-         <version>2.6.3</version>
+         <version>2.9.0</version>
       </dependency>
       <dependency>
          <groupId>org.xmlunit</groupId>
          <artifactId>xmlunit-assertj</artifactId>
-         <version>2.6.3</version>
+         <version>2.9.0</version>
       </dependency>
 
 <!-- /directory validation: -->
