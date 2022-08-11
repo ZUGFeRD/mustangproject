@@ -406,15 +406,14 @@ public class ZF2PushTest extends TestCase {
 
 		assertFalse(zi.getUTF8().contains("<ram:IBANID>")); // maybe add a direct debit mandate to the class in the future then this would fail
 		assertTrue(zi.getUTF8().contains("Hinterhaus"));
-		assertThat(zi.getUTF8()).valueByXPath("//ram:BuyerTradeParty/ram:GlobalID[@schemeID=0088]/text()")
+		assertThat(zi.getUTF8()).valueByXPath("//*[local-name()='BuyerTradeParty']/*[local-name()='GlobalID'][@schemeID=0088]").asString()
 				.isEqualTo("4304171000002");
-		assertThat(zi.getUTF8()).valueByXPath("/BuyerTradeParty//GlobalID[@schemeID=0160]")
+		assertThat(zi.getUTF8()).valueByXPath("//*[local-name()='SpecifiedTradeProduct']/*[local-name()='GlobalID'][@schemeID=0160]").asString()
 				.isEqualTo("2001015001325");
 		assertTrue(zi.getUTF8().contains("2001015001325"));
 		assertTrue(zi.getUTF8().contains("4304171000002"));
 		assertTrue(zi.getUTF8().contains("0088"));
 		assertTrue(zi.getUTF8().contains("0009845"));
-		assertTrue(zi.getUTF8().contains("0008734"));
 		assertTrue(zi.getUTF8().contains("ram:BuyerOrderReferencedDocument"));
 		assertTrue(zi.getUTF8().contains(occurrenceFrom));
 		assertTrue(zi.getUTF8().contains(occurrenceTo));
