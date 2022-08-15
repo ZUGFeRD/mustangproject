@@ -1,7 +1,7 @@
 
 2.5.3
 =======
-2022-08-11
+2022-08-15
 
 - Support GlobalIDs(schemedIDs) for Tradeparties and products #280
 - Dependency update #273
