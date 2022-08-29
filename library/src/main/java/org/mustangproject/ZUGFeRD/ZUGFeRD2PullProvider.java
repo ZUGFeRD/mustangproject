@@ -125,7 +125,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		// and ShipToTradeParty, but not both. Prefer seller assigned ID for now.
 		if (party.getID() != null) {
 			xml += "<ram:ID>" + XMLTools.encodeXML(party.getID()) + "</ram:ID>";
-		} else if ((party.getGlobalIDScheme() != null) && (party.getGlobalID() != null)) {
+		}
+		if ((party.getGlobalIDScheme() != null) && (party.getGlobalID() != null)) {
 			xml += "<ram:GlobalID schemeID=\"" + XMLTools.encodeXML(party.getGlobalIDScheme()) + "\">"
 					+ XMLTools.encodeXML(party.getGlobalID()) + "</ram:GlobalID>";
 		}
