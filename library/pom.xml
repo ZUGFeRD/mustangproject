@@ -3,13 +3,13 @@
 <parent>
     <groupId>org.mustangproject</groupId>
     <artifactId>core</artifactId>
-    <version>2.5.4</version>
+    <version>2.5.5-SNAPSHOT</version>
 </parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mustangproject</groupId>
 	<artifactId>library</artifactId>
-	<version>2.5.4</version>
+	<version>2.5.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>Library to write, read and validate e-invoices (Factur-X, ZUGFeRD and to a limited extend XRechnung/CII).  </name>
 	<description>The Mustang project is a java library to read, write and validate Factur-X/ZUGFeRD meta data inside your invoice PDFs. To write files, a provided PDF/A will be combined with generated or provided XML.
@@ -19,7 +19,7 @@
 		<connection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</connection>
 		<developerConnection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</developerConnection>
 		<url>https://github.com/ZUGFeRD/mustangproject</url>
-		<tag>core-2.5.4</tag>
+		<tag>core-2.3.2</tag>
 	</scm>
 	<repositories>
 		<repository><!-- for jargs -->
