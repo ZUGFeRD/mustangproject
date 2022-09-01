@@ -1,3 +1,7 @@
+2.5.3
+=======
+2022-09-01
+
 Extend importer PR #281 thanks to weclapp-dev
 Allow to violate CII-SR-450 and specify both ID and Global ID
 
