@@ -1,4 +1,12 @@
-2.5.3
+2.5.4
+=======
+2022-09-19
+
+Updated PH-schematron, now also reporting IDs of failed assertions
+
+
+
+2.5.4
 =======
 2022-09-01
 
