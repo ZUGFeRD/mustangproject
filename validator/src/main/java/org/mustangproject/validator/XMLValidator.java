@@ -407,30 +407,36 @@ public class XMLValidator extends Validator {
 			} catch (final Exception e) {
 				throw new IrrecoverableValidationError(e.getMessage());
 			}
-			 Document SVRLReport=new SVRLMarshaller().getAsDocument(sout);
+			Document SVRLReport = new SVRLMarshaller().getAsDocument(sout);
+			String SVRLReports = new SVRLMarshaller().getAsString(sout);
+			try {
+				Files.writeString(Paths.get("C:\\Users\\jstaerk\\workspace\\mustangproject\\log\\detail3.log"), SVRLReports, StandardCharsets.UTF_8);
+			} catch (Exception e) {
+
+			}
 			XPath xPath = XPathFactory.newInstance().newXPath();
 			String expression = "//*[local-name() = 'failed-assert']";
 			NodeList failedAsserts = null;
 			try {
 				failedAsserts = (NodeList) xPath.compile(expression).evaluate(SVRLReport, XPathConstants.NODESET);
 
-				String thisFailText="";
-				String thisFailID="";
-				String thisFailTest="";
-				String thisFailLocation="";
+				String thisFailText = "";
+				String thisFailID = "";
+				String thisFailTest = "";
+				String thisFailLocation = "";
 				if (failedAsserts.getLength() > 0) {
 
 					for (int nodeIndex = 0; nodeIndex < failedAsserts.getLength(); nodeIndex++) {
 						//nodes.item(i).getTextContent())) {
 						Node currentFailNode = failedAsserts.item(nodeIndex);
 						if (currentFailNode.getAttributes().getNamedItem("id") != null) {
-							thisFailID=" [ID "+currentFailNode.getAttributes().getNamedItem("id").getNodeValue()+"]";
+							thisFailID = " [ID " + currentFailNode.getAttributes().getNamedItem("id").getNodeValue() + "]";
 						}
 						if (currentFailNode.getAttributes().getNamedItem("test") != null) {
-							thisFailTest=currentFailNode.getAttributes().getNamedItem("test").getNodeValue();
+							thisFailTest = currentFailNode.getAttributes().getNamedItem("test").getNodeValue();
 						}
 						if (currentFailNode.getAttributes().getNamedItem("location") != null) {
-							thisFailLocation=currentFailNode.getAttributes().getNamedItem("location").getNodeValue();
+							thisFailLocation = currentFailNode.getAttributes().getNamedItem("location").getNodeValue();
 						}
 
 						NodeList failChilds = currentFailNode.getChildNodes();
@@ -439,20 +445,20 @@ public class XMLValidator extends Validator {
 
 								if (failChilds.item(failChildIndex).getLocalName().equals("text")) {
 									//	if (itemChilds.item(failChildIndex).getAttributes().getNamedItem("schemeID") != null) {
-									thisFailText=failChilds.item(failChildIndex).getTextContent();
+									thisFailText = failChilds.item(failChildIndex).getTextContent();
 
 								}
 							}
 						}
+
+						LOGGER.info("FailedAssert ", thisFailText);
+
+						context.addResultItem(new ValidationResultItem(severity, thisFailText + thisFailID + " from " + xsltFilename + ")")
+								.setLocation(thisFailLocation).setCriterion(thisFailTest).setSection(section)
+								.setPart(EPart.fx));
+						failedRules++;
+
 					}
-
-					LOGGER.info("FailedAssert ", thisFailText);
-
-					context.addResultItem(new ValidationResultItem(severity, thisFailText +  thisFailID + " from " + xsltFilename + ")")
-							.setLocation(thisFailLocation).setCriterion(thisFailTest).setSection(section)
-							.setPart(EPart.fx));
-					failedRules++;
-
 
 				}
 
@@ -463,7 +469,7 @@ public class XMLValidator extends Validator {
 			NodeList firedAsserts = null;
 			try {
 				firedAsserts = (NodeList) xPath.compile(expression).evaluate(SVRLReport, XPathConstants.NODESET);
-				firedRules=firedAsserts.getLength();
+				firedRules = firedAsserts.getLength();
 			} catch (XPathExpressionException e) {
 				LOGGER.error(e.getMessage(), e);
 			}
