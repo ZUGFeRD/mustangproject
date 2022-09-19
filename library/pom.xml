@@ -11,8 +11,8 @@
 	<artifactId>library</artifactId>
 	<version>2.5.5-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>Library to write, read and validate e-invoices (Factur-X, ZUGFeRD and to a limited extend XRechnung/CII).  </name>
-	<description>The Mustang project is a java library to read, write and validate Factur-X/ZUGFeRD meta data inside your invoice PDFs. To write files, a provided PDF/A will be combined with generated or provided XML.
+	<name>Library to write, read and validate e-invoices (Factur-X, ZUGFeRD, Order-X, XRechnung/CII)</name>
+	<description>FOSS Java library to read, write and validate european electronic invoices and orders in the UN/CEFACT Cross Industry Invoice based formats Factur-X/ZUGFeRD, XRechnung and Order-X in your invoice PDFs.
     </description>
 	<url>http://www.mustangproject.org/</url>
 	<scm>
@@ -105,12 +105,6 @@
 			<version>2.3.3</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.helger</groupId>
-			<artifactId>ph-schematron</artifactId>
-			<version>5.0.4</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.xmlunit</groupId>
 			<artifactId>xmlunit-core</artifactId>

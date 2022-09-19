@@ -78,9 +78,9 @@
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.helger/ph-schematron -->
         <dependency>
-            <groupId>com.helger</groupId>
-            <artifactId>ph-schematron</artifactId>
-            <version>5.6.0</version>
+            <groupId>com.helger.schematron</groupId>
+            <artifactId>ph-schematron-xslt</artifactId>
+            <version>6.3.3</version>
         </dependency>
         <dependency>
             <groupId>com.helger</groupId>
@@ -158,8 +158,8 @@
                     <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
                              mvn clean compile assembly:single -->
                     <!-- or whatever version you use -->
-                    <source>8</source>
-                    <target>8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <!-- /ZUV -->

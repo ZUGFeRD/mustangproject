@@ -6,6 +6,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.List;
@@ -13,12 +14,13 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.*;
 
+import com.helger.schematron.svrl.SVRLMarshaller;
 import com.helger.schematron.svrl.jaxb.ActivePattern;
+import com.helger.schematron.xslt.SchematronResourceXSLTCache;
+import org.mustangproject.Contact;
+import org.mustangproject.SchemedID;
 import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -392,6 +394,7 @@ public class XMLValidator extends Validator {
 	public void validateSchematron(String xml, String xsltFilename, int section, ESeverity severity) throws IrrecoverableValidationError {
 		ISchematronResource aResSCH = null;
 		aResSCH = SchematronResourceXSLT.fromClassPath(xsltFilename);
+
 		if (aResSCH != null) {
 			if (!aResSCH.isValidSchematron()) {
 				throw new IllegalArgumentException(xsltFilename + " is invalid Schematron!");
@@ -404,25 +407,68 @@ public class XMLValidator extends Validator {
 			} catch (final Exception e) {
 				throw new IrrecoverableValidationError(e.getMessage());
 			}
+			 Document SVRLReport=new SVRLMarshaller().getAsDocument(sout);
+			XPath xPath = XPathFactory.newInstance().newXPath();
+			String expression = "//*[local-name() = 'failed-assert']";
+			NodeList failedAsserts = null;
+			try {
+				failedAsserts = (NodeList) xPath.compile(expression).evaluate(SVRLReport, XPathConstants.NODESET);
 
-			final List<Object> failedAsserts = sout.getActivePatternAndFiredRuleAndFailedAssert();
-			if (failedAsserts.size() > 0) {
-				for (final Object object : failedAsserts) {
-					if (object instanceof FailedAssert) {
+				String thisFailText="";
+				String thisFailID="";
+				String thisFailTest="";
+				String thisFailLocation="";
+				if (failedAsserts.getLength() > 0) {
 
-						final FailedAssert failedAssert = (FailedAssert) object;
-						LOGGER.info("FailedAssert ", failedAssert);
+					for (int nodeIndex = 0; nodeIndex < failedAsserts.getLength(); nodeIndex++) {
+						//nodes.item(i).getTextContent())) {
+						Node currentFailNode = failedAsserts.item(nodeIndex);
+						if (currentFailNode.getAttributes().getNamedItem("id") != null) {
+							thisFailID=" [ID "+currentFailNode.getAttributes().getNamedItem("id").getNodeValue()+"]";
+						}
+						if (currentFailNode.getAttributes().getNamedItem("test") != null) {
+							thisFailTest=currentFailNode.getAttributes().getNamedItem("test").getNodeValue();
+						}
+						if (currentFailNode.getAttributes().getNamedItem("location") != null) {
+							thisFailLocation=currentFailNode.getAttributes().getNamedItem("location").getNodeValue();
+						}
 
-						context.addResultItem(new ValidationResultItem(severity, SVRLHelper.getAsString(failedAssert.getText())+" (From "+xsltFilename+")")
-								.setLocation(failedAssert.getLocation()).setCriterion(failedAssert.getTest()).setSection(section)
-								.setPart(EPart.fx));
-						failedRules++;
-					} else if (object instanceof FiredRule) {
-						firedRules++;
+						NodeList failChilds = currentFailNode.getChildNodes();
+						for (int failChildIndex = 0; failChildIndex < failChilds.getLength(); failChildIndex++) {
+							if (failChilds.item(failChildIndex).getLocalName() != null) {
+
+								if (failChilds.item(failChildIndex).getLocalName().equals("text")) {
+									//	if (itemChilds.item(failChildIndex).getAttributes().getNamedItem("schemeID") != null) {
+									thisFailText=failChilds.item(failChildIndex).getTextContent();
+
+								}
+							}
+						}
 					}
+
+					LOGGER.info("FailedAssert ", thisFailText);
+
+					context.addResultItem(new ValidationResultItem(severity, thisFailText +  thisFailID + " from " + xsltFilename + ")")
+							.setLocation(thisFailLocation).setCriterion(thisFailTest).setSection(section)
+							.setPart(EPart.fx));
+					failedRules++;
+
+
 				}
 
+			} catch (XPathExpressionException e) {
+				LOGGER.error(e.getMessage(), e);
 			}
+			expression = "//*[local-name() = 'fired-rule']";
+			NodeList firedAsserts = null;
+			try {
+				firedAsserts = (NodeList) xPath.compile(expression).evaluate(SVRLReport, XPathConstants.NODESET);
+				firedRules=firedAsserts.getLength();
+			} catch (XPathExpressionException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+
+
 			if (firedRules == 0) {
 				context.addResultItem(new ValidationResultItem(ESeverity.error, "No rules matched, XML to minimal?").setSection(26)
 						.setPart(EPart.fx));
