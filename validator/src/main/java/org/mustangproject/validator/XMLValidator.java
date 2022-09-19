@@ -408,12 +408,6 @@ public class XMLValidator extends Validator {
 				throw new IrrecoverableValidationError(e.getMessage());
 			}
 			Document SVRLReport = new SVRLMarshaller().getAsDocument(sout);
-			String SVRLReports = new SVRLMarshaller().getAsString(sout);
-			try {
-				Files.writeString(Paths.get("C:\\Users\\jstaerk\\workspace\\mustangproject\\log\\detail3.log"), SVRLReports, StandardCharsets.UTF_8);
-			} catch (Exception e) {
-
-			}
 			XPath xPath = XPathFactory.newInstance().newXPath();
 			String expression = "//*[local-name() = 'failed-assert']";
 			NodeList failedAsserts = null;
