@@ -83,11 +83,6 @@
             <version>6.3.3</version>
         </dependency>
         <dependency>
-            <groupId>com.helger</groupId>
-            <artifactId>ph-jaxb</artifactId>
-            <version>9.5.4</version>
-        </dependency>
-        <dependency>
             <groupId>org.mustangproject</groupId>
             <artifactId>library</artifactId>
             <version>2.5.6-SNAPSHOT</version>
