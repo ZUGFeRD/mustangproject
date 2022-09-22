@@ -2,7 +2,8 @@
 =======
 2022-09-22
 
-Removed a unneccessary dependency (ph-jaxb)
+Removed a unneccessary dependency (ph-jaxb).
+Added some javadoc.
 
 2.5.5
 =======

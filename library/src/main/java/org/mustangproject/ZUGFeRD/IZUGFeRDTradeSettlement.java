@@ -21,15 +21,15 @@ package org.mustangproject.ZUGFeRD;
 public interface IZUGFeRDTradeSettlement {
 
 	/***
-	 * 	
-	 * @return zf2 xml for applicableHeaderTradeSettlement
+	 * gets the applicableHeaderTradeSettlement
+	 * @return zf2 xml
 	 */
 	 String getSettlementXML();
 	 
 
 	/***
-	 * 	
-	 * @return zf2 xml for applicableHeaderTradePayment
+	 * 	gets the applicableHeaderTradePayment
+	 * @return zf2 xml
 	 */
 	 default String getPaymentXML() {
 		 return null;

@@ -13,7 +13,37 @@ import org.w3c.dom.NodeList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Contact implements IZUGFeRDExportableContact {
 
-	protected String name, phone, email, zip, street, location, country;
+	/**
+	 * name of the contact person
+	 */
+	protected String name;
+	/**
+	 * phone of the contact
+	 */
+	protected String phone;
+	/**
+	 * email address
+	 */
+	protected String email;
+	/**
+	 * postcode of the contact
+	 */
+	protected String zip;
+	/**
+	 * street address (=name+number)
+	 */
+	protected String street;
+	/**
+	 * city
+	 */
+	protected String location;
+	/**
+	 * 2 character ISO code of a country
+	 */
+	protected String country;
+	/**
+	 * the fax number of the contact person
+	 */
 	protected String fax = null;
 
 	/***

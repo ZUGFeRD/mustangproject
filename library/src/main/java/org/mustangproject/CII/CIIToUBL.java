@@ -7,10 +7,13 @@ import com.helger.ubl22.UBL22Writer;
 import java.io.File;
 import java.io.Serializable;
 
+/***
+ * converts a CII XML file to a UBL XML file
+ * thanks to Philip Helger for his library
+*/
 public class CIIToUBL {
 	/***
-	 * converts a CII XML file to a UBL XML file
-	 * thanks to Philip Helger for his library
+	 * performs the actual conversion
 	 * @param input
 	 * @param output
 	 */

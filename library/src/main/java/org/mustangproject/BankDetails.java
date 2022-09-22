@@ -6,13 +6,33 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlementPayment;
  * provides e.g. the IBAN to transfer money to :-)
  */
 public class BankDetails implements IZUGFeRDTradeSettlementPayment {
-	protected String IBAN, BIC, accountName=null;
+	/**
+	 * the bank account number
+	 */
+	protected String IBAN;
+	/**
+	 * BIC, I believe it's optional
+	 */
+	protected String BIC;
+	/**
+	 * the "name" of the bank account (holder)
+	 */
+	protected String accountName=null;
 
+	/***
+	 * constructor for normal use :-)
+	 * @param IBAN the IBAN as string
+	 * @param BIC the BIC code as string
+	 */
 	public BankDetails(String IBAN, String BIC) {
 		this.IBAN = IBAN;
 		this.BIC = BIC;
 	}
 
+	/***
+	 * getter for the IBAN
+	 * @return IBAN
+	 */
 	public String getIBAN() {
 		return IBAN;
 	}
@@ -30,6 +50,10 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 		return this;
 	}
 
+	/***
+	 * getter for the BIC
+	 * @return the BIC
+	 */
 	public String getBIC() {
 		return BIC;
 	}
