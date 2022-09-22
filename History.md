@@ -1,9 +1,14 @@
-2.5.4
+2.5.6
+=======
+2022-09-22
+
+Removed a unneccessary dependency (ph-jaxb)
+
+2.5.5
 =======
 2022-09-19
 
 Updated PH-schematron, now also reporting IDs of failed assertions
-
 
 
 2.5.4
