@@ -3,13 +3,13 @@
 <parent>
     <groupId>org.mustangproject</groupId>
     <artifactId>core</artifactId>
-    <version>2.5.6-SNAPSHOT</version>
+    <version>2.5.6</version>
 </parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mustangproject</groupId>
 	<artifactId>library</artifactId>
-	<version>2.5.6-SNAPSHOT</version>
+	<version>2.5.6</version>
 	<packaging>jar</packaging>
 	<name>Library to write, read and validate e-invoices (Factur-X, ZUGFeRD, Order-X, XRechnung/CII)</name>
 	<description>FOSS Java library to read, write and validate european electronic invoices and orders in the UN/CEFACT Cross Industry Invoice based formats Factur-X/ZUGFeRD, XRechnung and Order-X in your invoice PDFs.
@@ -19,7 +19,7 @@
 		<connection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</connection>
 		<developerConnection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</developerConnection>
 		<url>https://github.com/ZUGFeRD/mustangproject</url>
-		<tag>core-2.3.2</tag>
+		<tag>core-2.5.6</tag>
 	</scm>
 	<repositories>
 		<repository><!-- for jargs -->
