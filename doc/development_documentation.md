@@ -171,7 +171,10 @@ maybe not yet even existing new release version:
 cd validator/target
 mvn install:install-file -Dfile=validator-2.5.5-SNAPSHOT-shaded.jar -DgroupId=org.mustangproject -DartifactId=validator -Dversion=2.5.5 -Dpackaging=jar -DgeneratePom=true
 ```
-This will also work in Gradle given you have the `mavenLocal()` repository activated.
+In gradle you can use something like
+```
+implementation files('libs/validator-2.5.6-shaded.jar')
+```
 
 
 ## Release
