@@ -40,11 +40,15 @@ public class DXExporterFromA1 extends DXExporterFromA3 implements IZUGFeRDExport
 	}
 	/***
 	 * internal helper function: get namespace for order-x
-	 * @param ver the order-x version
+	 * @param ver the delivery-x version
 	 * @return the URN of the namespace
 	 */
 	public String getNamespaceForVersion(int ver) {
-		return "urn:facturx:pdfa:CrossIndustryDocument:despatchadvice:1p0#";
+		// As of late 2022 the Delivery-X standard is not yet published. See specification:
+		// Die digitale Ablösung des Papier-Lieferscheins, Version 1.1, April 2022
+		// Chapter 7.1 XMP-Erweiterungsschema für PDF/A-3
+		// http://docplayer.org/230301085-Der-digitale-lieferschein-dls.html
+		return "urn:factur-x:pdfa:CrossIndustryDocument:despatchadvice:1p0#";
 	}
 	/***
 	 * internal helper: returns the namespace prefix for the given order-x version number

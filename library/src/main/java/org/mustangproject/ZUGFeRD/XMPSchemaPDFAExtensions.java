@@ -139,6 +139,16 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 				addProperty(newSeq, "Version", "Text", "external", "The actual version of the Order-X XML schema");
 				addProperty(newSeq, "ConformanceLevel", "Text", "external",
 								    "The selected Order-X profile completeness");
+			} else if ((eStandard != null) && (eStandard == EStandard.despatchadvice))
+			{
+				// As of late 2022 the Delivery-X standard is not yet published. See specification:
+				// Die digitale Ablösung des Papier-Lieferscheins, Version 1.1, April 2022
+				// Chapter 7.1 XMP-Erweiterungsschema für PDF/A-3
+				// http://docplayer.org/230301085-Der-digitale-lieferschein-dls.html
+				addProperty(newSeq, "DocumentFileName", "Text", "external", "Name of the embedded XML despatch advice file");
+				addProperty(newSeq, "DocumentType",     "Text", "external", "DESPATCHADVICE");
+				addProperty(newSeq, "Version",          "Text", "external", "The actual version of the despatch advice dataset");
+				addProperty(newSeq, "ConformanceLevel", "Text", "external", "The conformance level of the despatch advice dataset");
 			} else
 			{
 				addProperty(newSeq, "DocumentFileName", "Text", "external", "name of the embedded XML invoice file");
