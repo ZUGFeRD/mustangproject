@@ -5,10 +5,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.mustangproject.ZUGFeRD.*;
+import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
+import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTradeParty;
+import org.mustangproject.ZUGFeRD.IZUGFeRDLegalOrganisation;
+import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlement;
+import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlementDebit;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /***
  * A organisation, i.e. usually a company
@@ -136,11 +141,17 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 								if (taxChilds.item(taxChildIndex).getLocalName() != null) {
 									if ((taxChilds.item(taxChildIndex).getLocalName().equals("ID"))) {
 										if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID") != null) {
-											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("VA")) {
-												setVATID(taxChilds.item(taxChildIndex).getFirstChild().getNodeValue());
-											}
-											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("FC")) {
-												setTaxID(taxChilds.item(taxChildIndex).getFirstChild().getNodeValue());
+											Node firstChild = taxChilds.item(taxChildIndex).getFirstChild();
+											if (firstChild != null)
+											{
+												if (taxChilds.item(taxChildIndex).getAttributes()
+														.getNamedItem("schemeID").getNodeValue().equals("VA")) {
+													setVATID(firstChild.getNodeValue());
+												}
+												if (taxChilds.item(taxChildIndex).getAttributes()
+														.getNamedItem("schemeID").getNodeValue().equals("FC")) {
+													setTaxID(firstChild.getNodeValue());
+												}
 											}
 										}
 									}

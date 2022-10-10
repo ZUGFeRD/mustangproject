@@ -63,7 +63,7 @@ public class ZUGFeRDImporter {
 	/**
 	 * map filenames of additional XML files to their contents
 	 */
-	private HashMap<String, byte[]> additionalXMLs = new HashMap<>();
+	private final HashMap<String, byte[]> additionalXMLs = new HashMap<>();
 	/**
 	 * Raw XML form of the extracted data - may be directly obtained.
 	 */
@@ -658,7 +658,9 @@ public class ZUGFeRDImporter {
 		}
 		if (getUTF8().contains("<rsm:CrossIndustryDocument")) {
 			return EStandard.zugferd;
-		} else if (getUTF8().contains("<rsm:CrossIndustryInvoice")) {
+		} else if (getUTF8().contains("<CrossIndustryDocument")) {
+			return EStandard.zugferd;
+		} else if (getUTF8().contains("<urn:rsm:CrossIndustryInvoice")) {
 			return EStandard.facturx;
 		} else if (getUTF8().contains("<SCRDMCCBDACIDAMessageStructure")) {
 			return EStandard.despatchadvice;
@@ -673,9 +675,13 @@ public class ZUGFeRDImporter {
 		if (!containsMeta) {
 			throw new Exception("Not yet parsed");
 		}
-		if (getUTF8().contains("<rsm:CrossIndustryDocument")||getUTF8().contains("<SCRDMCCBDACIDAMessageStructure")||getUTF8().contains("<rsm:SCRDMCCBDACIOMessageStructure")) {
+		String head = getUTF8();
+		if (head.contains("<rsm:CrossIndustryDocument") //
+				|| head.contains("<CrossIndustryDocument") //
+				|| head.contains("<SCRDMCCBDACIDAMessageStructure") //
+				|| head.contains("<rsm:SCRDMCCBDACIOMessageStructure")) { //
 			return 1;
-		} else if (getUTF8().contains("<rsm:CrossIndustryInvoice")) {
+		} else if (head.contains("<rsm:CrossIndustryInvoice")) {
 			return 2;
 		}
 		throw new Exception("ZUGFeRD version could not be determined");

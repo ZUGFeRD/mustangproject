@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.stream.Stream;
 
 /***
- * The Transactioncalculator e.g. adds the line totals and applies VAT on whole invoices
+ * The Transactioncalculator e.g. adds the line totals and applies VAT on whole
+ * invoices
+ * 
  * @see LineCalculator
  */
 public class TransactionCalculator implements IAbsoluteValueProvider {
@@ -23,7 +25,9 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	}
 
 	/***
-	 * if something had already been paid in advance, this will get it from the transaction
+	 * if something had already been paid in advance, this will get it from the
+	 * transaction
+	 * 
 	 * @return prepaid amount
 	 */
 	protected BigDecimal getTotalPrepaid() {
@@ -35,20 +39,21 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	}
 
 	/***
-	 * the invoice total with VAT, corrected by prepaid amount, allowances and charges
+	 * the invoice total with VAT, corrected by prepaid amount, allowances and
+	 * charges
+	 * 
 	 * @return the invoice total including taxes
 	 */
 	public BigDecimal getGrandTotal() {
 
 		final BigDecimal res = getTaxBasis();
-		return getVATPercentAmountMap().values().stream()
-				.map(VATAmount::getCalculated)
-				.map(p -> p.setScale(2, RoundingMode.HALF_UP))
-				.reduce(BigDecimal.ZERO, BigDecimal::add).add(res);
+		return getVATPercentAmountMap().values().stream().map(VATAmount::getCalculated)
+				.map(p -> p.setScale(2, RoundingMode.HALF_UP)).reduce(BigDecimal.ZERO, BigDecimal::add).add(res);
 	}
 
 	/***
 	 * returns total of charges for this tax rate
+	 * 
 	 * @param percent a specific rate, or null for any rate
 	 * @return the total amount
 	 */
@@ -70,7 +75,9 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	}
 
 	/***
-	 * returns a (potentially concatenated) string of charge reasons, or "Charges" if none are defined
+	 * returns a (potentially concatenated) string of charge reasons, or "Charges"
+	 * if none are defined
+	 * 
 	 * @param percent a specific rate, or null for any rate
 	 * @return the space separated String
 	 */
@@ -98,7 +105,9 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	}
 
 	/***
-	 * returns a (potentially concatenated) string of allowance reasons, or "Allowances", if none are defined
+	 * returns a (potentially concatenated) string of allowance reasons, or
+	 * "Allowances", if none are defined
+	 * 
 	 * @param percent a specific rate, or null for any rate
 	 * @return the space separated String
 	 */
@@ -111,9 +120,9 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		return res;
 	}
 
-
 	/***
 	 * returns total of allowances for this tax rate
+	 * 
 	 * @param percent a specific rate, or null for any rate
 	 * @return the total amount
 	 */
@@ -123,24 +132,27 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	}
 
 	/***
-	 * returns the total net value of all items, without document level charges/allowances
+	 * returns the total net value of all items, without document level
+	 * charges/allowances
+	 * 
 	 * @return item sum
 	 */
 	protected BigDecimal getTotal() {
-		BigDecimal dec = Stream.of(trans.getZFItems())
-				.map(LineCalculator::new)
-				.map(LineCalculator::getItemTotalNetAmount)
-				.reduce(ZERO, BigDecimal::add);
+		BigDecimal dec = Stream.of(trans.getZFItems()).map(LineCalculator::new)
+				.map(LineCalculator::getItemTotalNetAmount).reduce(ZERO, BigDecimal::add);
 		return dec;
 	}
 
 	/***
-	 * returns the total net value of the invoice, including charges/allowances on document
-	 * level
+	 * returns the total net value of the invoice, including charges/allowances on
+	 * document level
+	 * 
 	 * @return item sum +- charges/allowances
 	 */
 	protected BigDecimal getTaxBasis() {
-		return getTotal().add(getChargesForPercent(null).setScale(2, RoundingMode.HALF_UP)).subtract(getAllowancesForPercent(null).setScale(2, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP);
+		return getTotal().add(getChargesForPercent(null).setScale(2, RoundingMode.HALF_UP))
+				.subtract(getAllowancesForPercent(null).setScale(2, RoundingMode.HALF_UP))
+				.setScale(2, RoundingMode.HALF_UP);
 	}
 
 	/**
@@ -166,40 +178,42 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			}
 		}
 
-
 		IZUGFeRDAllowanceCharge[] charges = trans.getZFCharges();
 		if ((charges != null) && (charges.length > 0)) {
 			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
-				VATAmount theAmount = hm.get(currentCharge.getTaxPercent().stripTrailingZeros());
-				if (theAmount == null) {
-					theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO,
-							currentCharge.getCategoryCode() != null ? currentCharge.getCategoryCode() : "S");
+				BigDecimal taxPercent = currentCharge.getTaxPercent();
+				if (taxPercent != null) {
+					VATAmount theAmount = hm.get(taxPercent.stripTrailingZeros());
+					if (theAmount == null) {
+						theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO,
+								currentCharge.getCategoryCode() != null ? currentCharge.getCategoryCode() : "S");
+					}
+					theAmount.setBasis(theAmount.getBasis().add(currentCharge.getTotalAmount(this)));
+					BigDecimal factor = taxPercent.divide(new BigDecimal(100));
+					theAmount.setCalculated(theAmount.getBasis().multiply(factor));
+					hm.put(taxPercent.stripTrailingZeros(), theAmount);
 				}
-				theAmount.setBasis(theAmount.getBasis().add(currentCharge.getTotalAmount(this)));
-				BigDecimal factor = currentCharge.getTaxPercent().divide(new BigDecimal(100));
-				theAmount.setCalculated(theAmount.getBasis().multiply(factor));
-				hm.put(currentCharge.getTaxPercent().stripTrailingZeros(), theAmount);
 			}
 		}
 		IZUGFeRDAllowanceCharge[] allowances = trans.getZFAllowances();
 		if ((allowances != null) && (allowances.length > 0)) {
 			for (IZUGFeRDAllowanceCharge currentAllowance : allowances) {
-				VATAmount theAmount = hm.get(currentAllowance.getTaxPercent().stripTrailingZeros());
+				BigDecimal taxPercent = currentAllowance.getTaxPercent();
+				VATAmount theAmount = hm.get(taxPercent.stripTrailingZeros());
 				if (theAmount == null) {
 					theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO,
 							currentAllowance.getCategoryCode() != null ? currentAllowance.getCategoryCode() : "S");
 				}
 				theAmount.setBasis(theAmount.getBasis().subtract(currentAllowance.getTotalAmount(this)));
-				BigDecimal factor = currentAllowance.getTaxPercent().divide(new BigDecimal(100));
+				BigDecimal factor = taxPercent.divide(new BigDecimal(100));
 				theAmount.setCalculated(theAmount.getBasis().multiply(factor));
 
-				hm.put(currentAllowance.getTaxPercent().stripTrailingZeros(), theAmount);
+				hm.put(taxPercent.stripTrailingZeros(), theAmount);
 			}
 		}
 
 		return hm;
 	}
-
 
 	@Override
 	public BigDecimal getValue() {
