@@ -20,14 +20,20 @@
  */
 package org.mustangproject;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.mustangproject.ZUGFeRD.*;
-import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+
+import org.mustangproject.ZUGFeRD.IExportableTransaction;
+import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
+import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
+import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTradeParty;
+import org.mustangproject.ZUGFeRD.IZUGFeRDPaymentTerms;
+import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlement;
+import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /***
  * An invoice, with fluent setters
@@ -39,6 +45,8 @@ public class Invoice implements IExportableTransaction {
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, invoiceReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
 	protected BigDecimal totalPrepaidAmount = null;
+	protected BigDecimal grandTotalAmount = null;
+	protected BigDecimal duePayableAmount = null;
 	protected TradeParty sender = null, recipient = null, deliveryAddress = null;
 	@JsonDeserialize(contentAs=Item.class)
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
@@ -433,6 +441,24 @@ public class Invoice implements IExportableTransaction {
 		return this;
 	}
 
+	public BigDecimal getGrandTotalAmount() {
+		return grandTotalAmount;
+	}
+
+	public Invoice setGrandTotalAmount(BigDecimal grandTotalAmount) {
+		this.grandTotalAmount = grandTotalAmount;
+		return this;
+	}
+
+	public BigDecimal getDuePayableAmount() {
+		return duePayableAmount;
+	}
+
+	public Invoice setDuePayableAmount(BigDecimal duePayableAmount) {
+		this.duePayableAmount = duePayableAmount;
+		return this;
+	}
+
 	@Override
 	public IZUGFeRDExportableTradeParty getSender() {
 		return sender;
@@ -445,6 +471,7 @@ public class Invoice implements IExportableTransaction {
 	 * @param ownContact the sender contact
 	 * @return fluent setter
 	 */
+	@Deprecated
 	public Invoice setOwnContact(Contact ownContact) {
 		this.sender.setContact(ownContact);
 		return this;
@@ -689,4 +716,5 @@ public class Invoice implements IExportableTransaction {
 		this.specifiedProcuringProjectName = specifiedProcuringProjectName;
 		return this;
 	}
+
 }

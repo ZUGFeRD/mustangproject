@@ -1,13 +1,5 @@
 package org.mustangproject.ZUGFeRD;
 
-import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
-import org.mustangproject.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.xpath.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,6 +8,27 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.mustangproject.Allowance;
+import org.mustangproject.Charge;
+import org.mustangproject.EStandard;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
+import org.mustangproject.ReferencedDocument;
+import org.mustangproject.SchemedID;
+import org.mustangproject.TradeParty;
+import org.mustangproject.XMLTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDInvoiceImporter.class.getCanonicalName()); // log
@@ -81,11 +94,12 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			Node exchangedDocumentNode = ExchangedDocumentNodes.item(i);
 			NodeList exchangedDocumentChilds = exchangedDocumentNode.getChildNodes();
 			for (int documentChildIndex = 0; documentChildIndex < exchangedDocumentChilds.getLength(); documentChildIndex++) {
-				if ((exchangedDocumentChilds.item(documentChildIndex).getLocalName() != null) && (exchangedDocumentChilds.item(documentChildIndex).getLocalName().equals("ID"))) {
-					number = exchangedDocumentChilds.item(documentChildIndex).getTextContent();
+				Node item = exchangedDocumentChilds.item(documentChildIndex);
+				if ((item.getLocalName() != null) && (item.getLocalName().equals("ID"))) {
+					number = item.getTextContent();
 				}
-				if ((exchangedDocumentChilds.item(documentChildIndex).getLocalName() != null) && (exchangedDocumentChilds.item(documentChildIndex).getLocalName().equals("IssueDateTime"))) {
-					NodeList issueDateTimeChilds = exchangedDocumentChilds.item(documentChildIndex).getChildNodes();
+				if ((item.getLocalName() != null) && (item.getLocalName().equals("IssueDateTime"))) {
+					NodeList issueDateTimeChilds = item.getChildNodes();
 					for (int issueDateChildIndex = 0; issueDateChildIndex < issueDateTimeChilds.getLength(); issueDateChildIndex++) {
 						if ((issueDateTimeChilds.item(issueDateChildIndex).getLocalName() != null) && (issueDateTimeChilds.item(issueDateChildIndex).getLocalName().equals("DateTimeString"))) {
 							issueDate = new SimpleDateFormat("yyyyMMdd").parse(issueDateTimeChilds.item(issueDateChildIndex).getTextContent());
@@ -173,7 +187,9 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				Node currentItemNode = nodes.item(i);
 				NodeList itemChilds = currentItemNode.getChildNodes();
 				for (int itemChildIndex = 0; itemChildIndex < itemChilds.getLength(); itemChildIndex++) {
-					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLineTradeAgreement"))) {
+					String lineTrade = itemChilds.item(itemChildIndex).getLocalName();
+					if ((lineTrade != null) && (lineTrade.equals("SpecifiedLineTradeAgreement")
+							|| lineTrade.equals("SpecifiedSupplyChainTradeAgreement"))) {
 						NodeList tradeLineChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeLineChildIndex = 0; tradeLineChildIndex < tradeLineChilds.getLength(); tradeLineChildIndex++) {
 
@@ -184,13 +200,14 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 								NodeList refDocChilds = tradeLineChilds.item(tradeLineChildIndex).getChildNodes();
 								for (int refDocIndex = 0; refDocIndex < refDocChilds.getLength(); refDocIndex++) {
-									if ((refDocChilds.item(refDocIndex).getLocalName() != null) && (refDocChilds.item(refDocIndex).getLocalName().equals("IssuerAssignedID"))) {
+									String localName = refDocChilds.item(refDocIndex).getLocalName();
+									if ((localName != null) && (localName.equals("IssuerAssignedID"))) {
 										IssuerAssignedID = refDocChilds.item(refDocIndex).getTextContent();
 									}
-									if ((refDocChilds.item(refDocIndex).getLocalName() != null) && (refDocChilds.item(refDocIndex).getLocalName().equals("TypeCode"))) {
+									if ((localName != null) && (localName.equals("TypeCode"))) {
 										TypeCode = refDocChilds.item(refDocIndex).getTextContent();
 									}
-									if ((refDocChilds.item(refDocIndex).getLocalName() != null) && (refDocChilds.item(refDocIndex).getLocalName().equals("ReferenceTypeCode"))) {
+									if ((localName != null) && (localName.equals("ReferenceTypeCode"))) {
 										ReferenceTypeCode = refDocChilds.item(refDocIndex).getTextContent();
 									}
 								}
@@ -214,17 +231,21 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 							}
 						}
 					}
-					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLineTradeDelivery"))) {
+					if ((lineTrade != null) && (lineTrade.equals("SpecifiedLineTradeDelivery")
+							|| lineTrade.equals("SpecifiedSupplyChainTradeDelivery"))) {
 						NodeList tradeLineChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeLineChildIndex = 0; tradeLineChildIndex < tradeLineChilds.getLength(); tradeLineChildIndex++) {
-							if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && (tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("BilledQuantity") || tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("RequestedQuantity") || tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("DespatchedQuantity"))) {
+							String tradeName = tradeLineChilds.item(tradeLineChildIndex).getLocalName();
+							if ((tradeName != null)
+									&& (tradeName.equals("BilledQuantity") || tradeName.equals("RequestedQuantity")
+											|| tradeName.equals("DespatchedQuantity"))) {
 								//RequestedQuantity is for Order-X, BilledQuantity for FX and ZF
 								quantity = tradeLineChilds.item(tradeLineChildIndex).getTextContent();
 								unitCode = tradeLineChilds.item(tradeLineChildIndex).getAttributes().getNamedItem("unitCode").getNodeValue();
 							}
 						}
 					}
-					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedTradeProduct"))) {
+					if ((lineTrade != null) && (lineTrade.equals("SpecifiedTradeProduct"))) {
 						NodeList tradeProductChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeProductChildIndex = 0; tradeProductChildIndex < tradeProductChilds.getLength(); tradeProductChildIndex++) {
 							if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null) && (tradeProductChilds.item(tradeProductChildIndex).getLocalName().equals("Name"))) {
@@ -238,21 +259,26 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 							}
 						}
 					}
-					if ((itemChilds.item(itemChildIndex).getLocalName() != null) && (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLineTradeSettlement"))) {
+					if ((lineTrade != null) && (lineTrade.equals("SpecifiedLineTradeSettlement")
+							|| lineTrade.equals("SpecifiedSupplyChainTradeSettlement"))) {
 						NodeList tradeSettlementChilds = itemChilds.item(itemChildIndex).getChildNodes();
 						for (int tradeSettlementChildIndex = 0; tradeSettlementChildIndex < tradeSettlementChilds.getLength(); tradeSettlementChildIndex++) {
 
-							if (tradeSettlementChilds.item(tradeSettlementChildIndex).getLocalName() != null) {
-								if (tradeSettlementChilds.item(tradeSettlementChildIndex).getLocalName().equals("ApplicableTradeTax")) {
+							String tradeSettlementName = tradeSettlementChilds.item(tradeSettlementChildIndex)
+									.getLocalName();
+							if (tradeSettlementName != null) {
+								if (tradeSettlementName.equals("ApplicableTradeTax")) {
 									NodeList taxChilds = tradeSettlementChilds.item(tradeSettlementChildIndex).getChildNodes();
 									for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
-										if ((taxChilds.item(taxChildIndex).getLocalName() != null) && (taxChilds.item(taxChildIndex).getLocalName().equals("RateApplicablePercent"))) {
+										String taxChildName = taxChilds.item(taxChildIndex).getLocalName();
+										if ((taxChildName != null) && (taxChildName.equals("RateApplicablePercent")
+												|| taxChildName.equals("ApplicablePercent"))) {
 											vatPercent = taxChilds.item(taxChildIndex).getTextContent();
 										}
 									}
 								}
 
-								if (tradeSettlementChilds.item(tradeSettlementChildIndex).getLocalName().equals("SpecifiedTradeSettlementLineMonetarySummation")) {
+								if (tradeSettlementName.equals("SpecifiedTradeSettlementLineMonetarySummation")) {
 									NodeList totalChilds = tradeSettlementChilds.item(tradeSettlementChildIndex).getChildNodes();
 									for (int totalChildIndex = 0; totalChildIndex < totalChilds.getLength(); totalChildIndex++) {
 										if ((totalChilds.item(totalChildIndex).getLocalName() != null) && (totalChilds.item(totalChildIndex).getLocalName().equals("LineTotalAmount"))) {
@@ -297,20 +323,21 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				String reason = null;
 				String taxPercent = null;
 				for (int chargeChildIndex = 0; chargeChildIndex < chargeNodeChilds.getLength(); chargeChildIndex++) {
-					if (chargeNodeChilds.item(chargeChildIndex).getLocalName() != null) {
+					String chargeChildName = chargeNodeChilds.item(chargeChildIndex).getLocalName();
+					if (chargeChildName != null) {
 
-						if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("ChargeIndicator")) {
+						if (chargeChildName.equals("ChargeIndicator")) {
 							NodeList indicatorChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
 							for (int indicatorChildIndex = 0; indicatorChildIndex < indicatorChilds.getLength(); indicatorChildIndex++) {
 								if ((indicatorChilds.item(indicatorChildIndex).getLocalName() != null) && (indicatorChilds.item(indicatorChildIndex).getLocalName().equals("Indicator"))) {
 									isCharge = indicatorChilds.item(indicatorChildIndex).getTextContent().equalsIgnoreCase("true");
 								}
 							}
-						} else if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("ActualAmount")) {
+						} else if (chargeChildName.equals("ActualAmount")) {
 							chargeAmount = chargeNodeChilds.item(chargeChildIndex).getTextContent();
-						} else if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("Reason")) {
+						} else if (chargeChildName.equals("Reason")) {
 							reason = chargeNodeChilds.item(chargeChildIndex).getTextContent();
-						} else if (chargeNodeChilds.item(chargeChildIndex).getLocalName().equals("CategoryTradeTax")) {
+						} else if (chargeChildName.equals("CategoryTradeTax")) {
 							NodeList taxChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
 							for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
 								if ((taxChilds.item(taxChildIndex).getLocalName() != null) && (taxChilds.item(taxChildIndex).getLocalName().equals("RateApplicablePercent"))) {
@@ -347,6 +374,9 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 			TransactionCalculator tc = new TransactionCalculator(zpp);
 			String expectedStringTotalGross = tc.getGrandTotal().toPlainString();
+			zpp.setGrandTotalAmount(tc.getGrandTotal());
+			zpp.setTotalPrepaidAmount(tc.getTotalPrepaid());
+			zpp.setDuePayableAmount(tc.getGrandTotal().add(tc.getTotalPrepaid().negate()));
 			EStandard whichType;
 			try {
 				whichType = getStandard();
