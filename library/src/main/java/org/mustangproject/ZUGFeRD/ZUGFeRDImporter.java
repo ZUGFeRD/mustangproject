@@ -63,7 +63,7 @@ public class ZUGFeRDImporter {
 	/**
 	 * map filenames of additional XML files to their contents
 	 */
-	private HashMap<String, byte[]> additionalXMLs = new HashMap<>();
+	private final HashMap<String, byte[]> additionalXMLs = new HashMap<>();
 	/**
 	 * Raw XML form of the extracted data - may be directly obtained.
 	 */
@@ -76,6 +76,7 @@ public class ZUGFeRDImporter {
 	 * parsed Document
 	 */
 	private Document document;
+	private Integer version;
 
 
 	protected ZUGFeRDImporter() {
@@ -193,6 +194,7 @@ public class ZUGFeRDImporter {
 
 	public void setRawXML(byte[] rawXML) throws IOException {
 		this.rawXML = rawXML;
+		this.version = null;
 		try {
 			setDocument();
 		} catch (ParserConfigurationException | SAXException e) {
@@ -656,13 +658,16 @@ public class ZUGFeRDImporter {
 		if (!containsMeta) {
 			throw new Exception("Not yet parsed");
 		}
-		if (getUTF8().contains("<rsm:CrossIndustryDocument")) {
+		String head = getUTF8();
+		if (head.contains("<rsm:CrossIndustryDocument")) {
 			return EStandard.zugferd;
-		} else if (getUTF8().contains("<rsm:CrossIndustryInvoice")) {
+		} else if (head.contains("<CrossIndustryDocument")) {
+			return EStandard.zugferd;
+		} else if (head.contains("<urn:rsm:CrossIndustryInvoice") || head.contains("<rsm:CrossIndustryInvoice")) {
 			return EStandard.facturx;
-		} else if (getUTF8().contains("<SCRDMCCBDACIDAMessageStructure")) {
+		} else if (head.contains("<SCRDMCCBDACIDAMessageStructure")) {
 			return EStandard.despatchadvice;
-		} else if (getUTF8().contains("<rsm:SCRDMCCBDACIOMessageStructure")) {
+		} else if (head.contains("<rsm:SCRDMCCBDACIOMessageStructure")) {
 			return EStandard.orderx;
 		}
 
@@ -673,12 +678,21 @@ public class ZUGFeRDImporter {
 		if (!containsMeta) {
 			throw new Exception("Not yet parsed");
 		}
-		if (getUTF8().contains("<rsm:CrossIndustryDocument")||getUTF8().contains("<SCRDMCCBDACIDAMessageStructure")||getUTF8().contains("<rsm:SCRDMCCBDACIOMessageStructure")) {
-			return 1;
-		} else if (getUTF8().contains("<rsm:CrossIndustryInvoice")) {
-			return 2;
+		if (version != null)
+			return version;
+
+		String head = getUTF8();
+		if (head.contains("<rsm:CrossIndustryDocument") //
+				|| head.contains("<CrossIndustryDocument") //
+				|| head.contains("<SCRDMCCBDACIDAMessageStructure") //
+				|| head.contains("<rsm:SCRDMCCBDACIOMessageStructure")) { //
+			version = 1;
+		} else if (head.contains("<rsm:CrossIndustryInvoice")) {
+			version = 2;
 		}
-		throw new Exception("ZUGFeRD version could not be determined");
+		else
+			throw new Exception("ZUGFeRD version could not be determined");
+		return version;
 	}
 
 

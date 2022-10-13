@@ -17,6 +17,7 @@
  *
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
+
 /**
  * Mustangproject's ZUGFeRD implementation
  * Neccessary interface for ZUGFeRD exporter
@@ -26,7 +27,6 @@ package org.mustangproject.ZUGFeRD;
  * @author jstaerk
  * */
 
-
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -34,11 +34,12 @@ import org.mustangproject.FileAttachment;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 /***
- * the interface of an transaction, e.g. an invoice, you want to create xml (potentially to be added to a PDF)
- * for
+ * the interface of an transaction, e.g. an invoice, you want to create xml
+ * (potentially to be added to a PDF) for
+ * 
  * @see org.mustangproject.Invoice
  */
-public interface IExportableTransaction  {
+public interface IExportableTransaction {
 
 	/**
 	 * appears in /rsm:CrossIndustryDocument/rsm:HeaderExchangedDocument/ram:Name
@@ -49,7 +50,6 @@ public interface IExportableTransaction  {
 		return "RECHNUNG";
 	}
 
-
 	/**
 	 *
 	 *
@@ -58,7 +58,6 @@ public interface IExportableTransaction  {
 	default String getDocumentCode() {
 		return DocumentCodeTypeConstants.INVOICE;
 	}
-
 
 	/**
 	 * Number, typically invoice number of the invoice
@@ -69,7 +68,6 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
 	/**
 	 * the date when the invoice was created
 	 *
@@ -79,18 +77,19 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
 	/**
-	 * this should be the full sender institution name, details, manager and tax registration. It is one of the few functions which may return null. e.g.
+	 * this should be the full sender institution name, details, manager and tax
+	 * registration. It is one of the few functions which may return null. e.g.
 	 * <p>
-	 * Lieferant GmbH Lieferantenstraße 20 80333 München Deutschland Geschäftsführer: Hans Muster Handelsregisternummer: H A 123
+	 * Lieferant GmbH Lieferantenstraße 20 80333 München Deutschland
+	 * Geschäftsführer: Hans Muster Handelsregisternummer: H A 123
 	 *
-	 * @return null or full sender institution name, details, manager and tax registration
+	 * @return null or full sender institution name, details, manager and tax
+	 *         registration
 	 */
 	default String getOwnOrganisationFullPlaintextInfo() {
 		return null;
 	}
-
 
 	/**
 	 * when the invoice is to be paid
@@ -105,7 +104,6 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
 	/**
 	 * the sender of the invoice
 	 *
@@ -115,10 +113,8 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
 	/**
-	 * subject of the document e.g. invoice and order
-	 * number as human readable text
+	 * subject of the document e.g. invoice and order number as human readable text
 	 *
 	 * @return string with document subject
 	 */
@@ -130,19 +126,15 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
 	default IZUGFeRDAllowanceCharge[] getZFCharges() {
 		return null;
 	}
-
 
 	default IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
 		return null;
 	}
 
-
 	IZUGFeRDExportableItem[] getZFItems();
-
 
 	/**
 	 * the recipient
@@ -151,9 +143,9 @@ public interface IExportableTransaction  {
 	 */
 	IZUGFeRDExportableTradeParty getRecipient();
 
-
 	/**
 	 * the creditors payment informations
+	 * 
 	 * @deprecated use getTradeSettlement
 	 * @return an array of IZUGFeRDTradeSettlementPayment
 	 */
@@ -161,6 +153,7 @@ public interface IExportableTransaction  {
 	default IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
 		return null;
 	}
+
 	/**
 	 * the payment information for any payment means
 	 *
@@ -170,20 +163,18 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
 	/**
 	 * Tax ID (not VAT ID) of the sender
 	 *
 	 * @return Tax ID (not VAT ID) of the sender
 	 */
 	default String getOwnTaxID() {
-		if (getSender()!=null) {
+		if (getSender() != null) {
 			return getSender().getTaxID();
 		} else {
 			return null;
 		}
 	}
-
 
 	/**
 	 * VAT ID (Umsatzsteueridentifikationsnummer) of the sender
@@ -191,13 +182,12 @@ public interface IExportableTransaction  {
 	 * @return VAT ID (Umsatzsteueridentifikationsnummer) of the sender
 	 */
 	default String getOwnVATID() {
-		if (getSender()!=null) {
+		if (getSender() != null) {
 			return getSender().getVATID();
 		} else {
 			return null;
 		}
 	}
-
 
 	/**
 	 * supplier identification assigned by the costumer
@@ -208,20 +198,18 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
 	/**
 	 * own name
 	 *
 	 * @return the sender's organisation name
 	 */
 	default String getOwnOrganisationName() {
-		if (getSender()!=null) {
+		if (getSender() != null) {
 			return getSender().getName();
 		} else {
 			return null;
 		}
 	}
-
 
 	/**
 	 * own street address
@@ -229,13 +217,12 @@ public interface IExportableTransaction  {
 	 * @return sender street address
 	 */
 	default String getOwnStreet() {
-		if (getSender()!=null) {
+		if (getSender() != null) {
 			return getSender().getStreet();
 		} else {
 			return null;
 		}
 	}
-
 
 	/**
 	 * own street postal code
@@ -243,7 +230,7 @@ public interface IExportableTransaction  {
 	 * @return sender postal code
 	 */
 	default String getOwnZIP() {
-		if (getSender()!=null) {
+		if (getSender() != null) {
 			return getSender().getZIP();
 		} else {
 			return null;
@@ -251,14 +238,13 @@ public interface IExportableTransaction  {
 
 	}
 
-
 	/**
 	 * own city
 	 *
 	 * @return the invoice sender's city
 	 */
 	default String getOwnLocation() {
-		if (getSender()!=null) {
+		if (getSender() != null) {
 			return getSender().getLocation();
 		} else {
 			return null;
@@ -266,14 +252,13 @@ public interface IExportableTransaction  {
 
 	}
 
-
 	/**
 	 * own two digit country code
 	 *
 	 * @return the invoice senders two character country iso code
 	 */
 	default String getOwnCountry() {
-		if (getSender()!=null) {
+		if (getSender() != null) {
 			return getSender().getCountry();
 		} else {
 			return null;
@@ -281,14 +266,12 @@ public interface IExportableTransaction  {
 
 	}
 
-
 	/**
 	 * get delivery date
 	 *
 	 * @return the day the goods have been delivered
 	 */
 	Date getDeliveryDate();
-
 
 	/**
 	 * get main invoice currency used on the invoice
@@ -298,7 +281,6 @@ public interface IExportableTransaction  {
 	default String getCurrency() {
 		return "EUR";
 	}
-
 
 	/**
 	 * get payment term descriptional text e.g. Bis zum 22.10.2015 ohne Abzug
@@ -329,7 +311,8 @@ public interface IExportableTransaction  {
 	}
 
 	/**
-	 * get reference document number typically used for Invoice Corrections Will be added as IncludedNote in comfort profile
+	 * get reference document number typically used for Invoice Corrections Will be
+	 * added as IncludedNote in comfort profile
 	 *
 	 * @return the ID of the document this document refers to
 	 */
@@ -337,16 +320,15 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
 	/**
-	 * consignee identification (identification of the organisation the goods are shipped to [assigned by the costumer])
+	 * consignee identification (identification of the organisation the goods are
+	 * shipped to [assigned by the costumer])
 	 *
 	 * @return the sender's identification
 	 */
 	default String getShipToOrganisationID() {
 		return null;
 	}
-
 
 	/**
 	 * consignee name (name of the organisation the goods are shipped to)
@@ -357,9 +339,9 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
 	/**
-	 * consignee street address (street of the organisation the goods are shipped to)
+	 * consignee street address (street of the organisation the goods are shipped
+	 * to)
 	 *
 	 * @return consignee street address
 	 */
@@ -367,16 +349,15 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
 	/**
-	 * consignee street postal code (postal code of the organisation the goods are shipped to)
+	 * consignee street postal code (postal code of the organisation the goods are
+	 * shipped to)
 	 *
 	 * @return consignee postal code
 	 */
 	default String getShipToZIP() {
 		return null;
 	}
-
 
 	/**
 	 * consignee city (city of the organisation the goods are shipped to)
@@ -387,9 +368,9 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
 	/**
-	 * consignee two digit country code (country code of the organisation the goods are shipped to)
+	 * consignee two digit country code (country code of the organisation the goods
+	 * are shipped to)
 	 *
 	 * @return the consignee's two character country iso code
 	 */
@@ -397,17 +378,19 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
 	/**
-	 * get the ID of the SellerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement/ApplicableHeaderTradeAgreement
+	 * get the ID of the SellerOrderReferencedDocument, which sits in the
+	 * ApplicableSupplyChainTradeAgreement/ApplicableHeaderTradeAgreement
 	 *
 	 * @return the ID of the document
 	 */
 	default String getSellerOrderReferencedDocumentID() {
 		return null;
 	}
+
 	/**
-	 * get the ID of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
+	 * get the ID of the BuyerOrderReferencedDocument, which sits in the
+	 * ApplicableSupplyChainTradeAgreement
 	 *
 	 * @return the ID of the document
 	 */
@@ -416,7 +399,8 @@ public interface IExportableTransaction  {
 	}
 
 	/**
-	 * get the ID of the preceding invoice, which is e.g. to be corrected if this is a correction
+	 * get the ID of the preceding invoice, which is e.g. to be corrected if this is
+	 * a correction
 	 *
 	 * @return the ID of the document
 	 */
@@ -424,9 +408,13 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-  default Date getInvoiceReferencedIssueDate(){return null;}
+	default Date getInvoiceReferencedIssueDate() {
+		return null;
+	}
+
 	/**
-	 * get the issue timestamp of the BuyerOrderReferencedDocument, which sits in the ApplicableSupplyChainTradeAgreement
+	 * get the issue timestamp of the BuyerOrderReferencedDocument, which sits in
+	 * the ApplicableSupplyChainTradeAgreement
 	 *
 	 * @return the IssueDateTime in format CCYY-MM-DDTHH:MM:SS
 	 */
@@ -434,19 +422,21 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
 	/**
-	 * get the TotalPrepaidAmount located in SpecifiedTradeSettlementMonetarySummation (v1) or SpecifiedTradeSettlementHeaderMonetarySummation (v2)
+	 * get the TotalPrepaidAmount located in
+	 * SpecifiedTradeSettlementMonetarySummation (v1) or
+	 * SpecifiedTradeSettlementHeaderMonetarySummation (v2)
 	 *
-	 * @return the total sum (incl. VAT) of prepayments, i.e. the difference between GrandTotalAmount and DuePayableAmount
+	 * @return the total sum (incl. VAT) of prepayments, i.e. the difference between
+	 *         GrandTotalAmount and DuePayableAmount
 	 */
 	default BigDecimal getTotalPrepaidAmount() {
 		return BigDecimal.ZERO;
 	}
 
-
 	/***
 	 * delivery address, i.e. ram:ShipToTradeParty (only supported for zf2)
+	 * 
 	 * @return the IZUGFeRDExportableTradeParty delivery address
 	 */
 
@@ -454,9 +444,10 @@ public interface IExportableTransaction  {
 		return null;
 	}
 
-
 	/***
-	 * specifies the document level delivery period, will be included in a BillingSpecifiedPeriod element
+	 * specifies the document level delivery period, will be included in a
+	 * BillingSpecifiedPeriod element
+	 * 
 	 * @return the beginning of the delivery period
 	 */
 	default Date getDetailedDeliveryPeriodFrom() {
@@ -464,7 +455,9 @@ public interface IExportableTransaction  {
 	}
 
 	/***
-	 * specifies the document level delivery period, will be included in a BillingSpecifiedPeriod element
+	 * specifies the document level delivery period, will be included in a
+	 * BillingSpecifiedPeriod element
+	 * 
 	 * @return the end of the delivery period
 	 */
 	default Date getDetailedDeliveryPeriodTo() {
@@ -472,8 +465,9 @@ public interface IExportableTransaction  {
 	}
 
 	/**
-	 * get additional referenced documents acccording to BG-24 XRechnung (Rechnungsbegruendende Unterlagen),
-	 * i.e. ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument
+	 * get additional referenced documents acccording to BG-24 XRechnung
+	 * (Rechnungsbegruendende Unterlagen), i.e.
+	 * ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument
 	 *
 	 * @return a array of objects from class FileAttachment
 	 */
@@ -484,19 +478,23 @@ public interface IExportableTransaction  {
 	default String getDespatchAdviceReferencedDocumentID() {
 		return null;
 	}
+
 	/***
 	 * additional text description
-	 * @return an array of strings of document wide "includedNotes" (descriptive text values)
+	 * 
+	 * @return an array of strings of document wide "includedNotes" (descriptive
+	 *         text values)
 	 */
 	default String[] getNotes() {
 		return null;
 	}
 
-	default String getSpecifiedProcuringProjectName(){
+	default String getSpecifiedProcuringProjectName() {
 		return null;
 	}
 
-	default String getSpecifiedProcuringProjectID(){
+	default String getSpecifiedProcuringProjectID() {
 		return null;
 	}
+
 }

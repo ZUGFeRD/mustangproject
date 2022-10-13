@@ -310,16 +310,19 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 		xml += "<ram:SpecifiedTradeSettlementMonetarySummation>"
 				+ "<ram:LineTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotal()) + "</ram:LineTotalAmount>"
 				// currencyID=\"EUR\"
-				+ "<ram:ChargeTotalAmount currencyID=\"" + trans.getCurrency() + "\">0.00</ram:ChargeTotalAmount>" // currencyID=\"EUR\"
-				+ "<ram:AllowanceTotalAmount currencyID=\"" + trans.getCurrency() + "\">0.00</ram:AllowanceTotalAmount>" //
+				+ "<ram:ChargeTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
+				+ currencyFormat(calc.getChargeTotal()) + "</ram:ChargeTotalAmount>" // currencyID=\"EUR\"
+				+ "<ram:AllowanceTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
+				+ currencyFormat(calc.getAllowanceTotal()) + "</ram:AllowanceTotalAmount>" //
 				// currencyID=\"EUR\"
 				// + " <ChargeTotalAmount currencyID=\"EUR\">5.80</ChargeTotalAmount>"
 				// + " <AllowanceTotalAmount currencyID=\"EUR\">14.73</AllowanceTotalAmount>"
-				+ "<ram:TaxBasisTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getTotal()) + "</ram:TaxBasisTotalAmount>"
+				+ "<ram:TaxBasisTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
+				+ currencyFormat(calc.getTaxBasis()) + "</ram:TaxBasisTotalAmount>"
 				// //
 				// currencyID=\"EUR\"
 				+ "<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
-				+ currencyFormat(calc.getGrandTotal().subtract(calc.getTotal())) + "</ram:TaxTotalAmount>"
+				+ currencyFormat(calc.getGrandTotal().subtract(calc.getTaxBasis())) + "</ram:TaxTotalAmount>"
 				+ "<ram:GrandTotalAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>"
 				// //
 				// currencyID=\"EUR\"

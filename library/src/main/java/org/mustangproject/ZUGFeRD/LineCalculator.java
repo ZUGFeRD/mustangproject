@@ -7,10 +7,10 @@ import java.math.BigDecimal;
  * @see TransactionCalculator
  */
 public class LineCalculator {
-	private BigDecimal price;
-	private BigDecimal priceGross;
-	private BigDecimal itemTotalNetAmount;
-	private BigDecimal itemTotalVATAmount;
+	private final BigDecimal price;
+	private final BigDecimal priceGross;
+	private final BigDecimal itemTotalNetAmount;
+	private final BigDecimal itemTotalVATAmount;
 	private BigDecimal allowance = BigDecimal.ZERO;
 	private BigDecimal charge = BigDecimal.ZERO;
 	private BigDecimal allowanceItemTotal = BigDecimal.ZERO;
@@ -33,7 +33,10 @@ public class LineCalculator {
 			}
 		}
 		
-		BigDecimal multiplicator = currentItem.getProduct().getVATPercent().divide(BigDecimal.valueOf(100));
+		BigDecimal vatPercent = currentItem.getProduct().getVATPercent();
+		if (vatPercent == null)
+			vatPercent = BigDecimal.ZERO;
+		BigDecimal multiplicator = vatPercent.divide(BigDecimal.valueOf(100));
 		priceGross = currentItem.getPrice(); // see https://github.com/ZUGFeRD/mustangproject/issues/159
 		price = priceGross.subtract(allowance).add(charge);
 		itemTotalNetAmount = currentItem.getQuantity().multiply(getPrice()).divide(currentItem.getBasisQuantity())
