@@ -13,6 +13,9 @@
    <version>2.5.7-SNAPSHOT</version>
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
+      <maven.compiler.source>1.8</maven.compiler.source>
+      <maven.compiler.target>1.8</maven.compiler.target>
    </properties>
    <dependencies>
       <dependency>
@@ -82,6 +85,26 @@
                      <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                   </manifest>
                </archive>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-toolchains-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+               <execution>
+                  <goals>
+                     <goal>toolchain</goal>
+                  </goals>
+               </execution>
+            </executions>
+            <configuration>
+               <toolchains>
+                  <jdk>
+                     <version>1.8</version>
+                     <vendor>sun</vendor>
+                  </jdk>
+               </toolchains>
             </configuration>
          </plugin>
          <plugin>

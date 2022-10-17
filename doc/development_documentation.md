@@ -154,12 +154,38 @@ The whole settings.xml then looks e.g. like this
 The TOKEN is generated on github.
 Deployment to maven central is described e.g. on [dzone](https://dzone.com/articles/publish-your-artifacts-to-maven-central).
 See the following screenshot:
-
-
 Sign in in GitHub and click on the profile picture -> Settings. Now just generate a new token and set the checkboxes from the screenshot.
 ![screenshot](development_documentation_screenshot_github_settings.png "Screenshot Github Settings")
  The Token-ID is the password. 
 
+In .m2 also need a toolchains.xml which defines a Sun JDK 1.8 target like the following: 
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<toolchains>
+  <!-- JDK toolchains -->
+  <toolchain>
+    <type>jdk</type>
+    <provides>
+      <version>1.8</version>
+      <vendor>sun</vendor>
+    </provides>
+    <configuration>
+      <jdkHome>C:\Program Files\Java\jdk1.8.0_341</jdkHome>
+    </configuration>
+  </toolchain>
+  <toolchain>
+    <type>jdk</type>
+    <provides>
+      <version>18</version>
+      <vendor>zulu</vendor>
+    </provides>
+    <configuration>
+      <jdkHome>C:\Program Files\Zulu\zulu-18\</jdkHome>
+    </configuration>
+  </toolchain>
+ 
+</toolchains>
+```
 
 ## Integrate before release
 
