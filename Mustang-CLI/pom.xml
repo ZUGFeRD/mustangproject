@@ -102,7 +102,7 @@
                <toolchains>
                   <jdk>
                      <version>1.8</version>
-                     <vendor>sun</vendor>
+                     <vendor>openjdk</vendor>
                   </jdk>
                </toolchains>
             </configuration>
