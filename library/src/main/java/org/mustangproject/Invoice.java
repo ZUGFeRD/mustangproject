@@ -44,9 +44,6 @@ public class Invoice implements IExportableTransaction {
 
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, invoiceReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
-	protected BigDecimal totalPrepaidAmount = null;
-	protected BigDecimal grandTotalAmount = null;
-	protected BigDecimal duePayableAmount = null;
 	protected TradeParty sender = null, recipient = null, deliveryAddress = null;
 	@JsonDeserialize(contentAs=Item.class)
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
@@ -428,34 +425,6 @@ public class Invoice implements IExportableTransaction {
 
 	public Invoice setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
-		return this;
-	}
-
-	@Override
-	public BigDecimal getTotalPrepaidAmount() {
-		return totalPrepaidAmount;
-	}
-
-	public Invoice setTotalPrepaidAmount(BigDecimal totalPrepaidAmount) {
-		this.totalPrepaidAmount = totalPrepaidAmount;
-		return this;
-	}
-
-	public BigDecimal getGrandTotalAmount() {
-		return grandTotalAmount;
-	}
-
-	public Invoice setGrandTotalAmount(BigDecimal grandTotalAmount) {
-		this.grandTotalAmount = grandTotalAmount;
-		return this;
-	}
-
-	public BigDecimal getDuePayableAmount() {
-		return duePayableAmount;
-	}
-
-	public Invoice setDuePayableAmount(BigDecimal duePayableAmount) {
-		this.duePayableAmount = duePayableAmount;
 		return this;
 	}
 

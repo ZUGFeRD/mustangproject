@@ -73,7 +73,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 		xpr = xpath.compile("//*[local-name()=\"BuyerTradeParty\"]");
 		NodeList BuyerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-		xpr = xpath.compile("//*[local-name()=\"ExchangedDocument\"]");
+		xpr = xpath.compile("//*[local-name()=\"ExchangedDocument\"]|//*[local-name()=\"HeaderExchangedDocument\"]");
 		NodeList ExchangedDocumentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
 		xpr = xpath.compile("//*[local-name()=\"GrandTotalAmount\"]");
@@ -147,7 +147,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			}
 		}
 
-		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]");
+		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]|//*[local-name()=\"ApplicableSupplyChainTradeSettlement\"]");
 		NodeList headerTradeSettlementNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
 		for (int i = 0; i < headerTradeSettlementNodes.getLength(); i++) {
@@ -419,9 +419,6 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 			TransactionCalculator tc = new TransactionCalculator(zpp);
 			String expectedStringTotalGross = tc.getGrandTotal().toPlainString();
-			zpp.setGrandTotalAmount(tc.getGrandTotal());
-			zpp.setTotalPrepaidAmount(tc.getTotalPrepaid());
-			zpp.setDuePayableAmount(tc.getGrandTotal().add(tc.getTotalPrepaid().negate()));
 			EStandard whichType;
 			try {
 				whichType = getStandard();
