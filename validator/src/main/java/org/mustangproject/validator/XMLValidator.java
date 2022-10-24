@@ -333,7 +333,7 @@ public class XMLValidator extends Validator {
 				if (context.getFormat().equals("CII")) {
 
 					if (context.getGeneration().equals("2")
-							&& (isEN16931 || isXRechnung)) {
+							&& (isBasic || isEN16931 || isXRechnung)) {
 						//additionally validate against CEN
 						validateSchematron(zfXML, "/xslt/cii16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
 						if (!disableNotices || XrechnungSeverity != ESeverity.notice) {
