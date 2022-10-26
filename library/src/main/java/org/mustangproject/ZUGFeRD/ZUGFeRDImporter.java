@@ -463,6 +463,11 @@ public class ZUGFeRDImporter {
 	 */
 	public String getBuyerTradePartyName() {
 		return extractString("//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'Name']");
+	}	/**
+	 * @return the BuyerTradeParty Name
+	 */
+	public String getDeliveryTradePartyName() {
+		return extractString("//*[local-name() = 'ShipToTradeParty']//*[local-name() = 'Name']");
 	}
 
 
@@ -658,7 +663,7 @@ public class ZUGFeRDImporter {
 		if (!containsMeta) {
 			throw new Exception("Not yet parsed");
 		}
-		String head = getUTF8();
+		final String head = getUTF8();
 		if (head.contains("<rsm:CrossIndustryDocument")) {
 			return EStandard.zugferd;
 		} else if (head.contains("<CrossIndustryDocument")) {
@@ -678,10 +683,11 @@ public class ZUGFeRDImporter {
 		if (!containsMeta) {
 			throw new Exception("Not yet parsed");
 		}
-		if (version != null)
-			return version;
+		if (version != null) {
+      return version;
+    }
 
-		String head = getUTF8();
+		final String head = getUTF8();
 		if (head.contains("<rsm:CrossIndustryDocument") //
 				|| head.contains("<CrossIndustryDocument") //
 				|| head.contains("<SCRDMCCBDACIDAMessageStructure") //
@@ -690,8 +696,9 @@ public class ZUGFeRDImporter {
 		} else if (head.contains("<rsm:CrossIndustryInvoice")) {
 			version = 2;
 		}
-		else
-			throw new Exception("ZUGFeRD version could not be determined");
+		else {
+      throw new Exception("ZUGFeRD version could not be determined");
+    }
 		return version;
 	}
 
@@ -791,6 +798,27 @@ public class ZUGFeRDImporter {
 				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryDocument']//*[local-name() = 'SpecifiedSupplyChainTradeTransaction']//*[local-name() = 'ApplicableSupplyChainTradeAgreement']//*[local-name() = 'SellerTradeParty']//*[local-name() = 'PostalTradeAddress']");
 			} else {
 				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'SellerTradeParty']//*[local-name() = 'PostalTradeAddress']");
+			}
+		} catch (final Exception e) {
+			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+			return null;
+		}
+
+		return getAddressFromNodeList(nl);
+	}	
+  
+  /**
+	 * returns an instance of PostalTradeAddress for ShipToTradeParty section
+	 * @return an instance of PostalTradeAddress
+	 */
+	public PostalTradeAddress getDeliveryTradePartyAddress() {
+
+		final NodeList nl;
+		try {
+			if (getVersion() == 1) {
+				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryDocument']//*[local-name() = 'SpecifiedSupplyChainTradeTransaction']//*[local-name() = 'ApplicableSupplyChainTradeDelivery']//*[local-name() = 'ShipToTradeParty']//*[local-name() = 'PostalTradeAddress']");
+			} else {
+				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeDelivery']//*[local-name() = 'ShipToTradeParty']//*[local-name() = 'PostalTradeAddress']");
 			}
 		} catch (final Exception e) {
 			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
