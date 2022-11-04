@@ -5,6 +5,7 @@
 - works again in Java 1.8 (#286)
 - updated Jackson https://github.com/ZUGFeRD/mustangproject/pull/293
 - now also running EN16931 checks on Basic, which apparently is also a CIUS 
+- Add getter methods to ZUGFeRDImporter #295
 
 2.5.6
 =======
