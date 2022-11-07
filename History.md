@@ -1,8 +1,14 @@
+2.5.8
+=======
+
+
+- Corrected forgotten --d CLI shortcut
+
 2.5.7
 =======
 2022-11-07
 
-- Import of ZF1 invoices (thanks to Stefan Schmaltz https://github.com/ZUGFeRD/mustangproject/pull/292) 
+- Import of ZF1 invoices (thanks to Stefan Schmaltz https://github.com/ZUGFeRD/mustangproject/pull/292)
 - works again in Java 1.8 (#286)
 - updated Jackson https://github.com/ZUGFeRD/mustangproject/pull/293
 - now also running EN16931 checks on Basic, which apparently is also a CIUS 

@@ -354,7 +354,7 @@ public class Main {
 			options.addOption(new Option("", "out",true, "which output file to write to"));
 			options.addOption(new Option("", "no-notices",false, "suppress non-fatal errors"));
 			options.addOption(new Option("", "logAppend",true, "freeform text to be appended to log messages"));
-			options.addOption(new Option("", "directory",true, "which directory to operate on"));
+			options.addOption(new Option("d", "directory",true, "which directory to operate on"));
 			options.addOption(new Option("i", "ignorefileextension",false, "ignore non-matching file extensions"));
 			options.addOption(new Option("l", "listfromstdin",false, "take list of files from commandline"));
 			boolean optionsRecognized=false;
