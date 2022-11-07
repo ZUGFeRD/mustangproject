@@ -1,5 +1,6 @@
-2.6.0
+2.5.7
 =======
+2022-11-07
 
 - Import of ZF1 invoices (thanks to Stefan Schmaltz https://github.com/ZUGFeRD/mustangproject/pull/292) 
 - works again in Java 1.8 (#286)
