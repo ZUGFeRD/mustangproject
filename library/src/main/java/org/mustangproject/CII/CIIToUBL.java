@@ -8,14 +8,14 @@ import java.io.File;
 import java.io.Serializable;
 
 /***
- * converts a CII XML file to a UBL XML file
+ * converts a Cross Industry Invoice XML file to a UBL XML file
  * thanks to Philip Helger for his library
 */
 public class CIIToUBL {
 	/***
 	 * performs the actual conversion
-	 * @param input
-	 * @param output
+	 * @param input the CII file to convert
+	 * @param output the UBL file to write to
 	 */
    public void convert(File input, File output) {
 	   ErrorList occurred=new ErrorList();

@@ -55,7 +55,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 
 	/***
 	 * BT 132 (issue https://github.com/ZUGFeRD/mustangproject/issues/247)
-	 * @return
+	 * @return the line ID of the order (BT-132)
 	 */
 	default String getBuyerOrderReferencedDocumentLineID() {
 		return null;
@@ -100,7 +100,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 
 	/***
 	 * allows to specify multiple(!) referenced documents along with e.g. their typecodes
-	 * @return
+	 * @return the referenced documents
 	 */
 	default IReferencedDocument[] getReferencedDocuments() {
 		return null;
@@ -134,9 +134,9 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	}
 	
 	/***
-	 * specify allowances amount for the line item total, i.e. after item price is multiplied
-	 * by amount
-	 * @return
+	 * specify allowances amount for the line item total
+	 *
+	 * @return the sum of allowances for this item
 	 */
 	default IZUGFeRDAllowanceCharge[] getItemTotalAllowances() {
 		return null;

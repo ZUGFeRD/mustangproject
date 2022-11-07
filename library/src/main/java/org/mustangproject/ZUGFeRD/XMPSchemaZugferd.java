@@ -83,6 +83,7 @@ public class XMPSchemaZugferd extends XMPSchema {
     /***
 	 * Specify a custom XMP metadata document type
 	 * @param type INVOICE or ORDER
+	 * @return fluent setter
 	 */
 	public XMPSchemaZugferd setType(String type) {
 		setTextPropertyValue("DocumentType", type);

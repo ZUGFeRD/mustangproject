@@ -52,7 +52,7 @@ public class Item implements IZUGFeRDExportableItem {
 
 	/***
 	 * BT 132 (issue https://github.com/ZUGFeRD/mustangproject/issues/247)
-	 * @return
+	 * @return the line ID of the order (BT132)
 	 */
 	@Override
 	public String getBuyerOrderReferencedDocumentLineID() {

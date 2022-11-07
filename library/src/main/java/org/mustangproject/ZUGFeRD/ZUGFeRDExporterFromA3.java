@@ -678,6 +678,9 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	/**
 	 * Returns the AdobePDFSchema from the XMPMetadata if it exists.
 	 * If the overwrite flag is set or no AdobePDFSchema exists in the XMPMetadata, it is created, added and returned.
+	 *
+	 * @param xmp the metadata to attach to
+	 * @return the pdf schema
 	 */
 	protected AdobePDFSchema getAdobePDFSchema(XMPMetadata xmp) {
 		AdobePDFSchema pdf = xmp.getAdobePDFSchema();

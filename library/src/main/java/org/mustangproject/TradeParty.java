@@ -229,7 +229,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	/**
 	 * (optional)
 	 *
-	 * @param debitDetail
+	 * @param debitDetail e.g. containing IBAN and mandate
 	 * @return fluent setter
 	 */
 	public TradeParty addDebitDetails(IZUGFeRDTradeSettlementDebit debitDetail) {

@@ -114,10 +114,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	/***
 	 * returns the UN/CEFACT CII XML for companies(tradeparties), which is actually
 	 * the same for ZF1 (v 2013b) and ZF2 (v 2016b)
-	 * @param party
+	 * @param party any sender, recipient, seller or legal party involved
 	 * @param isSender some attributes are allowed only for senders in certain profiles
 	 * @param isShipToTradeParty some attributes are allowed only for senders or recipients
-	 * @return
+	 * @return CII XML
 	 */
 	protected String getTradePartyAsXML(IZUGFeRDExportableTradeParty party, boolean isSender, boolean isShipToTradeParty) {
 		String xml = "";
@@ -202,9 +202,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 	/***
 	 * returns the XML for a charge or allowance on item level
-	 * @param allowance
-	 * @param item
-	 * @return
+	 * @param allowance the allowance or charge on this item
+	 * @param item the item
+	 * @return CII XML
 	 */
 	protected String getAllowanceChargeStr(IZUGFeRDAllowanceCharge allowance, IAbsoluteValueProvider item) {
 		String percentage = "";
@@ -232,9 +232,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	
 	/***
 	 * returns the XML for a charge or allowance on item total level
-	 * @param allowance
-	 * @param item
-	 * @return
+	 * @param allowance the allowance or charge
+	 * @param item the line
+	 * @return CII XML
 	 */
 	protected String getItemTotalAllowanceChargeStr(IZUGFeRDAllowanceCharge allowance, IAbsoluteValueProvider item) {
 		String percentage = "";
