@@ -25,6 +25,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	protected String taxID = null, vatID = null;
 	protected String ID = null;
 	protected String additionalAddress = null;
+	protected String additionalAddressExtension = null;
 	protected List<BankDetails> bankDetails = new ArrayList<>();
 	protected List<IZUGFeRDTradeSettlementDebit> debitDetails = new ArrayList<>();
 	protected Contact contact = null;
@@ -119,6 +120,9 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 									}
 									if (postal.item(postalChildIndex).getLocalName().equals("LineTwo")) {
 										setAdditionalAddress(postal.item(postalChildIndex).getTextContent());
+									}
+									if (postal.item(postalChildIndex).getLocalName().equals("LineThree")) {
+										setAdditionalAddressExtension(postal.item(postalChildIndex).getTextContent());
 									}
 									if (postal.item(postalChildIndex).getLocalName().equals("CityName")) {
 										setLocation(postal.item(postalChildIndex).getTextContent());
@@ -398,15 +402,53 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	}
 
 
+
 	/***
-	 * additional parts of the address, e.g. which floor.
-	 * Street address will become "lineOne", this will become "lineTwo"
+	 * additional info of the address, e.g. which building or which floor.
+	 * Street address will become "lineOne", this will become "lineTwo".
+	 * (see setAdditionalAddressExtension for "lineThree")
 	 * @param additionalAddress additional address description
 	 * @return fluent setter
 	 */
 	public TradeParty setAdditionalAddress(String additionalAddress) {
 		this.additionalAddress = additionalAddress;
 		return this;
+	}
+
+	/***
+	 * Sets two parts of additional address at once, e.g. which building and which floor
+	 * (if building is not in question which floor can also be set with the first part only :-))
+	 *
+	 * @param additionalAddress1 first part of additional info, e.g. "Rear building"
+	 * @param additionalAddress2 second part of additional address info, e.g. "2nd floor"
+	 * @return fluent setter
+	 */
+	public TradeParty setAdditionalAddress(String additionalAddress1, String additionalAddress2) {
+		this.additionalAddress = additionalAddress1;
+		this.additionalAddressExtension = additionalAddress2;
+		return this;
+	}
+
+	/***
+	 * Sets even advanced additional address information,
+	 * e.g. which floor (if LineTwo has already been used e.g. for which building)
+	 * This could sometimes be BT-165?
+	 *
+	 * @param additionalAddress2
+	 * @return fluent setter
+	 */
+	public TradeParty setAdditionalAddressExtension(String additionalAddress2) {
+		this.additionalAddressExtension = additionalAddress2;
+		return this;
+	}
+
+	/***
+	 * Returns even advanced additional address information,
+	 * e.g. which floor (if LineTwo=setAdditionalAddress has already been used e.g. for which building)
+	 * @return lineThree
+	 */
+	public String getAdditionalAddressExtension() {
+		return this.additionalAddressExtension;
 	}
 
 

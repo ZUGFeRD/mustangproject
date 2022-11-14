@@ -177,6 +177,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml += "<ram:LineTwo>" + XMLTools.encodeXML(party.getAdditionalAddress())
 					+ "</ram:LineTwo>";
 		}
+		if (party.getAdditionalAddressExtension() != null) {
+			xml += "<ram:LineThree>" + XMLTools.encodeXML(party.getAdditionalAddressExtension())
+					+ "</ram:LineThree>";
+		}
 		xml += "<ram:CityName>" + XMLTools.encodeXML(party.getLocation())
 				+ "</ram:CityName>"
 				+ "<ram:CountryID>" + XMLTools.encodeXML(party.getCountry())

@@ -183,6 +183,17 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				.setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number);
 //.addItem(new Item(new Product("Testprodukt","","C62",BigDecimal.ZERO),amount,new BigDecimal(1.0)))
 		zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]"));
+
+		xpr = xpath.compile("//*[local-name()=\"BuyerReference\"]");
+		String buyerReference = null;
+		totalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (totalNodes.getLength() > 0) {
+			buyerReference = totalNodes.item(0).getTextContent();
+		}
+		if (buyerReference!=null) {
+			zpp.setReferenceNumber(buyerReference);
+		}
+
 		xpr = xpath.compile("//*[local-name()=\"IncludedSupplyChainTradeLineItem\"]");
 		NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 

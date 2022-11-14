@@ -1,7 +1,8 @@
 2.5.8
 =======
 
-
+- invoiceimporter to parse BuyerReference
+- support LineThree in TradeParty (BT-165?)
 - Corrected forgotten --d CLI shortcut
 
 2.5.7

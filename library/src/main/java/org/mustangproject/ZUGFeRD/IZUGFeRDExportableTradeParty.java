@@ -119,10 +119,22 @@ public interface IZUGFeRDExportableTradeParty {
 
 	/**
 	 * returns additional address information which is display in xml tag "LineTwo"
-	 * 
+	 * e.g. "Rear building"
+	 *
 	 * @return additional address information
 	 */
 	default String getAdditionalAddress() {
+		return null;
+	}
+
+	/**
+	 * returns additional address information which is display in xml tag "LineThree"
+	 * e.g. "Second floor" if LineTwo is already used, e.g. "Rear Building".
+	 * This attribute could sometimes be BT-165?
+	 *
+	 * @return additional address information
+	 */
+	default String getAdditionalAddressExtension() {
 		return null;
 	}
 

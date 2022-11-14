@@ -215,8 +215,8 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals(zi.getForeignReference(), getNumber());
 		assertEquals(zi.getBuyerTradePartyAddress().getPostcodeCode(), "88802");
 		assertEquals(zi.getBuyerTradePartyAddress().getLineOne(), "Bahnstr. 42");
-		assertEquals(zi.getBuyerTradePartyAddress().getLineTwo(), null);
-		assertEquals(zi.getBuyerTradePartyAddress().getLineThree(), null);
+		assertEquals(zi.getBuyerTradePartyAddress().getLineTwo(), "Hinterhaus");
+		assertEquals(zi.getBuyerTradePartyAddress().getLineThree(), "Zweiter Stock");
 		assertEquals(zi.getBuyerTradePartyAddress().getCountrySubDivisionName(), null);
 		assertEquals(zi.getBuyerTradePartyAddress().getCountryID(), "DE");
 		assertEquals(zi.getBuyerTradePartyAddress().getCityName(), "Spielkreis");

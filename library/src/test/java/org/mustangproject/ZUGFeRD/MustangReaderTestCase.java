@@ -77,6 +77,16 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 		}
 
 		@Override
+		public String getAdditionalAddress() {
+			return "Hinterhaus";
+		}
+
+		@Override
+		public String getAdditionalAddressExtension() {
+			return "Zweiter Stock";
+		}
+
+		@Override
 		public String getVATID() {
 			return "DE999999999";
 		}
