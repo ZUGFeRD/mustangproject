@@ -17,6 +17,6 @@ jobs:
       with:
         distribution: 'adopt' # for latest JDKs use temurin https://blog.adoptopenjdk.net/2021/08/goodbye-adoptopenjdk-hello-adoptium/
         java-version: '8'
-        cache: 'maven'
+        cache: 'maven' #cache/restore any dependencies to improve the workflow execution time
     - name: Build with Maven
       run: mvn -B package --file pom.xml
