@@ -13,9 +13,9 @@
    <version>2.5.8-SNAPSHOT</version>
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
-      <maven.compiler.source>1.8</maven.compiler.source>
-      <maven.compiler.target>1.8</maven.compiler.target>
+      <maven.compiler.compilerVersion>8</maven.compiler.compilerVersion>
+      <maven.compiler.source>8</maven.compiler.source>
+      <maven.compiler.target>8</maven.compiler.target>
    </properties>
    <dependencies>
       <dependency>
@@ -101,8 +101,8 @@
             <configuration>
                <toolchains>
                   <jdk>
-                     <version>1.8</version>
-                     <vendor>openjdk</vendor>
+                     <version>8</version>
+                     <vendor>adopt</vendor>
                   </jdk>
                </toolchains>
             </configuration>

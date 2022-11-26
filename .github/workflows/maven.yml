@@ -1,0 +1,22 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+# For setup-java see: https://github.com/actions/setup-java#Usage 
+
+name: Java CI with Maven
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-java@v3 # the log states the default ~/.m2/toolchains.xml is being created pointing to the JDK
+      with:
+        distribution: 'adopt' # for latest JDKs use temurin https://blog.adoptopenjdk.net/2021/08/goodbye-adoptopenjdk-hello-adoptium/
+        java-version: '8'
+        cache: 'maven' #cache/restore any dependencies to improve the workflow execution time
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml

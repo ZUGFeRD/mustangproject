@@ -45,9 +45,9 @@
 		<github.global.server>github</github.global.server>
 		<additionalparam>-Xdoclint:none</additionalparam>
 		<!-- Skip error check for javadoc -->
-		<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.compilerVersion>8</maven.compiler.compilerVersion>
+		<maven.compiler.source>8</maven.compiler.source>
+		<maven.compiler.target>8</maven.compiler.target>
 		<maven.deploy.skip>true</maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
 
 	</properties>
@@ -138,8 +138,8 @@
 					<!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
                         mvn clean compile assembly:single -->
 					<!-- or whatever version you use -->
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>8</source>
+					<target>8</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -156,8 +156,8 @@
 				<configuration>
 					<toolchains>
 						<jdk>
-							<version>1.8</version>
-							<vendor>openjdk</vendor>
+							<version>8</version>
+							<vendor>adopt</vendor>
 						</jdk>
 					</toolchains>
 				</configuration>

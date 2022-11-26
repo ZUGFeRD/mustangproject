@@ -192,8 +192,8 @@
                         <configuration>
                             <toolchains>
                                 <jdk>
-                                    <version>1.8</version>
-                                    <vendor>openjdk</vendor>
+                                    <version>8</version>
+                                    <vendor>adopt</vendor>
                                 </jdk>
                             </toolchains>
                         </configuration>
