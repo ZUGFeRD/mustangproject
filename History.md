@@ -1,9 +1,11 @@
-2.5.8
+2.6.0
 =======
 
 - invoiceimporter to parse BuyerReference
 - support LineThree in TradeParty (BT-165?)
 - Corrected forgotten --d CLI shortcut
+- No uber jar #297
+- automated server tests 
 
 2.5.7
 =======
