@@ -166,21 +166,11 @@ In .m2 also need a toolchains.xml which defines a Sun JDK 1.8 target like the fo
   <toolchain>
     <type>jdk</type>
     <provides>
-      <version>1.8</version>
-      <vendor>sun</vendor>
+      <version>8</version>
+      <vendor>adopt</vendor>
     </provides>
     <configuration>
-      <jdkHome>C:\Program Files\Java\jdk1.8.0_341</jdkHome>
-    </configuration>
-  </toolchain>
-  <toolchain>
-    <type>jdk</type>
-    <provides>
-      <version>18</version>
-      <vendor>zulu</vendor>
-    </provides>
-    <configuration>
-      <jdkHome>C:\Program Files\Zulu\zulu-18\</jdkHome>
+      <jdkHome>C:\Program Files\Eclipse Adoptium\jdk-8.0.352.8-hotspot</jdkHome>
     </configuration>
   </toolchain>
  
