@@ -265,10 +265,10 @@
                         </goals>
 
                         <configuration>
-                            <outputDirectory>${basedir}/src/main/resources/xslt/ZF_220/</outputDirectory>
+                            <outputDirectory>${basedir}/src/main/resources/xslt/ZF_221/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/src/main/resources/schematron/ZF_220/</directory>
+                                    <directory>${basedir}/src/main/resources/schematron/ZF_221/</directory>
                                     <includes>
                                         <include>**/*.xml</include>
                                     </includes>
