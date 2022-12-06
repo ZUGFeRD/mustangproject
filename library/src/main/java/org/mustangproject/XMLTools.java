@@ -1,22 +1,19 @@
 package org.mustangproject;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.dom4j.io.XMLWriter;
-import org.mustangproject.ZUGFeRD.ZUGFeRD2PullProvider;
 
 public class XMLTools extends XMLWriter {
-	public String escapeAttributeEntities(String s) {
+	@Override
+  public String escapeAttributeEntities(String s) {
 		return super.escapeAttributeEntities(s);
 	}
 
-	public String escapeElementEntities(String s) {
+	@Override
+  public String escapeElementEntities(String s) {
 		return super.escapeElementEntities(s);
 
 	}
@@ -44,8 +41,11 @@ public class XMLTools extends XMLWriter {
 
 
 	public static String encodeXML(CharSequence s) {
-		StringBuilder sb = new StringBuilder();
-		int len = s.length();
+    if (s == null) {
+      return "";
+    }
+		final StringBuilder sb = new StringBuilder();
+		final int len = s.length();
 		for (int i = 0; i < len; i++) {
 			int c = s.charAt(i);
 			if (c >= 0xd800 && c <= 0xdbff && i + 1 < len) {
@@ -126,7 +126,7 @@ public class XMLTools extends XMLWriter {
 	 * @return the byte array without bom
 	 */
 	public static byte[] removeBOM(byte[] zugferdRaw) {
-		byte[] zugferdData;
+		final byte[] zugferdData;
 		if ((zugferdRaw[0] == (byte) 0xEF) && (zugferdRaw[1] == (byte) 0xBB) && (zugferdRaw[2] == (byte) 0xBF)) {
 			// I don't like BOMs, lets remove it
 			zugferdData = new byte[zugferdRaw.length - 3];
