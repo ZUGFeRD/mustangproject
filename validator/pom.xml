@@ -82,7 +82,7 @@
         <dependency>
             <groupId>org.verapdf</groupId>
             <artifactId>validation-model</artifactId>
-            <version>1.16.1</version>
+            <version>1.22.2</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.helger/ph-schematron -->
         <dependency>

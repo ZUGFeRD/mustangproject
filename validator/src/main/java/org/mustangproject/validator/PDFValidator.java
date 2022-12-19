@@ -32,7 +32,7 @@ import org.verapdf.features.FeatureExtractorConfig;
 import org.verapdf.features.FeatureFactory;
 import org.verapdf.metadata.fixer.FixerFactory;
 import org.verapdf.metadata.fixer.MetadataFixerConfig;
-import org.verapdf.pdfa.VeraGreenfieldFoundryProvider;
+import org.verapdf.gf.foundry.VeraGreenfieldFoundryProvider;
 import org.verapdf.pdfa.validation.validators.ValidatorConfig;
 import org.verapdf.pdfa.validation.validators.ValidatorFactory;
 import org.verapdf.processor.BatchProcessor;
@@ -111,9 +111,8 @@ public class PDFValidator extends Validator {
 			final List<File> files = new ArrayList<>();
 			files.add(new File(pdfFilename));
 			// starting the processor
-			processor.process(files, ProcessorFactory.getHandler(FormatOption.MRR, true, reportStream, 100,
-					processorConfig.getValidatorConfig().isRecordPasses()));
-
+                        processor.process(files, ProcessorFactory.getHandler(FormatOption.MRR, true, reportStream,
+                                                        processorConfig.getValidatorConfig().isRecordPasses()));                        
 			pdfReport = reportStream.toString("utf-8").replaceAll("<\\?xml version=\"1\\.0\" encoding=\"utf-8\"\\?>",
 					"");
 		} catch (final VeraPDFException e) {
