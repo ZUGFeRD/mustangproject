@@ -6,6 +6,11 @@
 - Corrected forgotten --d CLI shortcut
 - No uber jar #297
 - automated server tests 
+- prevent nullpointerexception https://github.com/ZUGFeRD/mustangproject/pull/302  thanks to weclapp-dev
+- lines no longer included in basic-wl and minimum
+- due date and delivery date no longer mandatory for credit notes
+- Allow foreign limited addresses, e.g. allow Parties withpout postal addresses/postcodes
+- Allow invoices in minimum profile e.g. dont use applicabletradetax, linetotalamount, paymentreference etc in Minimum profile
 
 2.5.7
 =======
