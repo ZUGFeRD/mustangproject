@@ -51,20 +51,22 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 		try (InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile("Minimum").load(SOURCE_PDF)) {
-			//https://stackoverflow.com/questions/72450066/creating-a-min-basic-and-basic-wl-factur-x-using-mustang
+			/***
+			 * this is a classical example of a french invoice (very low profile, siret number) and an attempt to answer stackoverflow (!)
+			 * https://stackoverflow.com/questions/72450066/creating-a-min-basic-and-basic-wl-factur-x-using-mustang
+			 */
+
+			TradeParty recipient = new TradeParty().setName("Client").setCountry("FR");
+			String siret="0815";
+			String sirenTypeCode="0002";
+			recipient.setLegalOrganisation(new LegalOrganisation(siret,sirenTypeCode));
 			Invoice i = new Invoice()
 					.setIssueDate(new Date())
-/*					.setDueDate(new Date())
-					.setDetailedDeliveryPeriod(new Date(), new Date())
-					.setDeliveryDate(new Date())*/
 					.setSender(
 							new TradeParty().setName(ownOrgName).setCountry("FR")
 									.addBankDetails(new BankDetails(ownIBAN, ownBIC)))
-					.setRecipient(
-							new TradeParty().setName("Client").setCountry("FR"))
+					.setRecipient(recipient)
 					.setNumber(ownNumber)
-					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal(123), new BigDecimal(1)))
-					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal(123), new BigDecimal(1)))
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal(123), new BigDecimal(1)))
 					.setCreditNote();
 			ze.setTransaction(i);
@@ -76,17 +78,17 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 //			assertFalse(pdfContent.indexOf("urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#") == -1);
 
 		} catch (IOException e) {
-			fail("IOException should not happen in testZExport");
+			fail("IOException should not happen in testMinimumExport");
 		}
 
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF_FX_MINIMUM);
 
 		// Reading ZUGFeRD
-		assertEquals(zi.getAmount(), "439.11");
+		assertEquals("146.37",zi.getAmount());
 //		assertEquals(zi.getBIC(), ownBIC);
 //		assertEquals(zi.getIBAN(), ownIBAN);
-		assertEquals(zi.getHolder(), ownOrgName);
+		assertEquals(ownOrgName, zi.getHolder());
 //		assertEquals(zi.getForeignReference(), ownNumber);
 
 
