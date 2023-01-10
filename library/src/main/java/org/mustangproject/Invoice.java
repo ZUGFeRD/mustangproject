@@ -52,6 +52,7 @@ public class Invoice implements IExportableTransaction {
 	protected String contractReferencedDocument = null;
 	protected ArrayList<FileAttachment> xmlEmbeddedFiles=null;
 
+	protected BigDecimal totalPrepaidAmount = null;
 	protected Date detailedDeliveryDateStart = null;
 	protected Date detailedDeliveryPeriodEnd = null;
 
@@ -271,6 +272,22 @@ public class Invoice implements IExportableTransaction {
   @Override
 	public String getBuyerOrderReferencedDocumentIssueDateTime() {
 		return buyerOrderReferencedDocumentIssueDateTime;
+	}
+
+
+	/***
+	 * allow to set a amount which has already been paid
+	 * @param prepaid null is possible to omit
+	 * @return fluent setter
+	 */
+	public Invoice setTotalPrepaidAmount(BigDecimal prepaid) {
+		totalPrepaidAmount=prepaid;
+		return this;
+	}
+
+	@Override
+	public BigDecimal getTotalPrepaidAmount() {
+		return totalPrepaidAmount;
 	}
 
 	/***

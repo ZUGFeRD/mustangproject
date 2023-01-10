@@ -1,5 +1,6 @@
 - allow Bank credentials without BIC
 - allow minimum profile without delivery date
+- allow prepaid amount in invoice class
 
 2.6.0 "Joyeux Noël"
 =======
