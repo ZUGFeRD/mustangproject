@@ -72,13 +72,16 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 				+ "<ram:PayeePartyCreditorFinancialAccount>"
 				+ "<ram:IBANID>" + XMLTools.encodeXML(getOwnIBAN()) + "</ram:IBANID>";
 		xml+= accountNameStr;
-		xml+= "</ram:PayeePartyCreditorFinancialAccount>"
-				+ "<ram:PayeeSpecifiedCreditorFinancialInstitution>"
-				+ "<ram:BICID>" + XMLTools.encodeXML(getOwnBIC()) + "</ram:BICID>"
-				// + " <ram:Name>"+trans.getOwnBankName()+"</ram:Name>"
-				//
-				+ "</ram:PayeeSpecifiedCreditorFinancialInstitution>"
-				+ "</ram:SpecifiedTradeSettlementPaymentMeans>";
+		xml+= "</ram:PayeePartyCreditorFinancialAccount>";
+		if (getOwnBIC()!=null) {
+			xml+= "<ram:PayeeSpecifiedCreditorFinancialInstitution>"
+					+ "<ram:BICID>" + XMLTools.encodeXML(getOwnBIC()) + "</ram:BICID>"
+					// + " <ram:Name>"+trans.getOwnBankName()+"</ram:Name>"
+					//
+					+ "</ram:PayeeSpecifiedCreditorFinancialInstitution>"
+					+ "</ram:SpecifiedTradeSettlementPaymentMeans>";
+
+		}
 		return xml;
 	}
 	

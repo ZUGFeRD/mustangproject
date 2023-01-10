@@ -13,12 +13,19 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	/**
 	 * BIC, I believe it's optional
 	 */
-	protected String BIC;
+	protected String BIC=null;
 	/**
 	 * the "name" of the bank account (holder)
 	 */
 	protected String accountName=null;
 
+	/***
+	 * constructor for IBAN only :-)
+	 * @param IBAN the IBAN as string
+	 */
+	public BankDetails(String IBAN) {
+		this.IBAN = IBAN;
+	}
 	/***
 	 * constructor for normal use :-)
 	 * @param IBAN the IBAN as string

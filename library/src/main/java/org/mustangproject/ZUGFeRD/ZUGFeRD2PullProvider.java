@@ -563,7 +563,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml += "            </ram:ActualDeliverySupplyChainEvent>";
 
 		} else {
-			if (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE) {
+			if ((trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)&&(getProfile() != Profiles.getByName("Minimum"))) {
 				throw new IllegalStateException("No delivery date provided");
 			}
 		}

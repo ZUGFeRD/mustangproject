@@ -1,3 +1,6 @@
+- allow Bank credentials without BIC
+- allow minimum profile without delivery date
+
 2.6.0 "Joyeux Noël"
 =======
 2022-12-23
