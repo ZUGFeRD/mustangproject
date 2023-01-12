@@ -1,6 +1,7 @@
 - allow Bank credentials without BIC
 - allow minimum profile without delivery date
 - allow prepaid amount in invoice class
+- toolchain.xml now only required on `mvn release:release` not already on `mvn package`
 
 2.6.0 "Joyeux Noël"
 =======

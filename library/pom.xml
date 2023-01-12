@@ -157,26 +157,6 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-toolchains-plugin</artifactId>
-				<version>3.1.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>toolchain</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<toolchains>
-						<jdk>
-							<version>8</version>
-							<vendor>adopt</vendor>
-						</jdk>
-					</toolchains>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.2.1</version>
 				<configuration>
@@ -241,6 +221,41 @@
 	</build>
 
 
+	<profiles>
+		<profile> <!-- enforce building binaries with Java 1.8 for Maven Central, otherwise using them e.g. as jar will throw a version exception-->
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-toolchains-plugin</artifactId>
+						<version>3.1.0</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>toolchain</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<toolchains>
+								<jdk>
+									<version>8</version>
+									<vendor>adopt</vendor>
+								</jdk>
+							</toolchains>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<mailingLists>
 		<mailingList>
 			<name>User List</name>

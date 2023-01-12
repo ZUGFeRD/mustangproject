@@ -102,26 +102,6 @@
          </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-toolchains-plugin</artifactId>
-            <version>3.1.0</version>
-            <executions>
-               <execution>
-                  <goals>
-                     <goal>toolchain</goal>
-                  </goals>
-               </execution>
-            </executions>
-            <configuration>
-               <toolchains>
-                  <jdk>
-                     <version>8</version>
-                     <vendor>adopt</vendor>
-                  </jdk>
-               </toolchains>
-            </configuration>
-         </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <version>2.3.2</version>
             <configuration>
@@ -199,6 +179,43 @@
          </plugin>
       </plugins>
    </build>
+   <profiles>
+      <profile> <!-- enforce building binaries with Java 1.8 for Maven Central, otherwise using them e.g. as jar will
+           throw a version exception, triggered automatically on mvn release:release (hopefully) and requires an according
+           ~/.m2/toolchains.xml file, @see doc/development_documentation.md -->
+         <id>release-sign-artifacts</id>
+         <activation>
+            <property>
+               <name>performRelease</name>
+               <value>true</value>
+            </property>
+         </activation>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-toolchains-plugin</artifactId>
+                  <version>3.1.0</version>
+                  <executions>
+                     <execution>
+                        <goals>
+                           <goal>toolchain</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+                  <configuration>
+                     <toolchains>
+                        <jdk>
+                           <version>8</version>
+                           <vendor>adopt</vendor>
+                        </jdk>
+                     </toolchains>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
+      </profile>
+   </profiles>
    <licenses>
       <license>
          <name>Apache License, Version 2.0</name>
