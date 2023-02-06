@@ -468,9 +468,11 @@ public class Main {
 		String totalResult="valid";
 		if (!zfWalk.getResult()) {
 			totalResult="invalid";
+			System.exit(-1);
 		}
 
 		System.out.println("Overall test result: "+totalResult);
+
 		return true;
 	}
 
