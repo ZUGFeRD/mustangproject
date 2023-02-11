@@ -282,7 +282,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 
 		if ((paymentTermsDescription == null) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CORRECTEDINVOICE) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)) {
-			paymentTermsDescription = "Zahlbar ohne Abzug bis/Please remit until " + germanDateFormat.format(trans.getDueDate());
+			paymentTermsDescription = "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
 
 		}
 
@@ -297,7 +297,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		String rebateAgreement = "";
 		if (trans.rebateAgreementExists()) {
 			rebateAgreement = "<ram:IncludedNote><ram:Content>"
-					+ "Es bestehen Rabatt- und Bonusvereinbarungen/Existing allowance/bonus agreements</ram:Content>"
+					+ "Es bestehen Rabatt- und Bonusvereinbarungen.</ram:Content>"
 					+ "<ram:SubjectCode>AAK</ram:SubjectCode></ram:IncludedNote>";
 		}
 

@@ -27,10 +27,10 @@ public interface IZUGFeRDTradeSettlementDebit extends IZUGFeRDTradeSettlement {
 	@Override
 	default String getSettlementXML() {
 		
-	//30=generic bank transfer, 59=sepa transfer
+	
 		
 		String xml = "<ram:SpecifiedTradeSettlementPaymentMeans>"
-				+ "<ram:TypeCode>30</ram:TypeCode>"
+				+ "<ram:TypeCode>59</ram:TypeCode>"
 				+ "<ram:PayerPartyDebtorFinancialAccount>"
       		    + "<ram:IBANID>"+XMLTools.encodeXML(getIBAN())+"</ram:IBANID>"
       		    + "</ram:PayerPartyDebtorFinancialAccount>";
