@@ -308,7 +308,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 		String resultXML=zi.getUTF8();
-		assertTrue(resultXML.contains("<ram:TypeCode>30</ram:TypeCode>"));
+		assertTrue(resultXML.contains("<ram:TypeCode>59</ram:TypeCode>"));
 		assertTrue(resultXML.contains("<ram:ShipToTradeParty>"));
 		assertTrue(resultXML.contains("<ram:IBANID>DE540815</ram:IBANID>"));
 		assertTrue(resultXML.contains("<ram:ApplicableTradePaymentDiscountTerms"));
