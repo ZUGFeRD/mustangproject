@@ -1,3 +1,7 @@
+2.6.1
+=======
+2023-02-13
+
 - return error code not only on validation but also on recursive directory validation
 - allow Bank credentials without BIC
 - allow minimum profile without delivery date
