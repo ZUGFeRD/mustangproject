@@ -7,6 +7,7 @@
 - allow minimum profile without delivery date
 - allow prepaid amount in invoice class
 - toolchain.xml now only required on `mvn release:release` not already on `mvn package`
+- upgraded dependencies jackson-databind from 2.13.4.1 to 2.14.2 and xmlunit-assertj from 2.9.0 to 2.9.1
 
 2.6.0 "Joyeux Noël"
 =======
