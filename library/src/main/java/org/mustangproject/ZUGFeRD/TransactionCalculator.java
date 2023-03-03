@@ -164,13 +164,14 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	 */
 	protected HashMap<BigDecimal, VATAmount> getVATPercentAmountMap() {
 		HashMap<BigDecimal, VATAmount> hm = new HashMap<>();
+		final String vatDueDateTypeCode = trans.getVATDueDateTypeCode();
 
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			BigDecimal percent = currentItem.getProduct().getVATPercent();
 			if (percent != null) {
 				LineCalculator lc = new LineCalculator(currentItem);
 				VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(),
-						currentItem.getProduct().getTaxCategoryCode());
+						currentItem.getProduct().getTaxCategoryCode(), vatDueDateTypeCode);
 				VATAmount current = hm.get(percent.stripTrailingZeros());
 				if (current == null) {
 					hm.put(percent.stripTrailingZeros(), itemVATAmount);
@@ -188,7 +189,8 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 					VATAmount theAmount = hm.get(taxPercent.stripTrailingZeros());
 					if (theAmount == null) {
 						theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO,
-								currentCharge.getCategoryCode() != null ? currentCharge.getCategoryCode() : "S");
+								currentCharge.getCategoryCode() != null ? currentCharge.getCategoryCode() : "S",
+								vatDueDateTypeCode);
 					}
 					theAmount.setBasis(theAmount.getBasis().add(currentCharge.getTotalAmount(this)));
 					BigDecimal factor = taxPercent.divide(new BigDecimal(100));
@@ -205,7 +207,8 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 					VATAmount theAmount = hm.get(taxPercent.stripTrailingZeros());
 					if (theAmount == null) {
 						theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO,
-								currentAllowance.getCategoryCode() != null ? currentAllowance.getCategoryCode() : "S");
+								currentAllowance.getCategoryCode() != null ? currentAllowance.getCategoryCode() : "S",
+								vatDueDateTypeCode);
 					}
 					theAmount.setBasis(theAmount.getBasis().subtract(currentAllowance.getTotalAmount(this)));
 					BigDecimal factor = taxPercent.divide(new BigDecimal(100));

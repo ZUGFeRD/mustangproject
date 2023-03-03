@@ -63,6 +63,7 @@ public class Invoice implements IExportableTransaction {
 	protected String specifiedProcuringProjectID = null;
 	protected String specifiedProcuringProjectName = null;
 	protected String despatchAdviceReferencedDocumentID = null;
+	protected String vatDueDateTypeCode = null;
 
 	public Invoice() {
 		ZFItems = new ArrayList<>();
@@ -700,6 +701,20 @@ public class Invoice implements IExportableTransaction {
 
 	public Invoice setSpecifiedProcuringProjectName(String specifiedProcuringProjectName) {
 		this.specifiedProcuringProjectName = specifiedProcuringProjectName;
+		return this;
+	}
+
+	@Override
+	public String getVATDueDateTypeCode() {
+		return vatDueDateTypeCode;
+	}
+
+	/**
+	 * Decide when the VAT should be collected.
+	 * @param vatDueDateTypeCode use EventTimeCodeTypeConstants
+	 */
+	public Invoice setVATDueDateTypeCode(String vatDueDateTypeCode) {
+		this.vatDueDateTypeCode = vatDueDateTypeCode;
 		return this;
 	}
 

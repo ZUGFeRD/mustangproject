@@ -618,6 +618,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			final VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			if (amount != null) {
 				final String amountCategoryCode = amount.getCategoryCode();
+				final String amountDueDateTypeCode = amount.getDueDateTypeCode();
 				final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(amountCategoryCode);
 				if (getProfile() != Profiles.getByName("Minimum")) {
 
@@ -628,6 +629,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 							+ (displayExemptionReason ? exemptionReason : "")
 							+ "<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>" // currencyID=\"EUR\"
 							+ "<ram:CategoryCode>" + amountCategoryCode + "</ram:CategoryCode>"
+							+ (amountDueDateTypeCode != null ? "<ram:DueDateTypeCode>" + amountDueDateTypeCode + "</ram:DueDateTypeCode>" : "")
 							+ "<ram:RateApplicablePercent>"
 							+ vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent></ram:ApplicableTradeTax>";
 				}

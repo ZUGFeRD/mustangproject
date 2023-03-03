@@ -497,4 +497,8 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	default String getVATDueDateTypeCode() {
+		return null;
+	}
+
 }
