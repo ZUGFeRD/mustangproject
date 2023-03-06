@@ -228,7 +228,7 @@ public class LibraryTest extends ResourceCase {
 	 * automatically test the xrechnung
 	 */
 	public void testOXValidationEdge() {
-		File tempFile = new File("../library/target/testout-OX-Edge.pdf");
+		File tempFile = new File("../library/target/testout-OX-edge.pdf");
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
 
 		String res = zfv.validate(tempFile.getAbsolutePath());
