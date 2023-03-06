@@ -33,6 +33,8 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
 import junit.framework.TestCase;
+
+import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
 import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
@@ -390,7 +392,7 @@ public class ZF2PushTest extends TestCase {
 						.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(16)).addGlobalID(gtin), price, new BigDecimal(1.0)).addReferencedLineID("xxx").addNote("item level 1/1").addAllowance(new Allowance(new BigDecimal(0.02)).setReason("item discount").setTaxPercent(new BigDecimal(16))).setDetailedDeliveryPeriod(sdf.parse("2020-01-13"), sdf.parse("2020-01-15")))
 						.addCharge(new Charge(new BigDecimal(0.5)).setReason("quick delivery charge").setTaxPercent(new BigDecimal(16)))
 						.addAllowance(new Allowance(new BigDecimal(0.2)).setReason("discount").setTaxPercent(new BigDecimal(16)))
-						.setDeliveryDate(sdf.parse("2020-11-02")).setOwnVATID("DE0815").setNumber(number)
+						.setDeliveryDate(sdf.parse("2020-11-02")).setOwnVATID("DE0815").setNumber(number).setVATDueDateTypeCode(EventTimeCodeTypeConstants.PAYMENT_DATE)
 				);
 			} catch (ParseException e) {
 				e.printStackTrace();
@@ -429,6 +431,8 @@ public class ZF2PushTest extends TestCase {
 		assertFalse(zi.getUTF8().contains("DE47110")); // but not the VAT ID of the shiptotradeparty
 		assertTrue(zi.getUTF8().contains("document level 2/2"));
 		assertFalse(zi.getUTF8().contains("++49555123456")); // in profile EN16931 contact fax number is not allowed
+		assertThat(zi.getUTF8()).valueByXPath("//*[local-name()='ApplicableTradeTax']/*[local-name()='DueDateTypeCode']").asString()
+				.isEqualTo(EventTimeCodeTypeConstants.PAYMENT_DATE);
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_PUSHEDGE);
 		try {

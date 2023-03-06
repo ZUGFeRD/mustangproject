@@ -271,6 +271,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 			final VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			if (amount != null) {
 				final String amountCategoryCode = amount.getCategoryCode();
+				final String amountDueDateTypeCode = amount.getDueDateTypeCode();
 				final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(amountCategoryCode);
 				xml += "<ram:ApplicableTradeTax>"
 						+ "<ram:CalculatedAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(amount.getCalculated())
@@ -279,6 +280,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 						+ (displayExemptionReason ? exemptionReason : "")
 						+ "<ram:BasisAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>" // currencyID=\"EUR\"
 						+ "<ram:CategoryCode>" + amount.getCategoryCode() + "</ram:CategoryCode>"
+						+ (amountDueDateTypeCode != null ? "<ram:DueDateTypeCode>" + amountDueDateTypeCode + "</ram:DueDateTypeCode>" : "")
 						+ "<ram:ApplicablePercent>" + vatFormat(currentTaxPercent)
 						+ "</ram:ApplicablePercent></ram:ApplicableTradeTax>";
 			}
