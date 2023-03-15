@@ -1,3 +1,12 @@
+2.6.2
+=======
+
+- corrected linux build, fixes Github action
+- Issue 308: (be able to) define when VAT collection become applicable #309
+- upgraded CEN schematron to v1.3.9
+- remove logback.xml in some cases PR #311
+
+
 2.6.1
 =======
 2023-02-13
