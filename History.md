@@ -5,6 +5,7 @@
 - Issue 308: (be able to) define when VAT collection become applicable #309
 - upgraded CEN schematron to v1.3.9
 - remove logback.xml in some cases PR #311
+- upgrade XRechnung to 2.3 both in default creation+validator
 
 
 2.6.1

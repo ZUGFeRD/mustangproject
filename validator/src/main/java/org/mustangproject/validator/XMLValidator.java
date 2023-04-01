@@ -186,7 +186,7 @@ public class XMLValidator extends Validator {
 				boolean isEN16931 = false;
 				boolean isExtended = false;
 				boolean isXRechnung = false;
-				String currentZFVersionDir="ZF_221";
+				String currentZFVersionDir = "ZF_221";
 
 				String xsltFilename = null;
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:extended,
@@ -230,20 +230,20 @@ public class XMLValidator extends Validator {
 					}
 					if (isMiniumum) {
 						LOGGER.debug("is Minimum");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir+"/MINIMUM/FACTUR-X_MINIMUM.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/"+currentZFVersionDir+"/FACTUR-X_MINIMUM.xslt";
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/MINIMUM/FACTUR-X_MINIMUM.xsd", 18, EPart.fx);
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_MINIMUM.xslt";
 					} else if (isBasicWithoutLines) {
 						LOGGER.debug("is Basic/WL");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir+"/BASIC-WL/FACTUR-X_BASIC-WL.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/"+currentZFVersionDir+"/FACTUR-X_BASIC-WL.xslt";
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/BASIC-WL/FACTUR-X_BASIC-WL.xsd", 18, EPart.fx);
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_BASIC-WL.xslt";
 					} else if (isBasic) {
 						LOGGER.debug("is Basic");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir+"/BASIC/FACTUR-X_BASIC.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/"+currentZFVersionDir+"/FACTUR-X_BASIC.xslt";
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/BASIC/FACTUR-X_BASIC.xsd", 18, EPart.fx);
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_BASIC.xslt";
 					} else if (isEN16931) {
 						LOGGER.debug("is EN16931");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir+"/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/"+currentZFVersionDir+"/FACTUR-X_EN16931.xslt";
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_EN16931.xslt";
 					} else if (isXRechnung) {
 						LOGGER.debug("is XRechnung");
 						/*
@@ -251,12 +251,12 @@ public class XMLValidator extends Validator {
 						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.xslt=schematron also has to pass
 						* */
 						//validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/"+currentZFVersionDir+"/FACTUR-X_EN16931.xslt";
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_EN16931.xslt";
 						XrechnungSeverity = ESeverity.error;
 					} else if (isExtended) {
 						LOGGER.debug("is EXTENDED");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir+"/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/"+currentZFVersionDir+"/FACTUR-X_EXTENDED.xslt";
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_EXTENDED.xslt";
 					}
 
 					// takes around 10 Seconds. //
@@ -374,11 +374,12 @@ public class XMLValidator extends Validator {
 			// urn:cen.eu:en16931:2017#compliant#urn:xoev-dede:kosit:standard:xrechnung_2.0#conformant#urn:xoev-de:kosit:extension:xrechnung_2.0
 			validateSchematron(xml, "/xslt/XR_20/XRechnung-CII-validation.xslt", 27, errorImpact);
 		} else if (xml.contains(":xrechnung_2.1")) { // This is the default check which is also run on en16931 files to generate notices.
-			// As of the next version this should probably if (xml.contains(":xrechnung_2.1"))
 			validateSchematron(xml, "/xslt/XR_21/XRechnung-CII-validation.xslt", 27, errorImpact);
-		} else { // This is the default check which is also run on en16931 files to generate notices.
-			// As of the next version this should probably if (xml.contains(":xrechnung_2.2"))
+		} else if (xml.contains(":xrechnung_2.2")) { // This is the default check which is also run on en16931 files to generate notices.
 			validateSchematron(xml, "/xslt/XR_22/XRechnung-CII-validation.xslt", 27, errorImpact);
+		} else { // This is the default check which is also run on en16931 files to generate notices.
+			// As of the next version this should probably if (xml.contains(":xrechnung_2.3"))
+			validateSchematron(xml, "/xslt/XR_23/XRechnung-CII-validation.xslt", 27, errorImpact);
 		}
 
 	}
