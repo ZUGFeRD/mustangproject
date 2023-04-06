@@ -1,5 +1,6 @@
-2.6.2
+2.6.2 "Happy Easter"
 =======
+2023-04-06
 
 - corrected linux build, fixes Github action
 - Issue 308: (be able to) define when VAT collection become applicable #309
