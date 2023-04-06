@@ -1,0 +1,30 @@
+{
+  "name": "cache-directory",
+  "version": "2.0.0",
+  "description": "Find the proper cache directory based on operating system",
+  "main": "index.js",
+  "engines": {
+    "node": ">=4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/strugee/node-cache-directory.git"
+  },
+  "keywords": [
+    "cache",
+    "xdg",
+    "directory"
+  ],
+  "author": "Alex Jordan <alex@strugee.net>",
+  "license": "LGPL-3.0+",
+  "bugs": {
+    "url": "https://github.com/strugee/node-cache-directory/issues"
+  },
+  "homepage": "https://github.com/strugee/node-cache-directory#readme",
+  "dependencies": {
+    "xdg-basedir": "^3.0.0"
+  }
+}

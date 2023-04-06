@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Special Characters and Symbols :: Usegroup Docs</title>
+    <meta name="generator" content="Antora 3.1.2">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../..">Usegroup Docs</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="http://www.mustangproject.org">Mustangproject</a>
+            <a class="navbar-item" href="http://www.mustangproject.org/server/">Mustangserver</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="mustangserver" data-version="0.9.0">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="inline-text-formatting.html">Mustang Server</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="inline-text-formatting.html">Inline Text Formatting</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="special-characters.html">Special Characters and Symbols</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="admonition.html">Admonition</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="sidebar.html">Sidebar</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="ui-macros.html">User Interface Macros</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Lists</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lists/ordered-list.html">Ordered Lists</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lists/unordered-list.html">Unordered Lists</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Mustang Server</span>
+    <span class="version">0.9.0</span>
+  </div>
+  <ul class="components">
+    <li class="component">
+      <a class="title" href="../../mustang/2.6.1/index.html">Mustang Library</a>
+      <ul class="versions">
+        <li class="version is-latest">
+          <a href="../../mustang/2.6.1/index.html">2.6.1-beta.1</a>
+        </li>
+      </ul>
+    </li>
+    <li class="component is-current">
+      <a class="title" href="inline-text-formatting.html">Mustang Server</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="inline-text-formatting.html">0.9.0</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="inline-text-formatting.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="inline-text-formatting.html">Mustang Server</a></li>
+    <li><a href="special-characters.html">Special Characters and Symbols</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Special Characters and Symbols</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Special character and symbol replacement is built into Asciidoctor.</p>
+</div>
+<div class="paragraph">
+<p>During conversion, the characters in the table below are replaced with the appropriate character or Unicode entity.
+Replacement of special characters and symbols occurs in all inline and block elements except for comments and certain passthroughs.
+The three special characters, <code>&lt;</code>, <code>&gt;</code>, and <code>&amp;</code>, are always replaced first.</p>
+</div>
+<div class="paragraph">
+<p>HTML and XML character entities as well as decimal and hexadecimal Unicode code point references are also recognized and replaced.</p>
+</div>
+<div class="paragraph">
+<p>For example, to produce the <code>&#167;</code> symbol you can use <code>&amp;#167;</code>, <code>&amp;#x00A7;</code>, or <code>&amp;sect;</code> (HTML only).
+When the document is processed, the replacements substitution will replace the section symbol reference, regardless of whether it is a character entity reference or a numeric character reference, with <code>&amp;#167;</code>.
+In turn, <code>&amp;#167;</code> will display as <code>&#167;</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_special_character_and_symbol_syntax"><a class="anchor" href="#_special_character_and_symbol_syntax"></a>Special character and symbol syntax</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 28.5715%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-center valign-top">Syntax</th>
+<th class="tableblock halign-center valign-top">Replacement</th>
+<th class="tableblock halign-center valign-top">Rendered</th>
+<th class="tableblock halign-left valign-top">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ampersand</p></td>
+<td class="tableblock halign-center valign-top"><div class="literal"><pre>&amp;</pre></div></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&amp;amp;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&amp;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apostrophe, curved</p></td>
+<td class="tableblock halign-center valign-top"><div class="literal"><pre>Sam's</pre></div></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Sam&amp;#8217;s</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Sam&#8217;s</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The vertical form apostrophe is replaced with the curved form apostrophe.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Copyright</p></td>
+<td class="tableblock halign-center valign-top"><div class="literal"><pre>(C)</pre></div></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&amp;#169;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&#169;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ellipses</p></td>
+<td class="tableblock halign-center valign-top"><div class="literal"><pre>...</pre></div></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&amp;#8230;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&#8230;&#8203;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Em dash</p></td>
+<td class="tableblock halign-center valign-top"><div class="literal"><pre>--</pre></div></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&amp;#8212;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&#8201;&#8212;&#8201;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Only replaced if between two word characters, between a word character and a line boundary, or flanked by spaces.</p>
+<p class="tableblock">When flanked by space characters (e.g., <code>a -- b</code>), the normal spaces are replaced by thin spaces (&amp;#8201;).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Greater than</p></td>
+<td class="tableblock halign-center valign-top"><div class="literal"><pre>&gt;</pre></div></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&amp;gt;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&gt;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Left double arrow</p></td>
+<td class="tableblock halign-center valign-top"><div class="literal"><pre>&lt;=</pre></div></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&amp;#8656;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&#8656;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Left single arrow</p></td>
+<td class="tableblock halign-center valign-top"><div class="literal"><pre>&lt;-</pre></div></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&amp;#8592;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&#8592;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Less than</p></td>
+<td class="tableblock halign-center valign-top"><div class="literal"><pre>&lt;</pre></div></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&amp;lt;</p></td>
+<td class="tableblock halign-center valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Registered</p></td>
+<td class="tableblock halign-center valign-top"><div class="literal"><pre>(R)</pre></div></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&amp;#174;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&#174;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Right double arrow</p></td>
+<td class="tableblock halign-center valign-top"><div class="literal"><pre>=&gt;</pre></div></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&amp;#8658;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&#8658;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Right single arrow</p></td>
+<td class="tableblock halign-center valign-top"><div class="literal"><pre>-&gt;</pre></div></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&amp;#8594;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&#8594;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Trademark</p></td>
+<td class="tableblock halign-center valign-top"><div class="literal"><pre>(TM)</pre></div></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&amp;#8482;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&#8482;</p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

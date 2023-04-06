@@ -1,0 +1,28 @@
+{
+  "name": "multi-progress",
+  "version": "4.0.0",
+  "description": "Multiple progress bars based on the \"progress\" package",
+  "main": "multi-progress.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pitaj/multi-progress.git"
+  },
+  "keywords": [
+    "multi",
+    "multiple",
+    "progress",
+    "bar"
+  ],
+  "author": "PitaJ",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pitaj/multi-progress/issues"
+  },
+  "homepage": "https://github.com/pitaj/multi-progress",
+  "peerDependencies": {
+    "progress": "^2.0.0"
+  }
+}

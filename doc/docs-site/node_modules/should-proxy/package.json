@@ -1,0 +1,28 @@
+{
+  "name": "should-proxy",
+  "version": "1.0.4",
+  "description": "Checks if a url should be proxied",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test/index.js",
+    "format": "bash script/format"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pdxjohnny/should-proxy.git"
+  },
+  "keywords": [
+    "proxy",
+    "no_proxy",
+    "no-proxy"
+  ],
+  "devDependencies": {
+    "expect.js": "~0.2.0"
+  },
+  "author": "John Andersen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pdxjohnny/should-proxy/issues"
+  },
+  "homepage": "https://github.com/pdxjohnny/should-proxy#readme"
+}

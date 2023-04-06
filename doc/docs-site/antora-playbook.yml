@@ -1,0 +1,14 @@
+site:
+  title: Usegroup Docs
+  start_page: mustangserver::index.adoc 
+content:
+  sources: 
+  - url: https://jstaerk:clou3nfo@dev.usegroup.de/internal/mustangserver.git
+    branches: HEAD
+  - url: https://github.com/ZUGFeRD/mustangproject.git
+    branches: HEAD
+    start_path: doc/antora/docs
+ui: 
+  bundle:
+    url: ../ui-bundle/
+    snapshot: true
