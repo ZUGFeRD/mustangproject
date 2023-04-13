@@ -1,4 +1,6 @@
-support multiple languages in visualization
+- support multiple languages in visualization
+- support UBL input in visualization
+- resolve codelists in visualization
 
 2.6.2 "Happy Easter"
 =======

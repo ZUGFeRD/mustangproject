@@ -34,12 +34,11 @@ import java.nio.file.Files;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class VisualizationTest extends ResourceCase {
 
-	public void testVisualizationBasic() {
+	public void testCIIVisualizationBasic() {
 
 		// the writing part
-		CIIToUBL c2u = new CIIToUBL();
 		String sourceFilename = "factur-x.xml";
-		File input = getResourceAsFile(sourceFilename);
+		File CIIinputFile = getResourceAsFile(sourceFilename);
 
 		String expected = null;
 		String result = null;
@@ -48,22 +47,62 @@ public class VisualizationTest extends ResourceCase {
 			/* remove file endings so that tests can also pass after checking
 			   out from git with arbitrary options (which may include CSRF changes)
 			 */
-			result = zvi.visualize(input.getAbsolutePath(),ZUGFeRDVisualizer.Language.EN).replace("\r","").replace("\n","");
+			result = zvi.visualize(CIIinputFile.getAbsolutePath(),ZUGFeRDVisualizer.Language.FR).replace("\r","").replace("\n","");
 
-			File expectedResult=getResourceAsFile("factur-x.html");
+			File expectedResult=getResourceAsFile("factur-x-vis.fr.html");
 			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r","").replace("\n","");
 			// remove linebreaks as well...
 
+		} catch (UnsupportedOperationException e) {
+			fail("UnsupportedOperationException should not happen: "+e.getMessage());
+		} catch (IllegalArgumentException e) {
+			fail("IllegalArgumentException should not happen: "+e.getMessage());
 		} catch (TransformerException e) {
-			fail("Exception should not happen: "+e.getMessage());
+			fail("TransformerException should not happen: "+e.getMessage());
 		} catch (IOException e) {
-			fail("Exception should not happen: "+e.getMessage());
+			fail("IOException should not happen: "+e.getMessage());
 		}
 
 
 
 		assertNotNull(result);
 		// Reading ZUGFeRD
-		//assertEquals(expected, result);
+		assertEquals(expected, result);
+	}
+	public void testUBLVisualizationBasic() {
+
+		// the writing part
+		CIIToUBL c2u = new CIIToUBL();
+		String sourceFilename = "factur-x.xml";
+		File UBLinputFile = getResourceAsFile("01.01a-INVOICE_ubl.xml");
+
+		String expected = null;
+		String result = null;
+		try {
+			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+			/* remove file endings so that tests can also pass after checking
+			   out from git with arbitrary options (which may include CSRF changes)
+			 */
+			result = zvi.visualize(UBLinputFile.getAbsolutePath(),ZUGFeRDVisualizer.Language.EN).replace("\r","").replace("\n","");
+
+			File expectedResult=getResourceAsFile("factur-x-vis-ubl.en.html");
+			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r","").replace("\n","");
+			// remove linebreaks as well...
+
+		} catch (UnsupportedOperationException e) {
+			fail("UnsupportedOperationException should not happen: "+e.getMessage());
+		} catch (IllegalArgumentException e) {
+			fail("IllegalArgumentException should not happen: "+e.getMessage());
+		} catch (TransformerException e) {
+			fail("TransformerException should not happen: "+e.getMessage());
+		} catch (IOException e) {
+			fail("IOException should not happen: "+e.getMessage());
+		}
+
+
+
+		assertNotNull(result);
+		// Reading ZUGFeRD
+		assertEquals(expected, result);
 	}
 }
