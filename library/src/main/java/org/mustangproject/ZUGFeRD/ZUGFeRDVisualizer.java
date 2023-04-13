@@ -26,12 +26,16 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ZUGFeRDVisualizer {
 
+	public enum Language {
+		EN,
+		FR,
+		DE
+	}
 	static final ClassLoader CLASS_LOADER = ZUGFeRDVisualizer.class.getClassLoader();
 	private static final String RESOURCE_PATH = "";
 	private static final Logger LOG = Logger.getLogger(ZUGFeRDVisualizer.class.getName());
@@ -55,20 +59,26 @@ public class ZUGFeRDVisualizer {
 		mFactory = new net.sf.saxon.TransformerFactoryImpl();
 		// fact = TransformerFactory.newInstance();
 		mFactory.setURIResolver(new ClasspathResourceURIResolver());
+	}
+
+	public String visualize(String xmlFilename, Language lang)
+			throws FileNotFoundException, TransformerException, UnsupportedEncodingException {
+
 		try {
-			mXsltXRTemplate = mFactory.newTemplates(
-					new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/cii-xr.xsl")));
+			if (mXsltXRTemplate==null) {
+				mXsltXRTemplate = mFactory.newTemplates(
+						new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/cii-xr.xsl")));
+			}
 			mXsltHTMLTemplate = mFactory.newTemplates(new StreamSource(
-					CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/xrechnung-html.xsl")));
-			mXsltZF1HTMLTemplate = mFactory.newTemplates(new StreamSource(
-					CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/ZUGFeRD_1p0_c1p0_s1p0.xslt")));
+					CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/xrechnung-html."+lang.name().toLowerCase()+".xsl")));
+			if (mXsltZF1HTMLTemplate==null) {
+				mXsltZF1HTMLTemplate = mFactory.newTemplates(new StreamSource(
+						CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/ZUGFeRD_1p0_c1p0_s1p0.xslt")));
+			}
 		} catch (TransformerConfigurationException ex) {
 			LOG.log(Level.SEVERE, null, ex);
 		}
-	}
 
-	public String visualize(String xmlFilename)
-			throws FileNotFoundException, TransformerException, UnsupportedEncodingException {
 		/**
 		 * *
 		 * http://www.unece.org/fileadmin/DAM/cefact/xml/XML-Naming-And-Design-Rules-V2_1.pdf
@@ -88,11 +98,11 @@ public class ZUGFeRDVisualizer {
 
 		String zf1Signature = "rsm:CrossIndustryDocument";
 		if (fileContent.contains(zf1Signature)) {
-			applyZF1SchematronXsl(fis, baos);
+			applyZF1XSLT(fis, baos);
 
 		} else {
 			//zf2 or fx
-			applySchematronXsl(fis, iaos);
+			applyZF2XSLT(fis, iaos);
 			// take the copy of the stream and re-write it to an InputStream
 			PipedInputStream in = new PipedInputStream();
 			PipedOutputStream out;
@@ -123,7 +133,7 @@ public class ZUGFeRDVisualizer {
 						}
 					}
 				}).start();
-				applySchematronXsl2(in, baos);
+				applyXSLTToHTML(in, baos);
 			} catch (IOException e1) {
 				LOG.log(Level.SEVERE, null, e1);
 			}	
@@ -132,21 +142,21 @@ public class ZUGFeRDVisualizer {
 		return baos.toString("UTF-8");
 	}
 
-	public void applySchematronXsl(final InputStream xmlFile, final OutputStream HTMLOutstream)
+	public void applyZF2XSLT(final InputStream xmlFile, final OutputStream HTMLOutstream)
 			throws TransformerException {
 		Transformer transformer = mXsltXRTemplate.newTransformer();
 
 		transformer.transform(new StreamSource(xmlFile), new StreamResult(HTMLOutstream));
 	}
 
-	public void applyZF1SchematronXsl(final InputStream xmlFile, final OutputStream HTMLOutstream)
+	public void applyZF1XSLT(final InputStream xmlFile, final OutputStream HTMLOutstream)
 			throws TransformerException {
 		Transformer transformer = mXsltZF1HTMLTemplate.newTransformer();
 
 		transformer.transform(new StreamSource(xmlFile), new StreamResult(HTMLOutstream));
 	}
 
-	public void applySchematronXsl2(final InputStream xmlFile, final OutputStream HTMLOutstream)
+	public void applyXSLTToHTML(final InputStream xmlFile, final OutputStream HTMLOutstream)
 			throws TransformerException {
 		Transformer transformer = mXsltHTMLTemplate.newTransformer();
 

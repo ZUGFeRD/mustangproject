@@ -99,6 +99,7 @@ public class Main {
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "					-d, --directory to check recursively \n"
 				+ "        --action visualize  convert XML to HTML \n"
+				+ "                [--language <lang>]: set output lang (en, fr or de)\n"
 				+ "                [--source <filename>]: set input XML file\n"
 				+ "                [--out <filename>]: set output HTML file\n"
 				;
@@ -351,6 +352,7 @@ public class Main {
 			options.addOption(attachmentOpt);
 			options.addOption(new Option("", "source",true, "which source file to use"));
 			options.addOption(new Option("", "source-xml",true, "which source file to use"));
+			options.addOption(new Option("", "language",true, "output language (en, de or fr)"));
 			options.addOption(new Option("", "out",true, "which output file to write to"));
 			options.addOption(new Option("", "no-notices",false, "suppress non-fatal errors"));
 			options.addOption(new Option("", "logAppend",true, "freeform text to be appended to log messages"));
@@ -373,6 +375,7 @@ public class Main {
 				String sourceXMLName = cmd.getOptionValue("source-xml");
 				String outName = cmd.getOptionValue("out");
 				String format = cmd.getOptionValue("format");
+				String lang = cmd.getOptionValue("language");
 				Boolean noNotices = cmd.hasOption("no-notices");
 
 				String zugferdVersion = cmd.getOptionValue("version");
@@ -403,7 +406,7 @@ public class Main {
 					performConvert(sourceName, outName);
 					optionsRecognized=true;
 				} else if ((action!=null)&&(action.equals("visualize")))  {
-					performVisualization(sourceName, outName);
+					performVisualization(sourceName, lang, outName);
 					optionsRecognized=true;
 				} else if ((action!=null)&&(action.equals("upgrade")))  {
 					performUpgrade(sourceName, outName);
@@ -766,13 +769,23 @@ public class Main {
 		System.out.println(sr.getSummaryLine());
 	}
 
-	private static void performVisualization(String sourceName, String outName) {
+	private static void performVisualization(String sourceName, String lang, String outName) {
 		// Get params from user if not already defined
 		if (sourceName == null) {
 			sourceName = getFilenameFromUser("ZUGFeRD XML source", "factur-x.xml", "xml", true, false);
 		} else {
 			System.out.println("ZUGFeRD XML source set to " + sourceName);
 		}
+		if (lang == null) {
+			try {
+				lang = getStringFromUser("Output language", "en", "en|de|fr");
+			} catch(Exception e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+		} else {
+			System.out.println("Output language set to " + lang);
+		}
+
 		if (outName == null) {
 			outName = getFilenameFromUser("HTML target file", "factur-x.html", "html", false, true);
 		} else {
@@ -792,7 +805,14 @@ public class Main {
 		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
 		String xml = null;
 		try {
-			xml = zvi.visualize(sourceName);
+			ZUGFeRDVisualizer.Language langCode=ZUGFeRDVisualizer.Language.EN;
+			if (lang.equalsIgnoreCase("de")) {
+				langCode=ZUGFeRDVisualizer.Language.DE;
+			}
+			if (lang.equalsIgnoreCase("fr")) {
+				langCode=ZUGFeRDVisualizer.Language.FR;
+			}
+			xml = zvi.visualize(sourceName, langCode);
 			Files.write(Paths.get(outName), xml.getBytes());
 		} catch (FileNotFoundException e) {
 			LOGGER.error(e.getMessage(), e);

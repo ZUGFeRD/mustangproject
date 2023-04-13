@@ -1,3 +1,5 @@
+support multiple languages in visualization
+
 2.6.2 "Happy Easter"
 =======
 2023-04-06
