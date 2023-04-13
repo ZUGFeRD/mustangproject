@@ -72,7 +72,8 @@ public class SchematronPipeline {
 
 		@Override
 		public Source resolve(String href, String base) throws TransformerException {
-			return new StreamSource(cl.getResourceAsStream(resourcePath + href));
+			return new StreamSource(cl.getResourceAsStream(resourcePath +"xslt/"+ href));
+//			return new StreamSource(cl.getResourceAsStream(resourcePath + href));
 		}
 	}
 	

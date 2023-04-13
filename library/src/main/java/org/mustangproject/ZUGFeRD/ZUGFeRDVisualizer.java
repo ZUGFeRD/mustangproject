@@ -170,7 +170,7 @@ public class ZUGFeRDVisualizer {
 
 		@Override
 		public Source resolve(String href, String base) throws TransformerException {
-			return new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + href));
+			return new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH +"stylesheets/"+ href));
 		}
 	}
 }

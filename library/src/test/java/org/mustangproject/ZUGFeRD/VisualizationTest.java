@@ -64,6 +64,6 @@ public class VisualizationTest extends ResourceCase {
 
 		assertNotNull(result);
 		// Reading ZUGFeRD
-//		assertEquals(expected, result);
+		//assertEquals(expected, result);
 	}
 }

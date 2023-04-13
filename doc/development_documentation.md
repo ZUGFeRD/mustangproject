@@ -210,6 +210,11 @@ Change to the project directory and run
 
 Afterwards you can access the release page and update the documentation, e.g. upload the jar, the jar javadoc and ZugferdDev. You can also enter a changelog and a better title. 
 
+## Regular updates
+
+XRechnung from https://github.com/itplr-kosit/xrechnung-schematron,
+put in schematro, have xslt generated, potentially manually include
+the included file
 
 ## Release process
 
