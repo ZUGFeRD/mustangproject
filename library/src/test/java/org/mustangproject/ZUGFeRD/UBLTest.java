@@ -61,8 +61,8 @@ public class UBLTest extends ResourceCase {
 		try {
 			final File tempFile = File.createTempFile("ZUGFeRD-UBL-", "-test");
 			c2u.convert(input, tempFile);
-			expected = ResourceUtilities.readFile(StandardCharsets.UTF_8, expectedFile.getAbsolutePath());//.replaceAll("\r\n", "\n");
-			result = ResourceUtilities.readFile(StandardCharsets.UTF_8, tempFile.getAbsolutePath());//.replaceAll("\r\n", "\n");
+			expected = ResourceUtilities.readFile(StandardCharsets.UTF_8, expectedFile.getAbsolutePath());
+			result = ResourceUtilities.readFile(StandardCharsets.UTF_8, tempFile.getAbsolutePath());
 		} catch (final IOException e) {
 			fail("Exception should not happen: " + e.getMessage());
 		}
