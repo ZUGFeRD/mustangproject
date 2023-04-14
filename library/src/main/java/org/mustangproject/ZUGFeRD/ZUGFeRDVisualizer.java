@@ -100,6 +100,7 @@ public class ZUGFeRDVisualizer {
 		String zf1Signature = "rsm:CrossIndustryDocument";
 		String zf2Signature = "rsm:CrossIndustryInvoice";
 		String ublSignature = "ubl:Invoice";
+		String ublCreditNoteSignature = "ubl:CreditNote";
 		boolean doPostProcessing=false;
 		if (fileContent.contains(zf1Signature)) {
 			applyZF1XSLT(fis, baos);
@@ -112,6 +113,11 @@ public class ZUGFeRDVisualizer {
 		} else if (fileContent.contains(ublSignature)) {
 			//zf2 or fx
 			applyUBL2XSLT(fis, iaos);
+			doPostProcessing=true;
+
+		} else if (fileContent.contains(ublCreditNoteSignature)) {
+			//zf2 or fx
+			applyUBLCreditNote2XSLT(fis, iaos);
 			doPostProcessing=true;
 
 		}
@@ -168,6 +174,17 @@ public class ZUGFeRDVisualizer {
 		if (mXsltUBLTemplate==null) {
 			mXsltUBLTemplate = mFactory.newTemplates(
 					new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/ubl-invoice-xr.xsl")));
+		}
+		Transformer transformer = mXsltUBLTemplate.newTransformer();
+
+		transformer.transform(new StreamSource(xmlFile), new StreamResult(HTMLOutstream));
+	}
+
+	public void applyUBLCreditNote2XSLT(final InputStream xmlFile, final OutputStream HTMLOutstream)
+			throws TransformerException {
+		if (mXsltUBLTemplate==null) {
+			mXsltUBLTemplate = mFactory.newTemplates(
+					new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/ubl-creditnote-xr.xsl")));
 		}
 		Transformer transformer = mXsltUBLTemplate.newTransformer();
 
