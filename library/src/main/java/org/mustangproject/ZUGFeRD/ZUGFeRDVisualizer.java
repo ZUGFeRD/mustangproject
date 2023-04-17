@@ -71,7 +71,8 @@ public class ZUGFeRDVisualizer {
 						new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/cii-xr.xsl")));
 			}
 			mXsltHTMLTemplate = mFactory.newTemplates(new StreamSource(
-					CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/xrechnung-html."+lang.name().toLowerCase()+".xsl")));
+					CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/xrechnung-pdf.xsl")));
+//					CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/xrechnung-html."+lang.name().toLowerCase()+".xsl")));
 			if (mXsltZF1HTMLTemplate==null) {
 				mXsltZF1HTMLTemplate = mFactory.newTemplates(new StreamSource(
 						CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/ZUGFeRD_1p0_c1p0_s1p0.xslt")));
