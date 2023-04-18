@@ -1,6 +1,7 @@
-- support multiple languages in visualization
-- support UBL input in visualization
-- resolve codelists in visualization
+2.7.0
+=======
+2023-04-17
+- support english and french output in factur-x visualization (read: conversion to HTML), UBL invoice and creditnote input+ resolve codelist attributes (thanks to https://jcthiele.github.io/xrechnung-visualization-codelist-resolve/)
 
 2.6.2 "Happy Easter"
 =======
