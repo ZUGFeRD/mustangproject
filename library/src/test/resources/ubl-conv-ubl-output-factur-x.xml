@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cec="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
-  <cbc:CustomizationID>urn:cen.eu:en16931:2017:extended:urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+         xmlns:cec="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2">
+  <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
   <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
   <cbc:ID>RE-20201121/508</cbc:ID>
   <cbc:IssueDate>2020-11-21</cbc:IssueDate>
@@ -13,21 +15,21 @@
       <cac:PartyName>
         <cbc:Name>Bei Spiel GmbH</cbc:Name>
       </cac:PartyName>
-          <cac:PostalAddress>
+      <cac:PostalAddress>
         <cbc:StreetName>Ecke 12</cbc:StreetName>
-              <cbc:CityName>Stadthausen</cbc:CityName>
-              <cbc:PostalZone>12345</cbc:PostalZone>
-              <cac:Country>
+        <cbc:CityName>Stadthausen</cbc:CityName>
+        <cbc:PostalZone>12345</cbc:PostalZone>
+        <cac:Country>
           <cbc:IdentificationCode>DE</cbc:IdentificationCode>
         </cac:Country>
       </cac:PostalAddress>
-          <cac:PartyTaxScheme>
+      <cac:PartyTaxScheme>
         <cbc:CompanyID>DE136695976</cbc:CompanyID>
-              <cac:TaxScheme>
+        <cac:TaxScheme>
           <cbc:ID>VAT</cbc:ID>
         </cac:TaxScheme>
       </cac:PartyTaxScheme>
-          <cac:PartyLegalEntity>
+      <cac:PartyLegalEntity>
         <cbc:RegistrationName>Bei Spiel GmbH</cbc:RegistrationName>
       </cac:PartyLegalEntity>
     </cac:Party>
@@ -37,18 +39,18 @@
       <cac:PartyIdentification>
         <cbc:ID>2</cbc:ID>
       </cac:PartyIdentification>
-          <cac:PartyName>
+      <cac:PartyName>
         <cbc:Name>Theodor Est</cbc:Name>
       </cac:PartyName>
-          <cac:PostalAddress>
+      <cac:PostalAddress>
         <cbc:StreetName>Bahnstr. 42</cbc:StreetName>
-              <cbc:CityName>Spielkreis</cbc:CityName>
-              <cbc:PostalZone>88802</cbc:PostalZone>
-              <cac:Country>
+        <cbc:CityName>Spielkreis</cbc:CityName>
+        <cbc:PostalZone>88802</cbc:PostalZone>
+        <cac:Country>
           <cbc:IdentificationCode>DE</cbc:IdentificationCode>
         </cac:Country>
       </cac:PostalAddress>
-          <cac:PartyLegalEntity>
+      <cac:PartyLegalEntity>
         <cbc:RegistrationName>Theodor Est</cbc:RegistrationName>
       </cac:PartyLegalEntity>
     </cac:Party>
@@ -56,101 +58,111 @@
   <cac:Delivery>
     <cbc:ActualDeliveryDate>2020-11-10</cbc:ActualDeliveryDate>
   </cac:Delivery>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode name="Bank transfer">42</cbc:PaymentMeansCode>
+    <cbc:PaymentID>RE-20201121/508</cbc:PaymentID>
+    <cac:PayeeFinancialAccount>
+      <cbc:ID>DE88200800000970375700</cbc:ID>
+      <cbc:Name>Max Mustermann</cbc:Name>
+      <cac:FinancialInstitutionBranch>
+        <cbc:ID>COBADEFFXXX</cbc:ID>
+      </cac:FinancialInstitutionBranch>
+    </cac:PayeeFinancialAccount>
+  </cac:PaymentMeans>
   <cac:PaymentTerms>
     <cbc:Note>Zahlbar ohne Abzug bis 12.12.2020</cbc:Note>
   </cac:PaymentTerms>
   <cac:TaxTotal>
     <cbc:TaxAmount currencyID="EUR">75.04</cbc:TaxAmount>
-      <cac:TaxSubtotal>
-      <cbc:TaxableAmount currencyID="EUR">160.00</cbc:TaxableAmount>
-          <cbc:TaxAmount currencyID="EUR">11.20</cbc:TaxAmount>
-          <cac:TaxCategory>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="EUR">160</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="EUR">11.2</cbc:TaxAmount>
+      <cac:TaxCategory>
         <cbc:ID>S</cbc:ID>
-              <cbc:Percent>7.00</cbc:Percent>
-              <cac:TaxScheme>
+        <cbc:Percent>7</cbc:Percent>
+        <cac:TaxScheme>
           <cbc:ID>VAT</cbc:ID>
         </cac:TaxScheme>
       </cac:TaxCategory>
     </cac:TaxSubtotal>
-      <cac:TaxSubtotal>
-      <cbc:TaxableAmount currencyID="EUR">336.00</cbc:TaxableAmount>
-          <cbc:TaxAmount currencyID="EUR">63.84</cbc:TaxAmount>
-          <cac:TaxCategory>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="EUR">336</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="EUR">63.84</cbc:TaxAmount>
+      <cac:TaxCategory>
         <cbc:ID>S</cbc:ID>
-              <cbc:Percent>19.00</cbc:Percent>
-              <cac:TaxScheme>
+        <cbc:Percent>19</cbc:Percent>
+        <cac:TaxScheme>
           <cbc:ID>VAT</cbc:ID>
         </cac:TaxScheme>
       </cac:TaxCategory>
     </cac:TaxSubtotal>
   </cac:TaxTotal>
   <cac:LegalMonetaryTotal>
-    <cbc:LineExtensionAmount currencyID="EUR">496.00</cbc:LineExtensionAmount>
-      <cbc:TaxExclusiveAmount currencyID="EUR">496.00</cbc:TaxExclusiveAmount>
-      <cbc:TaxInclusiveAmount currencyID="EUR">571.04</cbc:TaxInclusiveAmount>
-      <cbc:AllowanceTotalAmount currencyID="EUR">0.00</cbc:AllowanceTotalAmount>
-      <cbc:ChargeTotalAmount currencyID="EUR">0.00</cbc:ChargeTotalAmount>
-      <cbc:PrepaidAmount currencyID="EUR">0.00</cbc:PrepaidAmount>
-      <cbc:PayableAmount currencyID="EUR">571.04</cbc:PayableAmount>
+    <cbc:LineExtensionAmount currencyID="EUR">496</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="EUR">496</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="EUR">571.04</cbc:TaxInclusiveAmount>
+    <cbc:AllowanceTotalAmount currencyID="EUR">0</cbc:AllowanceTotalAmount>
+    <cbc:ChargeTotalAmount currencyID="EUR">0</cbc:ChargeTotalAmount>
+    <cbc:PrepaidAmount currencyID="EUR">0</cbc:PrepaidAmount>
+    <cbc:PayableAmount currencyID="EUR">571.04</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>
   <cac:InvoiceLine>
     <cbc:ID>1</cbc:ID>
-      <cbc:InvoicedQuantity unitCode="HUR">1.0000</cbc:InvoicedQuantity>
-      <cbc:LineExtensionAmount currencyID="EUR">160.00</cbc:LineExtensionAmount>
-      <cac:Item>
+    <cbc:InvoicedQuantity unitCode="HUR">1</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">160</cbc:LineExtensionAmount>
+    <cac:Item>
       <cbc:Description>Of a sample invoice</cbc:Description>
-          <cbc:Name>Design (hours)</cbc:Name>
-          <cac:ClassifiedTaxCategory>
+      <cbc:Name>Design (hours)</cbc:Name>
+      <cac:ClassifiedTaxCategory>
         <cbc:ID>S</cbc:ID>
-              <cbc:Percent>7.00</cbc:Percent>
-              <cac:TaxScheme>
+        <cbc:Percent>7</cbc:Percent>
+        <cac:TaxScheme>
           <cbc:ID>VAT</cbc:ID>
         </cac:TaxScheme>
       </cac:ClassifiedTaxCategory>
     </cac:Item>
-      <cac:Price>
-      <cbc:PriceAmount currencyID="EUR">160.0000</cbc:PriceAmount>
-          <cbc:BaseQuantity unitCode="HUR">1.0000</cbc:BaseQuantity>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">160</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="HUR">1</cbc:BaseQuantity>
     </cac:Price>
   </cac:InvoiceLine>
   <cac:InvoiceLine>
     <cbc:ID>2</cbc:ID>
-      <cbc:InvoicedQuantity unitCode="H87">400.0000</cbc:InvoicedQuantity>
-      <cbc:LineExtensionAmount currencyID="EUR">316.00</cbc:LineExtensionAmount>
-      <cac:Item>
+    <cbc:InvoicedQuantity unitCode="H87">400</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">316</cbc:LineExtensionAmount>
+    <cac:Item>
       <cbc:Description>various colors, ~2000ml</cbc:Description>
-          <cbc:Name>Ballons</cbc:Name>
-          <cac:ClassifiedTaxCategory>
+      <cbc:Name>Ballons</cbc:Name>
+      <cac:ClassifiedTaxCategory>
         <cbc:ID>S</cbc:ID>
-              <cbc:Percent>19.00</cbc:Percent>
-              <cac:TaxScheme>
+        <cbc:Percent>19</cbc:Percent>
+        <cac:TaxScheme>
           <cbc:ID>VAT</cbc:ID>
         </cac:TaxScheme>
       </cac:ClassifiedTaxCategory>
     </cac:Item>
-      <cac:Price>
-      <cbc:PriceAmount currencyID="EUR">0.7900</cbc:PriceAmount>
-          <cbc:BaseQuantity unitCode="H87">1.0000</cbc:BaseQuantity>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">0.79</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="H87">1</cbc:BaseQuantity>
     </cac:Price>
   </cac:InvoiceLine>
   <cac:InvoiceLine>
     <cbc:ID>3</cbc:ID>
-      <cbc:InvoicedQuantity unitCode="LTR">800.0000</cbc:InvoicedQuantity>
-      <cbc:LineExtensionAmount currencyID="EUR">20.00</cbc:LineExtensionAmount>
-      <cac:Item>
-      <cbc:Description></cbc:Description>
-          <cbc:Name>Hot air „heiße Luft“ (litres)</cbc:Name>
-          <cac:ClassifiedTaxCategory>
+    <cbc:InvoicedQuantity unitCode="LTR">800</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">20</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Name>Hot air „heiße Luft“ (litres)</cbc:Name>
+      <cac:ClassifiedTaxCategory>
         <cbc:ID>S</cbc:ID>
-              <cbc:Percent>19.00</cbc:Percent>
-              <cac:TaxScheme>
+        <cbc:Percent>19</cbc:Percent>
+        <cac:TaxScheme>
           <cbc:ID>VAT</cbc:ID>
         </cac:TaxScheme>
       </cac:ClassifiedTaxCategory>
     </cac:Item>
-      <cac:Price>
-      <cbc:PriceAmount currencyID="EUR">0.0250</cbc:PriceAmount>
-          <cbc:BaseQuantity unitCode="LTR">1.0000</cbc:BaseQuantity>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">0.025</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="LTR">1</cbc:BaseQuantity>
     </cac:Price>
   </cac:InvoiceLine>
 </Invoice>
