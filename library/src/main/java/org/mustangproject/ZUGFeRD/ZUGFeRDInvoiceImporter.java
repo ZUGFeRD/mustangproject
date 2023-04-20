@@ -1,6 +1,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
@@ -41,6 +42,10 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 	public ZUGFeRDInvoiceImporter(String filename) {
 		super(filename);
+	}
+
+	public ZUGFeRDInvoiceImporter(InputStream stream) {
+		super(stream);
 	}
 
 	public void fromXML(String XML) {
