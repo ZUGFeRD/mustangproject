@@ -31,6 +31,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	protected Contact contact = null;
 	protected LegalOrganisation legalOrg = null;
 	protected SchemedID globalId=null;
+	protected SchemedID uriUniversalCommunicationId=null;
 
 	/**
 	 * Default constructor.
@@ -192,6 +193,27 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	}
 
+  
+	@Override
+	public String getUriUniversalCommunicationID() {
+		if (uriUniversalCommunicationId!=null) {
+			return uriUniversalCommunicationId.getID();
+		}
+		return null;
+	}
+
+
+
+	@Override
+	public String getUriUniversalCommunicationIDScheme() {
+		if (uriUniversalCommunicationId!=null) {
+			return uriUniversalCommunicationId.getScheme();
+		}
+		return null;
+
+	}
+
+  
 
 	/**
 	 * if it's a customer, this can e.g. be the customer ID
@@ -217,6 +239,11 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	public TradeParty addGlobalID(SchemedID schemedID) {
 		globalId=schemedID;
+		return this;
+	}
+  
+	public TradeParty addUriUniversalCommunicationID(SchemedID schemedID) {
+		uriUniversalCommunicationId=schemedID;
 		return this;
 	}
 

@@ -157,14 +157,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "</ram:FaxUniversalCommunication>";
 			}
 			if (party.getContact().getEMail() != null) {
-
 				xml += "<ram:EmailURIUniversalCommunication><ram:URIID>"
 						+ XMLTools.encodeXML(party.getContact().getEMail()) + "</ram:URIID>"
 						+ "</ram:EmailURIUniversalCommunication>";
 			}
-
 			xml += "</ram:DefinedTradeContact>";
-
 		}
 
 		xml += "<ram:PostalTradeAddress>";
@@ -188,11 +185,17 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml += "<ram:CityName>" + XMLTools.encodeXML(party.getLocation())
 					+ "</ram:CityName>";
 		}
-		;
+		
 //country IS mandatory
 		xml += "<ram:CountryID>" + XMLTools.encodeXML(party.getCountry())
 				+ "</ram:CountryID>"
 				+ "</ram:PostalTradeAddress>";
+    if (party.getUriUniversalCommunicationID() != null && party.getUriUniversalCommunicationIDScheme()!=null) {
+      xml += "<ram:URIUniversalCommunication>" +
+          "<ram:URIID schemeID=\"" + party.getUriUniversalCommunicationIDScheme() + "\">" +
+          XMLTools.encodeXML(party.getUriUniversalCommunicationID())
+          + "</ram:URIID></ram:URIUniversalCommunication>";
+    }
 
 		if ((party.getVATID() != null) && (!isShipToTradeParty)) {
 			xml += "<ram:SpecifiedTaxRegistration>"
