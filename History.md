@@ -1,3 +1,8 @@
+- #317 (support conversion towards peppol #282)
+- #313
+- https://github.com/ZUGFeRD/mustangproject/pull/315 invoiceimporter constructor for InputStream
+- be able to extract data into existing invoice objects
+
 2.7.0
 =======
 2023-04-17

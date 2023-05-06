@@ -57,12 +57,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		}
 	}
 
-	/***
-	 * This will parse a XML into a invoice object
-	 * 
-	 * @return the parsed invoice object
-	 */
-	public Invoice extractInvoice() throws XPathExpressionException, ParseException {
+	public Invoice extractInto(Invoice zpp) throws XPathExpressionException, ParseException {
 
 		String number = "";
 		/*
@@ -72,7 +67,6 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		 */
 		XPathFactory xpathFact = XPathFactory.newInstance();
 		XPath xpath = xpathFact.newXPath();
-		Invoice zpp = null;
 		XPathExpression xpr = xpath.compile("//*[local-name()=\"SellerTradeParty\"]");
 		NodeList SellerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
@@ -108,7 +102,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 							.getLength(); issueDateChildIndex++) {
 						if ((issueDateTimeChilds.item(issueDateChildIndex).getLocalName() != null)
 								&& (issueDateTimeChilds.item(issueDateChildIndex).getLocalName()
-										.equals("DateTimeString"))) {
+								.equals("DateTimeString"))) {
 							issueDate = new SimpleDateFormat("yyyyMMdd")
 									.parse(issueDateTimeChilds.item(issueDateChildIndex).getTextContent());
 						}
@@ -128,20 +122,20 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 					.getLength(); deliveryChildIndex++) {
 				if ((headerTradeDeliveryChilds.item(deliveryChildIndex).getLocalName() != null)
 						&& (headerTradeDeliveryChilds.item(deliveryChildIndex).getLocalName()
-								.equals("ActualDeliverySupplyChainEvent"))) {
+						.equals("ActualDeliverySupplyChainEvent"))) {
 					NodeList actualDeliveryChilds = headerTradeDeliveryChilds.item(deliveryChildIndex).getChildNodes();
 					for (int actualDeliveryChildIndex = 0; actualDeliveryChildIndex < actualDeliveryChilds
 							.getLength(); actualDeliveryChildIndex++) {
 						if ((actualDeliveryChilds.item(actualDeliveryChildIndex).getLocalName() != null)
 								&& (actualDeliveryChilds.item(actualDeliveryChildIndex).getLocalName()
-										.equals("OccurrenceDateTime"))) {
+								.equals("OccurrenceDateTime"))) {
 							NodeList occurenceChilds = actualDeliveryChilds.item(actualDeliveryChildIndex)
 									.getChildNodes();
 							for (int occurenceChildIndex = 0; occurenceChildIndex < occurenceChilds
 									.getLength(); occurenceChildIndex++) {
 								if ((occurenceChilds.item(occurenceChildIndex).getLocalName() != null)
 										&& (occurenceChilds.item(occurenceChildIndex).getLocalName()
-												.equals("DateTimeString"))) {
+										.equals("DateTimeString"))) {
 									deliveryDate = new SimpleDateFormat("yyyyMMdd")
 											.parse(occurenceChilds.item(occurenceChildIndex).getTextContent());
 								}
@@ -163,7 +157,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 					.getLength(); settlementChildIndex++) {
 				if ((headerTradeSettlementChilds.item(settlementChildIndex).getLocalName() != null)
 						&& (headerTradeSettlementChilds.item(settlementChildIndex).getLocalName()
-								.equals("SpecifiedTradePaymentTerms"))) {
+						.equals("SpecifiedTradePaymentTerms"))) {
 					NodeList paymentTermChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
 					for (int paymentTermChildIndex = 0; paymentTermChildIndex < paymentTermChilds
 							.getLength(); paymentTermChildIndex++) {
@@ -184,7 +178,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			}
 		}
 
-		zpp = new Invoice().setDueDate(dueDate).setDeliveryDate(deliveryDate).setIssueDate(issueDate)
+		zpp.setDueDate(dueDate).setDeliveryDate(deliveryDate).setIssueDate(issueDate)
 				.setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number);
 //.addItem(new Item(new Product("Testprodukt","","C62",BigDecimal.ZERO),amount,new BigDecimal(1.0)))
 		zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]"));
@@ -195,7 +189,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		if (totalNodes.getLength() > 0) {
 			buyerReference = totalNodes.item(0).getTextContent();
 		}
-		if (buyerReference!=null) {
+		if (buyerReference != null) {
 			zpp.setReferenceNumber(buyerReference);
 		}
 
@@ -278,7 +272,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 							String tradeName = tradeLineChilds.item(tradeLineChildIndex).getLocalName();
 							if ((tradeName != null)
 									&& (tradeName.equals("BilledQuantity") || tradeName.equals("RequestedQuantity")
-											|| tradeName.equals("DespatchedQuantity"))) {
+									|| tradeName.equals("DespatchedQuantity"))) {
 								// RequestedQuantity is for Order-X, BilledQuantity for FX and ZF
 								quantity = tradeLineChilds.item(tradeLineChildIndex).getTextContent();
 								unitCode = tradeLineChilds.item(tradeLineChildIndex).getAttributes()
@@ -292,12 +286,12 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 								.getLength(); tradeProductChildIndex++) {
 							if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null)
 									&& (tradeProductChilds.item(tradeProductChildIndex).getLocalName()
-											.equals("Name"))) {
+									.equals("Name"))) {
 								name = tradeProductChilds.item(tradeProductChildIndex).getTextContent();
 							}
 							if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null)
 									&& (tradeProductChilds.item(tradeProductChildIndex).getLocalName()
-											.equals("GlobalID"))) {
+									.equals("GlobalID"))) {
 								if (tradeProductChilds.item(tradeProductChildIndex).getAttributes()
 										.getNamedItem("schemeID") != null) {
 									gid = new SchemedID()
@@ -388,7 +382,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 									.getLength(); indicatorChildIndex++) {
 								if ((indicatorChilds.item(indicatorChildIndex).getLocalName() != null)
 										&& (indicatorChilds.item(indicatorChildIndex).getLocalName()
-												.equals("Indicator"))) {
+										.equals("Indicator"))) {
 									isCharge = indicatorChilds.item(indicatorChildIndex).getTextContent()
 											.equalsIgnoreCase("true");
 								}
@@ -445,12 +439,24 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 			if ((whichType != EStandard.despatchadvice)
 					&& ((!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2)))
-							&& (!ignoreCalculationErrors))) {
+					&& (!ignoreCalculationErrors))) {
 				throw new ParseException(
 						"Could not reproduce the invoice, this could mean that it could not be read properly", 0);
 			}
 		}
 		return zpp;
+
+	}
+
+	/***
+	 * This will parse a XML into a invoice object
+	 * 
+	 * @return the parsed invoice object
+	 */
+	public Invoice extractInvoice() throws XPathExpressionException, ParseException {
+		Invoice i=new Invoice();
+		return extractInto(i);
+
 
 	}
 
