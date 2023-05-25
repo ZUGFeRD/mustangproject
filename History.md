@@ -1,5 +1,9 @@
+2.7.1
+=======
+2023-05-25
+
 - #317 (support conversion towards peppol #282)
-- #313
+- #313 Update CII2UBL library
 - https://github.com/ZUGFeRD/mustangproject/pull/315 invoiceimporter constructor for InputStream
 - be able to extract data into existing invoice objects
 
