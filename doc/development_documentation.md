@@ -17,11 +17,11 @@ You may already start developing what you wanted. Of course you can use any edit
 
 2. fork
 
-Once you can build, the idea is that you contribute patches via pull requests. For this you need a github account and  a personal copy of the repository to store your changes in. Just klick fork on the mustangproject. On your copy you will have git write access. My suggestion as git client is sourcetree (I can send you instructions how to set it up).
+Once you can build, the idea is that you contribute patches via pull requests. For this you need a GitHub account and  a personal copy of the repository to store your changes in. Just click fork on the mustangproject. On your copy you will have git write access. My suggestion as git client is sourcetree (I can send you instructions how to set it up).
 
 3. branch
 
-If you do a pull request, please do a feature branch, e.g. if you are working on a feature abc you could call your branch feature_abc. Merge requests unfortunately don't work if you don't have a branch you request merge of. Technically we follow the "github flow" strategy (not to be exchanged with the more sophisticated "git flow" strategy)
+If you do a pull request, please do a feature branch, e.g. if you are working on a feature abc you could call your branch feature_abc. Merge requests unfortunately don't work if you don't have a branch you request merge of. Technically we follow the "GitHub flow" strategy (not to be exchanged with the more sophisticated "git flow" strategy)
 
 4. test
 
@@ -38,7 +38,7 @@ library.
 
 ![Architecture of mustangproject](Mustang-Architecture.svg "Graph of the architecture of Mustangproject")
 
-The validator component embeds VeraPDF, a open-source
+The validator component embeds VeraPDF, an open-source
 PDF/A-validator, via maven dependency and uses standard java
 checks against schema and ph-schematron for checks against the schematron
 to validate the XML part of the invoices.
@@ -151,7 +151,7 @@ The whole settings.xml then looks e.g. like this
 </settings>
 ```
 
-The TOKEN is generated on github.
+The TOKEN is generated on GitHub.
 Deployment to maven central is described e.g. on [dzone](https://dzone.com/articles/publish-your-artifacts-to-maven-central).
 See the following screenshot:
 Sign in in GitHub and click on the profile picture -> Settings. Now just generate a new token and set the checkboxes from the screenshot.
@@ -221,7 +221,7 @@ the included file
   * Update documentation
   * write/translate announcement
   * release via/for mvn
-  * Publish a github release
+  * Publish a GitHub release
   * update mustangproject.org RE
     * version number and release date
     * sample file?

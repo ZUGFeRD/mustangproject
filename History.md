@@ -63,7 +63,7 @@
 =======
 2022-09-22
 
-Removed a unneccessary dependency (ph-jaxb).
+Removed an unnecessary dependency (ph-jaxb).
 Added some javadoc.
 
 2.5.5
@@ -197,7 +197,7 @@ To prevent regressions it is recommended to re-validate your PDF output after up
 - allow 1.2 and 2.0 in RDF versions for XRechnung 2.0 Referenzprofil 
 - also use shortcut "t" for extended in zf1 #230
 - falscher Text in Exception #237
-- pr 240 ignore input pdf errors when specfied on command line https://github.com/ZUGFeRD/mustangproject/pull/240
+- pr 240 ignore input pdf errors when specified on command line https://github.com/ZUGFeRD/mustangproject/pull/240
 - pr 241 use sepa transfer instead of bank transfer https://github.com/ZUGFeRD/mustangproject/pull/241
 - be able to validate Order-X files
 
@@ -305,7 +305,7 @@ switch
 - new invoicecorrection class
 - order-x xml read support
 - support included notes on document and item level 
-- occurence periods  setOccurrencePeriod(Date start, Date end)
+- occurrence periods  setOccurrencePeriod(Date start, Date end)
 - automated tests zuv/verapdf validate created library test files
 - trans.getTradeSettlementPayment() removed in favor of trans.getTradeSettlement()
 - commandline option for no notices
@@ -370,7 +370,7 @@ Mustangproject 1.7.6
 2020-02-06
 
 - support different ship to address
-- allow for diffent namespace prefixes #140
+- allow for different namespace prefixes #140
 - include exemption reason if doing intra community supply
 - allow different currencies also for ZF2 (#150)
 - minor correction VAT exemptions
