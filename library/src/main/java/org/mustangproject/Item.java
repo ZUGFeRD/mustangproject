@@ -15,7 +15,7 @@ import java.util.Date;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Item implements IZUGFeRDExportableItem {
-	protected BigDecimal price, quantity, tax, grossPrice, lineTotalAmount;
+	protected BigDecimal price, quantity, basisQuantity, tax, grossPrice, lineTotalAmount;
 	protected Date detailedDeliveryPeriodFrom=null, detailedDeliveryPeriodTo=null;
 	protected String id;
 	protected String referencedLineID=null;
@@ -114,6 +114,17 @@ public class Item implements IZUGFeRDExportableItem {
 
 	public Item setPrice(BigDecimal price) {
 		this.price = price;
+		return this;
+	}
+
+
+	@Override
+	public BigDecimal getBasisQuantity() {
+		return basisQuantity;
+	}
+
+	public Item setBasisQuantity(BigDecimal basis) {
+		this.basisQuantity = basis;
 		return this;
 	}
 

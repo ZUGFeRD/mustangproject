@@ -165,9 +165,10 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 			this.price = price;
 			this.quantity = quantity;
 			this.product = product;
+			this.basisQuantity = BigDecimal.ONE;
 		}
 
-		private BigDecimal price, quantity;
+		private BigDecimal price, quantity, basisQuantity;
 		private IZUGFeRDExportableProduct product;
 		private String addReference=null;
 		
@@ -191,6 +192,15 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 
 		public void setQuantity(BigDecimal quantity) {
 			this.quantity = quantity;
+		}
+
+		@Override
+		public BigDecimal getBasisQuantity() {
+			return basisQuantity;
+		}
+
+		public void setBasisQuantity(BigDecimal quantity) {
+			this.basisQuantity = quantity;
 		}
 
 		@Override

@@ -201,6 +201,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			for (int i = 0; i < nodes.getLength(); i++) {
 
 				String price = "0";
+				String basisQuantity = "1";
 				String name = "";
 				String description = "";
 				SchemedID gid = null;
@@ -258,6 +259,11 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 									if ((netChilds.item(netIndex).getLocalName() != null)
 											&& (netChilds.item(netIndex).getLocalName().equals("ChargeAmount"))) {
 										price = netChilds.item(netIndex).getTextContent();// ChargeAmount
+
+									}
+									if ((netChilds.item(netIndex).getLocalName() != null)
+											&& (netChilds.item(netIndex).getLocalName().equals("BasisQuantity"))) {
+										basisQuantity = netChilds.item(netIndex).getTextContent();// ChargeAmount
 
 									}
 								}
@@ -351,6 +357,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 					p.addGlobalID(gid);
 				}
 				Item it = new Item(p, prc, qty);
+				it.setBasisQuantity(new BigDecimal(basisQuantity));
 				if (rdocs != null) {
 					for (ReferencedDocument rdoc : rdocs) {
 						it.addReferencedDocument(rdoc);

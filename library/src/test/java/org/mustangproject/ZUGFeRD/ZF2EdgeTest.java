@@ -200,8 +200,10 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 
 		Item design=new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
 		design.setAddReference("1825");
+		design.setBasisQuantity(new BigDecimal(100));
 		allItems[0] = design;
 		allItems[1] = new Item(new BigDecimal("0.79"), new BigDecimal("400"), balloonProduct);
+
 		allItems[2] = new Item(new BigDecimal("0.10"), new BigDecimal("200"), airProduct);
 		return allItems;
 	}
@@ -320,7 +322,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 		assertTrue(resultXML.contains("<ram:IssuerAssignedID>123</ram:IssuerAssignedID>"));
 
 		// Reading ZUGFeRD
-		assertEquals("496.00", zi.getAmount());
+		assertEquals("337.60", zi.getAmount());;
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 		try {
