@@ -1,3 +1,10 @@
+
+
+2.7.2
+=======
+
+- #322 support basis quantity in item class, invoice importer
+
 2.7.1
 =======
 2023-05-25

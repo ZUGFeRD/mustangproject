@@ -144,7 +144,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase  {
 
 
 	}
-	
+
 	public void testItemAllowancesChargesImport() {
 
 		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushItemChargesAllowances.pdf");
