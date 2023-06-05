@@ -144,7 +144,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase  {
 
 
 	}
-
+	
 	public void testItemAllowancesChargesImport() {
 
 		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushItemChargesAllowances.pdf");
@@ -159,6 +159,22 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase  {
 		assertFalse(hasExceptions);
 		TransactionCalculator tc=new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("18.33"),tc.getGrandTotal());
+	}
+
+	public void testBasisQuantityImport() {
+
+		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter("./target/testout-ZF2newEdge.pdf");
+
+		boolean hasExceptions=false;
+		Invoice invoice=null;
+		try {
+			invoice=zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException e) {
+			hasExceptions=true;
+		}
+		assertFalse(hasExceptions);
+		TransactionCalculator tc=new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("337.60"),tc.getGrandTotal());
 	}
 
 	public void testAllowancesChargesImport() {
