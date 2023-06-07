@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
-    <artifactId>core</artifactId>
+    <artifactId>mustang-core</artifactId>
     <version>2.7.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Mustang</name>
@@ -10,7 +10,7 @@
     <modules>
         <module>mustang-library</module>
         <module>mustang-validator</module>
-        <module>Mustang-CLI</module>
+        <module>mustang-CLI</module>
     </modules>
 
     <description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs

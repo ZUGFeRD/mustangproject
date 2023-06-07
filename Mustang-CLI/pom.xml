@@ -7,7 +7,7 @@
 </parent>
    <modelVersion>4.0.0</modelVersion>
    <groupId>org.mustangproject</groupId>
-   <artifactId>Mustang-CLI</artifactId>
+   <artifactId>mustang-CLI</artifactId>
    <name>e-invoices commandline tool, allowing to create(embed), split and validate Factur-X/ZUGFeRD files. Validation should also work for XRechnung/CII. </name>
    <packaging>jar</packaging>
    <version>2.7.2-SNAPSHOT</version>
