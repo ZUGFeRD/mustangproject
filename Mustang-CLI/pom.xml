@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 <parent>
     <groupId>org.mustangproject</groupId>
-    <artifactId>core</artifactId>
+    <artifactId>mustang-core</artifactId>
     <version>2.7.2-SNAPSHOT</version>
 </parent>
    <modelVersion>4.0.0</modelVersion>
@@ -20,7 +20,7 @@
    <dependencies>
       <dependency>
          <groupId>org.mustangproject</groupId>
-         <artifactId>validator</artifactId>
+         <artifactId>mustang-validator</artifactId>
          <version>2.7.2-SNAPSHOT</version>
          <!-- prototypes of new mustangproject versions can be installed by referring to them and installed to the local repo from a jar file with
         mvn install:install-file -Dfile=mustang-1.5.4-SNAPSHOT.jar -DgroupId=org.mustangproject.ZUGFeRD -DartifactId=mustang -Dversion=1.5.4 -Dpackaging=jar -DgeneratePom=true

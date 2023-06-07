@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.mustangproject</groupId>
-        <artifactId>core</artifactId>
+        <artifactId>mustang-core</artifactId>
         <version>2.7.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -97,7 +97,7 @@
         </dependency>
         <dependency>
             <groupId>org.mustangproject</groupId>
-            <artifactId>library</artifactId>
+            <artifactId>mustang-library</artifactId>
             <version>2.7.2-SNAPSHOT</version>
         </dependency>
         <dependency>
