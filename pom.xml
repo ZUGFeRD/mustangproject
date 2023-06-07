@@ -8,8 +8,8 @@
     <name>Mustang</name>
 
     <modules>
-        <module>library</module>
-        <module>validator</module>
+        <module>mustang-library</module>
+        <module>mustang-validator</module>
         <module>Mustang-CLI</module>
     </modules>
 
