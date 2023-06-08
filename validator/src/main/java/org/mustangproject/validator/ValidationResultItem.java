@@ -110,6 +110,9 @@ public class ValidationResultItem {
 	public String getMessage() {
 		return message;
 	}
-	
+
+	public String getLocation() {
+		return location;
+	}
 
 }

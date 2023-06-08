@@ -1,6 +1,7 @@
 package org.mustangproject.validator;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.slf4j.Logger;
@@ -145,11 +146,16 @@ public class ValidationContext {
 		if (filename==null) {
 			return "";
 		} else {
-			return filename;			
+			return filename;
 		}
 	}
 
 	public String getFormat() {
 		return format;
 	}
+
+	public List<ValidationResultItem> getResults() {
+		return results;
+	}
+
 }
