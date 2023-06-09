@@ -2,8 +2,10 @@
 
 2.7.2
 =======
+2023-06-09
 
 - #322 support basis quantity in item class, invoice importer
+- #327 expose validation results and location item (thanks to jpep-in) 
 
 2.7.1
 =======
