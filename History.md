@@ -1,18 +1,21 @@
+2.7.3
+=======
 
+- \#328 parse SpecifiedTradeProduct/SellerAssignedID, SellerOrderReferencedDocument/ram:IssuerAssignedID and BuyerOrderReferencedDocument/ram:IssuerAssignedID in invoiceparser 
 
 2.7.2
 =======
 2023-06-09
 
-- #322 support basis quantity in item class, invoice importer
-- #327 expose validation results and location item (thanks to jpep-in) 
+- \#322 support basis quantity in item class, invoice importer
+- \#327 expose validation results and location item (thanks to jpep-in) 
 
 2.7.1
 =======
 2023-05-25
 
-- #317 (support conversion towards peppol #282)
-- #313 Update CII2UBL library
+- \#317 (support conversion towards peppol #282)
+- \#313 Update CII2UBL library
 - https://github.com/ZUGFeRD/mustangproject/pull/315 invoiceimporter constructor for InputStream
 - be able to extract data into existing invoice objects
 

@@ -146,6 +146,47 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			}
 		}
 
+		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeAgreement\"]");
+		NodeList headerTradeAgreementNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		String buyerOrderIssuerAssignedID = null;
+		String sellerOrderIssuerAssignedID = null;
+		for (int i = 0; i < headerTradeAgreementNodes.getLength(); i++) {
+			// nodes.item(i).getTextContent())) {
+			Node headerTradeAgreementNode = headerTradeAgreementNodes.item(i);
+			NodeList headerTradeAgreementChilds = headerTradeAgreementNode.getChildNodes();
+			for (int agreementChildIndex = 0; agreementChildIndex < headerTradeAgreementChilds
+					.getLength(); agreementChildIndex++) {
+				if ((headerTradeAgreementChilds.item(agreementChildIndex).getLocalName() != null)
+						&& (headerTradeAgreementChilds.item(agreementChildIndex).getLocalName()
+						.equals("BuyerOrderReferencedDocument"))) {
+					NodeList buyerOrderChilds = headerTradeAgreementChilds.item(agreementChildIndex).getChildNodes();
+					for (int buyerOrderChildIndex = 0; buyerOrderChildIndex < buyerOrderChilds
+							.getLength(); buyerOrderChildIndex++) {
+						if ((buyerOrderChilds.item(buyerOrderChildIndex).getLocalName() != null)
+								&& (buyerOrderChilds.item(buyerOrderChildIndex).getLocalName()
+								.equals("IssuerAssignedID"))) {
+							buyerOrderIssuerAssignedID = buyerOrderChilds.item(buyerOrderChildIndex).getTextContent();
+						}
+					}
+				}
+				if ((headerTradeAgreementChilds.item(agreementChildIndex).getLocalName() != null)
+						&& (headerTradeAgreementChilds.item(agreementChildIndex).getLocalName()
+						.equals("SellerOrderReferencedDocument"))) {
+					NodeList sellerOrderChilds = headerTradeAgreementChilds.item(agreementChildIndex).getChildNodes();
+					for (int sellerOrderChildIndex = 0; sellerOrderChildIndex < sellerOrderChilds
+							.getLength(); sellerOrderChildIndex++) {
+						if ((sellerOrderChilds.item(sellerOrderChildIndex).getLocalName() != null)
+								&& (sellerOrderChilds.item(sellerOrderChildIndex).getLocalName()
+								.equals("IssuerAssignedID"))) {
+							sellerOrderIssuerAssignedID = sellerOrderChilds.item(sellerOrderChildIndex).getTextContent();
+						}
+					}
+				}
+			}
+
+		}
+
+
 		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]|//*[local-name()=\"ApplicableSupplyChainTradeSettlement\"]");
 		NodeList headerTradeSettlementNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
@@ -180,6 +221,13 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 		zpp.setDueDate(dueDate).setDeliveryDate(deliveryDate).setIssueDate(issueDate)
 				.setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number);
+		if (buyerOrderIssuerAssignedID != null) {
+			zpp.setBuyerOrderReferencedDocumentID(buyerOrderIssuerAssignedID);
+		}
+		if (sellerOrderIssuerAssignedID != null) {
+			zpp.setSellerOrderReferencedDocumentID(sellerOrderIssuerAssignedID);
+		}
+
 //.addItem(new Item(new Product("Testprodukt","","C62",BigDecimal.ZERO),amount,new BigDecimal(1.0)))
 		zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]"));
 
@@ -203,6 +251,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				String price = "0";
 				String basisQuantity = "1";
 				String name = "";
+				String sellerAssignedID = null;
 				String description = "";
 				SchemedID gid = null;
 				String quantity = "0";
@@ -297,6 +346,11 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 							}
 							if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null)
 									&& (tradeProductChilds.item(tradeProductChildIndex).getLocalName()
+									.equals("SellerAssignedID"))) {
+								sellerAssignedID = tradeProductChilds.item(tradeProductChildIndex).getTextContent();
+							}
+							if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null)
+									&& (tradeProductChilds.item(tradeProductChildIndex).getLocalName()
 									.equals("GlobalID"))) {
 								if (tradeProductChilds.item(tradeProductChildIndex).getAttributes()
 										.getNamedItem("schemeID") != null) {
@@ -355,6 +409,9 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 						vatPercent == null ? null : new BigDecimal(vatPercent.trim()));
 				if (gid != null) {
 					p.addGlobalID(gid);
+				}
+				if (sellerAssignedID != null) {
+					p.setSellerAssignedID(sellerAssignedID);
 				}
 				Item it = new Item(p, prc, qty);
 				it.setBasisQuantity(new BigDecimal(basisQuantity));
@@ -457,11 +514,11 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 	/***
 	 * This will parse a XML into a invoice object
-	 * 
+	 *
 	 * @return the parsed invoice object
 	 */
 	public Invoice extractInvoice() throws XPathExpressionException, ParseException {
-		Invoice i=new Invoice();
+		Invoice i = new Invoice();
 		return extractInto(i);
 
 
