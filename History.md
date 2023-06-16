@@ -1,5 +1,6 @@
 2.7.3
 =======
+2023-06-16
 
 - \#328 parse SpecifiedTradeProduct/SellerAssignedID, SellerOrderReferencedDocument/ram:IssuerAssignedID and BuyerOrderReferencedDocument/ram:IssuerAssignedID in invoiceparser 
 
