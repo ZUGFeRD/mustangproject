@@ -29,8 +29,10 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.mustangproject.FileAttachment;
+import org.mustangproject.IncludedNote;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 /***
@@ -80,10 +82,13 @@ public interface IExportableTransaction {
 	/**
 	 * this should be the full sender institution name, details, manager and tax
 	 * registration. It is one of the few functions which may return null. e.g.
-	 * <p>
+	 * <p/>
 	 * Lieferant GmbH Lieferantenstraße 20 80333 München Deutschland
 	 * Geschäftsführer: Hans Muster Handelsregisternummer: H A 123
+   * <p/>
 	 *
+   * It is written as an includedNode with subjectCode {@link org.mustangproject.SubjectCode#REG}. See also 
+   * {@link #getNotesWithSubjectCode()}
 	 * @return null or full sender institution name, details, manager and tax
 	 *         registration
 	 */
@@ -489,6 +494,13 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+  /**
+   * A grouping of business terms to indicate accounting-relevant free texts including a qualification of these. <p/>
+   * The information are written to the same xml nodes like {@link #getNotes()} but with explicit subjectCode.
+   */
+  default List<IncludedNote> getNotesWithSubjectCode(){
+    return null;
+  }
 	default String getSpecifiedProcuringProjectName() {
 		return null;
 	}
