@@ -21,20 +21,12 @@
 package org.mustangproject.ZUGFeRD;
 
 import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
-import static org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants.CORRECTEDINVOICE;
-import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATEGORY_CODES_WITH_EXEMPTION_REASON;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import org.mustangproject.*;
 
@@ -287,9 +279,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
         copyWithoutRebateInfo.addNote(note);
       }
     }
-    if(exportableTransaction.getSubjectNote()!= null) {
-      copyWithoutRebateInfo.addNote(exportableTransaction.getSubjectNote());
-    }
+    Optional.ofNullable(exportableTransaction.getSubjectNote()).ifPresent(copyWithoutRebateInfo::addNote);
     return super.buildNotes(copyWithoutRebateInfo);
   }
 }

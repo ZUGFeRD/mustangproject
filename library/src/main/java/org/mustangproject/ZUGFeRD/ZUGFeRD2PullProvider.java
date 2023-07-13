@@ -47,7 +47,6 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.IncludedNote;
-import org.mustangproject.SubjectCode;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
@@ -757,12 +756,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
     if (exportableTransaction.rebateAgreementExists()) {
       includedNotes.add(IncludedNote.discountBonusNote("Es bestehen Rabatt- und Bonusvereinbarungen."));
     }
-    if (exportableTransaction.getOwnOrganisationFullPlaintextInfo() != null) {
-      includedNotes.add(IncludedNote.regulatoryNote(exportableTransaction.getOwnOrganisationFullPlaintextInfo()));
-    }
-    if (exportableTransaction.getSubjectNote() != null) {
-      includedNotes.add(IncludedNote.unspecifiedNote(exportableTransaction.getSubjectNote()));
-    }
+    Optional.ofNullable(exportableTransaction.getOwnOrganisationFullPlaintextInfo())
+        .ifPresent(info -> includedNotes.add(IncludedNote.regulatoryNote(info)));
+
+    Optional.ofNullable(exportableTransaction.getSubjectNote())
+        .ifPresent(note -> includedNotes.add(IncludedNote.unspecifiedNote(note)));
+    
     return includedNotes.stream().map(IncludedNote::toCiiXml).collect(Collectors.joining(""));
   }
 
