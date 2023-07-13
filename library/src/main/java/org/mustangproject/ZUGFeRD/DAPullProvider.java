@@ -45,37 +45,12 @@ public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 	@Override
 	public void generateXML(IExportableTransaction trans) {
 		this.trans = trans;
-		boolean hasDueDate = false;
-		final SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-
-		final String exemptionReason = "";
-
-		String senderReg = "";
-		if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
-			senderReg = "<ram:IncludedNote><ram:Content>"
-					+ XMLTools.encodeXML(trans.getOwnOrganisationFullPlaintextInfo()) + "</ram:Content>"
-					+ "<ram:SubjectCode>REG</ram:SubjectCode></ram:IncludedNote>";
-
-		}
-
-		String subjectNote = "";
-		if (trans.getSubjectNote() != null) {
-			subjectNote = "<ram:IncludedNote><ram:Content>"
-					+ XMLTools.encodeXML(trans.getSubjectNote()) + "</ram:Content>"
-					+ "</ram:IncludedNote>";
-		}
 
 		final String typecode = "220";
 		/*if (trans.getDocumentCode() != null) {
 			typecode = trans.getDocumentCode();
 		}*/
-		String notes = "";
-		if (trans.getNotes() != null) {
-			for (final String currentNote : trans.getNotes()) {
-				notes += "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
 
-			}
-		}
 		String testBooleanStr="true";
 		String xml = "<SCRDMCCBDACIDAMessageStructure\n" +
 				"        xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:25\"\n" +
@@ -99,9 +74,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 				+ "<ram:TypeCode>" + typecode + "</ram:TypeCode>"
 				+ "<ram:IssueDateTime>"
 				+ DATE.udtFormat(trans.getIssueDate()) + "</ram:IssueDateTime>" // date
-				+ notes
-				+ subjectNote
-				+ senderReg
+				+ buildNotes(trans)
 
 				+ "</px:ExchangedDocument>"
 				+ "<px:SupplyChainTradeTransaction>";
@@ -111,7 +84,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				//	exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
-			notes = "";
+			String notes = "";
 			if (currentItem.getNotes() != null) {
 				for (final String currentNote : currentItem.getNotes()) {
 					notes = notes + "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
@@ -308,5 +281,19 @@ public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 		return profile;
 	}
 
-
+  @Override
+  protected String buildNotes(IExportableTransaction exportableTransaction) {
+    Invoice copyWithoutRebateInfo = new Invoice()
+        .setOwnOrganisationFullPlaintextInfo(exportableTransaction.getOwnOrganisationFullPlaintextInfo())
+        .addNotes(exportableTransaction.getNotesWithSubjectCode());
+    if(exportableTransaction.getNotes() != null) {
+      for (String note : exportableTransaction.getNotes()) {
+        copyWithoutRebateInfo.addNote(note);
+      }
+    }
+    if(exportableTransaction.getSubjectNote()!= null) {
+      copyWithoutRebateInfo.addNote(exportableTransaction.getSubjectNote());
+    }
+    return super.buildNotes(copyWithoutRebateInfo);
+  }
 }

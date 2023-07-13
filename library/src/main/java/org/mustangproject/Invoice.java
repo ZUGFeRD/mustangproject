@@ -22,6 +22,7 @@ package org.mustangproject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -678,6 +679,17 @@ public class Invoice implements IExportableTransaction {
 		notes.add(text);
 		return this;
 	}
+  
+  public Invoice addNotes(Collection<IncludedNote> notes) {
+    if (notes == null) {
+      return this;
+    }
+    if (includedNotes == null) {
+      includedNotes = new ArrayList<>();
+    }
+    includedNotes.addAll(notes);
+    return this;
+  }
   
   /**
    * adds a free text paragraph, which will become an includedNote element with explicit 

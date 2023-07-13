@@ -747,7 +747,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 	}
 
-  private static String buildNotes(IExportableTransaction exportableTransaction) {
+  protected String buildNotes(IExportableTransaction exportableTransaction) {
     final List<IncludedNote> includedNotes = Optional.ofNullable(exportableTransaction.getNotesWithSubjectCode())
         .orElse(new ArrayList<>());
     if (exportableTransaction.getNotes() != null) {
