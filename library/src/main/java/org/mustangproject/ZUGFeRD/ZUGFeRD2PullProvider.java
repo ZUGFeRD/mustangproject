@@ -30,6 +30,7 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -299,7 +300,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if (trans.getDocumentCode() != null) {
 			typecode = trans.getDocumentCode();
 		}
-    String notes;
     String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<rsm:CrossIndustryInvoice xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\""
 				// + "
@@ -334,19 +334,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
-			notes = "";
-			if (currentItem.getNotes() != null) {
-				for (final String currentNote : currentItem.getNotes()) {
-					notes = notes + "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
-				}
-			}
 			final LineCalculator lc = new LineCalculator(currentItem);
-			if ((getProfile() != Profiles.getByName("Minimum")) && (getProfile() != Profiles.getByName("BasicWL"))) {
-
-				xml += "<ram:IncludedSupplyChainTradeLineItem>" +
+      if ((getProfile() != Profiles.getByName("Minimum")) && (getProfile() != Profiles.getByName("BasicWL"))) {
+        xml += "<ram:IncludedSupplyChainTradeLineItem>" +
 						"<ram:AssociatedDocumentLineDocument>"
 						+ "<ram:LineID>" + lineID + "</ram:LineID>"
-						+ notes
+            + buildItemNotes(currentItem)
 						+ "</ram:AssociatedDocumentLineDocument>"
 
 						+ "<ram:SpecifiedTradeProduct>";
@@ -395,16 +388,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 								"<ram:TypeCode>" + XMLTools.encodeXML(currentReferencedDocument.getTypeCode()) + "</ram:TypeCode>" +
 								"<ram:ReferenceTypeCode>" + XMLTools.encodeXML(currentReferencedDocument.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>" +
 								"</ram:AdditionalReferencedDocument>";
-
-
 					}
-
 				}
 				if (currentItem.getBuyerOrderReferencedDocumentLineID() != null) {
 					xml += "<ram:BuyerOrderReferencedDocument> "
 							+ "<ram:LineID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentLineID()) + "</ram:LineID>"
 							+ "</ram:BuyerOrderReferencedDocument>";
-
 				}
 				xml += "<ram:GrossPriceProductTradePrice>"
 						+ "<ram:ChargeAmount>" + priceFormat(lc.getPriceGross())
@@ -746,6 +735,16 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
 		}
 	}
+
+  protected String buildItemNotes(IZUGFeRDExportableItem currentItem) {
+    if (currentItem.getNotes() == null) {
+      return "";
+    }
+    return Arrays.stream(currentItem.getNotes())
+        .map(IncludedNote::unspecifiedNote)
+        .map(IncludedNote::toCiiXml)
+        .collect(Collectors.joining());
+  }
 
   protected String buildNotes(IExportableTransaction exportableTransaction) {
     final List<IncludedNote> includedNotes = Optional.ofNullable(exportableTransaction.getNotesWithSubjectCode())

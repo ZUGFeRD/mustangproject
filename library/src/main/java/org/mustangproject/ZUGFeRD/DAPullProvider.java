@@ -27,11 +27,14 @@ import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATE
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.mustangproject.*;
 
@@ -84,18 +87,11 @@ public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				//	exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
-			String notes = "";
-			if (currentItem.getNotes() != null) {
-				for (final String currentNote : currentItem.getNotes()) {
-					notes = notes + "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
-
-				}
-			}
-			final LineCalculator lc = new LineCalculator(currentItem);
+      final LineCalculator lc = new LineCalculator(currentItem);
 			xml += "<ram:IncludedSupplyChainTradeLineItem>" +
 					"<ram:AssociatedDocumentLineDocument>"
 					+ "<ram:LineID>" + lineID + "</ram:LineID>"
-					+ notes
+          + buildItemNotes(currentItem)
 					+ "</ram:AssociatedDocumentLineDocument>"
 
 					+ "<ram:SpecifiedTradeProduct>";
