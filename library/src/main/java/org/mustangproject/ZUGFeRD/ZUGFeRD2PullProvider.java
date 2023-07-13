@@ -277,7 +277,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 		boolean hasDueDate = false;
 		final SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-
+    
 		String exemptionReason = "";
 
 		if (trans.getPaymentTermDescription() != null) {
@@ -288,42 +288,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			paymentTermsDescription = "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
 
 		}
-
-		String senderReg = "";
-		if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
-			senderReg = "<ram:IncludedNote><ram:Content>"
-					+ XMLTools.encodeXML(trans.getOwnOrganisationFullPlaintextInfo()) + "</ram:Content>"
-					+ "<ram:SubjectCode>REG</ram:SubjectCode></ram:IncludedNote>";
-
-		}
-
-		String rebateAgreement = "";
-		if (trans.rebateAgreementExists()) {
-			rebateAgreement = "<ram:IncludedNote><ram:Content>"
-					+ "Es bestehen Rabatt- und Bonusvereinbarungen.</ram:Content>"
-					+ "<ram:SubjectCode>AAK</ram:SubjectCode></ram:IncludedNote>";
-		}
-
-		String subjectNote = "";
-		if (trans.getSubjectNote() != null) {
-			subjectNote = "<ram:IncludedNote><ram:Content>"
-					+ XMLTools.encodeXML(trans.getSubjectNote()) + "</ram:Content>"
-					+ "</ram:IncludedNote>";
-		}
-
+    
 		String typecode = "380";
 		if (trans.getDocumentCode() != null) {
 			typecode = trans.getDocumentCode();
 		}
-		String notes = "";
-		if (trans.getNotes() != null) {
-			for (final String currentNote : trans.getNotes()) {
-				notes = notes + "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
-
-			}
-		}
-		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-
+    String notes;
+    String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<rsm:CrossIndustryInvoice xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\""
 				// + "
 				// xsi:schemaLocation=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100
@@ -347,10 +318,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "<ram:TypeCode>" + typecode + "</ram:TypeCode>"
 				+ "<ram:IssueDateTime>"
 				+ DATE.udtFormat(trans.getIssueDate()) + "</ram:IssueDateTime>" // date
-				+ notes
-				+ subjectNote
-				+ rebateAgreement
-				+ senderReg
+				+ buildNotes(trans)
 
 				+ "</rsm:ExchangedDocument>"
 				+ "<rsm:SupplyChainTradeTransaction>";
@@ -364,7 +332,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if (currentItem.getNotes() != null) {
 				for (final String currentNote : currentItem.getNotes()) {
 					notes = notes + "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
-
 				}
 			}
 			final LineCalculator lc = new LineCalculator(currentItem);
@@ -647,8 +614,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				xml += "<ram:EndDateTime>" + DATE.udtFormat(trans.getDetailedDeliveryPeriodTo()) + "</ram:EndDateTime>";
 			}
 			xml += "</ram:BillingSpecifiedPeriod>";
-
-
 		}
 
 		if ((trans.getZFCharges() != null) && (trans.getZFCharges().length > 0)) {
@@ -776,7 +741,32 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 	}
 
-	@Override
+  private static String buildNotes(IExportableTransaction trans) {
+    String notes = "";
+    if (trans.getNotes() != null) {
+      for (final String currentNote : trans.getNotes()) {
+        notes += "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
+      }
+    }
+    if (trans.rebateAgreementExists()) {
+      notes += "<ram:IncludedNote><ram:Content>"
+          + "Es bestehen Rabatt- und Bonusvereinbarungen.</ram:Content>"
+          + "<ram:SubjectCode>AAK</ram:SubjectCode></ram:IncludedNote>";
+    }
+    if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
+      notes += "<ram:IncludedNote><ram:Content>"
+          + XMLTools.encodeXML(trans.getOwnOrganisationFullPlaintextInfo()) + "</ram:Content>"
+          + "<ram:SubjectCode>REG</ram:SubjectCode></ram:IncludedNote>";
+    }
+    if (trans.getSubjectNote() != null) {
+      notes += "<ram:IncludedNote><ram:Content>"
+          + XMLTools.encodeXML(trans.getSubjectNote()) + "</ram:Content>"
+          + "</ram:IncludedNote>";
+    }
+    return notes;
+  }
+
+  @Override
 	public void setProfile(Profile p) {
 		profile = p;
 	}
