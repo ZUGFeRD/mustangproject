@@ -27,5 +27,13 @@ public enum SubjectCode {
   /**
    * Customs information
    */
-  CUS
+  CUS,
+  /**
+   * introduction
+   */
+  ACY,
+  /**
+   * Discount and bonus agreements
+   */
+  AAK
 }

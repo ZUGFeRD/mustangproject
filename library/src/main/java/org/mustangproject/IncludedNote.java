@@ -30,6 +30,12 @@ public class IncludedNote {
   public static IncludedNote taxNote(String content) {
     return new IncludedNote(content, SubjectCode.TXD);
   }
+  public static IncludedNote introductionNote(String content) {
+    return new IncludedNote(content, SubjectCode.ACY);
+  }
+  public static IncludedNote discountBonusNote(String content) {
+    return new IncludedNote(content, SubjectCode.AAK);
+  }
 
   public String getContent() {
     return content;

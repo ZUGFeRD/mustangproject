@@ -41,6 +41,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.FileAttachment;
+import org.mustangproject.SubjectCode;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
@@ -753,13 +754,17 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
     if (trans.rebateAgreementExists()) {
       notes.append("<ram:IncludedNote><ram:Content>")
           .append("Es bestehen Rabatt- und Bonusvereinbarungen.</ram:Content>")
-          .append("<ram:SubjectCode>AAK</ram:SubjectCode></ram:IncludedNote>");
+          .append("<ram:SubjectCode>")
+          .append(SubjectCode.AAK)
+          .append("</ram:SubjectCode></ram:IncludedNote>");
     }
     if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
       notes.append("<ram:IncludedNote><ram:Content>")
           .append(XMLTools.encodeXML(trans.getOwnOrganisationFullPlaintextInfo()))
           .append("</ram:Content>")
-          .append("<ram:SubjectCode>REG</ram:SubjectCode></ram:IncludedNote>");
+          .append("<ram:SubjectCode>")
+          .append(SubjectCode.REG)
+          .append("</ram:SubjectCode></ram:IncludedNote>");
     }
     if (trans.getSubjectNote() != null) {
       notes.append("<ram:IncludedNote><ram:Content>")
