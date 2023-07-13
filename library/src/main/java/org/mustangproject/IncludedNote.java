@@ -7,6 +7,13 @@ public class IncludedNote {
   private final String content;
   private final SubjectCode subjectCode;
 
+  private static final String INCLUDE_START = "<ram:IncludedNote>";
+  private static final String INCLUDE_END = "</ram:IncludedNote>";
+  private static final String CONTENT_START = "<ram:Content>";
+  private static final String CONTENT_END = "</ram:Content>";
+  private static final String SUBJECT_CODE_START = "<ram:SubjectCode>";
+  private static final String SUBJECT_CODE_END = "</ram:SubjectCode>";
+
   private IncludedNote(String content, SubjectCode subjectCode) {
     this.content = content;
     this.subjectCode = subjectCode;
@@ -37,12 +44,25 @@ public class IncludedNote {
     return new IncludedNote(content, SubjectCode.AAK);
   }
 
+  public static IncludedNote unspecifiedNote(String content) {
+    return new IncludedNote(content, null);
+  }
+
   public String getContent() {
     return content;
   }
 
   public SubjectCode getSubjectCode() {
     return subjectCode;
+  }
+  
+  public String toCiiXml(){
+    String result = INCLUDE_START + CONTENT_START +
+        XMLTools.encodeXML(getContent() )+ CONTENT_END;
+    if (getSubjectCode() != null) {
+      result += SUBJECT_CODE_START + getSubjectCode() + SUBJECT_CODE_END;
+    }
+    return result + INCLUDE_END;
   }
   
 }

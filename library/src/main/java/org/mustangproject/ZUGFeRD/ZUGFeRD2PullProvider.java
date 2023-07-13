@@ -29,11 +29,15 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -41,6 +45,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.FileAttachment;
+import org.mustangproject.IncludedNote;
 import org.mustangproject.SubjectCode;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
@@ -742,37 +747,24 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 	}
 
-  private static String buildNotes(IExportableTransaction trans) {
-    StringBuilder notes = new StringBuilder();
-    if (trans.getNotes() != null) {
-      for (final String currentNote : trans.getNotes()) {
-        notes.append("<ram:IncludedNote><ram:Content>")
-            .append(XMLTools.encodeXML(currentNote))
-            .append("</ram:Content></ram:IncludedNote>");
+  private static String buildNotes(IExportableTransaction exportableTransaction) {
+    final List<IncludedNote> includedNotes = Optional.ofNullable(exportableTransaction.getNotesWithSubjectCode())
+        .orElse(new ArrayList<>());
+    if (exportableTransaction.getNotes() != null) {
+      for (final String currentNote : exportableTransaction.getNotes()) {
+        includedNotes.add(IncludedNote.unspecifiedNote(currentNote));
       }
     }
-    if (trans.rebateAgreementExists()) {
-      notes.append("<ram:IncludedNote><ram:Content>")
-          .append("Es bestehen Rabatt- und Bonusvereinbarungen.</ram:Content>")
-          .append("<ram:SubjectCode>")
-          .append(SubjectCode.AAK)
-          .append("</ram:SubjectCode></ram:IncludedNote>");
+    if (exportableTransaction.rebateAgreementExists()) {
+      includedNotes.add(IncludedNote.discountBonusNote("Es bestehen Rabatt- und Bonusvereinbarungen."));
     }
-    if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
-      notes.append("<ram:IncludedNote><ram:Content>")
-          .append(XMLTools.encodeXML(trans.getOwnOrganisationFullPlaintextInfo()))
-          .append("</ram:Content>")
-          .append("<ram:SubjectCode>")
-          .append(SubjectCode.REG)
-          .append("</ram:SubjectCode></ram:IncludedNote>");
+    if (exportableTransaction.getOwnOrganisationFullPlaintextInfo() != null) {
+      includedNotes.add(IncludedNote.regulatoryNote(exportableTransaction.getOwnOrganisationFullPlaintextInfo()));
     }
-    if (trans.getSubjectNote() != null) {
-      notes.append("<ram:IncludedNote><ram:Content>")
-          .append(XMLTools.encodeXML(trans.getSubjectNote()))
-          .append("</ram:Content>")
-          .append("</ram:IncludedNote>");
+    if (exportableTransaction.getSubjectNote() != null) {
+      includedNotes.add(IncludedNote.unspecifiedNote(exportableTransaction.getSubjectNote()));
     }
-    return notes.toString();
+    return includedNotes.stream().map(IncludedNote::toCiiXml).collect(Collectors.joining(""));
   }
 
   @Override
