@@ -308,51 +308,5 @@ public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 		return profile;
 	}
 
-	private String buildPaymentTermsXml() {
-
-		final IZUGFeRDPaymentTerms paymentTerms = trans.getPaymentTerms();
-		if (paymentTerms == null) {
-			return "";
-		}
-		String paymentTermsXml = "<ram:SpecifiedTradePaymentTerms>";
-
-		final IZUGFeRDPaymentDiscountTerms discountTerms = paymentTerms.getDiscountTerms();
-		final Date dueDate = paymentTerms.getDueDate();
-		if (dueDate != null && discountTerms != null && discountTerms.getBaseDate() != null) {
-			throw new IllegalStateException(
-					"if paymentTerms.dueDate is specified, paymentTerms.discountTerms.baseDate has not to be specified");
-		}
-		paymentTermsXml += "<ram:Description>" + paymentTerms.getDescription() + "</ram:Description>";
-		if (dueDate != null) {
-			paymentTermsXml += "<ram:DueDateDateTime>";
-			paymentTermsXml += DATE.udtFormat(dueDate);
-			paymentTermsXml += "</ram:DueDateDateTime>";
-		}
-
-		if (discountTerms != null) {
-			paymentTermsXml += "<ram:ApplicableTradePaymentDiscountTerms>";
-			final String currency = trans.getCurrency();
-			final String basisAmount = currencyFormat(calc.getGrandTotal());
-			paymentTermsXml += "<ram:BasisAmount currencyID=\"" + currency + "\">" + basisAmount + "</ram:BasisAmount>";
-			paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toString()
-					+ "</ram:CalculationPercent>";
-
-			if (discountTerms.getBaseDate() != null) {
-				final Date baseDate = discountTerms.getBaseDate();
-				paymentTermsXml += "<ram:BasisDateTime>";
-				paymentTermsXml += DATE.udtFormat(baseDate);
-				paymentTermsXml += "</ram:BasisDateTime>";
-
-				paymentTermsXml += "<ram:BasisPeriodMeasure unitCode=\"" + discountTerms.getBasePeriodUnitCode() + "\">"
-						+ discountTerms.getBasePeriodMeasure() + "</ram:BasisPeriodMeasure>";
-			}
-
-			paymentTermsXml += "</ram:ApplicableTradePaymentDiscountTerms>";
-		}
-
-		paymentTermsXml += "</ram:SpecifiedTradePaymentTerms>";
-		return paymentTermsXml;
-	}
-
 
 }
