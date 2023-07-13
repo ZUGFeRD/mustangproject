@@ -742,28 +742,32 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	}
 
   private static String buildNotes(IExportableTransaction trans) {
-    String notes = "";
+    StringBuilder notes = new StringBuilder();
     if (trans.getNotes() != null) {
       for (final String currentNote : trans.getNotes()) {
-        notes += "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
+        notes.append("<ram:IncludedNote><ram:Content>")
+            .append(XMLTools.encodeXML(currentNote))
+            .append("</ram:Content></ram:IncludedNote>");
       }
     }
     if (trans.rebateAgreementExists()) {
-      notes += "<ram:IncludedNote><ram:Content>"
-          + "Es bestehen Rabatt- und Bonusvereinbarungen.</ram:Content>"
-          + "<ram:SubjectCode>AAK</ram:SubjectCode></ram:IncludedNote>";
+      notes.append("<ram:IncludedNote><ram:Content>")
+          .append("Es bestehen Rabatt- und Bonusvereinbarungen.</ram:Content>")
+          .append("<ram:SubjectCode>AAK</ram:SubjectCode></ram:IncludedNote>");
     }
     if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
-      notes += "<ram:IncludedNote><ram:Content>"
-          + XMLTools.encodeXML(trans.getOwnOrganisationFullPlaintextInfo()) + "</ram:Content>"
-          + "<ram:SubjectCode>REG</ram:SubjectCode></ram:IncludedNote>";
+      notes.append("<ram:IncludedNote><ram:Content>")
+          .append(XMLTools.encodeXML(trans.getOwnOrganisationFullPlaintextInfo()))
+          .append("</ram:Content>")
+          .append("<ram:SubjectCode>REG</ram:SubjectCode></ram:IncludedNote>");
     }
     if (trans.getSubjectNote() != null) {
-      notes += "<ram:IncludedNote><ram:Content>"
-          + XMLTools.encodeXML(trans.getSubjectNote()) + "</ram:Content>"
-          + "</ram:IncludedNote>";
+      notes.append("<ram:IncludedNote><ram:Content>")
+          .append(XMLTools.encodeXML(trans.getSubjectNote()))
+          .append("</ram:Content>")
+          .append("</ram:IncludedNote>");
     }
-    return notes;
+    return notes.toString();
   }
 
   @Override
