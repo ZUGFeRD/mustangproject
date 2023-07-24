@@ -21,15 +21,10 @@
 package org.mustangproject.ZUGFeRD;
 
 import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
-import static org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants.CORRECTEDINVOICE;
-import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATEGORY_CODES_WITH_EXEMPTION_REASON;
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Base64;
-import java.util.Date;
-import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,37 +40,12 @@ public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 	@Override
 	public void generateXML(IExportableTransaction trans) {
 		this.trans = trans;
-		boolean hasDueDate = false;
-		final SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-
-		final String exemptionReason = "";
-
-		String senderReg = "";
-		if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
-			senderReg = "<ram:IncludedNote><ram:Content>"
-					+ XMLTools.encodeXML(trans.getOwnOrganisationFullPlaintextInfo()) + "</ram:Content>"
-					+ "<ram:SubjectCode>REG</ram:SubjectCode></ram:IncludedNote>";
-
-		}
-
-		String subjectNote = "";
-		if (trans.getSubjectNote() != null) {
-			subjectNote = "<ram:IncludedNote><ram:Content>"
-					+ XMLTools.encodeXML(trans.getSubjectNote()) + "</ram:Content>"
-					+ "</ram:IncludedNote>";
-		}
 
 		final String typecode = "220";
 		/*if (trans.getDocumentCode() != null) {
 			typecode = trans.getDocumentCode();
 		}*/
-		String notes = "";
-		if (trans.getNotes() != null) {
-			for (final String currentNote : trans.getNotes()) {
-				notes += "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
 
-			}
-		}
 		String testBooleanStr="true";
 		String xml = "<SCRDMCCBDACIDAMessageStructure\n" +
 				"        xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:25\"\n" +
@@ -99,9 +69,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 				+ "<ram:TypeCode>" + typecode + "</ram:TypeCode>"
 				+ "<ram:IssueDateTime>"
 				+ DATE.udtFormat(trans.getIssueDate()) + "</ram:IssueDateTime>" // date
-				+ notes
-				+ subjectNote
-				+ senderReg
+				+ buildNotes(trans)
 
 				+ "</px:ExchangedDocument>"
 				+ "<px:SupplyChainTradeTransaction>";
@@ -111,18 +79,11 @@ public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				//	exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
-			notes = "";
-			if (currentItem.getNotes() != null) {
-				for (final String currentNote : currentItem.getNotes()) {
-					notes = notes + "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
-
-				}
-			}
-			final LineCalculator lc = new LineCalculator(currentItem);
+      final LineCalculator lc = new LineCalculator(currentItem);
 			xml += "<ram:IncludedSupplyChainTradeLineItem>" +
 					"<ram:AssociatedDocumentLineDocument>"
 					+ "<ram:LineID>" + lineID + "</ram:LineID>"
-					+ notes
+          + buildItemNotes(currentItem)
 					+ "</ram:AssociatedDocumentLineDocument>"
 
 					+ "<ram:SpecifiedTradeProduct>";
@@ -308,51 +269,17 @@ public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 		return profile;
 	}
 
-	private String buildPaymentTermsXml() {
-
-		final IZUGFeRDPaymentTerms paymentTerms = trans.getPaymentTerms();
-		if (paymentTerms == null) {
-			return "";
-		}
-		String paymentTermsXml = "<ram:SpecifiedTradePaymentTerms>";
-
-		final IZUGFeRDPaymentDiscountTerms discountTerms = paymentTerms.getDiscountTerms();
-		final Date dueDate = paymentTerms.getDueDate();
-		if (dueDate != null && discountTerms != null && discountTerms.getBaseDate() != null) {
-			throw new IllegalStateException(
-					"if paymentTerms.dueDate is specified, paymentTerms.discountTerms.baseDate has not to be specified");
-		}
-		paymentTermsXml += "<ram:Description>" + paymentTerms.getDescription() + "</ram:Description>";
-		if (dueDate != null) {
-			paymentTermsXml += "<ram:DueDateDateTime>";
-			paymentTermsXml += DATE.udtFormat(dueDate);
-			paymentTermsXml += "</ram:DueDateDateTime>";
-		}
-
-		if (discountTerms != null) {
-			paymentTermsXml += "<ram:ApplicableTradePaymentDiscountTerms>";
-			final String currency = trans.getCurrency();
-			final String basisAmount = currencyFormat(calc.getGrandTotal());
-			paymentTermsXml += "<ram:BasisAmount currencyID=\"" + currency + "\">" + basisAmount + "</ram:BasisAmount>";
-			paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toString()
-					+ "</ram:CalculationPercent>";
-
-			if (discountTerms.getBaseDate() != null) {
-				final Date baseDate = discountTerms.getBaseDate();
-				paymentTermsXml += "<ram:BasisDateTime>";
-				paymentTermsXml += DATE.udtFormat(baseDate);
-				paymentTermsXml += "</ram:BasisDateTime>";
-
-				paymentTermsXml += "<ram:BasisPeriodMeasure unitCode=\"" + discountTerms.getBasePeriodUnitCode() + "\">"
-						+ discountTerms.getBasePeriodMeasure() + "</ram:BasisPeriodMeasure>";
-			}
-
-			paymentTermsXml += "</ram:ApplicableTradePaymentDiscountTerms>";
-		}
-
-		paymentTermsXml += "</ram:SpecifiedTradePaymentTerms>";
-		return paymentTermsXml;
-	}
-
-
+  @Override
+  protected String buildNotes(IExportableTransaction exportableTransaction) {
+    Invoice copyWithoutRebateInfo = new Invoice()
+        .setOwnOrganisationFullPlaintextInfo(exportableTransaction.getOwnOrganisationFullPlaintextInfo())
+        .addNotes(exportableTransaction.getNotesWithSubjectCode());
+    if(exportableTransaction.getNotes() != null) {
+      for (String note : exportableTransaction.getNotes()) {
+        copyWithoutRebateInfo.addNote(note);
+      }
+    }
+    Optional.ofNullable(exportableTransaction.getSubjectNote()).ifPresent(copyWithoutRebateInfo::addNote);
+    return super.buildNotes(copyWithoutRebateInfo);
+  }
 }

@@ -29,11 +29,16 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -41,6 +46,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.FileAttachment;
+import org.mustangproject.IncludedNote;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
@@ -277,7 +283,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 		boolean hasDueDate = false;
 		final SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
-
+    
 		String exemptionReason = "";
 
 		if (trans.getPaymentTermDescription() != null) {
@@ -288,42 +294,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			paymentTermsDescription = "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
 
 		}
-
-		String senderReg = "";
-		if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
-			senderReg = "<ram:IncludedNote><ram:Content>"
-					+ XMLTools.encodeXML(trans.getOwnOrganisationFullPlaintextInfo()) + "</ram:Content>"
-					+ "<ram:SubjectCode>REG</ram:SubjectCode></ram:IncludedNote>";
-
-		}
-
-		String rebateAgreement = "";
-		if (trans.rebateAgreementExists()) {
-			rebateAgreement = "<ram:IncludedNote><ram:Content>"
-					+ "Es bestehen Rabatt- und Bonusvereinbarungen.</ram:Content>"
-					+ "<ram:SubjectCode>AAK</ram:SubjectCode></ram:IncludedNote>";
-		}
-
-		String subjectNote = "";
-		if (trans.getSubjectNote() != null) {
-			subjectNote = "<ram:IncludedNote><ram:Content>"
-					+ XMLTools.encodeXML(trans.getSubjectNote()) + "</ram:Content>"
-					+ "</ram:IncludedNote>";
-		}
-
+    
 		String typecode = "380";
 		if (trans.getDocumentCode() != null) {
 			typecode = trans.getDocumentCode();
 		}
-		String notes = "";
-		if (trans.getNotes() != null) {
-			for (final String currentNote : trans.getNotes()) {
-				notes = notes + "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
-
-			}
-		}
-		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-
+    String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 				+ "<rsm:CrossIndustryInvoice xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\""
 				// + "
 				// xsi:schemaLocation=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100
@@ -347,10 +323,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "<ram:TypeCode>" + typecode + "</ram:TypeCode>"
 				+ "<ram:IssueDateTime>"
 				+ DATE.udtFormat(trans.getIssueDate()) + "</ram:IssueDateTime>" // date
-				+ notes
-				+ subjectNote
-				+ rebateAgreement
-				+ senderReg
+				+ buildNotes(trans)
 
 				+ "</rsm:ExchangedDocument>"
 				+ "<rsm:SupplyChainTradeTransaction>";
@@ -360,20 +333,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
-			notes = "";
-			if (currentItem.getNotes() != null) {
-				for (final String currentNote : currentItem.getNotes()) {
-					notes = notes + "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
-
-				}
-			}
 			final LineCalculator lc = new LineCalculator(currentItem);
-			if ((getProfile() != Profiles.getByName("Minimum")) && (getProfile() != Profiles.getByName("BasicWL"))) {
-
-				xml += "<ram:IncludedSupplyChainTradeLineItem>" +
+      if ((getProfile() != Profiles.getByName("Minimum")) && (getProfile() != Profiles.getByName("BasicWL"))) {
+        xml += "<ram:IncludedSupplyChainTradeLineItem>" +
 						"<ram:AssociatedDocumentLineDocument>"
 						+ "<ram:LineID>" + lineID + "</ram:LineID>"
-						+ notes
+            + buildItemNotes(currentItem)
 						+ "</ram:AssociatedDocumentLineDocument>"
 
 						+ "<ram:SpecifiedTradeProduct>";
@@ -422,16 +387,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 								"<ram:TypeCode>" + XMLTools.encodeXML(currentReferencedDocument.getTypeCode()) + "</ram:TypeCode>" +
 								"<ram:ReferenceTypeCode>" + XMLTools.encodeXML(currentReferencedDocument.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>" +
 								"</ram:AdditionalReferencedDocument>";
-
-
 					}
-
 				}
 				if (currentItem.getBuyerOrderReferencedDocumentLineID() != null) {
 					xml += "<ram:BuyerOrderReferencedDocument> "
 							+ "<ram:LineID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentLineID()) + "</ram:LineID>"
 							+ "</ram:BuyerOrderReferencedDocument>";
-
 				}
 				xml += "<ram:GrossPriceProductTradePrice>"
 						+ "<ram:ChargeAmount>" + priceFormat(lc.getPriceGross())
@@ -647,8 +608,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				xml += "<ram:EndDateTime>" + DATE.udtFormat(trans.getDetailedDeliveryPeriodTo()) + "</ram:EndDateTime>";
 			}
 			xml += "</ram:BillingSpecifiedPeriod>";
-
-
 		}
 
 		if ((trans.getZFCharges() != null) && (trans.getZFCharges().length > 0)) {
@@ -776,7 +735,37 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 	}
 
-	@Override
+  protected String buildItemNotes(IZUGFeRDExportableItem currentItem) {
+    if (currentItem.getNotes() == null) {
+      return "";
+    }
+    return Arrays.stream(currentItem.getNotes())
+        .map(IncludedNote::unspecifiedNote)
+        .map(IncludedNote::toCiiXml)
+        .collect(Collectors.joining());
+  }
+
+  protected String buildNotes(IExportableTransaction exportableTransaction) {
+    final List<IncludedNote> includedNotes = Optional.ofNullable(exportableTransaction.getNotesWithSubjectCode())
+        .orElse(new ArrayList<>());
+    if (exportableTransaction.getNotes() != null) {
+      for (final String currentNote : exportableTransaction.getNotes()) {
+        includedNotes.add(IncludedNote.unspecifiedNote(currentNote));
+      }
+    }
+    if (exportableTransaction.rebateAgreementExists()) {
+      includedNotes.add(IncludedNote.discountBonusNote("Es bestehen Rabatt- und Bonusvereinbarungen."));
+    }
+    Optional.ofNullable(exportableTransaction.getOwnOrganisationFullPlaintextInfo())
+        .ifPresent(info -> includedNotes.add(IncludedNote.regulatoryNote(info)));
+
+    Optional.ofNullable(exportableTransaction.getSubjectNote())
+        .ifPresent(note -> includedNotes.add(IncludedNote.unspecifiedNote(note)));
+    
+    return includedNotes.stream().map(IncludedNote::toCiiXml).collect(Collectors.joining(""));
+  }
+
+  @Override
 	public void setProfile(Profile p) {
 		profile = p;
 	}

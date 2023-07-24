@@ -22,7 +22,9 @@ package org.mustangproject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.mustangproject.ZUGFeRD.IExportableTransaction;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
@@ -48,6 +50,7 @@ public class Invoice implements IExportableTransaction {
 	@JsonDeserialize(contentAs=Item.class)
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
 	protected ArrayList<String> notes = null;
+  private List<IncludedNote> includedNotes = null;
   	protected String sellerOrderReferencedDocumentID;
 	protected String contractReferencedDocument = null;
 	protected ArrayList<FileAttachment> xmlEmbeddedFiles=null;
@@ -396,7 +399,12 @@ public class Invoice implements IExportableTransaction {
 		return notes.toArray(new String[0]);
 	}
 
-	@Override
+  @Override
+  public List<IncludedNote> getNotesWithSubjectCode() {
+    return includedNotes;
+  }
+
+  @Override
 	public String getCurrency() {
 		return currency;
 	}
@@ -659,8 +667,8 @@ public class Invoice implements IExportableTransaction {
 	}
 
 
-	/***
-	 * adds a free text paragraph, which will become a includedNote element
+	/**
+	 * adds a free text paragraph, which will become an includedNote element
 	 * @param text freeform UTF8 plain text
 	 * @return fluent setter
 	 */
@@ -671,7 +679,129 @@ public class Invoice implements IExportableTransaction {
 		notes.add(text);
 		return this;
 	}
+  
+  public Invoice addNotes(Collection<IncludedNote> notes) {
+    if (notes == null) {
+      return this;
+    }
+    if (includedNotes == null) {
+      includedNotes = new ArrayList<>();
+    }
+    includedNotes.addAll(notes);
+    return this;
+  }
+  
+  /**
+   * adds a free text paragraph, which will become an includedNote element with explicit 
+   * subjectCode {@link SubjectCode#AAI}
+   * @param content freeform UTF8 plain text
+   * @return fluent setter
+   */
+  public Invoice addGeneralNote(String content) {
+    if (includedNotes == null) {
+      includedNotes = new ArrayList<>();
+    }
+    includedNotes.add(IncludedNote.generalNote(content));
+    return this;
+  }
 
+  /**
+   * adds a free text paragraph, which will become an includedNote element with explicit 
+   * subjectCode {@link SubjectCode#REG}
+   * @param content freeform UTF8 plain text
+   * @return fluent setter
+   */
+  public Invoice addRegulatoryNote(String content) {
+    if (includedNotes == null) {
+      includedNotes = new ArrayList<>();
+    }
+    includedNotes.add(IncludedNote.regulatoryNote(content));
+    return this;
+  }
+
+  /**
+   * adds a free text paragraph, which will become an includedNote element with explicit 
+   * subjectCode {@link SubjectCode#ABL}
+   * @param content freeform UTF8 plain text
+   * @return fluent setter
+   */
+  public Invoice addLegalNote(String content) {
+    if (includedNotes == null) {
+      includedNotes = new ArrayList<>();
+    }
+    includedNotes.add(IncludedNote.legalNote(content));
+    return this;
+  }
+
+  /**
+   * adds a free text paragraph, which will become an includedNote element with explicit 
+   * subjectCode {@link SubjectCode#CUS}
+   * @param content freeform UTF8 plain text
+   * @return fluent setter
+   */
+  public Invoice addCustomsNote(String content) {
+    if (includedNotes == null) {
+      includedNotes = new ArrayList<>();
+    }
+    includedNotes.add(IncludedNote.customsNote(content));
+    return this;
+  }
+
+  /**
+   * adds a free text paragraph, which will become an includedNote element with explicit 
+   * subjectCode {@link SubjectCode#SUR}
+   * @param content freeform UTF8 plain text
+   * @return fluent setter
+   */
+  public Invoice addSellerNote(String content) {
+    if (includedNotes == null) {
+      includedNotes = new ArrayList<>();
+    }
+    includedNotes.add(IncludedNote.sellerNote(content));
+    return this;
+  }
+
+  /**
+   * adds a free text paragraph, which will become an includedNote element with explicit 
+   * subjectCode {@link SubjectCode#TXD}
+   * @param content freeform UTF8 plain text
+   * @return fluent setter
+   */
+  public Invoice addTaxNote(String content) {
+    if (includedNotes == null) {
+      includedNotes = new ArrayList<>();
+    }
+    includedNotes.add(IncludedNote.taxNote(content));
+    return this;
+  }
+  
+   /**
+   * adds a free text paragraph, which will become an includedNote element with explicit 
+   * subjectCode {@link SubjectCode#ACY}
+   * @param content freeform UTF8 plain text
+   * @return fluent setter
+   */
+  public Invoice addIntroductionNote(String content) {
+    if (includedNotes == null) {
+      includedNotes = new ArrayList<>();
+    }
+    includedNotes.add(IncludedNote.introductionNote(content));
+    return this;
+  }  
+   /**
+   * adds a free text paragraph, which will become an includedNote element with explicit 
+   * subjectCode {@link SubjectCode#AAK}
+   * @param content freeform UTF8 plain text
+   * @return fluent setter
+   */
+  public Invoice addDiscountBonusNote(String content) {
+    if (includedNotes == null) {
+      includedNotes = new ArrayList<>();
+    }
+    includedNotes.add(IncludedNote.discountBonusNote(content));
+    return this;
+  }
+  
 	@Override
 	public String getSpecifiedProcuringProjectID() {
 		return specifiedProcuringProjectID;

@@ -27,14 +27,18 @@ import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATE
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
+import org.mustangproject.IncludedNote;
 import org.mustangproject.XMLTools;
 
 public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider {
@@ -64,39 +68,11 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 
 		}
 
-		String senderReg = "";
-		if (trans.getOwnOrganisationFullPlaintextInfo() != null) {
-			senderReg = "<ram:IncludedNote><ram:Content>"
-					+ XMLTools.encodeXML(trans.getOwnOrganisationFullPlaintextInfo()) + "</ram:Content>"
-					+ "<ram:SubjectCode>REG</ram:SubjectCode></ram:IncludedNote>";
-
-		}
-
-		String rebateAgreement = "";
-		if (trans.rebateAgreementExists()) {
-			rebateAgreement = "<ram:IncludedNote><ram:Content>"
-					+ "Es bestehen Rabatt- und Bonusvereinbarungen.</ram:Content>"
-					+ "<ram:SubjectCode>AAK</ram:SubjectCode></ram:IncludedNote>";
-		}
-
-		String subjectNote = "";
-		if (trans.getSubjectNote() != null) {
-			subjectNote = "<ram:IncludedNote><ram:Content>"
-					+ XMLTools.encodeXML(trans.getSubjectNote()) + "</ram:Content>"
-					+ "</ram:IncludedNote>";
-		}
-
 		final String typecode = "220";
 		/*if (trans.getDocumentCode() != null) {
 			typecode = trans.getDocumentCode();
 		}*/
-		String notes = "";
-		if (trans.getNotes() != null) {
-			for (final String currentNote : trans.getNotes()) {
-				notes += "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
-
-			}
-		}
+	
 		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 
 				+ "<rsm:SCRDMCCBDACIOMessageStructure\n" +
@@ -126,10 +102,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 				+ "<ram:TypeCode>" + typecode + "</ram:TypeCode>"
 				+ "<ram:IssueDateTime>"
 				+ DATE.udtFormat(trans.getIssueDate()) + "</ram:IssueDateTime>" // date
-				+ notes
-				+ subjectNote
-				+ rebateAgreement
-				+ senderReg
+				+ buildNotes(trans)
 
 				+ "</rsm:ExchangedDocument>"
 				+ "<rsm:SupplyChainTradeTransaction>";
@@ -139,18 +112,12 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 			//	exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
-			notes = "";
-			if (currentItem.getNotes() != null) {
-				for (final String currentNote : currentItem.getNotes()) {
-					notes = notes + "<ram:IncludedNote><ram:Content>" + XMLTools.encodeXML(currentNote) + "</ram:Content></ram:IncludedNote>";
-
-				}
-			}
+    
 			final LineCalculator lc = new LineCalculator(currentItem);
 			xml += "<ram:IncludedSupplyChainTradeLineItem>" +
 					"<ram:AssociatedDocumentLineDocument>"
 					+ "<ram:LineID>" + lineID + "</ram:LineID>"
-					+ notes
+					+ buildItemNotes(currentItem)
 					+ "</ram:AssociatedDocumentLineDocument>"
 
 					+ "<ram:SpecifiedTradeProduct>";
