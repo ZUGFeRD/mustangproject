@@ -1,3 +1,8 @@
+2.8.0
+=======
+
+Improvement of included notes #331
+
 2.7.3
 =======
 2023-06-16
