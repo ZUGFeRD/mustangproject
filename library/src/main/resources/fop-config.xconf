@@ -25,10 +25,11 @@
   
   <renderers>
    <renderer mime="application/pdf">
-   <fonts>
-       <font kerning="no" embed-url="file:///C:\Users\jstaerk\workspace\mustangproject\library\src\main\resources\FreeSans.ttf" embedding-mode="subset">
+   <fonts><!-- https://xmlgraphics.apache.org/fop/1.1/fonts.html auto-embed-->
+       <font kerning="no" embed-url="file:src/main/resources/FreeSans.ttf" embedding-mode="subset">
            <font-triplet name="SourceSerifPro" style="normal" weight="normal" />
-       </font>         
+       </font>
+   
    </fonts>
    <output-profile>classpath:AdobeCompat-v2.icc</output-profile>
    </renderer>
