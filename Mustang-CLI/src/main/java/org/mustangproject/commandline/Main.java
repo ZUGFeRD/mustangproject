@@ -43,14 +43,13 @@ import org.slf4j.LoggerFactory;
 import javax.xml.transform.TransformerException;
 
 public class Main {
-	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(Validator.class.getCanonicalName()); // log output
-
+	private static org.slf4j.Logger LOGGER; // log output
 	private static void printUsage() {
 		System.err.println(getUsage());
 	}
 
 	private static String getUsage() {
-		return "Usage: --action metrics|combine|extract|a3only|ubl|validate|validateExpectInvalid|validateExpectValid|visualize [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] | [-h,--help] \r\n"
+		return "Usage: --action metrics|combine|extract|a3only|ubl|validate|validateExpectInvalid|validateExpectValid|visualize [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] [--disable-file-logging] | [-h,--help] \r\n"
 				+ "        --action license   display open source license and notice\n"
 				+ "        --action metrics\n"
 				+ "          -d, --directory count ZUGFeRD files in directory to be scanned\n"
@@ -59,6 +58,7 @@ public class Main {
 				+ "                It will start once a blank line has been entered.\n" + "\n"
 				+ "        Additional parameter for both count operations\n"
 				+ "        [-i, --ignorefileextension]     Check for all files (*.*) instead of PDF files only (*.pdf) in metrics, ignore PDF/A input file errors in combine\n"
+			    + "        [--disable-file-logging]		disable logging to file.\n"
 				+ "        --action extract   extract Factur-X PDF to XML file\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source <filename>]: set input PDF file\n"
@@ -356,11 +356,13 @@ public class Main {
 			options.addOption(new Option("", "out",true, "which output file to write to"));
 			options.addOption(new Option("", "no-notices",false, "suppress non-fatal errors"));
 			options.addOption(new Option("", "logAppend",true, "freeform text to be appended to log messages"));
+			options.addOption(new Option("", "disable-file-logging", false, "suppress logging to file"));
 			options.addOption(new Option("d", "directory",true, "which directory to operate on"));
 			options.addOption(new Option("i", "ignorefileextension",false, "ignore non-matching file extensions"));
 			options.addOption(new Option("l", "listfromstdin",false, "take list of files from commandline"));
 			boolean optionsRecognized=false;
 			String action = "";
+            Boolean disableFileLogging = false;
 			try {
 				cmd = parser.parse(options, args);
 
@@ -370,6 +372,7 @@ public class Main {
 				Boolean filesFromStdIn = cmd.hasOption("listfromstdin");//((Number)cmdLine.getParsedOptionValue("integer-option")).intValue();
 				Boolean ignoreFileExt = cmd.hasOption("ignorefileextension");
 				Boolean helpRequested = cmd.hasOption("help")  || ((action!=null)&&(action.equals("help")));
+				disableFileLogging = cmd.hasOption("disable-file-logging");
 
 				String sourceName = cmd.getOptionValue("source");
 				String sourceXMLName = cmd.getOptionValue("source-xml");
@@ -387,6 +390,14 @@ public class Main {
 
 
 				ArrayList<FileAttachment> attachments=new ArrayList <>();
+				/*
+					setting system property to disable FILE appender and
+					suppress creation of files and folders.
+				 */
+				System.setProperty("FILE_APPENDER_ENABLED",  ((Boolean)(disableFileLogging==false)).toString());
+
+				LOGGER = LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+
 				if (helpRequested) {
 					printHelp();
 					optionsRecognized=true;
