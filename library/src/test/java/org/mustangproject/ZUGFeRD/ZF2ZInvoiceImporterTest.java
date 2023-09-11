@@ -104,11 +104,11 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		boolean hasExceptions = false;
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
-		File expectedResult=getResourceAsFile("testout-ZF2new.ubl.xml");
+		File expectedResult = getResourceAsFile("testout-ZF2new.ubl.xml");
 
 		Invoice invoice = null;
 		try {
-			String xml  = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r","").replace("\n","");
+			String xml = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r", "").replace("\n", "");
 
 			zii.fromXML(xml);
 
@@ -120,13 +120,13 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		// Reading ZUGFeRD
 		assertEquals("Bei Spiel GmbH", invoice.getOwnOrganisationName());
 		assertEquals(3, invoice.getZFItems().length);
-		assertEquals("400.0000", invoice.getZFItems()[1].getQuantity().toString());
+		assertEquals("400", invoice.getZFItems()[1].getQuantity().toString());
 
 		assertEquals("AB321", invoice.getReferenceNumber());
-		assertEquals("160.0000", invoice.getZFItems()[0].getPrice().toString());
+		assertEquals("160", invoice.getZFItems()[0].getPrice().toString());
 		assertEquals("Heiße Luft pro Liter", invoice.getZFItems()[2].getProduct().getName());
 		assertEquals("LTR", invoice.getZFItems()[2].getProduct().getUnit());
-		assertEquals("7.00", invoice.getZFItems()[0].getProduct().getVATPercent().toString());
+		assertEquals("7", invoice.getZFItems()[0].getProduct().getVATPercent().toString());
 		assertEquals("RE-20170509/505", invoice.getNumber());
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -153,6 +153,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		// name street location zip country, contact name phone email, total amount
 
 	}
+
 	public void testEdgeInvoiceImport() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushEdge.pdf");
