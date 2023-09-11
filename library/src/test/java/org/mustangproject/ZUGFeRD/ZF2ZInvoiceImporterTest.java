@@ -32,16 +32,14 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringReader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Scanner;
 
 
 /***
@@ -100,6 +98,61 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+	public void testInvoiceImportUBL() {
+
+
+		boolean hasExceptions = false;
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		File expectedResult=getResourceAsFile("testout-ZF2new.ubl.xml");
+
+		Invoice invoice = null;
+		try {
+			String xml  = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r","").replace("\n","");
+
+			zii.fromXML(xml);
+
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | IOException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		// Reading ZUGFeRD
+		assertEquals("Bei Spiel GmbH", invoice.getOwnOrganisationName());
+		assertEquals(3, invoice.getZFItems().length);
+		assertEquals("400.0000", invoice.getZFItems()[1].getQuantity().toString());
+
+		assertEquals("AB321", invoice.getReferenceNumber());
+		assertEquals("160.0000", invoice.getZFItems()[0].getPrice().toString());
+		assertEquals("Heiße Luft pro Liter", invoice.getZFItems()[2].getProduct().getName());
+		assertEquals("LTR", invoice.getZFItems()[2].getProduct().getUnit());
+		assertEquals("7.00", invoice.getZFItems()[0].getProduct().getVATPercent().toString());
+		assertEquals("RE-20170509/505", invoice.getNumber());
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		assertEquals("2017-05-09", sdf.format(invoice.getIssueDate()));
+		assertEquals("2017-05-07", sdf.format(invoice.getDeliveryDate()));
+		assertEquals("2017-05-30", sdf.format(invoice.getDueDate()));
+
+		assertEquals("Bahnstr. 42", invoice.getRecipient().getStreet());
+		assertEquals("Hinterhaus", invoice.getRecipient().getAdditionalAddress());
+		assertEquals("Zweiter Stock", invoice.getRecipient().getAdditionalAddressExtension());
+		assertEquals("88802", invoice.getRecipient().getZIP());
+		assertEquals("DE", invoice.getRecipient().getCountry());
+		assertEquals("Spielkreis", invoice.getRecipient().getLocation());
+
+		assertEquals("Ecke 12", invoice.getSender().getStreet());
+		assertEquals("12345", invoice.getSender().getZIP());
+		assertEquals("DE", invoice.getSender().getCountry());
+		assertEquals("Stadthausen", invoice.getSender().getLocation());
+
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("571.04"), tc.getGrandTotal());
+
+
+		// name street location zip country, contact name phone email, total amount
+
+	}
 	public void testEdgeInvoiceImport() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushEdge.pdf");

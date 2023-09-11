@@ -664,13 +664,14 @@ public class ZUGFeRDImporter {
 			throw new Exception("Not yet parsed");
 		}
 		final String head = getUTF8();
-		if (head.contains("<rsm:CrossIndustryDocument")) {
+		String rootNode=extractString("local-name(/*)");
+		if (rootNode.equals("CrossIndustryDocument")) {
 			return EStandard.zugferd;
-		} else if (head.contains("<CrossIndustryDocument")) {
-			return EStandard.zugferd;
-		} else if (head.contains("<urn:rsm:CrossIndustryInvoice") || head.contains("<rsm:CrossIndustryInvoice")) {
+		} else if (rootNode.equals("Invoice")) {
+			return EStandard.ubl;
+		} else if (rootNode.equals("CrossIndustryInvoice")) {
 			return EStandard.facturx;
-		} else if (head.contains("<SCRDMCCBDACIDAMessageStructure")) {
+		} else if (rootNode.equals("SCRDMCCBDACIDAMessageStructure")) {
 			return EStandard.despatchadvice;
 		} else if (head.contains("<rsm:SCRDMCCBDACIOMessageStructure")) {
 			return EStandard.orderx;

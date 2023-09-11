@@ -67,15 +67,15 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		 */
 		XPathFactory xpathFact = XPathFactory.newInstance();
 		XPath xpath = xpathFact.newXPath();
-		XPathExpression xpr = xpath.compile("//*[local-name()=\"SellerTradeParty\"]");
+		XPathExpression xpr = xpath.compile("//*[local-name()=\"SellerTradeParty\"]|//*[local-name()=\"AccountingSupplierParty\"]");
 		NodeList SellerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
-		xpr = xpath.compile("//*[local-name()=\"BuyerTradeParty\"]");
+		xpr = xpath.compile("//*[local-name()=\"BuyerTradeParty\"]|//*[local-name()=\"AccountingCustomerParty\"]");
 		NodeList BuyerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		xpr = xpath.compile("//*[local-name()=\"ExchangedDocument\"]|//*[local-name()=\"HeaderExchangedDocument\"]");
 		NodeList ExchangedDocumentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
-		xpr = xpath.compile("//*[local-name()=\"GrandTotalAmount\"]");
+		xpr = xpath.compile("//*[local-name()=\"GrandTotalAmount\"]|//*[local-name()=\"PayableAmount\"]");
 		BigDecimal expectedGrandTotal = null;
 		NodeList totalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (totalNodes.getLength() > 0) {
@@ -229,7 +229,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		}
 
 //.addItem(new Item(new Product("Testprodukt","","C62",BigDecimal.ZERO),amount,new BigDecimal(1.0)))
-		zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]"));
+		zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]|//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyName\"]").trim());
 
 		xpr = xpath.compile("//*[local-name()=\"BuyerReference\"]");
 		String buyerReference = null;
@@ -241,7 +241,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			zpp.setReferenceNumber(buyerReference);
 		}
 
-		xpr = xpath.compile("//*[local-name()=\"IncludedSupplyChainTradeLineItem\"]");
+		xpr = xpath.compile("//*[local-name()=\"IncludedSupplyChainTradeLineItem\"]|//*[local-name()=\"InvoiceLine\"]");
 		NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
 		if (nodes.getLength() == 0) {
@@ -311,7 +311,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 									}
 									if ((netChilds.item(netIndex).getLocalName() != null)
-											&& (netChilds.item(netIndex).getLocalName().equals("BasisQuantity"))) {
+											&& ((netChilds.item(netIndex).getLocalName().equals("BasisQuantity"))||(netChilds.item(netIndex).getLocalName().equals("InvoicedQuantity")))) {
 										basisQuantity = netChilds.item(netIndex).getTextContent();// ChargeAmount
 
 									}
