@@ -102,16 +102,13 @@ public class Main {
 				+ "                [--language <lang>]: set output lang (en, fr or de)\n"
 				+ "                [--source <filename>]: set input XML file\n"
 				+ "                [--out <filename>]: set output HTML file\n"
-			+ "        --action pdf  convert XML to PDF \n"
-			+ "                [--source <filename>]: set input XML file\n"
-			+ "                [--out <filename>]: set output PDF file\n"
 			;
 	}
 
 	private static void printHelp() {
 		System.out.println("Mustangproject.org " + org.mustangproject.ZUGFeRD.Version.VERSION + " \r\n"
 			+ "A Apache Public License tool for e-invoices with\r\n"
-			+ "ZUGFeRD Metadata (http://www.zugferd.org)\r\n" + "\r\n" + getUsage() + "\r\n");
+			+ "CII, UBL and/or ZUGFeRD/Factur-X Metadata\r\n" + "\r\n" + getUsage() + "\r\n");
 	}
 
 	/**

@@ -63,12 +63,6 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.14.2</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/fop -->
-		<dependency>
-			<groupId>org.apache.xmlgraphics</groupId>
-			<artifactId>fop</artifactId>
-			<version>2.9</version>
-		</dependency>
 
 		<dependency>
 			<groupId>javax.activation</groupId>
@@ -174,26 +168,6 @@
                 <manifest>
                     <addClasspath>true</addClasspath>
                 </manifest>
-                <manifestSections>
-                    <manifestSection>
-                        <name>FreeSans.ttf</name>
-                        <manifestEntries>
-                            <Content-Type>font/ttf</Content-Type>
-                        </manifestEntries>
-                    </manifestSection>
-                    <manifestSection>
-                        <name>FreeSerif.ttf</name>
-                        <manifestEntries>
-                            <Content-Type>application/x-font</Content-Type>
-                        </manifestEntries>
-                    </manifestSection>
-                    <manifestSection>
-                        <name>Times-Bold.ttf</name>
-                        <manifestEntries>
-                            <Content-Type>application/x-font</Content-Type>
-                        </manifestEntries>
-                    </manifestSection>
-                </manifestSections>
             </archive>
         </configuration>
       </plugin>

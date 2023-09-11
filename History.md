@@ -2,8 +2,8 @@
 =======
 
 Improvement of included notes #331
-fixes #259 by Heavenfighter
-java -Ddisable-file-logging -jar ..\..\..\mustangproject\Mustang-CLI\target\Mustang-CLI-2.7.4-SNAPSHOT.jar --action validate --source Storno_A.xml
+fixes #259 by Heavenfighter: added --disable-file-logging parameter
+parsing UBL files
 
 2.7.3
 =======

@@ -97,26 +97,6 @@
                      <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                      <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                   </manifest>
-                   <manifestSections>
-                       <manifestSection>
-                           <name>FreeSans.ttf</name>
-                           <manifestEntries>
-                               <Content-Type>font/ttf</Content-Type>
-                           </manifestEntries>
-                       </manifestSection>
-                       <manifestSection>
-                           <name>FreeSerif.ttf</name>
-                           <manifestEntries>
-                               <Content-Type>application/x-font</Content-Type>
-                           </manifestEntries>
-                       </manifestSection>
-                       <manifestSection>
-                           <name>Times-Bold.ttf</name>
-                           <manifestEntries>
-                               <Content-Type>application/x-font</Content-Type>
-                           </manifestEntries>
-                       </manifestSection>
-                   </manifestSections>
 
                </archive>
             </configuration>

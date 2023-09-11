@@ -20,23 +20,12 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import org.apache.fop.apps.*;
-import org.apache.fop.configuration.Configuration;
-import org.apache.fop.configuration.ConfigurationException;
-import org.apache.fop.configuration.DefaultConfigurationBuilder;
-import org.apache.xmlgraphics.util.MimeConstants;
-import org.mustangproject.CII.CIIToUBL;
-import org.mustangproject.ClasspathResolverURIAdapter;
-import org.xml.sax.SAXException;
 
 import javax.xml.transform.*;
-import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -182,167 +171,6 @@ public class ZUGFeRDVisualizer {
 		}
 
 		return baos.toString("UTF-8");
-	}
-
-	protected String toFOP(String xmlFilename)
-			throws FileNotFoundException, TransformerException, UnsupportedEncodingException {
-
-		try {
-			if (mXsltXRTemplate == null) {
-				mXsltXRTemplate = mFactory.newTemplates(
-						new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/cii-xr.xsl")));
-			}
-			if (mXsltPDFTemplate == null) {
-				mXsltPDFTemplate = mFactory.newTemplates(
-						new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/xr-pdf.xsl")));
-			}
-		} catch (TransformerConfigurationException ex) {
-			LOG.log(Level.SEVERE, null, ex);
-		}
-
-		FileInputStream fis = new FileInputStream(xmlFilename);
-		String fileContent = "";
-		try {
-			fileContent = new String(Files.readAllBytes(Paths.get(xmlFilename)), StandardCharsets.UTF_8);
-		} catch (IOException e2) {
-			LOG.log(Level.SEVERE, null, e2);
-		}
-
-		ByteArrayOutputStream iaos = new ByteArrayOutputStream();
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		//zf2 or fx
-		applyZF2XSLT(fis, iaos);
-
-		PipedInputStream in = new PipedInputStream();
-		PipedOutputStream out;
-		try {
-			out = new PipedOutputStream(in);
-			new Thread(new Runnable() {
-				public void run() {
-					try {
-						// write the original OutputStream to the PipedOutputStream
-						// note that in order for the below method to work, you need
-						// to ensure that the data has finished writing to the
-						// ByteArrayOutputStream
-						iaos.writeTo(out);
-					} catch (IOException e) {
-						LOG.log(Level.SEVERE, null, e);
-					} finally {
-						// close the PipedOutputStream here because we're done writing data
-						// once this thread has completed its run
-						if (out != null) {
-							// close the PipedOutputStream cleanly
-							try {
-								out.close();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								LOG.log(Level.SEVERE, null, e);
-							}
-						}
-					}
-				}
-			}).start();
-			applyXSLTToPDF(in, baos);
-		} catch (IOException e1) {
-			LOG.log(Level.SEVERE, null, e1);
-		}
-
-
-		return baos.toString("UTF-8");
-	}
-
-	public void toPDF(String xmlFilename, String pdfFilename) {
-
-		// the writing part
-		CIIToUBL c2u = new CIIToUBL();
-		String sourceFilename = "factur-x.xml";
-		File CIIinputFile = new File(xmlFilename);
-
-		String expected = null;
-		String result = null;
-
-		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
-			/* remove file endings so that tests can also pass after checking
-			   out from git with arbitrary options (which may include CSRF changes)
-			 */
-		try {
-			result = zvi.toFOP(CIIinputFile.getAbsolutePath());
-		} catch (FileNotFoundException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
-		} catch (TransformerException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
-		} catch (UnsupportedEncodingException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
-		}
-		/*
-		FopConfParser parser = null;
-		try {
-			//parsing configuration
-			parser = new FopConfParser(CLASS_LOADER.getResourceAsStream("fop-config.xconf"), new URI("file:///"));
-
-		} catch (SAXException e) {
-			throw new UncheckedIOException(new IOException(e));
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		} catch (URISyntaxException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
-		}*/
-//		FopFactoryBuilder builder = parser.getFopFactoryBuilder();
-		DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-
-		Configuration cfg = null;
-		try {
-			cfg = cfgBuilder.build(CLASS_LOADER.getResourceAsStream("fop-config.xconf"));
-		} catch (ConfigurationException e) {
-			throw new RuntimeException(e);
-		}
-
-		FopFactoryBuilder builder = new FopFactoryBuilder(new File(".").toURI(), new ClasspathResolverURIAdapter()).setConfiguration(cfg);
-// Step 1: Construct a FopFactory by specifying a reference to the configuration file
-// (reuse if you plan to render multiple documents!)
-
-		FopFactory fopFactory = builder.build();//FopFactory.newInstance(new File("c:\\Users\\jstaerk\\temp\\fop-config.xconf"));
-
-		FOUserAgent userAgent = fopFactory.newFOUserAgent();
-
-		userAgent.getRendererOptions().put("pdf-a-mode", "PDF/A-1b");
-
-// Step 2: Set up output stream.
-// Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
-
-		try (OutputStream out = new BufferedOutputStream(new FileOutputStream(pdfFilename))) {
-
-			// Step 3: Construct fop with desired output format
-			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
-
-			// Step 4: Setup JAXP using identity transformer
-			TransformerFactory factory = TransformerFactory.newInstance();
-			Transformer transformer = factory.newTransformer(); // identity transformer
-
-			// Step 5: Setup input and output for XSLT transformation
-			// Setup input stream
-			Source src = new StreamSource(new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8)));
-
-			// Resulting SAX events (the generated FO) must be piped through to FOP
-			Result res = new SAXResult(fop.getDefaultHandler());
-
-			// Step 6: Start XSLT transformation and FOP processing
-			transformer.transform(src, res);
-
-			//Files.write(Paths.get("C:\\Users\\jstaerk\\temp\\fop.pdf"), res.toString().getBytes(StandardCharsets.UTF_8));
-
-		} catch (FOPException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
-		} catch (TransformerConfigurationException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
-		} catch (IOException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
-		} catch (TransformerException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
-		}
-
-
 	}
 
 	protected void applyZF2XSLT(final InputStream xmlFile, final OutputStream HTMLOutstream)

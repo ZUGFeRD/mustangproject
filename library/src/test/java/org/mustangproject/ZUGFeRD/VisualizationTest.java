@@ -19,16 +19,11 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import org.apache.fop.apps.*;
-import org.apache.xmlgraphics.util.MimeConstants;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.mustangproject.CII.CIIToUBL;
-import org.xml.sax.SAXException;
 
 import javax.xml.transform.*;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -144,30 +139,5 @@ public class VisualizationTest extends ResourceCase {
 		assertEquals(expected, result);
 	}
 
-	public void testPDFVisualization() {
-
-		// the writing part
-		CIIToUBL c2u = new CIIToUBL();
-		String sourceFilename = "factur-x.xml";
-		File CIIinputFile = getResourceAsFile(sourceFilename);
-
-		String expected = null;
-		String result = null;
-		try {
-			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
-			/* remove file endings so that tests can also pass after checking
-			   out from git with arbitrary options (which may include CSRF changes)
-			 */
-			zvi.toPDF(CIIinputFile.getAbsolutePath(), "c:\\users\\jstaerk\\temp\\fopy2.pdf");
-		} catch (UnsupportedOperationException e) {
-			fail("UnsupportedOperationException should not happen: "+e.getMessage());
-		} catch (IllegalArgumentException e) {
-			fail("IllegalArgumentException should not happen: "+e.getMessage());
-		}
-
-//		assertNotNull(result);
-		// Reading ZUGFeRD
-//		assertEquals(expected, result);
-	}
 
 }
