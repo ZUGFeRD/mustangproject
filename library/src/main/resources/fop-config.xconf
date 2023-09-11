@@ -7,15 +7,13 @@
   <strict-validation>true</strict-validation>
 
   <!-- Base URL for resolving relative URLs -->
-  <base>./</base>
 
   <!-- Font Base URL for resolving relative font URLs -->
-  <font-base>./</font-base>
 
   <!-- Source resolution in dpi (dots/pixels per inch) for determining the size of pixels in SVG and bitmap images, default: 72dpi -->
-  <source-resolution>72</source-resolution>
+  <source-resolution>96</source-resolution>
   <!-- Target resolution in dpi (dots/pixels per inch) for specifying the target resolution for generated bitmaps, default: 72dpi -->
-  <target-resolution>72</target-resolution>
+  <target-resolution>96</target-resolution>
 
   <!-- default page-height and page-width, in case
        value is specified as auto -->
@@ -25,11 +23,12 @@
   
   <renderers>
    <renderer mime="application/pdf">
-   <fonts><!-- https://xmlgraphics.apache.org/fop/1.1/fonts.html auto-embed-->
-       <font kerning="no" embed-url="file:src/main/resources/FreeSans.ttf" embedding-mode="subset">
+   <fonts><!-- https://xmlgraphics.apache.org/fop/1.1/fonts.html auto-embed -->
+       <auto-detect/>
+       <font kerning="no" embed-url="FreeSans.ttf" embedding-mode="subset">
            <font-triplet name="SourceSerifPro" style="normal" weight="normal" />
+           <font-triplet name="Times-Bold" style="normal" weight="normal" />
        </font>
-   
    </fonts>
    <output-profile>classpath:AdobeCompat-v2.icc</output-profile>
    </renderer>
