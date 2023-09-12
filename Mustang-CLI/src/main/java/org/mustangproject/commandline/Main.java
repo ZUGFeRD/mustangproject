@@ -413,11 +413,8 @@ public class Main {
 				} else if ((action != null) && (action.equals("a3only"))) {
 					performConvert(sourceName, outName);
 					optionsRecognized = true;
-				} else if ((action != null) && (action.equals("pdf"))) {
-					performVisualization(sourceName, lang, outName, true);
-					optionsRecognized = true;
 				} else if ((action != null) && (action.equals("visualize"))) {
-					performVisualization(sourceName, lang, outName, false);
+					performVisualization(sourceName, lang, outName);
 					optionsRecognized = true;
 				} else if ((action != null) && (action.equals("upgrade"))) {
 					performUpgrade(sourceName, outName);

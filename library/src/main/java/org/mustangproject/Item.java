@@ -84,12 +84,22 @@ public class Item implements IZUGFeRDExportableItem {
 							}
 						}
 					}
+					if ((currentUBLItemChildNode.getLocalName() != null) && (currentUBLItemChildNode.getLocalName().equals("SellersItemIdentification"))) {
+						for (Node currentUBLSellerIDNodes : XMLTools.asList(currentUBLItemChildNode.getChildNodes())) {
+							if ((currentUBLSellerIDNodes.getLocalName() != null) && (currentUBLSellerIDNodes.getLocalName().equals("ID"))) {
+								sellerAssignedID = currentUBLSellerIDNodes.getTextContent();
+							}
+						}
+					}
 				}
 			}
+
 			if ((lineTrade != null) && (lineTrade.equals("Price"))) {
 				// ubl
 				// PriceAmount with currencyID and  BaseQuantity with unitCode
 				NodeList UBLpriceChilds = itemChilds.item(itemChildIndex).getChildNodes();
+				boolean isAllowance=true;
+				String allowanceCharge="";
 				for (Node currentUBLPriceChildNode : XMLTools.asList(UBLpriceChilds)) {
 
 					if ((currentUBLPriceChildNode.getLocalName() != null) && (currentUBLPriceChildNode.getLocalName().equals("PriceAmount"))) {
@@ -97,7 +107,26 @@ public class Item implements IZUGFeRDExportableItem {
 					}
 					if ((currentUBLPriceChildNode.getLocalName() != null) && (currentUBLPriceChildNode.getLocalName().equals("BaseQuantity"))) {
 						basisQuantity = currentUBLPriceChildNode.getTextContent();
-					}
+					}/* not needed because already reflected in net price
+					if ((currentUBLPriceChildNode.getLocalName() != null) && (currentUBLPriceChildNode.getLocalName().equals("AllowanceCharge"))) {
+						for (Node currentUBLAllowanceChildNode : XMLTools.asList(currentUBLPriceChildNode.getChildNodes())) {
+							if ((currentUBLAllowanceChildNode.getLocalName()!=null)&&(currentUBLAllowanceChildNode.getLocalName().equals("ChargeIndicator"))) {
+								if (currentUBLAllowanceChildNode.getTextContent().equalsIgnoreCase("true")) {
+									isAllowance=false;
+								}
+							}
+							if ((currentUBLAllowanceChildNode.getLocalName()!=null)&&(currentUBLAllowanceChildNode.getLocalName().equals("Amount"))) {
+								allowanceCharge=currentUBLAllowanceChildNode.getTextContent();
+							}
+
+
+						}
+						if (isAllowance) {
+						//	addAllowance(new Allowance(new BigDecimal(allowanceCharge)));
+						} else {
+						//	addAllowance(new Charge(new BigDecimal(allowanceCharge)));
+						}
+					}*/
 				}
 
 			}
@@ -187,7 +216,7 @@ public class Item implements IZUGFeRDExportableItem {
 					}
 					if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null)
 						&& (tradeProductChilds.item(tradeProductChildIndex).getLocalName()
-						.equals("SellerAssignedID"))) {
+						.equals("SellerAssignedID") ) ) {
 						sellerAssignedID = tradeProductChilds.item(tradeProductChildIndex).getTextContent();
 					}
 					if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null)

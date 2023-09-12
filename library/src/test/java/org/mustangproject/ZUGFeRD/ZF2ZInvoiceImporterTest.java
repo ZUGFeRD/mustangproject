@@ -173,6 +173,31 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+	public void testEdgeInvoiceImportUBL() {
+
+		boolean hasExceptions=false;
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		File expectedResult = getResourceAsFile("testout-ZF2PushEdge.ubl.xml");
+
+		Invoice invoice = null;
+		try {
+			String xml = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r", "").replace("\n", "");
+
+			zii.fromXML(xml);
+
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | IOException e) {
+			hasExceptions = true;
+		}
+
+		assertFalse(hasExceptions);
+		// Reading ZUGFeRD
+		assertEquals("4711", invoice.getZFItems()[0].getProduct().getSellerAssignedID());
+		assertEquals("9384", invoice.getSellerOrderReferencedDocumentID());
+		assertEquals("28934", invoice.getBuyerOrderReferencedDocumentID());
+
+	}
+
 	public void testZF1Import() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-MustangGnuaccountingBeispielRE-20171118_506zf1.pdf");
@@ -228,6 +253,27 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		try {
 			invoice = zii.extractInvoice();
 		} catch (XPathExpressionException | ParseException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("18.33"), tc.getGrandTotal());
+	}
+
+	public void testItemAllowancesChargesImportUBL() {
+
+		boolean hasExceptions=false;
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		File expectedResult = getResourceAsFile("testout-ZF2PushItemChargesAllowances.ubl.xml");
+
+		Invoice invoice = null;
+		try {
+			String xml = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r", "").replace("\n", "");
+
+			zii.fromXML(xml);
+
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | IOException e) {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
