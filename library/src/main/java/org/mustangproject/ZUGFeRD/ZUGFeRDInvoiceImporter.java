@@ -57,6 +57,14 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		}
 	}
 
+
+	/***
+	 * This will parse a XML into the given invoice object
+	 * @param zpp the invoice to be altered
+	 * @return the parsed invoice object
+	 * @throws XPathExpressionException if xpath could not be evaluated
+	 * @throws ParseException if the grand total of the parsed invoice could not be replicated with the new invoice
+	 */
 	public Invoice extractInto(Invoice zpp) throws XPathExpressionException, ParseException {
 
 		String number = "";
@@ -357,6 +365,8 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 	 * This will parse a XML into a invoice object
 	 *
 	 * @return the parsed invoice object
+	 * @throws XPathExpressionException if internal xpath expressions were wrong
+	 * @throws ParseException if the grand total of the parsed invoice could not be replicated with the new invoice
 	 */
 	public Invoice extractInvoice() throws XPathExpressionException, ParseException {
 		Invoice i = new Invoice();
@@ -365,10 +375,17 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 	}
 
+	/***
+	 * have the item prices be determined from the line total.
+	 * That's a workaround for some invoices which just put 0 as item price
+	 */
 	public void doRecalculateItemPricesFromLineTotals() {
 		recalcPrice = true;
 	}
 
+	/***
+	 * do not raise ParseExceptions even if the reproduced invoice total does not match the given value
+	 */
 	public void doIgnoreCalculationErrors() {
 		ignoreCalculationErrors = true;
 	}

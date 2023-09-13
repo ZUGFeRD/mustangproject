@@ -789,6 +789,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	/**
 	 * Adds an OutputIntent and the sRGB color profile if no OutputIntent exist
+	 * @throws IOException if the ICC file cannot be read or attached to doc
 	 */
 	protected void addSRGBOutputIntend()
 	    throws IOException
