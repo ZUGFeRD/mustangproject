@@ -18,6 +18,12 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD.model;
 
+/**
+ * The code shall distinguish between the following entries of the UNTDID 2005 list:
+ * - Invoice document issue date
+ * - Delivery date, actual
+ * - Paid to date
+ */
 public class EventTimeCodeTypeConstants {
 	public static final String INVOICE_DATE = "5";
 	public static final String DELIVERY_DATE = "29";

@@ -643,6 +643,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	/**
 	 * Reads the XMPMetadata from the PDDocument, if it exists.
 	 * Otherwise creates XMPMetadata.
+	 * @return the whole ZUGFeRD XMP meta data :-)
+	 * @throws IOException if the XMP can not be parsed
 	 */
 	protected XMPMetadata getXmpMetadata()
 	    throws IOException
@@ -668,11 +670,13 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	/**
 	 * Sets the producer if the overwrite flag is set or the producer is not already set.
 	 * Sets the PDFVersion to 1.4 if the field is empty.
+	 * @param xmp the previous metadata
 	 */
 	protected void writeAdobePDFSchema(XMPMetadata xmp) {
 		AdobePDFSchema pdf = getAdobePDFSchema(xmp);
-		if (overwrite || isEmpty(pdf.getProducer()))
+		if (overwrite || isEmpty(pdf.getProducer())) {
 			pdf.setProducer(producer);
+		}
 	}
 
 	/**

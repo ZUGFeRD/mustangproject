@@ -25,9 +25,12 @@ If you setup a Maven project, you can grab the artifacts using
 <dependency>
   <groupId>org.mustangproject</groupId>
   <artifactId>library</artifactId>
- <version>2.6.1</version>
+ <version>2.8.0</version>
 </dependency>
 ```
+Please note that instead of artifactId `library` you can also 
+use `validator`, which has a bigger footprint but additionally 
+allows to run validations.
 
 Contact
 -----

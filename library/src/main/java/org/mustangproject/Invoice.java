@@ -834,14 +834,21 @@ public class Invoice implements IExportableTransaction {
 		return this;
 	}
 
+
+	/***
+	 * when the VAT is due, if this can be anticipated, for all items, on transaction level
+	 * @return null if none or the code as string. Use EventTimeCodeTypeConstants, e.g. EventTimeCodeTypeConstants.PAYMENT_DATE
+	 */
 	@Override
 	public String getVATDueDateTypeCode() {
 		return vatDueDateTypeCode;
 	}
 
-	/**
+
+	/***
 	 * Decide when the VAT should be collected.
-	 * @param vatDueDateTypeCode use EventTimeCodeTypeConstants
+	 * @param vatDueDateTypeCode  use EventTimeCodeTypeConstants
+	 * @return the invoice (fluent setter)
 	 */
 	public Invoice setVATDueDateTypeCode(String vatDueDateTypeCode) {
 		this.vatDueDateTypeCode = vatDueDateTypeCode;

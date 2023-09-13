@@ -69,15 +69,15 @@ public interface IZUGFeRDExportableTradeParty {
 
 	/**
 	 * URIUniversalCommunication scheme (see EAS code list of the ZUGFeRD documentation)
-	 *
+	 * @return null or the EAS code
 	 */
 	default String getUriUniversalCommunicationIDScheme() {
 		return null;
 	}
 	/**
 	 * The URIID of URIUniversalCommunicationID
-   * It is used by some countries, i.e. Luxembourg
-	 *
+     * It is used by some countries, i.e. Luxembourg
+	 * @return null if not defined or a string (I believe thats just the email address?)
 	 */
 	default String getUriUniversalCommunicationID() {
 		return null;

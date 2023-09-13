@@ -659,7 +659,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	 * e.g. which floor (if LineTwo has already been used e.g. for which building)
 	 * This could sometimes be BT-165?
 	 *
-	 * @param additionalAddress2
+	 * @param additionalAddress2 a String or null
 	 * @return fluent setter
 	 */
 	public TradeParty setAdditionalAddressExtension(String additionalAddress2) {

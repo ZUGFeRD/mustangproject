@@ -4,9 +4,9 @@ import org.mustangproject.ZUGFeRD.IReferencedDocument;
 
 public class ReferencedDocument implements IReferencedDocument {
 
-	String issuerAssignedID;
-	String typeCode;
-	String referenceTypeCode;
+	protected String issuerAssignedID;
+	protected String typeCode;
+	protected String referenceTypeCode;
 
 	public ReferencedDocument(String issuerAssignedID, String typeCode, String referenceTypeCode) {
 		this.issuerAssignedID = issuerAssignedID;
@@ -22,23 +22,23 @@ public class ReferencedDocument implements IReferencedDocument {
 
 	/***
 	 * sets an ID assigned by the sender
-	 * @param issuerAssignedID
+	 * @param issuerAssignedID null or a string with the ID of the document as defined by issuer
 	 */
 	public void setIssuerAssignedID(String issuerAssignedID) {
 		this.issuerAssignedID = issuerAssignedID;
 	}
 
 	/**
-	 * which type is the document? e.g. "916" for additional invoice related
-	 * @param typeCode
+	 * which type is the document?
+	 * @param typeCode string with e.g. "916" for additional invoice related
 	 */
 	public void setTypeCode(String typeCode) {
 		this.typeCode = typeCode;
 	}
 
 	/**
-	 * type of the reference of this line, a UNTDID 1153 code
-	 * @param referenceTypeCode
+	 * type of the reference of this line,
+	 * @param referenceTypeCode the typecode of the reference as a UNTDID 1153 string value https://service.unece.org/trade/untdid/d19b/tred/tred1153.htm
 	 */
 	public void setReferenceTypeCode(String referenceTypeCode) {
 		this.referenceTypeCode = referenceTypeCode;

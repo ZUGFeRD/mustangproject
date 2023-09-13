@@ -48,11 +48,11 @@ public class VATAmount {
 		this.dueDateTypeCode = dueDateTypeCode;
 	}
 
-	BigDecimal basis, calculated, applicablePercent;
+	protected BigDecimal basis, calculated, applicablePercent;
 
-	String categoryCode;
+	protected String categoryCode;
 
-	String dueDateTypeCode;
+	protected String dueDateTypeCode;
 
 	public BigDecimal getApplicablePercent() {
 		return applicablePercent;
