@@ -245,6 +245,7 @@ public class ZUGFeRDImporter {
 	}
 
 	/**
+	 * @deprecated
 	 * @return the ZUGFeRD Profile
 	 */
 	public String getZUGFeRDProfil() {

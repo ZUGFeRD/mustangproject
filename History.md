@@ -1,9 +1,12 @@
 2.8.0
 =======
+2023-09-13
 
-Improvement of included notes #331
-fixes #259 by Heavenfighter: added --disable-file-logging parameter
-parsing UBL files
+- fixes #259 by Heavenfighter: added --disable-file-logging parameter
+- Improvement of included notes (#331)
+- Should B2B e-invoving come in Germany as defined in the according draft law
+  ([background](https://bit.ly/47CRz4G)) now the InvoiceImporter can at least also parse UBL files.
+
 
 2.7.3
 =======

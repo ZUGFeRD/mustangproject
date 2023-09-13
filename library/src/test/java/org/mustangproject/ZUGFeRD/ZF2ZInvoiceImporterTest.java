@@ -296,6 +296,28 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("337.60"), tc.getGrandTotal());
 	}
+	public void testBasisQuantityImportUBL() {
+
+		boolean hasExceptions=false;
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		File expectedResult = getResourceAsFile("testout-ZF2newEdge.ubl.xml");
+
+		Invoice invoice = null;
+		try {
+			String xml = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r", "").replace("\n", "");
+
+			zii.fromXML(xml);
+
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | IOException e) {
+			hasExceptions = true;
+		}
+
+
+		assertFalse(hasExceptions);
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("337.60"), tc.getGrandTotal());
+	}
 
 	public void testAllowancesChargesImport() {
 
@@ -308,6 +330,27 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		} catch (XPathExpressionException | ParseException e) {
 			hasExceptions = true;
 		}
+		assertFalse(hasExceptions);
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("11.07"), tc.getGrandTotal());
+
+	}
+	public void testAllowancesChargesImportUBL() {
+		boolean hasExceptions=false;
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		File expectedResult = getResourceAsFile("testout-ZF2PushChargesAllowances.ubl.xml");
+
+		Invoice invoice = null;
+		try {
+			String xml = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r", "").replace("\n", "");
+
+			zii.fromXML(xml);
+
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | IOException e) {
+			hasExceptions = true;
+		}
+
 		assertFalse(hasExceptions);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("11.07"), tc.getGrandTotal());
@@ -337,5 +380,25 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+	public void testXRImportUBL() {
+		boolean hasExceptions=false;
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		File expectedResult = getResourceAsFile("testout-XR-Edge.ubl.xml");
+
+		Invoice invoice = null;
+		try {
+			String xml = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r", "").replace("\n", "");
+
+			zii.fromXML(xml);
+
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | IOException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
+
+	}
 
 }
