@@ -1,9 +1,12 @@
+Missing closing tag in BankDetails when there's no BIC number #339
+
 2.8.0
 =======
+2023-09-14
 
 Improvement of included notes #331
 fixes #259 by Heavenfighter
-java -Ddisable-file-logging -jar ..\..\..\mustangproject\Mustang-CLI\target\Mustang-CLI-2.7.4-SNAPSHOT.jar --action validate --source Storno_A.xml
+introduction of --disable-file-logging command line option
 
 2.7.3
 =======
