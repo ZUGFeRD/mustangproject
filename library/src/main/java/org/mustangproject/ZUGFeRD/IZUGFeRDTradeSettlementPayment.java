@@ -78,10 +78,10 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 					+ "<ram:BICID>" + XMLTools.encodeXML(getOwnBIC()) + "</ram:BICID>"
 					// + " <ram:Name>"+trans.getOwnBankName()+"</ram:Name>"
 					//
-					+ "</ram:PayeeSpecifiedCreditorFinancialInstitution>"
-					+ "</ram:SpecifiedTradeSettlementPaymentMeans>";
+					+ "</ram:PayeeSpecifiedCreditorFinancialInstitution>";
 
 		}
+		xml+= "</ram:SpecifiedTradeSettlementPaymentMeans>";
 		return xml;
 	}
 	
