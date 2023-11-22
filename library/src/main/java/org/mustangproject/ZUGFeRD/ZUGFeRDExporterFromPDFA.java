@@ -44,7 +44,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	}
 
 	private byte[] fileToByteArrayInputStream(String pdfFilename) throws IOException {
-		FileInputStream fileInputStream = new FileInputStream(new File(pdfFilename));
+		FileInputStream fileInputStream = new FileInputStream(pdfFilename);
 		return fileInputStream.readAllBytes();
 	}
 
@@ -52,8 +52,6 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		// PDFBOX to be here...
 		PDDocument document = PDDocument.load(byteArrayInputStream);
 		PDDocumentCatalog catalog = document.getDocumentCatalog();
-		//short way to get PDF version
-		//document.getDocument().getVersion();
 		PDMetadata metadata = catalog.getMetadata();
 
 		if (metadata != null) {
