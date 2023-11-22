@@ -21,26 +21,18 @@ package org.mustangproject.commandline;
 import org.apache.commons.cli.*;
 import org.mustangproject.CII.CIIToUBL;
 import org.mustangproject.EStandard;
-import org.mustangproject.ZUGFeRD.*;
-import org.mustangproject.validator.Validator;
-import org.mustangproject.validator.ZUGFeRDValidator;
 import org.mustangproject.FileAttachment;
+import org.mustangproject.ZUGFeRD.*;
+import org.mustangproject.validator.ZUGFeRDValidator;
+import org.slf4j.LoggerFactory;
 
+import javax.xml.transform.TransformerException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-
-/*
- * This is the command line interface to mustangproject
- *
- */
-
-import org.slf4j.LoggerFactory;
-
-import javax.xml.transform.TransformerException;
 
 public class Main {
 	private static org.slf4j.Logger LOGGER; // log output
@@ -716,8 +708,10 @@ public class Main {
 				}
 
 			} else {
-				ze = new ZUGFeRDExporterFromA1().setProducer("Mustang-cli")
-					.setZUGFeRDVersion(standard, zfIntVersion)
+				ze = new ZUGFeRDExporterFromPDFA().load(pdfName);
+
+					ze.setProducer("Mustang-cli")
+					.setZUGFeRDVersion(zfIntVersion)
 					.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile);
 				if (ignoreInputErrors) {
 					((ZUGFeRDExporterFromA1) ze).ignorePDFAErrors();
@@ -727,7 +721,7 @@ public class Main {
 				((ZUGFeRDExporterFromA3) ze).attachFile(attachment.getFilename(), attachment.getData(), attachment.getMimetype(), attachment.getRelation());
 			}
 
-			ze = ze.load(pdfName);
+//			ze = ze.load(pdfName);
 
 			if (format.equals("zf")) {
 				ze.disableFacturX();
