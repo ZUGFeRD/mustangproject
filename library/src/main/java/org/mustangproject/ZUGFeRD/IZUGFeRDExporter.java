@@ -59,7 +59,7 @@ public interface IZUGFeRDExporter extends Closeable, IExporter  {
 	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException;
 	public IZUGFeRDExporter setXML(byte[] zugferdData) throws IOException;
 	public IZUGFeRDExporter disableFacturX();
-//	public IZUGFeRDExporter setProfile(Profile zugferdConformanceLevel);
+	public IZUGFeRDExporter setProfile(Profile zugferdConformanceLevel);
 	public String getNamespaceForVersion(int ver);
 	public String getPrefixForVersion(int ver) ;
 	public IZUGFeRDExporter disableAutoClose(boolean disableAutoClose);
