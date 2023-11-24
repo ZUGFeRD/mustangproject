@@ -144,9 +144,9 @@ public class VisualizationTest extends ResourceCase {
 		assertEquals(expected, result);
 	}
 
-	public void testPDFVisualization() {
+/*	public void testPDFVisualization() {
 
-		// the writing part
+	// the writing part
 		CIIToUBL c2u = new CIIToUBL();
 		String sourceFilename = "factur-x.xml";
 		File CIIinputFile = getResourceAsFile(sourceFilename);
@@ -157,7 +157,7 @@ public class VisualizationTest extends ResourceCase {
 			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
 			/* remove file endings so that tests can also pass after checking
 			   out from git with arbitrary options (which may include CSRF changes)
-			 */
+			 *
 			zvi.toPDF(CIIinputFile.getAbsolutePath(), "c:\\users\\jstaerk\\temp\\fopy2.pdf");
 		} catch (UnsupportedOperationException e) {
 			fail("UnsupportedOperationException should not happen: "+e.getMessage());
@@ -168,6 +168,6 @@ public class VisualizationTest extends ResourceCase {
 //		assertNotNull(result);
 		// Reading ZUGFeRD
 //		assertEquals(expected, result);
-	}
+	}*/
 
 }

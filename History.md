@@ -1,4 +1,7 @@
+
 Missing closing tag in BankDetails when there's no BIC number #339
+Have a way to merge to PDF file without knowing if it is A-1 or A-3 #341
+Be able to validate XR 3.0 #347
 
 2.8.0
 =======

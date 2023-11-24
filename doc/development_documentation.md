@@ -17,7 +17,8 @@ You may already start developing what you wanted. Of course you can use any edit
 
 2. fork
 
-Once you can build, the idea is that you contribute patches via pull requests. For this you need a GitHub account and  a personal copy of the repository to store your changes in. Just click fork on the mustangproject. On your copy you will have git write access. My suggestion as git client is sourcetree (I can send you instructions how to set it up).
+Once you can build, the idea is that you contribute patches via pull requests. For this you need a GitHub account and  a personal copy of the repository to store your changes in. Just click fork on the mustangproject. On your copy you will have git write access. My suggestion as git client is sourcetree.
+There is a documentation [how to create pull requests from forks to the original repo](https://docs.github.com/de/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork).  
 
 3. branch
 
@@ -212,9 +213,8 @@ Afterwards you can access the release page and update the documentation, e.g. up
 
 ## Regular updates
 
-XRechnung from https://github.com/itplr-kosit/xrechnung-schematron,
-put in schematro, have xslt generated, potentially manually include
-the included file
+Take the most recent XRechnung release from https://github.com/itplr-kosit/xrechnung-schematron,
+extract, rename xsl file to xslt, move to new version dir and add a if where the version is determined :-)
 
 ## Release process
 
