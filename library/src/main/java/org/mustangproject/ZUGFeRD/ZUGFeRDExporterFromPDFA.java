@@ -27,20 +27,37 @@ import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.PDFAIdentificationSchema;
 import org.apache.xmpbox.xml.DomXmpParser;
 import org.apache.xmpbox.xml.XmpParsingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.activation.DataSource;
 import java.io.*;
 
+/***
+ * Auto-detects the source PDF-A-Version and acts accordingly
+ * like a ZUGFeRDExporterFromA1 or ZUGFeRDExporterFromA3
+ */
 public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDExporterFromPDFA.class.getCanonicalName()); // log
+
 	protected IZUGFeRDExporter theExporter;
 
-	public IZUGFeRDExporter load(String pdfFilename) throws IOException {
-		if (getPDFAVersion(fileToByteArrayInputStream(pdfFilename)) < 2) {
-			theExporter = new ZUGFeRDExporterFromA1();
-		} else if (getPDFAVersion(fileToByteArrayInputStream(pdfFilename)) >= 3) {
+	protected void determineAndSetExporter(int PDFAVersion) {
+		if (PDFAVersion == 3) {
 			theExporter = new ZUGFeRDExporterFromA3();
+		} else if (PDFAVersion == 1) {
+			theExporter = new ZUGFeRDExporterFromA1();
+		} else {
+			throw new IllegalArgumentException("PDF-A version not supported");
 		}
-		return theExporter.load(pdfFilename);
+	}
+	protected IZUGFeRDExporter getExporter() {
+		if (theExporter==null) {
+			throw new RuntimeException("In ZUGFeRDExporterFromPDFA, source must always be loaded before other operations are performed.");
+		}
+
+		return theExporter;
 	}
 
 	private byte[] fileToByteArrayInputStream(String pdfFilename) throws IOException {
@@ -48,12 +65,18 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		return fileInputStream.readAllBytes();
 	}
 
+	/***
+	 *
+	 * @param byteArrayInputStream
+	 * @return 0 if unknown, 1 for PDF/A-1 or 3 for PDF/A-3
+	 * @throws IOException
+	 */
 	private int getPDFAVersion(byte[] byteArrayInputStream) throws IOException {
-		// PDFBOX to be here...
 		PDDocument document = PDDocument.load(byteArrayInputStream);
 		PDDocumentCatalog catalog = document.getDocumentCatalog();
 		PDMetadata metadata = catalog.getMetadata();
-
+		// the PDF version we could get through the document but we want the PDF-A version,
+		// which is different (and can probably base on different PDF versions)
 		if (metadata != null) {
 			try {
 				DomXmpParser xmpParser = new DomXmpParser();
@@ -64,13 +87,25 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 					return pdfaSchema.getPart();
 				}
 			} catch (XmpParsingException e) {
-				e.printStackTrace();
+				LOGGER.error("XmpParsingException", e);
 			} finally {
 				document.close();
 			}
 		}
 		return 0;
 	}
+
+	/***
+	 * Load from filename
+	 * @param pdfFilename binary of a PDF/A1 compliant document
+	 * @return
+	 * @throws IOException
+	 */
+	public IZUGFeRDExporter load(String pdfFilename) throws IOException {
+		determineAndSetExporter(getPDFAVersion(fileToByteArrayInputStream(pdfFilename)));
+		return theExporter.load(pdfFilename);
+	}
+
 
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
@@ -81,11 +116,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	 * @throws IOException (should not happen at all)
 	 */
 	public IZUGFeRDExporter load(byte[] pdfBinary) throws IOException {
-		if (getPDFAVersion(pdfBinary) >= 3) {
-			theExporter = new ZUGFeRDExporterFromA3();
-		} else if (getPDFAVersion(pdfBinary) < 2) {
-			theExporter = new ZUGFeRDExporterFromA1();
-		}
+		determineAndSetExporter(getPDFAVersion(pdfBinary));
 		return theExporter.load(pdfBinary);
 	}
 
@@ -99,88 +130,94 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	 * @throws IOException if anything is wrong with inputstream
 	 */
 	public IZUGFeRDExporter load(InputStream pdfSource) throws IOException {
-		if (getPDFAVersion(pdfSource.readAllBytes()) >= 3) {
-			theExporter = new ZUGFeRDExporterFromA3();
-		} else if (getPDFAVersion(pdfSource.readAllBytes()) < 2) {
-			theExporter = new ZUGFeRDExporterFromA1();
-		}
+		determineAndSetExporter(getPDFAVersion(pdfSource.readAllBytes()));
 		return theExporter.load(pdfSource);
 	}
 
 	public IZUGFeRDExporter setCreator(String creator) {
-		return theExporter.setCreator(creator);
+
+		return getExporter().setCreator(creator);
 	}
 
 	public ZUGFeRDExporterFromPDFA setProfile(Profile p) {
-		return (ZUGFeRDExporterFromPDFA) theExporter.setProfile(p);
+		return (ZUGFeRDExporterFromPDFA) getExporter().setProfile(p);
 	}
 
 	public ZUGFeRDExporterFromPDFA setProfile(String profileName) {
 		Profile p = Profiles.getByName(profileName);
-		return (ZUGFeRDExporterFromPDFA) theExporter.setProfile(p);
+		if (p==null)  {
+			throw new RuntimeException("Profile not found.");
+		}
+		return (ZUGFeRDExporterFromPDFA) getExporter().setProfile(p);
 	}
 
 	public IZUGFeRDExporter setConformanceLevel(PDFAConformanceLevel newLevel) {
-		return theExporter.setConformanceLevel(newLevel);
+		return getExporter().setConformanceLevel(newLevel);
 	}
 
 	public IZUGFeRDExporter setProducer(String producer) {
-		return theExporter.setProducer(producer);
+
+		return getExporter().setProducer(producer);
 	}
 
 	public IZUGFeRDExporter setZUGFeRDVersion(int version) {
 
-		return theExporter.setZUGFeRDVersion(version);
+		return getExporter().setZUGFeRDVersion(version);
 
 	}
 
 	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
-		return theExporter.ensurePDFIsValid(dataSource);
+
+		return getExporter().ensurePDFIsValid(dataSource);
 	}
 
 	public IZUGFeRDExporter setXML(byte[] zugferdData) throws IOException {
-		return theExporter.setXML(zugferdData);
+
+		return getExporter().setXML(zugferdData);
 	}
 
 	public IZUGFeRDExporter disableFacturX() {
-		return theExporter.disableFacturX();
+
+		return getExporter().disableFacturX();
 	}
 
 	//	public IZUGFeRDExporter setProfile(Profile zugferdConformanceLevel);
 	public String getNamespaceForVersion(int ver) {
-		return theExporter.getNamespaceForVersion(ver);
+
+		return getExporter().getNamespaceForVersion(ver);
 	}
 
 	public String getPrefixForVersion(int ver) {
-		return theExporter.getPrefixForVersion(ver);
+
+		return getExporter().getPrefixForVersion(ver);
 	}
 
 	public IZUGFeRDExporter disableAutoClose(boolean disableAutoClose) {
-		return theExporter.disableAutoClose(disableAutoClose);
+		return getExporter().disableAutoClose(disableAutoClose);
 	}
 
 	public IXMLProvider getProvider() {
-		return theExporter.getProvider();
+		return getExporter().getProvider();
 	}
 
 	@Override
 	public void close() throws IOException {
-		theExporter.close();
+		getExporter().close();
 	}
 
 	@Override
 	public IExporter setTransaction(IExportableTransaction trans) throws IOException {
-		return theExporter.setTransaction(trans);
+		return getExporter().setTransaction(trans);
 	}
 
 	@Override
 	public void export(String ZUGFeRDfilename) throws IOException {
-		theExporter.export(ZUGFeRDfilename);
+		getExporter().export(ZUGFeRDfilename);
 	}
 
 	@Override
 	public void export(OutputStream output) throws IOException {
-		theExporter.export(output);
+		getExporter().export(output);
 	}
 }
 

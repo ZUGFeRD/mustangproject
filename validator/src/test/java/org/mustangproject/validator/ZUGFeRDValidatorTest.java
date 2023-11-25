@@ -105,10 +105,75 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 				.isEqualTo("invalid");
 
 	}
-	/***
-	 * the XMLValidatorTests only cover the <xml></xml> part, this one includes the root element and
-	 * the global <summary></summary> part as well
-	 */
+
+	public void testXR23Validation() {
+		File tempFile = getResourceAsFile("validXRV23.xml");
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+
+		assertThat(res).valueByXPath("count(//error)")
+			.asInt()
+			.isEqualTo(1);// incorrectly throws an error due to https://awv-git.de/einvoicing/factur-x/-/issues/69
+
+		assertThat(res).valueByXPath("count(//notice)")
+			.asInt()
+			.isEqualTo(0);
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.asString()
+			.isEqualTo("invalid");// expect to be valid because XR notices are, well, only notices
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+			.asString()
+			.isEqualTo("invalid");
+
+
+	}
+	public void testXR30Validation() {
+
+		File tempFile = getResourceAsFile("validXRV30.xml");
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+		assertThat(res).valueByXPath("count(//error)")
+			.asInt()
+			.isEqualTo(1);// incorrectly throws an error due to https://awv-git.de/einvoicing/factur-x/-/issues/69
+
+		assertThat(res).valueByXPath("count(//notice)")
+			.asInt()
+			.isEqualTo(0);
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.asString()
+			.isEqualTo("invalid");// expect to be valid because XR notices are, well, only notices
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+			.asString()
+			.isEqualTo("invalid");
+
+		tempFile = getResourceAsFile("invalidXRV30.xml");
+		zfv = new ZUGFeRDValidator();
+		res = zfv.validate(tempFile.getAbsolutePath());
+
+		assertThat(res).valueByXPath("count(//error)")
+			.asInt()
+			.isEqualTo(4); //should be 3
+
+		assertThat(res).valueByXPath("count(//notice)")
+			.asInt()
+			.isEqualTo(0); // 12 notices RE XRechnung 3.0
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.asString()
+			.isEqualTo("invalid");// expect to be valid
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+			.asString()
+			.isEqualTo("invalid");// expect to be valid
+
+
+	}
+
+		/***
+		 * the XMLValidatorTests only cover the <xml></xml> part, this one includes the root element and
+		 * the global <summary></summary> part as well
+		 */
 	public void testXMLValidation() {
 		File tempFile = getResourceAsFile("validV2.xml");
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
@@ -121,7 +186,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("count(//notice)")
 				.asInt()
-				.isEqualTo(3); // 3 notices RE XRechnung
+				.isEqualTo(12); // 12 notices RE XRechnung 3.0
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
 				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
