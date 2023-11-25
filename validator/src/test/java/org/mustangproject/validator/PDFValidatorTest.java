@@ -8,6 +8,47 @@ import org.slf4j.LoggerFactory;
 public class PDFValidatorTest extends ResourceCase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDValidator.class.getCanonicalName()); // log
 
+	public void testPDFPotentialA3SourceValidation() {
+		final ValidationContext vc = new ValidationContext(null);
+		final PDFValidator pv = new PDFValidator(vc);
+
+		try {
+
+			File tempFile = new File("../library/target/testout-PDFA3FromA3.pdf");
+			assertTrue(tempFile.exists());
+
+			pv.setFilename(tempFile.getAbsolutePath());
+			pv.validate();
+			String actual = pv.getXMLResult();
+			assertEquals(true, actual.contains("summary status=\"valid"));
+			assertEquals(false, actual.contains("summary status=\"invalid"));
+
+
+			tempFile = new File("../library/target/testout-PDFA3FromUnkownA3.pdf");
+			assertTrue(tempFile.exists());
+
+			pv.setFilename(tempFile.getAbsolutePath());
+			vc.clear();
+			pv.validate();
+			actual = pv.getXMLResult();
+			assertEquals(true, actual.contains("summary status=\"valid"));
+			assertEquals(false, actual.contains("summary status=\"invalid"));
+
+			tempFile = new File("../library/target/testout-PDFA3FromUnkownA1.pdf");
+			assertTrue(tempFile.exists());
+
+			pv.setFilename(tempFile.getAbsolutePath());
+			vc.clear();
+			pv.validate();
+			actual = pv.getXMLResult();
+			assertEquals(true, actual.contains("summary status=\"valid"));
+			assertEquals(false, actual.contains("summary status=\"invalid"));
+
+		} catch (final IrrecoverableValidationError e) {
+			// ignore, will be in XML output anyway
+		}
+
+	}
 	public void testPDFValidation() {
 		final ValidationContext vc = new ValidationContext(null);
 		final PDFValidator pv = new PDFValidator(vc);
@@ -36,7 +77,7 @@ public class PDFValidatorTest extends ResourceCase {
 			assertEquals(true, actual.contains("validationReport profileName=\"PDF/A-3"));
 			assertEquals(true, actual.contains("batchSummary totalJobs=\"1\" failedToParse=\"0\" encrypted=\"0\""));
 			assertEquals(true,
-					actual.contains("validationReports compliant=\"1\" nonCompliant=\"0\" failedJobs=\"0\">"));
+				actual.contains("validationReports compliant=\"1\" nonCompliant=\"0\" failedJobs=\"0\">"));
 			// test some xml
 			// assertEquals(true, actual.contains("<error
 			// location=\"/*:CrossIndustryInvoice[namespace-uri()='urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100'][1]/*:SupplyChainTradeTransaction[namespace-uri()='urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100'][1]/*:ApplicableHeaderTradeSettlement[namespace-uri()='urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100'][1]/*:SpecifiedTradeSettlementHeaderMonetarySummation[namespace-uri()='urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100'][1]/*:DuePayableAmount[namespace-uri()='urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100'][1]\"
@@ -55,7 +96,7 @@ public class PDFValidatorTest extends ResourceCase {
 			assertEquals(true, actual.contains("validationReport profileName=\"PDF/A-3"));
 			assertEquals(true, actual.contains("batchSummary totalJobs=\"1\" failedToParse=\"0\" encrypted=\"0\""));
 			assertEquals(true,
-					actual.contains("validationReports compliant=\"1\" nonCompliant=\"0\" failedJobs=\"0\">"));
+				actual.contains("validationReports compliant=\"1\" nonCompliant=\"0\" failedJobs=\"0\">"));
 
 			assertEquals(false, actual.contains("<error"));
 		} catch (final IrrecoverableValidationError e) {
