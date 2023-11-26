@@ -1,21 +1,23 @@
-/** **********************************************************************
- *
+/**
+ * *********************************************************************
+ * <p>
  * Copyright 2018 Jochen Staerk
- *
+ * <p>
  * Use is subject to license terms.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0.
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *
+ * <p>
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *********************************************************************** */
+ * <p>
+ * **********************************************************************
+ */
 package org.mustangproject.ZUGFeRD;
 
 /**
@@ -38,7 +40,7 @@ import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 /***
  * the interface of an transaction, e.g. an invoice, you want to create xml
  * (potentially to be added to a PDF) for
- * 
+ *
  * @see org.mustangproject.Invoice
  */
 public interface IExportableTransaction {
@@ -82,13 +84,12 @@ public interface IExportableTransaction {
 	/**
 	 * this should be the full sender institution name, details, manager and tax
 	 * registration. It is one of the few functions which may return null. e.g.
-	 * <p/>
+	 *
 	 * Lieferant GmbH Lieferantenstraße 20 80333 München Deutschland
 	 * Geschäftsführer: Hans Muster Handelsregisternummer: H A 123
-   * <p/>
 	 *
-   * It is written as an includedNode with subjectCode {@link org.mustangproject.SubjectCode#REG}. See also 
-   * {@link #getNotesWithSubjectCode()}
+	 * It is written as an includedNode with subjectCode {@link org.mustangproject.SubjectCode#REG}. See also
+	 * {@link #getNotesWithSubjectCode()}
 	 * @return null or full sender institution name, details, manager and tax
 	 *         registration
 	 */
@@ -150,7 +151,7 @@ public interface IExportableTransaction {
 
 	/**
 	 * the creditors payment informations
-	 * 
+	 *
 	 * @deprecated use getTradeSettlement
 	 * @return an array of IZUGFeRDTradeSettlementPayment
 	 */
@@ -441,7 +442,7 @@ public interface IExportableTransaction {
 
 	/***
 	 * delivery address, i.e. ram:ShipToTradeParty (only supported for zf2)
-	 * 
+	 *
 	 * @return the IZUGFeRDExportableTradeParty delivery address
 	 */
 
@@ -452,7 +453,7 @@ public interface IExportableTransaction {
 	/***
 	 * specifies the document level delivery period, will be included in a
 	 * BillingSpecifiedPeriod element
-	 * 
+	 *
 	 * @return the beginning of the delivery period
 	 */
 	default Date getDetailedDeliveryPeriodFrom() {
@@ -462,7 +463,7 @@ public interface IExportableTransaction {
 	/***
 	 * specifies the document level delivery period, will be included in a
 	 * BillingSpecifiedPeriod element
-	 * 
+	 *
 	 * @return the end of the delivery period
 	 */
 	default Date getDetailedDeliveryPeriodTo() {
@@ -486,7 +487,7 @@ public interface IExportableTransaction {
 
 	/***
 	 * additional text description
-	 * 
+	 *
 	 * @return an array of strings of document wide "includedNotes" (descriptive
 	 *         text values)
 	 */
@@ -494,13 +495,16 @@ public interface IExportableTransaction {
 		return null;
 	}
 
-  /**
-   * A grouping of business terms to indicate accounting-relevant free texts including a qualification of these. <p/>
-   * The information are written to the same xml nodes like {@link #getNotes()} but with explicit subjectCode.
-   */
-  default List<IncludedNote> getNotesWithSubjectCode(){
-    return null;
-  }
+	/**
+	 * A grouping of business terms to indicate accounting-relevant free texts including a qualification of these.
+	 *
+	 * The information are written to the same xml nodes like {@link #getNotes()} but with explicit subjectCode.
+	 * @return list of the notes
+	 */
+	default List<IncludedNote> getNotesWithSubjectCode() {
+		return null;
+	}
+
 	default String getSpecifiedProcuringProjectName() {
 		return null;
 	}

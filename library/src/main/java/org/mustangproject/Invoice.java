@@ -842,6 +842,7 @@ public class Invoice implements IExportableTransaction {
 	/**
 	 * Decide when the VAT should be collected.
 	 * @param vatDueDateTypeCode use EventTimeCodeTypeConstants
+	 * @return fluent setter
 	 */
 	public Invoice setVATDueDateTypeCode(String vatDueDateTypeCode) {
 		this.vatDueDateTypeCode = vatDueDateTypeCode;

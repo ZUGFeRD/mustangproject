@@ -22,7 +22,7 @@ public class ReferencedDocument implements IReferencedDocument {
 
 	/***
 	 * sets an ID assigned by the sender
-	 * @param issuerAssignedID
+	 * @param issuerAssignedID the ID as a string :-)
 	 */
 	public void setIssuerAssignedID(String issuerAssignedID) {
 		this.issuerAssignedID = issuerAssignedID;
@@ -30,7 +30,7 @@ public class ReferencedDocument implements IReferencedDocument {
 
 	/**
 	 * which type is the document? e.g. "916" for additional invoice related
-	 * @param typeCode
+	 * @param typeCode as String, e.g. 916
 	 */
 	public void setTypeCode(String typeCode) {
 		this.typeCode = typeCode;
@@ -38,7 +38,7 @@ public class ReferencedDocument implements IReferencedDocument {
 
 	/**
 	 * type of the reference of this line, a UNTDID 1153 code
-	 * @param referenceTypeCode
+	 * @param referenceTypeCode three uppercase character reference type code as string
 	 */
 	public void setReferenceTypeCode(String referenceTypeCode) {
 		this.referenceTypeCode = referenceTypeCode;

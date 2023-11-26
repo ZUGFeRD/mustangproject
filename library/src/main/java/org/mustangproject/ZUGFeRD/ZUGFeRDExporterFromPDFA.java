@@ -105,8 +105,8 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	/***
 	 * Load from filename
 	 * @param pdfFilename binary of a PDF/A1 compliant document
-	 * @return
-	 * @throws IOException
+	 * @return the A1 or A3 exporter
+	 * @throws IOException e.g. on read error
 	 */
 	public IZUGFeRDExporter load(String pdfFilename) throws IOException {
 		determineAndSetExporter(getPDFAVersion(filenameToByteArray(pdfFilename)));

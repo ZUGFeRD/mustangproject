@@ -1,7 +1,7 @@
 package org.mustangproject;
 
 /**
- * EN16931-ID: BT-21 - the qualification of the free text on the invoice from BT-22<br/>
+ * EN16931-ID: BT-21 - the qualification of the free text on the invoice from BT-22
  * In the first step only the recommended codes are implemented. 
  */
 public enum SubjectCode {

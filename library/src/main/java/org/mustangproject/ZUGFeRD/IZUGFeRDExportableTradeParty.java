@@ -1,21 +1,23 @@
-/** **********************************************************************
- *
+/**
+ * *********************************************************************
+ * <p>
  * Copyright 2018 Jochen Staerk
- *
+ * <p>
  * Use is subject to license terms.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0.
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *
+ * <p>
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *********************************************************************** */
+ * <p>
+ * **********************************************************************
+ */
 package org.mustangproject.ZUGFeRD;
 
 import org.mustangproject.TradeParty;
@@ -50,13 +52,14 @@ public interface IZUGFeRDExportableTradeParty {
 	}
 
 
-  /***
+	/***
 	 * gets the official representation
 	 * @return the interface with the attributes of the legal organisation
 	 */
-	default IZUGFeRDLegalOrganisation getLegalOrganisation()  {
+	default IZUGFeRDLegalOrganisation getLegalOrganisation() {
 		return null;
 	}
+
 	/**
 	 * customer global identification scheme
 	 *
@@ -69,15 +72,17 @@ public interface IZUGFeRDExportableTradeParty {
 
 	/**
 	 * URIUniversalCommunication scheme (see EAS code list of the ZUGFeRD documentation)
-	 *
+	 * I believe EM for Email
+	 * @return String with code
 	 */
 	default String getUriUniversalCommunicationIDScheme() {
 		return null;
 	}
+
 	/**
 	 * The URIID of URIUniversalCommunicationID
-   * It is used by some countries, i.e. Luxembourg
-	 *
+	 * It is used by some countries, i.e. Luxembourg
+	 * @return the URI as string
 	 */
 	default String getUriUniversalCommunicationID() {
 		return null;
@@ -94,6 +99,7 @@ public interface IZUGFeRDExportableTradeParty {
 	 * @return First and last name of the recipient
 	 */
 	String getName();
+
 	/**
 	 * Postal code of the recipient
 	 *
