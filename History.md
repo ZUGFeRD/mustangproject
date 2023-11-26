@@ -1,18 +1,19 @@
 2.9.0
 =======
+2023-11-27
 
-Missing closing tag in BankDetails when there's no BIC number #339
-ZUGFeRDExporterFromA3 did not set default ZUGFeRD Version
-Have a way to merge to PDF file without knowing if it is A-1 or A-3 #341
-Be able to validate XR 3.0 #347
+- Missing closing tag in BankDetails when there's no BIC number #339
+- ZUGFeRDExporterFromA3 did not set default ZUGFeRD Version
+- Have a way to merge to PDF file without knowing if it is A-1 or A-3 #341
+- Be able to validate XR 3.0 #347
 
 2.8.0
 =======
 2023-09-14
 
-Improvement of included notes #331
-fixes #259 by Heavenfighter
-introduction of --disable-file-logging command line option
+- Improvement of included notes #331
+- fixes #259 by Heavenfighter
+- introduction of --disable-file-logging command line option
 
 2.7.3
 =======

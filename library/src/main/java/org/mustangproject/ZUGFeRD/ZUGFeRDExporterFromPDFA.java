@@ -60,8 +60,12 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		return theExporter;
 	}
 
-	private byte[] fileToByteArrayInputStream(String pdfFilename) throws IOException {
+	protected byte[] filenameToByteArray(String pdfFilename) throws IOException {
 		FileInputStream fileInputStream = new FileInputStream(pdfFilename);
+		return inputstreamToByteArray(fileInputStream);
+	}
+
+	protected byte[] inputstreamToByteArray(InputStream fileInputStream) throws IOException  {
 		byte[] bytes = new byte[fileInputStream.available()];
 		DataInputStream dataInputStream = new DataInputStream(fileInputStream);
 		dataInputStream.readFully(bytes);
@@ -105,7 +109,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	 * @throws IOException
 	 */
 	public IZUGFeRDExporter load(String pdfFilename) throws IOException {
-		determineAndSetExporter(getPDFAVersion(fileToByteArrayInputStream(pdfFilename)));
+		determineAndSetExporter(getPDFAVersion(filenameToByteArray(pdfFilename)));
 		return theExporter.load(pdfFilename);
 	}
 
@@ -133,7 +137,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	 * @throws IOException if anything is wrong with inputstream
 	 */
 	public IZUGFeRDExporter load(InputStream pdfSource) throws IOException {
-		determineAndSetExporter(getPDFAVersion(pdfSource.readAllBytes()));
+		determineAndSetExporter(getPDFAVersion(inputstreamToByteArray(pdfSource)));
 		return theExporter.load(pdfSource);
 	}
 
