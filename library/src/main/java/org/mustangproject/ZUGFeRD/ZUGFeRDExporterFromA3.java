@@ -264,6 +264,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	public ZUGFeRDExporterFromA3() {
 		super();
+		setZUGFeRDVersion(ZUGFeRDExporterFromA3.DefaultZUGFeRDVersion);
+
 	}
 
 	public void attachFile(FileAttachment file) {

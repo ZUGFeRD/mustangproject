@@ -33,25 +33,38 @@ import java.util.Date;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PDFAWriteTest extends ResourceCase {
+	final String TARGET_PDF_FROM_A1 = "./target/testout-PDFA3FromA3.pdf";
 	final String TARGET_PDF_FROM_A3 = "./target/testout-PDFA3FromA3.pdf";
 	final String TARGET_PDF_FROM_A3_UNKNOWN = "./target/testout-PDFA3FromUnkownA3.pdf";
 	final String TARGET_PDF_FROM_A1_UNKNOWN = "./target/testout-PDFA3FromUnkownA1.pdf";
-	public void testA3KnownExport() {
+	public void testA1KnownExport() {
 		// test creating factur-x invoices to french authorities, i.e. with SIRET number
 		// the writing part
 		TradeParty recipient = new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE");
+
+		Invoice i = createInvoice(recipient);
+		File tempFile = getResourceAsFile("MustangGnuaccountingBeispielRE-20201121_508blanko.pdf");//a3
+		int exceptions=0;
+		try {
+			ZUGFeRDExporterFromA1 zea3 = new ZUGFeRDExporterFromA1().load(tempFile.getAbsolutePath());
+			zea3.setTransaction(i);
+			zea3.export(TARGET_PDF_FROM_A1);
+
+		} catch (IOException e) {
+			exceptions++;
+		}
+		assertTrue(exceptions==0);
+
+	}
+	public void testA3KnownExport() {
+		TradeParty recipient = new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE");
+
 		Invoice i = createInvoice(recipient);
 		File tempFile = getResourceAsFile("MustangGnuaccountingBeispielRE-20201121_508blankoA3.pdf");//a3
 		int exceptions=0;
 		try {
 			ZUGFeRDExporterFromA3 zea3 = new ZUGFeRDExporterFromA3().load(tempFile.getAbsolutePath());
-
-			zea3.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
-				.setSender(new TradeParty("Test", "teststr", "55232", "teststadt", "DE").addBankDetails(new BankDetails("777666555", "DE4321"))).setOwnTaxID("4711").setOwnVATID("DE19990815")
-				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")
-					.setContact(new Contact("nameRep", "phoneRep", "emailRep@test.com"))).setNumber("X12")
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal(2.5), new BigDecimal(1.0))));
-
+			zea3.setTransaction(i);
 			zea3.export(TARGET_PDF_FROM_A3);
 
 		} catch (IOException e) {

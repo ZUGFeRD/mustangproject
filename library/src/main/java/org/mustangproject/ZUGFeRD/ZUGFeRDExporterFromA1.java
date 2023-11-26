@@ -84,10 +84,6 @@ public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 implements IZUG
 		return true;
 	}
 
-	public ZUGFeRDExporterFromA1() {
-		setZUGFeRDVersion(ZUGFeRDExporterFromA3.DefaultZUGFeRDVersion);
-
-	}
 
 	public ZUGFeRDExporterFromA1 load(String pdfFilename) throws IOException {
 		return (ZUGFeRDExporterFromA1) super.load(pdfFilename);
