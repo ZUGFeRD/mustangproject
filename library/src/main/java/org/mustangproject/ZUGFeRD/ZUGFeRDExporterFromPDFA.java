@@ -62,7 +62,11 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 
 	private byte[] fileToByteArrayInputStream(String pdfFilename) throws IOException {
 		FileInputStream fileInputStream = new FileInputStream(pdfFilename);
-		return fileInputStream.readAllBytes();
+		fileInputStream.reset();
+		byte[] bytes = new byte[fileInputStream.available()];
+		DataInputStream dataInputStream = new DataInputStream(fileInputStream);
+		dataInputStream.readFully(bytes);
+		return bytes;
 	}
 
 	/***
