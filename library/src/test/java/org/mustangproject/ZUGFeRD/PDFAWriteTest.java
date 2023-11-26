@@ -82,9 +82,9 @@ public class PDFAWriteTest extends ResourceCase {
 		File tempFile = getResourceAsFile("MustangGnuaccountingBeispielRE-20201121_508blankoA3.pdf");
 		int exceptions=0;
 		try {
-			ZUGFeRDExporterFromA1 zea3 = new  ZUGFeRDExporterFromA1().load(tempFile.getAbsolutePath());
-			zea3.setTransaction(i);
-			zea3.export(TARGET_PDF_FROM_A3_UNKNOWN);
+			IZUGFeRDExporter zea = new ZUGFeRDExporterFromPDFA().load(tempFile.getAbsolutePath());
+			zea.setTransaction(i);
+			zea.export(TARGET_PDF_FROM_A3_UNKNOWN);
 
 		} catch (IOException e) {
 			exceptions++;
