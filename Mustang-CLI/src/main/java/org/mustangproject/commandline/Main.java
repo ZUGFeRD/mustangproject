@@ -708,6 +708,10 @@ public class Main {
 				}
 
 			} else {
+				if (format.equals("fx")) {
+					zfIntVersion=2;// actually we are talking of generation, not version
+					// so even if someone correctly requested factur-x 1 internally we call it zugferd 2 :-(
+				}
 				ze = new ZUGFeRDExporterFromPDFA().load(pdfName);
 
 					ze.setProducer("Mustang-cli")
