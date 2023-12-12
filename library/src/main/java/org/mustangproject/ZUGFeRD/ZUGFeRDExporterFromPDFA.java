@@ -137,8 +137,9 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	 * @throws IOException if anything is wrong with inputstream
 	 */
 	public IZUGFeRDExporter load(InputStream pdfSource) throws IOException {
-		determineAndSetExporter(getPDFAVersion(inputstreamToByteArray(pdfSource)));
-		return theExporter.load(pdfSource);
+		byte[] byteArray=inputstreamToByteArray(pdfSource);
+		determineAndSetExporter(getPDFAVersion(byteArray));
+		return theExporter.load(byteArray);
 	}
 
 	public IZUGFeRDExporter setCreator(String creator) {

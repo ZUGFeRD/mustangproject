@@ -26,6 +26,7 @@ import org.junit.runners.MethodSorters;
 import org.mustangproject.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -101,7 +102,8 @@ public class PDFAWriteTest extends ResourceCase {
 		File tempFile = getResourceAsFile("MustangGnuaccountingBeispielRE-20201121_508blanko.pdf");
 		int exceptions=0;
 		try {
-			IZUGFeRDExporter zea3 = new  ZUGFeRDExporterFromPDFA().load(tempFile.getAbsolutePath());
+			FileInputStream fis=new FileInputStream(tempFile);
+			IZUGFeRDExporter zea3 = new  ZUGFeRDExporterFromPDFA().load(fis);
 			zea3.setTransaction(i);
 			zea3.setProfile(Profiles.getByName("EN16931"));
 			zea3.export(TARGET_PDF_FROM_A1_UNKNOWN);
