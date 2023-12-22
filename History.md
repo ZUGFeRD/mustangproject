@@ -1,5 +1,11 @@
+2.10.0
+- 
 - also accept pdf/a3 from inputstream
 - closes #354 factur-x 1 from commandline
+- support XR 3.0.1 (#343), 
+  - i.e. processid
+  - set email in tradeparty class
+  - empty description remove
 
 2.9.0
 =======

@@ -69,15 +69,6 @@ mvnw clean package -P generateXSLTFromSchematron
 `package -Dmaven.surefire.debug="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8001 -Xnoagent -Djava.compiler=NONE"`
 can be used as debug configuration goal in Eclipse. In that case you can set breakpoints in tests.
 
-## Validate
-
-The former ZUGFeRD VeraPDF [ZUV](https://github.com/ZUGFeRD/ZUV/) validator
-is now part of Mustangproject. 
-The JUnit tests of the validator component will also run through a couple of
-test files of the library component.
-
-
-
 
 ## Deployment
 

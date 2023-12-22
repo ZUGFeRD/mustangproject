@@ -31,7 +31,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	protected Contact contact = null;
 	protected LegalOrganisation legalOrg = null;
 	protected SchemedID globalId=null;
-	protected SchemedID uriUniversalCommunicationId=null;
+	protected SchemedID uriUniversalCommunicationId=null; //e.g. the email address of the organization
 
 	/**
 	 * Default constructor.
@@ -411,7 +411,31 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	}
 
-  
+
+	/***
+	 * sets the email of the organization (not the one of the contact person)
+	 * @return fluent setter
+	 */
+	public TradeParty setEmail(String eMail) {
+		SchemedID theSchemedID=new SchemedID("EM", eMail);
+		addUriUniversalCommunicationID(theSchemedID);
+		return this;
+	}
+
+	/***
+	 * gets the email of the organization (not the one of the contact person)
+	 * will return null if not set or if the provided UriUniversalCommunicationID
+	 * is not a email address
+	 *
+	 * @return String the email, or null
+	 */
+	public String getEmail() {
+		if (uriUniversalCommunicationId.getScheme().equals("EM")) {
+			return uriUniversalCommunicationId.getID();
+		}
+		return null;
+	}
+
 
 	/**
 	 * if it's a customer, this can e.g. be the customer ID
