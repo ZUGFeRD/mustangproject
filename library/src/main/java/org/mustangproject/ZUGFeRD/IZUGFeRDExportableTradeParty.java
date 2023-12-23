@@ -79,9 +79,11 @@ public interface IZUGFeRDExportableTradeParty {
 		return null;
 	}
 
+
+
 	/**
-	 * The URIID of URIUniversalCommunicationID
-	 * It is used by some countries, i.e. Luxembourg
+	 * The URIID of URIUniversalCommunicationID (e.g. email address)
+	 * It is used by some countries, i.e. Luxembourg, Peppol
 	 * @return the URI as string
 	 */
 	default String getUriUniversalCommunicationID() {
@@ -89,6 +91,24 @@ public interface IZUGFeRDExportableTradeParty {
 	}
 
 
+	/***
+	 * gets the email of the organization (not the one of the contact person)
+	 * will return null if not set or if the provided UriUniversalCommunicationID
+	 * is not a email address
+	 *
+	 * @return String the email, or null
+	 */
+	default String getEmail() {
+		if ((getUriUniversalCommunicationIDScheme()!=null)&&(getUriUniversalCommunicationIDScheme().equals("EM"))) {
+			return getUriUniversalCommunicationID();
+		}
+		return null;
+	}
+
+	/***
+	 * the named contact person for inquiries
+	 * @return contact
+	 */
 	default IZUGFeRDExportableContact getContact() {
 		return null;
 	}

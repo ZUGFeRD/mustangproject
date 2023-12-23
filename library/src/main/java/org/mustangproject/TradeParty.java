@@ -30,8 +30,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	protected List<IZUGFeRDTradeSettlementDebit> debitDetails = new ArrayList<>();
 	protected Contact contact = null;
 	protected LegalOrganisation legalOrg = null;
-	protected SchemedID globalId=null;
-	protected SchemedID uriUniversalCommunicationId=null; //e.g. the email address of the organization
+	protected SchemedID globalId = null;
+	protected SchemedID uriUniversalCommunicationId = null; //e.g. the email address of the organization
 
 	/**
 	 * Default constructor.
@@ -153,7 +153,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("GlobalID")) {
 							if (itemChilds.item(itemChildIndex).getAttributes().getNamedItem("schemeID") != null) {
-								SchemedID gid=new SchemedID().setScheme(itemChilds.item(itemChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue()).setId(itemChilds.item(itemChildIndex).getTextContent());
+								SchemedID gid = new SchemedID().setScheme(itemChilds.item(itemChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue()).setId(itemChilds.item(itemChildIndex).getTextContent());
 								addGlobalID(gid);
 							}
 
@@ -198,8 +198,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 									if ((taxChilds.item(taxChildIndex).getLocalName().equals("ID"))) {
 										if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID") != null) {
 											Node firstChild = taxChilds.item(taxChildIndex).getFirstChild();
-											if (firstChild != null)
-											{
+											if (firstChild != null) {
 												if (taxChilds.item(taxChildIndex).getAttributes()
 													.getNamedItem("schemeID").getNodeValue().equals("VA")) {
 													setVATID(firstChild.getNodeValue());
@@ -294,22 +293,19 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 							parseFromUBL(nodes);
 							return;
 						}
-
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("Name")) {
 							setName(itemChilds.item(itemChildIndex).getTextContent());
 						}
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("GlobalID")) {
 							if (itemChilds.item(itemChildIndex).getAttributes().getNamedItem("schemeID") != null) {
-								SchemedID gid=new SchemedID().setScheme(itemChilds.item(itemChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue()).setId(itemChilds.item(itemChildIndex).getTextContent());
+								SchemedID gid = new SchemedID().setScheme(itemChilds.item(itemChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue()).setId(itemChilds.item(itemChildIndex).getTextContent());
 								addGlobalID(gid);
 							}
-
 						}
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("DefinedTradeContact")) {
 							NodeList contact = itemChilds.item(itemChildIndex).getChildNodes();
 							setContact(new Contact(contact));
 						}
-
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("PostalTradeAddress")) {
 							NodeList postal = itemChilds.item(itemChildIndex).getChildNodes();
 							for (int postalChildIndex = 0; postalChildIndex < postal.getLength(); postalChildIndex++) {
@@ -337,6 +333,19 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 							}
 
 						}
+						if (itemChilds.item(itemChildIndex).getLocalName().equals("URIUniversalCommunication")) {
+							NodeList URIchilds = itemChilds.item(itemChildIndex).getChildNodes();
+							for (int URIChildIndex = 0; URIChildIndex < URIchilds.getLength(); URIChildIndex++) {
+								Node currentNode = URIchilds.item(URIChildIndex);
+								if ((currentNode.getLocalName() != null) && (currentNode.getLocalName().equals("URIID")
+									&&
+									(currentNode.getAttributes().getNamedItem("schemeID") != null))
+									&& (URIchilds.item(URIChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("EM"))
+								) {
+									setEmail(currentNode.getTextContent());
+								}
+							}
+						}
 
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedTaxRegistration")) {
 							NodeList taxChilds = itemChilds.item(itemChildIndex).getChildNodes();
@@ -345,14 +354,13 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 									if ((taxChilds.item(taxChildIndex).getLocalName().equals("ID"))) {
 										if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID") != null) {
 											Node firstChild = taxChilds.item(taxChildIndex).getFirstChild();
-											if (firstChild != null)
-											{
+											if (firstChild != null) {
 												if (taxChilds.item(taxChildIndex).getAttributes()
-														.getNamedItem("schemeID").getNodeValue().equals("VA")) {
+													.getNamedItem("schemeID").getNodeValue().equals("VA")) {
 													setVATID(firstChild.getNodeValue());
 												}
 												if (taxChilds.item(taxChildIndex).getAttributes()
-														.getNamedItem("schemeID").getNodeValue().equals("FC")) {
+													.getNamedItem("schemeID").getNodeValue().equals("FC")) {
 													setTaxID(firstChild.getNodeValue());
 												}
 											}
@@ -374,37 +382,35 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	@Override
 	public String getGlobalID() {
-		if (globalId!=null) {
+		if (globalId != null) {
 			return globalId.getID();
 		}
 		return null;
 	}
 
 
-
 	@Override
 	public String getGlobalIDScheme() {
-		if (globalId!=null) {
+		if (globalId != null) {
 			return globalId.getScheme();
 		}
 		return null;
 
 	}
 
-  
+
 	@Override
 	public String getUriUniversalCommunicationID() {
-		if (uriUniversalCommunicationId!=null) {
+		if (uriUniversalCommunicationId != null) {
 			return uriUniversalCommunicationId.getID();
 		}
 		return null;
 	}
 
 
-
 	@Override
 	public String getUriUniversalCommunicationIDScheme() {
-		if (uriUniversalCommunicationId!=null) {
+		if (uriUniversalCommunicationId != null) {
 			return uriUniversalCommunicationId.getScheme();
 		}
 		return null;
@@ -414,26 +420,13 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	/***
 	 * sets the email of the organization (not the one of the contact person)
+	 * (while setEmail has to be defined here getEmail comes from IZUGFeRDExportableTradeParty)
 	 * @return fluent setter
 	 */
 	public TradeParty setEmail(String eMail) {
-		SchemedID theSchemedID=new SchemedID("EM", eMail);
+		SchemedID theSchemedID = new SchemedID("EM", eMail);
 		addUriUniversalCommunicationID(theSchemedID);
 		return this;
-	}
-
-	/***
-	 * gets the email of the organization (not the one of the contact person)
-	 * will return null if not set or if the provided UriUniversalCommunicationID
-	 * is not a email address
-	 *
-	 * @return String the email, or null
-	 */
-	public String getEmail() {
-		if (uriUniversalCommunicationId.getScheme().equals("EM")) {
-			return uriUniversalCommunicationId.getID();
-		}
-		return null;
 	}
 
 
@@ -460,12 +453,12 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	}
 
 	public TradeParty addGlobalID(SchemedID schemedID) {
-		globalId=schemedID;
+		globalId = schemedID;
 		return this;
 	}
-  
+
 	public TradeParty addUriUniversalCommunicationID(SchemedID schemedID) {
-		uriUniversalCommunicationId=schemedID;
+		uriUniversalCommunicationId = schemedID;
 		return this;
 	}
 
@@ -496,7 +489,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	}
 
 	public TradeParty setLegalOrganisation(LegalOrganisation legalOrganisation) {
-		legalOrg=legalOrganisation;
+		legalOrg = legalOrganisation;
 		return this;
 	}
 
@@ -634,8 +627,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 			return null;
 		}
 		List<IZUGFeRDTradeSettlement> tradeSettlements = Stream.concat(bankDetails.stream(), debitDetails.stream())
-				.map(IZUGFeRDTradeSettlement.class::cast)
-				.collect(Collectors.toList());
+			.map(IZUGFeRDTradeSettlement.class::cast)
+			.collect(Collectors.toList());
 
 		IZUGFeRDTradeSettlement[] result = new IZUGFeRDTradeSettlement[tradeSettlements.size()];
 		for (int i = 0; i < tradeSettlements.size(); i++) {
@@ -649,7 +642,6 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	public String getAdditionalAddress() {
 		return additionalAddress;
 	}
-
 
 
 	/***
