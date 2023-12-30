@@ -1,5 +1,7 @@
 2.10.0
-- 
+=======
+2023-12-30
+
 - also accept pdf/a3 from inputstream
 - closes #354 factur-x 1 from commandline
 - support XR 3.0.1 (#343), 
