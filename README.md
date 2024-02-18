@@ -40,8 +40,8 @@ If you set up a Maven project, you can reference the mustang artifact like this:
 
 Further docs on how to develop **with** mustang: 
 
- - [ZugferdDev.en.pdf](https://github.com/ZUGFeRD/mustangproject/blob/master/doc/ZugferdDev.en.pdf?raw=true): the English mustang user documentation.
- - [ZugferdDev.de.pdf](https://github.com/ZUGFeRD/mustangproject/blob/master/doc/ZugferdDev.de.pdf?raw=true): the German mustang user documentation.
+ - [ZugferdDev.en.pdf](https://github.com/ZUGFeRD/mustangproject/blob/master/doc/ZugferdDev.en.pdf?raw=true): The English mustang user documentation.
+ - [ZugferdDev.de.pdf](https://github.com/ZUGFeRD/mustangproject/blob/master/doc/ZugferdDev.de.pdf?raw=true): The German mustang user documentation.
  - [Usage examples](https://www.mustangproject.org/use/): Read and write electronic invoices.
  - [Mustang classes](https://www.mustangproject.org/invoice-class/): Using the mustang classes.
 
