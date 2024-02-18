@@ -1,4 +1,5 @@
 - EN16931 validation 1.3.11 codelists v11 #357
+- Fonts removed #358
 
 2.10.0
 =======
