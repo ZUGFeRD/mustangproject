@@ -14,6 +14,7 @@ package org.mustangproject.ZUGFeRD;
  * @author jstaerk
  */
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +50,7 @@ import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.mustangproject.EStandard;
 import org.mustangproject.Item;
 import org.mustangproject.Product;
+import org.mustangproject.XMLTools;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -106,9 +108,18 @@ public class ZUGFeRDImporter {
 	/**
 	 * Extracts a ZUGFeRD invoice from a PDF document represented by an input stream. Errors are reported via exception handling.
 	 *
-	 * @param pdfStream a inputstream of a pdf file
+	 * @param inStream a inputstream of a pdf file
 	 */
-	private void extractLowLevel(InputStream pdfStream) throws IOException {
+	private void extractLowLevel(InputStream inStream) throws IOException {
+		BufferedInputStream pdfStream=new BufferedInputStream(inStream);
+		byte[] pad = new byte[4];
+		pdfStream.mark(0);
+		pdfStream.read(pad);
+		pdfStream.reset();
+		byte[] pdfSignature = { '%', 'P', 'D', 'F' };
+		if (pad.equals(pdfSignature)) { // we have a pdf
+
+
 		try (PDDocument doc = PDDocument.load(pdfStream)) {
 			// PDDocumentInformation info = doc.getDocumentInformation();
 			final PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
@@ -141,6 +152,12 @@ public class ZUGFeRDImporter {
 					extractFiles(namesL);
 				}
 			}
+		}
+		} else {
+			// no PDF probably XML
+			containsMeta = true;
+			setRawXML(XMLTools.getBytesFromStream(pdfStream));
+
 		}
 	}
 

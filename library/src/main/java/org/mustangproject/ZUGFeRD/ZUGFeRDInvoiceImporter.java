@@ -125,10 +125,16 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			number = extractString("//*[local-name()=\"Invoice\"]/*[local-name()=\"ID\"]").trim();
 			issueDate=new SimpleDateFormat("yyyy-MM-dd")
 				.parse(extractString("//*[local-name()=\"Invoice\"]/*[local-name()=\"IssueDate\"]").trim());
-			dueDate=new SimpleDateFormat("yyyy-MM-dd")
-				.parse(extractString("//*[local-name()=\"Invoice\"]/*[local-name()=\"DueDate\"]").trim());
-			deliveryDate=new SimpleDateFormat("yyyy-MM-dd")
-				.parse(extractString("//*[local-name()=\"Delivery\"]/*[local-name()=\"ActualDeliveryDate\"]").trim());
+			String dueDt=extractString("//*[local-name()=\"Invoice\"]/*[local-name()=\"DueDate\"]").trim();
+			if (dueDt.length()>0) {
+				dueDate=new SimpleDateFormat("yyyy-MM-dd")
+					.parse(dueDt);
+			}
+			String deliveryDt=extractString("//*[local-name()=\"Delivery\"]/*[local-name()=\"ActualDeliveryDate\"]").trim();
+			if (deliveryDt.length()>0) {
+				deliveryDate=new SimpleDateFormat("yyyy-MM-dd")
+					.parse(deliveryDt);
+			}
 		}
 		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeDelivery\"]");
 		NodeList headerTradeDeliveryNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
