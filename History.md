@@ -1,5 +1,7 @@
 - EN16931 validation 1.3.11 codelists v11 #357
 - Fonts removed #358
+- xrechnungimporter to read from filename, inputstream
+- zugferdimporter to accept xml files
 
 2.10.0
 =======

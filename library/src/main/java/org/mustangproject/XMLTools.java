@@ -1,6 +1,9 @@
 package org.mustangproject;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.AbstractList;
@@ -14,33 +17,38 @@ import org.w3c.dom.NodeList;
 
 public class XMLTools extends XMLWriter {
 	@Override
-  public String escapeAttributeEntities(String s) {
+	public String escapeAttributeEntities(String s) {
 		return super.escapeAttributeEntities(s);
 	}
 
 	@Override
-  public String escapeElementEntities(String s) {
+	public String escapeElementEntities(String s) {
 		return super.escapeElementEntities(s);
 
 	}
 
 	public static List<Node> asList(NodeList n) {
-		return n.getLength()==0?
-			Collections.<Node>emptyList(): new NodeListWrapper(n);
+		return n.getLength() == 0 ?
+			Collections.<Node>emptyList() : new NodeListWrapper(n);
 	}
+
 	static final class NodeListWrapper extends AbstractList<Node>
 		implements RandomAccess {
 		private final NodeList list;
+
 		NodeListWrapper(NodeList l) {
-			list=l;
+			list = l;
 		}
+
 		public Node get(int index) {
 			return list.item(index);
 		}
+
 		public int size() {
 			return list.getLength();
 		}
 	}
+
 	public static String nDigitFormat(BigDecimal value, int scale) {
 		/*
 		 * I needed 123,45, locale independent.I tried
@@ -63,9 +71,9 @@ public class XMLTools extends XMLWriter {
 
 
 	public static String encodeXML(CharSequence s) {
-    if (s == null) {
-      return "";
-    }
+		if (s == null) {
+			return "";
+		}
 		final StringBuilder sb = new StringBuilder();
 		final int len = s.length();
 		for (int i = 0; i < len; i++) {
@@ -122,24 +130,24 @@ public class XMLTools extends XMLWriter {
 	 * @see <a href="https://www.w3.org/TR/xml/#sec-guessing">Autodetection of Character Encodings</a>
 	 *
 	public static int guessBOMSize(ByteArrayInputStream is) throws IOException {
-		byte[] pad = new byte[4];
-		is.read(pad);
-		is.reset();
-		int test2 = ((pad[0] & 0xFF) << 8) | (pad[1] & 0xFF);
-		int test3 = ((test2 & 0xFFFF) << 8) | (pad[2] & 0xFF);
-		int test4 = ((test3 & 0xFFFFFF) << 8) | (pad[3] & 0xFF);
-		//
-		if (test4 == 0x0000FEFF || test4 == 0xFFFE0000 || test4 == 0x0000FFFE || test4 == 0xFEFF0000) {
-			// UCS-4: BOM takes 4 bytes
-			return 4;
-		} else if (test3 == 0xEFBBFF) {
-			// UTF-8: BOM takes 3 bytes
-			return 3;
-		} else if (test2 == 0xFEFF || test2 == 0xFFFE) {
-			// UTF-16: BOM takes 2 bytes
-			return 2;
-		}
-		return 0;
+	byte[] pad = new byte[4];
+	is.read(pad);
+	is.reset();
+	int test2 = ((pad[0] & 0xFF) << 8) | (pad[1] & 0xFF);
+	int test3 = ((test2 & 0xFFFF) << 8) | (pad[2] & 0xFF);
+	int test4 = ((test3 & 0xFFFFFF) << 8) | (pad[3] & 0xFF);
+	//
+	if (test4 == 0x0000FEFF || test4 == 0xFFFE0000 || test4 == 0x0000FFFE || test4 == 0xFEFF0000) {
+	// UCS-4: BOM takes 4 bytes
+	return 4;
+	} else if (test3 == 0xEFBBFF) {
+	// UTF-8: BOM takes 3 bytes
+	return 3;
+	} else if (test2 == 0xFEFF || test2 == 0xFFFE) {
+	// UTF-16: BOM takes 2 bytes
+	return 2;
+	}
+	return 0;
 	}*/
 
 	/***
@@ -159,5 +167,21 @@ public class XMLTools extends XMLWriter {
 		return zugferdData;
 	}
 
+	public static byte[] getBytesFromStream(InputStream fileinput) throws IOException {
+
+		// we're on java 8 so we cant use inputstream.readallbytes
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+		int nRead;
+		byte[] data = new byte[16384];
+		BufferedInputStream bufferedInput=new BufferedInputStream(fileinput);
+
+		while ((nRead = bufferedInput.read(data, 0, data.length)) != -1) {
+			buffer.write(data, 0, nRead);
+		}
+		return buffer.toByteArray();
+
+		// end of polyfill
+	}
 
 }
