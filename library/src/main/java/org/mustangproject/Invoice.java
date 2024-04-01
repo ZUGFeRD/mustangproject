@@ -455,7 +455,7 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	@Override
-	public IZUGFeRDExportableTradeParty getSender() {
+	public TradeParty getSender() {
 		return sender;
 	}
 
@@ -473,7 +473,7 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	@Override
-  public IZUGFeRDExportableTradeParty getRecipient() {
+    public TradeParty getRecipient() {
 		return recipient;
 	}
 

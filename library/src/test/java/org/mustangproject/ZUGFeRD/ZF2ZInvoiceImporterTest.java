@@ -193,8 +193,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("04011000-12345-03", invoice.getReferenceNumber());
 		assertEquals("seller@email.de", invoice.getSender().getContact().getEMail());
 		assertEquals("12345", invoice.getRecipient().getZIP());
-		invoice.getPaymentTerms().get
-		assertEquals("DE75512108001245126199", invoice.getDeliveryAddress().getBankDetails().getIBAN());
+		assertEquals("DE75512108001245126199", invoice.getSender().getBankDetails().get(0).getIBAN());
 
 	}
 
