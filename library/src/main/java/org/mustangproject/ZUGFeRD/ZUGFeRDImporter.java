@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -114,10 +115,14 @@ public class ZUGFeRDImporter {
 		BufferedInputStream pdfStream=new BufferedInputStream(inStream);
 		byte[] pad = new byte[4];
 		pdfStream.mark(0);
-		pdfStream.read(pad);
+		int readBytes = pdfStream.read(pad);
+		if(readBytes < 4) {
+			// 3 bytes or fewer could not be a valide file.
+			throw new IOException("tried to read from empty file");
+		}
 		pdfStream.reset();
 		byte[] pdfSignature = { '%', 'P', 'D', 'F' };
-		if (pad.equals(pdfSignature)) { // we have a pdf
+		if (Arrays.equals(pad, pdfSignature)) { // we have a pdf
 
 
 		try (PDDocument doc = PDDocument.load(pdfStream)) {
