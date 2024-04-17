@@ -404,19 +404,23 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "<ram:LineID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentLineID()) + "</ram:LineID>"
 						+ "</ram:BuyerOrderReferencedDocument>";
 				}
-				xml += "<ram:GrossPriceProductTradePrice>"
-					+ "<ram:ChargeAmount>" + priceFormat(lc.getPriceGross())
-					+ "</ram:ChargeAmount>" //currencyID=\"EUR\"
-					+ "<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
-					+ "\">" + quantityFormat(currentItem.getBasisQuantity()) + "</ram:BasisQuantity>"
-					+ allowanceChargeStr
-					// + " <AppliedTradeAllowanceCharge>"
-					// + " <ChargeIndicator>false</ChargeIndicator>"
-					// + " <ActualAmount currencyID=\"EUR\">0.6667</ActualAmount>"
-					// + " <Reason>Rabatt</Reason>"
-					// + " </AppliedTradeAllowanceCharge>"
-					+ "</ram:GrossPriceProductTradePrice>"
-					+ "<ram:NetPriceProductTradePrice>"
+
+				if (!allowanceChargeStr.isBlank()) {
+					xml += "<ram:GrossPriceProductTradePrice>"
+						+ "<ram:ChargeAmount>" + priceFormat(lc.getPriceGross())
+						+ "</ram:ChargeAmount>" //currencyID=\"EUR\"
+						+ "<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
+						+ "\">" + quantityFormat(currentItem.getBasisQuantity()) + "</ram:BasisQuantity>"
+						+ allowanceChargeStr
+						// + " <AppliedTradeAllowanceCharge>"
+						// + " <ChargeIndicator>false</ChargeIndicator>"
+						// + " <ActualAmount currencyID=\"EUR\">0.6667</ActualAmount>"
+						// + " <Reason>Rabatt</Reason>"
+						// + " </AppliedTradeAllowanceCharge>"
+						+ "</ram:GrossPriceProductTradePrice>";
+				}
+
+				xml += "<ram:NetPriceProductTradePrice>"
 					+ "<ram:ChargeAmount>" + priceFormat(lc.getPrice())
 					+ "</ram:ChargeAmount>" // currencyID=\"EUR\"
 					+ "<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
