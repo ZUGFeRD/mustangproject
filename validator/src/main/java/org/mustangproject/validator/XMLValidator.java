@@ -166,7 +166,7 @@ public class XMLValidator extends Validator {
 				// Create XPath object
 				final XPath xpath = xpathFactory.newXPath();
 				final XPathExpression expr = xpath.compile(
-						"//*[local-name()=\"GuidelineSpecifiedDocumentContextParameter\"]/*[local-name()=\"ID\"]/text()");
+						"(//*[local-name()=\"GuidelineSpecifiedDocumentContextParameter\"]/*[local-name()=\"ID\"])/text()|//*[local-name()=\"CustomizationID\"]/text()");
 				// evaluate expression result on XML document
 				ndList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
 
@@ -251,7 +251,7 @@ public class XMLValidator extends Validator {
 						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.xslt=schematron also has to pass
 						* */
 						//validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_EN16931.xslt";
+						xsltFilename = "/xslt/XR_30/XRechnung-CII-validation.xslt";
 						XrechnungSeverity = ESeverity.error;
 					} else if (isExtended) {
 						LOGGER.debug("is EXTENDED");
@@ -268,11 +268,24 @@ public class XMLValidator extends Validator {
 				} else if (root.getLocalName().equalsIgnoreCase("Invoice")) {
 					context.setGeneration("2");
 					context.setFormat("UBL");
+					isXRechnung = context.getProfile().contains("xrechnung");
 					// UBL
 					LOGGER.debug("UBL");
 					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "UBL_21/maindoc/UBL-Invoice-2.1.xsd", 18, EPart.fx);
 					xsltFilename = "/xslt/UBL_21/EN16931-UBL-validation.xsl";
-					XrechnungSeverity = ESeverity.error;
+
+					if (isXRechnung) {
+						LOGGER.debug("is XRechnung");
+						/*
+						the validation against the XRechnung Schematron will happen below but a
+						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.xslt=schematron also has to pass
+						* */
+						//validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
+						xsltFilename = "/xslt/XR_30/XRechnung-UBL-validation.xslt";
+						XrechnungSeverity = ESeverity.error;
+
+					}
+
 				} else if (root.getLocalName().equalsIgnoreCase("CrossIndustryDocument")) { // ZUGFeRD 1.0
 					context.setGeneration("1");
 					//
@@ -470,9 +483,18 @@ public class XMLValidator extends Validator {
 			} catch (XPathExpressionException e) {
 				LOGGER.error(e.getMessage(), e);
 			}
+			int activePatterns=0;
+			expression = "//*[local-name() = 'active-pattern']";
+			 firedAsserts = null;
+			try {
+				firedAsserts = (NodeList) xPath.compile(expression).evaluate(SVRLReport, XPathConstants.NODESET);
+				activePatterns = firedAsserts.getLength();
+			} catch (XPathExpressionException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
 
 
-			if (firedRules == 0) {
+			if (firedRules+activePatterns == 0) {
 				context.addResultItem(new ValidationResultItem(ESeverity.error, "No rules matched, XML to minimal?").setSection(26)
 						.setPart(EPart.fx));
 

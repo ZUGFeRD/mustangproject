@@ -5,6 +5,7 @@
 - (first) IBAN is now parsed into sender's getBankDetails
 - zugferdimporter to accept xml files
 - UBL importer to also parse contacts
+- https://github.com/ZUGFeRD/mustangproject/pull/369
 
 2.10.0
 =======
