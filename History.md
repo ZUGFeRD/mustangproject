@@ -6,6 +6,7 @@
 - zugferdimporter to accept xml files
 - UBL importer to also parse contacts
 - https://github.com/ZUGFeRD/mustangproject/pull/369
+- upgrade ph-scematron from 6.3.3 to 8
 
 2.10.0
 =======

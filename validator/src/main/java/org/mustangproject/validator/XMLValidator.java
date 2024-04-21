@@ -273,15 +273,20 @@ public class XMLValidator extends Validator {
 					LOGGER.debug("UBL");
 					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "UBL_21/maindoc/UBL-Invoice-2.1.xsd", 18, EPart.fx);
 					xsltFilename = "/xslt/UBL_21/EN16931-UBL-validation.xsl";
+					validateSchematron(zfXML, xsltFilename, 24, ESeverity.error);
 
 					if (isXRechnung) {
-						LOGGER.debug("is XRechnung");
 						/*
 						the validation against the XRechnung Schematron will happen below but a
 						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.xslt=schematron also has to pass
 						* */
 						//validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/XR_30/XRechnung-UBL-validation.xslt";
+						String xrVersion=context.getProfile().substring(context.getProfile().length()-3).replace(".","");
+						if (!xrVersion.equals("12")&&!xrVersion.equals("20")&&!xrVersion.equals("21")&&!xrVersion.equals("22")&&!xrVersion.equals("23")&&!xrVersion.equals("30")) {
+							throw new Exception("Unsupported XR version");
+						}
+						LOGGER.debug("is XRechnung v"+xrVersion);
+						xsltFilename = "/xslt/XR_"+xrVersion+"/XRechnung-UBL-validation.xslt";
 						XrechnungSeverity = ESeverity.error;
 
 					}

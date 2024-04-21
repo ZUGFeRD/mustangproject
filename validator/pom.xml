@@ -54,6 +54,17 @@
         </dependency>
         <!-- for ph-schematron -->
         <dependency>
+            <groupId>com.helger.commons</groupId>
+            <artifactId>ph-commons</artifactId>
+            <version>11.1.6</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <!-- /for ph-schematron -->
+        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.13</version>
@@ -88,7 +99,7 @@
         <dependency>
             <groupId>com.helger.schematron</groupId>
             <artifactId>ph-schematron-xslt</artifactId>
-            <version>6.3.3</version>
+            <version>8.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.helger</groupId>
