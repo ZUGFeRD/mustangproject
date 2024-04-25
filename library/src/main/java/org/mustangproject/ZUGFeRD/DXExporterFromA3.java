@@ -22,6 +22,7 @@ package org.mustangproject.ZUGFeRD;
 
 import org.apache.pdfbox.cos.*;
 import org.apache.pdfbox.io.IOUtils;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
@@ -29,7 +30,6 @@ import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDMarkInfo;
 import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDStructureTreeRoot;
 import org.apache.pdfbox.pdmodel.graphics.color.PDOutputIntent;
-import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.AdobePDFSchema;
 import org.apache.xmpbox.schema.DublinCoreSchema;
@@ -162,7 +162,7 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @param pdfBinary binary of a PDF/A1 compliant document
 	 */
 	public DXExporterFromA3 load(byte[] pdfBinary) throws IOException {
-		ensurePDFIsValid(new ByteArrayDataSource(new ByteArrayInputStream(pdfBinary)));
+		ensurePDFIsValid((DataSource) new RandomAccessReadBuffer(pdfBinary));
 		doc = PDDocument.load(pdfBinary);
 		return this;
 	}
@@ -542,6 +542,7 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	}
 
 	protected PDFAIdentificationSchema getPDFAIdentificationSchema(XMPMetadata xmp) {
+
 		PDFAIdentificationSchema pdfaid = xmp.getPDFIdentificationSchema();
 		if (pdfaid != null)
 			if (overwrite)
