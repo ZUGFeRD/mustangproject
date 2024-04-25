@@ -22,6 +22,7 @@ package org.mustangproject.ZUGFeRD;
 
 import org.apache.pdfbox.cos.*;
 import org.apache.pdfbox.io.IOUtils;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.*;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
@@ -33,7 +34,6 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDFontDescriptor;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.graphics.color.PDOutputIntent;
-import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.AdobePDFSchema;
 import org.apache.xmpbox.schema.DublinCoreSchema;
@@ -257,7 +257,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * @param pdfBinary binary of a PDF/A1 compliant document
 	 */
 	public ZUGFeRDExporterFromA3 load(byte[] pdfBinary) throws IOException {
-		ensurePDFIsValid(new ByteArrayDataSource(new ByteArrayInputStream(pdfBinary)));
+		ensurePDFIsValid((DataSource) new RandomAccessReadBuffer(pdfBinary));
 		doc = PDDocument.load(pdfBinary);
 		return this;
 	}
