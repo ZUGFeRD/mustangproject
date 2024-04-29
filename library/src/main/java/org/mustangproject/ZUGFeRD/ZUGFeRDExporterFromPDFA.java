@@ -20,6 +20,7 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
@@ -79,7 +80,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	 * @throws IOException
 	 */
 	private int getPDFAVersion(byte[] byteArrayInputStream) throws IOException {
-		PDDocument document = PDDocument.load(byteArrayInputStream);
+		PDDocument document = Loader.loadPDF(byteArrayInputStream);
 		PDDocumentCatalog catalog = document.getDocumentCatalog();
 		PDMetadata metadata = catalog.getMetadata();
 		// the PDF version we could get through the document but we want the PDF-A version,

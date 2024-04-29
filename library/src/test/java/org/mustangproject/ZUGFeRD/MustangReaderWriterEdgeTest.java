@@ -21,6 +21,7 @@ package org.mustangproject.ZUGFeRD;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.xmpbox.XMPMetadata;
@@ -252,7 +253,7 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 		setupPdfUnderTest(SOURCE_PDF, TARGET_PDF);
 
 		// now check the contents
-		PDDocument doc = PDDocument.load(new File(TARGET_PDF));
+		PDDocument doc = Loader.loadPDF(new File(TARGET_PDF));
 		PDMetadata meta = doc.getDocumentCatalog().getMetadata();
 		assertNotNull("The pdf must contain XMPMetadata", meta);
 

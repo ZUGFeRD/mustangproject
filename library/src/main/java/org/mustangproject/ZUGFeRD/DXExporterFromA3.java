@@ -20,6 +20,7 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.*;
 import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
@@ -163,7 +164,7 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 */
 	public DXExporterFromA3 load(byte[] pdfBinary) throws IOException {
 		ensurePDFIsValid((DataSource) new RandomAccessReadBuffer(pdfBinary));
-		doc = PDDocument.load(pdfBinary);
+		doc = Loader.loadPDF(pdfBinary);
 		return this;
 	}
 

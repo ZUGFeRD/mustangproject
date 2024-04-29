@@ -41,6 +41,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
@@ -120,7 +122,7 @@ public class ZUGFeRDImporter {
 		if (pad.equals(pdfSignature)) { // we have a pdf
 
 
-		try (PDDocument doc = PDDocument.load(pdfStream)) {
+		try (PDDocument doc = Loader.loadPDF(IOUtils.toByteArray(inStream))) {
 			// PDDocumentInformation info = doc.getDocumentInformation();
 			final PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
 			//start
