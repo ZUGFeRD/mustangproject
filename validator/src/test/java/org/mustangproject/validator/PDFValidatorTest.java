@@ -14,15 +14,17 @@ public class PDFValidatorTest extends ResourceCase {
 
 		try {
 
-			File tempFile = getResourceAsFile("XMLinvalidV2PDF.pdf");// need a more invalid file here
+			byte [] contents = getResourceAsByteArray("XMLinvalidV2PDF.pdf");// need a more invalid file here
 
-			pv.setFilename(tempFile.getAbsolutePath());
+			pv.setFilename("XMLinvalidV2PDF.pdf");
+			pv.setFileContents(contents);
 			pv.validate();
 			// assertEquals("", pv.getXMLResult());
 
 			//
-			tempFile = getResourceAsFile("Facture_F20180027.pdf");
-			pv.setFilename(tempFile.getAbsolutePath());
+			contents = getResourceAsByteArray("Facture_F20180027.pdf");
+			pv.setFilename("Facture_F20180027.pdf");
+			pv.setFileContents(contents);
 			pv.validate();
 			String actual = pv.getXMLResult();
 			assertEquals(true, actual.contains("summary status=\"valid"));
@@ -33,10 +35,10 @@ public class PDFValidatorTest extends ResourceCase {
 			xv.validate();
 			actual = vc.getXMLResult();
 
-			assertEquals(true, actual.contains("validationReport profileName=\"PDF/A-3"));
-			assertEquals(true, actual.contains("batchSummary totalJobs=\"1\" failedToParse=\"0\" encrypted=\"0\""));
+			assertEquals(true, actual.contains("flavour=3u"));
+			assertEquals(true, actual.contains("flavour=3b"));
 			assertEquals(true,
-					actual.contains("validationReports compliant=\"1\" nonCompliant=\"0\" failedJobs=\"0\">"));
+					actual.contains("isCompliant=true"));
 			// test some xml
 			// assertEquals(true, actual.contains("<error
 			// location=\"/*:CrossIndustryInvoice[namespace-uri()='urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100'][1]/*:SupplyChainTradeTransaction[namespace-uri()='urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100'][1]/*:ApplicableHeaderTradeSettlement[namespace-uri()='urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100'][1]/*:SpecifiedTradeSettlementHeaderMonetarySummation[namespace-uri()='urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100'][1]/*:DuePayableAmount[namespace-uri()='urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100'][1]\"
@@ -46,16 +48,16 @@ public class PDFValidatorTest extends ResourceCase {
 			assertEquals(true, actual.contains("<version>2</version>"));
 
 			// valid one
-			tempFile = getResourceAsFile("validV2PDF.pdf");
+			contents = getResourceAsByteArray("validV2PDF.pdf");
 
-			pv.setFilename(tempFile.getAbsolutePath());
+			pv.setFilename("validV2PDF.pdf");
+			pv.setFileContents(contents);
 			vc.clear();
 			pv.validate();
 			actual = pv.getXMLResult();
-			assertEquals(true, actual.contains("validationReport profileName=\"PDF/A-3"));
-			assertEquals(true, actual.contains("batchSummary totalJobs=\"1\" failedToParse=\"0\" encrypted=\"0\""));
-			assertEquals(true,
-					actual.contains("validationReports compliant=\"1\" nonCompliant=\"0\" failedJobs=\"0\">"));
+			assertEquals(true, actual.contains("flavour=3u"));
+			assertEquals(true, actual.contains("summary status=\"valid"));
+			assertEquals(false, actual.contains("summary status=\"invalid"));
 
 			assertEquals(false, actual.contains("<error"));
 		} catch (final IrrecoverableValidationError e) {
@@ -68,11 +70,12 @@ public class PDFValidatorTest extends ResourceCase {
 		final ValidationContext vc = new ValidationContext(null);
 		try {
 			final PDFValidator pv = new PDFValidator(vc);
+			// need a more
+			// invalid file here
+			byte [] contents = getResourceAsByteArray("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf");
 
-			File tempFile = getResourceAsFile("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf");// need a more
-																									// invalid file here
-
-			pv.setFilename(tempFile.getAbsolutePath());
+			pv.setFilename("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf");
+			pv.setFileContents(contents);
 			pv.validate();
 			String pdfvres = pv.getXMLResult();
 
@@ -86,9 +89,10 @@ public class PDFValidatorTest extends ResourceCase {
 			assertEquals(true, xmlvres.contains("invalid"));
 
 			vc.clear();
-			tempFile = getResourceAsFile("validV1WithAdditionalData.pdf");// need a more invalid file here
+			contents = getResourceAsByteArray("validV1WithAdditionalData.pdf");// need a more invalid file here
 
-			pv.setFilename(tempFile.getAbsolutePath());
+			pv.setFilename("validV1WithAdditionalData.pdf");
+			pv.setFileContents(contents);
 			pv.validate();
 			pdfvres = pv.getXMLResult();
 
@@ -110,10 +114,10 @@ public class PDFValidatorTest extends ResourceCase {
 		final ValidationContext vc = new ValidationContext(null);
 		final PDFValidator pv = new PDFValidator(vc);
 		try {
+			byte [] contents = getResourceAsByteArray("invalidXMP.pdf");
 
-			File tempFile = getResourceAsFile("invalidXMP.pdf");
-
-			pv.setFilename(tempFile.getAbsolutePath());
+			pv.setFilename("invalidXMP.pdf");
+			pv.setFileContents(contents);
 			vc.clear();
 			pv.validate();
 			String actual = pv.getXMLResult();
@@ -121,9 +125,10 @@ public class PDFValidatorTest extends ResourceCase {
 			assertEquals(true, actual
 					.contains("<error type=\"12\">XMP Metadata: ConformanceLevel contains invalid value</error>"));
 
-			tempFile = getResourceAsFile("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf");
+			contents = getResourceAsByteArray("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf");
 
-			pv.setFilename(tempFile.getAbsolutePath());
+			pv.setFilename("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf");
+			pv.setFileContents(contents);
 			vc.clear();
 			pv.validate();
 			actual = pv.getXMLResult();
