@@ -35,6 +35,7 @@ import org.verapdf.features.FeatureFactory;
 import org.verapdf.metadata.fixer.FixerFactory;
 import org.verapdf.metadata.fixer.MetadataFixerConfig;
 import org.verapdf.gf.foundry.VeraGreenfieldFoundryProvider;
+import org.verapdf.pdfa.flavours.PDFAFlavour;
 import org.verapdf.pdfa.validation.validators.ValidatorConfig;
 import org.verapdf.pdfa.validation.validators.ValidatorFactory;
 import org.verapdf.processor.BatchProcessor;
@@ -42,6 +43,7 @@ import org.verapdf.processor.FormatOption;
 import org.verapdf.processor.ItemProcessor;
 import org.verapdf.processor.ProcessorConfig;
 import org.verapdf.processor.ProcessorFactory;
+import org.verapdf.processor.ProcessorResult;
 import org.verapdf.processor.TaskType;
 import org.verapdf.processor.plugins.PluginsCollectionConfig;
 import org.verapdf.processor.reports.ItemDetails;
@@ -57,12 +59,14 @@ public class PDFValidator extends Validator {
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PDFValidator.class.getCanonicalName()); // log output
+	private static final PDFAFlavour[] PDF_A_3_FLAVOURS = {PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_A};
 
 	private String pdfFilename;
 
 	private byte[] fileContents;
 
 	private String pdfReport;
+	private ProcessorResult processorResult = null;
 
 	private String Signature;
 
@@ -113,8 +117,8 @@ public class PDFValidator extends Validator {
 			// starting the processor
 			ItemDetails itemDetails = ItemDetails.fromValues(pdfFilename);
 			inputStream.mark(Integer.MAX_VALUE);
-			processor.process(itemDetails, inputStream);
-			pdfReport = reportStream.toString("utf-8").replaceAll(
+			processorResult = processor.process(itemDetails, inputStream);
+			pdfReport = processorResult.getValidationResult().toString().replaceAll(
 				"<\\?xml version=\"1\\.0\" encoding=\"utf-8\"\\?>",
 				""
 			);
@@ -252,14 +256,7 @@ public class PDFValidator extends Validator {
 						.setSection(16).setPart(EPart.pdf));
 
 			}
-
-		} catch (final SAXException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (final IOException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (final ParserConfigurationException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (final XPathExpressionException e) {
+		} catch (final SAXException | IOException | ParserConfigurationException | XPathExpressionException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		zfXML = zi.getUTF8();
@@ -308,10 +305,11 @@ public class PDFValidator extends Validator {
 		//end
 
 		final long endTime = Calendar.getInstance().getTimeInMillis();
-		if (!pdfReport.contains("validationReports compliant=\"1\"")) {
+		if (!processorResult.getValidationResult().isCompliant()) {
 			context.setInvalid();
 		}
-		if (!pdfReport.contains("PDF/A-3")) {
+		if (Arrays.stream(PDF_A_3_FLAVOURS)
+			.anyMatch(pdfaFlavour -> processorResult.getValidationResult().getPDFAFlavour().equals(pdfaFlavour))) {
 			context.addResultItem(
 				new ValidationResultItem(ESeverity.error, "Not a PDF/A-3").setSection(23).setPart(EPart.pdf));
 
@@ -329,8 +327,9 @@ public class PDFValidator extends Validator {
 
 	}
 
-	public void setFileContents(byte[] fileContents) {
-		this.fileContents = fileContents;
+	public void setFileContents(byte[] filecontents) throws IrrecoverableValidationError {
+		this.fileContents = filecontents;
+
 	}
 
 	public String getRawXML() {

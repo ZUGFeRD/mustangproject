@@ -37,4 +37,18 @@ public class ResourceCase extends TestCase {
 		}
 	}
 
+	public static byte[] getResourceAsByteArray(String resourcePath) {
+		try {
+			InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
+			if (in == null) {
+				return null;
+			}
+			return in.readAllBytes();
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+			return null;
+		}
+	}
+
+
 }
