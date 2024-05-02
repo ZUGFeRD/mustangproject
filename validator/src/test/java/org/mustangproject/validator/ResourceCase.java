@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,7 @@ public class ResourceCase extends TestCase {
 			if (in == null) {
 				return null;
 			}
-			return in.readAllBytes();
+			return IOUtils.toByteArray(in);
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
 			return null;
