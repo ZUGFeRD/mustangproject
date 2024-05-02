@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
@@ -245,7 +246,7 @@ public class ZUGFeRDValidator {
 				context.addResultItem(
 					new ValidationResultItem(ESeverity.fatal, "File too small").setSection(5).setPart(EPart.pdf));
 			} else {
-				content = inputStream.readAllBytes();
+				content = IOUtils.toByteArray(inputStream);
 				isPDF = ByteArraySearcher.contains(content, new byte[]{'%', 'P', 'D', 'F'});
 				XMLValidator xv = new XMLValidator(context);
 				if (isPDF) {
