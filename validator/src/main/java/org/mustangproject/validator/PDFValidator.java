@@ -327,9 +327,8 @@ public class PDFValidator extends Validator {
 
 	}
 
-	public void setFileContents(byte[] filecontents) throws IrrecoverableValidationError {
-		this.fileContents = filecontents;
-
+	public void setFileContents(byte[] fileContents) {
+		this.fileContents = fileContents;
 	}
 
 	public String getRawXML() {
