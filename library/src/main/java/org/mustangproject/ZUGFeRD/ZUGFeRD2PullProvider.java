@@ -405,7 +405,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "</ram:BuyerOrderReferencedDocument>";
 				}
 
-				if (!allowanceChargeStr.isBlank()) {
+				if (!allowanceChargeStr.isEmpty()) {
 					xml += "<ram:GrossPriceProductTradePrice>"
 						+ "<ram:ChargeAmount>" + priceFormat(lc.getPriceGross())
 						+ "</ram:ChargeAmount>" //currencyID=\"EUR\"

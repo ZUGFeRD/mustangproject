@@ -21,13 +21,12 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.util.Date;
 
 import org.assertj.core.api.Assertions;
@@ -40,6 +39,8 @@ import org.mustangproject.Invoice;
 import org.mustangproject.Item;
 import org.mustangproject.Product;
 import org.mustangproject.TradeParty;
+
+import javax.xml.xpath.XPathExpressionException;
 
 public class UBLTest extends ResourceCase {
 	final String TARGET_XML = "./target/testout-1Lieferschein.xml";
@@ -96,6 +97,76 @@ public class UBLTest extends ResourceCase {
 			e.printStackTrace();
 		}
 
+
+	}
+
+	public void testEdgeInvoiceImportUBL() {
+
+		File UBLinputFile = getResourceAsFile("ubl/01.01a-INVOICE.ubl.xml");
+		boolean hasExceptions = false;
+
+		ZUGFeRDInvoiceImporter zii = null;
+		Invoice invoice = null;
+		try {
+			zii = new ZUGFeRDInvoiceImporter(new FileInputStream(UBLinputFile));
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		// Reading ZUGFeRD
+		assertEquals(new BigDecimal("288.79"), invoice.getZFItems()[0].getPrice());
+		assertEquals("04011000-12345-03", invoice.getReferenceNumber());
+		assertEquals("seller@email.de", invoice.getSender().getContact().getEMail());
+		assertEquals("12345", invoice.getRecipient().getZIP());
+		assertEquals("DE75512108001245126199", invoice.getSender().getBankDetails().get(0).getIBAN());
+
+	}
+
+
+	public void testInvoiceImportOtherUBL() {
+
+
+		File UBLinputFile = getResourceAsFile("EN16931_2_Teilrechnung.ubl.xml");
+			File UBLinputFile = getResourceAsFile("EN16931_AbweichenderZahlungsempf.ubl.xml");
+				File UBLinputFile = getResourceAsFile("EN16931_Betriebskostenabrechnung.ubl.xml");
+					File UBLinputFile = getResourceAsFile("EN16931_Einfach.ubl.xml");
+						File UBLinputFile = getResourceAsFile("EN16931_Einfach_DueDate.ubl.xml");
+							File UBLinputFile = getResourceAsFile("EN16931_Einfach_negativePaymentDue.ubl.xml");
+								File UBLinputFile = getResourceAsFile("EN16931_Elektron.ubl.xml");
+									File UBLinputFile = getResourceAsFile("EN16931_ElektronischeAdresse.ubl.xml");
+										File UBLinputFile = getResourceAsFile("EN16931_Gutschrift.ubl.xml");
+		File UBLinputFile = getResourceAsFile("EN16931_Haftpflichtversicherung_Versicherungssteuer.ubl.xml");
+		File UBLinputFile = getResourceAsFile("EN16931_Innergemeinschaftliche_Lieferungen.ubl.xml");
+		File UBLinputFile = getResourceAsFile("EN16931_Kraftfahrversicherung_Bruttopreise.ubl.xml");
+		File UBLinputFile = getResourceAsFile("EN16931_Miete.ubl.xml");
+		File UBLinputFile = getResourceAsFile("EN16931_OEPNV.ubl.xml");
+		File UBLinputFile = getResourceAsFile("EN16931_Physiotherapeut.ubl.xml");
+		File UBLinputFile = getResourceAsFile("EN16931_Rabatte.ubl.xml");
+		File UBLinputFile = getResourceAsFile("EN16931_Rechnungskorrektur.ubl.xml");
+		File UBLinputFile = getResourceAsFile("EN16931_RechnungsUebertragung.ubl.xml");
+		File UBLinputFile = getResourceAsFile("EN16931_Reisekostenabrechnung.ubl.xml");
+		File UBLinputFile = getResourceAsFile("EN16931_Sachversicherung_berechneter_Steuersatz.ubl.xml");
+		File UBLinputFile = getResourceAsFile("EN16931_SEPA_Prenotification.ubl.xml");
+
+		File UBLinputFile = getResourceAsFile("ubl/EN16931_1_Teilrechnung.ubl.xml");
+		boolean hasExceptions = false;
+
+		ZUGFeRDInvoiceImporter zii = null;
+		Invoice invoice = null;
+		try {
+			zii = new ZUGFeRDInvoiceImporter(new FileInputStream(UBLinputFile));
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		// Reading ZUGFeRD
+		assertEquals(new BigDecimal("288.79"), invoice.getZFItems()[0].getPrice());
+		assertEquals("04011000-12345-03", invoice.getReferenceNumber());
+		assertEquals("seller@email.de", invoice.getSender().getContact().getEMail());
+		assertEquals("12345", invoice.getRecipient().getZIP());
+		assertEquals("DE75512108001245126199", invoice.getSender().getBankDetails().get(0).getIBAN());
 
 	}
 }
