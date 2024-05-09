@@ -689,6 +689,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		} else {
 			xml += buildPaymentTermsXml();
 		}
+		if ((profile == Profiles.getByName("Extended"))&&(trans.getCashDiscounts()!=null)&&(trans.getCashDiscounts().length>0)) {
+			for (IZUGFeRDCashDiscount discount:trans.getCashDiscounts()
+			) {
+				xml += discount.getAsCII();
+			}
+		}
 
 
 		final String allowanceTotalLine = "<ram:AllowanceTotalAmount>" + currencyFormat(calc.getAllowancesForPercent(null)) + "</ram:AllowanceTotalAmount>";

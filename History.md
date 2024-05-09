@@ -7,6 +7,8 @@
 - UBL importer to also parse contacts
 - https://github.com/ZUGFeRD/mustangproject/pull/369
 - upgrade ph-schematron from 6.3.3 to 8
+- support inputstreams https://github.com/ZUGFeRD/mustangproject/pull/379
+- #314 ZUGFeRDInvoiceImporter additional constructur
 
 2.10.0
 =======
