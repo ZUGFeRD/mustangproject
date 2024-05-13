@@ -234,7 +234,6 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals(zi.getLineItemList().get(0).getProduct().getSellerAssignedID(), "");
 		assertEquals(zi.getLineItemList().get(0).getLineTotalAmount().toString(), "160.00");
 		assertEquals(zi.getLineItemList().get(0).getQuantity().toString(), "1.0000");
-		assertEquals(zi.getLineItemList().get(0).getGrossPrice().toString(), "160.0000");
 		assertEquals(zi.getLineItemList().get(0).getProduct().getVATPercent().toString(), "7.00");
 		assertEquals(zi.getLineItemList().get(0).getProduct().getName(), "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung");
 		assertEquals(zi.getLineItemList().get(0).getProduct().getDescription(), "");

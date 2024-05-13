@@ -290,10 +290,20 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			paymentTermsDescription = XMLTools.encodeXML(trans.getPaymentTermDescription());
 		}
 
-		if ((paymentTermsDescription == null) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CORRECTEDINVOICE) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)) {
-			paymentTermsDescription = "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
+
+		if ((profile == Profiles.getByName("XRechnung")) && (trans.getCashDiscounts() != null) && (trans.getCashDiscounts().length > 0)) {
+			for (IZUGFeRDCashDiscount discount : trans.getCashDiscounts()
+			) {
+				if (paymentTermsDescription == null) {
+					paymentTermsDescription = "";
+				}
+				paymentTermsDescription += discount.getAsXRechnung();
+			}
+		} else if ((paymentTermsDescription == null) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CORRECTEDINVOICE) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)) {
+			paymentTermsDescription = "Please remit until " + germanDateFormat.format(trans.getDueDate());
 
 		}
+
 
 		String typecode = "380";
 		if (trans.getDocumentCode() != null) {
@@ -689,8 +699,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		} else {
 			xml += buildPaymentTermsXml();
 		}
-		if ((profile == Profiles.getByName("Extended"))&&(trans.getCashDiscounts()!=null)&&(trans.getCashDiscounts().length>0)) {
-			for (IZUGFeRDCashDiscount discount:trans.getCashDiscounts()
+		if ((profile == Profiles.getByName("Extended")) && (trans.getCashDiscounts() != null) && (trans.getCashDiscounts().length > 0)) {
+			for (IZUGFeRDCashDiscount discount : trans.getCashDiscounts()
 			) {
 				xml += discount.getAsCII();
 			}
