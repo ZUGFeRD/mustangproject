@@ -35,7 +35,7 @@ If e.g. new elements or attributes are added, they are often added
 * in the object so that a developer can use them
 * in the interface so that a old fashioned developer could use them as well
 * in the pullprovider so that it actually finds it's way into the XML
-* in at least one test, after the test has been run this should at least once be 
+* in at least one test (the ...edgeTest are supposed to handle edge cases, ~all bells and whistles, maybe it fits there), after the test has been run this should at least once be 
 * validated. If that works one can start implementing the 
 * reading part (along with tests), then it needs to be
 * documented e.g. on the homepage and 

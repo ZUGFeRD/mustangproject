@@ -41,7 +41,7 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	 * @return this particular cash discount in proprietary xrechnung format
 	 */
 	public String getAsXRechnung() {
-		return "#SKONTO#TAGE="+days+"#PROZENT="+XMLTools.nDigitFormat(percent,3)+"#\n";
+		return "#SKONTO#TAGE="+days+"#PROZENT="+XMLTools.nDigitFormat(percent,2)+"#\n";
 	}
 
 
