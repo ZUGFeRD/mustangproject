@@ -73,5 +73,10 @@ public abstract class Validator {
 	}
 
 
+	public ValidationContext getValidationContext() {
+		return context;
+	}
+
+
 
 }

@@ -516,8 +516,4 @@ public class XMLValidator extends Validator {
 		return failedRules;
 	}
 
-	public ValidationContext getValidationContext() {
-		return context;
-	}
-
 }

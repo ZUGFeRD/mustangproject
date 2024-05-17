@@ -396,10 +396,6 @@ public class ZUGFeRDValidator {
 		disableNotices = true;
 	}
 
-	public ValidationContext getValidationContext() {
-		return context;
-	}
-
 	/**
 	 * Read the file and calculate the SHA-1 checksum
 	 *
