@@ -1,14 +1,8 @@
 package org.mustangproject.validator;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -324,6 +318,12 @@ public class PDFValidator extends Validator {
 	@Override
 	public void setFilename(String filename) throws IrrecoverableValidationError {
 		this.pdfFilename = filename;
+		try {
+			fileContents=Files.readAllBytes(Paths.get(pdfFilename));
+		} catch (IOException ex) {
+			throw new IrrecoverableValidationError("Could not read file");
+		}
+
 
 	}
 

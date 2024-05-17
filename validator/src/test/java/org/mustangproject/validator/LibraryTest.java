@@ -181,13 +181,13 @@ public class LibraryTest extends ResourceCase {
 		String res = zfv.validate(tempFile.getAbsolutePath());
 		assertThat(res).valueByXPath("count(//error)")
 				.asInt()
-				.isEqualTo(1);// there is an error inthe  XRechnung validatoion artefacts: https://github.com/itplr-kosit/validator-configuration-xrechnung/issues/84
+				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("invalid");// expect to be valid because XR notices are, well, only notices
+				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
-				.isEqualTo("invalid");
+				.isEqualTo("valid");
 		
 		assertThat(res).valueByXPath("count(//notice)")
 				.asInt()
