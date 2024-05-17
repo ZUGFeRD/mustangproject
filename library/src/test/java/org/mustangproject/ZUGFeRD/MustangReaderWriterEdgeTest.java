@@ -263,7 +263,7 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 		DomXmpParser xmpParser = new DomXmpParser();
 		XMPMetadata xmp = xmpParser.parse(xmpBytes);
 
-		PDFAIdentificationSchema pdfai = xmp.getPDFIdentificationSchema();
+		PDFAIdentificationSchema pdfai = xmp.getPDFAIdentificationSchema();
 		assertNotNull("The pdf must contain a PDFIdentificationSchema", pdfai);
 
 		assertTrue("The PDF/A conformance must be A, B or U",

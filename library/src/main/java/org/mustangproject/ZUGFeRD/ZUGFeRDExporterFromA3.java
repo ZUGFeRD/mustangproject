@@ -715,13 +715,16 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	}
 
 	protected PDFAIdentificationSchema getPDFAIdentificationSchema(XMPMetadata xmp) {
-		PDFAIdentificationSchema pdfaid = xmp.getPDFIdentificationSchema();
-		if (pdfaid != null)
-			if (overwrite)
+		PDFAIdentificationSchema pdfaid = xmp.getPDFAIdentificationSchema();
+		if (pdfaid != null) {
+			if (overwrite) {
 				xmp.removeSchema(pdfaid);
-			else
+			}
+			else {
 				return pdfaid;
-		return xmp.createAndAddPFAIdentificationSchema();
+			}
+		}
+		return xmp.createAndAddPDFAIdentificationSchema();
 	}
 
 	protected void writeDublinCoreSchema(XMPMetadata xmp) {

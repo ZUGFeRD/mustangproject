@@ -47,7 +47,7 @@ public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 implements IZUG
 		 * PDF/A requirements. (Stream length consistency, EOL after some Keyword...)
 		 */
 		parser.parse();// might add a Format.PDF_A1A as parameter and iterate through A1 and A3
-
+		
 		try (PreflightDocument document = parser.getPreflightDocument()) {
 			/*
 			 * Once the syntax validation is done, the parser can provide a

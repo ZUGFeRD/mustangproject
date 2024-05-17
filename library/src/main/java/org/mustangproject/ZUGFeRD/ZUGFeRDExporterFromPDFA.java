@@ -90,7 +90,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 				DomXmpParser xmpParser = new DomXmpParser();
 				XMPMetadata xmp = xmpParser.parse(metadata.createInputStream());
 
-				PDFAIdentificationSchema pdfaSchema = xmp.getPDFIdentificationSchema();
+				PDFAIdentificationSchema pdfaSchema = xmp.getPDFAIdentificationSchema();
 				if (pdfaSchema != null) {
 					return pdfaSchema.getPart();
 				}

@@ -155,7 +155,6 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	}
 
 
-
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
 	 * metadata level, this will not e.g. convert graphics to JPG-2000)
@@ -192,7 +191,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		}
 		if ((!fileAttached) && (attachZUGFeRDHeaders)) {
 			throw new IOException(
-					"File must be attached (usually with setTransaction) before perfoming this operation");
+				"File must be attached (usually with setTransaction) before perfoming this operation");
 		}
 		doc.save(ZUGFeRDfilename);
 		if (!disableAutoClose) {
@@ -219,7 +218,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		}
 		if ((!fileAttached) && (attachZUGFeRDHeaders)) {
 			throw new IOException(
-					"File must be attached (usually with setTransaction) before perfoming this operation");
+				"File must be attached (usually with setTransaction) before perfoming this operation");
 		}
 		doc.save(output);
 		if (!disableAutoClose) {
@@ -317,7 +316,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 			cosArray.add(fs);
 			doc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
 		} else if ((AFEntry instanceof COSObject) &&
-				((COSObject) AFEntry).getObject() instanceof COSArray) {
+			((COSObject) AFEntry).getObject() instanceof COSArray) {
 			COSArray cosArray = (COSArray) ((COSObject) AFEntry).getObject();
 			cosArray.add(fs);
 		} else {
@@ -400,11 +399,9 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * Sets the property orderXDocumentType.
 	 *
 	 * @param orderXDocumentType new value. Expected: ORDER, ORDER_RESPONSE, or ORDER_CHANGE
-	 *
 	 * @return this exporter
 	 */
-	public OXExporterFromA3 setOrderXDocumentType(String orderXDocumentType)
-	{
+	public OXExporterFromA3 setOrderXDocumentType(String orderXDocumentType) {
 		this.orderXDocumentType = orderXDocumentType;
 
 		return this;
@@ -427,8 +424,8 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 		if (attachZUGFeRDHeaders) {
 			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, 1, true, xmlProvider.getProfile(),
-					"urn:factur-x:pdfa:CrossIndustryDocument:1p0#", "fx",
-					"order-x.xml");
+				"urn:factur-x:pdfa:CrossIndustryDocument:1p0#", "fx",
+				"order-x.xml");
 			zf.setType(this.orderXDocumentType);
 
 			metadata.addSchema(zf);
@@ -460,8 +457,8 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		xmlProvider.generateXML(trans);
 		String filename = "order-x.xml";
 		PDFAttachGenericFile(doc, filename, "Alternative",
-				"Order metadata conforming to the Order-X standard (https://www.ferd-net.de/standards/order-x/index.html)",
-				"text/xml", xmlProvider.getXML());
+			"Order metadata conforming to the Order-X standard (https://www.ferd-net.de/standards/order-x/index.html)",
+			"text/xml", xmlProvider.getXML());
 
 		for (FileAttachment attachment : fileAttachments) {
 			PDFAttachGenericFile(doc, attachment.getFilename(), attachment.getRelation(), attachment.getDescription(), attachment.getMimetype(), attachment.getData());
@@ -533,13 +530,15 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	}
 
 	protected PDFAIdentificationSchema getPDFAIdentificationSchema(XMPMetadata xmp) {
-		PDFAIdentificationSchema pdfaid = xmp.getPDFIdentificationSchema();
-		if (pdfaid != null)
-			if (overwrite)
+		PDFAIdentificationSchema pdfaid = xmp.getPDFAIdentificationSchema();
+		if (pdfaid != null) {
+			if (overwrite) {
 				xmp.removeSchema(pdfaid);
-			else
+			} else {
 				return pdfaid;
-		return xmp.createAndAddPFAIdentificationSchema();
+			}
+		}
+		return xmp.createAndAddPDFAIdentificationSchema();
 	}
 
 	protected void writeDublinCoreSchema(XMPMetadata xmp) {

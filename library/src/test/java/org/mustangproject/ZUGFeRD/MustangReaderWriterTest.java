@@ -335,7 +335,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 			byte[] xmpBytes = new byte[exportXMPMetadata.available()];
 			exportXMPMetadata.read(xmpBytes);
 			final XMPMetadata xmp = new DomXmpParser().parse(xmpBytes);
-			PDFAIdentificationSchema pdfaid = xmp.getPDFIdentificationSchema();
+			PDFAIdentificationSchema pdfaid = xmp.getPDFAIdentificationSchema();
 			assertEquals(pdfaid.getPart().intValue(), 3);
 			assertEquals(pdfaid.getConformance(), "U");
 		} catch (XmpParsingException e) {
