@@ -36,110 +36,50 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>library</artifactId>
-            <version>2.10.1-SNAPSHOT</version>
-        </dependency>
-        <!-- for java9 -->
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.1</version>
-        </dependency>
-        <!-- for xml pretty print -->
-        <dependency>
-            <groupId>org.dom4j</groupId>
-            <artifactId>dom4j</artifactId>
-            <version>2.1.3</version>
-        </dependency>
-        <!-- for ph-schematron -->
-        <dependency>
-            <groupId>com.helger.commons</groupId>
-            <artifactId>ph-commons</artifactId>
-            <version>11.1.6</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>4.0.1</version>
-        </dependency>
-        <!-- /for ph-schematron -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.13</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>1.2.13</version>
-        </dependency>
-
-        <dependency>
-            <!-- This library is needed so that logback stderr output is sent to, well, stderr, otherwise it lands in stdout -->
-            <groupId>org.codehaus.janino</groupId>
-            <artifactId>janino</artifactId>
-            <version>3.1.7</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.googlecode.slf4j-maven-plugin-log/slf4j-maven-plugin-log -->
-        <dependency>
-            <groupId>com.googlecode.slf4j-maven-plugin-log</groupId>
-            <artifactId>slf4j-maven-plugin-log</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <!-- Verapdf plugin <dependency> <groupId>org.verapdf</groupId> <artifactId>core</artifactId>
-              <version>1.6.2</version> </dependency> -->
-        <!-- embedded verapdf -->
-        <dependency>
-            <groupId>org.verapdf</groupId>
-            <artifactId>validation-model</artifactId>
-            <version>1.22.2</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.helger/ph-schematron -->
-        <dependency>
-            <groupId>com.helger.schematron</groupId>
-            <artifactId>ph-schematron-xslt</artifactId>
-            <version>8.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.helger</groupId>
-            <artifactId>ph-jaxb</artifactId>
-            <version>9.5.5</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.mustangproject</groupId>
             <artifactId>library</artifactId>
-            <version>2.10.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.riversun</groupId>
+            <artifactId>bigdoc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.verapdf</groupId>
+            <artifactId>validation-model</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.helger.schematron</groupId>
+            <artifactId>ph-schematron-xslt</artifactId>
+        </dependency>
+        <!-- dependencies for the tests -->
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
-            <version>2.10.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-assertj</artifactId>
-            <version>2.9.1</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.riversun</groupId>
-            <artifactId>bigdoc</artifactId>
-            <version>0.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.9.1</version>
             <scope>test</scope>
-         </dependency>
-         <dependency>
+        </dependency>
+        <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-            <version>5.9.1</version>
             <scope>test</scope>
-         </dependency>
+        </dependency>
     </dependencies>
     <build>
         <pluginManagement>
@@ -155,13 +95,13 @@
             </plugins>
         </pluginManagement>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <runOrder>alphabetical</runOrder>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <runOrder>alphabetical</runOrder>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
             <!-- allow getImplementationVersion for the pom.xml -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -179,99 +119,99 @@
                     </archive>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
-                             mvn clean compile assembly:single -->
-                    <!-- or whatever version you use -->
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                <version>2.3.2</version>-->
+<!--                <configuration>-->
+<!--                    <descriptorRefs>-->
+<!--                        <descriptorRef>jar-with-dependencies</descriptorRef>-->
+<!--                    </descriptorRefs>-->
+<!--                    &lt;!&ndash; http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven-->
+<!--                             mvn clean compile assembly:single &ndash;&gt;-->
+<!--                    &lt;!&ndash; or whatever version you use &ndash;&gt;-->
+<!--                    <source>8</source>-->
+<!--                    <target>8</target>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
             <!-- /ZUV -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
-                <configuration>
-                    <shadedArtifactAttached>true</shadedArtifactAttached>
-                    <minimizeJar>false</minimizeJar>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>LICENSE</exclude>
-                                <exclude>NOTICE</exclude>
-                                <exclude>META-INF/*.SF</exclude>
-                                <exclude>META-INF/*.DSA</exclude>
-                                <exclude>META-INF/*.RSA</exclude>
-                            </excludes>
-                        </filter>
-                        <filter>
-                            <artifact>log4j:log4j</artifact>
-                            <includes>
-                                <include>**</include>
-                            </includes>
-                        </filter>
-                        <filter>
-                            <artifact>commons-logging:commons-logging</artifact>
-                            <includes>
-                                <include>**</include>
-                            </includes>
-                        </filter>
-                        <filter>
-                            <artifact>com.sun.xml.bind:jaxb-impl</artifact>
-                            <includes>
-                                <include>**</include>
-                            </includes>
-                        </filter>
-                    </filters>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <artifactSet>
-                                <excludes />
-                            </artifactSet>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-zf-schematron-xml-dependencies</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-shade-plugin</artifactId>-->
+<!--                <version>2.4.3</version>-->
+<!--                <configuration>-->
+<!--                    <shadedArtifactAttached>true</shadedArtifactAttached>-->
+<!--                    <minimizeJar>false</minimizeJar>-->
+<!--                    <filters>-->
+<!--                        <filter>-->
+<!--                            <artifact>*:*</artifact>-->
+<!--                            <excludes>-->
+<!--                                <exclude>LICENSE</exclude>-->
+<!--                                <exclude>NOTICE</exclude>-->
+<!--                                <exclude>META-INF/*.SF</exclude>-->
+<!--                                <exclude>META-INF/*.DSA</exclude>-->
+<!--                                <exclude>META-INF/*.RSA</exclude>-->
+<!--                            </excludes>-->
+<!--                        </filter>-->
+<!--                        <filter>-->
+<!--                            <artifact>log4j:log4j</artifact>-->
+<!--                            <includes>-->
+<!--                                <include>**</include>-->
+<!--                            </includes>-->
+<!--                        </filter>-->
+<!--                        <filter>-->
+<!--                            <artifact>commons-logging:commons-logging</artifact>-->
+<!--                            <includes>-->
+<!--                                <include>**</include>-->
+<!--                            </includes>-->
+<!--                        </filter>-->
+<!--                        <filter>-->
+<!--                            <artifact>com.sun.xml.bind:jaxb-impl</artifact>-->
+<!--                            <includes>-->
+<!--                                <include>**</include>-->
+<!--                            </includes>-->
+<!--                        </filter>-->
+<!--                    </filters>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>shade</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <artifactSet>-->
+<!--                                <excludes />-->
+<!--                            </artifactSet>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <artifactId>maven-resources-plugin</artifactId>-->
+<!--                <version>3.1.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>copy-zf-schematron-xml-dependencies</id>-->
+<!--                        <phase>compile</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>copy-resources</goal>-->
+<!--                        </goals>-->
 
-                        <configuration>
-                            <outputDirectory>${basedir}/src/main/resources/xslt/ZF_221/</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/src/main/resources/schematron/ZF_221/</directory>
-                                    <includes>
-                                        <include>**/*.xml</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--                        <configuration>-->
+<!--                            <outputDirectory>${basedir}/src/main/resources/xslt/ZF_221/</outputDirectory>-->
+<!--                            <resources>-->
+<!--                                <resource>-->
+<!--                                    <directory>${basedir}/src/main/resources/schematron/ZF_221/</directory>-->
+<!--                                    <includes>-->
+<!--                                        <include>**/*.xml</include>-->
+<!--                                    </includes>-->
+<!--                                </resource>-->
+<!--                            </resources>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
     <licenses>
@@ -305,26 +245,26 @@
             </activation>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-toolchains-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>toolchain</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <toolchains>
-                                <jdk>
-                                    <version>8</version>
-                                    <vendor>adopt</vendor>
-                                </jdk>
-                            </toolchains>
-                        </configuration>
-                    </plugin>
+<!--                    <plugin>-->
+<!--                        <groupId>org.apache.maven.plugins</groupId>-->
+<!--                        <artifactId>maven-toolchains-plugin</artifactId>-->
+<!--                        <version>3.1.0</version>-->
+<!--                        <executions>-->
+<!--                            <execution>-->
+<!--                                <goals>-->
+<!--                                    <goal>toolchain</goal>-->
+<!--                                </goals>-->
+<!--                            </execution>-->
+<!--                        </executions>-->
+<!--                        <configuration>-->
+<!--                            <toolchains>-->
+<!--                                <jdk>-->
+<!--                                    <version>8</version>-->
+<!--                                    <vendor>adopt</vendor>-->
+<!--                                </jdk>-->
+<!--                            </toolchains>-->
+<!--                        </configuration>-->
+<!--                    </plugin>-->
                 </plugins>
             </build>
         </profile>
@@ -336,22 +276,22 @@
             </activation>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>com.helger.maven</groupId>
-                        <artifactId>ph-schematron-maven-plugin</artifactId>
-                        <version>5.6.0</version>
-                        <configuration>
-                            <schematronDirectory>${basedir}/src/main/resources/schematron</schematronDirectory>
-                            <xsltDirectory>${basedir}/src/main/resources/xslt</xsltDirectory>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>convert</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
+<!--                    <plugin>-->
+<!--                        <groupId>com.helger.maven</groupId>-->
+<!--                        <artifactId>ph-schematron-maven-plugin</artifactId>-->
+<!--                        <version>5.6.0</version>-->
+<!--                        <configuration>-->
+<!--                            <schematronDirectory>${basedir}/src/main/resources/schematron</schematronDirectory>-->
+<!--                            <xsltDirectory>${basedir}/src/main/resources/xslt</xsltDirectory>-->
+<!--                        </configuration>-->
+<!--                        <executions>-->
+<!--                            <execution>-->
+<!--                                <goals>-->
+<!--                                    <goal>convert</goal>-->
+<!--                                </goals>-->
+<!--                            </execution>-->
+<!--                        </executions>-->
+<!--                    </plugin>-->
                 </plugins>
             </build>
         </profile>
