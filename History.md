@@ -11,11 +11,11 @@
 - zugferdimporter to accept xml files
 - UBL importer to also parse contacts
 - https://github.com/ZUGFeRD/mustangproject/pull/369
-- upgrade ph-schematron from 6.3.3 to 8
 - support inputstreams https://github.com/ZUGFeRD/mustangproject/pull/379
 - #314 ZUGFeRDInvoiceImporter additional constructur
 - add XML cash discount (thisn was previously only possible for XRechnung, not ZF Extended, using a manually encoded setPaymentTermDescription) 
 - surrendered to XRechnung 3 compromises, e.g. no longer put gross amount if it does not deviate from net
+- be able to programmatically access validation messages  https://github.com/ZUGFeRD/mustangproject/pull/382
 
 2.10.0
 =======
