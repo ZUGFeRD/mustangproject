@@ -484,7 +484,7 @@ public class XMLValidator extends Validator {
 			} catch (XPathExpressionException e) {
 				LOGGER.error(e.getMessage(), e);
 			}
-			int activePatterns=0;
+		/*	int activePatterns=0;
 			expression = "//*[local-name() = 'active-pattern']";
 			 firedAsserts = null;
 			try {
@@ -492,10 +492,10 @@ public class XMLValidator extends Validator {
 				activePatterns = firedAsserts.getLength();
 			} catch (XPathExpressionException e) {
 				LOGGER.error(e.getMessage(), e);
-			}
+			}*/
 
 
-			if (firedRules+activePatterns == 0) {
+			if (firedRules == 0) {
 				context.addResultItem(new ValidationResultItem(ESeverity.error, "No rules matched, XML to minimal?").setSection(26)
 						.setPart(EPart.fx));
 
