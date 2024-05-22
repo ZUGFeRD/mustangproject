@@ -1,7 +1,7 @@
 
 2.11.0
 =======
-2024-05-15
+2024-05-22
 
 - EN16931 validation 1.3.12 codelists v11 #357
 - Fonts removed #358
@@ -13,7 +13,7 @@
 - https://github.com/ZUGFeRD/mustangproject/pull/369
 - support inputstreams https://github.com/ZUGFeRD/mustangproject/pull/379
 - #314 ZUGFeRDInvoiceImporter additional constructur
-- add XML cash discount (thisn was previously only possible for XRechnung, not ZF Extended, using a manually encoded setPaymentTermDescription) 
+- add XML cash discount write support (new class, previously only possible for XRechnung, not ZF Extended, using a manually encoded setPaymentTermDescription) 
 - surrendered to XRechnung 3 compromises, e.g. no longer put gross amount if it does not deviate from net
 - be able to programmatically access validation messages  https://github.com/ZUGFeRD/mustangproject/pull/382
 

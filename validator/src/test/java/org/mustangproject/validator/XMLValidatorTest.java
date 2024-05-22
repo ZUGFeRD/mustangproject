@@ -68,9 +68,9 @@ public class XMLValidatorTest extends ResourceCase {
 
 			xv.validate();
 		} catch (final IrrecoverableValidationError e) {
-			noException = false; //expecting a fatal error, i.e. an exception
+			noException = false; //after corrected dependencies no longer expecting a exception here
 		}
-		assertFalse(noException);
+		assertTrue(noException);
 		noException=true;// moving on...
 		assertTrue(xv.getXMLResult().contains("<error type=\"25\""));
 		ctx.clear();
