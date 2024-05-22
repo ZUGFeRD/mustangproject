@@ -578,7 +578,7 @@ public class Invoice implements IExportableTransaction {
 	}
 	/***
 	 * Adds a cash discount (skonto)
-	 * @param CashDiscount the percent/period combination
+	 * @param c the CashDiscount percent/period combination
 	 * @return fluent setter
 	 */
 	public Invoice addCashDiscount(CashDiscount c) {
