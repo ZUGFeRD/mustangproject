@@ -175,7 +175,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 
 	}
 
-	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
+	public boolean ensurePDFIsValid(final String dataSource) throws IOException {
 
 		return getExporter().ensurePDFIsValid(dataSource);
 	}

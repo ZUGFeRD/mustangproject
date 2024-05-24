@@ -131,9 +131,11 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 */
 	public ZUGFeRDExporterFromA3 load(String pdfFilename) throws IOException {
 
-		ensurePDFIsValid(new FileDataSource(pdfFilename));
+
 		try (FileInputStream pdf = new FileInputStream(pdfFilename)) {
-			return load(readAllBytes(pdf));
+			byte[] content=readAllBytes(pdf);
+			ensurePDFIsValid(new String(content));
+			return load(content);
 		}
 	}
 
@@ -258,7 +260,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * @param pdfBinary binary of a PDF/A1 compliant document
 	 */
 	public ZUGFeRDExporterFromA3 load(byte[] pdfBinary) throws IOException {
-		ensurePDFIsValid((DataSource) new RandomAccessReadBuffer(pdfBinary));
+		ensurePDFIsValid(new String(pdfBinary));
 
 		doc = Loader.loadPDF(pdfBinary);
 		return this;
@@ -450,7 +452,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return load(readAllBytes(pdfSource));
 	}
 
-	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
+	public boolean ensurePDFIsValid(final String dataSource) throws IOException {
 		return true;
 	}
 

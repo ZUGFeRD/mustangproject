@@ -26,6 +26,8 @@ import org.apache.pdfbox.preflight.parser.PreflightParser;
 import javax.activation.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class DXExporterFromA1 extends DXExporterFromA3 implements IZUGFeRDExporter {
 	protected boolean ignorePDFAErrors = false;
@@ -35,9 +37,6 @@ public class DXExporterFromA1 extends DXExporterFromA3 implements IZUGFeRDExport
 		return this;
 	}
 
-	private static boolean isValidA1(DataSource dataSource) throws IOException {
-		return getPDFAParserValidationResult(new PreflightParser(dataSource));
-	}
 	/***
 	 * internal helper function: get namespace for order-x
 	 * @param ver the delivery-x version
@@ -59,33 +58,14 @@ public class DXExporterFromA1 extends DXExporterFromA3 implements IZUGFeRDExport
 		return "fx";
 	}
 
-	private static boolean getPDFAParserValidationResult(PreflightParser parser) throws IOException {
-		/*
-		 * Parse the PDF file with PreflightParser that inherits from the
-		 * NonSequentialParser. Some additional controls are present to check a set of
-		 * PDF/A requirements. (Stream length consistency, EOL after some Keyword...)
-		 */
-		parser.parse();// might add a Format.PDF_A1A as parameter and iterate through A1 and A3
+	private static boolean isValidA1(String dataSource) throws IOException {
 
-		try (PreflightDocument document = parser.getPreflightDocument()) {
-			/*
-			 * Once the syntax validation is done, the parser can provide a
-			 * PreflightDocument (that inherits from PDDocument) This document process the
-			 * end of PDF/A validation.
-			 */
+		Path tempFile = Files.createTempFile(null, null);
 
-			document.validate();
+		// Writes a string to the above temporary file
+		Files.write(tempFile, dataSource.getBytes());
 
-			// Get validation result
-			return document.getResult().isValid();
-		} catch (ValidationException e) {
-			/*
-			 * the parse method can throw a SyntaxValidationException if the PDF file can't
-			 * be parsed. In this case, the exception contains an instance of
-			 * ValidationResult
-			 */
-			return false;
-		}
+		return PreflightParser.validate(tempFile.toFile()).isValid();
 	}
 
 
@@ -96,7 +76,7 @@ public class DXExporterFromA1 extends DXExporterFromA3 implements IZUGFeRDExport
 		return (DXExporterFromA1)super.setProfile(profileName);
 	}
 
-	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
+	public boolean ensurePDFIsValid(final String dataSource) throws IOException {
 		if (!ignorePDFAErrors && !isValidA1(dataSource)) {
 			throw new IOException("File is not a valid PDF/A input file");
 		}

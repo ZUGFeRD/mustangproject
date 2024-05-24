@@ -56,7 +56,7 @@ public interface IZUGFeRDExporter extends Closeable, IExporter  {
 	public IZUGFeRDExporter setConformanceLevel(PDFAConformanceLevel newLevel);
 	public IZUGFeRDExporter setProducer(String producer);
 	public IZUGFeRDExporter setZUGFeRDVersion(int version);
-	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException;
+	public boolean ensurePDFIsValid(final String dataSource) throws IOException;
 	public IZUGFeRDExporter setXML(byte[] zugferdData) throws IOException;
 	public IZUGFeRDExporter disableFacturX();
 	public IZUGFeRDExporter setProfile(Profile zugferdConformanceLevel);
