@@ -140,6 +140,11 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	default IZUGFeRDCashDiscount[] getCashDiscounts() {	return null; }
+
+	/***
+	 * @return the invoice line items with the positions
+	 */
 	IZUGFeRDExportableItem[] getZFItems();
 
 	/**

@@ -177,7 +177,7 @@
         </ram:DueDateDateTime> 
       </ram:SpecifiedTradePaymentTerms>  
       <ram:SpecifiedTradeSettlementHeaderMonetarySummation> 
-        <ram:LineTotalAmount>496.00</ram:LineTotalAmount>  
+        <ram:LineTotalAmount>496.00</ram:LineTotalAmount>
         <ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>
         <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>  
         <ram:TaxBasisTotalAmount>496.00</ram:TaxBasisTotalAmount>  

@@ -1,12 +1,8 @@
 package org.mustangproject.validator;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -33,14 +29,18 @@ import org.verapdf.features.FeatureFactory;
 import org.verapdf.metadata.fixer.FixerFactory;
 import org.verapdf.metadata.fixer.MetadataFixerConfig;
 import org.verapdf.gf.foundry.VeraGreenfieldFoundryProvider;
+import org.verapdf.pdfa.flavours.PDFAFlavour;
 import org.verapdf.pdfa.validation.validators.ValidatorConfig;
 import org.verapdf.pdfa.validation.validators.ValidatorFactory;
 import org.verapdf.processor.BatchProcessor;
 import org.verapdf.processor.FormatOption;
+import org.verapdf.processor.ItemProcessor;
 import org.verapdf.processor.ProcessorConfig;
 import org.verapdf.processor.ProcessorFactory;
+import org.verapdf.processor.ProcessorResult;
 import org.verapdf.processor.TaskType;
 import org.verapdf.processor.plugins.PluginsCollectionConfig;
+import org.verapdf.processor.reports.ItemDetails;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -50,15 +50,17 @@ public class PDFValidator extends Validator {
 
 	public PDFValidator(ValidationContext ctx) {
 		super(ctx);
-		// TODO Auto-generated constructor stub
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PDFValidator.class.getCanonicalName()); // log output
-																											// is
+	private static final PDFAFlavour[] PDF_A_3_FLAVOURS = {PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_A};
 
 	private String pdfFilename;
 
+	private byte[] fileContents;
+
 	private String pdfReport;
+	private ProcessorResult processorResult = null;
 
 	private String Signature;
 
@@ -69,17 +71,13 @@ public class PDFValidator extends Validator {
 	}
 
 	@Override
-  public void validate() throws IrrecoverableValidationError {
+	public void validate() throws IrrecoverableValidationError {
 
 		zfXML = null;
-		final File file = new File(pdfFilename);
 		// file existence must have been checked before
-		final BigFileSearcher searcher = new BigFileSearcher();
-
-		final byte[] pdfSignature = { '%', 'P', 'D', 'F' };
-		if (searcher.indexOf(file, pdfSignature) != 0) {
+		if (!ByteArraySearcher.contains(fileContents, new byte[]{'%', 'P', 'D', 'F'})) {
 			context.addResultItem(
-					new ValidationResultItem(ESeverity.fatal, "Not a PDF file "+pdfFilename).setSection(20).setPart(EPart.pdf));
+				new ValidationResultItem(ESeverity.fatal, "Not a PDF file " + pdfFilename).setSection(20).setPart(EPart.pdf));
 
 		}
 
@@ -103,33 +101,29 @@ public class PDFValidator extends Validator {
 		// tasks.add(TaskType.FIX_METADATA);
 		// Creating processor config
 		final ProcessorConfig processorConfig = ProcessorFactory.fromValues(validatorConfig, featureConfig, pluginsConfig,
-				fixerConfig, tasks);
+			fixerConfig, tasks
+		);
 		// Creating processor and output stream.
 		final ByteArrayOutputStream reportStream = new ByteArrayOutputStream();
-		try (BatchProcessor processor = ProcessorFactory.fileBatchProcessor(processorConfig)) {
+		final InputStream inputStream = new ByteArrayInputStream(fileContents);
+		try (ItemProcessor processor = ProcessorFactory.createProcessor(processorConfig)) {
 			// Generating list of files for processing
-			final List<File> files = new ArrayList<>();
-			files.add(new File(pdfFilename));
 			// starting the processor
-                        processor.process(files, ProcessorFactory.getHandler(FormatOption.MRR, true, reportStream,
-                                                        processorConfig.getValidatorConfig().isRecordPasses()));                        
-			pdfReport = reportStream.toString("utf-8").replaceAll("<\\?xml version=\"1\\.0\" encoding=\"utf-8\"\\?>",
-					"");
-		} catch (final VeraPDFException e) {
-			final ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(6)
-					.setPart(EPart.pdf);
-			final StringWriter sw = new StringWriter();
-			final PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			vri.setStacktrace(sw.toString());
-			context.addResultItem(vri);
-		} catch (final IOException excep) {
+			ItemDetails itemDetails = ItemDetails.fromValues(pdfFilename);
+			inputStream.mark(Integer.MAX_VALUE);
+			processorResult = processor.process(itemDetails, inputStream);
+			pdfReport = processorResult.getValidationResult().toString().replaceAll(
+				"<\\?xml version=\"1\\.0\" encoding=\"utf-8\"\\?>",
+				""
+			);
+			inputStream.reset();
+		} catch (final Exception excep) {
 			context.addResultItem(new ValidationResultItem(ESeverity.exception, excep.getMessage()).setSection(7)
-					.setPart(EPart.pdf).setStacktrace(excep.getStackTrace().toString()));
+				.setPart(EPart.pdf).setStacktrace(excep.getStackTrace().toString()));
 		}
 
 		// step 2 validate XMP
-		final ZUGFeRDImporter zi = new ZUGFeRDImporter(pdfFilename);
+		final ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
 		final String xmp = zi.getXMP();
 
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -137,7 +131,7 @@ public class PDFValidator extends Validator {
 
 		if (xmp.length() == 0) {
 			context.addResultItem(new ValidationResultItem(ESeverity.error, "Invalid XMP Metadata not found")
-					.setSection(17).setPart(EPart.pdf));
+				.setSection(17).setPart(EPart.pdf));
 		}
 		/*
 		 * checking for sth like <zf:ConformanceLevel>EXTENDED</zf:ConformanceLevel>
@@ -160,26 +154,28 @@ public class PDFValidator extends Validator {
 
 			// get the first element
 			XPathExpression xpr = xpath.compile(
-					"//*[local-name()=\"ConformanceLevel\"]|//*[local-name()=\"Description\"]/@ConformanceLevel");
+				"//*[local-name()=\"ConformanceLevel\"]|//*[local-name()=\"Description\"]/@ConformanceLevel");
 			NodeList nodes = (NodeList) xpr.evaluate(docXMP, XPathConstants.NODESET);
 
 			if (nodes.getLength() == 0) {
 				context.addResultItem(
-						new ValidationResultItem(ESeverity.error, "XMP Metadata: ConformanceLevel not found")
-								.setSection(11).setPart(EPart.pdf));
+					new ValidationResultItem(ESeverity.error, "XMP Metadata: ConformanceLevel not found")
+						.setSection(11).setPart(EPart.pdf));
 			}
-	
-			boolean conformanceLevelValid=false;
+
+			boolean conformanceLevelValid = false;
 			for (int i = 0; i < nodes.getLength(); i++) {
 
-				final String[] valueArray = { "BASIC WL", "BASIC", "MINIMUM", "EN 16931", "COMFORT", "CIUS", "EXTENDED", "XRECHNUNG" };
+				final String[] valueArray = {"BASIC WL", "BASIC", "MINIMUM", "EN 16931", "COMFORT", "CIUS", "EXTENDED", "XRECHNUNG"};
 				if (stringArrayContains(valueArray, nodes.item(i).getTextContent())) {
-					conformanceLevelValid=true;
+					conformanceLevelValid = true;
 				}
 			}
 			if (!conformanceLevelValid) {
-				context.addResultItem(new ValidationResultItem(ESeverity.error,
-						"XMP Metadata: ConformanceLevel contains invalid value").setSection(12).setPart(EPart.pdf));
+				context.addResultItem(new ValidationResultItem(
+					ESeverity.error,
+					"XMP Metadata: ConformanceLevel contains invalid value"
+				).setSection(12).setPart(EPart.pdf));
 
 			}
 			xpr = xpath.compile("//*[local-name()=\"DocumentType\"]|//*[local-name()=\"Description\"]/@DocumentType");
@@ -187,43 +183,47 @@ public class PDFValidator extends Validator {
 
 			if (nodes.getLength() == 0) {
 				context.addResultItem(new ValidationResultItem(ESeverity.error, "XMP Metadata: DocumentType not found")
-						.setSection(13).setPart(EPart.pdf));
+					.setSection(13).setPart(EPart.pdf));
 			}
 
-			boolean documentTypeValid=false;
+			boolean documentTypeValid = false;
 			for (int i = 0; i < nodes.getLength(); i++) {
-				if (nodes.item(i).getTextContent().equals("INVOICE")||nodes.item(i).getTextContent().equals("ORDER")||nodes.item(i).getTextContent().equals("ORDER_RESPONSE")||nodes.item(i).getTextContent().equals("ORDER_CHANGE")) {
-					documentTypeValid=true;
+				if (nodes.item(i).getTextContent().equals("INVOICE") || nodes.item(i).getTextContent().equals("ORDER")
+					|| nodes.item(i).getTextContent().equals("ORDER_RESPONSE") || nodes.item(i).getTextContent()
+					.equals("ORDER_CHANGE")) {
+					documentTypeValid = true;
 				}
 			}
 			if (!documentTypeValid) {
 				context.addResultItem(
-						new ValidationResultItem(ESeverity.error, "XMP Metadata: DocumentType invalid")
-								.setSection(14).setPart(EPart.pdf));
+					new ValidationResultItem(ESeverity.error, "XMP Metadata: DocumentType invalid")
+						.setSection(14).setPart(EPart.pdf));
 
 			}
 			xpr = xpath.compile(
-					"//*[local-name()=\"DocumentFileName\"]|//*[local-name()=\"Description\"]/@DocumentFileName");
+				"//*[local-name()=\"DocumentFileName\"]|//*[local-name()=\"Description\"]/@DocumentFileName");
 			nodes = (NodeList) xpr.evaluate(docXMP, XPathConstants.NODESET);
 
 			if (nodes.getLength() == 0) {
 				context.addResultItem(
-						new ValidationResultItem(ESeverity.error, "XMP Metadata: DocumentFileName not found")
-								.setSection(21).setPart(EPart.pdf));
+					new ValidationResultItem(ESeverity.error, "XMP Metadata: DocumentFileName not found")
+						.setSection(21).setPart(EPart.pdf));
 			}
-			boolean documentFilenameValid=false;
+			boolean documentFilenameValid = false;
 			for (int i = 0; i < nodes.getLength(); i++) {
-				final String[] valueArray = { "factur-x.xml", "ZUGFeRD-invoice.xml", "zugferd-invoice.xml", "xrechnung.xml" , "order-x.xml" };
+				final String[] valueArray = {"factur-x.xml", "ZUGFeRD-invoice.xml", "zugferd-invoice.xml", "xrechnung.xml", "order-x.xml"};
 				if (stringArrayContains(valueArray, nodes.item(i).getTextContent())) {
-					documentFilenameValid=true;
+					documentFilenameValid = true;
 				}
 
 				// e.g. ZUGFeRD-invoice.xml
 			}
 			if (!documentFilenameValid) {
 
-				context.addResultItem(new ValidationResultItem(ESeverity.error,
-						"XMP Metadata: DocumentFileName contains invalid value").setSection(19).setPart(EPart.pdf));
+				context.addResultItem(new ValidationResultItem(
+					ESeverity.error,
+					"XMP Metadata: DocumentFileName contains invalid value"
+				).setSection(19).setPart(EPart.pdf));
 			}
 			xpr = xpath.compile("//*[local-name()=\"Version\"]|//*[local-name()=\"Description\"]/@Version");
 			nodes = (NodeList) xpr.evaluate(docXMP, XPathConstants.NODESET);
@@ -234,30 +234,23 @@ public class PDFValidator extends Validator {
 			// print the text content of each child
 			if (nodes.getLength() == 0) {
 				context.addResultItem(new ValidationResultItem(ESeverity.error, "XMP Metadata: Version not found")
-						.setSection(15).setPart(EPart.pdf));
+					.setSection(15).setPart(EPart.pdf));
 			}
 
-			boolean versionValid=false;
+			boolean versionValid = false;
 			for (int i = 0; i < nodes.getLength(); i++) {
-				final String[] valueArray = { "1.0", "2p0", "1.2", "2.0" , "2.1" }; //1.2, 2.0 and 2.1 are for xrechnung 1.2, 2p0 can be ZF 2.0, 2.1, 2.1.1
+				final String[] valueArray = {"1.0", "2p0", "1.2", "2.0", "2.1"}; //1.2, 2.0 and 2.1 are for xrechnung 1.2, 2p0 can be ZF 2.0, 2.1, 2.1.1
 				if (stringArrayContains(valueArray, nodes.item(i).getTextContent())) {
-					versionValid=true;
+					versionValid = true;
 				} // e.g. 1.0
 			}
 			if (!versionValid) {
 				context.addResultItem(
-						new ValidationResultItem(ESeverity.error, "XMP Metadata: Version contains invalid value")
-								.setSection(16).setPart(EPart.pdf));
+					new ValidationResultItem(ESeverity.error, "XMP Metadata: Version contains invalid value")
+						.setSection(16).setPart(EPart.pdf));
 
 			}
-
-		} catch (final SAXException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (final IOException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (final ParserConfigurationException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (final XPathExpressionException e) {
+		} catch (final SAXException | IOException | ParserConfigurationException | XPathExpressionException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		zfXML = zi.getUTF8();
@@ -272,19 +265,19 @@ public class PDFValidator extends Validator {
 			final byte[] pdfMachineSignature = "pdfMachine from Broadgun Software".getBytes("UTF-8");
 			final byte[] ghostscriptSignature = "%%Invocation:".getBytes("UTF-8");
 
-			if (searcher.indexOf(file, symtraxSignature) != -1) {
+			if (ByteArraySearcher.contains(fileContents, symtraxSignature)) {
 				Signature = "Symtrax";
-			} else if (searcher.indexOf(file, mustangSignature) != -1) {
+			} else if (ByteArraySearcher.contains(fileContents, mustangSignature)) {
 				Signature = "Mustang";
-			} else if (searcher.indexOf(file, facturxpythonSignature) != -1) {
+			} else if (ByteArraySearcher.contains(fileContents, facturxpythonSignature)) {
 				Signature = "Factur/X Python";
-			} else if (searcher.indexOf(file, intarsysSignature) != -1) {
+			} else if (ByteArraySearcher.contains(fileContents, intarsysSignature)) {
 				Signature = "Intarsys";
-			} else if (searcher.indexOf(file, konikSignature) != -1) {
+			} else if (ByteArraySearcher.contains(fileContents, konikSignature)) {
 				Signature = "Konik";
-			} else if (searcher.indexOf(file, pdfMachineSignature) != -1) {
+			} else if (ByteArraySearcher.contains(fileContents, pdfMachineSignature)) {
 				Signature = "pdfMachine";
-			} else if (searcher.indexOf(file, ghostscriptSignature) != -1) {
+			} else if (ByteArraySearcher.contains(fileContents, ghostscriptSignature)) {
 				Signature = "Ghostscript";
 			}
 
@@ -295,36 +288,47 @@ public class PDFValidator extends Validator {
 		}
 
 		// step 4:validate additional data
-		final HashMap<String, byte[]> additionalData=zi.getAdditionalData();
+		final HashMap<String, byte[]> additionalData = zi.getAdditionalData();
 		for (final String filename : additionalData.keySet()) {
 			// validating xml in byte[]	additionalData.get(filename)
 			LOGGER.info("validating additionalData " + filename);
 			validateSchema(additionalData.get(filename), "ad/basic/additional_data_base_schema.xsd", 2, EPart.pdf);
 		}
-		
-		
+
+
 		//end
 
 		final long endTime = Calendar.getInstance().getTimeInMillis();
-		if (!pdfReport.contains("validationReports compliant=\"1\"")) {
+		if (!processorResult.getValidationResult().isCompliant()) {
 			context.setInvalid();
 		}
-		if (!pdfReport.contains("PDF/A-3")) {
+		if (Arrays.stream(PDF_A_3_FLAVOURS)
+			.anyMatch(pdfaFlavour -> processorResult.getValidationResult().getPDFAFlavour().equals(pdfaFlavour))) {
 			context.addResultItem(
-					new ValidationResultItem(ESeverity.error, "Not a PDF/A-3").setSection(23).setPart(EPart.pdf));
+				new ValidationResultItem(ESeverity.error, "Not a PDF/A-3").setSection(23).setPart(EPart.pdf));
 
 		}
 		context.addCustomXML(pdfReport + "<info><signature>"
-				+ ((context.getSignature() != null) ? context.getSignature() : "unknown")
-				+ "</signature><duration unit=\"ms\">" + (endTime - startPDFTime) + "</duration></info>");
+			+ ((context.getSignature() != null) ? context.getSignature() : "unknown")
+			+ "</signature><duration unit=\"ms\">" + (endTime - startPDFTime) + "</duration></info>");
 
 	}
 
-	
+
 	@Override
 	public void setFilename(String filename) throws IrrecoverableValidationError {
 		this.pdfFilename = filename;
+		try {
+			fileContents=Files.readAllBytes(Paths.get(pdfFilename));
+		} catch (IOException ex) {
+			throw new IrrecoverableValidationError("Could not read file");
+		}
 
+
+	}
+
+	public void setFileContents(byte[] fileContents) {
+		this.fileContents = fileContents;
 	}
 
 	public String getRawXML() {

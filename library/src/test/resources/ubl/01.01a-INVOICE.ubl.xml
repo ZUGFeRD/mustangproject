@@ -2,7 +2,8 @@
 <ubl:Invoice xmlns:ubl="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
              xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
              xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
-    <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.3</cbc:CustomizationID>
+    <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0</cbc:CustomizationID>
+    <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
     <cbc:ID>123456XX</cbc:ID>
     <cbc:IssueDate>2016-04-04</cbc:IssueDate>
     <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
@@ -11,6 +12,7 @@
     <cbc:BuyerReference>04011000-12345-03</cbc:BuyerReference>
     <cac:AccountingSupplierParty>
         <cac:Party>
+            <cbc:EndpointID schemeID="EM">seller@email.de</cbc:EndpointID>
             <cac:PartyName>
                 <cbc:Name>[Seller trading name]</cbc:Name>
             </cac:PartyName>
@@ -42,6 +44,7 @@
     </cac:AccountingSupplierParty>
     <cac:AccountingCustomerParty>
         <cac:Party>
+            <cbc:EndpointID schemeID="EM">buyer@info.de</cbc:EndpointID>
             <cac:PartyIdentification>
                 <cbc:ID>[Buyer identifier]</cbc:ID>
             </cac:PartyIdentification>

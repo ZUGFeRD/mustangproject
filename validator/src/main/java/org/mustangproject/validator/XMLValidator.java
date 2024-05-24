@@ -1,26 +1,7 @@
 package org.mustangproject.validator;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Calendar;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.xpath.*;
-
+import com.helger.schematron.ISchematronResource;
 import com.helger.schematron.svrl.SVRLMarshaller;
-import com.helger.schematron.svrl.jaxb.ActivePattern;
-import com.helger.schematron.xslt.SchematronResourceXSLTCache;
-import org.mustangproject.Contact;
-import org.mustangproject.SchemedID;
+import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,14 +9,23 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.helger.schematron.xslt.SchematronResourceXSLT;
 import org.xml.sax.InputSource;
 
-import com.helger.schematron.ISchematronResource;
-import com.helger.schematron.svrl.SVRLHelper;
-import com.helger.schematron.svrl.jaxb.FailedAssert;
-import com.helger.schematron.svrl.jaxb.FiredRule;
-import com.helger.schematron.svrl.jaxb.SchematronOutputType;
-import com.helger.schematron.xslt.SchematronResourceXSLT;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.xpath.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Calendar;
+
 
 public class XMLValidator extends Validator {
 
@@ -187,7 +177,7 @@ public class XMLValidator extends Validator {
 				boolean isExtended = false;
 				boolean isXRechnung = false;
 				String currentZFVersionDir = "ZF_221";
-
+				int mainSchematronSectionErrorTypeCode=4;
 				String xsltFilename = null;
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:extended,
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:comfort,
@@ -251,7 +241,7 @@ public class XMLValidator extends Validator {
 						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.xslt=schematron also has to pass
 						* */
 						//validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/XR_30/XRechnung-CII-validation.xslt";
+
 						XrechnungSeverity = ESeverity.error;
 					} else if (isExtended) {
 						LOGGER.debug("is EXTENDED");
@@ -272,10 +262,12 @@ public class XMLValidator extends Validator {
 					// UBL
 					LOGGER.debug("UBL");
 					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "UBL_21/maindoc/UBL-Invoice-2.1.xsd", 18, EPart.fx);
-					xsltFilename = "/xslt/UBL_21/EN16931-UBL-validation.xsl";
-					validateSchematron(zfXML, xsltFilename, 24, ESeverity.error);
+					xsltFilename = "/xslt/UBL_21/EN16931-UBL-validation.xslt";
+
+					mainSchematronSectionErrorTypeCode=24;
 
 					if (isXRechnung) {
+						validateSchematron(zfXML, xsltFilename, 24, ESeverity.error);
 						/*
 						the validation against the XRechnung Schematron will happen below but a
 						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.xslt=schematron also has to pass
@@ -288,6 +280,7 @@ public class XMLValidator extends Validator {
 						LOGGER.debug("is XRechnung v"+xrVersion);
 						xsltFilename = "/xslt/XR_"+xrVersion+"/XRechnung-UBL-validation.xslt";
 						XrechnungSeverity = ESeverity.error;
+						mainSchematronSectionErrorTypeCode=27;
 
 					}
 
@@ -346,8 +339,11 @@ public class XMLValidator extends Validator {
 					}
 				}
 
-				// main schematron validation
-				validateSchematron(zfXML, xsltFilename, 4, ESeverity.error);
+				if (xsltFilename!=null) {
+					// main schematron validation
+					validateSchematron(zfXML, xsltFilename, mainSchematronSectionErrorTypeCode, ESeverity.error);
+
+				}
 
 				if (context.getFormat().equals("CII")) {
 
@@ -488,7 +484,7 @@ public class XMLValidator extends Validator {
 			} catch (XPathExpressionException e) {
 				LOGGER.error(e.getMessage(), e);
 			}
-			int activePatterns=0;
+		/*	int activePatterns=0;
 			expression = "//*[local-name() = 'active-pattern']";
 			 firedAsserts = null;
 			try {
@@ -496,10 +492,10 @@ public class XMLValidator extends Validator {
 				activePatterns = firedAsserts.getLength();
 			} catch (XPathExpressionException e) {
 				LOGGER.error(e.getMessage(), e);
-			}
+			}*/
 
 
-			if (firedRules+activePatterns == 0) {
+			if (firedRules == 0) {
 				context.addResultItem(new ValidationResultItem(ESeverity.error, "No rules matched, XML to minimal?").setSection(26)
 						.setPart(EPart.fx));
 
@@ -522,6 +518,5 @@ public class XMLValidator extends Validator {
 	public int getFailedRules() {
 		return failedRules;
 	}
-
 
 }

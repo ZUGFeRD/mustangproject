@@ -423,8 +423,9 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 
 	/***
-	 * sets the email of the organization (not the one of the contact person)
-	 * (while setEmail has to be defined here getEmail comes from IZUGFeRDExportableTradeParty)
+	 * 	sets the email of the organization (not the one of the contact person)
+	 * 	(while setEmail has to be defined here getEmail comes from IZUGFeRDExportableTradeParty)
+	 * @param eMail address of institution (not contact)
 	 * @return fluent setter
 	 */
 	public TradeParty setEmail(String eMail) {
