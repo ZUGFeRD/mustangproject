@@ -20,11 +20,13 @@ package org.mustangproject.ZUGFeRD;
 
 
 import org.apache.pdfbox.preflight.PreflightDocument;
+import org.apache.pdfbox.preflight.ValidationResult;
 import org.apache.pdfbox.preflight.exception.ValidationException;
 import org.apache.pdfbox.preflight.parser.PreflightParser;
 import org.mustangproject.EStandard;
 
 import javax.activation.DataSource;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -39,13 +41,19 @@ public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 implements IZUG
 	}
 
 	private static boolean isValidA1(String dataSource) throws IOException {
+		File temp = File.createTempFile("muspv", ".pdf");
+		temp.deleteOnExit(); //probably not needed
 
-		Path tempFile = Files.createTempFile(null, null);
 
 		// Writes a string to the above temporary file
-		Files.write(tempFile, dataSource.getBytes());
+		Files.write(temp.toPath(), dataSource.getBytes());
 
-		return PreflightParser.validate(tempFile.toFile()).isValid();
+		ValidationResult res=PreflightParser.validate(temp);
+		boolean isValid=res.isValid();
+		temp.delete();
+
+		return isValid;
+
 	}
 
 
