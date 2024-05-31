@@ -21,6 +21,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import org.apache.fop.apps.*;
+import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
@@ -303,6 +304,11 @@ public class ZUGFeRDVisualizer {
 // (reuse if you plan to render multiple documents!)
 
 		FopFactory fopFactory = builder.build();//FopFactory.newInstance(new File("c:\\Users\\jstaerk\\temp\\fop-config.xconf"));
+
+		fopFactory.getFontManager().setResourceResolver(
+			ResourceResolverFactory.createInternalResourceResolver(
+				new File(".").toURI(),
+				 new ClasspathResolverURIAdapter()));
 
 		FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
