@@ -142,6 +142,9 @@ public class ZUGFeRDImporter {
 				} else {
 
 					final List<PDNameTreeNode<PDComplexFileSpecification>> kids = etn.getKids();
+					if (kids == null) {
+						return;
+					}
 					for (final PDNameTreeNode<PDComplexFileSpecification> node : kids) {
 						final Map<String, PDComplexFileSpecification> namesL = node.getNames();
 						extractFiles(namesL);
