@@ -109,18 +109,20 @@ public class ZUGFeRDImporter {
 	 */
 	private void extractLowLevel(InputStream inStream) throws IOException {
 		BufferedInputStream pdfStream = new BufferedInputStream(inStream);
-		byte[] pad = new byte[4];
-		pdfStream.mark(0);
-		pdfStream.read(pad);
-		pdfStream.reset();
+		byte[] theBytes = IOUtils.toByteArray(inStream);
+
 		byte[] pdfSignature = {'%', 'P', 'D', 'F'};
-		if (Arrays.equals(pad, pdfSignature)) { // we have a pdf
+
+		byte[] copiedArray = new byte[4];
+
+		System.arraycopy(theBytes, 0, copiedArray, 0, 4);
+		if (Arrays.equals(copiedArray, pdfSignature)) { // we have a pdf
 
 
-		try (PDDocument doc = Loader.loadPDF(IOUtils.toByteArray(inStream))) {
-			// PDDocumentInformation info = doc.getDocumentInformation();
-			final PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
-			//start
+			try (PDDocument doc = Loader.loadPDF(theBytes)) {
+				// PDDocumentInformation info = doc.getDocumentInformation();
+				final PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
+				//start
 
 				if (doc.getDocumentCatalog() == null || doc.getDocumentCatalog().getMetadata() == null) {
 					Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.INFO, "no-xmlpart");
