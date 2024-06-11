@@ -151,7 +151,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 //			assertFalse(pdfContent.indexOf("urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#") == -1);
 
 		} catch (IOException e) {
-			fail("IOException should not happen in testZExport");
+			fail("IOException should not happen in testFXExport:"+e.getMessage());
 		}
 
 		// now check the contents (like MustangReaderTest)

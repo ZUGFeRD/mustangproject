@@ -121,10 +121,10 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @param pdfFilename filename of an PDF/A1 compliant document
 	 */
 	public DXExporterFromA3 load(String pdfFilename) throws IOException {
-
-		ensurePDFIsValid(new FileDataSource(pdfFilename));
 		try (FileInputStream pdf = new FileInputStream(pdfFilename)) {
-			return load(readAllBytes(pdf));
+			byte[] content=readAllBytes(pdf);
+			ensurePDFIsValid(new String(content));
+			return load(content);
 		}
 	}
 
@@ -163,7 +163,7 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @param pdfBinary binary of a PDF/A1 compliant document
 	 */
 	public DXExporterFromA3 load(byte[] pdfBinary) throws IOException {
-		ensurePDFIsValid((DataSource) new RandomAccessReadBuffer(pdfBinary));
+		ensurePDFIsValid(new String(pdfBinary));
 		doc = Loader.loadPDF(pdfBinary);
 		return this;
 	}
