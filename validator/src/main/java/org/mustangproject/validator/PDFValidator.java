@@ -129,7 +129,7 @@ public class PDFValidator extends Validator {
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		final Document docXMP;
 
-		if (xmp.length() == 0) {
+		if (xmp == null || xmp.length() == 0) {
 			context.addResultItem(new ValidationResultItem(ESeverity.error, "Invalid XMP Metadata not found")
 				.setSection(17).setPart(EPart.pdf));
 		}
