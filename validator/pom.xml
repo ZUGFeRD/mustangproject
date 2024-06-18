@@ -68,7 +68,7 @@
         <!-- embedded verapdf -->
         <dependency>
             <groupId>org.verapdf</groupId>
-            <artifactId>validation-model</artifactId>
+            <artifactId>validation-model-jakarta</artifactId>
             <version>1.26.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.helger/ph-schematron -->
