@@ -133,6 +133,7 @@ public class PDFValidator extends Validator {
 			context.addResultItem(new ValidationResultItem(ESeverity.error, "Invalid XMP Metadata not found")
 				.setSection(17).setPart(EPart.pdf));
 		}
+		else
 		/*
 		 * checking for sth like <zf:ConformanceLevel>EXTENDED</zf:ConformanceLevel>
 		 * <zf:DocumentType>INVOICE</zf:DocumentType>
