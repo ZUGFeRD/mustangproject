@@ -73,6 +73,7 @@ final class ByteArrayDataSource implements DataSource
   }
 }
 
+// Try to create an API similar to the 2.x one
 final class PreflightParserHelper
 {
   private static File createTmpFile (InputStream input) throws IOException
@@ -98,7 +99,7 @@ final class PreflightParserHelper
   }
 }
 
-final class JakartaUpdateMitigation
+final class PDFBoxUpdateMitigation
 {
   // Dummy for the name only
 }
