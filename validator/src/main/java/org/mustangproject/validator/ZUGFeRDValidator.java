@@ -322,6 +322,7 @@ public class ZUGFeRDValidator {
 			}
 		} catch (IrrecoverableValidationError | IOException irx) {
 			LOGGER.info(irx.getMessage());
+			context.setInvalid ();
 		} finally {
 			finalStringResult.append(context.getXMLResult());
 			finalStringResult.append("</validation>");
