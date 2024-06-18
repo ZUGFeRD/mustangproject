@@ -28,7 +28,10 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.mustangproject.*;
+import org.mustangproject.EStandard;
+import org.mustangproject.FileAttachment;
+import org.mustangproject.Invoice;
+import org.mustangproject.XMLTools;
 
 public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider {
 

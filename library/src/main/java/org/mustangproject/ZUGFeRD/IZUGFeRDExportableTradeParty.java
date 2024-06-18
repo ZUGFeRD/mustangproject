@@ -20,8 +20,6 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import org.mustangproject.TradeParty;
-
 /**
  * Mustangproject's ZUGFeRD implementation neccessary interface for ZUGFeRD exporter Licensed under the APLv2
  *

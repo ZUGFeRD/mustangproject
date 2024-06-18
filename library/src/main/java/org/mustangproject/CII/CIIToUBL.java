@@ -5,9 +5,9 @@ import java.io.Serializable;
 
 import com.helger.commons.error.list.ErrorList;
 import com.helger.en16931.cii2ubl.CIIToUBL23Converter;
-import com.helger.ubl21.UBL21Writer;
-import com.helger.ubl22.UBL22Writer;
-import com.helger.ubl23.UBL23Writer;
+import com.helger.ubl21.UBL21Marshaller;
+import com.helger.ubl22.UBL22Marshaller;
+import com.helger.ubl23.UBL23Marshaller;
 
 /***
  * converts a Cross Industry Invoice XML file to a UBL XML file
@@ -25,37 +25,37 @@ public class CIIToUBL {
 	   final Serializable aUBL = cc.convertCIItoUBL(input, occurred);
 	   if (aUBL instanceof oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType)
 	   {
-		   UBL21Writer.invoice ()
+		   UBL21Marshaller.invoice ()
 				   .setFormattedOutput (true)
 				   .write ((oasis.names.specification.ubl.schema.xsd.invoice_21.InvoiceType) aUBL, output);
 	   }
 	   else	if (aUBL instanceof oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType)
 	   {
-		   UBL21Writer.creditNote ()
+	     UBL21Marshaller.creditNote ()
 				   .setFormattedOutput (true)
 				   .write ((oasis.names.specification.ubl.schema.xsd.creditnote_21.CreditNoteType) aUBL, output);
 	   }
 	   else	if (aUBL instanceof oasis.names.specification.ubl.schema.xsd.invoice_22.InvoiceType)
 	   {
-		   UBL22Writer.invoice ()
+		   UBL22Marshaller.invoice ()
 				   .setFormattedOutput (true)
 				   .write ((oasis.names.specification.ubl.schema.xsd.invoice_22.InvoiceType) aUBL, output);
 	   }
 	   else if (aUBL instanceof oasis.names.specification.ubl.schema.xsd.creditnote_22.CreditNoteType)
 	   {
-		   UBL22Writer.creditNote ()
+		   UBL22Marshaller.creditNote ()
 				   .setFormattedOutput (true)
 				   .write ((oasis.names.specification.ubl.schema.xsd.creditnote_22.CreditNoteType) aUBL, output);
 	   }
 	   else if (aUBL instanceof oasis.names.specification.ubl.schema.xsd.invoice_23.InvoiceType)
 	   {
-		   UBL23Writer.invoice ()
+		   UBL23Marshaller.invoice ()
 				   .setFormattedOutput (true)
 				   .write ((oasis.names.specification.ubl.schema.xsd.invoice_23.InvoiceType) aUBL, output);
 	   }
      else if (aUBL instanceof oasis.names.specification.ubl.schema.xsd.creditnote_23.CreditNoteType)
 	   {
-		   UBL23Writer.creditNote ()
+		   UBL23Marshaller.creditNote ()
 				   .setFormattedOutput (true)
 				   .write ((oasis.names.specification.ubl.schema.xsd.creditnote_23.CreditNoteType) aUBL, output);
 	   }

@@ -3,11 +3,9 @@ package org.mustangproject.ZUGFeRD;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import javax.xml.xpath.XPath;
@@ -16,7 +14,14 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.mustangproject.*;
+import org.mustangproject.Allowance;
+import org.mustangproject.BankDetails;
+import org.mustangproject.Charge;
+import org.mustangproject.EStandard;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.TradeParty;
+import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;

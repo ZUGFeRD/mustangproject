@@ -18,11 +18,6 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import javax.activation.DataSource;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-
 public interface IZUGFeRDLegalOrganisation   {
 
 	/***

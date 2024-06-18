@@ -20,20 +20,38 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import org.apache.pdfbox.cos.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.transform.TransformerException;
+
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.cos.COSArray;
+import org.apache.pdfbox.cos.COSBase;
+import org.apache.pdfbox.cos.COSDictionary;
+import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.cos.COSObject;
 import org.apache.pdfbox.io.IOUtils;
-import org.apache.pdfbox.pdmodel.*;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
+import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDMarkInfo;
 import org.apache.pdfbox.pdmodel.documentinterchange.logicalstructure.PDStructureTreeRoot;
-import org.apache.pdfbox.pdmodel.font.PDCIDFontType2;
-import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDFontDescriptor;
-import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.graphics.color.PDOutputIntent;
-import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.AdobePDFSchema;
 import org.apache.xmpbox.schema.DublinCoreSchema;
@@ -47,11 +65,8 @@ import org.apache.xmpbox.xml.XmpSerializer;
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
 
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.xml.transform.TransformerException;
-import java.io.*;
-import java.util.*;
+import jakarta.activation.DataSource;
+import jakarta.activation.FileDataSource;
 
 public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
@@ -167,7 +182,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 */
 	public OXExporterFromA3 load(byte[] pdfBinary) throws IOException {
 		ensurePDFIsValid(new ByteArrayDataSource(new ByteArrayInputStream(pdfBinary)));
-		doc = PDDocument.load(pdfBinary);
+		doc = Loader.loadPDF(pdfBinary);
 		return this;
 	}
 
@@ -536,13 +551,13 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	}
 
 	protected PDFAIdentificationSchema getPDFAIdentificationSchema(XMPMetadata xmp) {
-		PDFAIdentificationSchema pdfaid = xmp.getPDFIdentificationSchema();
+		PDFAIdentificationSchema pdfaid = xmp.getPDFAIdentificationSchema();
 		if (pdfaid != null)
 			if (overwrite)
 				xmp.removeSchema(pdfaid);
 			else
 				return pdfaid;
-		return xmp.createAndAddPFAIdentificationSchema();
+		return xmp.createAndAddPDFAIdentificationSchema();
 	}
 
 	protected void writeDublinCoreSchema(XMPMetadata xmp) {
