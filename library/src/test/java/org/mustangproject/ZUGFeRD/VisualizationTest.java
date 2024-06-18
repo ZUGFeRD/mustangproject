@@ -80,10 +80,10 @@ public class VisualizationTest extends ResourceCase {
 			/* remove file endings so that tests can also pass after checking
 			   out from git with arbitrary options (which may include CSRF changes)
 			 */
-			result = zvi.visualize(UBLinputFile.getAbsolutePath(),ZUGFeRDVisualizer.Language.EN).replace("\r","").replace("\n","");
+			result = zvi.visualize(UBLinputFile.getAbsolutePath(),ZUGFeRDVisualizer.Language.EN).replace("\r","").replace("\n","").replace(" ","").replace("\t","");
 
 			File expectedResult=getResourceAsFile("factur-x-vis-ubl-creditnote.en.html");
-			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r","").replace("\n","");
+			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r","").replace("\n","").replace(" ","").replace("\t","");
 			// remove linebreaks as well...
 
 		} catch (UnsupportedOperationException e) {

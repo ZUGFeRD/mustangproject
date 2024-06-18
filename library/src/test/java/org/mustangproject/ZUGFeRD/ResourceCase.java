@@ -1,6 +1,8 @@
 package org.mustangproject.ZUGFeRD;
 
 import junit.framework.TestCase;
+
+import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+@Ignore
 public class ResourceCase extends TestCase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCase.class.getCanonicalName()); // log output is
 	

@@ -42,6 +42,7 @@ import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.cos.COSObject;
 import org.apache.pdfbox.io.IOUtils;
+import org.apache.pdfbox.pdfwriter.compress.CompressParameters;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -312,7 +313,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 			throw new IOException(
 					"File must be attached (usually with setTransaction) before perfoming this operation");
 		}
-		doc.save(ZUGFeRDfilename);
+		doc.save(ZUGFeRDfilename, CompressParameters.NO_COMPRESSION);
 		if (!disableAutoClose) {
 			close();
 		}
@@ -339,7 +340,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 			throw new IOException(
 					"File must be attached (usually with setTransaction) before perfoming this operation");
 		}
-		doc.save(output);
+		doc.save(output, CompressParameters.NO_COMPRESSION);
 		if (!disableAutoClose) {
 			close();
 		}
