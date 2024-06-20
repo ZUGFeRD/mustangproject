@@ -430,4 +430,8 @@ public class ZUGFeRDValidator {
 		}
 	}
 
+	public ValidationContext getValidationContext() {
+		return context;
+	}
+
 }
