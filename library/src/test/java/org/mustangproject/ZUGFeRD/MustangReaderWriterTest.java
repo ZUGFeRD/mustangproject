@@ -376,7 +376,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 //			assertFalse(pdfContent.indexOf("urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#") == -1);
 
 		} catch (IOException e) {
-			fail("IOException should not happen in testZExport");
+			fail("IOException should not happen in testZExport:"+e.getMessage());
 		}
 
 		// now check the contents (like MustangReaderTest)
@@ -418,7 +418,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 			assertTrue(pdfContent.indexOf(DocumentContextParameterTypeConstants.COMFORT) >= 0);
 
 		} catch (IOException e) {
-			fail("IOException should not happen in testZExport");
+			fail("IOException should not happen in testZExportv1Profile:"+e.getMessage());
 		}
 	}
 

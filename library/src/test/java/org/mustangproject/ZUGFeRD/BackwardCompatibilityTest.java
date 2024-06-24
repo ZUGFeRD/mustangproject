@@ -73,7 +73,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 //			assertFalse(pdfContent.indexOf("urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#") == -1);
 
 		} catch (IOException e) {
-			fail("IOException should not happen in testZExport");
+			fail("IOException should not happen in testZF1Export:"+e.getMessage());
 		}
 
 		// now check the contents (like MustangReaderTest)
@@ -113,7 +113,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 //			assertFalse(pdfContent.indexOf("urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#") == -1);
 
 		} catch (IOException e) {
-			fail("IOException should not happen in testZExport");
+			fail("IOException should not happen in testZF2Export:"+e.getMessage());
 		}
 
 		// now check the contents (like MustangReaderTest)
@@ -132,7 +132,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 
 		// the writing part
 		try (InputStream SOURCE_PDF = this.getClass()
-			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
+			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20201121_508blanko.pdf");
 
 			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1().setZUGFeRDVersion(2).setProfile("EN16931").load(SOURCE_PDF)) {
 
