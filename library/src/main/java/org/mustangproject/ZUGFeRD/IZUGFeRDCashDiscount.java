@@ -1,7 +1,5 @@
 package org.mustangproject.ZUGFeRD;
 
-import org.mustangproject.XMLTools;
-
 public interface IZUGFeRDCashDiscount {
 
 

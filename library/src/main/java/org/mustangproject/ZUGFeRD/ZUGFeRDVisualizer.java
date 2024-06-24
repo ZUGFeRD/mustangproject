@@ -20,29 +20,49 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import org.apache.fop.apps.*;
-import org.apache.fop.apps.io.ResourceResolverFactory;
-import org.apache.fop.configuration.Configuration;
-import org.apache.fop.configuration.ConfigurationException;
-import org.apache.fop.configuration.DefaultConfigurationBuilder;
-import org.apache.xmlgraphics.util.MimeConstants;
-import org.mustangproject.CII.CIIToUBL;
-import org.mustangproject.ClasspathResolverURIAdapter;
-import org.xml.sax.SAXException;
-
-import javax.xml.transform.*;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
-import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
+import org.apache.fop.apps.io.ResourceResolverFactory;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.ConfigurationException;
+import org.apache.fop.configuration.DefaultConfigurationBuilder;
+import org.apache.xmlgraphics.util.MimeConstants;
+import org.mustangproject.ClasspathResolverURIAdapter;
+import org.mustangproject.CII.CIIToUBL;
 
 public class ZUGFeRDVisualizer {
 

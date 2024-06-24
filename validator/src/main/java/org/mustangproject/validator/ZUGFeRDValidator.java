@@ -1,6 +1,12 @@
 package org.mustangproject.validator;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -27,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
+
+import jakarta.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 //abstract class
 public class ZUGFeRDValidator {
@@ -322,6 +329,7 @@ public class ZUGFeRDValidator {
 			}
 		} catch (IrrecoverableValidationError | IOException irx) {
 			LOGGER.info(irx.getMessage());
+			context.setInvalid ();
 		} finally {
 			finalStringResult.append(context.getXMLResult());
 			finalStringResult.append("</validation>");

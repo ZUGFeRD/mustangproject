@@ -21,6 +21,7 @@ package org.mustangproject.ZUGFeRD;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
@@ -328,13 +329,13 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 	}
 
 	private void checkPdfA3B(File tempFile) throws IOException, InvalidPasswordException {
-		try (PDDocument doc = PDDocument.load(tempFile)) {
+		try (PDDocument doc = Loader.loadPDF(tempFile)) {
 			PDMetadata metadata = doc.getDocumentCatalog().getMetadata();
 			InputStream exportXMPMetadata = metadata.exportXMPMetadata();
 			byte[] xmpBytes = new byte[exportXMPMetadata.available()];
 			exportXMPMetadata.read(xmpBytes);
 			final XMPMetadata xmp = new DomXmpParser().parse(xmpBytes);
-			PDFAIdentificationSchema pdfaid = xmp.getPDFIdentificationSchema();
+			PDFAIdentificationSchema pdfaid = xmp.getPDFAIdentificationSchema();
 			assertEquals(pdfaid.getPart().intValue(), 3);
 			assertEquals(pdfaid.getConformance(), "U");
 		} catch (XmpParsingException e) {

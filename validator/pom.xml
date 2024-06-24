@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.mustangproject</groupId>
         <artifactId>core</artifactId>
-        <version>2.11.1-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
@@ -11,7 +11,7 @@
     <name>Library to validate e-invoices (ZUGFeRD, Factur-X and Xrechnung)</name>
 
     <packaging>jar</packaging>
-    <version>2.11.1-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <repositories>
         <repository>
             <!-- for jargs -->
@@ -38,37 +38,24 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>library</artifactId>
-            <version>2.11.1-SNAPSHOT</version>
+            <version>3.0.0-SNAPSHOT</version>
         </dependency>
-        <!-- for java9 -->
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.1</version>
-        </dependency>
-        <!-- for xml pretty print -->
-        <dependency>
-            <groupId>org.dom4j</groupId>
-            <artifactId>dom4j</artifactId>
-            <version>2.1.3</version>
-        </dependency>
-        <!-- for ph-schematron -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.13</version>
+            <version>1.5.6</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.2.13</version>
+            <version>1.5.6</version>
         </dependency>
 
         <dependency>
             <!-- This library is needed so that logback stderr output is sent to, well, stderr, otherwise it lands in stdout -->
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
-            <version>3.1.7</version>
+            <version>3.1.8</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.googlecode.slf4j-maven-plugin-log/slf4j-maven-plugin-log -->
         <dependency>
@@ -81,24 +68,14 @@
         <!-- embedded verapdf -->
         <dependency>
             <groupId>org.verapdf</groupId>
-            <artifactId>validation-model</artifactId>
-            <version>1.22.2</version>
+            <artifactId>validation-model-jakarta</artifactId>
+            <version>1.26.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.helger/ph-schematron -->
         <dependency>
             <groupId>com.helger.schematron</groupId>
             <artifactId>ph-schematron-xslt</artifactId>
-            <version>6.3.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.helger</groupId>
-            <artifactId>ph-jaxb</artifactId>
-            <version>9.5.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mustangproject</groupId>
-            <artifactId>library</artifactId>
-            <version>2.11.1-SNAPSHOT</version>
+            <version>8.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
@@ -115,18 +92,18 @@
         <dependency>
             <groupId>org.riversun</groupId>
             <artifactId>bigdoc</artifactId>
-            <version>0.3.0</version>
+            <version>0.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.9.1</version>
+            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-            <version>5.9.1</version>
+            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -328,7 +305,7 @@
                     <plugin>
                         <groupId>com.helger.maven</groupId>
                         <artifactId>ph-schematron-maven-plugin</artifactId>
-                        <version>5.6.0</version>
+                        <version>8.0.0</version>
                         <configuration>
                             <schematronDirectory>${basedir}/src/main/resources/schematron</schematronDirectory>
                             <xsltDirectory>${basedir}/src/main/resources/xslt</xsltDirectory>

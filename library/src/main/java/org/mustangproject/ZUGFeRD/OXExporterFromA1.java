@@ -19,13 +19,15 @@
 package org.mustangproject.ZUGFeRD;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.pdfbox.preflight.PreflightDocument;
+import org.apache.pdfbox.preflight.ValidationResult;
 import org.apache.pdfbox.preflight.exception.ValidationException;
 import org.apache.pdfbox.preflight.parser.PreflightParser;
 
-import javax.activation.DataSource;
-import java.io.IOException;
-import java.io.InputStream;
+import jakarta.activation.DataSource;
 
 public class OXExporterFromA1 extends OXExporterFromA3 implements IZUGFeRDExporter {
 	protected boolean ignorePDFAErrors = false;
@@ -36,7 +38,7 @@ public class OXExporterFromA1 extends OXExporterFromA3 implements IZUGFeRDExport
 	}
 
 	private static boolean isValidA1(DataSource dataSource) throws IOException {
-		return getPDFAParserValidationResult(new PreflightParser(dataSource));
+		return getPDFAParserValidationResult(PreflightParserHelper.createPreflightParser(dataSource));
 	}
 	/***
 	 * internal helper function: get namespace for order-x
@@ -61,19 +63,19 @@ public class OXExporterFromA1 extends OXExporterFromA3 implements IZUGFeRDExport
 		 * NonSequentialParser. Some additional controls are present to check a set of
 		 * PDF/A requirements. (Stream length consistency, EOL after some Keyword...)
 		 */
-		parser.parse();// might add a Format.PDF_A1A as parameter and iterate through A1 and A3
+		// might add a Format.PDF_A1A as parameter and iterate through A1 and A3
 
-		try (PreflightDocument document = parser.getPreflightDocument()) {
+		try (PreflightDocument document = (PreflightDocument) parser.parse()) {
 			/*
 			 * Once the syntax validation is done, the parser can provide a
 			 * PreflightDocument (that inherits from PDDocument) This document process the
 			 * end of PDF/A validation.
 			 */
 
-			document.validate();
+			ValidationResult res = document.validate();
 
 			// Get validation result
-			return document.getResult().isValid();
+			return res.isValid();
 		} catch (ValidationException e) {
 			/*
 			 * the parse method can throw a SyntaxValidationException if the PDF file can't

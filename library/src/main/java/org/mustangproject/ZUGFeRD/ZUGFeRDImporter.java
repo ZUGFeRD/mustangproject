@@ -23,7 +23,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,6 +42,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
@@ -115,7 +123,7 @@ public class ZUGFeRDImporter {
 		if (Arrays.equals(pad, pdfSignature)) { // we have a pdf
 
 
-			try (PDDocument doc = PDDocument.load(pdfStream)) {
+			try (PDDocument doc = Loader.loadPDF(IOUtils.toByteArray (pdfStream))) {
 				// PDDocumentInformation info = doc.getDocumentInformation();
 				final PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
 				//start

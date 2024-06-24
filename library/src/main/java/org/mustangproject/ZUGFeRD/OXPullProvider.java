@@ -27,18 +27,14 @@ import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATE
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
-import org.mustangproject.IncludedNote;
 import org.mustangproject.XMLTools;
 
 public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider {

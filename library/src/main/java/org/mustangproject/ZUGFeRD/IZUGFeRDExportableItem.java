@@ -26,11 +26,12 @@ package org.mustangproject.ZUGFeRD;
  * @author jstaerk
  * */
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.mustangproject.Item;
-
 import java.math.BigDecimal;
 import java.util.Date;
+
+import org.mustangproject.Item;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(as = Item.class)
 public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
