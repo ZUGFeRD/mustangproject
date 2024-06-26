@@ -1,7 +1,8 @@
 
 - support pdf export/visualization to PDF, thanks to Heavenfighter #387 allow embedd fonts from jar-file for pdf creation #388
 - Fix #389: ClassCastException: ZUGFeRDExporterFromA3
-
+- jakarta support #372
+- Upgrade to PDFBox 3 #373 
 2.11.0
 =======
 2024-05-22

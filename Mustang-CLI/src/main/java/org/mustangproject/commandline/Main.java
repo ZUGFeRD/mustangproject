@@ -331,31 +331,34 @@ public class Main {
 		try {
 			CommandLine cmd;
 			CommandLineParser parser = new BasicParser();
+
 			// create Options object
 			Options options = new Options();
-
 			options.addOption(new Option("h", "help", false, "display usage"));
 			options.addOption(new Option("a", "action", true, "which action to perform"));
 			options.addOption(new Option("f", "format", true, "which format to output"));
-			options.addOption(new Option("", "version", true, "which version of the standard to use"));
-			options.addOption(new Option("", "profile", true, "which profile of the standard to use"));
-			Option attachmentOpt = new Option("", "attachments", true, "File attachments");
+			options.addOption(new Option("version", "version", true, "which version of the standard to use"));
+			options.addOption(new Option("profile", "profile", true, "which profile of the standard to use"));
+			Option attachmentOpt = new Option("attachments", "attachments", true, "File attachments");
 			attachmentOpt.setValueSeparator(',');
 			attachmentOpt.setArgs(Option.UNLIMITED_VALUES);
+
 			options.addOption(attachmentOpt);
-			options.addOption(new Option("", "source",true, "which source file to use"));
-			options.addOption(new Option("", "source-xml",true, "which source file to use"));
-			options.addOption(new Option("", "language",true, "output language (en, de or fr)"));
-			options.addOption(new Option("", "out",true, "which output file to write to"));
-			options.addOption(new Option("", "no-notices",false, "suppress non-fatal errors"));
-			options.addOption(new Option("", "logAppend",true, "freeform text to be appended to log messages"));
-			options.addOption(new Option("", "disable-file-logging", false, "suppress logging to file"));
+			options.addOption(new Option("source", "source",true, "which source file to use"));
+			options.addOption(new Option("source-xml", "source-xml",true, "which source file to use"));
+			options.addOption(new Option("language", "language",true, "output language (en, de or fr)"));
+			options.addOption(new Option("out", "out",true, "which output file to write to"));
+			options.addOption(new Option("no-notices", "no-notices",false, "suppress non-fatal errors"));
+			options.addOption(new Option("logAppend", "logAppend",true, "freeform text to be appended to log messages"));
+			options.addOption(new Option("disable-file-logging", "disable-file-logging", false, "suppress logging to file"));
 			options.addOption(new Option("d", "directory",true, "which directory to operate on"));
 			options.addOption(new Option("i", "ignorefileextension",false, "ignore non-matching file extensions"));
 			options.addOption(new Option("l", "listfromstdin",false, "take list of files from commandline"));
+
 			boolean optionsRecognized=false;
 			String action = "";
-            Boolean disableFileLogging = false;
+
+			Boolean disableFileLogging = false;
 			try {
 				cmd = parser.parse(options, args);
 
