@@ -261,7 +261,11 @@ public class ZUGFeRDImporter {
 	 * @return the ZUGFeRD Profile
 	 */
 	public String getZUGFeRDProfil() {
-		switch (extractString("//*[local-name() = 'GuidelineSpecifiedDocumentContextParameter']//*[local-name() = 'ID']")) {
+		String guideline = extractString("//*[local-name() = 'GuidelineSpecifiedDocumentContextParameter']//*[local-name() = 'ID']");
+		if(guideline.contains("xrechnung")) {
+			return "XRECHNUNG";
+		}
+		switch (guideline) {
 			case "urn:cen.eu:en16931:2017":
 			case "urn:ferd:CrossIndustryDocument:invoice:1p0:comfort":
 				return "COMFORT";
