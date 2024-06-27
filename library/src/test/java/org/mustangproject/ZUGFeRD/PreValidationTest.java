@@ -59,10 +59,11 @@ public class PreValidationTest extends TestCase {
 		hasEx = false;
 		try (InputStream source = this.getClass()
 			.getResourceAsStream(SOURCE_PDF)) {
-			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("My Application").ignorePDFAErrors()
-				.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2)
-				.load(source);
-			ze.setTransaction(createInvoice());
+			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1();
+			ze.ignorePDFAErrors().load(source);
+
+			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).
+				setTransaction(createInvoice());
 			ze.export(TARGET_PDF);
 		} catch (IOException e) {
 			hasEx = true;

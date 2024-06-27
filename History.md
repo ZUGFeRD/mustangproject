@@ -6,6 +6,8 @@
 - jakarta support #372
 - Upgrade to PDFBox 3 #373
 - #397
+- #392 CLI: action combine: --ignorefileextension to ignore PDF/A input file errors dosen't work
+- for CLI combine, fx is now default
 
 2.11.0
 =======

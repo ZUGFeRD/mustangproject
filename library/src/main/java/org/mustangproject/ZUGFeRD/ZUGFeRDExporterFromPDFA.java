@@ -49,14 +49,28 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 
 	protected IZUGFeRDExporter theExporter;
 
+	protected boolean ignorePDFAErrors = false;
+
+	public ZUGFeRDExporterFromPDFA ignorePDFAErrors() {
+		this.ignorePDFAErrors = true;
+		return this;
+	}
 	protected void determineAndSetExporter(int PDFAVersion) {
 		if (PDFAVersion == 3) {
 			theExporter = new ZUGFeRDExporterFromA3();
+			if (ignorePDFAErrors) {
+				((ZUGFeRDExporterFromA3)theExporter).ignorePDFAErrors();
+			}
 		} else if (PDFAVersion == 1) {
 			theExporter = new ZUGFeRDExporterFromA1();
+			if (ignorePDFAErrors) {
+				((ZUGFeRDExporterFromA1)theExporter).ignorePDFAErrors();
+			}
 		} else {
 			throw new IllegalArgumentException("PDF-A version not supported");
 		}
+
+
 	}
 	protected IZUGFeRDExporter getExporter() {
 		if (theExporter==null) {

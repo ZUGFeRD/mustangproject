@@ -31,12 +31,6 @@ import org.mustangproject.EStandard;
 import jakarta.activation.DataSource;
 
 public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 implements IZUGFeRDExporter {
-	protected boolean ignorePDFAErrors = false;
-
-	public ZUGFeRDExporterFromA1 ignorePDFAErrors() {
-		this.ignorePDFAErrors = true;
-		return this;
-	}
 
 	private static boolean isValidA1(DataSource dataSource) throws IOException {
 		return getPDFAParserValidationResult(PreflightParserHelper.createPreflightParser(dataSource));

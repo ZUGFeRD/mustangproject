@@ -80,7 +80,12 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	private boolean isFacturX = true;
 
 	public static final int DefaultZUGFeRDVersion = 2;
+	protected boolean ignorePDFAErrors = false;
 
+	public ZUGFeRDExporterFromA3 ignorePDFAErrors() {
+		this.ignorePDFAErrors = true;
+		return this;
+	}
 	protected PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
 	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<FileAttachment>();
 
