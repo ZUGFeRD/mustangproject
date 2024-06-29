@@ -332,7 +332,7 @@ public class ZUGFeRDVisualizer {
 
 		FOUserAgent userAgent = fopFactory.newFOUserAgent();
 
-		userAgent.getRendererOptions().put("pdf-a-mode", "PDF/A-1b");
+		userAgent.getRendererOptions().put("pdf-a-mode", "PDF/A-3b");
 
 // Step 2: Set up output stream.
 // Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
