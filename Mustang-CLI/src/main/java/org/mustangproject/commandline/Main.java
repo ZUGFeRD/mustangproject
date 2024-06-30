@@ -71,6 +71,7 @@ public class Main {
 			+ "                        For ZUGFeRD v1 or Order-X: <B>ASIC, <C>OMFORT or EX<T>ENDED\n"
 			+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED\n"
 			+ "                [--attachments <filenames>]: list of file attachments (passing a single empty file name prevents prompting)\n"
+			+ "                [--no-additional-attachments]: prevent prompting for attachments\n"
 			+ "        --action ubl   convert UN/CEFACT 2016b CII XML to UBL XML\n"
 			+ "                [--source <filename>]: set input XML file\n"
 			+ "                [--out <filename>]: set output XML file\n"
@@ -340,6 +341,7 @@ public class Main {
 			options.addOption(new Option("f", "format", true, "which format to output"));
 			options.addOption(new Option("version", "version", true, "which version of the standard to use"));
 			options.addOption(new Option("profile", "profile", true, "which profile of the standard to use"));
+			options.addOption(new Option("no-additional-attachments", "no-additional-attachments", false, "prevent prompting for attachments"));
 			Option attachmentOpt = new Option("attachments", "attachments", true, "File attachments");
 			attachmentOpt.setValueSeparator(',');
 			attachmentOpt.setArgs(Option.UNLIMITED_VALUES);
@@ -368,6 +370,7 @@ public class Main {
 				String directoryName = cmd.getOptionValue("directory");
 				Boolean filesFromStdIn = cmd.hasOption("listfromstdin");//((Number)cmdLine.getParsedOptionValue("integer-option")).intValue();
 				Boolean ignoreFileExt = cmd.hasOption("ignorefileextension");
+				Boolean noAttachments = cmd.hasOption("no-additional-attachments");
 				Boolean helpRequested = cmd.hasOption("help") || ((action != null) && (action.equals("help")));
 				disableFileLogging = cmd.hasOption("disable-file-logging");
 
@@ -403,7 +406,7 @@ public class Main {
 					performMetrics(directoryName, filesFromStdIn, ignoreFileExt);
 					optionsRecognized = true;
 				} else if ((action != null) && (action.equals("combine"))) {
-					performCombine(sourceName, sourceXMLName, outName, format, zugferdVersion, zugferdProfile, ignoreFileExt, attachmentFilenames, attachments);
+					performCombine(sourceName, sourceXMLName, outName, format, zugferdVersion, zugferdProfile, ignoreFileExt, attachmentFilenames, attachments, noAttachments);
 					optionsRecognized = true;
 				} else if ((action != null) && (action.equals("extract"))) {
 					performExtract(sourceName, outName);
@@ -441,7 +444,11 @@ public class Main {
 				System.exit(2);
 			}
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
+			if (LOGGER != null) {
+				LOGGER.error(e.getMessage(), e);
+			} else {
+				System.err.println(e.getMessage());
+			}
 			System.exit(-1);
 		}
 
@@ -548,7 +555,7 @@ public class Main {
 	}
 
 	private static void performCombine(String pdfName, String xmlName, String outName, String format, String zfVersion,
-									   String zfProfile, Boolean ignoreInputErrors, String[] attachmentFilenames, ArrayList<FileAttachment> attachments) throws Exception {
+									   String zfProfile, Boolean ignoreInputErrors, String[] attachmentFilenames, ArrayList<FileAttachment> attachments, Boolean noAttachments) throws Exception {
 		/*
 		 * ZUGFeRDExporter ze= new ZUGFeRDExporterFromA1Factory()
 		 * .setProducer("toecount") .setCreator(System.getProperty("user.name"))
@@ -579,11 +586,13 @@ public class Main {
 			if (attachmentFilenames == null) {
 				byte attachmentContents[] = null;
 				String attachmentFilename, attachmentMime, attachmentDescription;
-				attachmentFilename = getFilenameFromUser("Additional file attachments filename (empty for none)", "", "pdf", true, false);
-				if (attachmentFilename.length() != 0) {
-					attachmentContents = Files.readAllBytes(Paths.get(attachmentFilename));
-					attachmentMime = Files.probeContentType(Paths.get(attachmentFilename));
-					attachments.add(new FileAttachment(attachmentFilename, attachmentMime, "Data", attachmentContents));
+				if (!noAttachments) {
+					attachmentFilename = getFilenameFromUser("Additional file attachments filename (empty for none)", "", "pdf", true, false);
+					if (attachmentFilename.length() != 0) {
+						attachmentContents = Files.readAllBytes(Paths.get(attachmentFilename));
+						attachmentMime = Files.probeContentType(Paths.get(attachmentFilename));
+						attachments.add(new FileAttachment(attachmentFilename, attachmentMime, "Data", attachmentContents));
+					}
 				}
 			} else {
 				for (int i = 0; i < attachmentFilenames.length; i++) {
@@ -709,7 +718,7 @@ public class Main {
 				}
 				ze = new ZUGFeRDExporterFromPDFA();
 				if (ignoreInputErrors) {
-					((ZUGFeRDExporterFromPDFA)ze).ignorePDFAErrors();
+					((ZUGFeRDExporterFromPDFA) ze).ignorePDFAErrors();
 				}
 			}
 			for (FileAttachment attachment : attachments) {
@@ -731,7 +740,9 @@ public class Main {
 			System.out.println("Written to " + outName);
 
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage(), e);
+			if (LOGGER != null) {
+				LOGGER.error(e.getMessage(), e);
+			}
 			System.err.println(e.getMessage());
 		}
 	}
