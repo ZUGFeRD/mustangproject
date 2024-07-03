@@ -9,7 +9,9 @@
 - #392 CLI: action combine: --ignorefileextension to ignore PDF/A input file errors dosen't work
 - for CLI combine, fx is now default
 - set profile to XR if XR is imported #395
-- Powershell compatibility: added --no-additional-attachments command line option for better batch processing
+- Powershell compatibility: added --no-additional-attachments command line option for better batch processing:
+  In cmd also --attachments "" worked but in powershell it was hard to figure out that one had to use --attachments '""'
+- Be able to validate XRechnung/UBL files #337
 
 2.11.0
 =======
