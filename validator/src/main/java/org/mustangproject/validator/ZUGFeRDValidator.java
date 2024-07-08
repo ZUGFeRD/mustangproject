@@ -296,6 +296,7 @@ public class ZUGFeRDValidator {
 					if (isXML) {
 						pdfValidity = true;
 						optionsRecognized = true;
+						xv.disableAutoload();
 						xv.setFilename(fileNameOfInputStream);
 						sha1Checksum = calcSHA1(inputStream);
 

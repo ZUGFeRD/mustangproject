@@ -36,6 +36,7 @@ public class XMLValidator extends Validator {
 
 	protected String zfXML = "";
 	protected String filename = "";
+	protected boolean autoload=true;
 	int firedRules = 0;
 	int failedRules = 0;
 	boolean disableNotices = false;
@@ -55,19 +56,27 @@ public class XMLValidator extends Validator {
 	public void setFilename(String name) throws IrrecoverableValidationError { // from XML Filename
 		filename = name;
 		// file existence must have been checked before
+		if (autoload) {
+			try {
+				zfXML = new String(XMLTools.removeBOM(Files.readAllBytes(Paths.get(filename))), StandardCharsets.UTF_8);
+			} catch (final IOException e) {
 
-		try {
-			zfXML = new String(XMLTools.removeBOM(Files.readAllBytes(Paths.get(name))), StandardCharsets.UTF_8);
-		} catch (final IOException e) {
-
-			final ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(9)
+				final ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(9)
 					.setPart(EPart.fx);
-			final StringWriter sw = new StringWriter();
-			final PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			vri.setStacktrace(sw.toString());
-			context.addResultItem(vri);
+				final StringWriter sw = new StringWriter();
+				final PrintWriter pw = new PrintWriter(sw);
+				e.printStackTrace(pw);
+				vri.setStacktrace(sw.toString());
+				context.addResultItem(vri);
+			}
+
 		}
+
+	}
+
+	public void disableAutoload() {
+		// for streaming, which sets a fake filename
+		autoload=false;
 	}
 
 	/***
