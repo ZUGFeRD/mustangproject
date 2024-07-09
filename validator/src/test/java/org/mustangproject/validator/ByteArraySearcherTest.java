@@ -16,7 +16,7 @@ public class ByteArraySearcherTest {
     assertEquals (0, ByteArraySearcher.indexOf (haystack, new byte[] {'H', 'e'}));
     assertEquals (0, ByteArraySearcher.indexOf (haystack, new byte[] {'H', 'e', 'l', 'l'}));
     assertEquals (0, ByteArraySearcher.indexOf (haystack, haystack));
-    assertEquals (0, ByteArraySearcher.indexOf (haystack, new byte[0]));
+    assertEquals (-1, ByteArraySearcher.indexOf (haystack, new byte[0]));
     assertEquals (-1, ByteArraySearcher.indexOf (haystack, new byte[] {'a'}));
     assertEquals (-1, ByteArraySearcher.indexOf (haystack, new byte[] {'h'}));
     assertEquals (-1, ByteArraySearcher.indexOf (haystack, new byte[] {'r', 'o'}));
