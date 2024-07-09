@@ -127,9 +127,6 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	protected String orderXDocumentType = "ORDER";
 
 
-	private HashMap<String, byte[]> additionalXMLs = new HashMap<>();
-
-
 	private boolean attachZUGFeRDHeaders = true;
 
 	/**

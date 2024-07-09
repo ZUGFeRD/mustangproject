@@ -138,9 +138,6 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	protected PDDocument doc;
 
-	private HashMap<String, byte[]> additionalXMLs = new HashMap<>();
-
-
 	protected int ZFVersion = DefaultZUGFeRDVersion;
 	private boolean attachZUGFeRDHeaders = true;
 
@@ -559,7 +556,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		metadata.addSchema(pdfaex);
 	}
 
-	private void removeCidSet(PDDocumentCatalog catalog, PDDocument doc)
+	private void removeCidSet(PDDocument doc)
 	    throws IOException
 	{
 		// https://github.com/ZUGFeRD/mustangproject/issues/249
@@ -580,7 +577,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 							PDType0Font typedFont = (PDType0Font) pdFont;
 
 							if (typedFont.getDescendantFont() instanceof PDCIDFontType2) {
-								PDCIDFontType2 f = (PDCIDFontType2) typedFont.getDescendantFont();
+								@SuppressWarnings ("unused")
+                PDCIDFontType2 f = (PDCIDFontType2) typedFont.getDescendantFont();
 								PDFontDescriptor fontDescriptor = pdFont.getFontDescriptor();
 
 								fontDescriptor.getCOSObject().removeItem(cidSet);
@@ -601,7 +599,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		metadata = new PDMetadata(doc);
 		cat.setMetadata(metadata);
 
-		removeCidSet(cat, doc);
+		removeCidSet(doc);
 		xmp = getXmpMetadata();
 		writeAdobePDFSchema(xmp);
 		writePDFAIdentificationSchema(xmp);

@@ -21,7 +21,6 @@ package org.mustangproject.ZUGFeRD;
 
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import org.mustangproject.CII.CIIToUBL;
 
 import javax.xml.transform.*;
 import java.io.*;

@@ -90,7 +90,7 @@ public class UBLTest extends ResourceCase {
 			final ByteArrayOutputStream baos=new ByteArrayOutputStream();
 			oe.export(baos);
 
-			final String theXML = baos.toString("UTF-8");
+			final String theXML = baos.toString(StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<DespatchAdvice"));
 			Files.write(Paths.get(TARGET_XML), theXML.getBytes(StandardCharsets.UTF_8));
 		} catch (final IOException e) {

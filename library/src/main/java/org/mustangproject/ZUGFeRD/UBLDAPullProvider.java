@@ -22,7 +22,6 @@ package org.mustangproject.ZUGFeRD;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
@@ -86,13 +85,9 @@ public class UBLDAPullProvider implements IXMLProvider {
 		}
 		xml += "</DespatchAdvice>\n";
 		final byte[] ublRaw;
-		try {
-			ublRaw = xml.getBytes("UTF-8");
+		ublRaw = xml.getBytes(StandardCharsets.UTF_8);
 
-			ublData = XMLTools.removeBOM(ublRaw);
-		} catch (final UnsupportedEncodingException e) {
-			Logger.getLogger(UBLDAPullProvider.class.getName()).log(Level.SEVERE, null, e);
-		}
+		ublData = XMLTools.removeBOM(ublRaw);
 	}
 
 	public String getPartyXML(IZUGFeRDExportableTradeParty tp) {

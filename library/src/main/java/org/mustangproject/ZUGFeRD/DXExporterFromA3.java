@@ -127,9 +127,6 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	protected String despatchAdviceDocumentType = "DESPATCHADVICE";
 
 
-	private HashMap<String, byte[]> additionalXMLs = new HashMap<>();
-
-
 	private boolean attachZUGFeRDHeaders = true;
 
 	/**

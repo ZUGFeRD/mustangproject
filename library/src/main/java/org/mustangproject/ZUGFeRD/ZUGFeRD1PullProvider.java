@@ -100,7 +100,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 			format.setTrimText(false);
 			final XMLWriter writer = new XMLWriter(sw, format);
 			writer.write(document);
-			res = sw.toString().getBytes("UTF-8");
+			res = sw.toString().getBytes(StandardCharsets.UTF_8);
 
 		} catch (final IOException e) {
 			Logger.getLogger(ZUGFeRD1PullProvider.class.getName()).log(Level.SEVERE, null, e);
