@@ -34,4 +34,23 @@ public final class ByteArraySearcher {
 	public static boolean contains(byte[] haystack, byte[] needle) {
 	  return indexOf (haystack, needle) >= 0;
 	}
+
+  public static boolean startsWith(byte[] haystack, byte[] needle) {
+    if (needle.length > haystack.length) {
+      return false;
+    }
+    
+    // Any needle to search?
+    if (needle.length == 0) {
+      return false;
+    }
+
+    for (int j = 0; j < needle.length; j++) {
+      if (haystack[j] != needle[j]) {
+        return false;
+      }
+    }
+    
+    return true;
+  }
 }

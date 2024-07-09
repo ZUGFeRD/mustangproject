@@ -114,7 +114,7 @@ public class ZUGFeRDValidator {
         if (disableNotices) {
           xv.disableNotices();
         }
-        isPDF = ByteArraySearcher.indexOf(content, new byte[] {'%', 'P', 'D', 'F'}) == 0;
+        isPDF = ByteArraySearcher.startsWith(content, new byte[] {'%', 'P', 'D', 'F'});
         if (isPDF) {
           // Avoid reading again from file
           pdfv.setFilenameAndContents(contextFilename, content);

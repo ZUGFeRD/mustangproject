@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -73,7 +74,7 @@ public class PDFValidator extends Validator {
 
 		zfXML = null;
 		// file existence must have been checked before
-		if (!ByteArraySearcher.contains(fileContents, new byte[]{'%', 'P', 'D', 'F'})) {
+		if (!ByteArraySearcher.startsWith(fileContents, new byte[]{'%', 'P', 'D', 'F'})) {
 			context.addResultItem(
 				new ValidationResultItem(ESeverity.fatal, "Not a PDF file " + pdfFilename).setSection(20).setPart(EPart.pdf));
 
@@ -254,36 +255,31 @@ public class PDFValidator extends Validator {
 		zfXML = zi.getUTF8();
 
 		// step 3 find signatures
-		try {
-			final byte[] symtraxSignature = "Symtrax".getBytes("UTF-8");
-			final byte[] mustangSignature = "via mustangproject".getBytes("UTF-8");
-			final byte[] facturxpythonSignature = "by Alexis de Lattre".getBytes("UTF-8");
-			final byte[] intarsysSignature = "intarsys ".getBytes("UTF-8");
-			final byte[] konikSignature = "Konik".getBytes("UTF-8");
-			final byte[] pdfMachineSignature = "pdfMachine from Broadgun Software".getBytes("UTF-8");
-			final byte[] ghostscriptSignature = "%%Invocation:".getBytes("UTF-8");
+		final byte[] symtraxSignature = "Symtrax".getBytes(StandardCharsets.UTF_8);
+		final byte[] mustangSignature = "via mustangproject".getBytes(StandardCharsets.UTF_8);
+		final byte[] facturxpythonSignature = "by Alexis de Lattre".getBytes(StandardCharsets.UTF_8);
+		final byte[] intarsysSignature = "intarsys ".getBytes(StandardCharsets.UTF_8);
+		final byte[] konikSignature = "Konik".getBytes(StandardCharsets.UTF_8);
+		final byte[] pdfMachineSignature = "pdfMachine from Broadgun Software".getBytes(StandardCharsets.UTF_8);
+		final byte[] ghostscriptSignature = "%%Invocation:".getBytes(StandardCharsets.UTF_8);
 
-			if (ByteArraySearcher.contains(fileContents, symtraxSignature)) {
-				Signature = "Symtrax";
-			} else if (ByteArraySearcher.contains(fileContents, mustangSignature)) {
-				Signature = "Mustang";
-			} else if (ByteArraySearcher.contains(fileContents, facturxpythonSignature)) {
-				Signature = "Factur/X Python";
-			} else if (ByteArraySearcher.contains(fileContents, intarsysSignature)) {
-				Signature = "Intarsys";
-			} else if (ByteArraySearcher.contains(fileContents, konikSignature)) {
-				Signature = "Konik";
-			} else if (ByteArraySearcher.contains(fileContents, pdfMachineSignature)) {
-				Signature = "pdfMachine";
-			} else if (ByteArraySearcher.contains(fileContents, ghostscriptSignature)) {
-				Signature = "Ghostscript";
-			}
-
-			context.setSignature(Signature);
-
-		} catch (final UnsupportedEncodingException e) {
-			LOGGER.error(e.getMessage(), e);
+		if (ByteArraySearcher.contains(fileContents, symtraxSignature)) {
+			Signature = "Symtrax";
+		} else if (ByteArraySearcher.contains(fileContents, mustangSignature)) {
+			Signature = "Mustang";
+		} else if (ByteArraySearcher.contains(fileContents, facturxpythonSignature)) {
+			Signature = "Factur/X Python";
+		} else if (ByteArraySearcher.contains(fileContents, intarsysSignature)) {
+			Signature = "Intarsys";
+		} else if (ByteArraySearcher.contains(fileContents, konikSignature)) {
+			Signature = "Konik";
+		} else if (ByteArraySearcher.contains(fileContents, pdfMachineSignature)) {
+			Signature = "pdfMachine";
+		} else if (ByteArraySearcher.contains(fileContents, ghostscriptSignature)) {
+			Signature = "Ghostscript";
 		}
+
+		context.setSignature(Signature);
 
 		// step 4:validate additional data
 		final HashMap<String, byte[]> additionalData = zi.getAdditionalData();
