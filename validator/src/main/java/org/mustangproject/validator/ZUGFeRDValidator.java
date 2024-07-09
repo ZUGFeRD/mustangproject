@@ -1,5 +1,6 @@
 package org.mustangproject.validator;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -103,6 +104,10 @@ public class ZUGFeRDValidator {
         // Except it is "<?xml version='1.0'?><xml/>" LOL
         context.addResultItem(
           new ValidationResultItem(ESeverity.fatal, "File too small").setSection(5).setPart(EPart.pdf));
+      } else if (inputLength >= Integer.MAX_VALUE) {
+        // Byte arrays are limited to 2GB in Java
+        context.addResultItem(
+          new ValidationResultItem(ESeverity.fatal, "File too big").setSection(5).setPart(EPart.pdf));
       } else {
         content = IOUtils.toByteArray(inputStream);
         XMLValidator xv = new XMLValidator(context);
@@ -249,6 +254,15 @@ public class ZUGFeRDValidator {
       return internalValidate (fileNameOfInputStream, inputStream, inputLength);
     } finally {
       StreamHelper.close (inputStream);
+    }
+  }
+
+  public String validate(byte[] bytes, String fileNameOfInputStream) {
+    try(ByteArrayInputStream bais = new ByteArrayInputStream (bytes)) {
+      return internalValidate (fileNameOfInputStream, bais, bytes.length);
+    }
+    catch (IOException ex) { 
+      throw new UncheckedIOException (ex);
     }
   }
 
