@@ -329,8 +329,10 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 				}
 			}
 		}
-		if ((trans.getDocumentCode().equals(CORRECTEDINVOICE))/*||(trans.getDocumentCode().equals (DocumentCodeTypeConstants.CREDITNOTE))*/) {
-			hasDueDate = false;
+		if (trans.getDocumentCode() != null) {
+  		if ((trans.getDocumentCode().equals(CORRECTEDINVOICE))/*||(trans.getDocumentCode().equals (DocumentCodeTypeConstants.CREDITNOTE))*/) {
+  			hasDueDate = false;
+  		}
 		}
 
 		final Map<BigDecimal, VATAmount> VATPercentAmountMap = calc.getVATPercentAmountMap();
