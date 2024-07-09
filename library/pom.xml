@@ -320,7 +320,7 @@
                         <configuration>
                             <toolchains>
                                 <jdk>
-                                    <version>8</version>
+                                    <version>11</version>
                                     <vendor>adopt</vendor>
                                 </jdk>
                             </toolchains>

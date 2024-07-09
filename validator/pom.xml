@@ -29,9 +29,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.deploy.skip>false
         </maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
-        <maven.compiler.compilerVersion>8</maven.compiler.compilerVersion>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.compilerVersion>11</maven.compiler.compilerVersion>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
 
     </properties>
     <dependencies>
@@ -140,8 +140,8 @@
                     <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
                              mvn clean compile assembly:single -->
                     <!-- or whatever version you use -->
-                    <source>8</source>
-                    <target>8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <!-- /ZUV -->
@@ -269,7 +269,7 @@
                         <configuration>
                             <toolchains>
                                 <jdk>
-                                    <version>8</version>
+                                    <version>11</version>
                                     <vendor>adopt</vendor>
                                 </jdk>
                             </toolchains>
