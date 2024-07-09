@@ -33,6 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
+import jakarta.xml.bind.DatatypeConverter;
 import jakarta.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 //abstract class
@@ -82,21 +83,18 @@ public class ZUGFeRDValidator {
 	 * @return a xml string with the validation result
 	 */
 	public String validate(String filename) {
-		boolean xmlValidity;
 		context.clear();
-		StringBuffer finalStringResult = new StringBuffer();
+		StringBuilder finalStringResult = new StringBuilder();
 		SimpleDateFormat isoDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
 		startTime = Calendar.getInstance().getTimeInMillis();
-		try {
-			Path path = Paths.get(filename);
-			context.setFilename(path.getFileName().toString());// set filename without path
-
-		} catch (NullPointerException ex) {
-			// ignore
-		}
-		finalStringResult
-			.append("<validation filename='" + context.getFilename() + "' datetime='" + isoDF.format(date) + "'>");
+  	Path path = Paths.get(filename);
+		Path pathFilename = path.getFileName ();
+		if (pathFilename != null)
+		  context.setFilename(pathFilename.toString());// set filename without path
+		else
+      context.setFilename(filename);// fallback to provided name
+		finalStringResult.append("<validation filename='").append (context.getFilename()).append ("' datetime='").append (isoDF.format(date)).append ("'>");
 
 		boolean isPDF = false;
 		byte[] content = null;
@@ -110,49 +108,37 @@ public class ZUGFeRDValidator {
 
 			PDFValidator pdfv = new PDFValidator(context);
 			File file = new File(filename);
-			if (!file.exists()) {
+			if (!file.isFile()) {
 				context.addResultItem(
 					new ValidationResultItem(ESeverity.fatal, "File not found").setSection(1).setPart(EPart.pdf));
 			} else if (file.length() < 32) {
 				// with less than 32 bytes it can not even be a proper XML file
+        // Except it is "<?xml version='1.0'?><xml/>" LOL
 				context.addResultItem(
 					new ValidationResultItem(ESeverity.fatal, "File too small").setSection(5).setPart(EPart.pdf));
 			} else {
-				BigFileSearcher searcher = new BigFileSearcher();
 				content = Files.readAllBytes(file.toPath());
 				XMLValidator xv = new XMLValidator(context);
 				if (disableNotices) {
 					xv.disableNotices();
 				}
-				byte[] pdfSignature = {'%', 'P', 'D', 'F'};
-				isPDF = searcher.indexOf(file, pdfSignature) == 0;
+				isPDF = ByteArraySearcher.indexOf(content, new byte[] {'%', 'P', 'D', 'F'}) == 0;
 				if (isPDF) {
 					pdfv.setFilename(filename);
 					pdfv.setFileContents(content);
 
 					optionsRecognized = true;
-					try {
-						if (!file.exists()) {
-							context.addResultItem(
-								new ValidationResultItem(ESeverity.exception, "File " + filename + " not found")
-									.setSection(1));
-						}
-					} catch (IrrecoverableValidationError irx) {
-						// @todo log
-					}
-
 					finalStringResult.append("<pdf>");
-					optionsRecognized = true;
 					try {
 						pdfv.validate();
 
-						sha1Checksum = calcSHA1(new FileInputStream(file));
+						sha1Checksum = calcSHA1(content);
 
 						// Validate PDF
 
 						getPdfValidationResults(finalStringResult, pdfv, xv);
-					} catch (IrrecoverableValidationError | FileNotFoundException irx) {
-						// @todo log
+					} catch (IrrecoverableValidationError irx) {
+            LOGGER.info(irx.getMessage());
 					}
 
 					finalStringResult.append("</pdf>\n");
@@ -176,16 +162,13 @@ public class ZUGFeRDValidator {
 						// probably no xml file, sth like SAXParseException content not allowed in prolog
 						// ignore isXML is already false
 						// in the tests, this may error-out anyway
-						//ex.printStackTrace();
-
+					  LOGGER.info("No XML part provided");
 					}
 					if (isXML) {
 						pdfValidity = true;
 						optionsRecognized = true;
 						xv.setFilename(filename);
-						if (file.exists()) {
-							sha1Checksum = calcSHA1(Files.newInputStream(file.toPath()));
-						}
+						sha1Checksum = calcSHA1(content);
 
 						displayXMLValidationOutput = true;
 
@@ -201,7 +184,7 @@ public class ZUGFeRDValidator {
 					try {
 						xv.validate();
 					} catch (IrrecoverableValidationError irx) {
-						// @todo log
+            LOGGER.info("The hell");
 					}
 					finalStringResult.append(xv.getXMLResult());
 					finalStringResult.append("</xml>");
@@ -214,7 +197,8 @@ public class ZUGFeRDValidator {
 
 			}
 		} catch (IrrecoverableValidationError | IOException irx) {
-			// @todo log
+      LOGGER.info(irx.getMessage());
+      context.setInvalid ();
 		} finally {
 			finalStringResult.append(context.getXMLResult());
 			finalStringResult.append("</validation>");
@@ -224,123 +208,129 @@ public class ZUGFeRDValidator {
 		return formatOutput(finalStringResult, isPDF);
 	}
 
-	public String validate(InputStream inputStream, String fileNameOfInputStream) {
-		boolean xmlValidity;
-		context.clear();
-		StringBuffer finalStringResult = new StringBuffer();
-		SimpleDateFormat isoDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date date = new Date();
-		startTime = Calendar.getInstance().getTimeInMillis();
-		context.setFilename(fileNameOfInputStream);// set filename without path
-		finalStringResult.append("<validation filename='").append(context.getFilename()).append("' datetime='").append(isoDF.format(date)).append("'>");
+  public String validate(InputStream inputStream, String fileNameOfInputStream) {
+    context.clear();
+    StringBuilder finalStringResult = new StringBuilder();
+    SimpleDateFormat isoDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    Date date = new Date();
+    startTime = Calendar.getInstance().getTimeInMillis();
+    context.setFilename(fileNameOfInputStream);// set filename without path
+    finalStringResult.append("<validation filename='").append(context.getFilename()).append("' datetime='").append(isoDF.format(date)).append("'>");
 
-		boolean isPDF = false;
-		byte[] content = new byte[0];
-		try {
+    boolean isPDF = false;
+    byte[] content = null;
+    try {
 
-			if (fileNameOfInputStream == null) {
-				optionsRecognized = false;
-				context.addResultItem(new ValidationResultItem(ESeverity.fatal, "Filename not specified").setSection(10)
-					.setPart(EPart.pdf));
-			}
+      if (fileNameOfInputStream == null) {
+        optionsRecognized = false;
+        context.addResultItem(new ValidationResultItem(ESeverity.fatal, "Filename not specified").setSection(10)
+          .setPart(EPart.pdf));
+      }
 
-			PDFValidator pdfv = new PDFValidator(context);
-			if (inputStream == null) {
-				context.addResultItem(
-					new ValidationResultItem(ESeverity.fatal, "File not found").setSection(1).setPart(EPart.pdf));
-			} else if (inputStream.available() < 32) {
-				// with less then 32 bytes it can not even be a proper XML file
-				context.addResultItem(
-					new ValidationResultItem(ESeverity.fatal, "File too small").setSection(5).setPart(EPart.pdf));
-			} else {
-				content = IOUtils.toByteArray(inputStream);
-				isPDF = ByteArraySearcher.contains(content, new byte[]{'%', 'P', 'D', 'F'});
-				XMLValidator xv = new XMLValidator(context);
-				if (isPDF) {
-					pdfv.setFilename(fileNameOfInputStream);
-					pdfv.setFileContents(content);
+      PDFValidator pdfv = new PDFValidator(context);
+      if (inputStream == null) {
+        context.addResultItem(
+          new ValidationResultItem(ESeverity.fatal, "File not found").setSection(1).setPart(EPart.pdf));
+      } else if (inputStream.available() < 32) {
+        // with less than 32 bytes it can not even be a proper XML file
+        // Except it is "<?xml version='1.0'?><xml/>" LOL
+        context.addResultItem(
+          new ValidationResultItem(ESeverity.fatal, "File too small").setSection(5).setPart(EPart.pdf));
+      } else {
+        content = IOUtils.toByteArray(inputStream);
+        XMLValidator xv = new XMLValidator(context);
+        if (disableNotices) {
+          xv.disableNotices();
+        }
+        isPDF = ByteArraySearcher.indexOf(content, new byte[] {'%', 'P', 'D', 'F'}) == 0;
+        if (isPDF) {
+          // Avoid reading again from file
+          pdfv.setFilenameAndContents(fileNameOfInputStream, content);
 
-					optionsRecognized = true;
-					finalStringResult.append("<pdf>");
-					try {
-						pdfv.validate();
+          optionsRecognized = true;
+          finalStringResult.append("<pdf>");
+          try {
+            pdfv.validate();
 
-						sha1Checksum = calcSHA1(inputStream);
+            sha1Checksum = calcSHA1(content);
 
-						// Validate PDF
+            // Validate PDF
 
-						getPdfValidationResults(finalStringResult, pdfv, xv);
-					} catch (IrrecoverableValidationError irx) {
-						LOGGER.info(irx.getMessage());
-					}
+            getPdfValidationResults(finalStringResult, pdfv, xv);
+          } catch (IrrecoverableValidationError irx) {
+            LOGGER.info(irx.getMessage());
+          }
 
-					finalStringResult.append("</pdf>\n");
+          finalStringResult.append("</pdf>\n");
 
-					context.clearCustomXML();
-				} else {
-					boolean isXML = false;
-					try {
-						DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-						DocumentBuilder db = dbf.newDocumentBuilder();
+          context.clearCustomXML();
+        } else {
+          boolean isXML = false;
+          String xmlAsString = null;
+          try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
 
-						content = XMLTools.removeBOM(content);
-						String s = new String(content, StandardCharsets.UTF_8);
-						InputSource is = new InputSource(new StringReader(s));
-						Document doc = db.parse(is);
+            content = XMLTools.removeBOM(content);
+            xmlAsString = new String(content, StandardCharsets.UTF_8);
+            InputSource is = new InputSource(new StringReader(xmlAsString));
+            Document doc = db.parse(is);
 
-						Element root = doc.getDocumentElement();
-						isXML = true;//no exception so far
-					} catch (Exception ex) {
-						LOGGER.info("No XML part provided");
-					}
-					if (isXML) {
-						pdfValidity = true;
-						optionsRecognized = true;
-						xv.disableAutoload();
-						xv.setFilename(fileNameOfInputStream);
-						sha1Checksum = calcSHA1(inputStream);
+            Element root = doc.getDocumentElement();
+            isXML = true;//no exception so far
+          } catch (Exception ex) {
+            // probably no xml file, sth like SAXParseException content not allowed in prolog
+            // ignore isXML is already false
+            // in the tests, this may error-out anyway
+            LOGGER.info("No XML part provided");
+          }
+          if (isXML) {
+            pdfValidity = true;
+            optionsRecognized = true;
+            xv.setStringContent (xmlAsString);
+            xv.disableAutoload();
+            xv.setFilename(fileNameOfInputStream);
+            sha1Checksum = calcSHA1(content);
 
-						displayXMLValidationOutput = true;
+            displayXMLValidationOutput = true;
 
-					} else {
-						optionsRecognized = false;
-						context.addResultItem(new ValidationResultItem(
-							ESeverity.exception,
-							"File does not look like PDF nor XML (contains neither %PDF nor <?xml)"
-						).setSection(8));
+          } else {
+            optionsRecognized = false;
+            context.addResultItem(new ValidationResultItem(ESeverity.exception,
+              "File does not look like PDF nor XML (contains neither %PDF nor <?xml)").setSection(8));
 
-					}
-				}
-				if ((optionsRecognized) && (displayXMLValidationOutput)) {
-					finalStringResult.append("<xml>");
-					try {
-						xv.validate();
-					} catch (IrrecoverableValidationError irx) {
-						LOGGER.info("The hell");
-					}
-					finalStringResult.append(xv.getXMLResult());
-					finalStringResult.append("</xml>");
-					context.clearCustomXML();
-				}
+          }
+        }
+        if ((optionsRecognized) && (displayXMLValidationOutput)) {
+          finalStringResult.append("<xml>");
+          try {
+            xv.validate();
+          } catch (IrrecoverableValidationError irx) {
+            LOGGER.info("The hell");
+          }
+          finalStringResult.append(xv.getXMLResult());
+          finalStringResult.append("</xml>");
+          context.clearCustomXML();
+        }
 
-				if ((isPDF) && (!pdfValidity)) {
-					context.setInvalid();
-				}
+        if ((isPDF) && (!pdfValidity)) {
+          context.setInvalid();
+        }
 
-			}
-		} catch (IrrecoverableValidationError | IOException irx) {
-			LOGGER.info(irx.getMessage());
-			context.setInvalid ();
-		} finally {
-			finalStringResult.append(context.getXMLResult());
-			finalStringResult.append("</validation>");
+      }
+    } catch (IrrecoverableValidationError | IOException irx) {
+      LOGGER.info(irx.getMessage());
+      context.setInvalid ();
+    } finally {
+      finalStringResult.append(context.getXMLResult());
+      finalStringResult.append("</validation>");
 
-		}
+    }
 
-		return formatOutput(finalStringResult, isPDF);
-	}
+    return formatOutput(finalStringResult, isPDF);
+  }
 
-	private void getPdfValidationResults(StringBuffer finalStringResult, PDFValidator pdfv, XMLValidator xv) throws IrrecoverableValidationError {
+	private void getPdfValidationResults(StringBuilder finalStringResult, PDFValidator pdfv, XMLValidator xv) throws IrrecoverableValidationError {
 		finalStringResult.append(pdfv.getXMLResult());
 		pdfValidity = context.isValid();
 
@@ -356,7 +346,7 @@ public class ZUGFeRDValidator {
 		}
 	}
 
-	private String formatOutput(StringBuffer finalStringResult, boolean isPDF) {
+	private String formatOutput(StringBuilder finalStringResult, boolean isPDF) {
 		boolean xmlValidity;
 		OutputFormat format = OutputFormat.createPrettyPrint();
 		StringWriter sw = new StringWriter();
@@ -408,7 +398,7 @@ public class ZUGFeRDValidator {
 	/**
 	 * Read the file and calculate the SHA-1 checksum
 	 *
-	 * @param inputStream the InputStream to read
+	 * @param data the InputStream to read
 	 * @return the hex representation of the SHA-1 using uppercase chars
 	 * @throws FileNotFoundException    if the file does not exist, is a directory
 	 *                                  rather than a regular file, or for some
@@ -416,26 +406,19 @@ public class ZUGFeRDValidator {
 	 * @throws IOException              if an I/O error occurs
 	 * @throws NoSuchAlgorithmException should never happen
 	 */
-	private static String calcSHA1(InputStream inputStream) {
+	private static String calcSHA1(byte[] data) {
 		MessageDigest sha1 = null;
 		try {
 
 			sha1 = MessageDigest.getInstance("SHA-1");
-			byte[] buffer = new byte[8192];
-			int len = inputStream.read(buffer);
-
-			while (len != -1) {
-				sha1.update(buffer, 0, len);
-				len = inputStream.read(buffer);
-			}
-			inputStream.close();
-		} catch (IOException | NoSuchAlgorithmException e) {
+			sha1.update(data, 0, data.length);
+		} catch (NoSuchAlgorithmException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		if (sha1 == null) {
 			return "";
 		} else {
-			return new HexBinaryAdapter().marshal(sha1.digest());
+			return DatatypeConverter.printHexBinary(sha1.digest());
 		}
 	}
 
