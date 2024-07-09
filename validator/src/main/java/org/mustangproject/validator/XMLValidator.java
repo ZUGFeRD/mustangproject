@@ -1,23 +1,4 @@
 package org.mustangproject.validator;
-import com.helger.schematron.ISchematronResource;
-import com.helger.schematron.svrl.SVRLHelper;
-import com.helger.schematron.svrl.SVRLMarshaller;
-import com.helger.schematron.svrl.jaxb.SchematronOutputType;
-import org.mustangproject.XMLTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.helger.schematron.xslt.SchematronResourceXSLT;
-import org.xml.sax.InputSource;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.xpath.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -27,6 +8,29 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Calendar;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.mustangproject.XMLTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import com.helger.schematron.ISchematronResource;
+import com.helger.schematron.svrl.SVRLMarshaller;
+import com.helger.schematron.svrl.jaxb.SchematronOutputType;
+import com.helger.schematron.xslt.SchematronResourceXSLT;
 
 
 public class XMLValidator extends Validator {

@@ -40,7 +40,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.XMLTools;
 
-public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLProvider {
+public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 
 
 	//// MAIN CLASS

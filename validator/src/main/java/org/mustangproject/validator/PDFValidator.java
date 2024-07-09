@@ -1,14 +1,16 @@
 package org.mustangproject.validator;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,20 +22,16 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
-import org.riversun.bigdoc.bin.BigFileSearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.verapdf.core.VeraPDFException;
 import org.verapdf.features.FeatureExtractorConfig;
 import org.verapdf.features.FeatureFactory;
+import org.verapdf.gf.foundry.VeraGreenfieldFoundryProvider;
 import org.verapdf.metadata.fixer.FixerFactory;
 import org.verapdf.metadata.fixer.MetadataFixerConfig;
-import org.verapdf.gf.foundry.VeraGreenfieldFoundryProvider;
 import org.verapdf.pdfa.flavours.PDFAFlavour;
 import org.verapdf.pdfa.validation.validators.ValidatorConfig;
 import org.verapdf.pdfa.validation.validators.ValidatorFactory;
-import org.verapdf.processor.BatchProcessor;
-import org.verapdf.processor.FormatOption;
 import org.verapdf.processor.ItemProcessor;
 import org.verapdf.processor.ProcessorConfig;
 import org.verapdf.processor.ProcessorFactory;
@@ -95,7 +93,7 @@ public class PDFValidator extends Validator {
 		// Default fixer config
 		final MetadataFixerConfig fixerConfig = FixerFactory.defaultConfig();
 		// Tasks configuring
-		final EnumSet tasks = EnumSet.noneOf(TaskType.class);
+		final EnumSet<TaskType> tasks = EnumSet.noneOf(TaskType.class);
 		tasks.add(TaskType.VALIDATE);
 		// tasks.add(TaskType.EXTRACT_FEATURES);
 		// tasks.add(TaskType.FIX_METADATA);
@@ -104,7 +102,6 @@ public class PDFValidator extends Validator {
 			fixerConfig, tasks
 		);
 		// Creating processor and output stream.
-		final ByteArrayOutputStream reportStream = new ByteArrayOutputStream();
 		final InputStream inputStream = new ByteArrayInputStream(fileContents);
 		try (ItemProcessor processor = ProcessorFactory.createProcessor(processorConfig)) {
 			// Generating list of files for processing

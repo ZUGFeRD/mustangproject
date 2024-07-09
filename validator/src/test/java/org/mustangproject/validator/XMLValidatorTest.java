@@ -1,7 +1,5 @@
 package org.mustangproject.validator;
 
-import static org.xmlunit.assertj.XmlAssert.assertThat;
-
 import java.io.File;
 
 import javax.xml.transform.Source;

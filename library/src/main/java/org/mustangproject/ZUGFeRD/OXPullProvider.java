@@ -37,7 +37,7 @@ import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.XMLTools;
 
-public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider {
+public class OXPullProvider extends ZUGFeRD2PullProvider {
 
 	protected IExportableTransaction trans;
 	protected TransactionCalculator calc;
@@ -329,7 +329,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 				}
 			}
 		}
-		if ((trans.getDocumentCode() == CORRECTEDINVOICE)/*||(trans.getDocumentCode() == DocumentCodeTypeConstants.CREDITNOTE)*/) {
+		if ((trans.getDocumentCode().equals(CORRECTEDINVOICE))/*||(trans.getDocumentCode().equals (DocumentCodeTypeConstants.CREDITNOTE))*/) {
 			hasDueDate = false;
 		}
 

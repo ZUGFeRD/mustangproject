@@ -168,7 +168,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	}
 
 	public IZUGFeRDExporter setProfile(Profile p) {
-		return (IZUGFeRDExporter) getExporter().setProfile(p);
+		return getExporter().setProfile(p);
 	}
 
 	public IZUGFeRDExporter setProfile(String profileName) {
@@ -176,7 +176,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		if (p==null)  {
 			throw new RuntimeException("Profile not found.");
 		}
-		return (IZUGFeRDExporter) getExporter().setProfile(p);
+		return getExporter().setProfile(p);
 	}
 
 	public IZUGFeRDExporter setConformanceLevel(PDFAConformanceLevel newLevel) {

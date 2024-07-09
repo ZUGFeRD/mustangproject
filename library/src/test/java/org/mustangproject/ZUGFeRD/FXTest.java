@@ -26,6 +26,8 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.mustangproject.*;
 
+import com.helger.commons.io.file.SimpleFileIO;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;

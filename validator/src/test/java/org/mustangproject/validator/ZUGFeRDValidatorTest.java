@@ -2,12 +2,6 @@ package org.mustangproject.validator;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import org.xmlunit.builder.Input;
-import org.xmlunit.xpath.JAXPXPathEngine;
-import org.xmlunit.xpath.XPathEngine;
 
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 

@@ -29,10 +29,11 @@ import org.apache.pdfbox.preflight.parser.PreflightParser;
 
 import jakarta.activation.DataSource;
 
-public class DXExporterFromA1 extends DXExporterFromA3 implements IZUGFeRDExporter {
+public class DXExporterFromA1 extends DXExporterFromA3 {
 	protected boolean ignorePDFAErrors = false;
 
-	public DXExporterFromA1 ignorePDFAErrors() {
+	@Override
+  public DXExporterFromA1 ignorePDFAErrors() {
 		this.ignorePDFAErrors = true;
 		return this;
 	}
@@ -45,7 +46,8 @@ public class DXExporterFromA1 extends DXExporterFromA3 implements IZUGFeRDExport
 	 * @param ver the delivery-x version
 	 * @return the URN of the namespace
 	 */
-	public String getNamespaceForVersion(int ver) {
+	@Override
+  public String getNamespaceForVersion(int ver) {
 		// As of late 2022 the Delivery-X standard is not yet published. See specification:
 		// Die digitale Ablösung des Papier-Lieferscheins, Version 1.1, April 2022
 		// Chapter 7.1 XMP-Erweiterungsschema für PDF/A-3
@@ -57,7 +59,8 @@ public class DXExporterFromA1 extends DXExporterFromA3 implements IZUGFeRDExport
 	 * @param ver the ox version
 	 * @return the namespace prefix as string, without colon
 	 */
-	public String getPrefixForVersion(int ver) {
+	@Override
+  public String getPrefixForVersion(int ver) {
 		return "fx";
 	}
 
@@ -91,14 +94,17 @@ public class DXExporterFromA1 extends DXExporterFromA3 implements IZUGFeRDExport
 	}
 
 
-	public DXExporterFromA1 setProfile(Profile p) {
+	@Override
+  public DXExporterFromA1 setProfile(Profile p) {
 		return (DXExporterFromA1)super.setProfile(p);
 	}
-	public DXExporterFromA1 setProfile(String profileName) {
+	@Override
+  public DXExporterFromA1 setProfile(String profileName) {
 		return (DXExporterFromA1)super.setProfile(profileName);
 	}
 
-	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
+	@Override
+  public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
 		if (!ignorePDFAErrors && !isValidA1(dataSource)) {
 			throw new IOException("File is not a valid PDF/A input file");
 		}
@@ -110,32 +116,41 @@ public class DXExporterFromA1 extends DXExporterFromA3 implements IZUGFeRDExport
 
 	}
 
-	public DXExporterFromA1 load(String pdfFilename) throws IOException {
+	@Override
+  public DXExporterFromA1 load(String pdfFilename) throws IOException {
 		return (DXExporterFromA1) super.load(pdfFilename);
 	}
-	public DXExporterFromA1 load(byte[] pdfBinary) throws IOException {
+	@Override
+  public DXExporterFromA1 load(byte[] pdfBinary) throws IOException {
 		return (DXExporterFromA1) super.load(pdfBinary);
 	}
-	public DXExporterFromA1 load(InputStream pdfSource) throws IOException{
+	@Override
+  public DXExporterFromA1 load(InputStream pdfSource) throws IOException{
 		return (DXExporterFromA1) super.load(pdfSource);
 	}
-	public DXExporterFromA1 setCreator(String creator) {
+	@Override
+  public DXExporterFromA1 setCreator(String creator) {
 		return (DXExporterFromA1) super.setCreator(creator);
 	}
-	public DXExporterFromA1 setConformanceLevel(PDFAConformanceLevel newLevel) {
+	@Override
+  public DXExporterFromA1 setConformanceLevel(PDFAConformanceLevel newLevel) {
 		return (DXExporterFromA1) super.setConformanceLevel(newLevel);
 	}
-	public DXExporterFromA1 setProducer(String producer){
+	@Override
+  public DXExporterFromA1 setProducer(String producer){
 		return (DXExporterFromA1) super.setProducer(producer);
 	}
-	public DXExporterFromA1 setZUGFeRDVersion(int version){
+	@Override
+  public DXExporterFromA1 setZUGFeRDVersion(int version){
 		return (DXExporterFromA1) super.setZUGFeRDVersion(version);
 	}
-	public DXExporterFromA1 setXML(byte[] zugferdData) throws IOException{
+	@Override
+  public DXExporterFromA1 setXML(byte[] zugferdData) throws IOException{
 		return (DXExporterFromA1) super.setXML(zugferdData);
 	}
 
-	public DXExporterFromA1 disableAutoClose(boolean disableAutoClose){
+	@Override
+  public DXExporterFromA1 disableAutoClose(boolean disableAutoClose){
 		return (DXExporterFromA1) super.disableAutoClose(disableAutoClose);
 	}
 	public DXExporterFromA1 convertOnly() {

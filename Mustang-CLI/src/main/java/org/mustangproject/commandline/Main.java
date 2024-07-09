@@ -332,7 +332,7 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			CommandLine cmd;
-			CommandLineParser parser = new BasicParser();
+			CommandLineParser parser = new DefaultParser();
 
 			// create Options object
 			Options options = new Options();
@@ -427,7 +427,7 @@ public class Main {
 					performUBL(sourceName, outName);
 					optionsRecognized = true;
 				} else if ((action != null) && (action.equals("validate"))) {
-					optionsRecognized = performValidate(sourceName, noNotices != null && noNotices, cmd.getOptionValue("logAppend"));
+					optionsRecognized = performValidate(sourceName, noNotices, cmd.getOptionValue("logAppend"));
 				} else if ((action != null) && (action.equals("validateExpectValid"))) {
 					optionsRecognized = performValidateExpect(true, directoryName);
 				} else if ((action != null) && (action.equals("validateExpectInvalid"))) {
@@ -585,7 +585,7 @@ public class Main {
 
 			if (attachmentFilenames == null) {
 				byte attachmentContents[] = null;
-				String attachmentFilename, attachmentMime, attachmentDescription;
+				String attachmentFilename, attachmentMime;
 				if (!noAttachments) {
 					attachmentFilename = getFilenameFromUser("Additional file attachments filename (empty for none)", "", "pdf", true, false);
 					if (attachmentFilename.length() != 0) {

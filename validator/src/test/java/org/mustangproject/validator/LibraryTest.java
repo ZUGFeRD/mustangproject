@@ -1,10 +1,5 @@
 package org.mustangproject.validator;
 
-import org.xmlunit.builder.Input;
-import org.xmlunit.xpath.JAXPXPathEngine;
-import org.xmlunit.xpath.XPathEngine;
-
-import javax.xml.transform.Source;
 import java.io.File;
 
 import static org.xmlunit.assertj.XmlAssert.assertThat;

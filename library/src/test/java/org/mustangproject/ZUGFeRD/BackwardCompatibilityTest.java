@@ -316,7 +316,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 	
 		
 	//
-	public IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
+  public IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
 		Payment P = new Payment();
 		IZUGFeRDTradeSettlementPayment[] allP = new Payment[1];
 		allP[0] = P;

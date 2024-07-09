@@ -1,7 +1,5 @@
 package org.mustangproject;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -11,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.RandomAccess;
 
+import org.apache.commons.io.IOUtils;
 import org.dom4j.io.XMLWriter;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -40,11 +39,13 @@ public class XMLTools extends XMLWriter {
 			list = l;
 		}
 
-		public Node get(int index) {
+		@Override
+    public Node get(int index) {
 			return list.item(index);
 		}
 
-		public int size() {
+		@Override
+    public int size() {
 			return list.getLength();
 		}
 	}
@@ -127,6 +128,7 @@ public class XMLTools extends XMLWriter {
 	 */
 	public static byte[] removeBOM(byte[] zugferdRaw) {
 		final byte[] zugferdData;
+		// This handles the UTF-8 BOM 
 		if ((zugferdRaw[0] == (byte) 0xEF) && (zugferdRaw[1] == (byte) 0xBB) && (zugferdRaw[2] == (byte) 0xBF)) {
 			// I don't like BOMs, lets remove it
 			zugferdData = new byte[zugferdRaw.length - 3];
@@ -138,20 +140,7 @@ public class XMLTools extends XMLWriter {
 	}
 
 	public static byte[] getBytesFromStream(InputStream fileinput) throws IOException {
-
-		// we're on java 8 so we cant use inputstream.readallbytes
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-		int nRead;
-		byte[] data = new byte[16384];
-		BufferedInputStream bufferedInput=new BufferedInputStream(fileinput);
-
-		while ((nRead = bufferedInput.read(data, 0, data.length)) != -1) {
-			buffer.write(data, 0, nRead);
-		}
-		return buffer.toByteArray();
-
-		// end of polyfill
+	  return IOUtils.toByteArray (fileinput);
 	}
 
 }

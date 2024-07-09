@@ -66,15 +66,15 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 				//nodes.item(i).getTextContent())) {
 				Node currentItemNode = nodes.item(nodeIndex);
 
-				if (nodes.item(nodeIndex).getLocalName() != null) {
-					String debcurrentChild = nodes.item(nodeIndex).getLocalName();
-					if (nodes.item(nodeIndex).getLocalName().equals("Party")) {
+				if (currentItemNode.getLocalName() != null) {
+					String debcurrentChild = currentItemNode.getLocalName();
+					if (debcurrentChild.equals("Party")) {
 
-						NodeList party = nodes.item(nodeIndex).getChildNodes();
+						NodeList party = currentItemNode.getChildNodes();
 						for (int partyIndex = 0; partyIndex < party.getLength(); partyIndex++) {
 							if (party.item(partyIndex).getLocalName() != null) {
 								String debCN = party.item(partyIndex).getLocalName();
-								if (party.item(partyIndex).getLocalName().equals("PartyName")) {
+								if (debCN.equals("PartyName")) {
 
 									NodeList partyName = party.item(partyIndex).getChildNodes();
 									for (int partyNameIndex = 0; partyNameIndex < partyName.getLength(); partyNameIndex++) {
@@ -87,7 +87,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 										}
 									}
 								}
-								if (party.item(partyIndex).getLocalName().equals("PostalAddress")) {
+								if (debCN.equals("PostalAddress")) {
 
 									NodeList postal = party.item(partyIndex).getChildNodes();
 									for (int postalChildIndex = 0; postalChildIndex < postal.getLength(); postalChildIndex++) {
@@ -145,7 +145,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 									}
 								}
 
-								if (party.item(partyIndex).getLocalName().equals("Contact")) {
+								if (debCN.equals("Contact")) {
 									NodeList contact = party.item(partyIndex).getChildNodes();
 									setContact(new Contact(contact));
 
@@ -156,19 +156,19 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 					}
 
-					if (nodes.item(nodeIndex).getLocalName().equals("GlobalID")) {
+					if (debcurrentChild.equals("GlobalID")) {
 						if (nodes.item(nodeIndex).getAttributes().getNamedItem("schemeID") != null) {
 							SchemedID gid = new SchemedID().setScheme(nodes.item(nodeIndex).getAttributes().getNamedItem("schemeID").getNodeValue()).setId(nodes.item(nodeIndex).getTextContent());
 							addGlobalID(gid);
 						}
 
 					}
-					if (nodes.item(nodeIndex).getLocalName().equals("DefinedTradeContact")) {
+					if (debcurrentChild.equals("DefinedTradeContact")) {
 						NodeList contact = nodes.item(nodeIndex).getChildNodes();
 						setContact(new Contact(contact));
 					}
 
-					if (nodes.item(nodeIndex).getLocalName().equals("PostalTradeAddress")) {
+					if (debcurrentChild.equals("PostalTradeAddress")) {
 						NodeList postal = nodes.item(nodeIndex).getChildNodes();
 						for (int postalChildIndex = 0; postalChildIndex < postal.getLength(); postalChildIndex++) {
 							if (postal.item(postalChildIndex).getLocalName() != null) {
@@ -196,7 +196,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 					}
 
-					if (nodes.item(nodeIndex).getLocalName().equals("SpecifiedTaxRegistration")) {
+					if (debcurrentChild.equals("SpecifiedTaxRegistration")) {
 						NodeList taxChilds = nodes.item(nodeIndex).getChildNodes();
 						for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
 							if (taxChilds.item(taxChildIndex).getLocalName() != null) {
@@ -290,7 +290,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 			for (int nodeIndex = 0; nodeIndex < nodes.getLength(); nodeIndex++) {
 				//nodes.item(i).getTextContent())) {
 				String debLN = nodes.item(nodeIndex).getLocalName();
-				if (nodes.item(nodeIndex).getLocalName().equals("Party")) {
+				if (debLN.equals("Party")) {
 					// take one step back and parse from top
 					parseFromUBL(nodes);
 					return;

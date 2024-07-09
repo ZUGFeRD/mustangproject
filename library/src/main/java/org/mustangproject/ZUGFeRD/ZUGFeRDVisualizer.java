@@ -222,9 +222,8 @@ public class ZUGFeRDVisualizer {
 		}
 
 		FileInputStream fis = new FileInputStream(xmlFilename);
-		String fileContent = "";
 		try {
-			fileContent = new String(Files.readAllBytes(Paths.get(xmlFilename)), StandardCharsets.UTF_8);
+			new String(Files.readAllBytes(Paths.get(xmlFilename)), StandardCharsets.UTF_8);
 		} catch (IOException e2) {
 			LOG.log(Level.SEVERE, null, e2);
 		}
@@ -276,11 +275,8 @@ public class ZUGFeRDVisualizer {
 	public void toPDF(String xmlFilename, String pdfFilename) {
 
 		// the writing part
-		CIIToUBL c2u = new CIIToUBL();
-		String sourceFilename = "factur-x.xml";
 		File CIIinputFile = new File(xmlFilename);
 
-		String expected = null;
 		String result = null;
 
 		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();

@@ -2,19 +2,13 @@ package org.mustangproject.ZUGFeRD;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import org.apache.pdfbox.io.IOUtils;
-import org.apache.pdfbox.io.RandomAccessRead;
-import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.preflight.parser.PreflightParser;
 
 import jakarta.activation.DataSource;

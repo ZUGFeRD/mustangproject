@@ -2,13 +2,6 @@ package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.mustangproject.ZUGFeRD.*;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /***
  * A organisation, i.e. usually a company
