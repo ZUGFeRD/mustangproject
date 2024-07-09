@@ -324,13 +324,16 @@ public class PDFValidator extends Validator {
 		} catch (IOException ex) {
 			throw new IrrecoverableValidationError("Could not read file");
 		}
-
-
 	}
 
-	public void setFileContents(byte[] fileContents) {
-		this.fileContents = fileContents;
-	}
+  public void setFileContents(byte[] fileContents) {
+    this.fileContents = fileContents;
+  }
+
+  public void setFilenameAndContents(String filename, byte[] fileContents) {
+    this.pdfFilename = filename;
+    this.fileContents = fileContents;
+  }
 
 	public String getRawXML() {
 		return zfXML;
