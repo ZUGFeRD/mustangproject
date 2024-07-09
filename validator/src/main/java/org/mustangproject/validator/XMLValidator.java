@@ -1,5 +1,6 @@
 package org.mustangproject.validator;
 import com.helger.schematron.ISchematronResource;
+import com.helger.schematron.svrl.SVRLHelper;
 import com.helger.schematron.svrl.SVRLMarshaller;
 import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 import org.mustangproject.XMLTools;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -63,11 +65,16 @@ public class XMLValidator extends Validator {
 
 				final ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(9)
 					.setPart(EPart.fx);
-				final StringWriter sw = new StringWriter();
-				final PrintWriter pw = new PrintWriter(sw);
-				e.printStackTrace(pw);
-				vri.setStacktrace(sw.toString());
-				context.addResultItem(vri);
+				try (final StringWriter sw = new StringWriter();
+			       final PrintWriter pw = new PrintWriter(sw))
+				{
+  				e.printStackTrace(pw);
+  				vri.setStacktrace(sw.toString());
+  				context.addResultItem(vri);
+				}
+        catch (IOException ex) {
+          throw new UncheckedIOException (ex);
+        }
 			}
 
 		}
@@ -433,6 +440,7 @@ public class XMLValidator extends Validator {
 			} catch (final Exception e) {
 				throw new IrrecoverableValidationError(e.getMessage());
 			}
+			// SVRLHelper.getAllFailedAssertions (sout);
 			Document SVRLReport = new SVRLMarshaller().getAsDocument(sout);
 			XPath xPath = XPathFactory.newInstance().newXPath();
 			String expression = "//*[local-name() = 'failed-assert']";
