@@ -13,15 +13,15 @@ public class MiscValidatorTest extends ResourceCase  {
 		ZUGFeRDValidator zfv=new ZUGFeRDValidator();
 
 		String res=zfv.validate(null);
-		assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" + 
-				"\n" + 
-				"<validation filename=\"\" datetime=\".*?\">\n" + 
-				"  <messages>\n" + 
-				"    <error type=\"10\">Filename not specified</error> \n" + 
-				"  </messages>\n" + 
-				"  <summary status=\"invalid\"/>\n" + 
-				"</validation>\n" + 
-				""));
+    assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" + 
+        "\n" + 
+        "<validation filename=\"\" datetime=\".*?\">\n" + 
+        "  <messages>\n" + 
+        "    <error type=\"10\">Filename not specified</error> \n" + 
+        "  </messages>\n" + 
+        "  <summary status=\"invalid\"/>\n" + 
+        "</validation>\n" + 
+        ""));
 
 		res=zfv.validate("/dhfkbv/sfjkh");
 		assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" + 
