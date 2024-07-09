@@ -19,6 +19,7 @@ public abstract class Validator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Validator.class.getCanonicalName()); // log output
 	
 	protected ValidationContext context;
+	protected boolean autoload=true;
 	
 	public Validator(ValidationContext ctx){
 		this.context=ctx;
@@ -75,6 +76,10 @@ public abstract class Validator {
 
 	public ValidationContext getValidationContext() {
 		return context;
+	}
+
+	public void setAutoload(boolean autoload) {
+		this.autoload = autoload;
 	}
 
 
