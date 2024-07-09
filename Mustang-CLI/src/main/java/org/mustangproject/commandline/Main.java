@@ -521,8 +521,8 @@ public class Main {
 		// All params are good! continue...
 		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
 		  ze.convertOnly().load(pdfName);
-  		ze.export(outName);
-  		System.out.println("Written to " + outName);
+		  ze.export(outName);
+		  System.out.println("Written to " + outName);
 		}
 	}
 
