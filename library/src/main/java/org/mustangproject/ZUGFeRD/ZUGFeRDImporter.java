@@ -14,10 +14,7 @@ package org.mustangproject.ZUGFeRD;
  * @author jstaerk
  */
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -43,8 +40,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
@@ -786,11 +783,11 @@ public class ZUGFeRDImporter {
 
 
 	static String convertStreamToString(java.io.InputStream is) {
-	  // TODO wouldn't we use IOUtils.toByteArray nowadays???
-		// source https://stackoverflow.com/questions/309424/how-do-i-read-convert-an-inputstream-into-a-string-in-java referring to
-		// https://community.oracle.com/blogs/pat/2004/10/23/stupid-scanner-tricks
-		final Scanner s = new Scanner(is, StandardCharsets.UTF_8).useDelimiter("\\A");
-		return s.hasNext() ? s.next() : "";
+		try {
+			return IOUtils.toString(is, StandardCharsets.UTF_8);
+		} catch  (IOException e) {
+			throw new UncheckedIOException(e);
+		}
 	}
 
 	/**
