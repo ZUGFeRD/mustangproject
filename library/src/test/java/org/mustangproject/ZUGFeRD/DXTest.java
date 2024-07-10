@@ -45,7 +45,7 @@ import java.util.GregorianCalendar;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DXTest extends MustangReaderTestCase implements IExportableTransaction {
+public class DXTest extends MustangReaderTestCase {
 	final String TARGET_PDF = "./target/testout-DX.pdf";
 	final String TARGET_XML = "./target/testout-DX.xml";
 

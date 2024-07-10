@@ -43,7 +43,7 @@ import java.util.GregorianCalendar;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
-	protected class EasyRecipientTradeParty extends RecipientTradeParty implements IZUGFeRDExportableTradeParty  {
+	protected class EasyRecipientTradeParty extends RecipientTradeParty  {
 		// Not testing extended profile here, lineThree not possible
 		@Override
 		public String getAdditionalAddressExtension() {

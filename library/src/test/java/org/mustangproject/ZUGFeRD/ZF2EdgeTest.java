@@ -37,7 +37,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTransaction {
+public class ZF2EdgeTest extends MustangReaderTestCase {
 	final String TARGET_PDF = "./target/testout-ZF2newEdge.pdf";
 
 	protected class EdgeProduct implements IZUGFeRDExportableProduct {
@@ -325,7 +325,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 		assertTrue(resultXML.contains("<ram:IssuerAssignedID>123</ram:IssuerAssignedID>"));
 
 		// Reading ZUGFeRD
-		assertEquals("337.60", zi.getAmount());;
+		assertEquals("337.60", zi.getAmount());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 		try {

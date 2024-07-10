@@ -141,6 +141,6 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 */
 	default IZUGFeRDAllowanceCharge[] getItemTotalAllowances() {
 		return null;
-	};
+	}
 
 }

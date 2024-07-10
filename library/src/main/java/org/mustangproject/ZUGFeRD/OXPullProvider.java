@@ -22,22 +22,19 @@ package org.mustangproject.ZUGFeRD;
 
 import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
 import static org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants.CORRECTEDINVOICE;
-import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATEGORY_CODES_WITH_EXEMPTION_REASON;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.XMLTools;
 
-public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider {
+public class OXPullProvider extends ZUGFeRD2PullProvider {
 
 	protected IExportableTransaction trans;
 	protected TransactionCalculator calc;
@@ -329,17 +326,19 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 				}
 			}
 		}
-		if ((trans.getDocumentCode() == CORRECTEDINVOICE)/*||(trans.getDocumentCode() == DocumentCodeTypeConstants.CREDITNOTE)*/) {
-			hasDueDate = false;
+		if (trans.getDocumentCode() != null) {
+  		if ((trans.getDocumentCode().equals(CORRECTEDINVOICE))/*||(trans.getDocumentCode().equals (DocumentCodeTypeConstants.CREDITNOTE))*/) {
+  			hasDueDate = false;
+  		}
 		}
 
 		final Map<BigDecimal, VATAmount> VATPercentAmountMap = calc.getVATPercentAmountMap();
 		for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
 			final VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
 			if (amount != null) {
-				final String amountCategoryCode = amount.getCategoryCode();
+			  /*final String amountCategoryCode = amount.getCategoryCode();
 				final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(amountCategoryCode);
-	/*			xml += "<ram:ApplicableTradeTax>\n"
+				xml += "<ram:ApplicableTradeTax>\n"
 						+ "<ram:CalculatedAmount>" + currencyFormat(amount.getCalculated())
 						+ "</ram:CalculatedAmount>\n" //currencyID=\"EUR\"
 						+ "<ram:TypeCode>VAT</ram:TypeCode>\n"
@@ -475,13 +474,9 @@ public class OXPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 				+ "</rsm:SCRDMCCBDACIOMessageStructure>";
 
 		final byte[] zugferdRaw;
-		try {
-			zugferdRaw = xml.getBytes("UTF-8");
+		zugferdRaw = xml.getBytes(StandardCharsets.UTF_8);
 
-			zugferdData = XMLTools.removeBOM(zugferdRaw);
-		} catch (final UnsupportedEncodingException e) {
-			Logger.getLogger(OXPullProvider.class.getName()).log(Level.SEVERE, null, e);
-		}
+		zugferdData = XMLTools.removeBOM(zugferdRaw);
 	}
 
 

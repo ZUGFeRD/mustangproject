@@ -32,7 +32,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -62,7 +61,6 @@ import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.mustangproject.ClasspathResolverURIAdapter;
-import org.mustangproject.CII.CIIToUBL;
 
 public class ZUGFeRDVisualizer {
 
@@ -100,7 +98,7 @@ public class ZUGFeRDVisualizer {
 	}
 
 	public String visualize(String xmlFilename, Language lang)
-			throws FileNotFoundException, TransformerException, UnsupportedEncodingException {
+			throws FileNotFoundException, TransformerException {
 
 		try {
 			if (mXsltXRTemplate == null) {
@@ -202,11 +200,11 @@ public class ZUGFeRDVisualizer {
 
 		}
 
-		return baos.toString("UTF-8");
+		return baos.toString(StandardCharsets.UTF_8);
 	}
 
 	protected String toFOP(String xmlFilename)
-			throws FileNotFoundException, TransformerException, UnsupportedEncodingException {
+			throws FileNotFoundException, TransformerException {
 
 		try {
 			if (mXsltXRTemplate == null) {
@@ -222,9 +220,8 @@ public class ZUGFeRDVisualizer {
 		}
 
 		FileInputStream fis = new FileInputStream(xmlFilename);
-		String fileContent = "";
 		try {
-			fileContent = new String(Files.readAllBytes(Paths.get(xmlFilename)), StandardCharsets.UTF_8);
+			new String(Files.readAllBytes(Paths.get(xmlFilename)), StandardCharsets.UTF_8);
 		} catch (IOException e2) {
 			LOG.log(Level.SEVERE, null, e2);
 		}
@@ -270,17 +267,14 @@ public class ZUGFeRDVisualizer {
 		}
 
 
-		return baos.toString("UTF-8");
+		return baos.toString(StandardCharsets.UTF_8);
 	}
 
 	public void toPDF(String xmlFilename, String pdfFilename) {
 
 		// the writing part
-		CIIToUBL c2u = new CIIToUBL();
-		String sourceFilename = "factur-x.xml";
 		File CIIinputFile = new File(xmlFilename);
 
-		String expected = null;
 		String result = null;
 
 		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
@@ -289,11 +283,7 @@ public class ZUGFeRDVisualizer {
 			 */
 		try {
 			result = zvi.toFOP(CIIinputFile.getAbsolutePath());
-		} catch (FileNotFoundException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
-		} catch (TransformerException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
-		} catch (UnsupportedEncodingException e) {
+		} catch (FileNotFoundException | TransformerException e) {
 			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
 		}
 		/*

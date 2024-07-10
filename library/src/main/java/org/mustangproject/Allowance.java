@@ -1,14 +1,11 @@
 package org.mustangproject;
 
-import org.mustangproject.ZUGFeRD.IExportableTransaction;
-import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
-
 import java.math.BigDecimal;
 
 /***
  * (absolute) allowances on item and document level
  */
-public class Allowance extends Charge implements IZUGFeRDAllowanceCharge {
+public class Allowance extends Charge {
 
 	/***
 	 * bean constructor

@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -785,9 +786,10 @@ public class ZUGFeRDImporter {
 
 
 	static String convertStreamToString(java.io.InputStream is) {
+	  // TODO wouldn't we use IOUtils.toByteArray nowadays???
 		// source https://stackoverflow.com/questions/309424/how-do-i-read-convert-an-inputstream-into-a-string-in-java referring to
 		// https://community.oracle.com/blogs/pat/2004/10/23/stupid-scanner-tricks
-		final Scanner s = new Scanner(is, "UTF-8").useDelimiter("\\A");
+		final Scanner s = new Scanner(is, StandardCharsets.UTF_8).useDelimiter("\\A");
 		return s.hasNext() ? s.next() : "";
 	}
 

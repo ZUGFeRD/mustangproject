@@ -22,16 +22,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.framework.TestCase;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import org.mustangproject.XMLTools;
 
 public class BaseTest extends TestCase {

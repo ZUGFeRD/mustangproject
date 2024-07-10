@@ -57,15 +57,13 @@ public class PDFValidatorTest extends ResourceCase {
 
 			byte [] contents = getResourceAsByteArray("XMLinvalidV2PDF.pdf");// need a more invalid file here
 
-			pv.setFilename("XMLinvalidV2PDF.pdf");
-			pv.setFileContents(contents);
+			pv.setFilenameAndContents("XMLinvalidV2PDF.pdf", contents);
 			pv.validate();
 			// assertEquals("", pv.getXMLResult());
 
 			//
 			contents = getResourceAsByteArray("Facture_F20180027.pdf");
-			pv.setFilename("Facture_F20180027.pdf");
-			pv.setFileContents(contents);
+			pv.setFilenameAndContents("Facture_F20180027.pdf", contents);
 			pv.validate();
 			String actual = pv.getXMLResult();
 			assertEquals(true, actual.contains("summary status=\"valid"));
@@ -91,8 +89,7 @@ public class PDFValidatorTest extends ResourceCase {
 			// valid one
 			contents = getResourceAsByteArray("validV2PDF.pdf");
 
-			pv.setFilename("validV2PDF.pdf");
-			pv.setFileContents(contents);
+			pv.setFilenameAndContents("validV2PDF.pdf", contents);
 			vc.clear();
 			pv.validate();
 			actual = pv.getXMLResult();
@@ -115,8 +112,7 @@ public class PDFValidatorTest extends ResourceCase {
 			// invalid file here
 			byte [] contents = getResourceAsByteArray("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf");
 
-			pv.setFilename("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf");
-			pv.setFileContents(contents);
+			pv.setFilenameAndContents("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf", contents);
 			pv.validate();
 			String pdfvres = pv.getXMLResult();
 
@@ -132,8 +128,7 @@ public class PDFValidatorTest extends ResourceCase {
 			vc.clear();
 			contents = getResourceAsByteArray("validV1WithAdditionalData.pdf");// need a more invalid file here
 
-			pv.setFilename("validV1WithAdditionalData.pdf");
-			pv.setFileContents(contents);
+			pv.setFilenameAndContents("validV1WithAdditionalData.pdf", contents);
 			pv.validate();
 			pdfvres = pv.getXMLResult();
 
@@ -157,8 +152,7 @@ public class PDFValidatorTest extends ResourceCase {
 		try {
 			byte [] contents = getResourceAsByteArray("invalidXMP.pdf");
 
-			pv.setFilename("invalidXMP.pdf");
-			pv.setFileContents(contents);
+			pv.setFilenameAndContents("invalidXMP.pdf", contents);
 			vc.clear();
 			pv.validate();
 			String actual = pv.getXMLResult();
@@ -168,8 +162,7 @@ public class PDFValidatorTest extends ResourceCase {
 
 			contents = getResourceAsByteArray("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf");
 
-			pv.setFilename("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf");
-			pv.setFileContents(contents);
+			pv.setFilenameAndContents("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf", contents);
 			vc.clear();
 			pv.validate();
 			actual = pv.getXMLResult();

@@ -332,7 +332,7 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			CommandLine cmd;
-			CommandLineParser parser = new BasicParser();
+			CommandLineParser parser = new DefaultParser();
 
 			// create Options object
 			Options options = new Options();
@@ -427,7 +427,7 @@ public class Main {
 					performUBL(sourceName, outName);
 					optionsRecognized = true;
 				} else if ((action != null) && (action.equals("validate"))) {
-					optionsRecognized = performValidate(sourceName, noNotices != null && noNotices, cmd.getOptionValue("logAppend"));
+					optionsRecognized = performValidate(sourceName, noNotices, cmd.getOptionValue("logAppend"));
 				} else if ((action != null) && (action.equals("validateExpectValid"))) {
 					optionsRecognized = performValidateExpect(true, directoryName);
 				} else if ((action != null) && (action.equals("validateExpectInvalid"))) {
@@ -519,10 +519,11 @@ public class Main {
 		ensureFileNotExists(outName);
 
 		// All params are good! continue...
-		ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().convertOnly().load(pdfName);
-
-		ze.export(outName);
-		System.out.println("Written to " + outName);
+		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
+		  ze.convertOnly().load(pdfName);
+		  ze.export(outName);
+		  System.out.println("Written to " + outName);
+		}
 	}
 
 	private static void performExtract(String pdfName, String xmlName) throws IOException {
@@ -585,7 +586,7 @@ public class Main {
 
 			if (attachmentFilenames == null) {
 				byte attachmentContents[] = null;
-				String attachmentFilename, attachmentMime, attachmentDescription;
+				String attachmentFilename, attachmentMime;
 				if (!noAttachments) {
 					attachmentFilename = getFilenameFromUser("Additional file attachments filename (empty for none)", "", "pdf", true, false);
 					if (attachmentFilename.length() != 0) {
@@ -842,13 +843,7 @@ public class Main {
 			} else {
 				zvi.toPDF(sourceName, outName);
 			}
-		} catch (FileNotFoundException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (UnsupportedEncodingException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (TransformerException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (IOException e) {
+		} catch (TransformerException | IOException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 		System.out.println("Written to " + outName);
@@ -876,11 +871,8 @@ public class Main {
 	 * @throws Exception e.g. if the specified resource does not exist at the specified location
 	 */
 	static public String ExportResource(String resourceName) throws Exception {
-		InputStream stream = null;
-		OutputStream resStreamOut = null;
 		String jarFolder;
-		try {
-			stream = Main.class.getResourceAsStream(resourceName);//note that each / is a directory down in the "jar tree" been the jar the root of the tree
+		try (InputStream stream = Main.class.getResourceAsStream(resourceName)) {//note that each / is a directory down in the "jar tree" been the jar the root of the tree
 			if (stream == null) {
 				throw new Exception("Cannot get resource \"" + resourceName + "\" from Jar file.");
 			}
@@ -888,15 +880,11 @@ public class Main {
 			int readBytes;
 			byte[] buffer = new byte[4096];
 			jarFolder = System.getProperty("user.dir");
-			resStreamOut = new FileOutputStream(jarFolder + resourceName);
-			while ((readBytes = stream.read(buffer)) > 0) {
-				resStreamOut.write(buffer, 0, readBytes);
+			try (FileOutputStream resStreamOut = new FileOutputStream(jarFolder + resourceName)) {
+  			while ((readBytes = stream.read(buffer)) > 0) {
+  				resStreamOut.write(buffer, 0, readBytes);
+  			}
 			}
-		} catch (Exception ex) {
-			throw ex;
-		} finally {
-			stream.close();
-			resStreamOut.close();
 		}
 
 		return jarFolder + resourceName;
@@ -918,7 +906,8 @@ public class Main {
 		if (fileName == null)
 			return false;
 		File f = new File(fileName);
-		return f.exists();
+		// "exists" also returns true for directories
+		return f.isFile();
 	}
 
 }

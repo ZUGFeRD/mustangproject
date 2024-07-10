@@ -1,9 +1,7 @@
 package org.mustangproject;
 
 import org.mustangproject.ZUGFeRD.IAbsoluteValueProvider;
-import org.mustangproject.ZUGFeRD.IExportableTransaction;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
 
 import java.math.BigDecimal;
 

@@ -229,14 +229,14 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals(zi.getSellerTradePartyAddress().getCityName(), "Stadthausen");
 
 		final List<org.mustangproject.Item> li = zi.getLineItemList();
-		assertEquals(zi.getLineItemList().get(0).getId().toString(), "1");
-		assertEquals(zi.getLineItemList().get(0).getProduct().getBuyerAssignedID(), "");
-		assertEquals(zi.getLineItemList().get(0).getProduct().getSellerAssignedID(), "");
-		assertEquals(zi.getLineItemList().get(0).getLineTotalAmount().toString(), "160.00");
-		assertEquals(zi.getLineItemList().get(0).getQuantity().toString(), "1.0000");
-		assertEquals(zi.getLineItemList().get(0).getProduct().getVATPercent().toString(), "7.00");
-		assertEquals(zi.getLineItemList().get(0).getProduct().getName(), "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung");
-		assertEquals(zi.getLineItemList().get(0).getProduct().getDescription(), "");
+		assertEquals(li.get(0).getId().toString(), "1");
+		assertEquals(li.get(0).getProduct().getBuyerAssignedID(), "");
+		assertEquals(li.get(0).getProduct().getSellerAssignedID(), "");
+		assertEquals(li.get(0).getLineTotalAmount().toString(), "160.00");
+		assertEquals(li.get(0).getQuantity().toString(), "1.0000");
+		assertEquals(li.get(0).getProduct().getVATPercent().toString(), "7.00");
+		assertEquals(li.get(0).getProduct().getName(), "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung");
+		assertEquals(li.get(0).getProduct().getDescription(), "");
 
 		try {
 			assertEquals(zi.getVersion(), 2);

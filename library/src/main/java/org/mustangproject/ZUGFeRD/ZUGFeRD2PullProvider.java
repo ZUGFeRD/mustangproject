@@ -25,7 +25,6 @@ import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATE
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -756,13 +755,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			+ "</rsm:CrossIndustryInvoice>";
 
 		final byte[] zugferdRaw;
-		try {
-			zugferdRaw = xml.getBytes("UTF-8");
+		zugferdRaw = xml.getBytes(StandardCharsets.UTF_8);
 
-			zugferdData = XMLTools.removeBOM(zugferdRaw);
-		} catch (final UnsupportedEncodingException e) {
-			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
-		}
+		zugferdData = XMLTools.removeBOM(zugferdRaw);
 	}
 
 	protected String buildItemNotes(IZUGFeRDExportableItem currentItem) {

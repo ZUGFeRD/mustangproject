@@ -547,7 +547,7 @@ public class Invoice implements IExportableTransaction {
 			return null;
 		}
 
-		return ((TradeParty) getSender()).getAsTradeSettlement();
+		return getSender().getAsTradeSettlement();
 
 	}
 

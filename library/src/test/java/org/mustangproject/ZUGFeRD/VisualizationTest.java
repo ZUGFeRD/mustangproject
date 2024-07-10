@@ -21,7 +21,6 @@ package org.mustangproject.ZUGFeRD;
 
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import org.mustangproject.CII.CIIToUBL;
 
 import javax.xml.transform.*;
 import java.io.*;
@@ -69,8 +68,6 @@ public class VisualizationTest extends ResourceCase {
 	public void testUBLCreditNoteVisualizationBasic() {
 
 		// the writing part
-		CIIToUBL c2u = new CIIToUBL();
-		String sourceFilename = "factur-x.xml";
 		File UBLinputFile = getResourceAsFile("ubl-creditnote.xml");
 
 		String expected = null;
@@ -105,8 +102,6 @@ public class VisualizationTest extends ResourceCase {
 	public void testUBLVisualizationBasic() {
 
 		// the writing part
-		CIIToUBL c2u = new CIIToUBL();
-		String sourceFilename = "factur-x.xml";
 		File UBLinputFile = getResourceAsFile("ubl/01.01a-INVOICE.ubl.xml");
 
 		String expected = null;

@@ -40,7 +40,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.XMLTools;
 
-public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLProvider {
+public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 
 
 	//// MAIN CLASS
@@ -100,7 +100,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider implements IXMLPr
 			format.setTrimText(false);
 			final XMLWriter writer = new XMLWriter(sw, format);
 			writer.write(document);
-			res = sw.toString().getBytes("UTF-8");
+			res = sw.toString().getBytes(StandardCharsets.UTF_8);
 
 		} catch (final IOException e) {
 			Logger.getLogger(ZUGFeRD1PullProvider.class.getName()).log(Level.SEVERE, null, e);

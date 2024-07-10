@@ -1,7 +1,6 @@
 package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.apache.fop.util.XMLUtil;
 import org.mustangproject.ZUGFeRD.IReferencedDocument;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
@@ -12,7 +11,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /***
  * describes any invoice line
@@ -28,8 +26,8 @@ public class Item implements IZUGFeRDExportableItem {
 	protected Product product;
 	protected ArrayList<String> notes = null;
 	protected ArrayList<ReferencedDocument> referencedDocuments = null;
-	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<IZUGFeRDAllowanceCharge>(),
-		Charges = new ArrayList<IZUGFeRDAllowanceCharge>();
+	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
+		Charges = new ArrayList<>();
 
 	/***
 	 * default constructor
@@ -138,7 +136,7 @@ public class Item implements IZUGFeRDExportableItem {
 						ReferencedDocument rd = new ReferencedDocument(IssuerAssignedID, TypeCode,
 							ReferenceTypeCode);
 						if (rdocs == null) {
-							rdocs = new ArrayList<ReferencedDocument>();
+							rdocs = new ArrayList<>();
 						}
 						rdocs.add(rd);
 
@@ -428,7 +426,7 @@ public class Item implements IZUGFeRDExportableItem {
 	 */
 	public Item addNote(String text) {
 		if (notes == null) {
-			notes = new ArrayList<String>();
+			notes = new ArrayList<>();
 		}
 		notes.add(text);
 		return this;
@@ -441,7 +439,7 @@ public class Item implements IZUGFeRDExportableItem {
 	 */
 	public Item addReferencedDocument(ReferencedDocument doc) {
 		if (referencedDocuments == null) {
-			referencedDocuments = new ArrayList<ReferencedDocument>();
+			referencedDocuments = new ArrayList<>();
 		}
 		referencedDocuments.add(doc);
 		return this;
