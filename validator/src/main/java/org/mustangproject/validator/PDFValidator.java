@@ -63,6 +63,7 @@ public class PDFValidator extends Validator {
 	private String Signature;
 
 	private String zfXML = null;
+	protected boolean autoload=true;
 
 	protected static boolean stringArrayContains(String[] arr, String targetValue) {
 		return Arrays.asList(arr).contains(targetValue);
@@ -311,10 +312,12 @@ public class PDFValidator extends Validator {
 	@Override
 	public void setFilename(String filename) throws IrrecoverableValidationError {
 		this.pdfFilename = filename;
-		try {
-			fileContents=Files.readAllBytes(Paths.get(pdfFilename));
-		} catch (IOException ex) {
-			throw new IrrecoverableValidationError("Could not read file");
+		if(autoload) {
+			try {
+				fileContents=Files.readAllBytes(Paths.get(pdfFilename));
+			} catch (IOException ex) {
+				throw new IrrecoverableValidationError("Could not read file");
+			}
 		}
 	}
 

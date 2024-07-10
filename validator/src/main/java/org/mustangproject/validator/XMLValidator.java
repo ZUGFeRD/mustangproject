@@ -42,7 +42,6 @@ public class XMLValidator extends Validator {
 
 	protected String zfXML = "";
 	protected String filename = "";
-	protected boolean autoload=true;
 	int firedRules = 0;
 	int failedRules = 0;
 	boolean disableNotices = false;
@@ -83,11 +82,6 @@ public class XMLValidator extends Validator {
 
 		}
 
-	}
-
-	public void disableAutoload() {
-		// for streaming, which sets a fake filename
-		autoload=false;
 	}
 
 	/***
