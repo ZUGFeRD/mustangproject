@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -34,8 +32,11 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.EStandard;
 import org.mustangproject.XMLTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UBLDAPullProvider implements IXMLProvider {
+  private static final Logger LOGGER = LoggerFactory.getLogger (UBLDAPullProvider.class);
 
 	protected IExportableTransaction trans;
 	protected TransactionCalculator calc;
@@ -118,7 +119,7 @@ public class UBLDAPullProvider implements IXMLProvider {
 		try {
 			document = DocumentHelper.parseText(new String(ublData));
 		} catch (final DocumentException e1) {
-			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e1);
+			LOGGER.error ("Failed to parse UBL", e1);
 		}
 		try {
 			final OutputFormat format = OutputFormat.createPrettyPrint();
@@ -128,7 +129,7 @@ public class UBLDAPullProvider implements IXMLProvider {
 			res = sw.toString().getBytes(StandardCharsets.UTF_8);
 
 		} catch (final IOException e) {
-			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
+			LOGGER.error ("Failed to write XML", e);
 		}
 
 		return res;
