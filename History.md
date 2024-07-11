@@ -14,6 +14,8 @@
   In cmd also --attachments "" worked but in powershell it was hard to figure out that one had to use --attachments '""'
 - Be able to validate XRechnung/UBL files #337
 - ph-schematron aktualisiert, logback zugungsten log4j entfernt #402
+- java.util Logging zugungsten log4j entfernt #407
+- ZF extended no longer requires deliveydate #409
 
 2.11.0
 =======
