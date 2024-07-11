@@ -22,15 +22,16 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * This test utility class is providing usability functions to test file resources
  */
 public class ResourceUtilities {
-	private static final Logger LOG = Logger.getLogger(ResourceUtilities.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger (ResourceUtilities.class);
 
 	/**
 	 * Loading a File into a String using a certain encoding and file path
@@ -73,7 +74,7 @@ public class ResourceUtilities {
 			uri = ResourceUtilities.class.getClassLoader().getResource(relativeFilePath).toURI();
 			uri = new URI(toExternalForm(uri));
 		} catch (URISyntaxException ex) {
-			LOG.log(Level.SEVERE, null, ex);
+			LOGGER.error("Failed to parse URI", ex);
 		}
 		if (uri == null) {
 			throw new FileNotFoundException("Could not find the file '" + relativeFilePath + "'!");
@@ -129,7 +130,7 @@ public class ResourceUtilities {
 		try {
 			filepath = ResourceUtilities.class.getClassLoader().getResource("").toURI().getPath() + relativeFilePath;
 		} catch (URISyntaxException ex) {
-			LOG.log(Level.SEVERE, null, ex);
+			LOGGER.error("Failed to parse URI", ex);
 		}
 		return new File(filepath);
 	}
@@ -142,7 +143,7 @@ public class ResourceUtilities {
 		try {
 			testFolder = ResourceUtilities.class.getClassLoader().getResource("").toURI().getPath();
 		} catch (URISyntaxException ex) {
-			LOG.log(Level.SEVERE, null, ex);
+      LOGGER.error("Failed to parse URI", ex);
 		}
 		return testFolder;
 	}
@@ -206,7 +207,7 @@ public class ResourceUtilities {
 		try {
 			ret = new URI(sb.toString()).toASCIIString();
 		} catch (URISyntaxException ex) {
-			LOG.log(Level.SEVERE, null, ex);
+      LOGGER.error("Failed to parse URI", ex);
 		}
 		return ret;
 	}

@@ -6,17 +6,18 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.mustangproject.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /***
  * tests the linecalculator and transactioncalculator classes
  *
  */
 public class CalculationTest {
+  private static final Logger LOGGER = LoggerFactory.getLogger (CalculationTest.class);
 
 	@Test
 	public void testLineCalculator_simpleAmounts_resultInValidVATAmount() {
@@ -92,7 +93,7 @@ public class CalculationTest {
 			invoice.setDeliveryDate(sqlDate.parse("2020-12-31"));
 			invoice.setDueDate(sqlDate.parse("2021-01-15"));
 		} catch (Exception e) {
-			Logger.getLogger(CalculationTest.class.getName()).log(Level.SEVERE, null, e);
+			LOGGER.error("Failed to set dates", e);
 
 		}
 

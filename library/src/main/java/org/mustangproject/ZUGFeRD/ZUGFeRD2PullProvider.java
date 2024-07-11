@@ -35,8 +35,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.dom4j.Document;
@@ -48,8 +46,11 @@ import org.mustangproject.FileAttachment;
 import org.mustangproject.IncludedNote;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ZUGFeRD2PullProvider implements IXMLProvider {
+  private static final Logger LOGGER = LoggerFactory.getLogger (ZUGFeRD2PullProvider.class);
 
 	protected byte[] zugferdData;
 	protected IExportableTransaction trans;
@@ -91,7 +92,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		try {
 			document = DocumentHelper.parseText(new String(zugferdData));
 		} catch (final DocumentException e1) {
-			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e1);
+      LOGGER.error ("Failed to parse ZUGFeRD data", e1);
 		}
 		try {
 			final OutputFormat format = OutputFormat.createPrettyPrint();
@@ -101,7 +102,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			res = sw.toString().getBytes(StandardCharsets.UTF_8);
 
 		} catch (final IOException e) {
-			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
+      LOGGER.error ("Failed to write ZUGFeRD data", e);
 		}
 
 		return res;

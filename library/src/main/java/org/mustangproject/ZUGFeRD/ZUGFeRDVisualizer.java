@@ -35,8 +35,6 @@ import java.io.PipedOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -61,6 +59,10 @@ import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.mustangproject.ClasspathResolverURIAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.helger.commons.io.stream.StreamHelper;
 
 public class ZUGFeRDVisualizer {
 
@@ -72,7 +74,7 @@ public class ZUGFeRDVisualizer {
 
 	static final ClassLoader CLASS_LOADER = ZUGFeRDVisualizer.class.getClassLoader();
 	private static final String RESOURCE_PATH = "";
-	private static final Logger LOG = Logger.getLogger(ZUGFeRDVisualizer.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger (ZUGFeRDVisualizer.class);
 	// private static File createTempFileResult(final Transformer transformer, final
 	// StreamSource toTransform,
 	// final String suffix) throws TransformerException, IOException {
@@ -118,7 +120,7 @@ public class ZUGFeRDVisualizer {
 						CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/ZUGFeRD_1p0_c1p0_s1p0.xslt")));
 			}
 		} catch (TransformerConfigurationException ex) {
-			LOG.log(Level.SEVERE, null, ex);
+			LOGGER.error ("Failed to init XSLT templates", ex);
 		}
 
 		/**
@@ -132,7 +134,7 @@ public class ZUGFeRDVisualizer {
 		try {
 			fileContent = new String(Files.readAllBytes(Paths.get(xmlFilename)), StandardCharsets.UTF_8);
 		} catch (IOException e2) {
-			LOG.log(Level.SEVERE, null, e2);
+			LOGGER.error ("Failed to read file content", e2);
 		}
 
 		ByteArrayOutputStream iaos = new ByteArrayOutputStream();
@@ -177,25 +179,17 @@ public class ZUGFeRDVisualizer {
 							// ByteArrayOutputStream
 							iaos.writeTo(out);
 						} catch (IOException e) {
-							LOG.log(Level.SEVERE, null, e);
+							LOGGER.error ("Failed to write to stream", e);
 						} finally {
 							// close the PipedOutputStream here because we're done writing data
 							// once this thread has completed its run
-							if (out != null) {
-								// close the PipedOutputStream cleanly
-								try {
-									out.close();
-								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									LOG.log(Level.SEVERE, null, e);
-								}
-							}
+						  StreamHelper.close (out);
 						}
 					}
 				}).start();
 				applyXSLTToHTML(in, baos);
 			} catch (IOException e1) {
-				LOG.log(Level.SEVERE, null, e1);
+				LOGGER.error("Failed to create HTML", e1);
 			}
 
 		}
@@ -216,14 +210,15 @@ public class ZUGFeRDVisualizer {
 						new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/xr-pdf.xsl")));
 			}
 		} catch (TransformerConfigurationException ex) {
-			LOG.log(Level.SEVERE, null, ex);
+			LOGGER.error("Failed to init XSLT templates", ex);
 		}
 
 		FileInputStream fis = new FileInputStream(xmlFilename);
 		try {
+		  // TODO why are we reading the whole file here and discarding the content?
 			new String(Files.readAllBytes(Paths.get(xmlFilename)), StandardCharsets.UTF_8);
 		} catch (IOException e2) {
-			LOG.log(Level.SEVERE, null, e2);
+			LOGGER.error ("Failed to read file", e2);
 		}
 
 		ByteArrayOutputStream iaos = new ByteArrayOutputStream();
@@ -245,25 +240,17 @@ public class ZUGFeRDVisualizer {
 						// ByteArrayOutputStream
 						iaos.writeTo(out);
 					} catch (IOException e) {
-						LOG.log(Level.SEVERE, null, e);
+						LOGGER.error("Failed to write to stream", e);
 					} finally {
 						// close the PipedOutputStream here because we're done writing data
 						// once this thread has completed its run
-						if (out != null) {
-							// close the PipedOutputStream cleanly
-							try {
-								out.close();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								LOG.log(Level.SEVERE, null, e);
-							}
-						}
+						StreamHelper.close(out);
 					}
 				}
 			}).start();
 			applyXSLTToPDF(in, baos);
 		} catch (IOException e1) {
-			LOG.log(Level.SEVERE, null, e1);
+			LOGGER.error("Failed to create PDF", e1);
 		}
 
 
@@ -284,7 +271,7 @@ public class ZUGFeRDVisualizer {
 		try {
 			result = zvi.toFOP(CIIinputFile.getAbsolutePath());
 		} catch (FileNotFoundException | TransformerException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
+			LOGGER.error("Failed to apply FOP", e);
 		}
 		/*
 		FopConfParser parser = null;
@@ -348,17 +335,9 @@ public class ZUGFeRDVisualizer {
 
 			//Files.write(Paths.get("C:\\Users\\jstaerk\\temp\\fop.pdf"), res.toString().getBytes(StandardCharsets.UTF_8));
 
-		} catch (FOPException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
-		} catch (TransformerConfigurationException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
-		} catch (IOException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
-		} catch (TransformerException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
+		} catch (FOPException | IOException | TransformerException e) {
+			LOGGER.error("Failed to create PDF", e);
 		}
-
-
 	}
 
 	protected void applyZF2XSLT(final InputStream xmlFile, final OutputStream HTMLOutstream)

@@ -27,9 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -52,12 +49,15 @@ import org.mustangproject.EStandard;
 import org.mustangproject.Item;
 import org.mustangproject.Product;
 import org.mustangproject.XMLTools;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ZUGFeRDImporter {
+  private static final Logger LOGGER = LoggerFactory.getLogger (ZUGFeRDImporter.class);
 
 	/**
 	 * if metadata has been found
@@ -90,7 +90,7 @@ public class ZUGFeRDImporter {
 		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
 			extractLowLevel(bis);
 		} catch (final IOException e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+      LOGGER.error ("Failed to extract ZUGFeRD data", e);
 			throw new ZUGFeRDExportException(e);
 		}
 	}
@@ -100,7 +100,7 @@ public class ZUGFeRDImporter {
 		try {
 			extractLowLevel(pdfStream);
 		} catch (final IOException e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+      LOGGER.error ("Failed to extract ZUGFeRD data", e);
 			throw new ZUGFeRDExportException(e);
 		}
 	}
@@ -127,7 +127,7 @@ public class ZUGFeRDImporter {
 				//start
 
 				if (doc.getDocumentCatalog() == null || doc.getDocumentCatalog().getMetadata() == null) {
-					Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.INFO, "no-xmlpart");
+					LOGGER.info("no-xmlpart");
 					return;
 				}
 
@@ -219,7 +219,7 @@ public class ZUGFeRDImporter {
 		try {
 			setDocument();
 		} catch (ParserConfigurationException | SAXException e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+			LOGGER.error ("Failed to parse XML", e);
 			throw new ZUGFeRDExportException(e);
 		}
 	}
@@ -236,7 +236,7 @@ public class ZUGFeRDImporter {
 			final XPath xpath = xpathFact.newXPath();
 			result = xpath.evaluate(xpathStr, document);
 		} catch (final XPathExpressionException e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+      LOGGER.error ("Failed to evaluate XPath", e);
 			throw new ZUGFeRDExportException(e);
 		}
 		return result;
@@ -301,8 +301,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'ApplicableHeaderTradeSettlement']//*[local-name() = 'InvoiceCurrencyCode']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
-
+			// Exception was already logged
 			return "";
 		}
 	}
@@ -336,7 +335,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = '" + propertyName + "']//*[local-name() = 'IssuerAssignedID']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+			// Exception was already logged
 			return "";
 		}
 	}
@@ -359,7 +358,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'ExchangedDocument']//*[local-name() = 'IssueDateTime']//*[local-name() = 'DateTimeString']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+			// Exception was already logged
 			return "";
 		}
 	}
@@ -391,7 +390,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']//*[local-name() = 'TaxBasisTotalAmount']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+			// Exception was already logged
 			return "";
 		}
 	}
@@ -407,7 +406,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']//*[local-name() = 'TaxTotalAmount']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+			// Exception was already logged
 			return "";
 		}
 	}
@@ -423,7 +422,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']//*[local-name() = 'RoundingAmount']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+			// Exception was already logged
 			return "";
 		}
 	}
@@ -439,7 +438,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']//*[local-name() = 'TotalPrepaidAmount']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+      // Exception was already logged
 			return "";
 		}
 	}
@@ -477,7 +476,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'ExchangedDocument']//*[local-name() = 'IncludedNote']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+      // Exception was already logged
 			return "";
 		}
 	}
@@ -508,7 +507,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']//*[local-name() = 'LineTotalAmount']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+      // Exception was already logged
 			return "";
 		}
 	}
@@ -531,7 +530,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'ActualDeliverySupplyChainEvent']//*[local-name() = 'OccurrenceDateTime']//*[local-name() = 'DateTimeString']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+      // Exception was already logged
 			return "";
 		}
 	}
@@ -547,7 +546,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'ExchangedDocument']//*[local-name() = 'ID']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+      // Exception was already logged
 			return "";
 		}
 	}
@@ -564,7 +563,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'ExchangedDocument']/*[local-name() = 'TypeCode']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+      // Exception was already logged
 			return "";
 		}
 	}
@@ -581,7 +580,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'ApplicableHeaderTradeAgreement']/*[local-name() = 'BuyerReference']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+      // Exception was already logged
 			return "";
 		}
 	}
@@ -806,7 +805,7 @@ public class ZUGFeRDImporter {
 				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'PostalTradeAddress']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+      // Exception was already logged
 			return null;
 		}
 
@@ -828,7 +827,7 @@ public class ZUGFeRDImporter {
 				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'SellerTradeParty']//*[local-name() = 'PostalTradeAddress']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+      // Exception was already logged
 			return null;
 		}
 
@@ -850,7 +849,7 @@ public class ZUGFeRDImporter {
 				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeDelivery']//*[local-name() = 'ShipToTradeParty']//*[local-name() = 'PostalTradeAddress']");
 			}
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+      // Exception was already logged
 			return null;
 		}
 
@@ -1063,7 +1062,7 @@ public class ZUGFeRDImporter {
 			nl = getNodeListByPath("//*[local-name() = 'IncludedSupplyChainTradeLineItem']");
 
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+      // Exception was already logged
 		}
 
 		for (int i = 0; i < nl.getLength(); i++) {
@@ -1110,7 +1109,7 @@ public class ZUGFeRDImporter {
 			final XPathExpression xpr = xPath.compile(s);
 			return (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		} catch (final Exception e) {
-			Logger.getLogger(ZUGFeRDImporter.class.getName()).log(Level.SEVERE, null, e);
+			LOGGER.error("Failed to evaluate XPath", e);
 			return null;
 		}
 	}
