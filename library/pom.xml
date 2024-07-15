@@ -8,9 +8,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.mustangproject</groupId>
     <artifactId>library</artifactId>
-    <version>2.12.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Library to write, read and validate e-invoices (Factur-X, ZUGFeRD, Order-X, XRechnung/CII)</name>
     <description>FOSS Java library to read, write and validate european electronic invoices and orders in the UN/CEFACT
@@ -47,11 +45,9 @@
         <github.global.server>github</github.global.server>
         <additionalparam>-Xdoclint:none</additionalparam>
         <!-- Skip error check for javadoc -->
-        <maven.compiler.compilerVersion>11</maven.compiler.compilerVersion>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <maven.deploy.skip>true
-        </maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
+        <maven.deploy.skip>true</maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
 
     </properties>
     <dependencies>
@@ -170,12 +166,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
-                        mvn clean compile assembly:single -->
-                    <!-- or whatever version you use -->
                     <source>11</source>
                     <target>11</target>
                 </configuration>
@@ -234,10 +224,8 @@
                 <version>3.5.3</version>
                 <configuration>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
-                    <minimizeJar>false
-                    </minimizeJar><!-- no longer java 11 compatible if set to true because it removes e.g. javax/xml/bind/annotation/XmlSchema-->
+                    <minimizeJar>false</minimizeJar><!-- no longer java 11 compatible if set to true because it removes e.g. javax/xml/bind/annotation/XmlSchema-->
                     <filters>
-
                         <filter>
                             <artifact>*:*</artifact>
                             <excludes>
@@ -245,12 +233,6 @@
                                 <exclude>META-INF/*.DSA</exclude>
                                 <exclude>META-INF/*.RSA</exclude>
                             </excludes>
-                        </filter>
-                        <filter>
-                            <artifact>log4j:log4j</artifact>
-                            <includes>
-                                <include>**</include>
-                            </includes>
                         </filter>
                         <filter>
                             <artifact>commons-logging:commons-logging</artifact>
@@ -269,9 +251,6 @@
                         <configuration>
                             <artifactSet>
                                 <excludes>
-                                    <!--exclude>classworlds:classworlds</exclude> <exclude>junit:junit</exclude>
-                                        <exclude>jmock:*</exclude> <exclude>*:xml-apis</exclude> <exclude>org.apache.maven:lib:tests</exclude>
-                                        <exclude>log4j:log4j:jar:</exclude -->
                                 </excludes>
                             </artifactSet>
                         </configuration>
