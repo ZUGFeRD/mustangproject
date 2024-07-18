@@ -15,7 +15,9 @@
 - Be able to validate XRechnung/UBL files #337
 - ph-schematron aktualisiert, logback zugungsten log4j entfernt #402
 - java.util Logging zugungsten log4j entfernt #407
-- ZF extended no longer requires deliveydate #409
+- ZF extended no longer requires deliverydate #411
+- Return all BankDetails from parsed CII xml. Closes #408.
+- ubl visualization: do not require ubl namespace prefix #416
 
 2.11.0
 =======

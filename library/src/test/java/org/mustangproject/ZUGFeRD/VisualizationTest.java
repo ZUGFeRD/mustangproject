@@ -21,7 +21,9 @@ package org.mustangproject.ZUGFeRD;
 
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -57,11 +59,14 @@ public class VisualizationTest extends ResourceCase {
 			fail("TransformerException should not happen: "+e.getMessage());
 		} catch (IOException e) {
 			fail("IOException should not happen: "+e.getMessage());
-		}
+		} catch (ParserConfigurationException e) {
+			fail("ParserConfigurationException should not happen: "+e.getMessage());
+        } catch (SAXException e) {
+			fail("SAXException should not happen: "+e.getMessage());
+        }
 
 
-
-		assertNotNull(result);
+        assertNotNull(result);
 		// Reading ZUGFeRD
 		assertEquals(expected, result);
 	}
@@ -91,11 +96,14 @@ public class VisualizationTest extends ResourceCase {
 			fail("TransformerException should not happen: "+e.getMessage());
 		} catch (IOException e) {
 			fail("IOException should not happen: "+e.getMessage());
+		} catch (ParserConfigurationException e) {
+			fail("ParserConfigurationException should not happen: "+e.getMessage());
+        } catch (SAXException e) {
+			fail("SAXException should not happen: "+e.getMessage());
 		}
 
 
-
-		assertNotNull(result);
+        assertNotNull(result);
 		// Reading ZUGFeRD
 		assertEquals(expected, result);
 	}
@@ -125,11 +133,14 @@ public class VisualizationTest extends ResourceCase {
 			fail("TransformerException should not happen: "+e.getMessage());
 		} catch (IOException e) {
 			fail("IOException should not happen: "+e.getMessage());
-		}
+		} catch (ParserConfigurationException e) {
+			fail("ParserConfigurationException should not happen: "+e.getMessage());
+        } catch (SAXException e) {
+			fail("SAXException should not happen: "+e.getMessage());
+        }
 
 
-
-		assertNotNull(result);
+        assertNotNull(result);
 		// Reading ZUGFeRD
 		assertEquals(expected, result);
 	}

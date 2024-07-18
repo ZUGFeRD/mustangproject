@@ -843,8 +843,9 @@ public class Main {
 			} else {
 				zvi.toPDF(sourceName, outName);
 			}
-		} catch (TransformerException | IOException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
+			System.err.println(e.getMessage());
 		}
 		System.out.println("Written to " + outName);
 
