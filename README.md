@@ -34,7 +34,7 @@ If you set up a Maven project, you can reference the mustang artifact like this:
 <dependency>
   <groupId>org.mustangproject</groupId>
   <artifactId>library</artifactId>
- <version>2.11.0</version>
+ <version>2.12.0</version>
 </dependency>
 ```
 

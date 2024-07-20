@@ -1,12 +1,13 @@
 2.12.0
 =======
+2024-07-20
 
 - support pdf export/visualization to PDF, thanks to Heavenfighter #387 allow embedd fonts from jar-file for pdf creation #388
 - Fix #389: ClassCastException: ZUGFeRDExporterFromA3
 - jakarta support #372
 - Upgrade to PDFBox 3 #373
 - Requires Java 11
-- #397
+- #397 Build succeeds but file is unusable on alpine/docker
 - #392 CLI: action combine: --ignorefileextension to ignore PDF/A input file errors dosen't work
 - for CLI combine, fx is now default
 - set profile to XR if XR is imported #395
