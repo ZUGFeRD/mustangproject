@@ -34,6 +34,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -396,6 +397,18 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml += "<ram:Description>" +
 						XMLTools.encodeXML(currentItem.getProduct().getDescription()) +
 						"</ram:Description>";
+				}
+				if (currentItem.getProduct().getAttributes() != null) {
+					xml += "<ram:ApplicableProductCharacteristic>";
+					for ( Entry<String, String> entry : currentItem.getProduct().getAttributes().entrySet() ) {
+						xml += "<ram:Description>" + XMLTools.encodeXML(entry.getKey()) + "</ram:Description>" + "<ram:Value>" + XMLTools.encodeXML(entry.getValue()) + "</ram:Value>";
+					}
+					xml += "</ram:ApplicableProductCharacteristic>";
+				}
+				if (currentItem.getProduct().getCountryOfOrigin() != null) {
+					xml += "<ram:OriginTradeCountry><ram:ID>" +
+					XMLTools.encodeXML(currentItem.getProduct().getCountryOfOrigin()) +
+					"</ram:ID></ram:OriginTradeCountry>";
 				}
 				xml += "</ram:SpecifiedTradeProduct>"
 
