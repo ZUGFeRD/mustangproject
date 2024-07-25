@@ -399,11 +399,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						"</ram:Description>";
 				}
 				if (currentItem.getProduct().getAttributes() != null) {
-					xml += "<ram:ApplicableProductCharacteristic>";
 					for ( Entry<String, String> entry : currentItem.getProduct().getAttributes().entrySet() ) {
-						xml += "<ram:Description>" + XMLTools.encodeXML(entry.getKey()) + "</ram:Description>" + "<ram:Value>" + XMLTools.encodeXML(entry.getValue()) + "</ram:Value>";
+						xml += "<ram:ApplicableProductCharacteristic>" +
+							"<ram:Description>" + XMLTools.encodeXML(entry.getKey()) + "</ram:Description>" +
+							"<ram:Value>" + XMLTools.encodeXML(entry.getValue()) + "</ram:Value>" +
+							"</ram:ApplicableProductCharacteristic>";
 					}
-					xml += "</ram:ApplicableProductCharacteristic>";
 				}
 				if (currentItem.getProduct().getCountryOfOrigin() != null) {
 					xml += "<ram:OriginTradeCountry><ram:ID>" +
