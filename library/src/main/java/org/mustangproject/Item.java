@@ -60,6 +60,7 @@ public class Item implements IZUGFeRDExportableItem {
 		String vatPercent = null;
 		String lineTotal = "0";
 		String unitCode = "0";
+		String referencedLineID = null;
 
 		ArrayList<ReferencedDocument> rdocs = null;
 
@@ -140,6 +141,16 @@ public class Item implements IZUGFeRDExportableItem {
 						}
 						rdocs.add(rd);
 
+					}
+
+					if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("BuyerOrderReferencedDocument")) {
+						NodeList docChilds = tradeLineChilds.item(tradeLineChildIndex).getChildNodes();
+						for (int docIndex = 0; docIndex < docChilds.getLength(); docIndex++) {
+							String localName = docChilds.item(docIndex).getLocalName();
+							if ((localName != null) && (localName.equals("LineID"))) {
+								referencedLineID = docChilds.item(docIndex).getTextContent();
+							}
+						}
 					}
 
 					if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && tradeLineChilds
@@ -263,6 +274,7 @@ public class Item implements IZUGFeRDExportableItem {
 				addReferencedDocument(rdoc);
 			}
 		}
+		addReferencedLineID( referencedLineID );
 	}
 
 
