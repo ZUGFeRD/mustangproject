@@ -20,9 +20,35 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import org.apache.pdfbox.cos.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.transform.TransformerException;
+
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.cos.COSArray;
+import org.apache.pdfbox.cos.COSBase;
+import org.apache.pdfbox.cos.COSDictionary;
+import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.cos.COSObject;
 import org.apache.pdfbox.io.IOUtils;
-import org.apache.pdfbox.pdmodel.*;
+import org.apache.pdfbox.pdfwriter.compress.CompressParameters;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
+import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDResources;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
@@ -33,7 +59,6 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDFontDescriptor;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.graphics.color.PDOutputIntent;
-import org.apache.pdfbox.preflight.utils.ByteArrayDataSource;
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.AdobePDFSchema;
 import org.apache.xmpbox.schema.DublinCoreSchema;
@@ -47,19 +72,21 @@ import org.apache.xmpbox.xml.XmpSerializer;
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
 
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.xml.transform.TransformerException;
-import java.io.*;
-import java.util.*;
+import jakarta.activation.DataSource;
+import jakarta.activation.FileDataSource;
 
-public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporter, IExporter, Closeable {
+public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporter {
 	private boolean isFacturX = true;
 
 	public static final int DefaultZUGFeRDVersion = 2;
+	protected boolean ignorePDFAErrors = false;
 
+	public ZUGFeRDExporterFromA3 ignorePDFAErrors() {
+		this.ignorePDFAErrors = true;
+		return this;
+	}
 	protected PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
-	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<FileAttachment>();
+	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<>();
 
 	/**
 	 * This flag controls whether or not the metadata is overwritten, or kind of merged.
@@ -110,9 +137,6 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	protected String subject;
 
 	protected PDDocument doc;
-
-	private HashMap<String, byte[]> additionalXMLs = new HashMap<String, byte[]>();
-
 
 	protected int ZFVersion = DefaultZUGFeRDVersion;
 	private boolean attachZUGFeRDHeaders = true;
@@ -220,9 +244,10 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * Generate ZF2.1 files with filename factur-x.xml
 	 *
 	 * @return this (fluent setter)
-	 * @deprecated
+	 * @deprecated It's now the default anyway
 	 */
-	public ZUGFeRDExporterFromA3 setFacturX() {
+	@Deprecated
+  public ZUGFeRDExporterFromA3 setFacturX() {
 		isFacturX = true;
 		return this;
 	}
@@ -258,7 +283,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 */
 	public ZUGFeRDExporterFromA3 load(byte[] pdfBinary) throws IOException {
 		ensurePDFIsValid(new ByteArrayDataSource(new ByteArrayInputStream(pdfBinary)));
-		doc = PDDocument.load(pdfBinary);
+		doc = Loader.loadPDF(pdfBinary);
 		return this;
 	}
 
@@ -282,7 +307,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * @param ZUGFeRDfilename the pdf file name
 	 * @throws IOException if anything is wrong in the target location
 	 */
-	public void export(String ZUGFeRDfilename) throws IOException {
+	@Override
+  public void export(String ZUGFeRDfilename) throws IOException {
 		if (!documentPrepared) {
 			prepareDocument();
 		}
@@ -290,7 +316,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 			throw new IOException(
 					"File must be attached (usually with setTransaction) before perfoming this operation");
 		}
-		doc.save(ZUGFeRDfilename);
+		doc.save(ZUGFeRDfilename, CompressParameters.NO_COMPRESSION);
 		if (!disableAutoClose) {
 			close();
 		}
@@ -309,7 +335,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * @param output the OutputStream
 	 * @throws IOException if anything is wrong in the OutputStream
 	 */
-	public void export(OutputStream output) throws IOException {
+	@Override
+  public void export(OutputStream output) throws IOException {
 		if (!documentPrepared) {
 			prepareDocument();
 		}
@@ -317,7 +344,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 			throw new IOException(
 					"File must be attached (usually with setTransaction) before perfoming this operation");
 		}
-		doc.save(output);
+		doc.save(output, CompressParameters.NO_COMPRESSION);
 		if (!disableAutoClose) {
 			close();
 		}
@@ -371,7 +398,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		ef.setSize(data.length);
 		ef.setCreationDate(new GregorianCalendar());
 
-		ef.setModDate(GregorianCalendar.getInstance());
+		ef.setModDate(Calendar.getInstance());
 
 		fs.setEmbeddedFile(ef);
 
@@ -403,7 +430,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		doc.getDocumentCatalog().setNames(names);
 
 		// AF entry (Array) in catalog with the FileSpec
-		COSBase AFEntry = (COSBase) doc.getDocumentCatalog().getCOSObject().getItem("AF");
+		COSBase AFEntry = doc.getDocumentCatalog().getCOSObject().getItem("AF");
 		if ((AFEntry == null)) {
 			COSArray cosArray = new COSArray();
 			cosArray.add(fs);
@@ -529,7 +556,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		metadata.addSchema(pdfaex);
 	}
 
-	private void removeCidSet(PDDocumentCatalog catalog, PDDocument doc)
+	private void removeCidSet(PDDocument doc)
 	    throws IOException
 	{
 		// https://github.com/ZUGFeRD/mustangproject/issues/249
@@ -550,7 +577,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 							PDType0Font typedFont = (PDType0Font) pdFont;
 
 							if (typedFont.getDescendantFont() instanceof PDCIDFontType2) {
-								PDCIDFontType2 f = (PDCIDFontType2) typedFont.getDescendantFont();
+								@SuppressWarnings ("unused")
+                PDCIDFontType2 f = (PDCIDFontType2) typedFont.getDescendantFont();
 								PDFontDescriptor fontDescriptor = pdFont.getFontDescriptor();
 
 								fontDescriptor.getCOSObject().removeItem(cidSet);
@@ -571,7 +599,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		metadata = new PDMetadata(doc);
 		cat.setMetadata(metadata);
 
-		removeCidSet(cat, doc);
+		removeCidSet(doc);
 		xmp = getXmpMetadata();
 		writeAdobePDFSchema(xmp);
 		writePDFAIdentificationSchema(xmp);
@@ -608,7 +636,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 *              <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
 	 * @throws IOException if anything is wrong with already loaded PDF
 	 */
-	public IExporter setTransaction(IExportableTransaction trans) throws IOException {
+	@Override
+  public IExporter setTransaction(IExportableTransaction trans) throws IOException {
 		this.trans = trans;
 		return prepare();
 	}
@@ -713,13 +742,13 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	}
 
 	protected PDFAIdentificationSchema getPDFAIdentificationSchema(XMPMetadata xmp) {
-		PDFAIdentificationSchema pdfaid = xmp.getPDFIdentificationSchema();
+		PDFAIdentificationSchema pdfaid = xmp.getPDFAIdentificationSchema();
 		if (pdfaid != null)
 			if (overwrite)
 				xmp.removeSchema(pdfaid);
 			else
 				return pdfaid;
-		return xmp.createAndAddPFAIdentificationSchema();
+		return xmp.createAndAddPDFAIdentificationSchema();
 	}
 
 	protected void writeDublinCoreSchema(XMPMetadata xmp) {
@@ -760,7 +789,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		if (overwrite || isEmpty(xsb.getCreatorTool()) || "UnknownApplication".equals(xsb.getCreatorTool()))
 			xsb.setCreatorTool(creatorTool);
 		if (overwrite || xsb.getCreateDate() == null)
-			xsb.setCreateDate(GregorianCalendar.getInstance());
+			xsb.setCreateDate(Calendar.getInstance());
 	}
 
 	protected XMPBasicSchema getXmpBasicSchema(XMPMetadata xmp) {

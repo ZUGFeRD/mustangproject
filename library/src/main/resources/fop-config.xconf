@@ -25,7 +25,7 @@
    <renderer mime="application/pdf">
    <fonts><!-- https://xmlgraphics.apache.org/fop/1.1/fonts.html auto-embed -->
        <auto-detect/>
-       <font kerning="no" embed-url="FreeSans.ttf" embedding-mode="subset">
+       <font kerning="no" embed-url="classpath:FreeSans.ttf" embedding-mode="subset">
            <font-triplet name="SourceSerifPro" style="normal" weight="normal" />
            <font-triplet name="Times-Bold" style="normal" weight="normal" />
        </font>

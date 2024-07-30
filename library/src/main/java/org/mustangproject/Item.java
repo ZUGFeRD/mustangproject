@@ -1,7 +1,6 @@
 package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.apache.fop.util.XMLUtil;
 import org.mustangproject.ZUGFeRD.IReferencedDocument;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
@@ -12,7 +11,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /***
  * describes any invoice line
@@ -28,8 +26,8 @@ public class Item implements IZUGFeRDExportableItem {
 	protected Product product;
 	protected ArrayList<String> notes = null;
 	protected ArrayList<ReferencedDocument> referencedDocuments = null;
-	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<IZUGFeRDAllowanceCharge>(),
-		Charges = new ArrayList<IZUGFeRDAllowanceCharge>();
+	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
+		Charges = new ArrayList<>();
 
 	/***
 	 * default constructor
@@ -62,6 +60,7 @@ public class Item implements IZUGFeRDExportableItem {
 		String vatPercent = null;
 		String lineTotal = "0";
 		String unitCode = "0";
+		String referencedLineID = null;
 
 		ArrayList<ReferencedDocument> rdocs = null;
 
@@ -138,10 +137,20 @@ public class Item implements IZUGFeRDExportableItem {
 						ReferencedDocument rd = new ReferencedDocument(IssuerAssignedID, TypeCode,
 							ReferenceTypeCode);
 						if (rdocs == null) {
-							rdocs = new ArrayList<ReferencedDocument>();
+							rdocs = new ArrayList<>();
 						}
 						rdocs.add(rd);
 
+					}
+
+					if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("BuyerOrderReferencedDocument")) {
+						NodeList docChilds = tradeLineChilds.item(tradeLineChildIndex).getChildNodes();
+						for (int docIndex = 0; docIndex < docChilds.getLength(); docIndex++) {
+							String localName = docChilds.item(docIndex).getLocalName();
+							if ((localName != null) && (localName.equals("LineID"))) {
+								referencedLineID = docChilds.item(docIndex).getTextContent();
+							}
+						}
 					}
 
 					if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && tradeLineChilds
@@ -265,6 +274,7 @@ public class Item implements IZUGFeRDExportableItem {
 				addReferencedDocument(rdoc);
 			}
 		}
+		addReferencedLineID( referencedLineID );
 	}
 
 
@@ -428,7 +438,7 @@ public class Item implements IZUGFeRDExportableItem {
 	 */
 	public Item addNote(String text) {
 		if (notes == null) {
-			notes = new ArrayList<String>();
+			notes = new ArrayList<>();
 		}
 		notes.add(text);
 		return this;
@@ -441,7 +451,7 @@ public class Item implements IZUGFeRDExportableItem {
 	 */
 	public Item addReferencedDocument(ReferencedDocument doc) {
 		if (referencedDocuments == null) {
-			referencedDocuments = new ArrayList<ReferencedDocument>();
+			referencedDocuments = new ArrayList<>();
 		}
 		referencedDocuments.add(doc);
 		return this;

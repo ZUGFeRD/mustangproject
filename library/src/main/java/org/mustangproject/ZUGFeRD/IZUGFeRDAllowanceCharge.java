@@ -15,9 +15,9 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
-
 import java.math.BigDecimal;
+
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
 
 /**
  * The interface for allowances or charges, to be used by the pullprovider

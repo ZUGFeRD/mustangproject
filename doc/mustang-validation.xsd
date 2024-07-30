@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:element name="validation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="pdf"/>
+                <xs:element ref="messages"/>
+                <xs:element ref="summary"/>
+            </xs:sequence>
+            <xs:attribute name="datetime" use="required"/>
+            <xs:attribute name="filename" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="pdf">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="report"/>
+                <xs:element ref="info"/>
+                <xs:element ref="messages"/>
+                <xs:element ref="summary"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="report">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="buildInformation"/>
+                <xs:element ref="jobs"/>
+                <xs:element ref="batchSummary"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="buildInformation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="releaseDetails"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="releaseDetails">
+        <xs:complexType>
+            <xs:attribute name="buildDate" use="required" type="xs:dateTime"/>
+            <xs:attribute name="id" use="required" type="xs:NCName"/>
+            <xs:attribute name="version" use="required" type="xs:NMTOKEN"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="jobs">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="job"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="job">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="item"/>
+                <xs:element ref="validationReport"/>
+                <xs:element ref="duration"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="item">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="name"/>
+            </xs:sequence>
+            <xs:attribute name="size" use="required" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="name" type="xs:string"/>
+    <xs:element name="validationReport">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="details"/>
+            </xs:sequence>
+            <xs:attribute name="isCompliant" use="required" type="xs:boolean"/>
+            <xs:attribute name="profileName" use="required"/>
+            <xs:attribute name="statement" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="details">
+        <xs:complexType>
+            <xs:attribute name="failedChecks" use="required" type="xs:integer"/>
+            <xs:attribute name="failedRules" use="required" type="xs:integer"/>
+            <xs:attribute name="passedChecks" use="required" type="xs:integer"/>
+            <xs:attribute name="passedRules" use="required" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="batchSummary">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="validationReports"/>
+                <xs:element ref="featureReports"/>
+                <xs:element ref="repairReports"/>
+                <xs:element ref="duration"/>
+            </xs:sequence>
+            <xs:attribute name="encrypted" use="required" type="xs:integer"/>
+            <xs:attribute name="failedToParse" use="required" type="xs:integer"/>
+            <xs:attribute name="outOfMemory" use="required" type="xs:integer"/>
+            <xs:attribute name="totalJobs" use="required" type="xs:integer"/>
+            <xs:attribute name="veraExceptions" use="required" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="validationReports">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="compliant" use="required" type="xs:integer"/>
+                    <xs:attribute name="failedJobs" use="required" type="xs:integer"/>
+                    <xs:attribute name="nonCompliant" use="required" type="xs:integer"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="featureReports">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="failedJobs" use="required" type="xs:integer"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="repairReports">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:integer">
+                    <xs:attribute name="failedJobs" use="required" type="xs:integer"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="info">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="signature"/>
+                <xs:element ref="duration"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="signature" type="xs:NCName"/>
+    <xs:element name="duration">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:NMTOKEN">
+                    <xs:attribute name="finish" type="xs:integer"/>
+                    <xs:attribute name="start" type="xs:integer"/>
+                    <xs:attribute name="unit" type="xs:NCName"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="messages">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element ref="exception"/>
+                <xs:element minOccurs="0"  maxOccurs="unbounded" ref="error"/>
+                <xs:element minOccurs="0"  maxOccurs="unbounded" ref="notice"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="exception">
+        <xs:complexType mixed="true">
+            <xs:attribute name="type" use="required" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="error">
+        <xs:complexType mixed="true">
+            <xs:attribute name="type" use="required" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="notice">
+        <xs:complexType mixed="true">
+            <xs:attribute name="type" use="required" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="summary">
+        <xs:complexType>
+            <xs:attribute name="status" use="required" type="xs:NCName"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

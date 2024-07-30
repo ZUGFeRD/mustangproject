@@ -23,13 +23,10 @@ package org.mustangproject.ZUGFeRD;
 import junit.framework.TestCase;
 import org.mustangproject.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /***
  * This is a test to confirm the minimum steps to implement a interface are still sufficient

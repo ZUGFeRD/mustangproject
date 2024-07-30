@@ -21,6 +21,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
 
@@ -155,5 +156,13 @@ public interface IZUGFeRDExportableProduct {
 			return "Reverse Charge";
 		}
 		return null;
+	}
+
+	default String getCountryOfOrigin() {
+	    return null;
+	}
+
+	default HashMap<String, String> getAttributes() {
+	    return null;
 	}
 }

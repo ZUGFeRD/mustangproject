@@ -1,7 +1,5 @@
 package org.mustangproject.validator;
 
-import static org.xmlunit.assertj.XmlAssert.assertThat;
-
 import java.io.File;
 
 import javax.xml.transform.Source;
@@ -68,9 +66,9 @@ public class XMLValidatorTest extends ResourceCase {
 
 			xv.validate();
 		} catch (final IrrecoverableValidationError e) {
-			noException = false; //expecting a fatal error, i.e. an exception
+			noException = false; //after corrected dependencies no longer expecting a exception here
 		}
-		assertFalse(noException);
+		assertTrue(noException);
 		noException=true;// moving on...
 		assertTrue(xv.getXMLResult().contains("<error type=\"25\""));
 		ctx.clear();
@@ -235,7 +233,6 @@ public class XMLValidatorTest extends ResourceCase {
 
 	}
 
-	/* UBL validation is not yet there :-(
 	public void testXRValidationUBL() {
 		ValidationContext ctx = new ValidationContext(null);
 		XMLValidator xv = new XMLValidator(ctx);
@@ -258,6 +255,31 @@ public class XMLValidatorTest extends ResourceCase {
 		}
 		assertTrue(noExceptions);
 
-	}*/
+	}
+
+
+	public void testUBLValidation() {
+		ValidationContext ctx = new ValidationContext(null);
+		XMLValidator xv = new XMLValidator(ctx);
+		XPathEngine xpath = new JAXPXPathEngine();
+
+		boolean noExceptions = true;
+		File tempFile = getResourceAsFile("EN16931_Einfach.ubl.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("valid", content);
+
+
+		} catch (IrrecoverableValidationError e) {
+
+			noExceptions = false;
+		}
+		assertTrue(noExceptions);
+
+	}
 
 }

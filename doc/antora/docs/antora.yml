@@ -1,7 +1,0 @@
-name: mustang
-title: Mustang Library
-version: 2.6.1
-prerelease: -beta.1
-nav:
-- modules/ROOT/nav.adoc
-- modules/module-one/nav.adoc

@@ -19,16 +19,12 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import org.apache.fop.apps.*;
-import org.apache.xmlgraphics.util.MimeConstants;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import org.mustangproject.CII.CIIToUBL;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -63,19 +59,20 @@ public class VisualizationTest extends ResourceCase {
 			fail("TransformerException should not happen: "+e.getMessage());
 		} catch (IOException e) {
 			fail("IOException should not happen: "+e.getMessage());
-		}
+		} catch (ParserConfigurationException e) {
+			fail("ParserConfigurationException should not happen: "+e.getMessage());
+        } catch (SAXException e) {
+			fail("SAXException should not happen: "+e.getMessage());
+        }
 
 
-
-		assertNotNull(result);
+        assertNotNull(result);
 		// Reading ZUGFeRD
 		assertEquals(expected, result);
 	}
 	public void testUBLCreditNoteVisualizationBasic() {
 
 		// the writing part
-		CIIToUBL c2u = new CIIToUBL();
-		String sourceFilename = "factur-x.xml";
 		File UBLinputFile = getResourceAsFile("ubl-creditnote.xml");
 
 		String expected = null;
@@ -85,10 +82,10 @@ public class VisualizationTest extends ResourceCase {
 			/* remove file endings so that tests can also pass after checking
 			   out from git with arbitrary options (which may include CSRF changes)
 			 */
-			result = zvi.visualize(UBLinputFile.getAbsolutePath(),ZUGFeRDVisualizer.Language.EN).replace("\r","").replace("\n","");
+			result = zvi.visualize(UBLinputFile.getAbsolutePath(),ZUGFeRDVisualizer.Language.EN).replace("\r","").replace("\n","").replace(" ","").replace("\t","");
 
 			File expectedResult=getResourceAsFile("factur-x-vis-ubl-creditnote.en.html");
-			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r","").replace("\n","");
+			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r","").replace("\n","").replace(" ","").replace("\t","");
 			// remove linebreaks as well...
 
 		} catch (UnsupportedOperationException e) {
@@ -99,20 +96,21 @@ public class VisualizationTest extends ResourceCase {
 			fail("TransformerException should not happen: "+e.getMessage());
 		} catch (IOException e) {
 			fail("IOException should not happen: "+e.getMessage());
+		} catch (ParserConfigurationException e) {
+			fail("ParserConfigurationException should not happen: "+e.getMessage());
+        } catch (SAXException e) {
+			fail("SAXException should not happen: "+e.getMessage());
 		}
 
 
-
-		assertNotNull(result);
+        assertNotNull(result);
 		// Reading ZUGFeRD
 		assertEquals(expected, result);
 	}
 	public void testUBLVisualizationBasic() {
 
 		// the writing part
-		CIIToUBL c2u = new CIIToUBL();
-		String sourceFilename = "factur-x.xml";
-		File UBLinputFile = getResourceAsFile("01.01a-INVOICE_ubl.xml");
+		File UBLinputFile = getResourceAsFile("ubl/01.01a-INVOICE.ubl.xml");
 
 		String expected = null;
 		String result = null;
@@ -135,11 +133,14 @@ public class VisualizationTest extends ResourceCase {
 			fail("TransformerException should not happen: "+e.getMessage());
 		} catch (IOException e) {
 			fail("IOException should not happen: "+e.getMessage());
-		}
+		} catch (ParserConfigurationException e) {
+			fail("ParserConfigurationException should not happen: "+e.getMessage());
+        } catch (SAXException e) {
+			fail("SAXException should not happen: "+e.getMessage());
+        }
 
 
-
-		assertNotNull(result);
+        assertNotNull(result);
 		// Reading ZUGFeRD
 		assertEquals(expected, result);
 	}

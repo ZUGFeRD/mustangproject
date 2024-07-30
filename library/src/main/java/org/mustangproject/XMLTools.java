@@ -1,6 +1,7 @@
 package org.mustangproject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.AbstractList;
@@ -8,39 +9,47 @@ import java.util.Collections;
 import java.util.List;
 import java.util.RandomAccess;
 
+import org.apache.commons.io.IOUtils;
 import org.dom4j.io.XMLWriter;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class XMLTools extends XMLWriter {
 	@Override
-  public String escapeAttributeEntities(String s) {
+	public String escapeAttributeEntities(String s) {
 		return super.escapeAttributeEntities(s);
 	}
 
 	@Override
-  public String escapeElementEntities(String s) {
+	public String escapeElementEntities(String s) {
 		return super.escapeElementEntities(s);
 
 	}
 
 	public static List<Node> asList(NodeList n) {
-		return n.getLength()==0?
-			Collections.<Node>emptyList(): new NodeListWrapper(n);
+		return n.getLength() == 0 ?
+			Collections.<Node>emptyList() : new NodeListWrapper(n);
 	}
+
 	static final class NodeListWrapper extends AbstractList<Node>
 		implements RandomAccess {
 		private final NodeList list;
+
 		NodeListWrapper(NodeList l) {
-			list=l;
+			list = l;
 		}
-		public Node get(int index) {
+
+		@Override
+    public Node get(int index) {
 			return list.item(index);
 		}
-		public int size() {
+
+		@Override
+    public int size() {
 			return list.getLength();
 		}
 	}
+
 	public static String nDigitFormat(BigDecimal value, int scale) {
 		/*
 		 * I needed 123,45, locale independent.I tried
@@ -63,9 +72,9 @@ public class XMLTools extends XMLWriter {
 
 
 	public static String encodeXML(CharSequence s) {
-    if (s == null) {
-      return "";
-    }
+		if (s == null) {
+			return "";
+		}
 		final StringBuilder sb = new StringBuilder();
 		final int len = s.length();
 		for (int i = 0; i < len; i++) {
@@ -112,36 +121,6 @@ public class XMLTools extends XMLWriter {
 		return sb.toString();
 	}
 
-
-	/**
-	 * Returns the Byte Order Mark size and thus allows to skips over a BOM
-	 * at the beginning of the given ByteArrayInputStream, if one exists.
-	 *
-	 * @param is the ByteArrayInputStream used
-	 * @throws IOException if can not be read from is
-	 * @see <a href="https://www.w3.org/TR/xml/#sec-guessing">Autodetection of Character Encodings</a>
-	 *
-	public static int guessBOMSize(ByteArrayInputStream is) throws IOException {
-		byte[] pad = new byte[4];
-		is.read(pad);
-		is.reset();
-		int test2 = ((pad[0] & 0xFF) << 8) | (pad[1] & 0xFF);
-		int test3 = ((test2 & 0xFFFF) << 8) | (pad[2] & 0xFF);
-		int test4 = ((test3 & 0xFFFFFF) << 8) | (pad[3] & 0xFF);
-		//
-		if (test4 == 0x0000FEFF || test4 == 0xFFFE0000 || test4 == 0x0000FFFE || test4 == 0xFEFF0000) {
-			// UCS-4: BOM takes 4 bytes
-			return 4;
-		} else if (test3 == 0xEFBBFF) {
-			// UTF-8: BOM takes 3 bytes
-			return 3;
-		} else if (test2 == 0xFEFF || test2 == 0xFFFE) {
-			// UTF-16: BOM takes 2 bytes
-			return 2;
-		}
-		return 0;
-	}*/
-
 	/***
 	 * removes utf8 byte order marks from byte arrays, in case one is there
 	 * @param zugferdRaw the CII XML
@@ -149,6 +128,7 @@ public class XMLTools extends XMLWriter {
 	 */
 	public static byte[] removeBOM(byte[] zugferdRaw) {
 		final byte[] zugferdData;
+		// This handles the UTF-8 BOM 
 		if ((zugferdRaw[0] == (byte) 0xEF) && (zugferdRaw[1] == (byte) 0xBB) && (zugferdRaw[2] == (byte) 0xBF)) {
 			// I don't like BOMs, lets remove it
 			zugferdData = new byte[zugferdRaw.length - 3];
@@ -159,5 +139,8 @@ public class XMLTools extends XMLWriter {
 		return zugferdData;
 	}
 
+	public static byte[] getBytesFromStream(InputStream fileinput) throws IOException {
+	  return IOUtils.toByteArray (fileinput);
+	}
 
 }

@@ -22,18 +22,18 @@ package org.mustangproject.ZUGFeRD;
 
 import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import org.mustangproject.*;
+import org.mustangproject.EStandard;
+import org.mustangproject.FileAttachment;
+import org.mustangproject.Invoice;
+import org.mustangproject.XMLTools;
 
-public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider {
+public class DAPullProvider extends ZUGFeRD2PullProvider {
 
 	protected IExportableTransaction trans;
-	private String paymentTermsDescription;
 	protected Profile profile = Profiles.getByName(EStandard.despatchadvice,"pilot", 1);
 
 
@@ -249,13 +249,9 @@ public class DAPullProvider extends ZUGFeRD2PullProvider implements IXMLProvider
 				+ "</SCRDMCCBDACIDAMessageStructure>";
 
 		final byte[] zugferdRaw;
-		try {
-			zugferdRaw = xml.getBytes("UTF-8");
+		zugferdRaw = xml.getBytes(StandardCharsets.UTF_8);
 
-			zugferdData = XMLTools.removeBOM(zugferdRaw);
-		} catch (final UnsupportedEncodingException e) {
-			Logger.getLogger(OXPullProvider.class.getName()).log(Level.SEVERE, null, e);
-		}
+		zugferdData = XMLTools.removeBOM(zugferdRaw);
 	}
 
 

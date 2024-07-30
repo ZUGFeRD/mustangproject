@@ -1,5 +1,5 @@
 
-## General approach
+## Typical process
 
 1. build
 
@@ -28,6 +28,18 @@ If you do a pull request, please do a feature branch, e.g. if you are working on
 
 Most of mustang is a library, adding (autmated junit) test cases is often not only the most sustainable but also the fastest way to see if new/changed functionality works. If something is changed so that old test cases break on purpose please do not just remove them but take the time to fix the test cases
 
+
+## Typical workflow
+
+If e.g. new elements or attributes are added, they are often added
+* in the object so that a developer can use them
+* in the interface so that a old fashioned developer could use them as well
+* in the pullprovider so that it actually finds it's way into the XML
+* in at least one test (the ...edgeTest are supposed to handle edge cases, ~all bells and whistles, maybe it fits there), after the test has been run this should at least once be 
+* validated. If that works one can start implementing the 
+* reading part (along with tests), then it needs to be
+* documented e.g. on the homepage and 
+* communicated, at the very least by mentioning it in the history.md
 
 ## Architecture
 
@@ -155,16 +167,16 @@ In .m2 also need a toolchains.xml which defines a Sun JDK 1.8 target like the fo
 <?xml version="1.0" encoding="UTF-8"?>
 <toolchains>
   <!-- JDK toolchains -->
-  <toolchain>
-    <type>jdk</type>
-    <provides>
-      <version>8</version>
-      <vendor>adopt</vendor>
-    </provides>
-    <configuration>
-      <jdkHome>C:\Program Files\Eclipse Adoptium\jdk-8.0.352.8-hotspot</jdkHome>
-    </configuration>
-  </toolchain>
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <version>11</version>
+            <vendor>adopt</vendor>
+        </provides>
+        <configuration>
+            <jdkHome>C:\Program Files\Eclipse Adoptium\jdk-11.0.23.9-hotspot</jdkHome>
+        </configuration>
+    </toolchain>
  
 </toolchains>
 ```

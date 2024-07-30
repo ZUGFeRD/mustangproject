@@ -1,3 +1,43 @@
+2.12.0
+=======
+2024-07-20
+
+- support pdf export/visualization to PDF, thanks to Heavenfighter #387 allow embedd fonts from jar-file for pdf creation #388
+- Fix #389: ClassCastException: ZUGFeRDExporterFromA3
+- jakarta support #372
+- Upgrade to PDFBox 3 #373
+- Requires Java 11
+- #397 Build succeeds but file is unusable on alpine/docker
+- #392 CLI: action combine: --ignorefileextension to ignore PDF/A input file errors dosen't work
+- for CLI combine, fx is now default
+- set profile to XR if XR is imported #395
+- Powershell compatibility: added --no-additional-attachments command line option for better batch processing:
+  In cmd also --attachments "" worked but in powershell it was hard to figure out that one had to use --attachments '""'
+- Be able to validate XRechnung/UBL files #337
+- ph-schematron aktualisiert, logback zugungsten log4j entfernt #402
+- java.util Logging zugungsten log4j entfernt #407
+- ZF extended no longer requires deliverydate #411
+- Return all BankDetails from parsed CII xml. Closes #408.
+- ubl visualization: do not require ubl namespace prefix #416
+
+2.11.0
+=======
+2024-05-22
+
+- EN16931 validation 1.3.12 codelists v11 #357
+- Fonts removed #358
+- xrechnungimporter to read from filename, inputstream
+- invoice's getSender/getRecipient() now return tradeparty no IZUGFeRDExportableTradeParty
+- (first) IBAN is now parsed into sender's getBankDetails
+- zugferdimporter to accept xml files
+- UBL importer to also parse contacts
+- https://github.com/ZUGFeRD/mustangproject/pull/369
+- support inputstreams https://github.com/ZUGFeRD/mustangproject/pull/379
+- #314 ZUGFeRDInvoiceImporter additional constructur
+- add XML cash discount write support (new class, previously only possible for XRechnung, not ZF Extended, using a manually encoded setPaymentTermDescription) 
+- surrendered to XRechnung 3 compromises, e.g. no longer put gross amount if it does not deviate from net
+- be able to programmatically access validation messages  https://github.com/ZUGFeRD/mustangproject/pull/382
+
 2.10.0
 =======
 2023-12-30

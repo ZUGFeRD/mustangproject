@@ -21,12 +21,9 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import junit.framework.TestCase;
-import org.assertj.core.util.Lists;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.mustangproject.*;

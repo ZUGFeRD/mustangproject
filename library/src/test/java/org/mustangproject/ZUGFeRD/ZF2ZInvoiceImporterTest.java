@@ -21,16 +21,8 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.mustangproject.Invoice;
 
-import junit.framework.TestCase;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
 import java.math.BigDecimal;
@@ -39,7 +31,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Scanner;
 
 
 /***
@@ -174,6 +165,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("28934", invoice.getBuyerOrderReferencedDocumentID());
 
 	}
+
 
 	public void testZF1Import() {
 

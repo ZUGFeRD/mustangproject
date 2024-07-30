@@ -32,9 +32,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
 
 import static org.xmlunit.assertj.XmlAssert.assertThat;
@@ -88,10 +85,11 @@ public class XRTest extends TestCase {
 		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 				.setSender(new TradeParty(orgname,"teststr","55232","teststadt","DE").setEmail("sender@example.com").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test","+49123456789","test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890","COBADEFXXX")))
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setEmail("recipient@sample.org"))
+				.addCashDiscount(new CashDiscount(new BigDecimal(2),7))
+				.addCashDiscount(new CashDiscount(new BigDecimal(3),14))
 				.setReferenceNumber("991-01484-64")//leitweg-id
 				// not using any VAT, this is also a test of zero-rated goods:
-				.setNumber(number).setPaymentTermDescription("#SKONTO#TAGE=14#PROZENT=2.25#\n" +
-						"#SKONTO#TAGE=28#PROZENT=1.00#\n").addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal(1.0)))
+				.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal(1.0)))
 				.embedFileInXML(fe1);
 
 
@@ -101,6 +99,7 @@ public class XRTest extends TestCase {
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+		assertTrue(theXML.contains("#SKONTO#"));
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
 				.asInt()
 				.isEqualTo(1); //2 errors are OK because there is a known bug

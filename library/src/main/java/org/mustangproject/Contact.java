@@ -111,10 +111,10 @@ public class Contact implements IZUGFeRDExportableContact {
 				Node currentItemNode = nodes.item(nodeIndex);
 				if (currentItemNode.getLocalName() != null) {
 
-					if (currentItemNode.getLocalName().equals("PersonName")) {
+					if (currentItemNode.getLocalName().equals("PersonName")/*CII*/||currentItemNode.getLocalName().equals("Name")/*UBL*/) {
 						setName(currentItemNode.getFirstChild().getNodeValue());
 					}
-					if (currentItemNode.getLocalName().equals("TelephoneUniversalCommunication")) {
+					if (currentItemNode.getLocalName().equals("TelephoneUniversalCommunication")) { /*CII*/
 						NodeList tel = currentItemNode.getChildNodes();
 						for (int telChildIndex = 0; telChildIndex < tel.getLength(); telChildIndex++) {
 							if (tel.item(telChildIndex).getLocalName() != null) {
@@ -123,8 +123,10 @@ public class Contact implements IZUGFeRDExportableContact {
 								}
 							}
 						}
+					} else if (currentItemNode.getLocalName().equals("Telephone")) { /* UBL */
+						setPhone(currentItemNode.getTextContent());
 					}
-					if (currentItemNode.getLocalName().equals("EmailURIUniversalCommunication")) {
+					if (currentItemNode.getLocalName().equals("EmailURIUniversalCommunication")) { /* CII */
 						NodeList email = currentItemNode.getChildNodes();
 						for (int emailChildIndex = 0; emailChildIndex < email.getLength(); emailChildIndex++) {
 							if (email.item(emailChildIndex).getLocalName() != null) {
@@ -133,6 +135,8 @@ public class Contact implements IZUGFeRDExportableContact {
 								}
 							}
 						}
+					} else if (currentItemNode.getLocalName().equals("ElectronicMail")) { /* UBL */
+						setEMail(currentItemNode.getTextContent());
 					}
 				}
 			}

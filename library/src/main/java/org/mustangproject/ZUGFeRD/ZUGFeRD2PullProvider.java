@@ -25,7 +25,6 @@ import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATE
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -35,9 +34,8 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.dom4j.Document;
@@ -49,8 +47,11 @@ import org.mustangproject.FileAttachment;
 import org.mustangproject.IncludedNote;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ZUGFeRD2PullProvider implements IXMLProvider {
+  private static final Logger LOGGER = LoggerFactory.getLogger (ZUGFeRD2PullProvider.class);
 
 	protected byte[] zugferdData;
 	protected IExportableTransaction trans;
@@ -92,7 +93,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		try {
 			document = DocumentHelper.parseText(new String(zugferdData));
 		} catch (final DocumentException e1) {
-			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e1);
+      LOGGER.error ("Failed to parse ZUGFeRD data", e1);
 		}
 		try {
 			final OutputFormat format = OutputFormat.createPrettyPrint();
@@ -102,7 +103,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			res = sw.toString().getBytes(StandardCharsets.UTF_8);
 
 		} catch (final IOException e) {
-			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
+      LOGGER.error ("Failed to write ZUGFeRD data", e);
 		}
 
 		return res;
@@ -290,10 +291,20 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			paymentTermsDescription = XMLTools.encodeXML(trans.getPaymentTermDescription());
 		}
 
-		if ((paymentTermsDescription == null) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CORRECTEDINVOICE) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)) {
-			paymentTermsDescription = "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
+
+		if ((profile == Profiles.getByName("XRechnung")) && (trans.getCashDiscounts() != null) && (trans.getCashDiscounts().length > 0)) {
+			for (IZUGFeRDCashDiscount discount : trans.getCashDiscounts()
+			) {
+				if (paymentTermsDescription == null) {
+					paymentTermsDescription = "";
+				}
+				paymentTermsDescription += discount.getAsXRechnung();
+			}
+		} else if ((paymentTermsDescription == null) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CORRECTEDINVOICE) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)) {
+			paymentTermsDescription = "Please remit until " + germanDateFormat.format(trans.getDueDate());
 
 		}
+
 
 		String typecode = "380";
 		if (trans.getDocumentCode() != null) {
@@ -387,6 +398,19 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						XMLTools.encodeXML(currentItem.getProduct().getDescription()) +
 						"</ram:Description>";
 				}
+				if (currentItem.getProduct().getAttributes() != null) {
+					for ( Entry<String, String> entry : currentItem.getProduct().getAttributes().entrySet() ) {
+						xml += "<ram:ApplicableProductCharacteristic>" +
+							"<ram:Description>" + XMLTools.encodeXML(entry.getKey()) + "</ram:Description>" +
+							"<ram:Value>" + XMLTools.encodeXML(entry.getValue()) + "</ram:Value>" +
+							"</ram:ApplicableProductCharacteristic>";
+					}
+				}
+				if (currentItem.getProduct().getCountryOfOrigin() != null) {
+					xml += "<ram:OriginTradeCountry><ram:ID>" +
+					XMLTools.encodeXML(currentItem.getProduct().getCountryOfOrigin()) +
+					"</ram:ID></ram:OriginTradeCountry>";
+				}
 				xml += "</ram:SpecifiedTradeProduct>"
 
 					+ "<ram:SpecifiedLineTradeAgreement>";
@@ -404,19 +428,23 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "<ram:LineID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentLineID()) + "</ram:LineID>"
 						+ "</ram:BuyerOrderReferencedDocument>";
 				}
-				xml += "<ram:GrossPriceProductTradePrice>"
-					+ "<ram:ChargeAmount>" + priceFormat(lc.getPriceGross())
-					+ "</ram:ChargeAmount>" //currencyID=\"EUR\"
-					+ "<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
-					+ "\">" + quantityFormat(currentItem.getBasisQuantity()) + "</ram:BasisQuantity>"
-					+ allowanceChargeStr
-					// + " <AppliedTradeAllowanceCharge>"
-					// + " <ChargeIndicator>false</ChargeIndicator>"
-					// + " <ActualAmount currencyID=\"EUR\">0.6667</ActualAmount>"
-					// + " <Reason>Rabatt</Reason>"
-					// + " </AppliedTradeAllowanceCharge>"
-					+ "</ram:GrossPriceProductTradePrice>"
-					+ "<ram:NetPriceProductTradePrice>"
+
+				if (!allowanceChargeStr.isEmpty()) {
+					xml += "<ram:GrossPriceProductTradePrice>"
+						+ "<ram:ChargeAmount>" + priceFormat(lc.getPriceGross())
+						+ "</ram:ChargeAmount>" //currencyID=\"EUR\"
+						+ "<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
+						+ "\">" + quantityFormat(currentItem.getBasisQuantity()) + "</ram:BasisQuantity>"
+						+ allowanceChargeStr
+						// + " <AppliedTradeAllowanceCharge>"
+						// + " <ChargeIndicator>false</ChargeIndicator>"
+						// + " <ActualAmount currencyID=\"EUR\">0.6667</ActualAmount>"
+						// + " <Reason>Rabatt</Reason>"
+						// + " </AppliedTradeAllowanceCharge>"
+						+ "</ram:GrossPriceProductTradePrice>";
+				}
+
+				xml += "<ram:NetPriceProductTradePrice>"
 					+ "<ram:ChargeAmount>" + priceFormat(lc.getPrice())
 					+ "</ram:ChargeAmount>" // currencyID=\"EUR\"
 					+ "<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
@@ -536,10 +564,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml += "</ram:OccurrenceDateTime>";
 			xml += "            </ram:ActualDeliverySupplyChainEvent>";
 
-		} else {
-			if ((trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE) && (getProfile() != Profiles.getByName("Minimum"))) {
-				throw new IllegalStateException("No delivery date provided");
-			}
 		}
 		/*
 		 * + "<DeliveryNoteReferencedDocument>" +
@@ -685,6 +709,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		} else {
 			xml += buildPaymentTermsXml();
 		}
+		if ((profile == Profiles.getByName("Extended")) && (trans.getCashDiscounts() != null) && (trans.getCashDiscounts().length > 0)) {
+			for (IZUGFeRDCashDiscount discount : trans.getCashDiscounts()
+			) {
+				xml += discount.getAsCII();
+			}
+		}
 
 
 		final String allowanceTotalLine = "<ram:AllowanceTotalAmount>" + currencyFormat(calc.getAllowancesForPercent(null)) + "</ram:AllowanceTotalAmount>";
@@ -736,13 +766,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			+ "</rsm:CrossIndustryInvoice>";
 
 		final byte[] zugferdRaw;
-		try {
-			zugferdRaw = xml.getBytes("UTF-8");
+		zugferdRaw = xml.getBytes(StandardCharsets.UTF_8);
 
-			zugferdData = XMLTools.removeBOM(zugferdRaw);
-		} catch (final UnsupportedEncodingException e) {
-			Logger.getLogger(ZUGFeRD2PullProvider.class.getName()).log(Level.SEVERE, null, e);
-		}
+		zugferdData = XMLTools.removeBOM(zugferdRaw);
 	}
 
 	protected String buildItemNotes(IZUGFeRDExportableItem currentItem) {
