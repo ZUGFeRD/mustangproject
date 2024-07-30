@@ -45,6 +45,12 @@ public interface IZUGFeRDAllowanceCharge {
 	String getReason();
 
 	/***
+	 * get the code for the allowance/charge
+	 * @return the code
+	 */
+	String getReasonCode();
+
+	/***
 	 * get the applicable tax percentage for the allowance/charge
 	 * @return the percentage
 	 */

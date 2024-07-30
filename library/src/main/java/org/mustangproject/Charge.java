@@ -27,6 +27,10 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	 */
 	protected String reason;
 	/**
+	 * Code from list UNTDID 5189
+	 */
+	protected String reasonCode;
+	/**
 	 * the category ID why this charge has been applied
 	 */
 	protected String categoryCode;
@@ -95,6 +99,22 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 
 
 	@Override
+	public String getReasonCode() {
+		return reasonCode;
+	}
+
+	/***
+	 * Reason code for the charge
+	 * @param reasonCode from list UNTDID 5189
+	 * @return fluid setter
+	 */
+	public Charge setReasonCode(String reasonCode) {
+		this.reasonCode = reasonCode;
+		return this;
+	}
+
+	
+	@Override
 	public BigDecimal getTotalAmount(IAbsoluteValueProvider currentItem) {
 		if (totalAmount!=null) {
 			return totalAmount;
@@ -137,7 +157,7 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 
 
 	/***
-	 * machine readable reason for this allowance/charge
+	 * the category ID why this has been applied
 	 * @param categoryCode usually S
 	 * @return fluid setter
 	 */

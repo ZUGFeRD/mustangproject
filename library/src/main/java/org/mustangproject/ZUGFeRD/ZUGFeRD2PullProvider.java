@@ -141,7 +141,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 		if (party.getLegalOrganisation() != null) {
 			xml += "<ram:SpecifiedLegalOrganization> ";
-			xml += "  <ram:ID schemeID=\"" + XMLTools.encodeXML(party.getLegalOrganisation().getSchemeID()) + "\">" + XMLTools.encodeXML(party.getLegalOrganisation().getID()) + "</ram:ID>";
+			xml += "<ram:ID schemeID=\"" + XMLTools.encodeXML(party.getLegalOrganisation().getSchemeID()) + "\">" + XMLTools.encodeXML(party.getLegalOrganisation().getID()) + "</ram:ID>";
 			xml += "</ram:SpecifiedLegalOrganization>";
 		}
 
@@ -244,10 +244,16 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			// only in extended profile
 			reason = "<ram:Reason>" + XMLTools.encodeXML(allowance.getReason()) + "</ram:Reason>";
 		}
+		String reasonCode = "";
+		if ((allowance.getReasonCode() != null) && (profile == Profiles.getByName("XRechnung"))) {
+			// only in XRechnung profile
+			reasonCode = "<ram:ReasonCode>" + allowance.getReasonCode() + "</ram:ReasonCode>";
+		}
 		final String allowanceChargeStr = "<ram:AppliedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>" +
 			chargeIndicator + "</udt:Indicator></ram:ChargeIndicator>" + percentage +
 			"<ram:ActualAmount>" + priceFormat(allowance.getTotalAmount(item)) + "</ram:ActualAmount>" +
 			reason +
+			reasonCode +
 			"</ram:AppliedTradeAllowanceCharge>";
 		return allowanceChargeStr;
 	}
@@ -269,10 +275,21 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			chargeIndicator = "true";
 		}
 
+		String reason = "";
+		if ((allowance.getReason() != null) && (profile == Profiles.getByName("Extended"))) {
+			// only in extended profile
+			reason = "<ram:Reason>" + XMLTools.encodeXML(allowance.getReason()) + "</ram:Reason>";
+		}
+		String reasonCode = "";
+		if ((allowance.getReasonCode() != null) && (profile == Profiles.getByName("XRechnung"))) {
+			// only in XRechnung profile
+			reasonCode = "<ram:ReasonCode>" + allowance.getReasonCode() + "</ram:ReasonCode>";
+		}
 		final String itemTotalAllowanceChargeStr = "<ram:SpecifiedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>" +
 			chargeIndicator + "</udt:Indicator></ram:ChargeIndicator>" + percentage +
 			"<ram:ActualAmount>" + currencyFormat(allowance.getTotalAmount(item)) + "</ram:ActualAmount>" +
-			"<ram:Reason>" + XMLTools.encodeXML(allowance.getReason()) + "</ram:Reason>" +
+			reason +
+			reasonCode +
 			"</ram:SpecifiedTradeAllowanceCharge>";
 		return itemTotalAllowanceChargeStr;
 	}
@@ -325,9 +342,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		//
 
 		if (getProfile() == Profiles.getByName("XRechnung")) {
-			xml += "  <ram:BusinessProcessSpecifiedDocumentContextParameter>\n"
-				+ "    <ram:ID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</ram:ID>\n"
-				+ "  </ram:BusinessProcessSpecifiedDocumentContextParameter>\n";
+			xml += "<ram:BusinessProcessSpecifiedDocumentContextParameter>\n"
+				+ "<ram:ID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</ram:ID>\n"
+				+ "</ram:BusinessProcessSpecifiedDocumentContextParameter>\n";
 		}
 		xml +=
 			"<ram:GuidelineSpecifiedDocumentContextParameter>"
@@ -336,7 +353,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "</rsm:ExchangedDocumentContext>"
 				+ "<rsm:ExchangedDocument>"
 				+ "<ram:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:ID>"
-				// + " <ram:Name>RECHNUNG</ram:Name>"
+				// + "<ram:Name>RECHNUNG</ram:Name>"
 				// + "<ram:TypeCode>380</ram:TypeCode>"
 				+ "<ram:TypeCode>" + typecode + "</ram:TypeCode>"
 				+ "<ram:IssueDateTime>"
@@ -436,11 +453,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
 						+ "\">" + quantityFormat(currentItem.getBasisQuantity()) + "</ram:BasisQuantity>"
 						+ allowanceChargeStr
-						// + " <AppliedTradeAllowanceCharge>"
-						// + " <ChargeIndicator>false</ChargeIndicator>"
-						// + " <ActualAmount currencyID=\"EUR\">0.6667</ActualAmount>"
-						// + " <Reason>Rabatt</Reason>"
-						// + " </AppliedTradeAllowanceCharge>"
+						// + "<AppliedTradeAllowanceCharge>"
+						// + "<ChargeIndicator>false</ChargeIndicator>"
+						// + "<ActualAmount currencyID=\"EUR\">0.6667</ActualAmount>"
+						// + "<Reason>Rabatt</Reason>"
+						// + "</AppliedTradeAllowanceCharge>"
 						+ "</ram:GrossPriceProductTradePrice>";
 				}
 
@@ -499,53 +516,53 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			+ getTradePartyAsXML(trans.getSender(), true, false)
 			+ "</ram:SellerTradeParty>"
 			+ "<ram:BuyerTradeParty>";
-		// + " <ID>GE2020211</ID>"
-		// + " <GlobalID schemeID=\"0088\">4000001987658</GlobalID>"
+		// + "<ID>GE2020211</ID>"
+		// + "<GlobalID schemeID=\"0088\">4000001987658</GlobalID>"
 
 		xml += getTradePartyAsXML(trans.getRecipient(), false, false);
 		xml += "</ram:BuyerTradeParty>";
 
 		if (trans.getSellerOrderReferencedDocumentID() != null) {
-			xml += "   <ram:SellerOrderReferencedDocument>"
-				+ "       <ram:IssuerAssignedID>"
+			xml += "<ram:SellerOrderReferencedDocument>"
+				+ "<ram:IssuerAssignedID>"
 				+ XMLTools.encodeXML(trans.getSellerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
-				+ "   </ram:SellerOrderReferencedDocument>";
+				+ "</ram:SellerOrderReferencedDocument>";
 		}
 		if (trans.getBuyerOrderReferencedDocumentID() != null) {
-			xml += "   <ram:BuyerOrderReferencedDocument>"
-				+ "       <ram:IssuerAssignedID>"
+			xml += "<ram:BuyerOrderReferencedDocument>"
+				+ "<ram:IssuerAssignedID>"
 				+ XMLTools.encodeXML(trans.getBuyerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
-				+ "   </ram:BuyerOrderReferencedDocument>";
+				+ "</ram:BuyerOrderReferencedDocument>";
 		}
 		if (trans.getContractReferencedDocument() != null) {
-			xml += "   <ram:ContractReferencedDocument>"
-				+ "       <ram:IssuerAssignedID>"
+			xml += "<ram:ContractReferencedDocument>"
+				+ "<ram:IssuerAssignedID>"
 				+ XMLTools.encodeXML(trans.getContractReferencedDocument()) + "</ram:IssuerAssignedID>"
-				+ "    </ram:ContractReferencedDocument>";
+				+ "</ram:ContractReferencedDocument>";
 		}
 
 		// Additional Documents of XRechnung (Rechnungsbegruendende Unterlagen - BG-24 XRechnung)
 		if (trans.getAdditionalReferencedDocuments() != null) {
 			for (final FileAttachment f : trans.getAdditionalReferencedDocuments()) {
 				final String documentContent = new String(Base64.getEncoder().encodeToString(f.getData()));
-				xml += "  <ram:AdditionalReferencedDocument>"
-					+ "    <ram:IssuerAssignedID>" + f.getFilename() + "</ram:IssuerAssignedID>"
-					+ "    <ram:TypeCode>916</ram:TypeCode>"
-					+ "    <ram:Name>" + f.getDescription() + "</ram:Name>"
-					+ "    <ram:AttachmentBinaryObject mimeCode=\"" + f.getMimetype() + "\"\n"
-					+ "      filename=\"" + f.getFilename() + "\">" + documentContent + "</ram:AttachmentBinaryObject>"
-					+ "  </ram:AdditionalReferencedDocument>";
+				xml += "<ram:AdditionalReferencedDocument>"
+					+ "<ram:IssuerAssignedID>" + f.getFilename() + "</ram:IssuerAssignedID>"
+					+ "<ram:TypeCode>916</ram:TypeCode>"
+					+ "<ram:Name>" + f.getDescription() + "</ram:Name>"
+					+ "<ram:AttachmentBinaryObject mimeCode=\"" + f.getMimetype() + "\"\n"
+					+ "filename=\"" + f.getFilename() + "\">" + documentContent + "</ram:AttachmentBinaryObject>"
+					+ "</ram:AdditionalReferencedDocument>";
 			}
 		}
 
 		if (trans.getSpecifiedProcuringProjectID() != null) {
-			xml += "   <ram:SpecifiedProcuringProject>"
-				+ "       <ram:ID>"
+			xml += "<ram:SpecifiedProcuringProject>"
+				+ "<ram:ID>"
 				+ XMLTools.encodeXML(trans.getSpecifiedProcuringProjectID()) + "</ram:ID>";
 			if (trans.getSpecifiedProcuringProjectName() != null) {
-				xml += "       <ram:Name >" + XMLTools.encodeXML(trans.getSpecifiedProcuringProjectName()) + "</ram:Name>";
+				xml += "<ram:Name>" + XMLTools.encodeXML(trans.getSpecifiedProcuringProjectName()) + "</ram:Name>";
 			}
-			xml += "    </ram:SpecifiedProcuringProject>";
+			xml += "</ram:SpecifiedProcuringProject>";
 		}
 		xml += "</ram:ApplicableHeaderTradeAgreement>";
 		xml += "<ram:ApplicableHeaderTradeDelivery>";
@@ -562,7 +579,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "<ram:OccurrenceDateTime>";
 			xml += DATE.udtFormat(trans.getDeliveryDate());
 			xml += "</ram:OccurrenceDateTime>";
-			xml += "            </ram:ActualDeliverySupplyChainEvent>";
+			xml += "</ram:ActualDeliverySupplyChainEvent>";
 
 		}
 		/*
@@ -581,9 +598,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		xml += "</ram:ApplicableHeaderTradeDelivery>";
 		xml += "<ram:ApplicableHeaderTradeSettlement>";
 		if ((trans.getNumber() != null) && (getProfile() != Profiles.getByName("Minimum"))) {
-			xml += "            <ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>";
+			xml += "<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>";
 		}
-		xml += "            <ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>";
+		xml += "<ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>";
 
 		if (trans.getTradeSettlementPayment() != null) {
 			for (final IZUGFeRDTradeSettlementPayment payment : trans.getTradeSettlementPayment()) {
@@ -645,40 +662,87 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 
 		if ((trans.getZFCharges() != null) && (trans.getZFCharges().length > 0)) {
-
-			for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-				if (calc.getChargesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO) != 0) {
-					xml += " <ram:SpecifiedTradeAllowanceCharge>" +
+			if (profile == Profiles.getByName("XRechnung")) {
+				for(IZUGFeRDAllowanceCharge charge : trans.getZFCharges()) {
+					xml += "<ram:SpecifiedTradeAllowanceCharge>" +
 						"<ram:ChargeIndicator>" +
 						"<udt:Indicator>true</udt:Indicator>" +
 						"</ram:ChargeIndicator>" +
-						"<ram:ActualAmount>" + currencyFormat(calc.getChargesForPercent(currentTaxPercent)) + "</ram:ActualAmount>" +
-						"<ram:Reason>" + XMLTools.encodeXML(calc.getChargeReasonForPercent(currentTaxPercent)) + "</ram:Reason>" +
-						"<ram:CategoryTradeTax>" +
+						"<ram:ActualAmount>" + currencyFormat(charge.getTotalAmount(calc)) + "</ram:ActualAmount>";
+					if (charge.getReason() != null) {
+						xml += "<ram:Reason>" + XMLTools.encodeXML(charge.getReason()) + "</ram:Reason>";
+					}
+					if (charge.getReasonCode() != null) {
+						xml += "<ram:ReasonCode>" + charge.getReasonCode() + "</ram:ReasonCode>";
+					}
+					xml += "<ram:CategoryTradeTax>" +
 						"<ram:TypeCode>VAT</ram:TypeCode>" +
-						"<ram:CategoryCode>" + VATPercentAmountMap.get(currentTaxPercent).getCategoryCode() + "</ram:CategoryCode>" +
-						"<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>" +
-						"</ram:CategoryTradeTax>" +
-						"</ram:SpecifiedTradeAllowanceCharge>	";
+						"<ram:CategoryCode>" + charge.getCategoryCode() + "</ram:CategoryCode>";
+					if (charge.getTaxPercent() != null) {
+						xml += "<ram:RateApplicablePercent>" + vatFormat(charge.getTaxPercent()) + "</ram:RateApplicablePercent>";
+					}
+					xml += "</ram:CategoryTradeTax>" +
+						"</ram:SpecifiedTradeAllowanceCharge>";
+				}
+			} else {
+				for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
+					if (calc.getChargesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO) != 0) {
+						xml += "<ram:SpecifiedTradeAllowanceCharge>" +
+							"<ram:ChargeIndicator>" +
+							"<udt:Indicator>true</udt:Indicator>" +
+							"</ram:ChargeIndicator>" +
+							"<ram:ActualAmount>" + currencyFormat(calc.getChargesForPercent(currentTaxPercent)) + "</ram:ActualAmount>" +
+							"<ram:Reason>" + XMLTools.encodeXML(calc.getChargeReasonForPercent(currentTaxPercent)) + "</ram:Reason>" +
+							"<ram:CategoryTradeTax>" +
+							"<ram:TypeCode>VAT</ram:TypeCode>" +
+							"<ram:CategoryCode>" + VATPercentAmountMap.get(currentTaxPercent).getCategoryCode() + "</ram:CategoryCode>" +
+							"<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>" +
+							"</ram:CategoryTradeTax>" +
+							"</ram:SpecifiedTradeAllowanceCharge>";
+					}
 				}
 			}
 		}
 
 		if ((trans.getZFAllowances() != null) && (trans.getZFAllowances().length > 0)) {
-			for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-				if (calc.getAllowancesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO) != 0) {
+			if (profile == Profiles.getByName("XRechnung")) {
+				for(IZUGFeRDAllowanceCharge allowance : trans.getZFAllowances()) {
 					xml += "<ram:SpecifiedTradeAllowanceCharge>" +
 						"<ram:ChargeIndicator>" +
 						"<udt:Indicator>false</udt:Indicator>" +
 						"</ram:ChargeIndicator>" +
-						"<ram:ActualAmount>" + currencyFormat(calc.getAllowancesForPercent(currentTaxPercent)) + "</ram:ActualAmount>" +
-						"<ram:Reason>" + XMLTools.encodeXML(calc.getAllowanceReasonForPercent(currentTaxPercent)) + "</ram:Reason>" +
-						"<ram:CategoryTradeTax>" +
+						"<ram:ActualAmount>" + currencyFormat(allowance.getTotalAmount(calc)) + "</ram:ActualAmount>";
+					if (allowance.getReason() != null) {
+						xml += "<ram:Reason>" + XMLTools.encodeXML(allowance.getReason()) + "</ram:Reason>";
+					}
+					if (allowance.getReasonCode() != null) {
+						xml += "<ram:ReasonCode>" + allowance.getReasonCode() + "</ram:ReasonCode>";
+					}
+					xml += "<ram:CategoryTradeTax>" +
 						"<ram:TypeCode>VAT</ram:TypeCode>" +
-						"<ram:CategoryCode>" + VATPercentAmountMap.get(currentTaxPercent).getCategoryCode() + "</ram:CategoryCode>" +
-						"<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>" +
-						"</ram:CategoryTradeTax>" +
-						"</ram:SpecifiedTradeAllowanceCharge>	";
+						"<ram:CategoryCode>" + allowance.getCategoryCode() + "</ram:CategoryCode>";
+					if (allowance.getTaxPercent() != null) {
+						xml += "<ram:RateApplicablePercent>" + vatFormat(allowance.getTaxPercent()) + "</ram:RateApplicablePercent>";
+					}
+					xml += "</ram:CategoryTradeTax>" +
+						"</ram:SpecifiedTradeAllowanceCharge>";
+				}
+			} else {
+				for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
+					if (calc.getAllowancesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO) != 0) {
+						xml += "<ram:SpecifiedTradeAllowanceCharge>" +
+							"<ram:ChargeIndicator>" +
+							"<udt:Indicator>false</udt:Indicator>" +
+							"</ram:ChargeIndicator>" +
+							"<ram:ActualAmount>" + currencyFormat(calc.getAllowancesForPercent(currentTaxPercent)) + "</ram:ActualAmount>" +
+							"<ram:Reason>" + XMLTools.encodeXML(calc.getAllowanceReasonForPercent(currentTaxPercent)) + "</ram:Reason>" +
+							"<ram:CategoryTradeTax>" +
+							"<ram:TypeCode>VAT</ram:TypeCode>" +
+							"<ram:CategoryCode>" + VATPercentAmountMap.get(currentTaxPercent).getCategoryCode() + "</ram:CategoryCode>" +
+							"<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>" +
+							"</ram:CategoryTradeTax>" +
+							"</ram:SpecifiedTradeAllowanceCharge>";
+					}
 				}
 			}
 		}
@@ -736,31 +800,31 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		// //
 		// currencyID=\"EUR\"
 		if (getProfile() != Profiles.getByName("Minimum")) {
-			xml += "             <ram:TotalPrepaidAmount>" + currencyFormat(calc.getTotalPrepaid()) + "</ram:TotalPrepaidAmount>";
+			xml += "<ram:TotalPrepaidAmount>" + currencyFormat(calc.getTotalPrepaid()) + "</ram:TotalPrepaidAmount>";
 		}
 		xml += "<ram:DuePayableAmount>" + currencyFormat(calc.getGrandTotal().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>"
 			+ "</ram:SpecifiedTradeSettlementHeaderMonetarySummation>";
 		if (trans.getInvoiceReferencedDocumentID() != null) {
-			xml += "   <ram:InvoiceReferencedDocument>"
-				+ "       <ram:IssuerAssignedID>"
+			xml += "<ram:InvoiceReferencedDocument>"
+				+ "<ram:IssuerAssignedID>"
 				+ XMLTools.encodeXML(trans.getInvoiceReferencedDocumentID()) + "</ram:IssuerAssignedID>";
 			if (trans.getInvoiceReferencedIssueDate() != null) {
 				xml += "<ram:FormattedIssueDateTime>"
 					+ DATE.qdtFormat(trans.getInvoiceReferencedIssueDate())
 					+ "</ram:FormattedIssueDateTime>";
 			}
-			xml += "   </ram:InvoiceReferencedDocument>";
+			xml += "</ram:InvoiceReferencedDocument>";
 		}
 
 		xml += "</ram:ApplicableHeaderTradeSettlement>";
-		// + " <IncludedSupplyChainTradeLineItem>\n"
-		// + " <AssociatedDocumentLineDocument>\n"
-		// + " <IncludedNote>\n"
-		// + " <Content>Wir erlauben uns Ihnen folgende Positionen aus der Lieferung Nr.
+		// + "<IncludedSupplyChainTradeLineItem>\n"
+		// + "<AssociatedDocumentLineDocument>\n"
+		// + "<IncludedNote>\n"
+		// + "<Content>Wir erlauben uns Ihnen folgende Positionen aus der Lieferung Nr.
 		// 2013-51112 in Rechnung zu stellen:</Content>\n"
-		// + " </IncludedNote>\n"
-		// + " </AssociatedDocumentLineDocument>\n"
-		// + " </IncludedSupplyChainTradeLineItem>\n";
+		// + "</IncludedNote>\n"
+		// + "</AssociatedDocumentLineDocument>\n"
+		// + "</IncludedSupplyChainTradeLineItem>\n";
 
 		xml += "</rsm:SupplyChainTradeTransaction>"
 			+ "</rsm:CrossIndustryInvoice>";
