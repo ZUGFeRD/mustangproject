@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
 	private BigDecimal totalAmount;
 	private String reason;
+	private String reasonCode;
 	private BigDecimal taxPercent;
 	boolean isCharge=true;
 
@@ -34,6 +35,11 @@ public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
 	@Override
 	public String getReason() {
 		return reason;
+	}
+
+	@Override
+	public String getReasonCode() {
+		return reasonCode;
 	}
 
 	@Override
@@ -58,6 +64,11 @@ public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
 
 	public IZUGFeRDAllowanceChargeImpl setReason(String reason) {
 		this.reason = reason;
+		return this;
+	}
+
+	public IZUGFeRDAllowanceChargeImpl setReasonCode(String reasonCode) {
+		this.reasonCode = reasonCode;
 		return this;
 	}
 
