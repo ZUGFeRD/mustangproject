@@ -1,3 +1,8 @@
+- #420
+- Enhance Charges/Allowances with reasonCode. #432
+- Fix build warnings from editing and building. #415
+- ZUGFeRDVisualizer.toPDF(): generate PDF/A-3b. #400
+
 2.12.0
 =======
 2024-07-20

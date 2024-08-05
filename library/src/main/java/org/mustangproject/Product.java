@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 /***
  * describes a product, good or service used in an invoice item line
@@ -15,6 +16,8 @@ public class Product implements IZUGFeRDExportableProduct {
 	protected boolean isReverseCharge = false;
 	protected boolean isIntraCommunitySupply = false;
 	protected SchemedID globalId = null;
+	protected String countryOfOrigin = null;
+	protected HashMap<String, String> attributes = null;
 
 	/***
 	 * default constructor
@@ -63,6 +66,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	}
 
 
+	@Override
 	public String getSellerAssignedID() {
 		return sellerAssignedID;
 	}
@@ -77,6 +81,7 @@ public class Product implements IZUGFeRDExportableProduct {
 		return this;
 	}
 
+	@Override
 	public String getBuyerAssignedID() {
 		return buyerAssignedID;
 	}
@@ -182,5 +187,33 @@ public class Product implements IZUGFeRDExportableProduct {
 	public Product setVATPercent(BigDecimal VATPercent) {
 		this.VATPercent = VATPercent;
 		return this;
+	}
+
+	@Override
+	public String getCountryOfOrigin() {
+	    return this.countryOfOrigin;
+	}
+
+	public Product setCountryOfOrigin(String countryOfOrigin) {
+	    this.countryOfOrigin = countryOfOrigin;
+	    return this;
+	}
+
+	@Override
+	public HashMap<String, String> getAttributes() {
+	    return this.attributes;
+	}
+
+	public Product setAttributes(HashMap<String, String> attributes) {
+	    this.attributes = attributes;
+	    return this;
+	}
+
+	public Product addAttribute(String name, String value ) {
+	    if ( this.attributes == null ) {
+		this.attributes = new HashMap<>();
+	    }
+	    this.attributes.put(name, value);
+	    return this;
 	}
 }

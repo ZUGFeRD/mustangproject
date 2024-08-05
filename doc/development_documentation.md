@@ -127,14 +127,10 @@ The whole settings.xml then looks e.g. like this
       <offline/>
       <pluginGroups/>
       <servers>
-        <server> 
-      	<id>github</id> 
-      	<password>TOKEN</password> 
-        </server> 
     <server> 
       <id>ossrh</id> 
-      <username>jstaerk</username> 
-      <password>JIRA-PASSWORD</password> 
+      <username>SONATYPE TOKEN USER</username> 
+      <password>SONATYPE TOKEN PASSWORD</password> 
     </server> 
 
       </servers>

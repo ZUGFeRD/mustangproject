@@ -6,12 +6,10 @@
         <version>2.13.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.mustangproject</groupId>
     <artifactId>validator</artifactId>
     <name>Library to validate e-invoices (ZUGFeRD, Factur-X and Xrechnung)</name>
 
     <packaging>jar</packaging>
-    <version>2.13.0-SNAPSHOT</version>
     <repositories>
         <repository>
             <!-- for jargs -->
@@ -27,18 +25,15 @@
     </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.deploy.skip>false
-        </maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
-        <maven.compiler.compilerVersion>11</maven.compiler.compilerVersion>
+        <maven.deploy.skip>false</maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-
     </properties>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>library</artifactId>
-            <version>2.13.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
@@ -134,12 +129,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
-                             mvn clean compile assembly:single -->
-                    <!-- or whatever version you use -->
                     <source>11</source>
                     <target>11</target>
                 </configuration>
@@ -164,19 +153,7 @@
                             </excludes>
                         </filter>
                         <filter>
-                            <artifact>log4j:log4j</artifact>
-                            <includes>
-                                <include>**</include>
-                            </includes>
-                        </filter>
-                        <filter>
                             <artifact>commons-logging:commons-logging</artifact>
-                            <includes>
-                                <include>**</include>
-                            </includes>
-                        </filter>
-                        <filter>
-                            <artifact>com.sun.xml.bind:jaxb-impl</artifact>
                             <includes>
                                 <include>**</include>
                             </includes>
