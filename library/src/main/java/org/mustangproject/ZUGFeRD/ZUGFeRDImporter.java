@@ -21,12 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -57,7 +52,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ZUGFeRDImporter {
-  private static final Logger LOGGER = LoggerFactory.getLogger (ZUGFeRDImporter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDImporter.class);
 
 	/**
 	 * if metadata has been found
@@ -67,6 +62,10 @@ public class ZUGFeRDImporter {
 	 * map filenames of additional XML files to their contents
 	 */
 	private final HashMap<String, byte[]> additionalXMLs = new HashMap<>();
+	/**
+	 * map filenames of all embedded files in the respective PDF
+	 */
+	private final HashMap<String, byte[]> PDFAttachments = new HashMap<>();
 	/**
 	 * Raw XML form of the extracted data - may be directly obtained.
 	 */
@@ -90,7 +89,7 @@ public class ZUGFeRDImporter {
 		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
 			extractLowLevel(bis);
 		} catch (final IOException e) {
-      LOGGER.error ("Failed to extract ZUGFeRD data", e);
+			LOGGER.error("Failed to extract ZUGFeRD data", e);
 			throw new ZUGFeRDExportException(e);
 		}
 	}
@@ -100,9 +99,32 @@ public class ZUGFeRDImporter {
 		try {
 			extractLowLevel(pdfStream);
 		} catch (final IOException e) {
-      LOGGER.error ("Failed to extract ZUGFeRD data", e);
+			LOGGER.error("Failed to extract ZUGFeRD data", e);
 			throw new ZUGFeRDExportException(e);
 		}
+	}
+
+
+	/***
+	 * return the file names of all files embedded into the PDF
+	 * @see for XML embedded files please use ZUGFeRDInvoiceImporter.getFileAttachments
+	 * @return a Stringset
+	 */
+	public Set<String> getEmbeddedFilenames() {
+		return PDFAttachments.keySet();
+	}
+
+	/***
+	 * returns the file contents of the specified filename embedded into the PDF
+	 * @param filename String
+	 * @return a bytearray, or null if the filename has not been fond
+	 */
+	public byte[] getEmbeddedFile(String filename) {
+
+		if (PDFAttachments.containsKey(filename)) {
+			return PDFAttachments.get(filename);
+		}
+		return null;
 	}
 
 
@@ -121,7 +143,7 @@ public class ZUGFeRDImporter {
 		if (Arrays.equals(pad, pdfSignature)) { // we have a pdf
 
 
-			try (PDDocument doc = Loader.loadPDF(IOUtils.toByteArray (pdfStream))) {
+			try (PDDocument doc = Loader.loadPDF(IOUtils.toByteArray(pdfStream))) {
 				// PDDocumentInformation info = doc.getDocumentInformation();
 				final PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
 				//start
@@ -174,10 +196,10 @@ public class ZUGFeRDImporter {
 			/**
 			 * filenames for invoice data (ZUGFeRD v1 and v2, Factur-X)
 			 */
+			final PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
 			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml")) || filename.equals("xrechnung.xml") || filename.equals("order-x.xml") || filename.equals("cida.xml")) {
 				containsMeta = true;
 
-				final PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
 				// String embeddedFilename = filePath + filename;
 				// File file = new File(filePath + filename);
 				// System.out.println("Writing " + embeddedFilename);
@@ -191,9 +213,9 @@ public class ZUGFeRDImporter {
 				// fos.close();
 			}
 			if (filename.startsWith("additional_data")) {
-				final PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
 				additionalXMLs.put(filename, embeddedFile.toByteArray());
 			}
+			PDFAttachments.put(filename, embeddedFile.toByteArray());
 		}
 	}
 
@@ -214,12 +236,13 @@ public class ZUGFeRDImporter {
 
 
 	public void setRawXML(byte[] rawXML) throws IOException {
+		this.containsMeta = true;
 		this.rawXML = rawXML;
 		this.version = null;
 		try {
 			setDocument();
 		} catch (ParserConfigurationException | SAXException e) {
-			LOGGER.error ("Failed to parse XML", e);
+			LOGGER.error("Failed to parse XML", e);
 			throw new ZUGFeRDExportException(e);
 		}
 	}
@@ -236,7 +259,7 @@ public class ZUGFeRDImporter {
 			final XPath xpath = xpathFact.newXPath();
 			result = xpath.evaluate(xpathStr, document);
 		} catch (final XPathExpressionException e) {
-      LOGGER.error ("Failed to evaluate XPath", e);
+			LOGGER.error("Failed to evaluate XPath", e);
 			throw new ZUGFeRDExportException(e);
 		}
 		return result;
@@ -268,7 +291,7 @@ public class ZUGFeRDImporter {
 	 */
 	public String getZUGFeRDProfil() {
 		String guideline = extractString("//*[local-name() = 'GuidelineSpecifiedDocumentContextParameter']//*[local-name() = 'ID']");
-		if(guideline.contains("xrechnung")) {
+		if (guideline.contains("xrechnung")) {
 			return "XRECHNUNG";
 		}
 		switch (guideline) {
@@ -438,7 +461,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']//*[local-name() = 'TotalPrepaidAmount']");
 			}
 		} catch (final Exception e) {
-      // Exception was already logged
+			// Exception was already logged
 			return "";
 		}
 	}
@@ -476,7 +499,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'ExchangedDocument']//*[local-name() = 'IncludedNote']");
 			}
 		} catch (final Exception e) {
-      // Exception was already logged
+			// Exception was already logged
 			return "";
 		}
 	}
@@ -507,7 +530,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']//*[local-name() = 'LineTotalAmount']");
 			}
 		} catch (final Exception e) {
-      // Exception was already logged
+			// Exception was already logged
 			return "";
 		}
 	}
@@ -530,7 +553,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'ActualDeliverySupplyChainEvent']//*[local-name() = 'OccurrenceDateTime']//*[local-name() = 'DateTimeString']");
 			}
 		} catch (final Exception e) {
-      // Exception was already logged
+			// Exception was already logged
 			return "";
 		}
 	}
@@ -546,7 +569,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'ExchangedDocument']//*[local-name() = 'ID']");
 			}
 		} catch (final Exception e) {
-      // Exception was already logged
+			// Exception was already logged
 			return "";
 		}
 	}
@@ -563,7 +586,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'ExchangedDocument']/*[local-name() = 'TypeCode']");
 			}
 		} catch (final Exception e) {
-      // Exception was already logged
+			// Exception was already logged
 			return "";
 		}
 	}
@@ -580,7 +603,7 @@ public class ZUGFeRDImporter {
 				return extractString("//*[local-name() = 'ApplicableHeaderTradeAgreement']/*[local-name() = 'BuyerReference']");
 			}
 		} catch (final Exception e) {
-      // Exception was already logged
+			// Exception was already logged
 			return "";
 		}
 	}
@@ -784,7 +807,7 @@ public class ZUGFeRDImporter {
 	static String convertStreamToString(java.io.InputStream is) {
 		try {
 			return IOUtils.toString(is, StandardCharsets.UTF_8);
-		} catch  (IOException e) {
+		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
 	}
@@ -805,7 +828,7 @@ public class ZUGFeRDImporter {
 				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'PostalTradeAddress']");
 			}
 		} catch (final Exception e) {
-      // Exception was already logged
+			// Exception was already logged
 			return null;
 		}
 
@@ -827,7 +850,7 @@ public class ZUGFeRDImporter {
 				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'SellerTradeParty']//*[local-name() = 'PostalTradeAddress']");
 			}
 		} catch (final Exception e) {
-      // Exception was already logged
+			// Exception was already logged
 			return null;
 		}
 
@@ -849,7 +872,7 @@ public class ZUGFeRDImporter {
 				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeDelivery']//*[local-name() = 'ShipToTradeParty']//*[local-name() = 'PostalTradeAddress']");
 			}
 		} catch (final Exception e) {
-      // Exception was already logged
+			// Exception was already logged
 			return null;
 		}
 
@@ -1062,7 +1085,7 @@ public class ZUGFeRDImporter {
 			nl = getNodeListByPath("//*[local-name() = 'IncludedSupplyChainTradeLineItem']");
 
 		} catch (final Exception e) {
-      // Exception was already logged
+			// Exception was already logged
 		}
 
 		for (int i = 0; i < nl.getLength(); i++) {

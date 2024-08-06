@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 
 /***
@@ -283,6 +284,34 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
 
+	}
+
+	/**
+	 * testing if other files embedded in pdf additionally to the invoice can be read correctly
+	 * */
+	public void testDetach() {
+		boolean hasExceptions = false;
+
+		byte[] fileA=null;
+		byte[] fileB=null;
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushAttachments.pdf");
+		for (String filename:zii.getEmbeddedFilenames()
+			 ) {
+			if (filename.equals("one.pdf")) {
+				fileA=zii.getEmbeddedFile(filename);
+			} else if (filename.equals("two.pdf")) {
+				fileB=zii.getEmbeddedFile(filename);
+
+			}
+
+		}
+		byte[] b = {12, 13}; // the sample data that was used to write the files
+
+		assertTrue(Arrays.equals(fileA, b));
+		assertEquals(fileA.length, 2);
+		assertTrue(Arrays.equals(fileB, b));
+		assertEquals(fileB.length, 2);
 	}
 
 
