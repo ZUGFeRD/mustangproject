@@ -9,7 +9,6 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTradeParty;
 import org.mustangproject.ZUGFeRD.IZUGFeRDLegalOrganisation;
 import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlement;
-import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlementDebit;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -27,7 +26,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	protected String additionalAddress = null;
 	protected String additionalAddressExtension = null;
 	protected List<BankDetails> bankDetails = new ArrayList<>();
-	protected List<IZUGFeRDTradeSettlementDebit> debitDetails = new ArrayList<>();
+	protected List<DirectDebit> debitDetails = new ArrayList<>();
 	protected Contact contact = null;
 	protected LegalOrganisation legalOrg = null;
 	protected SchemedID globalId = null;
@@ -483,7 +482,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	 * @param debitDetail e.g. containing IBAN and mandate
 	 * @return fluent setter
 	 */
-	public TradeParty addDebitDetails(IZUGFeRDTradeSettlementDebit debitDetail) {
+	public TradeParty addDebitDetails(DirectDebit debitDetail) {
 		debitDetails.add(debitDetail);
 		return this;
 	}

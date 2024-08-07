@@ -522,4 +522,7 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	default String getCreditorReferenceID() {
+		return null;
+	}
 }
