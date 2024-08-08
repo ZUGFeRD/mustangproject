@@ -40,10 +40,7 @@ import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
-import org.mustangproject.EStandard;
-import org.mustangproject.Item;
-import org.mustangproject.Product;
-import org.mustangproject.XMLTools;
+import org.mustangproject.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -65,7 +62,7 @@ public class ZUGFeRDImporter {
 	/**
 	 * map filenames of all embedded files in the respective PDF
 	 */
-	private final HashMap<String, byte[]> PDFAttachments = new HashMap<>();
+	private final ArrayList<FileAttachment> PDFAttachments = new ArrayList<>();
 	/**
 	 * Raw XML form of the extracted data - may be directly obtained.
 	 */
@@ -107,25 +104,13 @@ public class ZUGFeRDImporter {
 
 	/***
 	 * return the file names of all files embedded into the PDF
-	 * @see for XML embedded files please use ZUGFeRDInvoiceImporter.getFileAttachments
-	 * @return a Stringset
+	 * @see for XML embedded files please use ZUGFeRDInvoiceImporter.getFileAttachmentsXML
+	 * @return a ArrayList of FileAttachments, empty if none
 	 */
-	public Set<String> getEmbeddedFilenames() {
-		return PDFAttachments.keySet();
+	public List<FileAttachment> getFileAttachmentsPDF() {
+		return PDFAttachments;
 	}
 
-	/***
-	 * returns the file contents of the specified filename embedded into the PDF
-	 * @param filename String
-	 * @return a bytearray, or null if the filename has not been fond
-	 */
-	public byte[] getEmbeddedFile(String filename) {
-
-		if (PDFAttachments.containsKey(filename)) {
-			return PDFAttachments.get(filename);
-		}
-		return null;
-	}
 
 
 	/**
@@ -196,6 +181,7 @@ public class ZUGFeRDImporter {
 			/**
 			 * filenames for invoice data (ZUGFeRD v1 and v2, Factur-X)
 			 */
+
 			final PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
 			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml")) || filename.equals("xrechnung.xml") || filename.equals("order-x.xml") || filename.equals("cida.xml")) {
 				containsMeta = true;
@@ -215,7 +201,7 @@ public class ZUGFeRDImporter {
 			if (filename.startsWith("additional_data")) {
 				additionalXMLs.put(filename, embeddedFile.toByteArray());
 			}
-			PDFAttachments.put(filename, embeddedFile.toByteArray());
+			PDFAttachments.add(new FileAttachment(filename, embeddedFile.getSubtype(), "Data", embeddedFile.toByteArray()));
 		}
 	}
 

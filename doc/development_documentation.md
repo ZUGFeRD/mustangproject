@@ -6,7 +6,6 @@
 To check if the necessary tools are there, the build is in a stable state and works on your platform, e.g. download and extract https://github.com/ZUGFeRD/mustangproject/archive/master.zip and run ./mvnw clean package
 
 Mvnw is a maven wrapper which will download maven.Maven is the dependency management tool which will download all libraries, their dependencies, and build the whole thing.
-Mvnw is a maven wrapper which will download maven.Maven is the dependency management tool which will download all libraries, their dependencies, and build the whole thing.
 
 You will need a Java JDK, e.g. https://www.azul.com/downloads/zulu-community/?architecture=x86-64-bit&package=jdk
 
@@ -60,7 +59,7 @@ to validate the XML part of the invoices.
 
 ## New build
 
-Target platform is java 1.8
+Target platform is java 1.11
 
 ## Build
 
@@ -158,7 +157,7 @@ Sign in in GitHub and click on the profile picture -> Settings. Now just generat
 ![screenshot](development_documentation_screenshot_github_settings.png "Screenshot Github Settings")
  The Token-ID is the password. 
 
-In .m2 also need a toolchains.xml which defines a Sun JDK 1.8 target like the following: 
+In .m2 also need a toolchains.xml which defines a JDK 1.11 target like the following: 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <toolchains>
@@ -185,11 +184,11 @@ maybe not yet even existing new release version:
 
 ```
 cd validator/target
-mvn install:install-file -Dfile=validator-2.5.5-SNAPSHOT-shaded.jar -DgroupId=org.mustangproject -DartifactId=validator -Dversion=2.5.5 -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile=validator-2.12.0-SNAPSHOT-shaded.jar -Dclassifier=shaded -DgroupId=org.mustangproject -DartifactId=validator -Dversion=2.12.0 -Dpackaging=jar -DgeneratePom=true
 ```
 In gradle you can use something like
 ```
-implementation files('libs/validator-2.5.6-shaded.jar')
+implementation files('libs/validator-2.12.0-shaded.jar')
 ```
 
 

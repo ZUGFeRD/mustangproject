@@ -21,6 +21,7 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import org.mustangproject.FileAttachment;
 import org.mustangproject.Invoice;
 
 import javax.xml.xpath.XPathExpressionException;
@@ -296,15 +297,12 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		byte[] fileB=null;
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushAttachments.pdf");
-		for (String filename:zii.getEmbeddedFilenames()
-			 ) {
-			if (filename.equals("one.pdf")) {
-				fileA=zii.getEmbeddedFile(filename);
-			} else if (filename.equals("two.pdf")) {
-				fileB=zii.getEmbeddedFile(filename);
-
+		for (FileAttachment fa:zii.getFileAttachmentsPDF()) {
+			if (fa.getFilename().equals("one.pdf")) {
+				fileA=fa.getData();
+			} else if (fa.getFilename().equals("two.pdf")) {
+				fileB=fa.getData();
 			}
-
 		}
 		byte[] b = {12, 13}; // the sample data that was used to write the files
 

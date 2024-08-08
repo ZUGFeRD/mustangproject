@@ -1,9 +1,12 @@
 - #420
+- #441
 - Enhance Charges/Allowances with reasonCode. #432
 - Fix build warnings from editing and building. #415
 - ZUGFeRDVisualizer.toPDF(): generate PDF/A-3b. #400
-- allow access to invoice attachments via  ZUGFeRDInvoiceImporter zii.getEmbeddedFilenames()/zii.getEmbeddedFile(filename) 
-  and XML (zii.getFileAttachments)
+- allow access to invoice attachments via  ZUGFeRDInvoiceImporter zii.getFileAttachmentsPDF() 
+  and XML (zii.getFileAttachmentsXML)
+-  #436 and #370. (langfr)
+- refactor(ZUGFeRDVisualizer): improve PDF visualization performance #438
 
 
 2.12.0

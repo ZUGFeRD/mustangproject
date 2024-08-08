@@ -133,7 +133,7 @@ public class XRTest extends TestCase {
 		} catch (IOException e) {
             throw new RuntimeException(e);
         }
-		List<FileAttachment> attachedFiles=zii.getFileAttachments();
+		List<FileAttachment> attachedFiles=zii.getFileAttachmentsXML();
         assertNotNull(attachedFiles);
 		assertEquals(attachedFiles.size(), 1);
 

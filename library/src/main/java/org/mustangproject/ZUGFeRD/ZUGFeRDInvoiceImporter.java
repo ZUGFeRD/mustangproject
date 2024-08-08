@@ -345,7 +345,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			xpr = xpath.compile("//*[local-name()=\"AttachmentBinaryObject\"]|//*[local-name()=\"EmbeddedDocumentBinaryObject\"]");
 			NodeList attachmentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			for (int i = 0; i < attachmentNodes.getLength(); i++) {
-				FileAttachment fa=new FileAttachment(attachmentNodes.item(i).getAttributes().getNamedItem("filename").getNodeValue(),attachmentNodes.item(i).getAttributes().getNamedItem("mimeCode").getNodeValue(),"",Base64.getDecoder().decode(attachmentNodes.item(i).getTextContent()));
+				FileAttachment fa=new FileAttachment(attachmentNodes.item(i).getAttributes().getNamedItem("filename").getNodeValue(),attachmentNodes.item(i).getAttributes().getNamedItem("mimeCode").getNodeValue(),"Data", Base64.getDecoder().decode(attachmentNodes.item(i).getTextContent()));
 				fileAttachments.add(fa);
 			// filename = "Aufmass.png" mimeCode = "image/png"
 				//EmbeddedDocumentBinaryObject cbc:EmbeddedDocumentBinaryObject mimeCode="image/png" filename="Aufmass.png"
@@ -449,10 +449,10 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 	/***
 	 *
-	 * @return the file attachments embedded in XML using base64,
-	 * @see for PDF embedded files use getEmbeddedFilenames()/getEmbeddedFile()
+	 * @return the file attachments embedded in XML (using base64) decoded as byte array,
+	 * @see for PDF embedded files in FX use getFileAttachmentsPDF()
 	 */
-	public List<FileAttachment> getFileAttachments() {
+	public List<FileAttachment> getFileAttachmentsXML() {
 		return fileAttachments;
 	}
 
