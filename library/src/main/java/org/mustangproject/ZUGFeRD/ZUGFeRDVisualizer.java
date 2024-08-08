@@ -226,13 +226,6 @@ public class ZUGFeRDVisualizer {
 		}
 
 		FileInputStream fis = new FileInputStream(xmlFilename);
-		try {
-			// TODO why are we reading the whole file here and discarding the content?
-			new String(Files.readAllBytes(Paths.get(xmlFilename)), StandardCharsets.UTF_8);
-		} catch (IOException e2) {
-			LOGGER.error("Failed to read file", e2);
-		}
-
 		ByteArrayOutputStream iaos = new ByteArrayOutputStream();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -276,12 +269,11 @@ public class ZUGFeRDVisualizer {
 
 		String result = null;
 
-		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
 			/* remove file endings so that tests can also pass after checking
 			   out from git with arbitrary options (which may include CSRF changes)
 			 */
 		try {
-			result = zvi.toFOP(CIIinputFile.getAbsolutePath());
+			result = this.toFOP(CIIinputFile.getAbsolutePath());
 		} catch (FileNotFoundException | TransformerException e) {
 			LOGGER.error("Failed to apply FOP", e);
 		}
