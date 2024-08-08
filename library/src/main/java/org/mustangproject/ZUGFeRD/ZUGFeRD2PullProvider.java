@@ -318,8 +318,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				paymentTermsDescription += discount.getAsXRechnung();
 			}
 		} else if ((paymentTermsDescription == null) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CORRECTEDINVOICE) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)) {
-			paymentTermsDescription = "Please remit until " + germanDateFormat.format(trans.getDueDate());
-
+			if ( trans.getDueDate() != null ) {
+				paymentTermsDescription = "Please remit until " + germanDateFormat.format(trans.getDueDate());
+			}
 		}
 
 
