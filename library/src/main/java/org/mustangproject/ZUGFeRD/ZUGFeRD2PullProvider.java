@@ -598,6 +598,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 		xml += "</ram:ApplicableHeaderTradeDelivery>";
 		xml += "<ram:ApplicableHeaderTradeSettlement>";
+		if ((trans.getCreditorReferenceID() != null) && (getProfile() != Profiles.getByName("Minimum"))) {
+			xml += "<ram:CreditorReferenceID>" + XMLTools.encodeXML(trans.getCreditorReferenceID()) + "</ram:CreditorReferenceID>";
+		}
 		if ((trans.getNumber() != null) && (getProfile() != Profiles.getByName("Minimum"))) {
 			xml += "<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>";
 		}

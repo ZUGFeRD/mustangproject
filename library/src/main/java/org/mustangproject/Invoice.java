@@ -63,6 +63,7 @@ public class Invoice implements IExportableTransaction {
 	protected String specifiedProcuringProjectName = null;
 	protected String despatchAdviceReferencedDocumentID = null;
 	protected String vatDueDateTypeCode = null;
+	protected String creditorReferenceID; // required when direct debit is used.
 
 	public Invoice() {
 		ZFItems = new ArrayList<>();
@@ -875,6 +876,15 @@ public class Invoice implements IExportableTransaction {
 	 */
 	public Invoice setVATDueDateTypeCode(String vatDueDateTypeCode) {
 		this.vatDueDateTypeCode = vatDueDateTypeCode;
+		return this;
+	}
+
+	public String getCreditorReferenceID() {
+		return creditorReferenceID;
+	}
+
+	public Invoice setCreditorReferenceID(String creditorReferenceID) {
+		this.creditorReferenceID = creditorReferenceID;
 		return this;
 	}
 
