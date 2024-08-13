@@ -203,12 +203,10 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 									if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID") != null) {
 										Node firstChild = taxChilds.item(taxChildIndex).getFirstChild();
 										if (firstChild != null) {
-											if (taxChilds.item(taxChildIndex).getAttributes()
-												.getNamedItem("schemeID").getNodeValue().equals("VA")) {
+											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("VA")) {
 												setVATID(firstChild.getNodeValue());
 											}
-											if (taxChilds.item(taxChildIndex).getAttributes()
-												.getNamedItem("schemeID").getNodeValue().equals("FC")) {
+											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("FC")) {
 												setTaxID(firstChild.getNodeValue());
 											}
 										}
@@ -298,6 +296,9 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 				NodeList itemChilds = currentItemNode.getChildNodes();
 				for (int itemChildIndex = 0; itemChildIndex < itemChilds.getLength(); itemChildIndex++) {
 					if (itemChilds.item(itemChildIndex).getLocalName() != null) {
+						if (itemChilds.item(itemChildIndex).getLocalName().equals("ID")) {
+							setID(itemChilds.item(itemChildIndex).getTextContent());
+						}
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("Name")) {
 							setName(itemChilds.item(itemChildIndex).getTextContent());
 						}
@@ -358,12 +359,10 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 										if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID") != null) {
 											Node firstChild = taxChilds.item(taxChildIndex).getFirstChild();
 											if (firstChild != null) {
-												if (taxChilds.item(taxChildIndex).getAttributes()
-													.getNamedItem("schemeID").getNodeValue().equals("VA")) {
+												if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("VA")) {
 													setVATID(firstChild.getNodeValue());
 												}
-												if (taxChilds.item(taxChildIndex).getAttributes()
-													.getNamedItem("schemeID").getNodeValue().equals("FC")) {
+												if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("FC")) {
 													setTaxID(firstChild.getNodeValue());
 												}
 											}
@@ -630,9 +629,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		if (bankDetails.isEmpty() && debitDetails.isEmpty()) {
 			return null;
 		}
-		List<IZUGFeRDTradeSettlement> tradeSettlements = Stream.concat(bankDetails.stream(), debitDetails.stream())
-			.map(IZUGFeRDTradeSettlement.class::cast)
-			.collect(Collectors.toList());
+		List<IZUGFeRDTradeSettlement> tradeSettlements = Stream.concat(bankDetails.stream(), debitDetails.stream()).map(IZUGFeRDTradeSettlement.class::cast).collect(Collectors.toList());
 
 		IZUGFeRDTradeSettlement[] result = new IZUGFeRDTradeSettlement[tradeSettlements.size()];
 		for (int i = 0; i < tradeSettlements.size(); i++) {
