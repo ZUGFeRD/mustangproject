@@ -308,6 +308,10 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 								addGlobalID(gid);
 							}
 						}
+						if (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLegalOrganization")) {
+							NodeList organization = itemChilds.item(itemChildIndex).getChildNodes();
+							setLegalOrganisation(new LegalOrganisation(organization));
+						}
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("DefinedTradeContact")) {
 							NodeList contact = itemChilds.item(itemChildIndex).getChildNodes();
 							setContact(new Contact(contact));

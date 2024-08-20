@@ -2,6 +2,8 @@ package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.mustangproject.ZUGFeRD.*;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /***
  * A organisation, i.e. usually a company
@@ -9,35 +11,68 @@ import org.mustangproject.ZUGFeRD.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LegalOrganisation implements IZUGFeRDLegalOrganisation {
 
-	protected String ID = null;
-	protected String SchemeID = null;
+	protected SchemedID schemedID = null;
+	protected String tradingBusinessName = null;
 
 	public LegalOrganisation() {
 	}
 
 	public LegalOrganisation(String ID, String scheme) {
-		this.ID=ID;
-		this.SchemeID=scheme;
+		this.schemedID = new SchemedID(ID, scheme);
+	}
+
+	public LegalOrganisation(SchemedID schemedID, String tradingBusinessName) {
+		this.schemedID = schemedID;
+		this.tradingBusinessName=tradingBusinessName;
+	}
+
+	/***
+	 * XML parsing constructor
+	 * @param nodes the nodelist returned e.g. from xpath
+	 */
+	public LegalOrganisation(NodeList nodes) {
+		if (nodes.getLength() > 0) {
+		/*
+			will parse sth like
+			<ram:SpecifiedLegalOrganization>  
+				<ram:ID schemeID="0002">4711</ram:ID>
+				<ram:TradingBusinessName>Test GmbH &amp; Co.KG</ram:TradingBusinessName>
+			</ram:SpecifiedLegalOrganization>
+		 */
+			for (int nodeIndex = 0; nodeIndex < nodes.getLength(); nodeIndex++) {
+				Node currentItemNode = nodes.item(nodeIndex);
+				if (currentItemNode.getLocalName() != null) {
+					if (currentItemNode.getLocalName().equals("GlobalID")) {
+						if (currentItemNode.getAttributes().getNamedItem("schemeID") != null) {
+							SchemedID gid = new SchemedID().setScheme(currentItemNode.getAttributes().getNamedItem("schemeID").getNodeValue()).setId(currentItemNode.getTextContent());
+							this.setSchemedID(gid);
+						}
+					}
+					if (currentItemNode.getLocalName().equals("TradingBusinessName")) {
+					    setTradingBusinessName(currentItemNode.getFirstChild().getNodeValue());
+					}
+				}
+			}
+		}
 	}
 
 	@Override
-	public String getID() {
-		return ID;
+	public SchemedID getSchemedID() {
+		return this.schemedID;
 	}
 
 	@Override
-	public String getSchemeID() {
-		return SchemeID;
+	public String getTradingBusinessName() {
+		return this.tradingBusinessName;
 	}
 
-	public LegalOrganisation setID(String id) {
-		this.ID=id;
+	public LegalOrganisation setSchemedID(SchemedID schemedID) {
+		this.schemedID = schemedID;
 		return this;
 	}
 
-	public LegalOrganisation setSchemeID(String scheme) {
-		SchemeID=scheme;
+	public LegalOrganisation setTradingBusinessName(String tradingBusinessName) {
+		this.tradingBusinessName = tradingBusinessName;
 		return this;
 	}
-
 }

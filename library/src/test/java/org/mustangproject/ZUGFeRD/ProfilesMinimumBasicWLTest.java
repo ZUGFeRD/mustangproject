@@ -36,7 +36,8 @@ import java.util.Date;
  */
 public class ProfilesMinimumBasicWLTest extends TestCase {
 
-	final String TARGET_PDF_FX_MINIMUM = "./target/testout-Minimum.pdf";
+	final String TARGET_PDF_FX_MINIMUM_INV = "./target/testout-Minimum-INV.pdf";
+	final String TARGET_PDF_FX_MINIMUM_CN = "./target/testout-Minimum-CN.pdf";
 
 	public void testMinimumCreditNote() {
 		String ownNumber = "NUMFACTURE";
@@ -67,7 +68,7 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal(123), new BigDecimal(1)))
 					.setCreditNote();
 			ze.setTransaction(i);
-			ze.export(TARGET_PDF_FX_MINIMUM);
+			ze.export(TARGET_PDF_FX_MINIMUM_CN);
 
 			// check for pdf-a schema extension
 //			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
@@ -79,7 +80,7 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 		}
 
 		// now check the contents (like MustangReaderTest)
-		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF_FX_MINIMUM);
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF_FX_MINIMUM_CN);
 
 		// Reading ZUGFeRD
 		assertEquals("146.37",zi.getAmount());
@@ -121,7 +122,7 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 					.setNumber(ownNumber).setTotalPrepaidAmount(new BigDecimal("1"))
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal(123), new BigDecimal(1)));
 			ze.setTransaction(i);
-			ze.export(TARGET_PDF_FX_MINIMUM);
+			ze.export(TARGET_PDF_FX_MINIMUM_INV);
 
 			// check for pdf-a schema extension
 //			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
@@ -133,7 +134,7 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 		}
 
 		// now check the contents (like MustangReaderTest)
-		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF_FX_MINIMUM);
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF_FX_MINIMUM_INV);
 
 		// Reading ZUGFeRD
 		assertEquals("145.37",zi.getAmount());
