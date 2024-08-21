@@ -116,12 +116,20 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	
 	@Override
 	public BigDecimal getTotalAmount(IAbsoluteValueProvider currentItem) {
+		if (percent!=null) {
+			return currentItem.getValue().multiply(getPercent().divide(new BigDecimal(100)));
+		} else if(totalAmount != null) {
+			return totalAmount;
+		} else {
+			throw new RuntimeException("percent must be set");
+		}
+	}
+
+	public BigDecimal getTotalAmount() {
 		if (totalAmount!=null) {
 			return totalAmount;
-		} else if (percent!=null) {
-			return currentItem.getValue().multiply(getPercent().divide(new BigDecimal(100)));
 		} else {
-			throw new RuntimeException("Either totalAmount or percent must be set");
+			throw new RuntimeException("totalAmount must be set");
 		}
 	}
 
