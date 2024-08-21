@@ -1,5 +1,6 @@
 - #420
 - #441
+- #431 support reasoncodes
 - Enhance Charges/Allowances with reasonCode. #432
 - Fix build warnings from editing and building. #415
 - ZUGFeRDVisualizer.toPDF(): generate PDF/A-3b. #400
@@ -7,8 +8,9 @@
   and XML (zii.getFileAttachmentsXML)
 -  #436 and #370. (langfr)
 - refactor(ZUGFeRDVisualizer): improve PDF visualization performance #438
-
-
+- trying to default product on empty description
+- #452
+- 
 2.12.0
 =======
 2024-07-20
