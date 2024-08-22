@@ -503,9 +503,14 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "<ram:LineTotalAmount>" + currencyFormat(lc.getItemTotalNetAmount())
 					+ "</ram:LineTotalAmount>" // currencyID=\"EUR\"
 					+ "</ram:SpecifiedTradeSettlementLineMonetarySummation>";
-				if (currentItem.getAdditionalReferencedDocumentID() != null) {
-					xml += "<ram:AdditionalReferencedDocument><ram:IssuerAssignedID>" + currentItem.getAdditionalReferencedDocumentID() + "</ram:IssuerAssignedID><ram:TypeCode>130</ram:TypeCode></ram:AdditionalReferencedDocument>";
-
+				if (currentItem.getAdditionalReferences() != null) {
+					for (final IReferencedDocument currentReference : currentItem.getAdditionalReferences()) {
+						xml += "<ram:AdditionalReferencedDocument>" +
+							"<ram:IssuerAssignedID>" + XMLTools.encodeXML(currentReference.getIssuerAssignedID()) + "</ram:IssuerAssignedID>" +
+							"<ram:TypeCode>130</ram:TypeCode>" +
+							"<ram:ReferenceTypeCode>" + XMLTools.encodeXML(currentReference.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>" +
+							"</ram:AdditionalReferencedDocument>";
+					}
 				}
 				xml += "</ram:SpecifiedLineTradeSettlement>"
 					+ "</ram:IncludedSupplyChainTradeLineItem>";

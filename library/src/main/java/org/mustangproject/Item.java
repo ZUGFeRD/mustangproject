@@ -465,6 +465,29 @@ public class Item implements IZUGFeRDExportableItem {
 		return referencedDocuments.toArray(new IReferencedDocument[0]);
 	}
 
+
+	/***
+	 * adds item level references along with their typecodes and issuerassignedIDs (contract ID, cost centre, ...) 
+	 * @param doc the ReferencedDocument to add
+	 * @return fluent setter
+	 */
+	public Item addAdditionalReference(ReferencedDocument doc) {
+		if (referencedDocuments == null) {
+			referencedDocuments = new ArrayList<>();
+		}
+		referencedDocuments.add(doc);
+		return this;
+	}
+
+	@Override
+	public IReferencedDocument[] getAdditionalReferences() {
+		if (referencedDocuments == null) {
+			return null;
+		}
+		return referencedDocuments.toArray(new IReferencedDocument[0]);
+	}
+	
+	
 	/***
 	 * specify a item level delivery period
 	 * (apart from the document level delivery period, and the document level

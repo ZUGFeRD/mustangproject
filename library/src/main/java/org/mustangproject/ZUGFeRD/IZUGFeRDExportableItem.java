@@ -91,10 +91,10 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	}
 
 	/***
-	 * the ID of an additionally referenced document for this item
-	 * @return the id as string
+	 * allows to specify multiple references (billing information)
+	 * @return the referenced documents
 	 */
-	default String getAdditionalReferencedDocumentID() {
+	default IReferencedDocument[] getAdditionalReferences() {
 		return null;
 	}
 
