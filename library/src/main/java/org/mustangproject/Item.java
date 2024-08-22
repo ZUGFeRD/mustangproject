@@ -26,6 +26,7 @@ public class Item implements IZUGFeRDExportableItem {
 	protected Product product;
 	protected ArrayList<String> notes = null;
 	protected ArrayList<ReferencedDocument> referencedDocuments = null;
+	protected ArrayList<ReferencedDocument> additionalReference = null;
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
 		Charges = new ArrayList<>();
 
@@ -248,6 +249,35 @@ public class Item implements IZUGFeRDExportableItem {
 								}
 							}
 						}
+						
+						if (tradeSettlementName.equals("AdditionalReferencedDocument")) {
+							String IssuerAssignedID = "";
+							String TypeCode = "";
+							String ReferenceTypeCode = "";
+
+							NodeList refDocChilds = tradeSettlementChilds.item(tradeSettlementChildIndex).getChildNodes();
+							for (int refDocIndex = 0; refDocIndex < refDocChilds.getLength(); refDocIndex++) {
+								String localName = refDocChilds.item(refDocIndex).getLocalName();
+								if ((localName != null) && (localName.equals("IssuerAssignedID"))) {
+									IssuerAssignedID = refDocChilds.item(refDocIndex).getTextContent();
+								}
+								if ((localName != null) && (localName.equals("TypeCode"))) {
+									TypeCode = refDocChilds.item(refDocIndex).getTextContent();
+								}
+								if ((localName != null) && (localName.equals("ReferenceTypeCode"))) {
+									ReferenceTypeCode = refDocChilds.item(refDocIndex).getTextContent();
+								}
+							}
+
+							ReferencedDocument rd = new ReferencedDocument(IssuerAssignedID, TypeCode,
+								ReferenceTypeCode);
+							if (rdocs == null) {
+								rdocs = new ArrayList<>();
+							}
+							rdocs.add(rd);
+
+						}
+						
 					}
 				}
 			}
@@ -472,19 +502,19 @@ public class Item implements IZUGFeRDExportableItem {
 	 * @return fluent setter
 	 */
 	public Item addAdditionalReference(ReferencedDocument doc) {
-		if (referencedDocuments == null) {
-			referencedDocuments = new ArrayList<>();
+		if (additionalReference == null) {
+			additionalReference = new ArrayList<>();
 		}
-		referencedDocuments.add(doc);
+		additionalReference.add(doc);
 		return this;
 	}
 
 	@Override
 	public IReferencedDocument[] getAdditionalReferences() {
-		if (referencedDocuments == null) {
+		if (additionalReference == null) {
 			return null;
 		}
-		return referencedDocuments.toArray(new IReferencedDocument[0]);
+		return additionalReference.toArray(new IReferencedDocument[0]);
 	}
 	
 	
