@@ -1,18 +1,23 @@
-- #420
-- #441
-- #431 support reasoncodes
+2.13.0
+=======
+2024-08-27
+
+- Item Attributes and Country of Origin missing on Product.  #420
+- Avoid NullPointerException if dueDate is not set.  #441
+- support reasoncodes #431 
 - Enhance Charges/Allowances with reasonCode. #432
 - Fix build warnings from editing and building. #415
 - ZUGFeRDVisualizer.toPDF(): generate PDF/A-3b. #400
 - allow access to invoice attachments via  ZUGFeRDInvoiceImporter zii.getFileAttachmentsPDF() 
   and XML (zii.getFileAttachmentsXML)
--  #436 and #370. (langfr)
+- No interface for required field CreditorReferenceID #436 and
+- X-Rechnung direct-debit missing mandatory field BT-90  #370. (langfr)
 - refactor(ZUGFeRDVisualizer): improve PDF visualization performance #438
-- trying to default product on empty description
-- #452
-- #447 legalorganisation tradingbusinessname
-- #455
-- 
+- product creation without description now possible empty description
+- filename of embedded file was not xrechnung.xml when using profile xrechnung #452
+- allow legalorganisation to have a tradingbusinessname #447 
+- JSon deserialization does not work with BankDetails #455
+
 2.12.0
 =======
 2024-07-20
