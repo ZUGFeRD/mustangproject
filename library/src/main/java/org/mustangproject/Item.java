@@ -64,7 +64,7 @@ public class Item implements IZUGFeRDExportableItem {
 		String referencedLineID = null;
 
 		ArrayList<ReferencedDocument> rdocs = null;
-		ArrayList<ReferencedDocument> additionalReferences = null;
+		ArrayList<ReferencedDocument> addRefs = null;
 
 		// nodes.item(i).getTextContent())) {
 
@@ -272,10 +272,10 @@ public class Item implements IZUGFeRDExportableItem {
 
 							ReferencedDocument rd = new ReferencedDocument(IssuerAssignedID, TypeCode,
 								ReferenceTypeCode);
-							if (additionalReferences == null) {
-								additionalReferences = new ArrayList<>();
+							if (addRefs == null) {
+								addRefs = new ArrayList<>();
 							}
-							additionalReferences.add(rd);
+							addRefs.add(rd);
 
 						}
 						
@@ -305,8 +305,8 @@ public class Item implements IZUGFeRDExportableItem {
 				addReferencedDocument(rdoc);
 			}
 		}
-		if (additionalReferences != null) {
-			for (ReferencedDocument rdoc : additionalReferences) {
+		if (addRefs != null) {
+			for (ReferencedDocument rdoc : addRefs) {
 				addAdditionalReference(rdoc);
 			}
 		}
