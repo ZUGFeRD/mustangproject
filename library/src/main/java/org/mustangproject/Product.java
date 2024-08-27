@@ -11,7 +11,8 @@ import java.util.HashMap;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Product implements IZUGFeRDExportableProduct {
-	protected String unit, name, description, sellerAssignedID, buyerAssignedID;
+	protected String unit, name, sellerAssignedID, buyerAssignedID;
+	protected String description="";
 	protected BigDecimal VATPercent;
 	protected boolean isReverseCharge = false;
 	protected boolean isIntraCommunitySupply = false;
