@@ -18,12 +18,15 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public interface IZUGFeRDTradeSettlement {
 
 	/***
 	 * gets the applicableHeaderTradeSettlement
 	 * @return zf2 xml
 	 */
+	@JsonIgnore
 	 String getSettlementXML();
 	 
 
@@ -31,6 +34,7 @@ public interface IZUGFeRDTradeSettlement {
 	 * 	gets the applicableHeaderTradePayment
 	 * @return zf2 xml
 	 */
+	@JsonIgnore
 	 default String getPaymentXML() {
 		 return null;
 	 }

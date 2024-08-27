@@ -10,6 +10,8 @@
 - refactor(ZUGFeRDVisualizer): improve PDF visualization performance #438
 - trying to default product on empty description
 - #452
+- #447 legalorganisation tradingbusinessname
+- #455
 - 
 2.12.0
 =======
