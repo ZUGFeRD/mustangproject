@@ -511,6 +511,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 							"<ram:ReferenceTypeCode>" + XMLTools.encodeXML(currentReference.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>" +
 							"</ram:AdditionalReferencedDocument>";
 					}
+				} else if (currentItem.getAdditionalReferencedDocumentID() != null) {
+					xml += "<ram:AdditionalReferencedDocument><ram:IssuerAssignedID>" + currentItem.getAdditionalReferencedDocumentID() + "</ram:IssuerAssignedID><ram:TypeCode>130</ram:TypeCode></ram:AdditionalReferencedDocument>";
 				}
 				xml += "</ram:SpecifiedLineTradeSettlement>"
 					+ "</ram:IncludedSupplyChainTradeLineItem>";

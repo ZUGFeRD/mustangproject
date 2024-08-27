@@ -91,6 +91,16 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	}
 
 	/***
+	 * the ID of an additionally referenced document for this item
+	 * @deprecated use {@link #getAdditionalReferences()} instead.
+	 * @return the id as string
+	 */
+	@Deprecated
+	default String getAdditionalReferencedDocumentID() {
+		return null;
+	}
+
+	/***
 	 * allows to specify multiple references (billing information)
 	 * @return the referenced documents
 	 */
