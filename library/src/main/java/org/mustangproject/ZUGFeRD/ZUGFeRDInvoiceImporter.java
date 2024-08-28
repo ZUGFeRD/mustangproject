@@ -423,7 +423,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 	/***
 	 *
 	 * @return the file attachments embedded in XML (using base64) decoded as byte array,
-	 * @see for PDF embedded files in FX use getFileAttachmentsPDF()
+	 * for PDF embedded files in FX use getFileAttachmentsPDF()
 	 */
 	public List<FileAttachment> getFileAttachmentsXML() {
 		return fileAttachments;

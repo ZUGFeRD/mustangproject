@@ -104,7 +104,7 @@ public class ZUGFeRDImporter {
 
 	/***
 	 * return the file names of all files embedded into the PDF
-	 * @see for XML embedded files please use ZUGFeRDInvoiceImporter.getFileAttachmentsXML
+	 * for XML embedded files please use ZUGFeRDInvoiceImporter.getFileAttachmentsXML
 	 * @return a ArrayList of FileAttachments, empty if none
 	 */
 	public List<FileAttachment> getFileAttachmentsPDF() {
