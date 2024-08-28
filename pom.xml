@@ -8,12 +8,13 @@
     <name>Mustang</name>
 
     <description>
-    	The Mustang project is a java library to read and write ZUGFeRD
-        meta data inside your invoice PDFs
+    	The Mustang project is a java library and command line tool to read, write and validate
+        e-invoices in EN16931 formats, writing CII and reading also UBL and altogether
+        supporting ZUGFeRD/Factur-X PDFs and XRechnung files
     </description>
         
     <url>http://www.mustangproject.org/</url>
-    
+
     <modules>
         <module>library</module>
         <module>validator</module>
@@ -26,7 +27,9 @@
         <additionalparam>-Xdoclint:none</additionalparam>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        
+        <maven.deploy.skip>true</maven.deploy.skip><!-- prevent this to be deployed to maven central as "core",
+        we only want submodules, see also https://stackoverflow.com/questions/7446599/how-to-deploy-only-the-sub-modules-using-maven-deploy-->
+
         <dep.slf4j.version>2.0.13</dep.slf4j.version>
         <dep.saxon-he.version>12.4</dep.saxon-he.version>
         <dep.jackson.version>2.17.1</dep.jackson.version>
@@ -80,9 +83,10 @@
     </mailingLists>
 
     <scm child.scm.connection.inherit.append.path="false" child.scm.developerConnection.inherit.append.path="false" child.scm.url.inherit.append.path="false">
-        <connection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</connection>
-        <developerConnection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</developerConnection>
-        <url>https://github.com/ZUGFeRD/mustangproject</url>
+        <connection>scm:git:git://github.com/dexecutor/dependent-tasks-executor.git</connection>
+        <developerConnection>scm:git:git@github.com:dexecutor/dexecutor.git</developerConnection>
+        <url>https://github.com/dexecutor/dependent-tasks-executor</url>
+        <tag>core-2.3.2</tag>
     </scm>
 
     <distributionManagement>
@@ -277,6 +281,16 @@
         	</plugin>
         </plugins>
     </build>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
     
     <dependencyManagement>
 		<dependencies>
@@ -355,6 +369,26 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-toolchains-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>toolchain</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <toolchains>
+                                <jdk>
+                                    <version>11</version>
+                                    <vendor>adopt</vendor>
+                                </jdk>
+                            </toolchains>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
