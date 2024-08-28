@@ -8,7 +8,7 @@
     <name>Mustang</name>
 
     <description>
-    	The Mustang project is a java library and command line tool to read, write and validate
+    	Mustangproject is a java library and command line tool to read, write and validate
         e-invoices in EN16931 formats, writing CII and reading also UBL and altogether
         supporting ZUGFeRD/Factur-X PDFs and XRechnung files
     </description>
@@ -281,16 +281,6 @@
         	</plugin>
         </plugins>
     </build>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
     
     <dependencyManagement>
 		<dependencies>
