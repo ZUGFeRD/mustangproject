@@ -34,6 +34,7 @@ import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.PDFAIdentificationSchema;
 import org.apache.xmpbox.xml.DomXmpParser;
 import org.apache.xmpbox.xml.XmpParsingException;
+import org.mustangproject.FileAttachment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,6 +73,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 
 
 	}
+
 	public IZUGFeRDExporter getExporter() {
 		if (theExporter==null) {
 			throw new RuntimeException("In ZUGFeRDExporterFromPDFA, source must always be loaded before other operations are performed.");
@@ -247,5 +249,14 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	public void export(OutputStream output) throws IOException {
 		getExporter().export(output);
 	}
+
+	public void attachFile(FileAttachment file) {
+		theExporter.attachFile(file);
+	}
+
+	public void attachFile(String filename, byte[] data, String mimetype, String relation) {
+		theExporter.attachFile(filename, data, mimetype, relation);
+	}
+
 }
 
