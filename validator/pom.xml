@@ -1,22 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.mustangproject</groupId>
         <artifactId>core</artifactId>
         <version>2.13.0</version>
     </parent>
-    
+    <modelVersion>4.0.0</modelVersion>
     <artifactId>validator</artifactId>
+    <name>Library to validate e-invoices (ZUGFeRD, Factur-X and Xrechnung)</name>
+
     <packaging>jar</packaging>
-    
-    <name>E-Invoices Validator</name>
-	
-	<description>
-		Library to validate e-invoices (ZUGFeRD, Factur-X and Xrechnung
-	</description>
-	
+    <repositories>
+        <repository>
+            <!-- for jargs -->
+            <id>sonatype-oss-public</id>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.deploy.skip>false</maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
     <dependencies>
         <dependency>
@@ -24,82 +35,155 @@
             <artifactId>library</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.2</version>
         </dependency>
 
+        <!-- Verapdf plugin <dependency> <groupId>org.verapdf</groupId> <artifactId>core</artifactId>
+              <version>1.6.2</version> </dependency> -->
+        <!-- embedded verapdf -->
         <dependency>
             <groupId>org.verapdf</groupId>
             <artifactId>validation-model-jakarta</artifactId>
-            <version>${dep.verapdf.validation-model-jakarta.version}</version>
+            <version>1.26.1</version>
         </dependency>
-        
         <!-- https://mvnrepository.com/artifact/com.helger/ph-schematron -->
         <dependency>
             <groupId>com.helger.schematron</groupId>
             <artifactId>ph-schematron-xslt</artifactId>
-            <version>${dep.ph-schematron-xslt.version}</version>
+            <version>8.0.0</version>
         </dependency>
-        
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
+            <version>2.10.0</version>
+            <scope>test</scope>
         </dependency>
-        
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-assertj</artifactId>
+            <version>2.10.0</version>
+            <scope>test</scope>
         </dependency>
-        
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
         </dependency>
-        
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
         </dependency>
-        
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
+            <version>2.0.9</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <!-- mvn help:effective-pom will otherwise tell it just defaults
+                             to 2.3.2 - which does not release in the maven repo, and neither shows any
+                             error message :-( -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <runOrder>alphabetical</runOrder>
+                </configuration>
             </plugin>
-
+            <!-- allow getImplementationVersion for the pom.xml -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/logback.xml</exclude>
+                    </excludes>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
             </plugin>
-
+            <!-- /ZUV -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <configuration>
+                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                    <minimizeJar>false</minimizeJar>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>LICENSE</exclude>
+                                <exclude>NOTICE</exclude>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                        <filter>
+                            <artifact>commons-logging:commons-logging</artifact>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                        </filter>
+                    </filters>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <excludes />
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
-
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>copy-zf-schematron-xml-dependencies</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
-                        <phase>compile</phase>
 
                         <configuration>
                             <outputDirectory>${basedir}/src/main/resources/xslt/ZF_221/</outputDirectory>
@@ -117,11 +201,62 @@
             </plugin>
         </plugins>
     </build>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Jochen Stärk</name>
+            <email>jstaerk@usegroup.de</email>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
     <profiles>
-        <profile>
-            <!-- build the intermediate XSLT files from schematron takes 30min+ and is only
-            	 required if there actually is a change in the schematron,
-         		invoke manually with commandline -P generateXSLTFromSchematron on demand -->
+        <profile> <!-- enforce building binaries with Java 1.8 for Maven Central, otherwise using them e.g. as jar will
+        throw a version exception, triggered automatically on mvn release:release (hopefully) and requires an according
+        ~/.m2/toolchains.xml file, @see doc/development_documentation.md -->
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-toolchains-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>toolchain</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <toolchains>
+                                <jdk>
+                                    <version>11</version>
+                                    <vendor>adopt</vendor>
+                                </jdk>
+                            </toolchains>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile> <!-- build the intermediate XSLT files from schematron takes 30min+ and is only required if there actually is a change in the schematron,
+         -> invoke manually with commandline -P generateXSLTFromSchematron on demand -->
             <id>generateXSLTFromSchematron</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -131,7 +266,7 @@
                     <plugin>
                         <groupId>com.helger.maven</groupId>
                         <artifactId>ph-schematron-maven-plugin</artifactId>
-                        <version>${dep.ph-schematron-xslt.version}</version>
+                        <version>8.0.0</version>
                         <configuration>
                             <schematronDirectory>${basedir}/src/main/resources/schematron</schematronDirectory>
                             <xsltDirectory>${basedir}/src/main/resources/xslt</xsltDirectory>

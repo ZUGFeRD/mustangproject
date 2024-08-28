@@ -18,7 +18,6 @@
 - allow legalorganisation to have a tradingbusinessname #447 
 - JSon deserialization does not work with BankDetails #455
 - Fix ClassCastException in CLI (Main.java). #451
-- Re-Formatted and re-organized POMs #446
 - changed additional references by line from String to List and implemented it on Item #454
  
 2.12.0
