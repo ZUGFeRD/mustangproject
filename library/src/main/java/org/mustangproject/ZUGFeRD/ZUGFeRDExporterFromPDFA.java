@@ -72,7 +72,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 
 
 	}
-	protected IZUGFeRDExporter getExporter() {
+	public IZUGFeRDExporter getExporter() {
 		if (theExporter==null) {
 			throw new RuntimeException("In ZUGFeRDExporterFromPDFA, source must always be loaded before other operations are performed.");
 		}

@@ -722,9 +722,6 @@ public class Main {
 					((ZUGFeRDExporterFromPDFA) ze).ignorePDFAErrors();
 				}
 			}
-			for (FileAttachment attachment : attachments) {
-				((ZUGFeRDExporterFromA3) ze).attachFile(attachment.getFilename(), attachment.getData(), attachment.getMimetype(), attachment.getRelation());
-			}
 
 			ze.load(pdfName);
 			ze.setProducer("Mustang-cli")
@@ -736,6 +733,14 @@ public class Main {
 			}
 
 			ze.setXML(Files.readAllBytes(Paths.get(xmlName)));
+
+			for (FileAttachment attachment : attachments) {
+				if (((ZUGFeRDExporterFromPDFA) ze).getExporter() instanceof ZUGFeRDExporterFromA3 ) {
+					((ZUGFeRDExporterFromA3) ((ZUGFeRDExporterFromPDFA) ze).getExporter()).attachFile(attachment.getFilename(), attachment.getData(), attachment.getMimetype(), attachment.getRelation());
+				} else {
+					System.err.println("IZUGFeRDExporter ze is not of type 'ZUGFeRDExporterFromA3'");
+				}
+			}
 
 			ze.export(outName);
 			System.out.println("Written to " + outName);
