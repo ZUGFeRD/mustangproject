@@ -653,7 +653,13 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	public Invoice setPaymentTerms(IZUGFeRDPaymentTerms paymentTerms) {
-		this.paymentTerms = new IZUGFeRDPaymentTerms[] { paymentTerms };
+		if (null != paymentTerms) {
+			this.paymentTerms = new IZUGFeRDPaymentTerms[] { paymentTerms };
+		}
+		else {
+			this.paymentTerms = null;
+		}
+
 		return this;
 	}
 
