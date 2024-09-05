@@ -13,7 +13,7 @@
         <module>Mustang-CLI</module>
     </modules>
 
-    <description>The Mustang project is a java library to read and write ZUGFeRD meta data inside your invoice PDFs
+    <description>Mustangproject is a java library and commandline tool to read, validate, write and convert EN16931 e-invoices, e.g. Factur-X and XRechnung (read and writing CII and reading also UBL).
     </description>
     <url>http://www.mustangproject.org/</url>
     <scm>
