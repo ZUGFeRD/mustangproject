@@ -138,8 +138,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ XMLTools.encodeXML(party.getGlobalID()) + "</ram:GlobalID>";
 		}
 		xml += "<ram:Name>" + XMLTools.encodeXML(party.getName()) + "</ram:Name>";
-
-		if (party.getLegalOrganisation() != null && (profile == Profiles.getByName("EN16931") || profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung"))) {
+		if (party.getDescription() != null) {
+			xml += "<ram:Description>" + XMLTools.encodeXML(party.getDescription()) + "</ram:Description>";
+		}
+		if (party.getLegalOrganisation() != null) {
 			xml += "<ram:SpecifiedLegalOrganization> ";
 			if (party.getLegalOrganisation().getSchemedID() != null) {
 				xml += "<ram:ID schemeID=\"" + XMLTools.encodeXML(party.getLegalOrganisation().getSchemedID().getScheme()) + "\">" + XMLTools.encodeXML(party.getLegalOrganisation().getSchemedID().getID()) + "</ram:ID>";
