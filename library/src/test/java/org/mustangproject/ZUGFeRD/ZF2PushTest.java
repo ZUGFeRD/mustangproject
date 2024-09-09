@@ -60,7 +60,9 @@ public class ZF2PushTest extends TestCase {
 	final String TARGET_REVERSECHARGEPDF = "./target/testout-ZF2PushReverseCharge.pdf";
 
 	public void testPushExport() {
-
+	/***
+ 	* This writes to a filename like an official sample, please consider when changing (probably better not?)
+ 	*/
 		// the writing part
 		String orgname = "Bei Spiel GmbH";
 		String number = "RE-20201121/508";
@@ -92,10 +94,14 @@ public class ZF2PushTest extends TestCase {
 			fail("Exception should not be raised");
 		}
 
+
+
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 		assertTrue(zi.getUTF8().contains("DE88200800000970375700")); //the iban
 		assertTrue(zi.getUTF8().contains("Max Mustermann")); //account holder
+		assertTrue(zi.getUTF8().contains("DueDateDateTime")); //account holder
+		assertTrue(zi.getUTF8().contains("20201212")); //account holder
 
 		assertTrue(zi.getUTF8().contains("<rsm:CrossIndustryInvoice"));
 
@@ -118,6 +124,8 @@ public class ZF2PushTest extends TestCase {
 		String orgname = "Test company";
 		String number = "123";
 		String priceStr = "1.00";
+
+		String senderDescription = "Kein Kleinunternehmer";
 		String taxID = "9990815";
 		BigDecimal price = new BigDecimal(priceStr);
 		try {
@@ -132,7 +140,7 @@ public class ZF2PushTest extends TestCase {
 			ze.attachFile("one.pdf", b, "application/pdf", "Alternative");
 			ze.attachFile("two.pdf", b, "application/pdf", "Alternative");
 			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
-				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID(taxID).addVATID("DE0815"))
+				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID(taxID).addVATID("DE0815").setDescription(senderDescription))
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE4711")
 					.setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE")))
 				.setNumber(number)
@@ -144,6 +152,16 @@ public class ZF2PushTest extends TestCase {
 		} catch (IOException e) {
 			fail("IOException should not be raised");
 		}
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_PDF);
+		Invoice i= null;
+		try {
+			i = zii.extractInvoice();
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+		assertEquals(senderDescription,i.getSender().getDescription());
 
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_ATTACHMENTSPDF);
