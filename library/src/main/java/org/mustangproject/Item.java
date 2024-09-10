@@ -22,7 +22,8 @@ public class Item implements IZUGFeRDExportableItem {
 	protected BigDecimal basisQuantity = BigDecimal.ONE;
 	protected Date detailedDeliveryPeriodFrom = null, detailedDeliveryPeriodTo = null;
 	protected String id;
-	protected String referencedLineID = null;
+	protected String buyerOrderReferencedDocumentLineID = null;
+	protected String buyerOrderReferencedDocumentID = null;
 	protected Product product;
 	protected ArrayList<String> notes = null;
 	protected ArrayList<ReferencedDocument> referencedDocuments = null;
@@ -61,7 +62,8 @@ public class Item implements IZUGFeRDExportableItem {
 		String vatPercent = null;
 		String lineTotal = "0";
 		String unitCode = "0";
-		String referencedLineID = null;
+		String buyerOrderReferencedDocumentLineID = null;
+		String buyerOrderReferencedDocumentID = null;
 
 		ArrayList<ReferencedDocument> rdocs = null;
 		ArrayList<ReferencedDocument> addRefs = null;
@@ -150,7 +152,9 @@ public class Item implements IZUGFeRDExportableItem {
 						for (int docIndex = 0; docIndex < docChilds.getLength(); docIndex++) {
 							String localName = docChilds.item(docIndex).getLocalName();
 							if ((localName != null) && (localName.equals("LineID"))) {
-								referencedLineID = docChilds.item(docIndex).getTextContent();
+								buyerOrderReferencedDocumentLineID = docChilds.item(docIndex).getTextContent();
+							} else if ((localName != null) && (localName.equals("IssuerAssignedID"))) {
+								buyerOrderReferencedDocumentID = docChilds.item(docIndex).getTextContent();
 							}
 						}
 					}
@@ -310,22 +314,34 @@ public class Item implements IZUGFeRDExportableItem {
 				addAdditionalReference(rdoc);
 			}
 		}
-		addReferencedLineID( referencedLineID );
+		addBuyerOrderReferencedDocumentLineID( buyerOrderReferencedDocumentLineID );
+		addBuyerOrderReferencedDocumentID( buyerOrderReferencedDocumentID );
 	}
 
 
-	public Item addReferencedLineID(String s) {
-		referencedLineID = s;
+	public Item addBuyerOrderReferencedDocumentLineID(String s) {
+		buyerOrderReferencedDocumentLineID = s;
 		return this;
 	}
 
-	/***
-	 * BT 132 (issue https://github.com/ZUGFeRD/mustangproject/issues/247)
-	 * @return the line ID of the order (BT132)
-	 */
+	@Deprecated(since = "2.14.0")
+	public Item addReferencedLineID(String s) {
+		return addBuyerOrderReferencedDocumentLineID(s);
+	}
+
+	@Override
+	public String getBuyerOrderReferencedDocumentID() {
+		return buyerOrderReferencedDocumentID;
+	}
+
+	public Item addBuyerOrderReferencedDocumentID(String s) {
+		buyerOrderReferencedDocumentID = s;
+		return this;
+	}
+
 	@Override
 	public String getBuyerOrderReferencedDocumentLineID() {
-		return referencedLineID;
+		return buyerOrderReferencedDocumentLineID;
 	}
 
 	public BigDecimal getLineTotalAmount() {
