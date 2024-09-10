@@ -51,7 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ZUGFeRD2PullProvider implements IXMLProvider {
-  private static final Logger LOGGER = LoggerFactory.getLogger (ZUGFeRD2PullProvider.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRD2PullProvider.class);
 
 	protected byte[] zugferdData;
 	protected IExportableTransaction trans;
@@ -93,7 +93,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		try {
 			document = DocumentHelper.parseText(new String(zugferdData));
 		} catch (final DocumentException e1) {
-      LOGGER.error ("Failed to parse ZUGFeRD data", e1);
+			LOGGER.error("Failed to parse ZUGFeRD data", e1);
 		}
 		try {
 			final OutputFormat format = OutputFormat.createPrettyPrint();
@@ -103,7 +103,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			res = sw.toString().getBytes(StandardCharsets.UTF_8);
 
 		} catch (final IOException e) {
-      LOGGER.error ("Failed to write ZUGFeRD data", e);
+			LOGGER.error("Failed to write ZUGFeRD data", e);
 		}
 
 		return res;
@@ -325,7 +325,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				paymentTermsDescription += discount.getAsXRechnung();
 			}
 		} else if ((paymentTermsDescription == null) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CORRECTEDINVOICE) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)) {
-			if ( trans.getDueDate() != null ) {
+			if (trans.getDueDate() != null) {
 				paymentTermsDescription = "Please remit until " + germanDateFormat.format(trans.getDueDate());
 			}
 		}
@@ -424,7 +424,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						"</ram:Description>";
 				}
 				if (currentItem.getProduct().getAttributes() != null) {
-					for ( Entry<String, String> entry : currentItem.getProduct().getAttributes().entrySet() ) {
+					for (Entry<String, String> entry : currentItem.getProduct().getAttributes().entrySet()) {
 						xml += "<ram:ApplicableProductCharacteristic>" +
 							"<ram:Description>" + XMLTools.encodeXML(entry.getKey()) + "</ram:Description>" +
 							"<ram:Value>" + XMLTools.encodeXML(entry.getValue()) + "</ram:Value>" +
@@ -433,8 +433,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 				if (currentItem.getProduct().getCountryOfOrigin() != null) {
 					xml += "<ram:OriginTradeCountry><ram:ID>" +
-					XMLTools.encodeXML(currentItem.getProduct().getCountryOfOrigin()) +
-					"</ram:ID></ram:OriginTradeCountry>";
+						XMLTools.encodeXML(currentItem.getProduct().getCountryOfOrigin()) +
+						"</ram:ID></ram:OriginTradeCountry>";
 				}
 				xml += "</ram:SpecifiedTradeProduct>"
 
@@ -654,12 +654,17 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				final String amountDueDateTypeCode = amount.getDueDateTypeCode();
 				final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(amountCategoryCode);
 				if (getProfile() != Profiles.getByName("Minimum")) {
+					String exemptionReasonTextXML = "";
+					if ((displayExemptionReason) && (amount.getVatExemptionReasonText() != null)) {
+						exemptionReasonTextXML = "<ram:ExemptionReason>" + XMLTools.encodeXML(amount.getVatExemptionReasonText()) + "</ram:ExemptionReason>";
+
+					}
 
 					xml += "<ram:ApplicableTradeTax>"
 						+ "<ram:CalculatedAmount>" + currencyFormat(amount.getCalculated())
 						+ "</ram:CalculatedAmount>" //currencyID=\"EUR\"
 						+ "<ram:TypeCode>VAT</ram:TypeCode>"
-						+ (displayExemptionReason ? exemptionReason : "")
+						+ exemptionReasonTextXML
 						+ "<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>" // currencyID=\"EUR\"
 						+ "<ram:CategoryCode>" + amountCategoryCode + "</ram:CategoryCode>"
 						+ (amountDueDateTypeCode != null ? "<ram:DueDateTypeCode>" + amountDueDateTypeCode + "</ram:DueDateTypeCode>" : "")
@@ -681,7 +686,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 		if ((trans.getZFCharges() != null) && (trans.getZFCharges().length > 0)) {
 			if (profile == Profiles.getByName("XRechnung")) {
-				for(IZUGFeRDAllowanceCharge charge : trans.getZFCharges()) {
+				for (IZUGFeRDAllowanceCharge charge : trans.getZFCharges()) {
 					xml += "<ram:SpecifiedTradeAllowanceCharge>" +
 						"<ram:ChargeIndicator>" +
 						"<udt:Indicator>true</udt:Indicator>" +
@@ -724,7 +729,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 		if ((trans.getZFAllowances() != null) && (trans.getZFAllowances().length > 0)) {
 			if (profile == Profiles.getByName("XRechnung")) {
-				for(IZUGFeRDAllowanceCharge allowance : trans.getZFAllowances()) {
+				for (IZUGFeRDAllowanceCharge allowance : trans.getZFAllowances()) {
 					xml += "<ram:SpecifiedTradeAllowanceCharge>" +
 						"<ram:ChargeIndicator>" +
 						"<udt:Indicator>false</udt:Indicator>" +

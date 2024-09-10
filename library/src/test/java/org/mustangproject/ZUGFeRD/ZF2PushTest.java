@@ -125,7 +125,7 @@ public class ZF2PushTest extends TestCase {
 		String number = "123";
 		String priceStr = "1.00";
 
-		String senderDescription = "Kein Kleinunternehmer";
+		String senderDescription = "Kleinunternehmer";
 		String taxID = "9990815";
 		BigDecimal price = new BigDecimal(priceStr);
 		try {
@@ -144,7 +144,7 @@ public class ZF2PushTest extends TestCase {
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE4711")
 					.setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE")))
 				.setNumber(number)
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), price, new BigDecimal(1.0)))
+				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(0)).setTaxExemptionReason("Kleinunternehmer gemäß §19 UStG").setTaxCategoryCode("E"), price, new BigDecimal(1.0)))
 			);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
@@ -152,7 +152,7 @@ public class ZF2PushTest extends TestCase {
 		} catch (IOException e) {
 			fail("IOException should not be raised");
 		}
-		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_PDF);
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_ATTACHMENTSPDF);
 		Invoice i= null;
 		try {
 			i = zii.extractInvoice();
@@ -170,7 +170,7 @@ public class ZF2PushTest extends TestCase {
 		assertTrue(zi.getUTF8().contains(taxID));
 
 		// Reading ZUGFeRD
-		assertEquals("1.19", zi.getAmount());
+		assertEquals("1.00", zi.getAmount());
 		assertEquals(orgname, zi.getHolder());
 		assertEquals(number, zi.getForeignReference());
 		try {
