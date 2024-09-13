@@ -24,7 +24,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,7 +40,7 @@ import java.util.stream.Stream;
  * It can be constructed either from the children of a single {@link Node} or a {@link NodeList}.
  */
 public class NodeMap {
-	private final Map<String, Node> map;
+	private final Map<String, List<Node>> map = new HashMap<>();
 
 	/**
 	 * Create a new {@link NodeMap}
@@ -53,10 +55,8 @@ public class NodeMap {
 		if (node == null) {
 			throw new IllegalArgumentException("node cannot be null");
 		}
-		if (!node.hasChildNodes()) {
-			map = Map.of();
-		} else {
-			map = mapNodeList(node.getChildNodes());
+		if (node.hasChildNodes()) {
+			mapNodeList(node.getChildNodes());
 		}
 	}
 
@@ -64,7 +64,7 @@ public class NodeMap {
 		if (nodeList == null) {
 			throw new IllegalArgumentException("nodeList cannot be null");
 		}
-		map = mapNodeList(nodeList);
+		mapNodeList(nodeList);
 	}
 
 	/**
@@ -135,13 +135,13 @@ public class NodeMap {
 	 */
 	public Stream<Node> getAllNodes(String... localNames) {
 		List<String> localNamesList = Arrays.asList(localNames);
-		return map.entrySet().stream().filter(e -> localNamesList.contains(e.getKey())).map(Map.Entry::getValue);
+		return map.entrySet().stream().filter(e -> localNamesList.contains(e.getKey())).flatMap(e -> e.getValue().stream());
 	}
 
-	private Map<String, Node> mapNodeList(NodeList nodeList) {
-		return IntStream.range(0, nodeList.getLength()).mapToObj(nodeList::item)
+	private void mapNodeList(NodeList nodeList) {
+		IntStream.range(0, nodeList.getLength()).mapToObj(nodeList::item)
 			.filter(node -> node != null && node.getLocalName() != null)
-			.collect(Collectors.toMap(Node::getLocalName, node -> node));
+			.forEach(node -> map.computeIfAbsent(node.getLocalName(), k -> new ArrayList<>()).add(node));
 	}
 
 	@Override
