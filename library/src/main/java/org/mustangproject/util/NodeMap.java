@@ -23,6 +23,7 @@ package org.mustangproject.util;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +101,18 @@ public class NodeMap {
 	 */
 	public Optional<String> getAsString(String... localNames) {
 		return getNode(localNames).map(Node::getTextContent);
+	}
+
+	/**
+	 * Get the text content of a matching node
+	 * <p>
+	 * In case more than one node matches, it is not guaranteed that the first match is selected
+	 *
+	 * @param localNames one or more {@code LocalName}s
+	 * @return the text content of the matching node, converted to BigDecimal
+	 */
+	public Optional<BigDecimal> getAsBigDecimal(String... localNames) {
+		return getNode(localNames).map(Node::getTextContent).map(s->new BigDecimal(s.trim()));
 	}
 
 	/**

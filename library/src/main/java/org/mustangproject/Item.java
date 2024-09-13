@@ -64,15 +64,15 @@ public class Item implements IZUGFeRDExportableItem {
 			//and we additionally have vat%
 			setProduct(new Product());
 			icnm.getAsString("Name").ifPresent(product::setName);
-			icnm.getAsNodeMap("ClassifiedTaxCategory").flatMap(m -> m.getAsString("Percent"))
-				.ifPresent(vatPercent -> product.setVATPercent(new BigDecimal(vatPercent.trim())));
+			icnm.getAsNodeMap("ClassifiedTaxCategory").flatMap(m -> m.getAsBigDecimal("Percent"))
+				.ifPresent(product::setVATPercent);
 		});
 
 		itemMap.getAsNodeMap("Price").ifPresent(icnm -> {
 			// ubl
 			// PriceAmount with currencyID and  BaseQuantity with unitCode
-			icnm.getAsString("PriceAmount").ifPresent(amount -> setPrice(new BigDecimal(amount.trim())));
-			icnm.getAsString("BaseQuantity").ifPresent(baseQuantity -> setQuantity(new BigDecimal(baseQuantity.trim())));
+			icnm.getAsBigDecimal("PriceAmount").ifPresent(this::setPrice);
+			icnm.getAsBigDecimal("BaseQuantity").ifPresent(this::setBasisQuantity);
 		});
 
 		itemMap.getNode("InvoicedQuantity").ifPresent(icn -> {
@@ -82,19 +82,17 @@ public class Item implements IZUGFeRDExportableItem {
 		});
 
 		itemMap.getAsNodeMap("SpecifiedLineTradeAgreement", "SpecifiedSupplyChainTradeAgreement").ifPresent(icnm -> {
-			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode)
-				.forEach(this::addReferencedDocument);
-
 			icnm.getAsNodeMap("BuyerOrderReferencedDocument")
 				.flatMap(bordNodes -> bordNodes.getAsString("LineID"))
 				.ifPresent(this::addReferencedLineID);
 
 			icnm.getAsNodeMap("NetPriceProductTradePrice").ifPresent(npptpNodes -> {
-				npptpNodes.getAsString("ChargeAmount")
-					.ifPresent(amount -> setPrice(new BigDecimal(amount.trim())));
-				npptpNodes.getAsString("BasisQuantity")
-					.ifPresent(bq -> setBasisQuantity(new BigDecimal(bq.trim())));
+				npptpNodes.getAsBigDecimal("ChargeAmount").ifPresent(this::setPrice);
+				npptpNodes.getAsBigDecimal("BasisQuantity").ifPresent(this::setBasisQuantity);
 			});
+
+			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode)
+				.forEach(this::addReferencedDocument);
 		});
 
 		itemMap.getNode("SpecifiedTradeProduct").map(Product::new).ifPresent(this::setProduct);
@@ -114,13 +112,13 @@ public class Item implements IZUGFeRDExportableItem {
 
 		itemMap.getAsNodeMap("SpecifiedLineTradeSettlement", "SpecifiedSupplyChainTradeSettlement").ifPresent(icnm -> {
 			icnm.getAsNodeMap("ApplicableTradeTax")
-				.map(cnm -> cnm.getAsStringOrNull("RateApplicablePercent", "ApplicablePercent"))
-				.ifPresent(vatPercent -> product.setVATPercent(new BigDecimal(vatPercent.trim())));
+				.flatMap(cnm -> cnm.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent"))
+				.ifPresent(product::setVATPercent);
 
 			if (recalcPrice && !BigDecimal.ZERO.equals(quantity)) {
 				icnm.getAsNodeMap("SpecifiedTradeSettlementLineMonetarySummation")
-					.map(cnm -> cnm.getAsStringOrNull("LineTotalAmount"))
-					.ifPresent(lineTotal -> setPrice(new BigDecimal(lineTotal.trim()).divide(quantity, 4, RoundingMode.HALF_UP)));
+					.flatMap(cnm -> cnm.getAsBigDecimal("LineTotalAmount"))
+					.ifPresent(lineTotal -> setPrice(lineTotal.divide(quantity, 4, RoundingMode.HALF_UP)));
 			}
 
 			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).forEach(this::addAdditionalReference);
