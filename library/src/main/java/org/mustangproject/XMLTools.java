@@ -5,9 +5,15 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.AbstractList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.RandomAccess;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 import org.dom4j.io.XMLWriter;
@@ -23,7 +29,6 @@ public class XMLTools extends XMLWriter {
 	@Override
 	public String escapeElementEntities(String s) {
 		return super.escapeElementEntities(s);
-
 	}
 
 	public static List<Node> asList(NodeList n) {
