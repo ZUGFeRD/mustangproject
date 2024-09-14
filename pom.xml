@@ -42,7 +42,7 @@
         
         <dep.commons-cli.version>1.9.0</dep.commons-cli.version>
         <dep.verapdf.validation-model-jakarta.version>1.26.1</dep.verapdf.validation-model-jakarta.version>
-        <dep.ph-schematron-xslt.version>8.0.3</dep.ph-schematron-xslt.version>
+        <dep.ph-schematron-xslt.version>8.0.0</dep.ph-schematron-xslt.version>
 
         <mvn.maven-compiler-plugin.version>3.13.0</mvn.maven-compiler-plugin.version>
         <mvn.maven-resources-plugin.version>3.3.1</mvn.maven-resources-plugin.version>
@@ -257,11 +257,6 @@
                                 <goal>shade</goal>
                             </goals>
                             <phase>package</phase>
-                            <configuration>
-                                <artifactSet>
-                                    <excludes></excludes>
-                                </artifactSet>
-                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
