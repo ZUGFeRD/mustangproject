@@ -11,11 +11,11 @@
     <packaging>jar</packaging>
     
     <name>E-Invoices Validator</name>
-	
-	<description>
-		Library to validate e-invoices (ZUGFeRD, Factur-X and Xrechnung
-	</description>
-	
+
+    <description>
+        Library to validate e-invoices (ZUGFeRD, Factur-X and Xrechnung
+    </description>
+
     <properties>
     </properties>
     <dependencies>
@@ -33,14 +33,11 @@
         <dependency>
             <groupId>org.verapdf</groupId>
             <artifactId>validation-model-jakarta</artifactId>
-            <version>${dep.verapdf.validation-model-jakarta.version}</version>
         </dependency>
         
-        <!-- https://mvnrepository.com/artifact/com.helger/ph-schematron -->
         <dependency>
             <groupId>com.helger.schematron</groupId>
             <artifactId>ph-schematron-xslt</artifactId>
-            <version>${dep.ph-schematron-xslt.version}</version>
         </dependency>
         
         <dependency>
@@ -120,8 +117,8 @@
     <profiles>
         <profile>
             <!-- build the intermediate XSLT files from schematron takes 30min+ and is only
-            	 required if there actually is a change in the schematron,
-         		invoke manually with commandline -P generateXSLTFromSchematron on demand -->
+                 required if there actually is a change in the schematron,
+                 invoke manually with commandline -P generateXSLTFromSchematron on demand -->
             <id>generateXSLTFromSchematron</id>
             <activation>
                 <activeByDefault>false</activeByDefault>

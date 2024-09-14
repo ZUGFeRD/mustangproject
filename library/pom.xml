@@ -13,7 +13,7 @@
     <name>Mustang Library to r/w e-invoices</name>
     
     <description>
-    	FOSS Java library to read, write and validate european electronic invoices and orders in the UN/CEFACT
+        FOSS Java library to read, write and validate european electronic invoices and orders in the UN/CEFACT
         Cross Industry Invoice based formats Factur-X/ZUGFeRD, XRechnung and Order-X in your invoice PDFs.
     </description>
     
@@ -26,75 +26,54 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         
-        <!-- https://mvnrepository.com/artifact/net.sf.saxon/Saxon-HE -->
         <dependency>
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
-            <version>${dep.saxon-he.version}</version>
         </dependency>
         
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${dep.jackson.version}</version>
         </dependency>
         
-        <!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/fop -->
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>fop</artifactId>
-            <version>${dep.apache.fop.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>${dep.jakarta.xml-bind.version}</version>
         </dependency>
         
         <dependency>
             <groupId>org.eclipse.angus</groupId>
             <artifactId>angus-activation</artifactId>
-            <version>${dep.angus.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>preflight</artifactId>
-            <version>${dep.pdfbox.version}</version>
         </dependency>
         
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>${dep.pdfbox.version}</version>
         </dependency>
         
         <dependency>
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>
-            <version>${dep.dom4j.version}</version>
         </dependency>
         
-        <!-- CII to UBL conversion -->
         <dependency>
             <groupId>com.helger</groupId>
             <artifactId>en16931-cii2ubl</artifactId>
-            <version>${dep.en16931-cii2ubl.version}</version>
         </dependency>
         
-        <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <version>${dep.jaxb-runtime.version}</version>
         </dependency>
 
         <dependency>

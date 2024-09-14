@@ -8,7 +8,7 @@
     <name>Mustang</name>
 
     <description>
-    	The Mustang project is a java library to read and write ZUGFeRD
+        The Mustang project is a java library to read and write ZUGFeRD
         meta data inside your invoice PDFs
     </description>
         
@@ -28,21 +28,35 @@
         <maven.compiler.target>11</maven.compiler.target>
         
         <dep.slf4j.version>2.0.13</dep.slf4j.version>
-        <dep.saxon-he.version>12.4</dep.saxon-he.version>
+        <dep.saxon-he.version>12.5</dep.saxon-he.version>
         <dep.jackson.version>2.17.1</dep.jackson.version>
         <dep.apache.fop.version>2.9</dep.apache.fop.version>
         <dep.jakarta.xml-bind.version>4.0.2</dep.jakarta.xml-bind.version>
         <dep.angus.version>2.0.2</dep.angus.version>
-        <dep.pdfbox.version>3.0.2</dep.pdfbox.version>
+        <dep.pdfbox.version>3.0.3</dep.pdfbox.version>
         <dep.dom4j.version>2.1.4</dep.dom4j.version>
         <dep.en16931-cii2ubl.version>2.2.4</dep.en16931-cii2ubl.version>
         <dep.jaxb-runtime.version>4.0.5</dep.jaxb-runtime.version>
-        <dep.junit5.version>5.10.2</dep.junit5.version>
+        <dep.junit5.version>5.11.0</dep.junit5.version>
         <dep.xmlunit.version>2.10.0</dep.xmlunit.version>
         
         <dep.commons-cli.version>1.9.0</dep.commons-cli.version>
         <dep.verapdf.validation-model-jakarta.version>1.26.1</dep.verapdf.validation-model-jakarta.version>
-        <dep.ph-schematron-xslt.version>8.0.0</dep.ph-schematron-xslt.version>
+        <dep.ph-schematron-xslt.version>8.0.3</dep.ph-schematron-xslt.version>
+
+        <mvn.maven-compiler-plugin.version>3.13.0</mvn.maven-compiler-plugin.version>
+        <mvn.maven-resources-plugin.version>3.3.1</mvn.maven-resources-plugin.version>
+        <mvn.maven-release-plugin.version>3.1.1</mvn.maven-release-plugin.version>
+        <mvn.maven-javadoc-plugin.version>3.8.0</mvn.maven-javadoc-plugin.version>
+        <mvn.maven-deploy-plugin.version>3.1.2</mvn.maven-deploy-plugin.version>
+        <mvn.nexus-staging-maven-plugin.version>1.7.0</mvn.nexus-staging-maven-plugin.version>
+        <mvn.maven-surefire-plugin.version>3.3.1</mvn.maven-surefire-plugin.version>
+        <mvn.maven-source-plugin.version>3.3.1</mvn.maven-source-plugin.version>
+        <mvn.maven-jar-plugin.version>3.4.2</mvn.maven-jar-plugin.version>
+        <mvn.maven-shade-plugin.version>3.5.3</mvn.maven-shade-plugin.version>
+        <mvn.templating-maven-plugin.version>3.0.0</mvn.templating-maven-plugin.version>
+        <mvn.maven-gpg-plugin.version>3.2.4</mvn.maven-gpg-plugin.version>
+        <mvn.dep.maven-scm-provider-gitexe.version>2.1.0</mvn.dep.maven-scm-provider-gitexe.version>
     </properties>
     
     <licenses>
@@ -99,10 +113,10 @@
     <build>
         <pluginManagement>
             <plugins>
-	            <plugin>
-    	            <groupId>org.apache.maven.plugins</groupId>
-        	        <artifactId>maven-compiler-plugin</artifactId>
-        	        <version>3.13.0</version>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${mvn.maven-compiler-plugin.version}</version>
                     <executions>
                         <execution>
                             <id>compile</id>
@@ -114,18 +128,18 @@
                             </configuration>
                         </execution>
                     </executions>
-	            </plugin>
+                </plugin>
             
-            	<plugin>
-	                <groupId>org.apache.maven.plugins</groupId>
-        	        <artifactId>maven-resources-plugin</artifactId>
-	                <version>3.3.1</version>
-            	</plugin>
-            	
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${mvn.maven-resources-plugin.version}</version>
+                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>${mvn.maven-release-plugin.version}</version>
                     <configuration>
                         <localCheckout>true</localCheckout>
                         <pushChanges>false</pushChanges>
@@ -136,75 +150,72 @@
                         <dependency>
                             <groupId>org.apache.maven.scm</groupId>
                             <artifactId>maven-scm-provider-gitexe</artifactId>
-                            <version>2.1.0</version>
+                            <version>${mvn.dep.maven-scm-provider-gitexe.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
                 
                 <plugin>
-	                <groupId>org.apache.maven.plugins</groupId>
-	                <artifactId>maven-javadoc-plugin</artifactId>
-	                <version>3.8.0</version>
-	                <configuration>
-	                    <excludePackageNames>org.mustangproject.ZUGFeRD.model.*</excludePackageNames>
-	                </configuration>
-            	</plugin>
-            	
-	            <plugin>
-	                <artifactId>maven-deploy-plugin</artifactId>
-	                <version>3.1.2</version>
-	                <configuration>
-	                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
-	                </configuration>
-	            </plugin>
-	            
-	            <plugin>
-	                <groupId>org.sonatype.plugins</groupId>
-	                <artifactId>nexus-staging-maven-plugin</artifactId>
-	                <version>1.7.0</version>
-	                <extensions>true</extensions>
-	                <configuration>
-	                    <serverId>ossrh</serverId>
-	                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
-	                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-	                </configuration>
-	            </plugin>
-	            
-	            <plugin>
-	                <groupId>org.apache.maven.plugins</groupId>
-	                <artifactId>maven-surefire-plugin</artifactId>
-	                <version>3.3.1</version>
-	                <configuration>
-	                	<runOrder>alphabetical</runOrder>
-	                </configuration>
-	            </plugin>
-
-				<plugin>
-	                <groupId>org.apache.maven.plugins</groupId>
-	                <artifactId>maven-source-plugin</artifactId>
-	                <version>3.3.1</version>
-	                <executions>
-	                    <execution>
-                            <id>attach-sources</id>
-	                        <goals>
-    	                        <goal>jar-no-fork</goal>
-        	                </goals>
-	                    </execution>
-	                </executions>
-	            </plugin>
-	            
-				<plugin>
-	                <groupId>org.apache.maven.plugins</groupId>
-	                <artifactId>maven-jar-plugin</artifactId>
-    	            <version>3.4.2</version>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${mvn.maven-javadoc-plugin.version}</version>
                     <configuration>
-	                    <archive>
-	                        <manifest>
-	                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-	                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-	                        </manifest>
-	                    </archive>
-	                </configuration>
+                        <excludePackageNames>org.mustangproject.ZUGFeRD.model.*</excludePackageNames>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${mvn.maven-deploy-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${mvn.nexus-staging-maven-plugin.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <serverId>ossrh</serverId>
+                        <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${mvn.maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <runOrder>alphabetical</runOrder>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${mvn.maven-source-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${mvn.maven-jar-plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
                     <executions>
                         <execution>
                             <goals>
@@ -212,126 +223,204 @@
                             </goals>
                         </execution>
                     </executions>
-				</plugin>
-				
-	            <plugin>
-    	            <groupId>org.apache.maven.plugins</groupId>
-        	        <artifactId>maven-shade-plugin</artifactId>
-            	    <version>3.5.3</version>
-            	    <configuration>
-	                    <minimizeJar>false</minimizeJar>
-	                    <filters>
-	                        <filter>
-	                            <artifact>*:*</artifact>
-	                            <excludes>
-	                                <exclude>LICENSE</exclude>
-	                                <exclude>NOTICE</exclude>
-	                                <exclude>META-INF/*.SF</exclude>
-	                                <exclude>META-INF/*.DSA</exclude>
-	                                <exclude>META-INF/*.RSA</exclude>
-	                            </excludes>
-	                        </filter>
-	                        <filter>
-	                            <artifact>commons-logging:commons-logging</artifact>
-	                            <includes>
-	                                <include>**</include>
-	                            </includes>
-	                        </filter>
-	                    </filters>
-	                </configuration>
-	                <executions>
-	                    <execution>
-	                        <goals>
-	                            <goal>shade</goal>
-	                        </goals>
-	                        <phase>package</phase>
-	                        <configuration>
-	                            <artifactSet>
-	                                <excludes></excludes>
-	                            </artifactSet>
-	                        </configuration>
-	                    </execution>
-	                </executions>
-				</plugin>
+                </plugin>
 
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>templating-maven-plugin</artifactId>
-					<version>3.0.0</version>
-					<executions>
-						<execution>
-							<id>filtering-java-templates</id>
-							<goals>
-								<goal>filter-sources</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${mvn.maven-shade-plugin.version}</version>
+                    <configuration>
+                        <minimizeJar>false</minimizeJar>
+                        <filters>
+                            <filter>
+                                <artifact>*:*</artifact>
+                                <excludes>
+                                    <exclude>LICENSE</exclude>
+                                    <exclude>NOTICE</exclude>
+                                    <exclude>META-INF/*.SF</exclude>
+                                    <exclude>META-INF/*.DSA</exclude>
+                                    <exclude>META-INF/*.RSA</exclude>
+                                </excludes>
+                            </filter>
+                            <filter>
+                                <artifact>commons-logging:commons-logging</artifact>
+                                <includes>
+                                    <include>**</include>
+                                </includes>
+                            </filter>
+                        </filters>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                            <phase>package</phase>
+                            <configuration>
+                                <artifactSet>
+                                    <excludes></excludes>
+                                </artifactSet>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>templating-maven-plugin</artifactId>
+                    <version>${mvn.templating-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>filtering-java-templates</id>
+                            <goals>
+                                <goal>filter-sources</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
         
         <plugins>
-        	<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>templating-maven-plugin</artifactId>
-        	</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
     
     <dependencyManagement>
-		<dependencies>
-	        <dependency>
-	            <groupId>org.slf4j</groupId>
-    	    	<artifactId>slf4j-api</artifactId>
-        		<version>${dep.slf4j.version}</version>
-	        </dependency>
-		
-	        <dependency>
-	            <groupId>jakarta.xml.bind</groupId>
-	            <artifactId>jakarta.xml.bind-api</artifactId>
-	            <version>${dep.jakarta.xml-bind.version}</version>
-	        </dependency>
+        <dependencies>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${dep.slf4j.version}</version>
+            </dependency>
 
-			<dependency>
-				<groupId>org.junit.jupiter</groupId>
-				<artifactId>junit-jupiter-api</artifactId>
-				<version>${dep.junit5.version}</version>
-				<scope>test</scope>
-			</dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${dep.jakarta.xml-bind.version}</version>
+            </dependency>
 
-			<dependency>
-				<groupId>org.junit.vintage</groupId>
-				<artifactId>junit-vintage-engine</artifactId>
-				<version>${dep.junit5.version}</version>
-				<scope>test</scope>
-			</dependency>
-			
-	        <dependency>
-	            <groupId>org.xmlunit</groupId>
-	            <artifactId>xmlunit-core</artifactId>
-	            <version>${dep.xmlunit.version}</version>
-	            <scope>test</scope>
-	        </dependency>
+            <dependency>
+                <groupId>commons-cli</groupId>
+                <artifactId>commons-cli</artifactId>
+                <version>${dep.commons-cli.version}</version>
+            </dependency>
 
-	        <dependency>
-	            <groupId>org.xmlunit</groupId>
-	            <artifactId>xmlunit-assertj</artifactId>
-	            <version>${dep.xmlunit.version}</version>
-	            <scope>test</scope>
-	        </dependency>
+            <dependency>
+                <groupId>net.sf.saxon</groupId>
+                <artifactId>Saxon-HE</artifactId>
+                <version>${dep.saxon-he.version}</version>
+            </dependency>
 
-	        <dependency>
-	            <groupId>org.slf4j</groupId>
-	            <artifactId>slf4j-simple</artifactId>
-	            <version>${dep.slf4j.version}</version>
-	            <scope>test</scope>
-	        </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${dep.jackson.version}</version>
+            </dependency>
 
-		</dependencies>
+            <dependency>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>fop</artifactId>
+                <version>${dep.apache.fop.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${dep.jakarta.xml-bind.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.angus</groupId>
+                <artifactId>angus-activation</artifactId>
+                <version>${dep.angus.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>preflight</artifactId>
+                <version>${dep.pdfbox.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>${dep.pdfbox.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>${dep.dom4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.helger</groupId>
+                <artifactId>en16931-cii2ubl</artifactId>
+                <version>${dep.en16931-cii2ubl.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.verapdf</groupId>
+                <artifactId>validation-model-jakarta</artifactId>
+                <version>${dep.verapdf.validation-model-jakarta.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.helger.schematron</groupId>
+                <artifactId>ph-schematron-xslt</artifactId>
+                <version>${dep.ph-schematron-xslt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${dep.junit5.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <version>${dep.junit5.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.xmlunit</groupId>
+                <artifactId>xmlunit-core</artifactId>
+                <version>${dep.xmlunit.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.xmlunit</groupId>
+                <artifactId>xmlunit-assertj</artifactId>
+                <version>${dep.xmlunit.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${dep.slf4j.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+        </dependencies>
     </dependencyManagement>
     
     <profiles>
-		<!-- GPG Signature on release -->
+        <!-- GPG Signature on release -->
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
@@ -345,7 +434,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.4</version>
+                        <version>${mvn.maven-gpg-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
