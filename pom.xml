@@ -141,9 +141,10 @@
                     <artifactId>maven-release-plugin</artifactId>
                     <version>${mvn.maven-release-plugin.version}</version>
                     <configuration>
-                        <localCheckout>true</localCheckout>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <releaseProfiles>release</releaseProfiles>
+                        <goals>deploy</goals>
                         <pushChanges>false</pushChanges>
-                        <mavenExecutorId>forked-path</mavenExecutorId>
                         <arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
                     </configuration>
                     <dependencies>
