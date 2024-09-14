@@ -2,8 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
-    <artifactId>core</artifactId>
     <version>2.14.0-SNAPSHOT</version>
+
+    <artifactId>core</artifactId>
     <packaging>pom</packaging>
     <name>Mustang</name>
 
@@ -27,6 +28,8 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         
+        <skip.javadoc>true</skip.javadoc> <!-- will be set to false on release -->
+
         <dep.slf4j.version>2.0.13</dep.slf4j.version>
         <dep.saxon-he.version>12.5</dep.saxon-he.version>
         <dep.jackson.version>2.17.1</dep.jackson.version>
@@ -104,6 +107,7 @@
             <id>ossrh</id>
             <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+
         <snapshotRepository>
             <id>ossrh</id>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
@@ -161,8 +165,20 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${mvn.maven-javadoc-plugin.version}</version>
                     <configuration>
+                        <skip>${skip.javadoc}</skip>
                         <excludePackageNames>org.mustangproject.ZUGFeRD.model.*</excludePackageNames>
+                        <doclint>none</doclint>
+                        <failOnError>false</failOnError>
+                        <failOnWarnings>false</failOnWarnings>
                     </configuration>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
 
                 <plugin>
@@ -281,6 +297,21 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>templating-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -416,15 +447,18 @@
     </dependencyManagement>
     
     <profiles>
-        <!-- GPG Signature on release -->
+        <!-- GPG Signature and Javadoc on release -->
         <profile>
-            <id>release-sign-artifacts</id>
+            <id>release</id>
             <activation>
                 <property>
                     <name>performRelease</name>
                     <value>true</value>
                 </property>
             </activation>
+            <properties>
+                <skip.javadoc>false</skip.javadoc>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
