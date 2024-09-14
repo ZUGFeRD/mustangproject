@@ -26,6 +26,7 @@ public class Item implements IZUGFeRDExportableItem {
 	protected Product product;
 	protected ArrayList<String> notes = null;
 	protected ArrayList<ReferencedDocument> referencedDocuments = null;
+	protected ArrayList<ReferencedDocument> additionalReference = null;
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
 		Charges = new ArrayList<>();
 
@@ -63,6 +64,7 @@ public class Item implements IZUGFeRDExportableItem {
 		String referencedLineID = null;
 
 		ArrayList<ReferencedDocument> rdocs = null;
+		ArrayList<ReferencedDocument> addRefs = null;
 
 		// nodes.item(i).getTextContent())) {
 
@@ -248,6 +250,35 @@ public class Item implements IZUGFeRDExportableItem {
 								}
 							}
 						}
+						
+						if (tradeSettlementName.equals("AdditionalReferencedDocument")) {
+							String IssuerAssignedID = "";
+							String TypeCode = "";
+							String ReferenceTypeCode = "";
+
+							NodeList refDocChilds = tradeSettlementChilds.item(tradeSettlementChildIndex).getChildNodes();
+							for (int refDocIndex = 0; refDocIndex < refDocChilds.getLength(); refDocIndex++) {
+								String localName = refDocChilds.item(refDocIndex).getLocalName();
+								if ((localName != null) && (localName.equals("IssuerAssignedID"))) {
+									IssuerAssignedID = refDocChilds.item(refDocIndex).getTextContent();
+								}
+								if ((localName != null) && (localName.equals("TypeCode"))) {
+									TypeCode = refDocChilds.item(refDocIndex).getTextContent();
+								}
+								if ((localName != null) && (localName.equals("ReferenceTypeCode"))) {
+									ReferenceTypeCode = refDocChilds.item(refDocIndex).getTextContent();
+								}
+							}
+
+							ReferencedDocument rd = new ReferencedDocument(IssuerAssignedID, TypeCode,
+								ReferenceTypeCode);
+							if (addRefs == null) {
+								addRefs = new ArrayList<>();
+							}
+							addRefs.add(rd);
+
+						}
+						
 					}
 				}
 			}
@@ -272,6 +303,11 @@ public class Item implements IZUGFeRDExportableItem {
 		if (rdocs != null) {
 			for (ReferencedDocument rdoc : rdocs) {
 				addReferencedDocument(rdoc);
+			}
+		}
+		if (addRefs != null) {
+			for (ReferencedDocument rdoc : addRefs) {
+				addAdditionalReference(rdoc);
 			}
 		}
 		addReferencedLineID( referencedLineID );
@@ -465,6 +501,29 @@ public class Item implements IZUGFeRDExportableItem {
 		return referencedDocuments.toArray(new IReferencedDocument[0]);
 	}
 
+
+	/***
+	 * adds item level references along with their typecodes and issuerassignedIDs (contract ID, cost centre, ...) 
+	 * @param doc the ReferencedDocument to add
+	 * @return fluent setter
+	 */
+	public Item addAdditionalReference(ReferencedDocument doc) {
+		if (additionalReference == null) {
+			additionalReference = new ArrayList<>();
+		}
+		additionalReference.add(doc);
+		return this;
+	}
+
+	@Override
+	public IReferencedDocument[] getAdditionalReferences() {
+		if (additionalReference == null) {
+			return null;
+		}
+		return additionalReference.toArray(new IReferencedDocument[0]);
+	}
+	
+	
 	/***
 	 * specify a item level delivery period
 	 * (apart from the document level delivery period, and the document level

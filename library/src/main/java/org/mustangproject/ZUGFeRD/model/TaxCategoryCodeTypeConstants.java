@@ -30,5 +30,5 @@ public class TaxCategoryCodeTypeConstants {
 	public static final String UNTAXEDSERVICE = "O";
 	public static final String INTRACOMMUNITY = "K";
 	
-	public static Set<String> CATEGORY_CODES_WITH_EXEMPTION_REASON = Stream.of(INTRACOMMUNITY, REVERSECHARGE).collect(Collectors.toSet());
+	public static Set<String> CATEGORY_CODES_WITH_EXEMPTION_REASON = Stream.of(INTRACOMMUNITY, REVERSECHARGE, TAXEXEMPT).collect(Collectors.toSet());
 }

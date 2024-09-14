@@ -96,6 +96,7 @@ public class ZUGFeRDVisualizer {
 	private TransformerFactory mFactory = null;
 	private Templates mXsltXRTemplate = null;
 	private Templates mXsltUBLTemplate = null;
+	private Templates mXsltCIOTemplate = null;
 	private Templates mXsltHTMLTemplate = null;
 	private Templates mXsltPDFTemplate = null;
 	private Templates mXsltZF1HTMLTemplate = null;
@@ -151,6 +152,8 @@ public class ZUGFeRDVisualizer {
 		String zf2Signature = "CrossIndustryInvoice";
 		String ublSignature = "Invoice";
 		String ublCreditNoteSignature = "CreditNote";
+		String cioSignature = "SCRDMCCBDACIOMessageStructure" +
+			"";
 		boolean doPostProcessing = false;
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -172,6 +175,10 @@ public class ZUGFeRDVisualizer {
 		} else if (root.getLocalName().equals(ublCreditNoteSignature)) {
 			//zf2 or fx
 			applyUBLCreditNote2XSLT(fis, iaos);
+			doPostProcessing = true;
+		} else if (root.getLocalName().equals(cioSignature)) {
+			//zf2 or fx
+			applyCIO2XSLT(fis, iaos);
 			doPostProcessing = true;
 		} else {
 			throw new IllegalArgumentException("File does not look like CII or UBL");
@@ -277,20 +284,6 @@ public class ZUGFeRDVisualizer {
 		} catch (FileNotFoundException | TransformerException e) {
 			LOGGER.error("Failed to apply FOP", e);
 		}
-		/*
-		FopConfParser parser = null;
-		try {
-			//parsing configuration
-			parser = new FopConfParser(CLASS_LOADER.getResourceAsStream("fop-config.xconf"), new URI("file:///"));
-
-		} catch (SAXException e) {
-			throw new UncheckedIOException(new IOException(e));
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		} catch (URISyntaxException e) {
-			Logger.getLogger(ZUGFeRDVisualizer.class.getName()).log(Level.SEVERE, null, e);
-		}*/
-//		FopFactoryBuilder builder = parser.getFopFactoryBuilder();
 		DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
 
 		Configuration cfg = null;
@@ -347,6 +340,17 @@ public class ZUGFeRDVisualizer {
 	protected void applyZF2XSLT(final InputStream xmlFile, final OutputStream HTMLOutstream)
 		throws TransformerException {
 		Transformer transformer = mXsltXRTemplate.newTransformer();
+
+		transformer.transform(new StreamSource(xmlFile), new StreamResult(HTMLOutstream));
+	}
+
+	protected void applyCIO2XSLT(final InputStream xmlFile, final OutputStream HTMLOutstream)
+		throws TransformerException {
+		if (mXsltCIOTemplate == null) {
+			mXsltCIOTemplate = mFactory.newTemplates(
+				new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/cio-xr.xsl")));
+		}
+		Transformer transformer = mXsltCIOTemplate.newTransformer();
 
 		transformer.transform(new StreamSource(xmlFile), new StreamResult(HTMLOutstream));
 	}

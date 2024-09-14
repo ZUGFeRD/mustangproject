@@ -11,7 +11,10 @@ import java.util.HashMap;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Product implements IZUGFeRDExportableProduct {
-	protected String unit, name, description, sellerAssignedID, buyerAssignedID;
+	protected String unit, name, sellerAssignedID, buyerAssignedID;
+	protected String description="";
+	protected String taxExemptionReason=null;
+	protected String taxCategoryCode=null;
 	protected BigDecimal VATPercent;
 	protected boolean isReverseCharge = false;
 	protected boolean isIntraCommunitySupply = false;
@@ -62,6 +65,44 @@ public class Product implements IZUGFeRDExportableProduct {
 
 	public Product addGlobalID(SchemedID schemedID) {
 		globalId = schemedID;
+		return this;
+	}
+
+	/***
+	 *
+	 * @return e.g. intra-commnunity supply or small business
+	 */
+	@Override
+	public String getTaxExemptionReason() {
+		return taxExemptionReason;
+	}
+
+	/***
+	 *
+	 * @param taxExemptionReasonText String e.g. Kleinunternehmer gemäß §19 UStG https://github.com/ZUGFeRD/mustangproject/issues/463
+	 * @return
+	 */
+	public Product setTaxExemptionReason(String  taxExemptionReasonText) {
+		taxExemptionReason = taxExemptionReasonText;
+		return this;
+	}
+
+	/***
+	 *
+	 * @return e.g. S (normal tax), Z=zero rated,  E (e.g. small business) or K (intrra community supply)
+	 */
+	@Override
+	public String getTaxCategoryCode() {
+		return taxCategoryCode;
+	}
+
+	/***
+	 *
+	 * @param code e.g. S (normal tax), Z=zero rated,  E (e.g. small business) or K (intrra community supply) see also https://github.com/ZUGFeRD/mustangproject/issues/463
+	 * @return
+	 */
+	public Product setTaxCategoryCode(String  code) {
+		taxCategoryCode = code;
 		return this;
 	}
 

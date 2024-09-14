@@ -23,6 +23,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	protected String name, zip, street, location, country;
 	protected String taxID = null, vatID = null;
 	protected String ID = null;
+	protected String description = null;
 	protected String additionalAddress = null;
 	protected String additionalAddressExtension = null;
 	protected List<BankDetails> bankDetails = new ArrayList<>();
@@ -66,14 +67,14 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 				Node currentItemNode = nodes.item(nodeIndex);
 
 				if (currentItemNode.getLocalName() != null) {
-					String debcurrentChild = currentItemNode.getLocalName();
-					if (debcurrentChild.equals("Party")) {
+					String currentUBLChild = currentItemNode.getLocalName();
+					if (currentUBLChild.equals("Party")) {
 
 						NodeList party = currentItemNode.getChildNodes();
 						for (int partyIndex = 0; partyIndex < party.getLength(); partyIndex++) {
 							if (party.item(partyIndex).getLocalName() != null) {
-								String debCN = party.item(partyIndex).getLocalName();
-								if (debCN.equals("PartyName")) {
+								String currentTopElementName = party.item(partyIndex).getLocalName();
+								if (currentTopElementName.equals("PartyName")) {
 
 									NodeList partyName = party.item(partyIndex).getChildNodes();
 									for (int partyNameIndex = 0; partyNameIndex < partyName.getLength(); partyNameIndex++) {
@@ -86,7 +87,20 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 										}
 									}
 								}
-								if (debCN.equals("PostalAddress")) {
+
+								// UBL only: formally it can have a name as well but BT27 party name *should* be stored in
+								// so overwrite if one exists
+								if (currentTopElementName.equals("PartyLegalEntity")) {
+									NodeList legal = party.item(partyIndex).getChildNodes();
+									for (int legalChildIndex = 0; legalChildIndex < legal.getLength(); legalChildIndex++) {
+										if (legal.item(legalChildIndex).getLocalName() != null) {
+											if (legal.item(legalChildIndex).getLocalName().equals("RegistrationName")) {
+												setName(legal.item(legalChildIndex).getTextContent());
+											}
+										}
+									}
+								}
+								if (currentTopElementName.equals("PostalAddress")) {
 
 									NodeList postal = party.item(partyIndex).getChildNodes();
 									for (int postalChildIndex = 0; postalChildIndex < postal.getLength(); postalChildIndex++) {
@@ -144,7 +158,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 									}
 								}
 
-								if (debCN.equals("Contact")) {
+								if (currentTopElementName.equals("Contact")) {
 									NodeList contact = party.item(partyIndex).getChildNodes();
 									setContact(new Contact(contact));
 
@@ -155,19 +169,19 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 					}
 
-					if (debcurrentChild.equals("GlobalID")) {
+					if (currentUBLChild.equals("GlobalID")) {
 						if (nodes.item(nodeIndex).getAttributes().getNamedItem("schemeID") != null) {
 							SchemedID gid = new SchemedID().setScheme(nodes.item(nodeIndex).getAttributes().getNamedItem("schemeID").getNodeValue()).setId(nodes.item(nodeIndex).getTextContent());
 							addGlobalID(gid);
 						}
 
 					}
-					if (debcurrentChild.equals("DefinedTradeContact")) {
+					if (currentUBLChild.equals("DefinedTradeContact")) {
 						NodeList contact = nodes.item(nodeIndex).getChildNodes();
 						setContact(new Contact(contact));
 					}
 
-					if (debcurrentChild.equals("PostalTradeAddress")) {
+					if (currentUBLChild.equals("PostalTradeAddress")) {
 						NodeList postal = nodes.item(nodeIndex).getChildNodes();
 						for (int postalChildIndex = 0; postalChildIndex < postal.getLength(); postalChildIndex++) {
 							if (postal.item(postalChildIndex).getLocalName() != null) {
@@ -195,7 +209,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 					}
 
-					if (debcurrentChild.equals("SpecifiedTaxRegistration")) {
+					if (currentUBLChild.equals("SpecifiedTaxRegistration")) {
 						NodeList taxChilds = nodes.item(nodeIndex).getChildNodes();
 						for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
 							if (taxChilds.item(taxChildIndex).getLocalName() != null) {
@@ -286,8 +300,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 			for (int nodeIndex = 0; nodeIndex < nodes.getLength(); nodeIndex++) {
 				//nodes.item(i).getTextContent())) {
-				String debLN = nodes.item(nodeIndex).getLocalName();
-				if (debLN.equals("Party")) {
+				String topElementName = nodes.item(nodeIndex).getLocalName();
+				if (topElementName.equals("Party")) {
 					// take one step back and parse from top
 					parseFromUBL(nodes);
 					return;
@@ -302,11 +316,19 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("Name")) {
 							setName(itemChilds.item(itemChildIndex).getTextContent());
 						}
+
+						if (itemChilds.item(itemChildIndex).getLocalName().equals("Description")) {
+							setDescription(itemChilds.item(itemChildIndex).getTextContent());
+						}
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("GlobalID")) {
 							if (itemChilds.item(itemChildIndex).getAttributes().getNamedItem("schemeID") != null) {
 								SchemedID gid = new SchemedID().setScheme(itemChilds.item(itemChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue()).setId(itemChilds.item(itemChildIndex).getTextContent());
 								addGlobalID(gid);
 							}
+						}
+						if (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLegalOrganization")) {
+							NodeList organization = itemChilds.item(itemChildIndex).getChildNodes();
+							setLegalOrganisation(new LegalOrganisation(organization));
 						}
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("DefinedTradeContact")) {
 							NodeList contact = itemChilds.item(itemChildIndex).getChildNodes();
@@ -552,6 +574,26 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	 */
 	public TradeParty setName(String name) {
 		this.name = name;
+		return this;
+	}
+
+
+	/***
+	 *
+	 * @return String the description, e.g. if it's a vat exempt company
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+
+	/***
+	 * required, usually done in the constructor: the complete name of the organisation
+	 * @param description human readable description
+	 * @return fluent setter
+	 */
+	public TradeParty setDescription(String description) {
+		this.description = description;
 		return this;
 	}
 

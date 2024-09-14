@@ -172,6 +172,10 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 				LineCalculator lc = new LineCalculator(currentItem);
 				VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(),
 						currentItem.getProduct().getTaxCategoryCode(), vatDueDateTypeCode);
+				String reasonText=currentItem.getProduct().getTaxExemptionReason();
+				if (reasonText!=null) {
+					itemVATAmount.setVatExemptionReasonText(reasonText);
+				}
 				VATAmount current = hm.get(percent.stripTrailingZeros());
 				if (current == null) {
 					hm.put(percent.stripTrailingZeros(), itemVATAmount);

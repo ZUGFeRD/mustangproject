@@ -722,9 +722,6 @@ public class Main {
 					((ZUGFeRDExporterFromPDFA) ze).ignorePDFAErrors();
 				}
 			}
-			for (FileAttachment attachment : attachments) {
-				((ZUGFeRDExporterFromA3) ze).attachFile(attachment.getFilename(), attachment.getData(), attachment.getMimetype(), attachment.getRelation());
-			}
 
 			ze.load(pdfName);
 			ze.setProducer("Mustang-cli")
@@ -736,6 +733,10 @@ public class Main {
 			}
 
 			ze.setXML(Files.readAllBytes(Paths.get(xmlName)));
+
+			for (FileAttachment attachment : attachments) {
+				ze.attachFile(attachment.getFilename(), attachment.getData(), attachment.getMimetype(), attachment.getRelation());
+			}
 
 			ze.export(outName);
 			System.out.println("Written to " + outName);
