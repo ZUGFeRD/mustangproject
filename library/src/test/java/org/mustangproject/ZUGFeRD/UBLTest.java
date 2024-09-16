@@ -123,6 +123,23 @@ public class UBLTest extends ResourceCase {
 
 	}
 
+	public void testEdgeInvoiceImportUBL2() {
+		File UBLinputFile = getResourceAsFile("ubl/04.01a-INVOICE_ubl.xml");
+		boolean hasExceptions = false;
+
+		ZUGFeRDInvoiceImporter zii = null;
+		Invoice invoice = null;
+		try {
+			zii = new ZUGFeRDInvoiceImporter(new FileInputStream(UBLinputFile));
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
+			e.printStackTrace();
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+
+		assertEquals(new BigDecimal("10000.0"), invoice.getTotalPrepaidAmount());
+	}
 
 /*	public void testInvoiceImportOtherUBL() {
 

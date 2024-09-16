@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -86,6 +87,12 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		NodeList totalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (totalNodes.getLength() > 0) {
 			expectedGrandTotal = new BigDecimal(totalNodes.item(0).getTextContent());
+		}
+
+		xpr = xpath.compile("//*[local-name()=\"PrepaidAmount\"]");
+		NodeList prepaidNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (prepaidNodes.getLength() > 0) {
+			zpp.setTotalPrepaidAmount(new BigDecimal(prepaidNodes.item(0).getTextContent()));
 		}
 
 		Date issueDate = null;
@@ -307,9 +314,9 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 		xpr = xpath.compile("//*[local-name()=\"BuyerReference\"]");
 		String buyerReference = null;
-		totalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-		if (totalNodes.getLength() > 0) {
-			buyerReference = totalNodes.item(0).getTextContent();
+		prepaidNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (prepaidNodes.getLength() > 0) {
+			buyerReference = prepaidNodes.item(0).getTextContent();
 		}
 		if (buyerReference != null) {
 			zpp.setReferenceNumber(buyerReference);
@@ -409,7 +416,8 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			}
 
 			TransactionCalculator tc = new TransactionCalculator(zpp);
-			String expectedStringTotalGross = tc.getGrandTotal().toPlainString();
+			String expectedStringTotalGross = tc.getGrandTotal()
+				.subtract(Objects.requireNonNullElse(zpp.getTotalPrepaidAmount(), BigDecimal.ZERO)).toPlainString();
 			EStandard whichType;
 			try {
 				whichType = getStandard();
