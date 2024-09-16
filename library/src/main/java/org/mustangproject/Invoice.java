@@ -41,7 +41,7 @@ public class Invoice implements IExportableTransaction {
 
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, invoiceReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
-	protected TradeParty sender = null, recipient = null, deliveryAddress = null;
+	protected TradeParty sender = null, recipient = null, deliveryAddress = null, payee = null;
 	protected ArrayList<CashDiscount> cashDiscounts = null;
 	@JsonDeserialize(contentAs = Item.class)
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
@@ -577,6 +577,22 @@ public class Invoice implements IExportableTransaction {
 		this.deliveryAddress = deliveryAddress;
 		return this;
 	}
+
+	@Override
+	public TradeParty getPayee() {
+		return this.payee;
+	}
+
+	/***
+	 * if the payee is not the seller, it can be specified here
+	 * @param payee the payment receiving organisation
+	 * @return fluent setter
+	 */
+	public Invoice setPayee(TradeParty payee) {
+		this.payee = payee;
+		return this;
+	}
+
 	/***
 	 * Adds a cash discount (skonto)
 	 * @param c the CashDiscount percent/period combination
