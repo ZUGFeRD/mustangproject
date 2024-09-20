@@ -313,4 +313,36 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 
+
+	public void testEEISI_300_cii_Import() {
+		boolean hasExceptions = false;
+		File input = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel2.ubl.xml");
+
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		try {
+			zii.fromXML(new String(Files.readAllBytes(input.toPath()), StandardCharsets.UTF_8));
+
+		} catch (IOException e) {
+			hasExceptions = true;
+		}
+
+		Invoice invoice = null;
+		try {
+			invoice = zii.extractInvoice();
+			assertEquals("Seller contact point",invoice.getSender().getName());
+				/*
+				<cbc:Name>Seller contact point</cbc:Name>
+        <cbc:Telephone>+41 345 654455</cbc:Telephone>
+        <cbc:ElectronicMail>seller@contact.de);*/
+		} catch (XPathExpressionException | ParseException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("205.00"), tc.getGrandTotal());
+
+	}
+
+
 }
