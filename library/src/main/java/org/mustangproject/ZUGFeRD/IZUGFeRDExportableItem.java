@@ -53,6 +53,13 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 		return null;
 	}
 
+	/***
+	 * buyer order reference document id
+	 * @return  the document id (defaults to {@code null})
+	 */
+	default String getBuyerOrderReferencedDocumentID() {
+		return null;
+	}
 
 	/***
 	 * BT 132 (issue https://github.com/ZUGFeRD/mustangproject/issues/247)
