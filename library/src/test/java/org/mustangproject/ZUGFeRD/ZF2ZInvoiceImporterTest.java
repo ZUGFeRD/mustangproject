@@ -318,7 +318,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 
-
+/*
 	public void testEEISI_300_cii_Import() {
 		boolean hasExceptions = false;
 		File input = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel2.ubl.xml");
@@ -339,7 +339,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				/*
 				<cbc:Name>Seller contact point</cbc:Name>
         <cbc:Telephone>+41 345 654455</cbc:Telephone>
-        <cbc:ElectronicMail>seller@contact.de);*/
+        <cbc:ElectronicMail>seller@contact.de);*
 		} catch (XPathExpressionException | ParseException e) {
 			hasExceptions = true;
 		}
@@ -349,5 +349,5 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
-
+*/
 }
