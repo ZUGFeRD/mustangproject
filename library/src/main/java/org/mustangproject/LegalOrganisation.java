@@ -18,7 +18,7 @@ public class LegalOrganisation implements IZUGFeRDLegalOrganisation {
 	}
 
 	public LegalOrganisation(String ID, String scheme) {
-		this.schemedID = new SchemedID(ID, scheme);
+		this.schemedID = new SchemedID(scheme, ID);
 	}
 
 	public LegalOrganisation(SchemedID schemedID, String tradingBusinessName) {
