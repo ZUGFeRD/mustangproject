@@ -628,13 +628,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				"</ram:ShipToTradeParty>";
 		}
 
-		if (this.trans.getPayee() != null) {
-			xml += "<ram:PayeeTradeParty>" +
-				getTradePartyPayeeAsXML(this.trans.getPayee()) +
-				"</ram:PayeeTradeParty>";
-		}
-
-
 		if (trans.getDeliveryDate() != null) {
 			xml += "<ram:ActualDeliverySupplyChainEvent>"
 				+ "<ram:OccurrenceDateTime>";
@@ -665,6 +658,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml += "<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>";
 		}
 		xml += "<ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>";
+
+		if (this.trans.getPayee() != null) {
+			xml += "<ram:PayeeTradeParty>" +
+				getTradePartyPayeeAsXML(this.trans.getPayee()) +
+				"</ram:PayeeTradeParty>";
+		}
 
 		if (trans.getTradeSettlementPayment() != null) {
 			for (final IZUGFeRDTradeSettlementPayment payment : trans.getTradeSettlementPayment()) {
