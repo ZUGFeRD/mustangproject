@@ -39,8 +39,8 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	}
 
 	/***
-	 * the invoice total with VAT, corrected by prepaid amount, allowances and
-	 * charges
+	 * the invoice total with VAT, allowances and
+	 * charges, WITHOUT considering prepaid amount
 	 * 
 	 * @return the invoice total including taxes
 	 */

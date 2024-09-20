@@ -450,8 +450,16 @@ public interface IExportableTransaction {
 	 *
 	 * @return the IZUGFeRDExportableTradeParty delivery address
 	 */
-
 	default IZUGFeRDExportableTradeParty getDeliveryAddress() {
+		return null;
+	}
+
+	/***
+	 * payee / payment receiver, if different from seller, ram:Payee (only supported for zf2)
+	 *
+	 * @return the IZUGFeRDExportableTradeParty payment receiver, if different from sellver
+	 */
+	default IZUGFeRDExportableTradeParty getPayee() {
 		return null;
 	}
 

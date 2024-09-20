@@ -66,6 +66,11 @@
       </cac:PartyLegalEntity>
     </cac:Party>
   </cac:AccountingCustomerParty>
+  <cac:PayeeParty>
+    <cac:PartyName>
+      <cbc:Name>VR Factoring GmbH</cbc:Name>
+    </cac:PartyName>
+  </cac:PayeeParty>
   <cac:Delivery>
     <cbc:ActualDeliveryDate>2017-05-07</cbc:ActualDeliveryDate>
   </cac:Delivery>

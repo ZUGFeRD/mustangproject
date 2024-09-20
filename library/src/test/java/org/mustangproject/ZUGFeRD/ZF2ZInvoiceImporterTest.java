@@ -139,6 +139,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("DE", invoice.getSender().getCountry());
 		assertEquals("Stadthausen", invoice.getSender().getLocation());
 
+		assertTrue(invoice.getPayee() != null);
+		assertEquals("VR Factoring GmbH", invoice.getPayee().getName());
+
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("571.04"), tc.getGrandTotal());
 
@@ -285,6 +288,8 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
 
+		assertTrue(invoice.getPayee() != null);
+		assertEquals("VR Factoring GmbH", invoice.getPayee().getName());
 	}
 
 	/**
