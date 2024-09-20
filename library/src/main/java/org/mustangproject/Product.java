@@ -137,6 +137,9 @@ public class Product implements IZUGFeRDExportableProduct {
 	 */
 	@Override
 	public String getTaxCategoryCode() {
+		if (taxCategoryCode == null) {
+			return IZUGFeRDExportableProduct.super.getTaxCategoryCode();
+		}
 		return taxCategoryCode;
 	}
 
