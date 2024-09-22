@@ -190,7 +190,7 @@ public class XMLValidator extends Validator {
 				boolean isEN16931 = false;
 				boolean isExtended = false;
 				boolean isXRechnung = false;
-				String currentZFVersionDir = "ZF_221";
+				String currentZFVersionDir = "ZF_230";
 				int mainSchematronSectionErrorTypeCode=4;
 				String xsltFilename = null;
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:extended,
