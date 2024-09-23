@@ -732,11 +732,12 @@ public class Main {
 				ze.disableFacturX();
 			}
 
-			ze.setXML(Files.readAllBytes(Paths.get(xmlName)));
 
 			for (FileAttachment attachment : attachments) {
 				ze.attachFile(attachment.getFilename(), attachment.getData(), attachment.getMimetype(), attachment.getRelation());
 			}
+
+			ze.setXML(Files.readAllBytes(Paths.get(xmlName)));
 
 			ze.export(outName);
 			System.out.println("Written to " + outName);

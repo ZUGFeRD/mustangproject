@@ -1,5 +1,21 @@
-- 461
-- 463
+2.14.0
+=======
+2024-09-22
+
+- #461 UBL import contacts
+- #463 add support for BT-33, i.e. Tradeparty description #463
+- #456 Provide a way to set uriUniversalCommunicationId on the TradeParty using JSON deserialization
+- #467 Fix test using wrong file
+- #468 Fix validator dependencies
+- #469 Enable EN16931 schema validation for XRechnung
+- #471 Fix LegalOrganisation schemeId
+- #473 Fix UnsupportedOperationException in buildNotes
+- #476 Add DesignatedProductClassification for SpecifiedTradeProduct
+- #482 Fix current validation errors
+- #423 can no longer add attachments via cli
+- #465 cli version should also be able to combine PDF/A-3 source
+- #487 update to zugferd 2.3.0
+- #472 Fix logging implementation missing in CLI
 
 2.13.0
 =======

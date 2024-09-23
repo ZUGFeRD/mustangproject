@@ -23,7 +23,22 @@
             <artifactId>library</artifactId>
             <version>${project.version}</version>
         </dependency>
-        
+		<dependency>
+			<groupId>org.dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>2.1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.16.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>3.0.2</version>
+			<scope>test</scope>
+		</dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
@@ -83,10 +98,10 @@
                         <phase>compile</phase>
 
                         <configuration>
-                            <outputDirectory>${basedir}/src/main/resources/xslt/ZF_221/</outputDirectory>
+                            <outputDirectory>${basedir}/src/main/resources/xslt/ZF_230/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/src/main/resources/schematron/ZF_221/</directory>
+                                    <directory>${basedir}/src/main/resources/schematron/ZF_230/</directory>
                                     <includes>
                                         <include>**/*.xml</include>
                                     </includes>

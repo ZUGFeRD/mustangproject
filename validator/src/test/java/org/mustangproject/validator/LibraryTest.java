@@ -169,7 +169,7 @@ public class LibraryTest extends ResourceCase {
 	/**
 	 * automatically test the xrechnung
 	 */
-	public void testXRValidation() {
+	public void testXREdgeValidation() {
 		File tempFile = new File("../library/target/testout-XR-Edge.xml");
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
 

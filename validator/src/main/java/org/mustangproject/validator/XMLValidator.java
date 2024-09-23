@@ -190,7 +190,7 @@ public class XMLValidator extends Validator {
 				boolean isEN16931 = false;
 				boolean isExtended = false;
 				boolean isXRechnung = false;
-				String currentZFVersionDir = "ZF_221";
+				String currentZFVersionDir = "ZF_230";
 				int mainSchematronSectionErrorTypeCode=4;
 				String xsltFilename = null;
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:extended,
@@ -254,7 +254,7 @@ public class XMLValidator extends Validator {
 						the validation against the XRechnung Schematron will happen below but a
 						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.xslt=schematron also has to pass
 						* */
-						//validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
 
 						XrechnungSeverity = ESeverity.error;
 					} else if (isExtended) {
