@@ -16,6 +16,8 @@
 - #465 cli version should also be able to combine PDF/A-3 source
 - #487 update to zugferd 2.3.0
 - #472 Fix logging implementation missing in CLI
+- #479 Re-Formatted and re-organized POMs - Part 2
+
 
 2.13.0
 =======
