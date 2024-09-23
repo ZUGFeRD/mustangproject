@@ -54,8 +54,9 @@ public class ClassCode {
 		this(listID, code, null);
 	}
 
-	/**
+	/***
 	 * Set the version for the scheme returned by {@link #getListID()}
+	 * @param listVersionID the scheme version
 	 */
 	public void setListVersionID(String listVersionID) {
 		this.listVersionID = listVersionID;

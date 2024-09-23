@@ -36,7 +36,6 @@ import java.util.stream.Stream;
 
 /**
  * The {@link NodeMap} contains a {@link Map} representation of DOM object
- * <p />
  * It can be constructed either from the children of a single {@link Node} or a {@link NodeList}.
  */
 public class NodeMap {
@@ -44,7 +43,6 @@ public class NodeMap {
 
 	/**
 	 * Create a new {@link NodeMap}
-	 * <p />
 	 * The {@link Node} that is passed to the constructor must not be null.
 	 * The {@link NodeMap} will be empty when no child nodes are present.
 	 *
@@ -69,7 +67,6 @@ public class NodeMap {
 
 	/**
 	 * Get matching node by {@code LocalName}
-	 * <p />
 	 * In case more than one node matches, it is not guaranteed that the first match is selected
 	 *
 	 * @param localNames one or more {@code LocalName}s
@@ -81,7 +78,6 @@ public class NodeMap {
 
 	/**
 	 * Get a {@link NodeMap} of the child of a matching node by {@code LocalName}
-	 * <p />
 	 * In case more than one node matches, it is not guaranteed that the first match is selected
 	 *
 	 * @param localNames one or more {@code LocalName}s
@@ -93,7 +89,6 @@ public class NodeMap {
 
 	/**
 	 * Get the text content of a matching node
-	 * <p>
 	 * In case more than one node matches, it is not guaranteed that the first match is selected
 	 *
 	 * @param localNames one or more {@code LocalName}s
@@ -105,7 +100,6 @@ public class NodeMap {
 
 	/**
 	 * Get the text content of a matching node
-	 * <p>
 	 * In case more than one node matches, it is not guaranteed that the first match is selected
 	 *
 	 * @param localNames one or more {@code LocalName}s
@@ -117,7 +111,6 @@ public class NodeMap {
 
 	/**
 	 * Get the text content of a matching node
-	 * <p>
 	 * In case more than one node matches, it is not guaranteed that the first match is selected
 	 *
 	 * @param localNames one or more {@code LocalName}s

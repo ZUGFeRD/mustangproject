@@ -124,7 +124,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	/***
 	 *
 	 * @param taxExemptionReasonText String e.g. Kleinunternehmer gemäß §19 UStG https://github.com/ZUGFeRD/mustangproject/issues/463
-	 * @return
+	 * @return fluent setter
 	 */
 	public Product setTaxExemptionReason(String  taxExemptionReasonText) {
 		taxExemptionReason = taxExemptionReasonText;
@@ -146,7 +146,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	/***
 	 *
 	 * @param code e.g. S (normal tax), Z=zero rated,  E (e.g. small business) or K (intrra community supply) see also https://github.com/ZUGFeRD/mustangproject/issues/463
-	 * @return
+	 * @return fluent setter
 	 */
 	public Product setTaxCategoryCode(String  code) {
 		taxCategoryCode = code;

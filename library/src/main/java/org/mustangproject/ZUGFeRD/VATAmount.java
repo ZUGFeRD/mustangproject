@@ -108,6 +108,7 @@ public class VATAmount {
 	/**
      * @param documentCode as String
 	 * @deprecated Use {@link #setCategoryCode(String)} instead
+	 * @return fluent setter
 	 */
 	@Deprecated
 	public VATAmount setDocumentCode(String documentCode) {
