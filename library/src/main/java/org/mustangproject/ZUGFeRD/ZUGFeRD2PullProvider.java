@@ -76,11 +76,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	}
 
 	protected String priceFormat(BigDecimal value) {
-		return XMLTools.nDigitFormat(value, 4);
+		return XMLTools.nDigitFormat(value, 18);
 	}
 
 	protected String quantityFormat(BigDecimal value) {
-		return XMLTools.nDigitFormat(value, 4);
+		return XMLTools.nDigitFormat(value, 18);
 	}
 
 	@Override
