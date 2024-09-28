@@ -32,6 +32,8 @@ import java.nio.file.Files;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class VisualizationTest extends ResourceCase {
 
+	final String TARGET_PDF = "./target/testout-Visualization.pdf";
+
 	public void testCIIVisualizationBasic() {
 
 		// the writing part
@@ -145,21 +147,18 @@ public class VisualizationTest extends ResourceCase {
 		assertEquals(expected, result);
 	}
 
-/*	public void testPDFVisualization() {
+	public void testPDFVisualization() {
 
-	// the writing part
-		CIIToUBL c2u = new CIIToUBL();
+		File UBLinputFile = getResourceAsFile("ubl/01.01a-INVOICE.ubl.xml");
+
+		// the writing part
 		String sourceFilename = "factur-x.xml";
-		File CIIinputFile = getResourceAsFile(sourceFilename);
 
 		String expected = null;
 		String result = null;
 		try {
 			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
-			/* remove file endings so that tests can also pass after checking
-			   out from git with arbitrary options (which may include CSRF changes)
-			 *
-			zvi.toPDF(CIIinputFile.getAbsolutePath(), "c:\\users\\jstaerk\\temp\\fopy2.pdf");
+			zvi.toPDF(UBLinputFile.getAbsolutePath(), TARGET_PDF);
 		} catch (UnsupportedOperationException e) {
 			fail("UnsupportedOperationException should not happen: "+e.getMessage());
 		} catch (IllegalArgumentException e) {
@@ -169,6 +168,6 @@ public class VisualizationTest extends ResourceCase {
 //		assertNotNull(result);
 		// Reading ZUGFeRD
 //		assertEquals(expected, result);
-	}*/
+	}
 
 }
