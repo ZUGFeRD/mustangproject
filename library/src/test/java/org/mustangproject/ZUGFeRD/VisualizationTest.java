@@ -19,8 +19,10 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.mustangproject.util.ByteArraySearcher;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,11 +30,13 @@ import javax.xml.transform.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class VisualizationTest extends ResourceCase {
 
-	final String TARGET_PDF = "./target/testout-Visualization.pdf";
+	final String TARGET_PDF_CII = "./target/testout-Visualization-cii.pdf";
+	final String TARGET_PDF_UBL = "./target/testout-Visualization-cii.pdf";
 
 	public void testCIIVisualizationBasic() {
 
@@ -147,7 +151,31 @@ public class VisualizationTest extends ResourceCase {
 		assertEquals(expected, result);
 	}
 
-	public void testPDFVisualization() {
+	public void testPDFVisualizationCII() {
+
+		File CIIinputFile = getResourceAsFile("cii/01.01a-INVOICE.cii.xml");
+
+		// the writing part
+
+		String expected = null;
+		String result = null;
+		try {
+			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+			zvi.toPDF(CIIinputFile.getAbsolutePath(), TARGET_PDF_CII);
+		} catch (UnsupportedOperationException e) {
+			fail("UnsupportedOperationException should not happen: "+e.getMessage());
+		} catch (IllegalArgumentException e) {
+			fail("IllegalArgumentException should not happen: "+e.getMessage());
+		}
+
+		try {
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+		} catch (IOException e) {
+			fail("IOException should not occur");
+		}
+	}
+
+	public void testPDFVisualizationUBL() {
 
 		File UBLinputFile = getResourceAsFile("ubl/01.01a-INVOICE.ubl.xml");
 
@@ -158,16 +186,19 @@ public class VisualizationTest extends ResourceCase {
 		String result = null;
 		try {
 			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
-			zvi.toPDF(UBLinputFile.getAbsolutePath(), TARGET_PDF);
+			zvi.toPDF(UBLinputFile.getAbsolutePath(), TARGET_PDF_UBL);
 		} catch (UnsupportedOperationException e) {
 			fail("UnsupportedOperationException should not happen: "+e.getMessage());
 		} catch (IllegalArgumentException e) {
 			fail("IllegalArgumentException should not happen: "+e.getMessage());
 		}
 
-//		assertNotNull(result);
-		// Reading ZUGFeRD
-//		assertEquals(expected, result);
+
+		try {
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+		} catch (IOException e) {
+			fail("IOException should not occur");
+		}
 	}
 
 }

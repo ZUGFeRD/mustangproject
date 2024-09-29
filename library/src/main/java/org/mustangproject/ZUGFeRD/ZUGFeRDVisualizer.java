@@ -148,10 +148,6 @@ public class ZUGFeRDVisualizer {
 		throws FileNotFoundException, TransformerException, IOException, SAXException, ParserConfigurationException {
 
 		try {
-			if (mXsltXRTemplate == null) {
-				mXsltXRTemplate = mFactory.newTemplates(
-					new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/cii-xr.xsl")));
-			}
 			if (mXsltPDFTemplate == null) {
 				mXsltPDFTemplate = mFactory.newTemplates(
 					new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/xr-pdf.xsl")));
@@ -247,6 +243,8 @@ public class ZUGFeRDVisualizer {
 
 		FileInputStream fis = new FileInputStream(xmlFilename);
 		EStandard theStandard= findOutStandardFromRootNode(fis);
+		fis = new FileInputStream(xmlFilename);//rewind :-(
+
 		try {
 			if (mXsltPDFTemplate == null) {
 				mXsltPDFTemplate = mFactory.newTemplates(
@@ -367,6 +365,11 @@ public class ZUGFeRDVisualizer {
 
 	protected void applyZF2XSLT(final InputStream xmlFile, final OutputStream HTMLOutstream)
 		throws TransformerException {
+		if (mXsltXRTemplate==null) {
+			mXsltXRTemplate = mFactory.newTemplates(
+				new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/cii-xr.xsl")));
+
+		}
 		Transformer transformer = mXsltXRTemplate.newTransformer();
 
 		transformer.transform(new StreamSource(xmlFile), new StreamResult(HTMLOutstream));
