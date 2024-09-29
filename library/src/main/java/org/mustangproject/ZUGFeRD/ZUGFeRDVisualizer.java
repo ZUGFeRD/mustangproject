@@ -111,7 +111,7 @@ public class ZUGFeRDVisualizer {
 	/***
 	 * returns which standard is used, CII or UBL
 	 * @param fis inputstream (will be consumed)
-	 * @return (facturx=cii)
+	 * @return (facturx = cii)
 	 */
 	public EStandard findOutStandardFromRootNode(InputStream fis) {
 
@@ -134,7 +134,7 @@ public class ZUGFeRDVisualizer {
 			} else if (root.getLocalName().equals(ublSignature)) {
 				return EStandard.ubl;
 			} else if (root.getLocalName().equals(ublCreditNoteSignature)) {
-				return EStandard.ubl;
+				return EStandard.ubl_creditnote;
 			} else if (root.getLocalName().equals(cioSignature)) {
 				return EStandard.orderx;
 			}
@@ -185,7 +185,7 @@ public class ZUGFeRDVisualizer {
 
 
 		fis = new FileInputStream(xmlFilename); // fis wont reset() so re-read from beginning
-		EStandard thestandard=findOutStandardFromRootNode(fis);
+		EStandard thestandard = findOutStandardFromRootNode(fis);
 		fis = new FileInputStream(xmlFilename); // fis wont reset() so re-read from beginning
 
 		if (thestandard == EStandard.zugferd) {
@@ -197,6 +197,10 @@ public class ZUGFeRDVisualizer {
 		} else if (thestandard == EStandard.ubl) {
 			//zf2 or fx
 			applyUBL2XSLT(fis, iaos);
+			doPostProcessing = true;
+		} else if (thestandard == EStandard.ubl_creditnote) {
+			//zf2 or fx
+			applyUBLCreditNote2XSLT(fis, iaos);
 			doPostProcessing = true;
 		} else if (thestandard == EStandard.orderx) {
 			//zf2 or fx
@@ -242,7 +246,7 @@ public class ZUGFeRDVisualizer {
 		throws FileNotFoundException, TransformerException {
 
 		FileInputStream fis = new FileInputStream(xmlFilename);
-		EStandard theStandard= findOutStandardFromRootNode(fis);
+		EStandard theStandard = findOutStandardFromRootNode(fis);
 		fis = new FileInputStream(xmlFilename);//rewind :-(
 
 		try {
@@ -258,10 +262,12 @@ public class ZUGFeRDVisualizer {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		//zf2 or fx
-		if (theStandard==EStandard.facturx) {
+		if (theStandard == EStandard.facturx) {
 			applyZF2XSLT(fis, iaos);
-		} else if (theStandard==EStandard.ubl) {
+		} else if (theStandard == EStandard.ubl) {
 			applyUBL2XSLT(fis, iaos);
+		} else if (theStandard == EStandard.ubl_creditnote) {
+			applyUBLCreditNote2XSLT(fis, iaos);
 		}
 
 
@@ -365,7 +371,7 @@ public class ZUGFeRDVisualizer {
 
 	protected void applyZF2XSLT(final InputStream xmlFile, final OutputStream HTMLOutstream)
 		throws TransformerException {
-		if (mXsltXRTemplate==null) {
+		if (mXsltXRTemplate == null) {
 			mXsltXRTemplate = mFactory.newTemplates(
 				new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/cii-xr.xsl")));
 
