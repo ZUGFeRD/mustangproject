@@ -201,4 +201,30 @@ public class VisualizationTest extends ResourceCase {
 		}
 	}
 
+	public void testPDFVisualizationUBLCreditNote() {
+
+		File UBLinputFile = getResourceAsFile("ubl/UBL-CreditNote-2.1-Example.ubl.xml");
+
+		// the writing part
+		String sourceFilename = "factur-x.xml";
+
+		String expected = null;
+		String result = null;
+		try {
+			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+			zvi.toPDF(UBLinputFile.getAbsolutePath(), TARGET_PDF_UBL);
+		} catch (UnsupportedOperationException e) {
+			fail("UnsupportedOperationException should not happen: "+e.getMessage());
+		} catch (IllegalArgumentException e) {
+			fail("IllegalArgumentException should not happen: "+e.getMessage());
+		}
+
+
+		try {
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+		} catch (IOException e) {
+			fail("IOException should not occur");
+		}
+	}
+
 }
