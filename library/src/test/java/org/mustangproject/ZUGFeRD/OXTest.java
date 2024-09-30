@@ -297,7 +297,7 @@ public class OXTest extends MustangReaderTestCase {
 		try {
 			Invoice i = zii.extractInvoice();
 
-			assertEquals(new BigDecimal("400.0000"), i.getZFItems()[1].getQuantity());
+			assertEquals(new BigDecimal("400.000000000000000000"), i.getZFItems()[1].getQuantity());
 			/* getting the Quantity is more difficult than usual because in OrderX it's
 			called requestedQuantity, not BilledQuantity
 			 */
@@ -351,7 +351,7 @@ public class OXTest extends MustangReaderTestCase {
 		try {
 			Invoice i = zii.extractInvoice();
 
-			assertEquals(new BigDecimal("1.0000"), i.getZFItems()[1].getQuantity());
+			assertEquals(new BigDecimal("1.000000000000000000"), i.getZFItems()[1].getQuantity());
 			/* getting the Quantity is more difficult than usual because in OrderX it's
 			called requestedQuantity, not BilledQuantity
 			 */

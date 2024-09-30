@@ -57,10 +57,10 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		// Reading ZUGFeRD
 		assertEquals("Bei Spiel GmbH", invoice.getOwnOrganisationName());
 		assertEquals(3, invoice.getZFItems().length);
-		assertEquals("400.0000", invoice.getZFItems()[1].getQuantity().toString());
+		assertEquals("400.000000000000000000", invoice.getZFItems()[1].getQuantity().toString());
 
 		assertEquals("AB321", invoice.getReferenceNumber());
-		assertEquals("160.0000", invoice.getZFItems()[0].getPrice().toString());
+		assertEquals("160.000000000000000000", invoice.getZFItems()[0].getPrice().toString());
 		assertEquals("Heiße Luft pro Liter", invoice.getZFItems()[2].getProduct().getName());
 		assertEquals("LTR", invoice.getZFItems()[2].getProduct().getUnit());
 		assertEquals("7.00", invoice.getZFItems()[0].getProduct().getVATPercent().toString());
