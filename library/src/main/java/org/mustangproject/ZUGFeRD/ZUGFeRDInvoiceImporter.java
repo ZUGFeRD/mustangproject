@@ -377,6 +377,8 @@ public class ZUGFeRDInvoiceImporter {
 
 		}
 
+		String currency= extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"InvoiceCurrencyCode\"]|*[local-name()=\"DocumentCurrencyCode\"]");
+		zpp.setCurrency(currency);
 
 		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]|//*[local-name()=\"ApplicableSupplyChainTradeSettlement\"]");
 		NodeList headerTradeSettlementNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
