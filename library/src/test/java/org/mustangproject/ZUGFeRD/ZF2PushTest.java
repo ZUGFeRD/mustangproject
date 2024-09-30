@@ -152,7 +152,7 @@ public class ZF2PushTest extends TestCase {
 		} catch (IOException e) {
 			fail("IOException should not be raised");
 		}
-		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_PDF);
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_ATTACHMENTSPDF);
 		Invoice i= null;
 		try {
 			i = zii.extractInvoice();
