@@ -362,8 +362,6 @@ public class ZUGFeRDVisualizer {
 			// Step 6: Start XSLT transformation and FOP processing
 			transformer.transform(src, res);
 
-			//Files.write(Paths.get("C:\\Users\\jstaerk\\temp\\fop.pdf"), res.toString().getBytes(StandardCharsets.UTF_8));
-
 		} catch (FOPException | IOException | TransformerException e) {
 			LOGGER.error("Failed to create PDF", e);
 		}

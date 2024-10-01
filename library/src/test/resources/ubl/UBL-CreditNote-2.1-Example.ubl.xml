@@ -33,14 +33,6 @@ but with a UTF8 BOM at the beginning
 			</cac:ExternalReference>
 		</cac:Attachment>
 	</cac:AdditionalDocumentReference>
-	<cac:AdditionalDocumentReference>
-		<cbc:ID>Doc2</cbc:ID>
-		<cbc:DocumentType>Drawing</cbc:DocumentType>
-		<cac:Attachment>
-			<cbc:EmbeddedDocumentBinaryObject mimeCode="application/pdf"
-				>UjBsR09EbGhjZ0dTQUxNQUFBUUNBRU1tQ1p0dU1GUXhEUzhi</cbc:EmbeddedDocumentBinaryObject>
-		</cac:Attachment>
-	</cac:AdditionalDocumentReference>
 	<cac:AccountingSupplierParty>
 		<cac:Party>
 			<cbc:EndpointID schemeID="GLN" schemeAgencyID="9">1234567890123</cbc:EndpointID>
