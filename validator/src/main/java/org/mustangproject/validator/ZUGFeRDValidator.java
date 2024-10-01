@@ -25,6 +25,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.mustangproject.util.ByteArraySearcher;
 import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

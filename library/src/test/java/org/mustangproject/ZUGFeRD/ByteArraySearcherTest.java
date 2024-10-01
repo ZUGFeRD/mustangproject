@@ -1,4 +1,4 @@
-package org.mustangproject.validator;
+package org.mustangproject.ZUGFeRD;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
+import org.mustangproject.util.ByteArraySearcher;
 
 public class ByteArraySearcherTest
 {
