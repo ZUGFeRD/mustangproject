@@ -62,11 +62,15 @@ public class ZUGFeRDInvoiceImporter {
 	 * parsed Document
 	 */
 	protected Document document;
+	/***
+	 * automatically parse into importedInvoice
+	 */
+	protected boolean parseAutomatically = true;
 	protected Integer version;
-	protected Invoice importedInvoice=null;
+	protected Invoice importedInvoice = null;
 	protected boolean recalcPrice = false;
 	protected boolean ignoreCalculationErrors = false;
-	protected ArrayList<FileAttachment> fileAttachments=new ArrayList<>();
+	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<>();
 
 
 	protected ZUGFeRDInvoiceImporter() {
@@ -93,7 +97,6 @@ public class ZUGFeRDInvoiceImporter {
 	}
 
 
-
 	/***
 	 * return the file names of all files embedded into the PDF
 	 * @see for XML embedded files please use ZUGFeRDInvoiceImporter.getFileAttachmentsXML
@@ -102,7 +105,6 @@ public class ZUGFeRDInvoiceImporter {
 	public List<FileAttachment> getFileAttachmentsPDF() {
 		return PDFAttachments;
 	}
-
 
 
 	/**
@@ -165,8 +167,6 @@ public class ZUGFeRDInvoiceImporter {
 	}
 
 
-
-
 	private void extractFiles(Map<String, PDComplexFileSpecification> names) throws IOException {
 		for (final String alias : names.keySet()) {
 
@@ -199,16 +199,35 @@ public class ZUGFeRDInvoiceImporter {
 		}
 	}
 
-	public void setRawXML(byte[] rawXML) throws IOException {
+	/***
+	 * set the xml of a CII invoice
+	 * @param rawXML the xml string
+	 * @param doParse automatically parse input for zugferdImporter (not ZUGFeRDInvoiceImporter)
+	 * @throws IOException
+	 */
+	public void setRawXML(byte[] rawXML, boolean doParse) throws IOException {
 		this.containsMeta = true;
 		this.rawXML = rawXML;
 		this.version = null;
+
+			parseAutomatically = doParse;
+
 		try {
 			setDocument();
 		} catch (ParserConfigurationException | SAXException e) {
 			LOGGER.error("Failed to parse XML", e);
 			throw new ZUGFeRDExportException(e);
 		}
+
+	}
+
+	/***
+	 * set the xml of a CII invoice, simple version
+	 * @param rawXML the cii(?) as a string
+	 * @throws IOException
+	 */
+	public void setRawXML(byte[] rawXML) throws IOException {
+		setRawXML(rawXML, true);
 	}
 
 	private void setDocument() throws ParserConfigurationException, IOException, SAXException {
@@ -218,16 +237,17 @@ public class ZUGFeRDInvoiceImporter {
 		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
 		///	is.skip(guessBOMSize(is));
 		document = builder.parse(is);
-		try {
-			importedInvoice=new Invoice();
-			extractInto(importedInvoice);
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
+		if (parseAutomatically) {
+			try {
+				importedInvoice = new Invoice();
+				extractInto(importedInvoice);
+			} catch (XPathExpressionException e) {
+				throw new RuntimeException(e);
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
-
 
 
 	/***
@@ -377,7 +397,7 @@ public class ZUGFeRDInvoiceImporter {
 
 		}
 
-		String currency= extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"InvoiceCurrencyCode\"]|*[local-name()=\"DocumentCurrencyCode\"]");
+		String currency = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"InvoiceCurrencyCode\"]|*[local-name()=\"DocumentCurrencyCode\"]");
 		zpp.setCurrency(currency);
 
 		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]|//*[local-name()=\"ApplicableSupplyChainTradeSettlement\"]");
@@ -503,7 +523,7 @@ public class ZUGFeRDInvoiceImporter {
 			xpr = xpath.compile("//*[local-name()=\"AttachmentBinaryObject\"]|//*[local-name()=\"EmbeddedDocumentBinaryObject\"]");
 			NodeList attachmentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			for (int i = 0; i < attachmentNodes.getLength(); i++) {
-				FileAttachment fa=new FileAttachment(attachmentNodes.item(i).getAttributes().getNamedItem("filename").getNodeValue(),attachmentNodes.item(i).getAttributes().getNamedItem("mimeCode").getNodeValue(),"Data", Base64.getDecoder().decode(attachmentNodes.item(i).getTextContent()));
+				FileAttachment fa = new FileAttachment(attachmentNodes.item(i).getAttributes().getNamedItem("filename").getNodeValue(), attachmentNodes.item(i).getAttributes().getNamedItem("mimeCode").getNodeValue(), "Data", Base64.getDecoder().decode(attachmentNodes.item(i).getTextContent()));
 				fileAttachments.add(fa);
 				// filename = "Aufmass.png" mimeCode = "image/png"
 				//EmbeddedDocumentBinaryObject cbc:EmbeddedDocumentBinaryObject mimeCode="image/png" filename="Aufmass.png"
@@ -581,6 +601,7 @@ public class ZUGFeRDInvoiceImporter {
 			}
 
 			TransactionCalculator tc = new TransactionCalculator(zpp);
+
 			String expectedStringTotalGross = tc.getGrandTotal().toPlainString();
 			EStandard whichType;
 			try {
@@ -600,10 +621,10 @@ public class ZUGFeRDInvoiceImporter {
 		return zpp;
 
 	}
+
 	protected Document getDocument() {
 		return document;
 	}
-
 
 
 	protected String extractString(String xpathStr) {

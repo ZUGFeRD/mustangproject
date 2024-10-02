@@ -374,6 +374,9 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 			if (settlement instanceof IZUGFeRDTradeSettlementDebit) {
 				return ((IZUGFeRDTradeSettlementDebit) settlement).getIBAN();
 			}
+			if (settlement instanceof IZUGFeRDTradeSettlementPayment) {
+				return ((IZUGFeRDTradeSettlementPayment) settlement).getOwnIBAN();
+			}
 		}
 		return null;
 	}
@@ -401,7 +404,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return when the payment is due
 	 */
 	public String getDueDate() {
-		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd");
 		return sdf.format(importedInvoice.getDueDate());
 	}
 
