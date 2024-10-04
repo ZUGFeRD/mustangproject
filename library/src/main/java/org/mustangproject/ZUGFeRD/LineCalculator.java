@@ -37,10 +37,10 @@ public class LineCalculator {
 		BigDecimal vatPercent = currentItem.getProduct().getVATPercent();
 		if (vatPercent == null)
 			vatPercent = BigDecimal.ZERO;
-		BigDecimal multiplicator = vatPercent.divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
+		BigDecimal multiplicator = vatPercent.divide(BigDecimal.valueOf(100));
 		priceGross = currentItem.getPrice(); // see https://github.com/ZUGFeRD/mustangproject/issues/159
 		price = priceGross.subtract(allowance).add(charge);
-		itemTotalNetAmount = currentItem.getQuantity().multiply(getPrice()).divide(currentItem.getBasisQuantity())
+		itemTotalNetAmount = currentItem.getQuantity().multiply(getPrice()).divide(currentItem.getBasisQuantity(), RoundingMode.HALF_UP)
 				.subtract(allowanceItemTotal).setScale(2, RoundingMode.HALF_UP);
 		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);
 
