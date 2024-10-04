@@ -89,6 +89,19 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 									}
 								}
 
+								if (currentTopElementName.equals("PartyIdentification")) {
+
+									NodeList partyName = party.item(partyIndex).getChildNodes();
+									for (int partyNameIndex = 0; partyNameIndex < partyName.getLength(); partyNameIndex++) {
+										if (partyName.item(partyNameIndex).getLocalName() != null) {
+											if (partyName.item(partyNameIndex).getLocalName().equals("ID")) {
+												setID(partyName.item(partyNameIndex).getTextContent());
+											}
+
+										}
+									}
+								}
+
 								// UBL only: formally it can have a name as well but BT27 party name *should* be stored in
 								// so overwrite if one exists
 								if (currentTopElementName.equals("PartyLegalEntity")) {
@@ -311,7 +324,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 				NodeList itemChilds = currentItemNode.getChildNodes();
 				for (int itemChildIndex = 0; itemChildIndex < itemChilds.getLength(); itemChildIndex++) {
 					if (itemChilds.item(itemChildIndex).getLocalName() != null) {
-						if (itemChilds.item(itemChildIndex).getLocalName().equals("ID")) {
+						if (itemChilds.item(itemChildIndex).getLocalName().equals("GlobalID")) {
 							setID(itemChilds.item(itemChildIndex).getTextContent());
 						}
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("Name")) {

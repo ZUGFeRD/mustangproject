@@ -112,7 +112,7 @@
     <cac:Party>
       <cbc:EndpointID schemeID="DE:SMTP">Buyer electronic address</cbc:EndpointID>
       <cac:PartyIdentification>
-        <cbc:ID>0190:Buyer identifier</cbc:ID>
+        <cbc:ID>Buyer identifier</cbc:ID>
       </cac:PartyIdentification>
       <cac:PartyName>
         <cbc:Name>Buyer trading name</cbc:Name>

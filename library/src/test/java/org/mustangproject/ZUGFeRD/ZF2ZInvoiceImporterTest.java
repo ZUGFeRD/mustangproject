@@ -42,9 +42,23 @@ import java.util.Arrays;
 public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 
-	public void testInvoiceImport() {
+	public void testInvoiceImportSupportCase145() {
 
-		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2new.pdf");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("C:\\Users\\jstaerk\\workspace\\XMLExamples\\zfdiverses\\20241004_\\IGEPA-Rechnung_41102839_00200_20240918.PDF");
+		boolean hasExceptions = false;
+		Invoice invoice = null;
+		try {
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+
+	}
+
+		public void testInvoiceImport() {
+
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2new.pdf");
 
 		boolean hasExceptions = false;
 		Invoice invoice = null;
@@ -318,12 +332,30 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 
-/*
+
 	public void testEEISI_300_cii_Import() {
 		boolean hasExceptions = false;
 		File input = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel2.ubl.xml");
+		File inputCorrect = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel2.cii.xml");
 
 
+		ZUGFeRDInvoiceImporter cii = new ZUGFeRDInvoiceImporter();
+		try {
+			cii.fromXML(new String(Files.readAllBytes(inputCorrect.toPath()), StandardCharsets.UTF_8));
+
+		} catch (IOException e) {
+			hasExceptions = true;
+		}
+
+		Invoice ciiinvoice = null;
+		try {
+			ciiinvoice = cii.extractInvoice();
+
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
 		try {
 			zii.fromXML(new String(Files.readAllBytes(input.toPath()), StandardCharsets.UTF_8));
@@ -335,11 +367,12 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		Invoice invoice = null;
 		try {
 			invoice = zii.extractInvoice();
-			assertEquals("Seller contact point",invoice.getSender().getName());
+			assertEquals("Seller name",invoice.getSender().getName());
+			assertEquals(ciiinvoice.getRecipient().getID(),invoice.getRecipient().getID());
 				/*
 				<cbc:Name>Seller contact point</cbc:Name>
         <cbc:Telephone>+41 345 654455</cbc:Telephone>
-        <cbc:ElectronicMail>seller@contact.de);*
+        <cbc:ElectronicMail>seller@contact.de);*/
 		} catch (XPathExpressionException | ParseException e) {
 			hasExceptions = true;
 		}
@@ -349,5 +382,5 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
-*/
+
 }
