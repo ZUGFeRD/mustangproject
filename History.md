@@ -4,6 +4,7 @@
 - 491
 - 501
 - upgraded en16931 cen schematron to 1.3.12 
+- -499/500 PDF layout corrections
 
 2.14.0
 =======

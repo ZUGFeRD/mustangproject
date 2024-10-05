@@ -21,7 +21,7 @@ public class XMLTools extends XMLWriter {
 
 	public static String nDigitFormat(BigDecimal value, int scale) {
 		/*
-		 * I needed 123,45, locale independent.I tried
+		 * I needed 123.45, locale independent.I tried
 		 * NumberFormat.getCurrencyInstance().format( 12345.6789 ); but that is locale
 		 * specific.I also tried DecimalFormat df = new DecimalFormat( "0,00" );
 		 * df.setDecimalSeparatorAlwaysShown(true); df.setGroupingUsed(false);
@@ -39,7 +39,28 @@ public class XMLTools extends XMLWriter {
 
 	}
 
-	public static String encodeXML(CharSequence s) {
+	/***
+	 * formats a number so that at least minDecimals are displayed but at the maximum maxDecimals are there, i.e.
+	 * cuts potential 0s off the end until minDecimals
+	 * @param value
+	 * @param maxDecimals number of maximal scale
+	 * @param minDecimals number of minimal scale
+	 * @return value as String with decimals in the specified range
+	 */
+	public static String nDigitFormatDecimalRange(BigDecimal value, int maxDecimals, int minDecimals) {
+		if ((maxDecimals<minDecimals)||(maxDecimals<0)||(minDecimals<0)) {
+			throw new IllegalArgumentException("Invalid scale range provided");
+		}
+		int curDecimals=maxDecimals;
+		while  ( (curDecimals>minDecimals) && (value.setScale(curDecimals, RoundingMode.HALF_UP).compareTo(value.setScale(curDecimals-1, RoundingMode.HALF_UP))==0)) {
+			 curDecimals--;
+		}
+		return value.setScale(curDecimals, RoundingMode.HALF_UP).toPlainString();
+
+	}
+
+
+		public static String encodeXML(CharSequence s) {
 		if (s == null) {
 			return "";
 		}

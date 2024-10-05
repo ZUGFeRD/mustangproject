@@ -76,11 +76,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	}
 
 	protected String priceFormat(BigDecimal value) {
-		return XMLTools.nDigitFormat(value, 18);
+		// 18 decimals are max for price and qty due  to xml restrictions,
+		// see Chapter 3.2.3 of https://www.w3.org/TR/xmlschema-2/
+		return XMLTools.nDigitFormatDecimalRange(value, 18, 4);
 	}
 
 	protected String quantityFormat(BigDecimal value) {
-		return XMLTools.nDigitFormat(value, 18);
+		return XMLTools.nDigitFormatDecimalRange(value, 18, 4);
 	}
 
 	@Override
