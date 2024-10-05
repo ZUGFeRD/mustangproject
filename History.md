@@ -2,6 +2,8 @@
 - 494
 - 391
 - 491
+- 501
+- upgraded en16931 cen schematron to 1.3.12 
 
 2.14.0
 =======

@@ -276,7 +276,7 @@ public class XMLValidator extends Validator {
 					// UBL
 					LOGGER.debug("UBL");
 					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "UBL_21/maindoc/UBL-Invoice-2.1.xsd", 18, EPart.fx);
-					xsltFilename = "/xslt/UBL_21/EN16931-UBL-validation.xslt";
+					xsltFilename = "/xslt/en16931schematron/EN16931-UBL-validation.xslt";
 
 					mainSchematronSectionErrorTypeCode=24;
 
@@ -364,7 +364,7 @@ public class XMLValidator extends Validator {
 					if (context.getGeneration().equals("2")
 							&& (isBasic || isEN16931 || isXRechnung)) {
 						//additionally validate against CEN
-						validateSchematron(zfXML, "/xslt/cii16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
+						validateSchematron(zfXML, "/xslt/en16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
 						if (!disableNotices || XrechnungSeverity != ESeverity.notice) {
 							validateXR(zfXML, XrechnungSeverity);
 						}
