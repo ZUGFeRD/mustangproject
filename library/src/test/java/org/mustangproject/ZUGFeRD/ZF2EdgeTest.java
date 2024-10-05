@@ -215,7 +215,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	}
 
 	@Override
-	public IZUGFeRDPaymentTerms getPaymentTerms() {
+	public IZUGFeRDPaymentTerms[] getPaymentTerms() {
 		PaymentDiscountTerms paymentDiscountTerms =
 				new PaymentDiscountTerms(
 						new BigDecimal(2), // skonto prozent
@@ -230,13 +230,13 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 			e.printStackTrace();
 
 		}
-		return
-				new PaymentTerms(
-						"14 Tage 2% Skonto, 30 Tage rein netto",
-						due,// fälligkeitsdatum
-						paymentDiscountTerms //PaymentDiscountTerms
-				);
-
+		return new IZUGFeRDPaymentTerms[]{
+			new PaymentTerms(
+				"14 Tage 2% Skonto, 30 Tage rein netto",
+				due,// fälligkeitsdatum
+				paymentDiscountTerms //PaymentDiscountTerms
+			)
+		};
 	}
 
 	@Override
