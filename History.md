@@ -1,10 +1,13 @@
-- 481 
-- 494
-- 391
-- 491
-- 501
+2.14.1 
+=======
+2024-10-06
+
+- #481 also be able to convert XRechnung/UBL to PDF not only CII
+- #494 Quantity/Price Decimal Places
+- #391 Runden bei Negativwerten
+- #491/501 non terminating decimal expansion
 - upgraded en16931 cen schematron to 1.3.12 
-- -499/500 PDF layout corrections
+- #499/500 PDF layout corrections
 
 2.14.0
 =======
