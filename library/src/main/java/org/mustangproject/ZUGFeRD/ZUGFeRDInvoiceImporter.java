@@ -261,6 +261,8 @@ public class ZUGFeRDInvoiceImporter {
 
 		String number = "";
 		String typeCode = null;
+		String deliveryPeriodStart = null;
+		String deliveryPeriodEnd = null;
 		/*
 		 * dummywerte sind derzeit noch setDueDate setIssueDate setDeliveryDate
 		 * setSender setRecipient setnumber bspw. due date
@@ -460,9 +462,37 @@ public class ZUGFeRDInvoiceImporter {
 						}
 					}
 				}
+				if ((headerTradeSettlementChilds.item(settlementChildIndex).getLocalName() != null)
+					&& (headerTradeSettlementChilds.item(settlementChildIndex).getLocalName().equals("BillingSpecifiedPeriod"))) {
+					NodeList periodChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
+					for (int periodChildIndex = 0; periodChildIndex < periodChilds.getLength(); periodChildIndex++) {
+						if ((periodChilds.item(periodChildIndex).getLocalName() != null) && (periodChilds.item(periodChildIndex).getLocalName().equals("StartDateTime"))) {
+
+							NodeList startPeriodChilds = periodChilds.item(periodChildIndex).getChildNodes();
+							for (int startPeriodIndex = 0; startPeriodIndex < startPeriodChilds.getLength(); startPeriodIndex++) {
+								if ((startPeriodChilds.item(startPeriodIndex).getLocalName() != null) && (startPeriodChilds.item(startPeriodIndex).getLocalName().equals("DateTimeString"))) {//CII
+									deliveryPeriodStart = startPeriodChilds.item(startPeriodIndex).getTextContent();
+								}
+							}
+						}
+						if ((periodChilds.item(periodChildIndex).getLocalName() != null) && (periodChilds.item(periodChildIndex).getLocalName().equals("EndDateTime"))) {
+							NodeList endPeriodChilds = periodChilds.item(periodChildIndex).getChildNodes();
+							for (int endPeriodIndex = 0; endPeriodIndex < endPeriodChilds.getLength(); endPeriodIndex++) {
+								if ((endPeriodChilds.item(endPeriodIndex).getLocalName() != null) && (endPeriodChilds.item(endPeriodIndex).getLocalName().equals("DateTimeString"))) {//CII
+									deliveryPeriodEnd = endPeriodChilds.item(endPeriodIndex).getTextContent();
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 
+		if ((deliveryPeriodStart!=null)&&(deliveryPeriodEnd!=null)) {
+			zpp.setDetailedDeliveryPeriod(XMLTools.tryDate(deliveryPeriodStart), XMLTools.tryDate(deliveryPeriodEnd));
+		} else if (deliveryPeriodStart!=null) {
+			zpp.setDeliveryDate(XMLTools.tryDate(deliveryPeriodStart));
+		}
 
 		xpr = xpath.compile("//*[local-name()=\"PaymentMeans\"]"); //UBL only
 		NodeList paymentMeansNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);

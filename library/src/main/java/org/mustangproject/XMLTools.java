@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.AbstractList;
-import java.util.Collections;
-import java.util.List;
-import java.util.RandomAccess;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 import org.dom4j.io.XMLWriter;
+import org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -70,7 +69,85 @@ public class XMLTools extends XMLWriter {
 
 	}
 
+	/**
+	 * returns the value of an node
+	 *
+	 * @param node the Node to get the value from
+	 * @return A String or empty String, if no value was found
+	 */
+	public static String getNodeValue(Node node) {
+		if (node != null && node.getFirstChild() != null) {
+			return node.getFirstChild().getNodeValue();
+		}
+		return "";
+	}
 
+
+	/**
+	 * tries to convert a String to BigDecimal.
+	 *
+	 * @param nodeValue The value as String
+	 * @return a BigDecimal with the value provides as String or a BigDecimal with value 0.00 if an error occurs
+	 */
+	public static BigDecimal tryBigDecimal(String nodeValue) {
+		try {
+			return new BigDecimal(nodeValue);
+		} catch (final Exception e) {
+			try {
+				return BigDecimal.valueOf(Float.valueOf(nodeValue));
+			} catch (final Exception ex) {
+				return new BigDecimal("0.00");
+			}
+		}
+	}
+
+
+	/**
+	 * tries to convert a Node to a BigDecimal.
+	 *
+	 * @param node The value as String
+	 * @return a BigDecimal with the value provides as String or a BigDecimal with value 0.00 if an error occurs
+	 */
+	public static BigDecimal tryBigDecimal(Node node) {
+		final String nodeValue = XMLTools.getNodeValue(node);
+		if (nodeValue.isEmpty()) {
+			return null;
+		}
+		return XMLTools.tryBigDecimal(nodeValue);
+	}
+
+	/***
+	 * returns a util.Date from a 102 String yyyymmdd in a node
+	 * @param node the node
+	 * @return a util.Date, or null, if not parseable
+	 */
+	public static Date tryDate(Node node) {
+		final String nodeValue = XMLTools.getNodeValue(node);
+		if (nodeValue.isEmpty()) {
+			return null;
+		}
+		return tryDate(nodeValue);
+	}
+
+	/***
+	 * returns a util.Date from a 102 String yyyymmdd
+	 * @param toParse the string
+	 * @return a util.Date, or null, if not parseable
+	 */
+	public static Date tryDate(String toParse) {
+		final SimpleDateFormat formatter = ZUGFeRDDateFormat.DATE.getFormatter();
+		try {
+			return formatter.parse(toParse);
+		} catch (final Exception e) {
+			return null;
+		}
+	}
+
+	/***
+	 * relplaces some entities like < , > and & with their escaped pendant like &lt;
+	 * @param s the string
+	 * @return the "safe" string
+	 */
 	public static String encodeXML(CharSequence s) {
 		if (s == null) {
 			return "";

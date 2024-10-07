@@ -34,6 +34,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.fop.util.XMLUtil;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
@@ -702,7 +703,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 							if (node != null) {
 								final NodeList tradeAgreementChildren = node.getChildNodes();
 								node = getNodeByName(tradeAgreementChildren, "ChargeAmount");
-								lineItem.setPrice(tryBigDecimal(getNodeValue(node)));
+								lineItem.setPrice(XMLTools.tryBigDecimal(node));
 								node = getNodeByName(tradeAgreementChildren, "BasisQuantity");
 								if (node != null && node.getAttributes() != null) {
 									final Node unitCodeAttribute = node.getAttributes().getNamedItem("unitCode");
@@ -715,48 +716,48 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 							node = getNodeByName(nn.getChildNodes(), "GrossPriceProductTradePrice");
 							if (node != null) {
 								node = getNodeByName(node.getChildNodes(), "ChargeAmount");
-								lineItem.setGrossPrice(tryBigDecimal(getNodeValue(node)));
+								lineItem.setGrossPrice(XMLTools.tryBigDecimal(node));
 							}
 							break;
 
 						case "AssociatedDocumentLineDocument":
 
 							node = getNodeByName(nn.getChildNodes(), "LineID");
-							lineItem.setId(getNodeValue(node));
+							lineItem.setId(XMLTools.getNodeValue(node));
 							break;
 
 						case "SpecifiedTradeProduct":
 
 							node = getNodeByName(nn.getChildNodes(), "SellerAssignedID");
-							lineItem.getProduct().setSellerAssignedID(getNodeValue(node));
+							lineItem.getProduct().setSellerAssignedID(XMLTools.getNodeValue(node));
 
 							node = getNodeByName(nn.getChildNodes(), "BuyerAssignedID");
-							lineItem.getProduct().setBuyerAssignedID(getNodeValue(node));
+							lineItem.getProduct().setBuyerAssignedID(XMLTools.getNodeValue(node));
 
 							node = getNodeByName(nn.getChildNodes(), "Name");
-							lineItem.getProduct().setName(getNodeValue(node));
+							lineItem.getProduct().setName(XMLTools.getNodeValue(node));
 
 							node = getNodeByName(nn.getChildNodes(), "Description");
-							lineItem.getProduct().setDescription(getNodeValue(node));
+							lineItem.getProduct().setDescription(XMLTools.getNodeValue(node));
 							break;
 
 						case "SpecifiedLineTradeDelivery":
 						case "SpecifiedSupplyChainTradeDelivery":
 							node = getNodeByName(nn.getChildNodes(), "BilledQuantity");
-							lineItem.setQuantity(tryBigDecimal(getNodeValue(node)));
+							lineItem.setQuantity(XMLTools.tryBigDecimal(node));
 							break;
 
 						case "SpecifiedLineTradeSettlement":
 							node = getNodeByName(nn.getChildNodes(), "ApplicableTradeTax");
 							if (node != null) {
 								node = getNodeByName(node.getChildNodes(), "RateApplicablePercent");
-								lineItem.getProduct().setVATPercent(tryBigDecimal(getNodeValue(node)));
+								lineItem.getProduct().setVATPercent(XMLTools.tryBigDecimal(node));
 							}
 
 							node = getNodeByName(nn.getChildNodes(), "ApplicableTradeTax");
 							if (node != null) {
 								node = getNodeByName(node.getChildNodes(), "CalculatedAmount");
-								lineItem.setTax(tryBigDecimal(getNodeValue(node)));
+								lineItem.setTax(XMLTools.tryBigDecimal(node));
 							}
 							node = getNodeByName(nn.getChildNodes(), "BillingSpecifiedPeriod");
 							if (node != null) {
@@ -770,13 +771,13 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 								if (end != null) {
 									dateTimeEnd = getNodeByName(end.getChildNodes(), "DateTimeString");
 								}
-								lineItem.setDetailedDeliveryPeriod(tryDate(dateTimeStart), tryDate(dateTimeEnd));
+								lineItem.setDetailedDeliveryPeriod(XMLTools.tryDate(dateTimeStart), XMLTools.tryDate(dateTimeEnd));
 							}
 
 							node = getNodeByName(nn.getChildNodes(), "SpecifiedTradeSettlementLineMonetarySummation");
 							if (node != null) {
 								node = getNodeByName(node.getChildNodes(), "LineTotalAmount");
-								lineItem.setLineTotalAmount(tryBigDecimal(getNodeValue(node)));
+								lineItem.setLineTotalAmount(XMLTools.tryBigDecimal(node));
 							}
 							break;
 						case "SpecifiedSupplyChainTradeSettlement":
@@ -785,19 +786,19 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 							node = getNodeByName(nn.getChildNodes(), "ApplicableTradeTax");
 							if (node != null) {
 								node = getNodeByName(node.getChildNodes(), "ApplicablePercent");
-								lineItem.getProduct().setVATPercent(tryBigDecimal(getNodeValue(node)));
+								lineItem.getProduct().setVATPercent(XMLTools.tryBigDecimal(node));
 							}
 
 							node = getNodeByName(nn.getChildNodes(), "ApplicableTradeTax");
 							if (node != null) {
 								node = getNodeByName(node.getChildNodes(), "CalculatedAmount");
-								lineItem.setTax(tryBigDecimal(getNodeValue(node)));
+								lineItem.setTax(XMLTools.tryBigDecimal(node));
 							}
 
 							node = getNodeByName(nn.getChildNodes(), "SpecifiedTradeSettlementMonetarySummation");
 							if (node != null) {
 								node = getNodeByName(node.getChildNodes(), "LineTotalAmount");
-								lineItem.setLineTotalAmount(tryBigDecimal(getNodeValue(node)));
+								lineItem.setLineTotalAmount(XMLTools.tryBigDecimal(node));
 							}
 							break;
 					}
@@ -872,51 +873,4 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 		}
 	}
 
-	/**
-	 * returns the value of an node
-	 *
-	 * @param node the Node to get the value from
-	 * @return A String or empty String, if no value was found
-	 */
-	private String getNodeValue(Node node) {
-		if (node != null && node.getFirstChild() != null) {
-			return node.getFirstChild().getNodeValue();
-		}
-		return "";
-	}
-
-	/**
-	 * tries to convert an String to BigDecimal.
-	 *
-	 * @param nodeValue The value as String
-	 * @return a BigDecimal with the value provides as String or a BigDecimal with value 0.00 if an error occurs
-	 */
-	private BigDecimal tryBigDecimal(String nodeValue) {
-		try {
-			return new BigDecimal(nodeValue);
-		} catch (final Exception e) {
-			try {
-				return BigDecimal.valueOf(Float.valueOf(nodeValue));
-			} catch (final Exception ex) {
-				return new BigDecimal("0.00");
-			}
-		}
-	}
-
-	private Date tryDate(Node node) {
-		final String nodeValue = getNodeValue(node);
-		if (nodeValue.isEmpty()) {
-			return null;
-		}
-		return tryDate(nodeValue);
-	}
-
-	private static Date tryDate(String toParse) {
-		final SimpleDateFormat formatter = ZUGFeRDDateFormat.DATE.getFormatter();
-		try {
-			return formatter.parse(toParse);
-		} catch (final Exception e) {
-			return null;
-		}
-	}
 }
