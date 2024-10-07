@@ -394,9 +394,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 */
 	public String getAmount() {
 
-		TransactionCalculator ic=new TransactionCalculator(importedInvoice);
-
-		return ic.getGrandTotal().toPlainString();
+		return importedInvoice.getGrandTotal().toPlainString();
 	}
 
 

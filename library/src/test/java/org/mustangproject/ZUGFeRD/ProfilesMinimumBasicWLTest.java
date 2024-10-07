@@ -136,7 +136,7 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF_FX_MINIMUM);
 
 		// Reading ZUGFeRD
-		assertEquals("145.37",zi.getAmount());
+		assertEquals("146.37",zi.getAmount());
 //		assertEquals(zi.getBIC(), ownBIC);
 //		assertEquals(zi.getIBAN(), ownIBAN);
 		assertEquals(ownOrgName, zi.getHolder());

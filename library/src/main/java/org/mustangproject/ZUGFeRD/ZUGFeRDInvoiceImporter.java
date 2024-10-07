@@ -67,7 +67,7 @@ public class ZUGFeRDInvoiceImporter {
 	 */
 	protected boolean parseAutomatically = true;
 	protected Integer version;
-	protected Invoice importedInvoice = null;
+	protected CalculatedInvoice importedInvoice = null;
 	protected boolean recalcPrice = false;
 	protected boolean ignoreCalculationErrors = false;
 	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<>();
@@ -239,7 +239,7 @@ public class ZUGFeRDInvoiceImporter {
 		document = builder.parse(is);
 		if (parseAutomatically) {
 			try {
-				importedInvoice = new Invoice();
+				importedInvoice = new CalculatedInvoice();
 				extractInto(importedInvoice);
 			} catch (XPathExpressionException e) {
 				throw new RuntimeException(e);
@@ -281,6 +281,12 @@ public class ZUGFeRDInvoiceImporter {
 		NodeList totalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (totalNodes.getLength() > 0) {
 			expectedGrandTotal = new BigDecimal(totalNodes.item(0).getTextContent());
+			if (zpp instanceof CalculatedInvoice) {
+				// usually we would re-calculate the invoice to get expectedGrandTotal
+				// however, for "minimal" invoices or other invoices without lines
+				// this will not work
+				((CalculatedInvoice) zpp).setGrandTotal(expectedGrandTotal);
+			}
 		}
 
 		Date issueDate = null;
