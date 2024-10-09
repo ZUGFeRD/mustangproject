@@ -77,13 +77,6 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	}
 
 
-	/***
-	 * have the item prices be determined from the line total.
-	 * That's a workaround for some invoices which just put 0 as item price
-	 */
-	public void doRecalculateItemPricesFromLineTotals() {
-		recalcPrice = true;
-	}
 
 	/***
 	 * do not raise ParseExceptions even if the reproduced invoice total does not match the given value

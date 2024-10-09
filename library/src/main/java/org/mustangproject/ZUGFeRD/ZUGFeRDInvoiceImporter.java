@@ -78,6 +78,14 @@ public class ZUGFeRDInvoiceImporter {
 	}
 
 	public ZUGFeRDInvoiceImporter(String pdfFilename) {
+		setPDFFilename(pdfFilename);
+	}
+
+	public ZUGFeRDInvoiceImporter(InputStream pdfStream) {
+		setInputStream(pdfStream);
+	}
+
+	public void setPDFFilename(String pdfFilename){
 		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
 			extractLowLevel(bis);
 		} catch (final IOException e) {
@@ -86,8 +94,7 @@ public class ZUGFeRDInvoiceImporter {
 		}
 	}
 
-
-	public ZUGFeRDInvoiceImporter(InputStream pdfStream) {
+	public void setInputStream(InputStream pdfStream) {
 		try {
 			extractLowLevel(pdfStream);
 		} catch (final IOException e) {
@@ -167,6 +174,20 @@ public class ZUGFeRDInvoiceImporter {
 	}
 
 
+	/***
+	 * have the item prices be determined from the line total.
+	 * That's a workaround for some invoices which just put 0 as item price
+	 */
+	public void doRecalculateItemPricesFromLineTotals() {
+		recalcPrice = true;
+	}
+
+
+	/***
+	 * sets th pdf attachments, and if a file is recognized (e.g. a factur-x.xml) triggers processing
+	 * @param names the Hashmap of String, PDComplexFileSpecification
+	 * @throws IOException
+	 */
 	private void extractFiles(Map<String, PDComplexFileSpecification> names) throws IOException {
 		for (final String alias : names.keySet()) {
 
@@ -209,8 +230,7 @@ public class ZUGFeRDInvoiceImporter {
 		this.containsMeta = true;
 		this.rawXML = rawXML;
 		this.version = null;
-
-			parseAutomatically = doParse;
+		parseAutomatically = doParse;
 
 		try {
 			setDocument();
@@ -235,7 +255,7 @@ public class ZUGFeRDInvoiceImporter {
 		xmlFact.setNamespaceAware(true);
 		final DocumentBuilder builder = xmlFact.newDocumentBuilder();
 		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
-		///	is.skip(guessBOMSize(is));
+		///    is.skip(guessBOMSize(is));
 		document = builder.parse(is);
 		if (parseAutomatically) {
 			try {
@@ -488,9 +508,9 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
-		if ((deliveryPeriodStart!=null)&&(deliveryPeriodEnd!=null)) {
+		if ((deliveryPeriodStart != null) && (deliveryPeriodEnd != null)) {
 			zpp.setDetailedDeliveryPeriod(XMLTools.tryDate(deliveryPeriodStart), XMLTools.tryDate(deliveryPeriodEnd));
-		} else if (deliveryPeriodStart!=null) {
+		} else if (deliveryPeriodStart != null) {
 			zpp.setDeliveryDate(XMLTools.tryDate(deliveryPeriodStart));
 		}
 

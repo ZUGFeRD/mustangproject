@@ -237,7 +237,7 @@ public class Item implements IZUGFeRDExportableItem {
 							}
 						}
 
-						if (tradeSettlementName.equals("SpecifiedTradeSettlementLineMonetarySummation")) {
+						if (tradeSettlementName.equals("SpecifiedTradeSettlementLineMonetarySummation") || tradeSettlementName.equals("SpecifiedTradeSettlementMonetarySummation")) {
 							NodeList totalChilds = tradeSettlementChilds.item(tradeSettlementChildIndex)
 								.getChildNodes();
 							for (int totalChildIndex = 0; totalChildIndex < totalChilds
@@ -255,7 +255,7 @@ public class Item implements IZUGFeRDExportableItem {
 		BigDecimal prc = new BigDecimal(price.trim());
 		BigDecimal qty = new BigDecimal(quantity.trim());
 		if ((recalcPrice) && (!qty.equals(BigDecimal.ZERO))) {
-			prc = new BigDecimal(lineTotal.trim()).divide(qty, 4, RoundingMode.HALF_UP);
+			prc = new BigDecimal(lineTotal.trim()).divide(qty, 18, RoundingMode.HALF_UP);
 		}
 		Product p = new Product(name, description, unitCode,
 			vatPercent == null ? null : new BigDecimal(vatPercent.trim()));
