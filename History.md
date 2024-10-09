@@ -1,3 +1,6 @@
+
+- #509 CLI currently does not write a logfile
+
 2.14.1 
 =======
 2024-10-06
