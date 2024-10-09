@@ -139,6 +139,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("DE", invoice.getSender().getCountry());
 		assertEquals("Stadthausen", invoice.getSender().getLocation());
 
+		assertTrue(invoice.getPayee() != null);
+		assertEquals("VR Factoring GmbH", invoice.getPayee().getName());
+
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("571.04"), tc.getGrandTotal());
 
@@ -285,6 +288,8 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
 
+		assertTrue(invoice.getPayee() != null);
+		assertEquals("VR Factoring GmbH", invoice.getPayee().getName());
 	}
 
 	/**
@@ -313,4 +318,36 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 
+/*
+	public void testEEISI_300_cii_Import() {
+		boolean hasExceptions = false;
+		File input = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel2.ubl.xml");
+
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		try {
+			zii.fromXML(new String(Files.readAllBytes(input.toPath()), StandardCharsets.UTF_8));
+
+		} catch (IOException e) {
+			hasExceptions = true;
+		}
+
+		Invoice invoice = null;
+		try {
+			invoice = zii.extractInvoice();
+			assertEquals("Seller contact point",invoice.getSender().getName());
+				/*
+				<cbc:Name>Seller contact point</cbc:Name>
+        <cbc:Telephone>+41 345 654455</cbc:Telephone>
+        <cbc:ElectronicMail>seller@contact.de);*
+		} catch (XPathExpressionException | ParseException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("205.00"), tc.getGrandTotal());
+
+	}
+
+*/
 }

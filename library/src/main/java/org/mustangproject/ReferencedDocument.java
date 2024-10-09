@@ -1,6 +1,8 @@
 package org.mustangproject;
 
 import org.mustangproject.ZUGFeRD.IReferencedDocument;
+import org.mustangproject.util.NodeMap;
+import org.w3c.dom.Node;
 
 public class ReferencedDocument implements IReferencedDocument {
 
@@ -57,5 +59,15 @@ public class ReferencedDocument implements IReferencedDocument {
 	@Override
 	public String getReferenceTypeCode() {
 		return referenceTypeCode;
+	}
+
+	public static ReferencedDocument fromNode(Node node) {
+		if (!node.hasChildNodes()) {
+			return null;
+		}
+		NodeMap nodes = new NodeMap(node);
+		return new ReferencedDocument(nodes.getAsStringOrNull("IssuerAssignedID"),
+			nodes.getAsStringOrNull("TypeCode"),
+			nodes.getAsStringOrNull("ReferenceTypeCode"));
 	}
 }

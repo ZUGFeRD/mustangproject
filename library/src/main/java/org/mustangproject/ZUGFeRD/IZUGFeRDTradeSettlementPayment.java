@@ -18,6 +18,7 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.mustangproject.XMLTools;
 
 public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement {
@@ -27,6 +28,7 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 	 *
 	 * @return payment information text
 	 */
+	@JsonIgnore
 	default String getOwnPaymentInfoText() {
 		return null;
 	}
@@ -59,6 +61,7 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 
 
 	@Override
+	@JsonIgnore
   default String getSettlementXML() {
 		String accountNameStr="";
 		if (getAccountName()!=null) {

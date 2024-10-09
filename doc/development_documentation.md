@@ -59,7 +59,7 @@ to validate the XML part of the invoices.
 
 ## New build
 
-Target platform is java 1.11
+Target platform is java 1.17
 
 ## Build
 
@@ -229,3 +229,47 @@ extract, rename xsl file to xslt, move to new version dir and add a if where the
   * freshcode.club
   * Submit on openpr.de/.com, https://www.einpresswire.com/
  
+## Tips&amp;Inspriration
+
+
+NodeList from a XPath https://github.com/ZUGFeRD/mustangproject/pull/476/files
+```
+     	xpr = xpath.compile("//*[local-name()=\"PrepaidAmount\"]");
+		NodeList prepaidNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		nodeMap.getNode("GlobalID").ifPresent(idNode -> {
+			if (idNode.hasAttributes()
+				&& idNode.getAttributes().getNamedItem("schemeID") != null) {
+				globalId = new SchemedID()
+					.setScheme(idNode.getAttributes().getNamedItem("schemeID").getNodeValue())
+					.setId(idNode.getTextContent());
+			}
+		});
+```
+
+nodeMap.getAsNodeMap and nodeMap.getAsString 
+```
+
+		nodeMap.getAsString("SellerAssignedID").ifPresent(this::setSellerAssignedID);
+		nodeMap.getAsString("BuyerAssignedID").ifPresent(this::setBuyerAssignedID);
+		nodeMap.getAsString("Name").ifPresent(this::setName);
+		nodeMap.getAsString("Description").ifPresent(this::setDescription);
+
+		nodeMap.getAsNodeMap("ApplicableProductCharacteristic").ifPresent(apcNodes -> {
+			String key = apcNodes.getAsStringOrNull("Description");
+			String value = apcNodes.getAsStringOrNull("Value");
+			if (key != null && value != null) {
+				if (attributes == null) {
+					attributes = new HashMap<>();
+				}
+				attributes.put(key, value);
+			}
+		});
+
+		nodeMap.getAsNodeMap("DesignatedProductClassification").ifPresent(dpcNodes -> {
+			String className = dpcNodes.getAsStringOrNull("ClassName");
+			dpcNodes.getNode("ClassCode").map(ClassCode::fromNode).ifPresent(classCode ->
+				classifications.add(new DesignatedProductClassification(classCode, className)));
+		});
+
+		nodeMap.getAsString("OriginTradeCounty").ifPresent(this::setCountryOfOrigin);
+```

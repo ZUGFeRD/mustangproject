@@ -12,6 +12,7 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlement;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /***
@@ -326,6 +327,10 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 								addGlobalID(gid);
 							}
 						}
+						if (itemChilds.item(itemChildIndex).getLocalName().equals("SpecifiedLegalOrganization")) {
+							NodeList organization = itemChilds.item(itemChildIndex).getChildNodes();
+							setLegalOrganisation(new LegalOrganisation(organization));
+						}
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("DefinedTradeContact")) {
 							NodeList contact = itemChilds.item(itemChildIndex).getChildNodes();
 							setContact(new Contact(contact));
@@ -420,6 +425,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 
 	@Override
+	@JsonIgnore
 	public String getUriUniversalCommunicationID() {
 		if (uriUniversalCommunicationId != null) {
 			return uriUniversalCommunicationId.getID();
@@ -429,6 +435,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 
 	@Override
+	@JsonIgnore
 	public String getUriUniversalCommunicationIDScheme() {
 		if (uriUniversalCommunicationId != null) {
 			return uriUniversalCommunicationId.getScheme();

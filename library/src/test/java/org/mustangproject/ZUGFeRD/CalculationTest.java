@@ -17,14 +17,14 @@ import java.text.SimpleDateFormat;
  *
  */
 public class CalculationTest {
-  private static final Logger LOGGER = LoggerFactory.getLogger (CalculationTest.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CalculationTest.class);
 
 	@Test
 	public void testLineCalculator_simpleAmounts_resultInValidVATAmount() {
 		final IZUGFeRDExportableProduct product = new IZUGFeRDExportableProductImpl().setVatPercent(valueOf(16));
 		final IZUGFeRDExportableItem currentItem = new IZUGFeRDExportableItemImpl().setPrice(valueOf(100))
-				.setQuantity(TEN)
-				.setProduct(product);
+			.setQuantity(TEN)
+			.setProduct(product);
 
 		final LineCalculator calculator = new LineCalculator(currentItem);
 
@@ -41,9 +41,9 @@ public class CalculationTest {
 		final IZUGFeRDAllowanceCharge allowance = new IZUGFeRDAllowanceChargeImpl().setTotalAmount(valueOf(14.8730));
 
 		final IZUGFeRDExportableItem currentItem = new IZUGFeRDExportableItemImpl().setPrice(valueOf(148.73))
-				.setQuantity(valueOf(12))
-				.setItemAllowances(new IZUGFeRDAllowanceCharge[]{allowance})
-				.setProduct(product);
+			.setQuantity(valueOf(12))
+			.setItemAllowances(new IZUGFeRDAllowanceCharge[]{allowance})
+			.setProduct(product);
 
 		final LineCalculator calculator = new LineCalculator(currentItem);
 
@@ -60,10 +60,10 @@ public class CalculationTest {
 		// 20 % charge
 		final IZUGFeRDAllowanceCharge charge = new IZUGFeRDAllowanceChargeImpl().setTotalAmount(valueOf(29.746));
 		final IZUGFeRDExportableItem currentItem = new IZUGFeRDExportableItemImpl().setPrice(valueOf(148.73))
-				.setQuantity(valueOf(12))
-				.setItemAllowances(new IZUGFeRDAllowanceCharge[]{allowance})
-				.setItemCharges(new IZUGFeRDAllowanceCharge[]{charge})
-				.setProduct(product);
+			.setQuantity(valueOf(12))
+			.setItemAllowances(new IZUGFeRDAllowanceCharge[]{allowance})
+			.setItemCharges(new IZUGFeRDAllowanceCharge[]{charge})
+			.setProduct(product);
 
 		final LineCalculator calculator = new LineCalculator(currentItem);
 
@@ -187,5 +187,18 @@ public class CalculationTest {
 		assertEquals(valueOf(101.86).stripTrailingZeros(), calculator.getGrandTotal().stripTrailingZeros());
 	}
 
+	/**
+	 * LineCalculator should not throw an exception when calculating a non-terminating decimal expansion
+	 * */
+	@Test
+	public void testNonTerminatingDecimalExpansion() {
+		final Product product = new Product();
+		final IZUGFeRDExportableItem currentItem = new Item().setPrice(valueOf(386.52))
+			.setQuantity(BigDecimal.valueOf(31))
+			.setBasisQuantity(BigDecimal.valueOf(366))
+			.setProduct(product);
+		final LineCalculator calculator = new LineCalculator(currentItem);
+		assertEquals(BigDecimal.valueOf(32.74), calculator.getItemTotalNetAmount());
+	}
 
 }

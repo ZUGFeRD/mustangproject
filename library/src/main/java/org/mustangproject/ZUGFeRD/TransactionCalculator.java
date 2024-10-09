@@ -39,8 +39,8 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	}
 
 	/***
-	 * the invoice total with VAT, corrected by prepaid amount, allowances and
-	 * charges
+	 * the invoice total with VAT, allowances and
+	 * charges, WITHOUT considering prepaid amount
 	 * 
 	 * @return the invoice total including taxes
 	 */
@@ -172,6 +172,10 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 				LineCalculator lc = new LineCalculator(currentItem);
 				VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(),
 						currentItem.getProduct().getTaxCategoryCode(), vatDueDateTypeCode);
+				String reasonText=currentItem.getProduct().getTaxExemptionReason();
+				if (reasonText!=null) {
+					itemVATAmount.setVatExemptionReasonText(reasonText);
+				}
 				VATAmount current = hm.get(percent.stripTrailingZeros());
 				if (current == null) {
 					hm.put(percent.stripTrailingZeros(), itemVATAmount);

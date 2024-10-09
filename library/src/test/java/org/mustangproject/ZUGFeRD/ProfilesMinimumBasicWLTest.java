@@ -36,7 +36,8 @@ import java.util.Date;
  */
 public class ProfilesMinimumBasicWLTest extends TestCase {
 
-	final String TARGET_PDF_FX_MINIMUM = "./target/testout-Minimum.pdf";
+	final String TARGET_PDF_FX_MINIMUM_INV = "./target/testout-Minimum-INV.pdf";
+	final String TARGET_PDF_FX_MINIMUM_CN = "./target/testout-Minimum-CN.pdf";
 
 	public void testMinimumCreditNote() {
 		String ownNumber = "NUMFACTURE";
@@ -60,14 +61,14 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 			Invoice i = new Invoice()
 					.setIssueDate(new Date())
 					.setSender(
-							new TradeParty().setName(ownOrgName).setCountry("FR")
+							new TradeParty().setName(ownOrgName).setCountry("FR").setVATID("FR555444333222111")
 									.addBankDetails(new BankDetails(ownIBAN, ownBIC)))
 					.setRecipient(recipient)
 					.setNumber(ownNumber)
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal(123), new BigDecimal(1)))
 					.setCreditNote();
 			ze.setTransaction(i);
-			ze.export(TARGET_PDF_FX_MINIMUM);
+			ze.export(TARGET_PDF_FX_MINIMUM_CN);
 
 			// check for pdf-a schema extension
 //			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
@@ -79,7 +80,7 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 		}
 
 		// now check the contents (like MustangReaderTest)
-		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF_FX_MINIMUM);
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF_FX_MINIMUM_CN);
 
 		// Reading ZUGFeRD
 		assertEquals("146.37",zi.getAmount());
@@ -115,13 +116,13 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 					.setIssueDate(new Date())
 					.setDueDate(new Date())
 					.setSender(
-							new TradeParty().setName(ownOrgName).setCountry("FR")
+							new TradeParty().setName(ownOrgName).setCountry("FR").setVATID("FR555444333222111")
 									.addBankDetails(new BankDetails(ownIBAN)))
 					.setRecipient(recipient)
 					.setNumber(ownNumber).setTotalPrepaidAmount(new BigDecimal("1"))
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal(123), new BigDecimal(1)));
 			ze.setTransaction(i);
-			ze.export(TARGET_PDF_FX_MINIMUM);
+			ze.export(TARGET_PDF_FX_MINIMUM_INV);
 
 			// check for pdf-a schema extension
 //			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
@@ -133,7 +134,7 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 		}
 
 		// now check the contents (like MustangReaderTest)
-		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF_FX_MINIMUM);
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF_FX_MINIMUM_INV);
 
 		// Reading ZUGFeRD
 		assertEquals("146.37",zi.getAmount());

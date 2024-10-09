@@ -165,4 +165,11 @@ public interface IZUGFeRDExportableProduct {
 	default HashMap<String, String> getAttributes() {
 	    return null;
 	}
+
+	/**
+	 * Detailed information about the product
+	 *
+	 * @return an array containing the product classifications or {@code null} if not set
+	 */
+	default IDesignatedProductClassification[] getClassifications() { return null; }
 }

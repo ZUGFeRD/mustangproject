@@ -36,7 +36,7 @@ public class DeSerializationTest extends TestCase {
 	public void testJackson() throws JsonProcessingException {
 
 		ObjectMapper mapper = new ObjectMapper();
-		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty("some org", "teststr", "55232", "teststadt", "DE").addTaxID("taxID")).setOwnVATID("DE0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE4711").setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE"))).setNumber("0185").addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal("1"), new BigDecimal(1.0)));
+		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty("some org", "teststr", "55232", "teststadt", "DE").addTaxID("taxID").addBankDetails(new BankDetails("DE3600000123456", "ABCDEFG1001").setAccountName("Donald Duck")).setEmail("info@company.com")).setOwnVATID("DE0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE4711").setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE"))).setNumber("0185").addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal("1"), new BigDecimal(1.0)));
 		String jsonArray = mapper.writeValueAsString(i);
 
 		// [{"stringValue":"a","intValue":1,"booleanValue":true},
@@ -45,6 +45,8 @@ public class DeSerializationTest extends TestCase {
 		Invoice fromJSON = mapper.readValue(jsonArray, Invoice.class);
 		assertEquals(fromJSON.getNumber(), i.getNumber());
 		assertEquals(fromJSON.getZFItems().length, i.getZFItems().length);
+		assertEquals("info@company.com", fromJSON.getSender().getEmail());
+		assertEquals("info@company.com", fromJSON.getSender().getUriUniversalCommunicationID());
 
 	}
 }

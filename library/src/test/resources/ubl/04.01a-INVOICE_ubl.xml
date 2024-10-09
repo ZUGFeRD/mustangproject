@@ -1,0 +1,388 @@
+<ubl:Invoice xmlns:ubl="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+  xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+  xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_2.2#conformant#urn:xoev-de:kosit:extension:xrechnung_2.2</cbc:CustomizationID>
+  <cbc:ID>12345</cbc:ID>
+  <cbc:IssueDate>2019-05-15</cbc:IssueDate>
+  <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+  <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+  <cbc:BuyerReference>12345678-12345-83</cbc:BuyerReference>
+  <cac:InvoicePeriod>
+    <cbc:StartDate>2019-02-01</cbc:StartDate>
+    <cbc:EndDate>2019-05-07</cbc:EndDate>
+  </cac:InvoicePeriod>
+  <cac:OrderReference>
+    <cbc:ID>123</cbc:ID>
+  </cac:OrderReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PartyName>
+        <cbc:Name>M. Meier Handwerk GbR</cbc:Name>
+      </cac:PartyName>
+      <cac:PostalAddress>
+        <cbc:StreetName>Hauptstraße 2</cbc:StreetName>
+        <cbc:CityName>Musterstadt</cbc:CityName>
+        <cbc:PostalZone>12345</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>DE</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cbc:CompanyID>DE/12/345/67890</cbc:CompanyID>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>M. Meier Handwerk GbR</cbc:RegistrationName>
+        <cbc:CompanyID>1122334455</cbc:CompanyID>
+      </cac:PartyLegalEntity>
+      <cac:Contact>
+        <cbc:Name>M. Meier Handwerk GbR</cbc:Name>
+        <cbc:Telephone>010/12345</cbc:Telephone>
+        <cbc:ElectronicMail>info@m-meier.de</cbc:ElectronicMail>
+      </cac:Contact>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyIdentification>
+        <cbc:ID>345LA5324</cbc:ID>
+      </cac:PartyIdentification>
+      <cac:PostalAddress>
+        <cbc:StreetName>Dorfplatz 3</cbc:StreetName>
+        <cbc:CityName>Musterort</cbc:CityName>
+        <cbc:PostalZone>54321</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>DE</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>Beispielkunde</cbc:RegistrationName>
+      </cac:PartyLegalEntity>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode>31</cbc:PaymentMeansCode>
+    <cac:PayeeFinancialAccount>
+      <cbc:ID>DE091111222233334444</cbc:ID>
+    </cac:PayeeFinancialAccount>
+  </cac:PaymentMeans>
+  <cac:PaymentTerms>
+    <cbc:Note>Zahlbar innerhalb 14 Tagen nach Erhalt der Rechnung.</cbc:Note>
+  </cac:PaymentTerms>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="EUR">2382</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="EUR">12536.84</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="EUR">2382</cbc:TaxAmount>
+      <cac:TaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>19</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="EUR">12536.84</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="EUR">12536.84</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="EUR">14918.84</cbc:TaxInclusiveAmount>
+    <cbc:PrepaidAmount currencyID="EUR">10000.0</cbc:PrepaidAmount>
+    <cbc:PayableAmount currencyID="EUR">4918.84</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="XPP">1</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">818.04</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Name>Sanitär und Zubehör</cbc:Name>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>19</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">818.04</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="MTR">1</cbc:BaseQuantity>
+    </cac:Price>
+    <cac:SubInvoiceLine>
+      <cbc:ID>1 1</cbc:ID>
+      <cbc:InvoicedQuantity unitCode="XPP">1</cbc:InvoicedQuantity>
+      <cbc:LineExtensionAmount currencyID="EUR">335.79</cbc:LineExtensionAmount>
+      <cac:Item>
+        <cbc:Name>Demontage Sanitär</cbc:Name>
+        <cac:ClassifiedTaxCategory>
+          <cbc:ID>S</cbc:ID>
+          <cbc:Percent>19</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>VAT</cbc:ID>
+          </cac:TaxScheme>
+        </cac:ClassifiedTaxCategory>
+      </cac:Item>
+      <cac:Price>
+        <cbc:PriceAmount currencyID="EUR">335.79</cbc:PriceAmount>
+        <cbc:BaseQuantity unitCode="MTR">1</cbc:BaseQuantity>
+      </cac:Price>  
+      <cac:SubInvoiceLine>
+        <cbc:ID>1 1 1</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="MTR">149</cbc:InvoicedQuantity>       
+        <cbc:LineExtensionAmount currencyID="EUR"
+          >193.70</cbc:LineExtensionAmount>
+        <cac:Item>
+          <cbc:Name>Demontage TW-Rohrleitung DN 12-25</cbc:Name>
+          <cac:ClassifiedTaxCategory>
+            <cbc:ID>S</cbc:ID>
+            <cbc:Percent>19</cbc:Percent>
+            <cac:TaxScheme>
+              <cbc:ID>VAT</cbc:ID>
+            </cac:TaxScheme>
+          </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+          <cbc:PriceAmount currencyID="EUR">1.30</cbc:PriceAmount>
+          <cbc:BaseQuantity unitCode="MTR">1</cbc:BaseQuantity>
+        </cac:Price>
+      </cac:SubInvoiceLine>
+      <cac:SubInvoiceLine>
+        <cbc:ID>1 1 2</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="MTR">32.50</cbc:InvoicedQuantity>     
+        <cbc:LineExtensionAmount currencyID="EUR"
+          >48.75</cbc:LineExtensionAmount>
+        <cac:Item>
+          <cbc:Name>Demontage SML DN 100</cbc:Name>
+          <cac:ClassifiedTaxCategory>
+            <cbc:ID>S</cbc:ID>
+            <cbc:Percent>19</cbc:Percent>
+            <cac:TaxScheme>
+              <cbc:ID>VAT</cbc:ID>
+            </cac:TaxScheme>
+          </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+          <cbc:PriceAmount currencyID="EUR">1.50</cbc:PriceAmount>
+          <cbc:BaseQuantity unitCode="MTR">1</cbc:BaseQuantity>
+        </cac:Price>
+      </cac:SubInvoiceLine>
+      <cac:SubInvoiceLine>
+        <cbc:ID>1 1 3</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="MTR">71.80</cbc:InvoicedQuantity>     
+        <cbc:LineExtensionAmount currencyID="EUR"
+          >93.34</cbc:LineExtensionAmount>
+        <cac:Item>
+          <cbc:Name>Demontage AW-Rohrleitungen Kunststoff PP bis DN100</cbc:Name>
+          <cac:ClassifiedTaxCategory>
+            <cbc:ID>S</cbc:ID>
+            <cbc:Percent>19</cbc:Percent>
+            <cac:TaxScheme>
+              <cbc:ID>VAT</cbc:ID>
+            </cac:TaxScheme>
+          </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+          <cbc:PriceAmount currencyID="EUR">1.30</cbc:PriceAmount>
+          <cbc:BaseQuantity unitCode="MTR">1</cbc:BaseQuantity>
+        </cac:Price>
+      </cac:SubInvoiceLine>
+    </cac:SubInvoiceLine>
+    <cac:SubInvoiceLine>
+      <cbc:ID>1 2</cbc:ID>    
+      <cbc:InvoicedQuantity unitCode="XPP">1</cbc:InvoicedQuantity>
+      <cbc:LineExtensionAmount currencyID="EUR">482.25</cbc:LineExtensionAmount>
+      <cac:Item>
+        <cbc:Name>Abwasserleitungen und Zubehör</cbc:Name>
+        <cac:ClassifiedTaxCategory>
+          <cbc:ID>S</cbc:ID>
+          <cbc:Percent>19</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>VAT</cbc:ID>
+          </cac:TaxScheme>
+        </cac:ClassifiedTaxCategory>
+      </cac:Item>
+      <cac:Price>
+        <cbc:PriceAmount currencyID="EUR">482.25</cbc:PriceAmount>
+        <cbc:BaseQuantity unitCode="MTR">1</cbc:BaseQuantity>
+      </cac:Price>  
+      <cac:SubInvoiceLine>
+        <cbc:ID>1 2 1</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="MTR">9.5</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR"
+          >99.75</cbc:LineExtensionAmount>
+        <cac:Item>
+          <cbc:Name>Abwasserleitung HT-PP DN 100</cbc:Name>
+          <cac:ClassifiedTaxCategory>
+            <cbc:ID>S</cbc:ID>
+            <cbc:Percent>19</cbc:Percent>
+            <cac:TaxScheme>
+              <cbc:ID>VAT</cbc:ID>
+            </cac:TaxScheme>
+          </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+          <cbc:PriceAmount currencyID="EUR">10.50</cbc:PriceAmount>
+          <cbc:BaseQuantity unitCode="MTR">1</cbc:BaseQuantity>
+        </cac:Price>
+      </cac:SubInvoiceLine>
+      <cac:SubInvoiceLine>
+        <cbc:ID>1 2 2</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="MTR">45.0</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR"
+          >382.50</cbc:LineExtensionAmount>
+        <cac:Item>
+          <cbc:Name>Abwasserleitung HT-PP DN 50</cbc:Name>
+          <cac:ClassifiedTaxCategory>
+            <cbc:ID>S</cbc:ID>
+            <cbc:Percent>19</cbc:Percent>
+            <cac:TaxScheme>
+              <cbc:ID>VAT</cbc:ID>
+            </cac:TaxScheme>
+          </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+          <cbc:PriceAmount currencyID="EUR">8.50</cbc:PriceAmount>
+          <cbc:BaseQuantity unitCode="MTR">1</cbc:BaseQuantity>
+        </cac:Price>
+      </cac:SubInvoiceLine>
+    </cac:SubInvoiceLine>
+  </cac:InvoiceLine>
+  <cac:InvoiceLine>
+    <cbc:ID>2</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="XPP">1</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">11718.8</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Name>Heizung und Zubehör</cbc:Name>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>19</cbc:Percent>
+        <cac:TaxScheme>
+          <cbc:ID>VAT</cbc:ID>
+        </cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">11718.8</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="MTR">1</cbc:BaseQuantity>
+    </cac:Price>   
+    <cac:SubInvoiceLine>
+      <cbc:ID>2 1</cbc:ID>
+      <cbc:InvoicedQuantity unitCode="XPP">1</cbc:InvoicedQuantity>
+      <cbc:LineExtensionAmount currencyID="EUR">1324</cbc:LineExtensionAmount>
+      <cac:Item>
+        <cbc:Name>Demontage Heizung</cbc:Name>
+        <cac:ClassifiedTaxCategory>
+          <cbc:ID>S</cbc:ID>
+          <cbc:Percent>19</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>VAT</cbc:ID>
+          </cac:TaxScheme>
+        </cac:ClassifiedTaxCategory>
+      </cac:Item>
+      <cac:Price>
+        <cbc:PriceAmount currencyID="EUR">1324</cbc:PriceAmount>
+        <cbc:BaseQuantity unitCode="MTR">1</cbc:BaseQuantity>
+      </cac:Price>  
+      <cac:SubInvoiceLine>
+        <cbc:ID>2 1 1</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="C62">20</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">700</cbc:LineExtensionAmount>
+        <cac:Item>
+          <cbc:Name>Entleeren der Heizungsanlage, teilnetz</cbc:Name>
+          <cac:ClassifiedTaxCategory>
+            <cbc:ID>S</cbc:ID>
+            <cbc:Percent>19</cbc:Percent>
+            <cac:TaxScheme>
+              <cbc:ID>VAT</cbc:ID>
+            </cac:TaxScheme>
+          </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+          <cbc:PriceAmount currencyID="EUR">35</cbc:PriceAmount>
+          <cbc:BaseQuantity unitCode="C62">1</cbc:BaseQuantity>
+        </cac:Price>
+      </cac:SubInvoiceLine>
+      <cac:SubInvoiceLine>
+        <cbc:ID>2 1 2</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="C62">52</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR">624</cbc:LineExtensionAmount>
+        <cac:Item>
+          <cbc:Name>Demontage Flachheizkörpers</cbc:Name>
+          <cac:ClassifiedTaxCategory>
+            <cbc:ID>S</cbc:ID>
+            <cbc:Percent>19</cbc:Percent>
+            <cac:TaxScheme>
+              <cbc:ID>VAT</cbc:ID>
+            </cac:TaxScheme>
+          </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+          <cbc:PriceAmount currencyID="EUR">12</cbc:PriceAmount>
+          <cbc:BaseQuantity unitCode="C62">1</cbc:BaseQuantity>
+        </cac:Price>
+      </cac:SubInvoiceLine>
+    </cac:SubInvoiceLine>
+    <cac:SubInvoiceLine>
+      <cbc:ID>2 2</cbc:ID>
+      <cbc:InvoicedQuantity unitCode="XPP">1</cbc:InvoicedQuantity>
+      <cbc:LineExtensionAmount currencyID="EUR"
+        >10394.8</cbc:LineExtensionAmount>
+      <cac:Item>
+        <cbc:Name>Heizflächen und Zubehör</cbc:Name>
+        <cac:ClassifiedTaxCategory>
+          <cbc:ID>S</cbc:ID>
+          <cbc:Percent>19</cbc:Percent>
+          <cac:TaxScheme>
+            <cbc:ID>VAT</cbc:ID>
+          </cac:TaxScheme>
+        </cac:ClassifiedTaxCategory>
+      </cac:Item>
+      <cac:Price>
+        <cbc:PriceAmount currencyID="EUR">10394.8</cbc:PriceAmount>
+        <cbc:BaseQuantity unitCode="MTR">1</cbc:BaseQuantity>
+      </cac:Price>  
+      <cac:SubInvoiceLine>
+        <cbc:ID>2 2 1</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="C62">52</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR"
+          >10202.4</cbc:LineExtensionAmount>
+        <cac:Item>
+          <cbc:Name>Flachheizkörper Stahl profiliert Seitent. H 300mm L -500mm Typ22</cbc:Name>
+          <cac:ClassifiedTaxCategory>
+            <cbc:ID>S</cbc:ID>
+            <cbc:Percent>19</cbc:Percent>
+            <cac:TaxScheme>
+              <cbc:ID>VAT</cbc:ID>
+            </cac:TaxScheme>
+          </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+          <cbc:PriceAmount currencyID="EUR">196.20</cbc:PriceAmount>
+          <cbc:BaseQuantity unitCode="C62">1</cbc:BaseQuantity>
+        </cac:Price>
+      </cac:SubInvoiceLine>
+      <cac:SubInvoiceLine>
+        <cbc:ID>2 2 2</cbc:ID>
+        <cbc:InvoicedQuantity unitCode="C62">104</cbc:InvoicedQuantity>
+        <cbc:LineExtensionAmount currencyID="EUR"
+          >192.4</cbc:LineExtensionAmount>
+        <cac:Item>
+          <cbc:Name>Einzelrosette aus Kunststoff, weiß</cbc:Name>
+          <cac:ClassifiedTaxCategory>
+            <cbc:ID>S</cbc:ID>
+            <cbc:Percent>19</cbc:Percent>
+            <cac:TaxScheme>
+              <cbc:ID>VAT</cbc:ID>
+            </cac:TaxScheme>
+          </cac:ClassifiedTaxCategory>
+        </cac:Item>
+        <cac:Price>
+          <cbc:PriceAmount currencyID="EUR">1.85</cbc:PriceAmount>
+          <cbc:BaseQuantity unitCode="MTR">1</cbc:BaseQuantity>
+        </cac:Price>
+      </cac:SubInvoiceLine>
+    </cac:SubInvoiceLine>
+  </cac:InvoiceLine>
+</ubl:Invoice>

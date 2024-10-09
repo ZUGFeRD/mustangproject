@@ -1,23 +1,34 @@
 package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
+import org.mustangproject.util.NodeMap;
+import org.w3c.dom.Node;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /***
  * describes a product, good or service used in an invoice item line
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Product implements IZUGFeRDExportableProduct {
-	protected String unit, name, description, sellerAssignedID, buyerAssignedID;
+	protected String unit, name, sellerAssignedID, buyerAssignedID;
+	protected String description="";
+	protected String taxExemptionReason=null;
+	protected String taxCategoryCode=null;
 	protected BigDecimal VATPercent;
 	protected boolean isReverseCharge = false;
 	protected boolean isIntraCommunitySupply = false;
 	protected SchemedID globalId = null;
 	protected String countryOfOrigin = null;
-	protected HashMap<String, String> attributes = null;
+	protected HashMap<String, String> attributes = new HashMap<>();
+	protected List<IDesignatedProductClassification> classifications = new ArrayList<>();
 
 	/***
 	 * default constructor
@@ -33,6 +44,42 @@ public class Product implements IZUGFeRDExportableProduct {
 		this.VATPercent = VATPercent;
 	}
 
+	public Product(Node node) {
+		NodeMap nodeMap = new NodeMap(node);
+
+		nodeMap.getNode("GlobalID").ifPresent(idNode -> {
+			if (idNode.hasAttributes()
+				&& idNode.getAttributes().getNamedItem("schemeID") != null) {
+				globalId = new SchemedID()
+					.setScheme(idNode.getAttributes().getNamedItem("schemeID").getNodeValue())
+					.setId(idNode.getTextContent());
+			}
+		});
+
+		nodeMap.getAsString("SellerAssignedID").ifPresent(this::setSellerAssignedID);
+		nodeMap.getAsString("BuyerAssignedID").ifPresent(this::setBuyerAssignedID);
+		nodeMap.getAsString("Name").ifPresent(this::setName);
+		nodeMap.getAsString("Description").ifPresent(this::setDescription);
+
+		nodeMap.getAsNodeMap("ApplicableProductCharacteristic").ifPresent(apcNodes -> {
+			String key = apcNodes.getAsStringOrNull("Description");
+			String value = apcNodes.getAsStringOrNull("Value");
+			if (key != null && value != null) {
+				if (attributes == null) {
+					attributes = new HashMap<>();
+				}
+				attributes.put(key, value);
+			}
+		});
+
+		nodeMap.getAsNodeMap("DesignatedProductClassification").ifPresent(dpcNodes -> {
+			String className = dpcNodes.getAsStringOrNull("ClassName");
+			dpcNodes.getNode("ClassCode").map(ClassCode::fromNode).ifPresent(classCode ->
+				classifications.add(new DesignatedProductClassification(classCode, className)));
+		});
+
+		nodeMap.getAsString("OriginTradeCounty").ifPresent(this::setCountryOfOrigin);
+	}
 
 	/***
 	 * empty constructor
@@ -62,6 +109,47 @@ public class Product implements IZUGFeRDExportableProduct {
 
 	public Product addGlobalID(SchemedID schemedID) {
 		globalId = schemedID;
+		return this;
+	}
+
+	/***
+	 *
+	 * @return e.g. intra-commnunity supply or small business
+	 */
+	@Override
+	public String getTaxExemptionReason() {
+		return taxExemptionReason;
+	}
+
+	/***
+	 *
+	 * @param taxExemptionReasonText String e.g. Kleinunternehmer gemäß §19 UStG https://github.com/ZUGFeRD/mustangproject/issues/463
+	 * @return fluent setter
+	 */
+	public Product setTaxExemptionReason(String  taxExemptionReasonText) {
+		taxExemptionReason = taxExemptionReasonText;
+		return this;
+	}
+
+	/***
+	 *
+	 * @return e.g. S (normal tax), Z=zero rated,  E (e.g. small business) or K (intrra community supply)
+	 */
+	@Override
+	public String getTaxCategoryCode() {
+		if (taxCategoryCode == null) {
+			return IZUGFeRDExportableProduct.super.getTaxCategoryCode();
+		}
+		return taxCategoryCode;
+	}
+
+	/***
+	 *
+	 * @param code e.g. S (normal tax), Z=zero rated,  E (e.g. small business) or K (intrra community supply) see also https://github.com/ZUGFeRD/mustangproject/issues/463
+	 * @return fluent setter
+	 */
+	public Product setTaxCategoryCode(String  code) {
+		taxCategoryCode = code;
 		return this;
 	}
 
@@ -124,6 +212,8 @@ public class Product implements IZUGFeRDExportableProduct {
 	public Product setIntraCommunitySupply() {
 		isIntraCommunitySupply = true;
 		setVATPercent(BigDecimal.ZERO);
+		setTaxExemptionReason("Intra-community supply");
+		setTaxCategoryCode("K");
 		return this;
 	}
 
@@ -201,19 +291,57 @@ public class Product implements IZUGFeRDExportableProduct {
 
 	@Override
 	public HashMap<String, String> getAttributes() {
-	    return this.attributes;
+		if (attributes.isEmpty()) {
+			return null;
+		} else {
+			return this.attributes;
+		}
 	}
 
-	public Product setAttributes(HashMap<String, String> attributes) {
-	    this.attributes = attributes;
+	public Product setAttributes(Map<String, String> attributes) {
+	    this.attributes.clear();
+		if (attributes != null) {
+			this.attributes.putAll(attributes);
+		}
 	    return this;
 	}
 
 	public Product addAttribute(String name, String value ) {
-	    if ( this.attributes == null ) {
-		this.attributes = new HashMap<>();
-	    }
 	    this.attributes.put(name, value);
 	    return this;
+	}
+
+	@Override
+	public IDesignatedProductClassification[] getClassifications() {
+		if (classifications.isEmpty()) {
+			return null;
+		} else {
+			return classifications.toArray(new IDesignatedProductClassification[0]);
+		}
+	}
+
+	/**
+	 * Replace the current set of {@link IDesignatedProductClassification}s with a new set
+	 *
+	 * @param classifications the new set of classifications
+	 * @return the modified object
+	 */
+	public Product setClassifications(IDesignatedProductClassification[] classifications) {
+		this.classifications.clear();
+		if (classifications != null) {
+			this.classifications.addAll(Arrays.asList(classifications));
+		}
+		return this;
+	}
+
+	/**
+	 * Add a {@link IDesignatedProductClassification} classification
+	 *
+	 * @param classification the classification
+	 * @return the modified object
+	 */
+	public Product addClassification(IDesignatedProductClassification classification) {
+		this.classifications.add(classification);
+		return this;
 	}
 }

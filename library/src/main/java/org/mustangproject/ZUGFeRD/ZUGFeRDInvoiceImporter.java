@@ -8,6 +8,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -309,6 +314,10 @@ public class ZUGFeRDInvoiceImporter {
 
 		xpr = xpath.compile("//*[local-name()=\"BuyerTradeParty\"]|//*[local-name()=\"AccountingCustomerParty\"]/*");
 		NodeList BuyerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+
+		xpr = xpath.compile("//*[local-name()=\"PayeeTradeParty\"]|//*[local-name()=\"PayeeParty\"]/*");
+		NodeList payeeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+
 		xpr = xpath.compile("//*[local-name()=\"ExchangedDocument\"]|//*[local-name()=\"HeaderExchangedDocument\"]");
 		NodeList ExchangedDocumentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
@@ -323,6 +332,12 @@ public class ZUGFeRDInvoiceImporter {
 				// this will not work
 				((CalculatedInvoice) zpp).setGrandTotal(expectedGrandTotal);
 			}
+		}
+
+		xpr = xpath.compile("//*[local-name()=\"PrepaidAmount\"]");
+		NodeList prepaidNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (prepaidNodes.getLength() > 0) {
+			zpp.setTotalPrepaidAmount(new BigDecimal(prepaidNodes.item(0).getTextContent()));
 		}
 
 		Date issueDate = null;
@@ -553,7 +568,12 @@ public class ZUGFeRDInvoiceImporter {
 		}
 
 		zpp.setDueDate(dueDate).setDeliveryDate(deliveryDate).setIssueDate(issueDate).setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number).setDocumentCode(typeCode);
+
 		bankDetails.forEach(bankDetail -> zpp.getSender().addBankDetails(bankDetail));
+
+		if (payeeNodes.getLength() > 0) {
+			zpp.setPayee(new TradeParty(payeeNodes));
+		}
 
 		if (buyerOrderIssuerAssignedID != null) {
 			zpp.setBuyerOrderReferencedDocumentID(buyerOrderIssuerAssignedID);
@@ -569,9 +589,9 @@ public class ZUGFeRDInvoiceImporter {
 
 		xpr = xpath.compile("//*[local-name()=\"BuyerReference\"]");
 		String buyerReference = null;
-		totalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-		if (totalNodes.getLength() > 0) {
-			buyerReference = totalNodes.item(0).getTextContent();
+		prepaidNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (prepaidNodes.getLength() > 0) {
+			buyerReference = prepaidNodes.item(0).getTextContent();
 		}
 		if (buyerReference != null) {
 			zpp.setReferenceNumber(buyerReference);
@@ -671,8 +691,8 @@ public class ZUGFeRDInvoiceImporter {
 			}
 
 			TransactionCalculator tc = new TransactionCalculator(zpp);
-
-			String expectedStringTotalGross = tc.getGrandTotal().toPlainString();
+			String expectedStringTotalGross = tc.getGrandTotal()
+				.subtract(Objects.requireNonNullElse(zpp.getTotalPrepaidAmount(), BigDecimal.ZERO)).toPlainString();
 			EStandard whichType;
 			try {
 				whichType = getStandard();
@@ -779,7 +799,7 @@ public class ZUGFeRDInvoiceImporter {
 	/***
 	 *
 	 * @return the file attachments embedded in XML (using base64) decoded as byte array,
-	 * @see for PDF embedded files in FX use getFileAttachmentsPDF()
+	 * for PDF embedded files in FX use getFileAttachmentsPDF()
 	 */
 	public List<FileAttachment> getFileAttachmentsXML() {
 		return fileAttachments;
