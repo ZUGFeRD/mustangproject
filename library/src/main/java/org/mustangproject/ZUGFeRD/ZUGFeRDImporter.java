@@ -232,7 +232,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 		String id = null;
 		if  ((importedInvoice.getRecipient()!=null) && (importedInvoice.getRecipient().getLegalOrganisation()!=null)) {
 			// this *should* be the official result
-			id = importedInvoice.getRecipient().getLegalOrganisation().getID();
+			id = importedInvoice.getRecipient().getLegalOrganisation().getSchemedID().getID();
 		}
 		// but also provide some fallback
 		if (id == null) {
