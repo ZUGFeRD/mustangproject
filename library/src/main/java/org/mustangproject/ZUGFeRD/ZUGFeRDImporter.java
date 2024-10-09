@@ -52,6 +52,7 @@ import org.xml.sax.SAXException;
 
 public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDImporter.class);
+
 	public ZUGFeRDImporter() {
 		super();
 	}
@@ -65,8 +66,6 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	}
 
 
-
-
 	/***
 	 * Wrapper for protected method extractString
 	 * @param xpathStr the xpath expression to be evaluated
@@ -75,7 +74,6 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	public String wExtractString(String xpathStr) {
 		return extractString(xpathStr);
 	}
-
 
 
 	////////////////////////////////////
@@ -221,7 +219,16 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return the BuyerTradeParty SpecifiedTaxRegistration ID
 	 */
 	public String getBuyertradePartySpecifiedTaxRegistrationID() {
-		return importedInvoice.getRecipient().getLegalOrganisation().getID();
+		String id = null;
+		if  ((importedInvoice.getRecipient()!=null) && (importedInvoice.getRecipient().getLegalOrganisation()!=null)) {
+			// this *should* be the official result
+			id = importedInvoice.getRecipient().getLegalOrganisation().getID();
+		}
+		// but also provide some fallback
+		if (id == null) {
+			id = getBuyerTradePartyID();
+		}
+		return id;
 	}
 
 
@@ -357,7 +364,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return the sender's account IBAN code
 	 */
 	public String getIBAN() {
-		for (IZUGFeRDTradeSettlement settlement:importedInvoice.getTradeSettlement()) {
+		for (IZUGFeRDTradeSettlement settlement : importedInvoice.getTradeSettlement()) {
 			if (settlement instanceof IZUGFeRDTradeSettlementDebit) {
 				return ((IZUGFeRDTradeSettlementDebit) settlement).getIBAN();
 			}
@@ -389,7 +396,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return when the payment is due
 	 */
 	public String getDueDate() {
-		SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		return sdf.format(importedInvoice.getDueDate());
 	}
 
@@ -421,14 +428,19 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return the BuyerTradeParty ID
 	 */
 	public String getBuyerTradePartyID() {
-		return importedInvoice.getRecipient().getID();
+		String id = importedInvoice.getRecipient().getID();
+		if (id == null) {
+			// provide some fallback
+			id = importedInvoice.getRecipient().getVATID();
+		}
+		return id;
 	}
 
 	/**
 	 * @return the Issue Date()
 	 */
 	public String getIssueDate() {
-		SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		return sdf.format(importedInvoice.getIssueDate());
 	}
 
@@ -506,7 +518,6 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 		}
 		return version;
 	}
-
 
 
 	/**
