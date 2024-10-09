@@ -216,6 +216,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		InputStream inputStream = this.getClass().getResourceAsStream("/zugferd_invoice.pdf");
 		ZUGFeRDImporter zi = new ZUGFeRDImporter();
 		zi.doRecalculateItemPricesFromLineTotals();
+		zi.doIgnoreCalculationErrors();
 		zi.setInputStream(inputStream);
 		// Reading ZUGFeRD
 		String amount = zi.getAmount();

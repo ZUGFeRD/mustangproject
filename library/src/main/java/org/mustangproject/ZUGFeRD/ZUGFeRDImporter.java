@@ -78,13 +78,6 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 
 
 
-	/***
-	 * do not raise ParseExceptions even if the reproduced invoice total does not match the given value
-	 */
-	public void doIgnoreCalculationErrors() {
-		ignoreCalculationErrors = true;
-	}
-
 	////////////////////////////////////
 
 	/**
@@ -435,7 +428,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return the Issue Date()
 	 */
 	public String getIssueDate() {
-		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd");
 		return sdf.format(importedInvoice.getIssueDate());
 	}
 

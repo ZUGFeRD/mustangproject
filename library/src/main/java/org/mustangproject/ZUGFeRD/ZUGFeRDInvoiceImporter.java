@@ -184,6 +184,14 @@ public class ZUGFeRDInvoiceImporter {
 
 
 	/***
+	 * do not raise ParseExceptions even if the reproduced invoice total does not match the given value
+	 */
+	public void doIgnoreCalculationErrors() {
+		ignoreCalculationErrors = true;
+	}
+
+
+	/***
 	 * sets th pdf attachments, and if a file is recognized (e.g. a factur-x.xml) triggers processing
 	 * @param names the Hashmap of String, PDComplexFileSpecification
 	 * @throws IOException
