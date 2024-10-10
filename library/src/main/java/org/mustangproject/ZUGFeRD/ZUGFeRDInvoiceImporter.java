@@ -237,8 +237,8 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				if ((headerTradeSettlementChilds.item(settlementChildIndex).getLocalName() != null)
 					&& (headerTradeSettlementChilds.item(settlementChildIndex).getLocalName().equals("SpecifiedTradeSettlementPaymentMeans"))) {
 					NodeList paymentMeansChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
+					String IBAN = null, BIC = null;
 					for (int paymentMeansChildIndex = 0; paymentMeansChildIndex < paymentMeansChilds.getLength(); paymentMeansChildIndex++) {
-						String IBAN = null, BIC = null;
 						if ((paymentMeansChilds.item(paymentMeansChildIndex).getLocalName() != null) && (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayeePartyCreditorFinancialAccount"))) {
 							NodeList accountChilds = paymentMeansChilds.item(paymentMeansChildIndex).getChildNodes();
 							for (int accountChildIndex = 0; accountChildIndex < accountChilds.getLength(); accountChildIndex++) {
@@ -247,7 +247,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 								}
 							}
 						}
-						if ((paymentMeansChilds.item(paymentMeansChildIndex).getLocalName() != null) && (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayeePartyCreditorFinancialInstitution"))) {
+						if ((paymentMeansChilds.item(paymentMeansChildIndex).getLocalName() != null) && (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayeeSpecifiedCreditorFinancialInstitution"))) {
 							NodeList accountChilds = paymentMeansChilds.item(paymentMeansChildIndex).getChildNodes();
 							for (int accountChildIndex = 0; accountChildIndex < accountChilds.getLength(); accountChildIndex++) {
 								if ((accountChilds.item(accountChildIndex).getLocalName() != null) && (accountChilds.item(accountChildIndex).getLocalName().equals("BICID"))) {//CII
@@ -255,13 +255,14 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 								}
 							}
 						}
-						if (IBAN != null) {
-							BankDetails bd = new BankDetails(IBAN);
-							if (BIC != null) {
-								bd.setBIC(BIC);
-							}
-							bankDetails.add(bd);
+
+					}
+					if (IBAN != null) {
+						BankDetails bd = new BankDetails(IBAN);
+						if (BIC != null) {
+							bd.setBIC(BIC);
 						}
+						bankDetails.add(bd);
 					}
 				}
 			}

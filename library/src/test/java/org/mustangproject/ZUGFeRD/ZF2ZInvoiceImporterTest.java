@@ -287,6 +287,12 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertFalse(hasExceptions);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
+		assertTrue(invoice.getTradeSettlement().length==1);
+		assertTrue(invoice.getTradeSettlement()[0] instanceof IZUGFeRDTradeSettlementPayment);
+		IZUGFeRDTradeSettlementPayment paym=(IZUGFeRDTradeSettlementPayment)invoice.getTradeSettlement()[0];
+		assertEquals("DE12500105170648489890", paym.getOwnIBAN());
+		assertEquals("COBADEFXXX", paym.getOwnBIC());
+
 
 		assertTrue(invoice.getPayee() != null);
 		assertEquals("VR Factoring GmbH", invoice.getPayee().getName());

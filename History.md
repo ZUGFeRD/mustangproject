@@ -1,4 +1,4 @@
-
+- also parse BICs in InvoiceImporter not only IBANs
 - #509 CLI currently does not write a logfile
 
 2.14.1 
