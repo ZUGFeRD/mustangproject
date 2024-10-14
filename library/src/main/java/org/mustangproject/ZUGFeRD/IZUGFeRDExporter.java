@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import jakarta.activation.DataSource;
+import org.mustangproject.FileAttachment;
 
 public interface IZUGFeRDExporter extends Closeable, IExporter  {
 	/**
@@ -64,6 +65,8 @@ public interface IZUGFeRDExporter extends Closeable, IExporter  {
 	public String getNamespaceForVersion(int ver);
 	public String getPrefixForVersion(int ver) ;
 	public IZUGFeRDExporter disableAutoClose(boolean disableAutoClose);
+	public void attachFile(FileAttachment file);
+	public void attachFile(String filename, byte[] data, String mimetype, String relation);
 	public IXMLProvider getProvider();
 
 }

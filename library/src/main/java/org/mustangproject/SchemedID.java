@@ -31,4 +31,9 @@ public class SchemedID {
 		setId(id);
 	}
 
+	@Override
+	public String toString() {
+		return "SchemedID{scheme='" + scheme + "', id='" + id + "'}";
+	}
+
 }

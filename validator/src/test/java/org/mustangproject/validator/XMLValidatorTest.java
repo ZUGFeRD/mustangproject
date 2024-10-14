@@ -226,6 +226,25 @@ public class XMLValidatorTest extends ResourceCase {
 			content = xpath.evaluate("/validation/summary/@status", source);
 			assertEquals("invalid", content);
 
+		} catch (final IrrecoverableValidationError e) {
+			// ignore, will be in XML output anyway
+		}
+
+	}
+
+	public void testXRSchemaValidation() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("invalidXRSchemav2.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("invalid", content);
 
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway

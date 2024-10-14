@@ -1,3 +1,60 @@
+- also parse BICs in InvoiceImporter not only IBANs
+- #509 CLI currently does not write a logfile
+
+2.14.1 
+=======
+2024-10-06
+
+- #481 also be able to convert XRechnung/UBL to PDF not only CII
+- #494 Quantity/Price Decimal Places
+- #391 Runden bei Negativwerten
+- #491/501 non terminating decimal expansion
+- upgraded en16931 cen schematron to 1.3.12 
+- #499/500 PDF layout corrections
+
+2.14.0
+=======
+2024-09-22
+
+- #461 UBL import contacts
+- #463 add support for BT-33, i.e. Tradeparty description #463
+- #456 Provide a way to set uriUniversalCommunicationId on the TradeParty using JSON deserialization
+- #467 Fix test using wrong file
+- #468 Fix validator dependencies
+- #469 Enable EN16931 schema validation for XRechnung
+- #471 Fix LegalOrganisation schemeId
+- #473 Fix UnsupportedOperationException in buildNotes
+- #476 Add DesignatedProductClassification for SpecifiedTradeProduct
+- #482 Fix current validation errors
+- #423 can no longer add attachments via cli
+- #465 cli version should also be able to combine PDF/A-3 source
+- #487 update to zugferd 2.3.0
+- #472 Fix logging implementation missing in CLI
+- #479 Re-Formatted and re-organized POMs - Part 2
+
+
+2.13.0
+=======
+2024-08-28
+
+- Item Attributes and Country of Origin missing on Product.  #420
+- Avoid NullPointerException if dueDate is not set.  #441
+- support reasoncodes #431 
+- Enhance Charges/Allowances with reasonCode. #432
+- Fix build warnings from editing and building. #415
+- ZUGFeRDVisualizer.toPDF(): generate PDF/A-3b. #400
+- allow access to invoice attachments via  ZUGFeRDInvoiceImporter zii.getFileAttachmentsPDF() 
+  and XML (zii.getFileAttachmentsXML)
+- No interface for required field CreditorReferenceID #436 and
+- X-Rechnung direct-debit missing mandatory field BT-90  #370. (langfr)
+- refactor(ZUGFeRDVisualizer): improve PDF visualization performance #438
+- product creation without description now possible empty description
+- filename of embedded file was not xrechnung.xml when using profile xrechnung #452
+- allow legalorganisation to have a tradingbusinessname #447 
+- JSon deserialization does not work with BankDetails #455
+- Fix ClassCastException in CLI (Main.java). #451
+- changed additional references by line from String to List and implemented it on Item #454
+ 
 2.12.0
 =======
 2024-07-20

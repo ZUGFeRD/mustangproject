@@ -4,15 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.AbstractList;
-import java.util.Collections;
-import java.util.List;
-import java.util.RandomAccess;
 
 import org.apache.commons.io.IOUtils;
 import org.dom4j.io.XMLWriter;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class XMLTools extends XMLWriter {
 	@Override
@@ -23,36 +17,11 @@ public class XMLTools extends XMLWriter {
 	@Override
 	public String escapeElementEntities(String s) {
 		return super.escapeElementEntities(s);
-
-	}
-
-	public static List<Node> asList(NodeList n) {
-		return n.getLength() == 0 ?
-			Collections.<Node>emptyList() : new NodeListWrapper(n);
-	}
-
-	static final class NodeListWrapper extends AbstractList<Node>
-		implements RandomAccess {
-		private final NodeList list;
-
-		NodeListWrapper(NodeList l) {
-			list = l;
-		}
-
-		@Override
-    public Node get(int index) {
-			return list.item(index);
-		}
-
-		@Override
-    public int size() {
-			return list.getLength();
-		}
 	}
 
 	public static String nDigitFormat(BigDecimal value, int scale) {
 		/*
-		 * I needed 123,45, locale independent.I tried
+		 * I needed 123.45, locale independent.I tried
 		 * NumberFormat.getCurrencyInstance().format( 12345.6789 ); but that is locale
 		 * specific.I also tried DecimalFormat df = new DecimalFormat( "0,00" );
 		 * df.setDecimalSeparatorAlwaysShown(true); df.setGroupingUsed(false);
@@ -70,8 +39,28 @@ public class XMLTools extends XMLWriter {
 
 	}
 
+	/***
+	 * formats a number so that at least minDecimals are displayed but at the maximum maxDecimals are there, i.e.
+	 * cuts potential 0s off the end until minDecimals
+	 * @param value
+	 * @param maxDecimals number of maximal scale
+	 * @param minDecimals number of minimal scale
+	 * @return value as String with decimals in the specified range
+	 */
+	public static String nDigitFormatDecimalRange(BigDecimal value, int maxDecimals, int minDecimals) {
+		if ((maxDecimals<minDecimals)||(maxDecimals<0)||(minDecimals<0)) {
+			throw new IllegalArgumentException("Invalid scale range provided");
+		}
+		int curDecimals=maxDecimals;
+		while  ( (curDecimals>minDecimals) && (value.setScale(curDecimals, RoundingMode.HALF_UP).compareTo(value.setScale(curDecimals-1, RoundingMode.HALF_UP))==0)) {
+			 curDecimals--;
+		}
+		return value.setScale(curDecimals, RoundingMode.HALF_UP).toPlainString();
 
-	public static String encodeXML(CharSequence s) {
+	}
+
+
+		public static String encodeXML(CharSequence s) {
 		if (s == null) {
 			return "";
 		}

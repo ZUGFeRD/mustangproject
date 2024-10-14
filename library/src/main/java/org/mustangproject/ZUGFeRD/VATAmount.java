@@ -32,6 +32,16 @@ import java.math.RoundingMode;
  */
 public class VATAmount {
 
+
+	protected BigDecimal basis, calculated, applicablePercent;
+
+	protected String categoryCode;
+
+	protected String vatExemptionReasonText;
+
+	protected String dueDateTypeCode;
+
+
 	public VATAmount(BigDecimal basis, BigDecimal calculated, String categoryCode) {
 		super();
 		this.basis = basis;
@@ -48,35 +58,41 @@ public class VATAmount {
 		this.dueDateTypeCode = dueDateTypeCode;
 	}
 
-	BigDecimal basis, calculated, applicablePercent;
-
-	String categoryCode;
-
-	String dueDateTypeCode;
-
 	public BigDecimal getApplicablePercent() {
 		return applicablePercent;
 	}
 
-	public void setApplicablePercent(BigDecimal applicablePercent) {
+	public VATAmount setApplicablePercent(BigDecimal applicablePercent) {
+
 		this.applicablePercent = applicablePercent;
+		return this;
 	}
 
 	public BigDecimal getBasis() {
 		return basis;
 	}
 
-	public void setBasis(BigDecimal basis) {
+	public VATAmount setBasis(BigDecimal basis) {
 		this.basis = basis.setScale(2, RoundingMode.HALF_UP);
-
+		return this;
 	}
 
 	public BigDecimal getCalculated() {
 		return calculated;
 	}
 
-	public void setCalculated(BigDecimal calculated) {
+	public VATAmount setCalculated(BigDecimal calculated) {
 		this.calculated = calculated;
+		return this;
+	}
+
+	public String getVatExemptionReasonText() {
+		return vatExemptionReasonText;
+	}
+
+	public VATAmount setVatExemptionReasonText(String theText) {
+		this.vatExemptionReasonText = theText;
+		return this;
 	}
 
 	/**
@@ -92,34 +108,38 @@ public class VATAmount {
 	/**
      * @param documentCode as String
 	 * @deprecated Use {@link #setCategoryCode(String)} instead
+	 * @return fluent setter
 	 */
 	@Deprecated
-	public void setDocumentCode(String documentCode) {
+	public VATAmount setDocumentCode(String documentCode) {
 		this.categoryCode = documentCode;
+		return this;
 	}
 
 	public String getCategoryCode() {
 		return categoryCode;
 	}
 
-	public void setCategoryCode(String categoryCode) {
+	public VATAmount setCategoryCode(String categoryCode) {
 		this.categoryCode = categoryCode;
+		return this;
 	}
 
 	public String getDueDateTypeCode() {
 		return dueDateTypeCode;
 	}
 
-	public void setDueDateTypeCode(String dueDateTypeCode) {
+	public VATAmount setDueDateTypeCode(String dueDateTypeCode) {
 		this.dueDateTypeCode = dueDateTypeCode;
+		return this;
 	}
 
 	public VATAmount add(VATAmount v) {
-		return new VATAmount(basis.add(v.getBasis()), calculated.add(v.getCalculated()), this.categoryCode, this.dueDateTypeCode);
+		return new VATAmount(basis.add(v.getBasis()), calculated.add(v.getCalculated()), this.categoryCode, this.dueDateTypeCode).setVatExemptionReasonText(v.getVatExemptionReasonText());
 	}
 
 	public VATAmount subtract(VATAmount v) {
-		return new VATAmount(basis.subtract(v.getBasis()), calculated.subtract(v.getCalculated()), this.categoryCode, this.dueDateTypeCode);
+		return new VATAmount(basis.subtract(v.getBasis()), calculated.subtract(v.getCalculated()), this.categoryCode, this.dueDateTypeCode).setVatExemptionReasonText(v.getVatExemptionReasonText());
 	}
 
 }
