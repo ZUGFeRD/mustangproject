@@ -314,7 +314,7 @@ public class Item implements IZUGFeRDExportableItem {
 
 
 	/***
-	 * adds item level references along with their typecodes and issuerassignedIDs (contract ID, cost centre, ...) 
+	 * adds item level references along with their typecodes and issuerassignedIDs (contract ID, cost centre, ...)
 	 * @param doc the ReferencedDocument to add
 	 * @return fluent setter
 	 */
@@ -333,8 +333,8 @@ public class Item implements IZUGFeRDExportableItem {
 		}
 		return additionalReference.toArray(new IReferencedDocument[0]);
 	}
-	
-	
+
+
 	/***
 	 * specify a item level delivery period
 	 * (apart from the document level delivery period, and the document level
