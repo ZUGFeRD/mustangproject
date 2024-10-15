@@ -324,6 +324,26 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 
+
+	public void testImportDebit() {
+		File CIIinputFile = getResourceAsFile("cii/minimalDebit.xml");
+		try {
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
+			Invoice i=zii.extractInvoice();
+
+			assertEquals("DE21860000000086001055", i.getSender().getBankDetails().get(0).getIBAN());
+
+		} catch (IOException e) {
+			fail("IOException not expected");
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+
+
+	}
+
 /*
 	public void testEEISI_300_cii_Import() {
 		boolean hasExceptions = false;
