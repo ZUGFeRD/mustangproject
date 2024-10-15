@@ -322,10 +322,10 @@ public interface IExportableTransaction {
 	}
 
 	/**
-	 * get reference document number typically used for Invoice Corrections Will be
-	 * added as IncludedNote in comfort profile
-	 *
-	 * @return the ID of the document this document refers to
+	 * get BuyerReference (BT-10) an identifier assigned by the buyer and used
+	 * for internal routing. Used for the Leitweg-ID.
+	 * 
+	 * @return the BuyerReference of this document
 	 */
 	default String getReferenceNumber() {
 		return null;
