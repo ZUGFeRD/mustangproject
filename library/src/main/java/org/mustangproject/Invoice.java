@@ -30,6 +30,7 @@ import org.mustangproject.ZUGFeRD.*;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /***
@@ -57,7 +58,7 @@ public class Invoice implements IExportableTransaction {
 
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
 		Charges = new ArrayList<>(), LogisticsServiceCharges = new ArrayList<>();
-	protected IZUGFeRDPaymentTerms paymentTerms = null;
+	protected IZUGFeRDPaymentTerms[] paymentTerms = null;
 	protected Date invoiceReferencedIssueDate;
 	protected String specifiedProcuringProjectID = null;
 	protected String specifiedProcuringProjectName = null;
@@ -554,14 +555,27 @@ public class Invoice implements IExportableTransaction {
 
 
 	@Override
-	public IZUGFeRDPaymentTerms getPaymentTerms() {
+	public IZUGFeRDPaymentTerms[] getPaymentTerms() {
 		return paymentTerms;
 	}
 
-	public Invoice setPaymentTerms(IZUGFeRDPaymentTerms paymentTerms) {
+	@JsonProperty
+	public Invoice setPaymentTerms(IZUGFeRDPaymentTerms[] paymentTerms) {
 		this.paymentTerms = paymentTerms;
 		return this;
 	}
+
+	public Invoice setPaymentTerms(IZUGFeRDPaymentTerms paymentTerms) {
+		if (null != paymentTerms) {
+			this.paymentTerms = new IZUGFeRDPaymentTerms[] { paymentTerms };
+		}
+		else {
+			this.paymentTerms = null;
+		}
+
+		return this;
+	}
+
 
 	@Override
 	public TradeParty getDeliveryAddress() {
