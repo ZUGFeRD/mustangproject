@@ -1,6 +1,7 @@
 package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IReferencedDocument;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
@@ -18,6 +19,7 @@ import java.util.Date;
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Item implements IZUGFeRDExportableItem {
 	protected BigDecimal price = BigDecimal.ZERO;
 	protected BigDecimal quantity;

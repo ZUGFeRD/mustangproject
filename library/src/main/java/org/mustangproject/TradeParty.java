@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTradeParty;
 import org.mustangproject.ZUGFeRD.IZUGFeRDLegalOrganisation;
@@ -19,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * A organisation, i.e. usually a company
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	protected String name, zip, street, location, country;
@@ -500,6 +502,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		return this;
 	}
 
+
 	/**
 	 * (optional)
 	 *
@@ -509,6 +512,14 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	public TradeParty addDebitDetails(DirectDebit debitDetail) {
 		debitDetails.add(debitDetail);
 		return this;
+	}
+
+	/**
+	 * primarily for invoiceimporter and JSON
+	 * @return the list of sepa mandates
+	 */
+	public List<DirectDebit> getDebitDetails() {
+		return debitDetails;
 	}
 
 	@Override
@@ -670,6 +681,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		return contact;
 	}
 
+	@JsonIgnore
 	public IZUGFeRDTradeSettlement[] getAsTradeSettlement() {
 		if (bankDetails.isEmpty() && debitDetails.isEmpty()) {
 			return null;
