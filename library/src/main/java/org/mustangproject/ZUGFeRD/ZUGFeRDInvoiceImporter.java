@@ -78,7 +78,7 @@ public class ZUGFeRDInvoiceImporter {
 	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<>();
 
 
-	protected ZUGFeRDInvoiceImporter() {
+	public ZUGFeRDInvoiceImporter() {
 		//constructor for extending classes
 	}
 
@@ -90,7 +90,7 @@ public class ZUGFeRDInvoiceImporter {
 		setInputStream(pdfStream);
 	}
 
-	public void setPDFFilename(String pdfFilename){
+	public void setPDFFilename(String pdfFilename) {
 		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
 			extractLowLevel(bis);
 		} catch (final IOException e) {
@@ -134,7 +134,8 @@ public class ZUGFeRDInvoiceImporter {
 		if (Arrays.equals(pad, pdfSignature)) { // we have a pdf
 
 
-			try (PDDocument doc = Loader.loadPDF(IOUtils.toByteArray(pdfStream))) {
+			try {
+				PDDocument doc = Loader.loadPDF(IOUtils.toByteArray(pdfStream));
 				// PDDocumentInformation info = doc.getDocumentInformation();
 				final PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
 				//start
@@ -169,6 +170,9 @@ public class ZUGFeRDInvoiceImporter {
 						extractFiles(namesL);
 					}
 				}
+			} catch (Exception e) {
+				LOGGER.error("Failed to parse PDF", e);
+				//ignore otherwise
 			}
 		} else {
 			// no PDF probably XML
@@ -307,7 +311,7 @@ public class ZUGFeRDInvoiceImporter {
 		NodeList SellerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		XPathExpression shipEx = xpath.compile("//*[local-name()=\"ShipToTradeParty\"]");
 		NodeList deliveryNodes = (NodeList) shipEx.evaluate(getDocument(), XPathConstants.NODESET);
-		if (deliveryNodes!=null) {
+		if (deliveryNodes != null) {
 			zpp.setDeliveryAddress(new TradeParty(deliveryNodes));
 		}
 
@@ -460,10 +464,13 @@ public class ZUGFeRDInvoiceImporter {
 		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]|//*[local-name()=\"ApplicableSupplyChainTradeSettlement\"]");
 		NodeList headerTradeSettlementNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		List<BankDetails> bankDetails = new ArrayList<>();
+		String directDebitMandateID = null;
+		String IBAN = null, BIC = null;
 
 		for (int i = 0; i < headerTradeSettlementNodes.getLength(); i++) {
 			// nodes.item(i).getTextContent())) {
 			Node headerTradeSettlementNode = headerTradeSettlementNodes.item(i);
+
 			NodeList headerTradeSettlementChilds = headerTradeSettlementNode.getChildNodes();
 			for (int settlementChildIndex = 0; settlementChildIndex < headerTradeSettlementChilds.getLength(); settlementChildIndex++) {
 				if ((headerTradeSettlementChilds.item(settlementChildIndex).getLocalName() != null)
@@ -478,13 +485,17 @@ public class ZUGFeRDInvoiceImporter {
 								}
 							}
 						}
+						if ((paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("DirectDebitMandateID"))) {
+							directDebitMandateID = paymentTermChilds.item(paymentTermChildIndex).getTextContent();
+						}
 					}
 				}
 
 				if ((headerTradeSettlementChilds.item(settlementChildIndex).getLocalName() != null)
 					&& (headerTradeSettlementChilds.item(settlementChildIndex).getLocalName().equals("SpecifiedTradeSettlementPaymentMeans"))) {
 					NodeList paymentMeansChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
-					String IBAN = null, BIC = null;
+					IBAN = null;
+					BIC = null;
 					for (int paymentMeansChildIndex = 0; paymentMeansChildIndex < paymentMeansChilds.getLength(); paymentMeansChildIndex++) {
 
 						if ((paymentMeansChilds.item(paymentMeansChildIndex).getLocalName() != null) && (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayeePartyCreditorFinancialAccount") || paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayerPartyDebtorFinancialAccount"))) {
@@ -558,7 +569,7 @@ public class ZUGFeRDInvoiceImporter {
 					NodeList paymentTermChilds = paymentMeansChilds.item(meansChildIndex).getChildNodes();
 					for (int paymentTermChildIndex = 0; paymentTermChildIndex < paymentTermChilds.getLength(); paymentTermChildIndex++) {
 						if ((paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("ID"))) {
-							String IBAN = paymentTermChilds.item(paymentTermChildIndex).getTextContent();
+							IBAN = paymentTermChilds.item(paymentTermChildIndex).getTextContent();
 							if (IBAN != null) {
 								BankDetails bd = new BankDetails(IBAN);
 								bankDetails.add(bd);
@@ -570,6 +581,11 @@ public class ZUGFeRDInvoiceImporter {
 		}
 
 		zpp.setDueDate(dueDate).setDeliveryDate(deliveryDate).setIssueDate(issueDate).setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number).setDocumentCode(typeCode);
+
+		if ((directDebitMandateID != null) && (IBAN != null)) {
+			DirectDebit d = new DirectDebit(IBAN, directDebitMandateID);
+			zpp.getSender().addDebitDetails(d);
+		}
 
 		bankDetails.forEach(bankDetail -> zpp.getSender().addBankDetails(bankDetail));
 
@@ -707,7 +723,7 @@ public class ZUGFeRDInvoiceImporter {
 				&& ((!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2)))
 				&& (!ignoreCalculationErrors))) {
 				throw new ParseException(
-					"Could not reproduce the invoice, this could mean that it could not be read properly", 0);
+					"Could not reproduce the invoice, this could mean that it could not be read properly exp "+expectedStringTotalGross+" is "+XMLTools.nDigitFormat(expectedGrandTotal, 2), 0);
 			}
 		}
 		return zpp;
