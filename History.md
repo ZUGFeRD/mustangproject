@@ -3,6 +3,8 @@
 2024-
 - 435 use invoiceimporter as common technical basis also for zugferdimporter 
 - also import delivery address
+- 527 
+- make document charges and allowances serializable
 
 
 2.14.2

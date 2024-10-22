@@ -522,6 +522,20 @@ public class Invoice implements IExportableTransaction {
 		}
 	}
 
+	/***
+	 * this is wrong and only used from jackson
+	 * @param iza
+	 * @return
+	 */
+	public Invoice setZFAllowances(Allowance[] iza) {
+		Allowances=new ArrayList<>();
+
+		for (IZUGFeRDAllowanceCharge cz:iza) {
+			Allowances.add(cz);
+		}
+		return this;
+	}
+
 
 	@Override
 	public IZUGFeRDAllowanceCharge[] getZFCharges() {
@@ -532,6 +546,18 @@ public class Invoice implements IExportableTransaction {
 		}
 	}
 
+	/***
+	 * this is wrong and only used from jackson
+	 * @param iza
+	 * @return
+	 */
+	public Invoice setZFCharges(Charge[] iza) {
+		Charges=new ArrayList<>();
+		for (IZUGFeRDAllowanceCharge cz:iza) {
+			Charges.add(cz);
+		}
+		return this;
+	}
 
 	@Override
 	public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
