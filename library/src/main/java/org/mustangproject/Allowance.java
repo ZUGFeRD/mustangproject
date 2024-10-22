@@ -1,5 +1,7 @@
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.math.BigDecimal;
 
 /***
@@ -28,6 +30,7 @@ public class Allowance extends Charge {
 	 * @return false since its not supposed to be calculated negatively
 	 */
 	@Override
+	@JsonIgnore
 	public boolean isCharge() {
 		return false;
 	}

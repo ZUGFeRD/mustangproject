@@ -34,9 +34,13 @@ public class LineCalculator {
 			}
 		}
 		
-		BigDecimal vatPercent = currentItem.getProduct().getVATPercent();
-		if (vatPercent == null)
+		BigDecimal vatPercent = null;
+		if (currentItem.getProduct()!=null) {
+			vatPercent = currentItem.getProduct().getVATPercent();
+		}
+		if (vatPercent == null) {
 			vatPercent = BigDecimal.ZERO;
+		}
 		BigDecimal multiplicator = vatPercent.divide(BigDecimal.valueOf(100));
 		priceGross = currentItem.getPrice(); // see https://github.com/ZUGFeRD/mustangproject/issues/159
 		price = priceGross.subtract(allowance).add(charge);

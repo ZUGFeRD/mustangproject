@@ -1,9 +1,11 @@
 package org.mustangproject.ZUGFeRD;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,43 +13,276 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.*;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
+import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
+import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
+import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
+import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.mustangproject.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
-public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
+public class ZUGFeRDInvoiceImporter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDInvoiceImporter.class.getCanonicalName()); // log
-	private boolean recalcPrice = false;
-	private boolean ignoreCalculationErrors = false;
-	private ArrayList<FileAttachment> fileAttachments=new ArrayList<>();
+
+	/**
+	 * if metadata has been found
+	 */
+	protected boolean containsMeta = false;
+	/**
+	 * map filenames of additional XML files to their contents
+	 */
+	protected final HashMap<String, byte[]> additionalXMLs = new HashMap<>();
+	/**
+	 * map filenames of all embedded files in the respective PDF
+	 */
+	protected final ArrayList<FileAttachment> PDFAttachments = new ArrayList<>();
+	/**
+	 * Raw XML form of the extracted data - may be directly obtained.
+	 */
+	protected byte[] rawXML = null;
+	/**
+	 * XMP metadata
+	 */
+	protected String xmpString = null; // XMP metadata
+	/**
+	 * parsed Document
+	 */
+	protected Document document;
+	/***
+	 * automatically parse into importedInvoice
+	 */
+	protected boolean parseAutomatically = true;
+	protected Integer version;
+	protected CalculatedInvoice importedInvoice = null;
+	protected boolean recalcPrice = false;
+	protected boolean ignoreCalculationErrors = false;
+	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<>();
+
 
 	public ZUGFeRDInvoiceImporter() {
-		super();
+		//constructor for extending classes
 	}
 
-	public ZUGFeRDInvoiceImporter(String filename) {
-		super(filename);
+	public ZUGFeRDInvoiceImporter(String pdfFilename) {
+		setPDFFilename(pdfFilename);
 	}
 
-	public ZUGFeRDInvoiceImporter(InputStream stream) {
-		super(stream);
+	public ZUGFeRDInvoiceImporter(InputStream pdfStream) {
+		setInputStream(pdfStream);
 	}
 
-	public void fromXML(String XML) {
+	public void setPDFFilename(String pdfFilename) {
+		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
+			extractLowLevel(bis);
+		} catch (final IOException e) {
+			LOGGER.error("Failed to extract ZUGFeRD data", e);
+			throw new ZUGFeRDExportException(e);
+		}
+	}
+
+	public void setInputStream(InputStream pdfStream) {
 		try {
+			extractLowLevel(pdfStream);
+		} catch (final IOException e) {
+			LOGGER.error("Failed to extract ZUGFeRD data", e);
+			throw new ZUGFeRDExportException(e);
+		}
+	}
+
+
+	/***
+	 * return the file names of all files embedded into the PDF
+	 * @see for XML embedded files please use ZUGFeRDInvoiceImporter.getFileAttachmentsXML
+	 * @return a ArrayList of FileAttachments, empty if none
+	 */
+	public List<FileAttachment> getFileAttachmentsPDF() {
+		return PDFAttachments;
+	}
+
+
+	/**
+	 * Extracts a ZUGFeRD invoice from a PDF document represented by an input stream. Errors are reported via exception handling.
+	 *
+	 * @param inStream a inputstream of a pdf file
+	 */
+	private void extractLowLevel(InputStream inStream) throws IOException {
+		BufferedInputStream pdfStream = new BufferedInputStream(inStream);
+		byte[] pad = new byte[4];
+		pdfStream.mark(0);
+		pdfStream.read(pad);
+		pdfStream.reset();
+		byte[] pdfSignature = {'%', 'P', 'D', 'F'};
+		if (Arrays.equals(pad, pdfSignature)) { // we have a pdf
+
+
+			try {
+				PDDocument doc = Loader.loadPDF(IOUtils.toByteArray(pdfStream));
+				// PDDocumentInformation info = doc.getDocumentInformation();
+				final PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
+				//start
+
+				if (doc.getDocumentCatalog() == null || doc.getDocumentCatalog().getMetadata() == null) {
+					LOGGER.info("no-xmlpart");
+					return;
+				}
+
+				final InputStream XMP = doc.getDocumentCatalog().getMetadata().exportXMPMetadata();
+				xmpString = convertStreamToString(XMP);
+
+				final PDEmbeddedFilesNameTreeNode etn = names.getEmbeddedFiles();
+				if (etn == null) {
+					return;
+				}
+
+				final Map<String, PDComplexFileSpecification> efMap = etn.getNames();
+				// String filePath = "/tmp/";
+
+				if (efMap != null) {
+					extractFiles(efMap); // see
+					// https://memorynotfound.com/apache-pdfbox-extract-embedded-file-pdf-document/
+				} else {
+
+					final List<PDNameTreeNode<PDComplexFileSpecification>> kids = etn.getKids();
+					if (kids == null) {
+						return;
+					}
+					for (final PDNameTreeNode<PDComplexFileSpecification> node : kids) {
+						final Map<String, PDComplexFileSpecification> namesL = node.getNames();
+						extractFiles(namesL);
+					}
+				}
+			} catch (Exception e) {
+				LOGGER.error("Failed to parse PDF", e);
+				//ignore otherwise
+			}
+		} else {
+			// no PDF probably XML
 			containsMeta = true;
-			setRawXML(XML.getBytes(StandardCharsets.UTF_8));
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
+			setRawXML(XMLTools.getBytesFromStream(pdfStream));
+
+		}
+	}
+
+
+	/***
+	 * have the item prices be determined from the line total.
+	 * That's a workaround for some invoices which just put 0 as item price
+	 */
+	public void doRecalculateItemPricesFromLineTotals() {
+		recalcPrice = true;
+	}
+
+
+	/***
+	 * do not raise ParseExceptions even if the reproduced invoice total does not match the given value
+	 */
+	public void doIgnoreCalculationErrors() {
+		ignoreCalculationErrors = true;
+	}
+
+
+	/***
+	 * sets th pdf attachments, and if a file is recognized (e.g. a factur-x.xml) triggers processing
+	 * @param names the Hashmap of String, PDComplexFileSpecification
+	 * @throws IOException
+	 */
+	private void extractFiles(Map<String, PDComplexFileSpecification> names) throws IOException {
+		for (final String alias : names.keySet()) {
+
+			final PDComplexFileSpecification fileSpec = names.get(alias);
+			final String filename = fileSpec.getFilename();
+			/**
+			 * filenames for invoice data (ZUGFeRD v1 and v2, Factur-X)
+			 */
+
+			final PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
+			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml")) || filename.equals("xrechnung.xml") || filename.equals("order-x.xml") || filename.equals("cida.xml")) {
+				containsMeta = true;
+
+				// String embeddedFilename = filePath + filename;
+				// File file = new File(filePath + filename);
+				// System.out.println("Writing " + embeddedFilename);
+				// ByteArrayOutputStream fileBytes=new
+				// ByteArrayOutputStream();
+				// FileOutputStream fos = new FileOutputStream(file);
+
+				setRawXML(embeddedFile.toByteArray());
+
+				// fos.write(embeddedFile.getByteArray());
+				// fos.close();
+			}
+			if (filename.startsWith("additional_data")) {
+				additionalXMLs.put(filename, embeddedFile.toByteArray());
+			}
+			PDFAttachments.add(new FileAttachment(filename, embeddedFile.getSubtype(), "Data", embeddedFile.toByteArray()));
+		}
+	}
+
+	/***
+	 * set the xml of a CII invoice
+	 * @param rawXML the xml string
+	 * @param doParse automatically parse input for zugferdImporter (not ZUGFeRDInvoiceImporter)
+	 * @throws IOException
+	 */
+	public void setRawXML(byte[] rawXML, boolean doParse) throws IOException {
+		this.containsMeta = true;
+		this.rawXML = rawXML;
+		this.version = null;
+		parseAutomatically = doParse;
+
+		try {
+			setDocument();
+		} catch (ParserConfigurationException | SAXException e) {
+			LOGGER.error("Failed to parse XML", e);
+			throw new ZUGFeRDExportException(e);
+		}
+
+	}
+
+	/***
+	 * set the xml of a CII invoice, simple version
+	 * @param rawXML the cii(?) as a string
+	 * @throws IOException
+	 */
+	public void setRawXML(byte[] rawXML) throws IOException {
+		setRawXML(rawXML, true);
+	}
+
+	private void setDocument() throws ParserConfigurationException, IOException, SAXException {
+		final DocumentBuilderFactory xmlFact = DocumentBuilderFactory.newInstance();
+		xmlFact.setNamespaceAware(true);
+		final DocumentBuilder builder = xmlFact.newDocumentBuilder();
+		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
+		///    is.skip(guessBOMSize(is));
+		document = builder.parse(is);
+		if (parseAutomatically) {
+			try {
+				importedInvoice = new CalculatedInvoice();
+				extractInto(importedInvoice);
+			} catch (XPathExpressionException e) {
+				throw new RuntimeException(e);
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 
@@ -63,6 +298,8 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 		String number = "";
 		String typeCode = null;
+		String deliveryPeriodStart = null;
+		String deliveryPeriodEnd = null;
 		/*
 		 * dummywerte sind derzeit noch setDueDate setIssueDate setDeliveryDate
 		 * setSender setRecipient setnumber bspw. due date
@@ -72,6 +309,12 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		XPath xpath = xpathFact.newXPath();
 		XPathExpression xpr = xpath.compile("//*[local-name()=\"SellerTradeParty\"]|//*[local-name()=\"AccountingSupplierParty\"]/*");
 		NodeList SellerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		XPathExpression shipEx = xpath.compile("//*[local-name()=\"ShipToTradeParty\"]");
+		NodeList deliveryNodes = (NodeList) shipEx.evaluate(getDocument(), XPathConstants.NODESET);
+		if (deliveryNodes != null) {
+			zpp.setDeliveryAddress(new TradeParty(deliveryNodes));
+		}
+
 
 		xpr = xpath.compile("//*[local-name()=\"BuyerTradeParty\"]|//*[local-name()=\"AccountingCustomerParty\"]/*");
 		NodeList BuyerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
@@ -87,6 +330,12 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		NodeList totalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (totalNodes.getLength() > 0) {
 			expectedGrandTotal = new BigDecimal(totalNodes.item(0).getTextContent());
+			if (zpp instanceof CalculatedInvoice) {
+				// usually we would re-calculate the invoice to get expectedGrandTotal
+				// however, for "minimal" invoices or other invoices without lines
+				// this will not work
+				((CalculatedInvoice) zpp).setGrandTotal(expectedGrandTotal);
+			}
 		}
 
 		xpr = xpath.compile("//*[local-name()=\"PrepaidAmount\"]");
@@ -209,14 +458,19 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 		}
 
+		String currency = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"InvoiceCurrencyCode\"]|*[local-name()=\"DocumentCurrencyCode\"]");
+		zpp.setCurrency(currency);
 
 		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]|//*[local-name()=\"ApplicableSupplyChainTradeSettlement\"]");
 		NodeList headerTradeSettlementNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		List<BankDetails> bankDetails = new ArrayList<>();
+		String directDebitMandateID = null;
+		String IBAN = null, BIC = null;
 
 		for (int i = 0; i < headerTradeSettlementNodes.getLength(); i++) {
 			// nodes.item(i).getTextContent())) {
 			Node headerTradeSettlementNode = headerTradeSettlementNodes.item(i);
+
 			NodeList headerTradeSettlementChilds = headerTradeSettlementNode.getChildNodes();
 			for (int settlementChildIndex = 0; settlementChildIndex < headerTradeSettlementChilds.getLength(); settlementChildIndex++) {
 				if ((headerTradeSettlementChilds.item(settlementChildIndex).getLocalName() != null)
@@ -231,15 +485,20 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 								}
 							}
 						}
+						if ((paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("DirectDebitMandateID"))) {
+							directDebitMandateID = paymentTermChilds.item(paymentTermChildIndex).getTextContent();
+						}
 					}
 				}
 
 				if ((headerTradeSettlementChilds.item(settlementChildIndex).getLocalName() != null)
 					&& (headerTradeSettlementChilds.item(settlementChildIndex).getLocalName().equals("SpecifiedTradeSettlementPaymentMeans"))) {
 					NodeList paymentMeansChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
-					String IBAN = null, BIC = null;
+					IBAN = null;
+					BIC = null;
 					for (int paymentMeansChildIndex = 0; paymentMeansChildIndex < paymentMeansChilds.getLength(); paymentMeansChildIndex++) {
-						if ((paymentMeansChilds.item(paymentMeansChildIndex).getLocalName() != null) && (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayeePartyCreditorFinancialAccount"))) {
+
+						if ((paymentMeansChilds.item(paymentMeansChildIndex).getLocalName() != null) && (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayeePartyCreditorFinancialAccount") || paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayerPartyDebtorFinancialAccount"))) {
 							NodeList accountChilds = paymentMeansChilds.item(paymentMeansChildIndex).getChildNodes();
 							for (int accountChildIndex = 0; accountChildIndex < accountChilds.getLength(); accountChildIndex++) {
 								if ((accountChilds.item(accountChildIndex).getLocalName() != null) && (accountChilds.item(accountChildIndex).getLocalName().equals("IBANID"))) {//CII
@@ -265,9 +524,37 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 						bankDetails.add(bd);
 					}
 				}
+				if ((headerTradeSettlementChilds.item(settlementChildIndex).getLocalName() != null)
+					&& (headerTradeSettlementChilds.item(settlementChildIndex).getLocalName().equals("BillingSpecifiedPeriod"))) {
+					NodeList periodChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
+					for (int periodChildIndex = 0; periodChildIndex < periodChilds.getLength(); periodChildIndex++) {
+						if ((periodChilds.item(periodChildIndex).getLocalName() != null) && (periodChilds.item(periodChildIndex).getLocalName().equals("StartDateTime"))) {
+
+							NodeList startPeriodChilds = periodChilds.item(periodChildIndex).getChildNodes();
+							for (int startPeriodIndex = 0; startPeriodIndex < startPeriodChilds.getLength(); startPeriodIndex++) {
+								if ((startPeriodChilds.item(startPeriodIndex).getLocalName() != null) && (startPeriodChilds.item(startPeriodIndex).getLocalName().equals("DateTimeString"))) {//CII
+									deliveryPeriodStart = startPeriodChilds.item(startPeriodIndex).getTextContent();
+								}
+							}
+						}
+						if ((periodChilds.item(periodChildIndex).getLocalName() != null) && (periodChilds.item(periodChildIndex).getLocalName().equals("EndDateTime"))) {
+							NodeList endPeriodChilds = periodChilds.item(periodChildIndex).getChildNodes();
+							for (int endPeriodIndex = 0; endPeriodIndex < endPeriodChilds.getLength(); endPeriodIndex++) {
+								if ((endPeriodChilds.item(endPeriodIndex).getLocalName() != null) && (endPeriodChilds.item(endPeriodIndex).getLocalName().equals("DateTimeString"))) {//CII
+									deliveryPeriodEnd = endPeriodChilds.item(endPeriodIndex).getTextContent();
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 
+		if ((deliveryPeriodStart != null) && (deliveryPeriodEnd != null)) {
+			zpp.setDetailedDeliveryPeriod(XMLTools.tryDate(deliveryPeriodStart), XMLTools.tryDate(deliveryPeriodEnd));
+		} else if (deliveryPeriodStart != null) {
+			zpp.setDeliveryDate(XMLTools.tryDate(deliveryPeriodStart));
+		}
 
 		xpr = xpath.compile("//*[local-name()=\"PaymentMeans\"]"); //UBL only
 		NodeList paymentMeansNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
@@ -282,7 +569,7 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 					NodeList paymentTermChilds = paymentMeansChilds.item(meansChildIndex).getChildNodes();
 					for (int paymentTermChildIndex = 0; paymentTermChildIndex < paymentTermChilds.getLength(); paymentTermChildIndex++) {
 						if ((paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("ID"))) {
-							String IBAN = paymentTermChilds.item(paymentTermChildIndex).getTextContent();
+							IBAN = paymentTermChilds.item(paymentTermChildIndex).getTextContent();
 							if (IBAN != null) {
 								BankDetails bd = new BankDetails(IBAN);
 								bankDetails.add(bd);
@@ -294,6 +581,11 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 		}
 
 		zpp.setDueDate(dueDate).setDeliveryDate(deliveryDate).setIssueDate(issueDate).setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number).setDocumentCode(typeCode);
+
+		if ((directDebitMandateID != null) && (IBAN != null)) {
+			DirectDebit d = new DirectDebit(IBAN, directDebitMandateID);
+			zpp.getSender().addDebitDetails(d);
+		}
 
 		bankDetails.forEach(bankDetail -> zpp.getSender().addBankDetails(bankDetail));
 
@@ -339,9 +631,9 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 			xpr = xpath.compile("//*[local-name()=\"AttachmentBinaryObject\"]|//*[local-name()=\"EmbeddedDocumentBinaryObject\"]");
 			NodeList attachmentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			for (int i = 0; i < attachmentNodes.getLength(); i++) {
-				FileAttachment fa=new FileAttachment(attachmentNodes.item(i).getAttributes().getNamedItem("filename").getNodeValue(),attachmentNodes.item(i).getAttributes().getNamedItem("mimeCode").getNodeValue(),"Data", Base64.getDecoder().decode(attachmentNodes.item(i).getTextContent()));
+				FileAttachment fa = new FileAttachment(attachmentNodes.item(i).getAttributes().getNamedItem("filename").getNodeValue(), attachmentNodes.item(i).getAttributes().getNamedItem("mimeCode").getNodeValue(), "Data", Base64.getDecoder().decode(attachmentNodes.item(i).getTextContent()));
 				fileAttachments.add(fa);
-			// filename = "Aufmass.png" mimeCode = "image/png"
+				// filename = "Aufmass.png" mimeCode = "image/png"
 				//EmbeddedDocumentBinaryObject cbc:EmbeddedDocumentBinaryObject mimeCode="image/png" filename="Aufmass.png"
 			}
 
@@ -431,12 +723,96 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 				&& ((!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2)))
 				&& (!ignoreCalculationErrors))) {
 				throw new ParseException(
-					"Could not reproduce the invoice, this could mean that it could not be read properly", 0);
+					"Could not reproduce the invoice, this could mean that it could not be read properly exp "+expectedStringTotalGross+" is "+XMLTools.nDigitFormat(expectedGrandTotal, 2), 0);
 			}
 		}
 		return zpp;
 
 	}
+
+	protected Document getDocument() {
+		return document;
+	}
+
+
+	protected String extractString(String xpathStr) {
+		if (!containsMeta) {
+			throw new ZUGFeRDExportException("No suitable data/ZUGFeRD file could be found.");
+		}
+		final String result;
+		try {
+			final Document document = getDocument();
+			final XPathFactory xpathFact = XPathFactory.newInstance();
+			final XPath xpath = xpathFact.newXPath();
+			result = xpath.evaluate(xpathStr, document);
+		} catch (final XPathExpressionException e) {
+			LOGGER.error("Failed to evaluate XPath", e);
+			throw new ZUGFeRDExportException(e);
+		}
+		return result;
+	}
+
+	public EStandard getStandard() throws Exception {
+		if (!containsMeta) {
+			throw new Exception("Not yet parsed");
+		}
+		final String head = getUTF8();
+		String rootNode = extractString("local-name(/*)");
+		if (rootNode.equals("CrossIndustryDocument")) {
+			return EStandard.zugferd;
+		} else if (rootNode.equals("Invoice")) {
+			return EStandard.ubl;
+		} else if (rootNode.equals("CreditNote")) {
+			return EStandard.ubl;
+		} else if (rootNode.equals("CrossIndustryInvoice")) {
+			return EStandard.facturx;
+		} else if (rootNode.equals("SCRDMCCBDACIDAMessageStructure")) {
+			return EStandard.despatchadvice;
+		} else if (head.contains("<rsm:SCRDMCCBDACIOMessageStructure")) {
+			return EStandard.orderx;
+		}
+
+		throw new Exception("ZUGFeRD version could not be determined");
+
+	}
+
+	/**
+	 * @return return UTF8 XML (without BOM) of the invoice
+	 */
+	public String getUTF8() {
+		if (rawXML == null) {
+			return null;
+		}
+		if (rawXML.length < 3) {
+			return new String(rawXML);
+		}
+
+
+		final byte[] bomlessData;
+
+		if ((rawXML[0] == (byte) 0xEF)
+			&& (rawXML[1] == (byte) 0xBB)
+			&& (rawXML[2] == (byte) 0xBF)) {
+			// I don't like BOMs, lets remove it
+			bomlessData = new byte[rawXML.length - 3];
+			System.arraycopy(rawXML, 3, bomlessData, 0,
+				rawXML.length - 3);
+		} else {
+			bomlessData = rawXML;
+		}
+
+		return new String(bomlessData);
+	}
+
+
+	static String convertStreamToString(java.io.InputStream is) {
+		try {
+			return IOUtils.toString(is, StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+
 
 	/***
 	 *
@@ -461,18 +837,18 @@ public class ZUGFeRDInvoiceImporter extends ZUGFeRDImporter {
 
 	}
 
-	/***
-	 * have the item prices be determined from the line total.
-	 * That's a workaround for some invoices which just put 0 as item price
-	 */
-	public void doRecalculateItemPricesFromLineTotals() {
-		recalcPrice = true;
-	}
 
 	/***
-	 * do not raise ParseExceptions even if the reproduced invoice total does not match the given value
+	 * sets the XML for the importer to parse
+	 * @param XML the UBL or CII
 	 */
-	public void doIgnoreCalculationErrors() {
-		ignoreCalculationErrors = true;
+	public void fromXML(String XML) {
+		try {
+			containsMeta = true;
+			setRawXML(XML.getBytes(StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
 	}
+
 }
