@@ -3,7 +3,9 @@
 2024-
 - 435 use invoiceimporter as common technical basis also for zugferdimporter 
 - also import delivery address
-- 527 
+- 527 metrics raises errors
+- 517
+- 518 corrently validate more XRechnung versions
 - make document charges and allowances serializable
 
 
