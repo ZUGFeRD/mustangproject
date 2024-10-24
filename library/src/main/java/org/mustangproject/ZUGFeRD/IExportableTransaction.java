@@ -308,7 +308,7 @@ public interface IExportableTransaction {
 	 *
 	 * @return the IZUGFeRDPaymentTerms of the invoice
 	 */
-	default IZUGFeRDPaymentTerms getPaymentTerms() {
+	default IZUGFeRDPaymentTerms[] getPaymentTerms() {
 		return null;
 	}
 
