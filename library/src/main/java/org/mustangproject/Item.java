@@ -1,6 +1,7 @@
 package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IReferencedDocument;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
@@ -18,6 +19,7 @@ import java.util.Date;
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Item implements IZUGFeRDExportableItem {
 	protected BigDecimal price = BigDecimal.ZERO;
 	protected BigDecimal quantity;
@@ -314,7 +316,7 @@ public class Item implements IZUGFeRDExportableItem {
 
 
 	/***
-	 * adds item level references along with their typecodes and issuerassignedIDs (contract ID, cost centre, ...) 
+	 * adds item level references along with their typecodes and issuerassignedIDs (contract ID, cost centre, ...)
 	 * @param doc the ReferencedDocument to add
 	 * @return fluent setter
 	 */
@@ -333,8 +335,8 @@ public class Item implements IZUGFeRDExportableItem {
 		}
 		return additionalReference.toArray(new IReferencedDocument[0]);
 	}
-	
-	
+
+
 	/***
 	 * specify a item level delivery period
 	 * (apart from the document level delivery period, and the document level

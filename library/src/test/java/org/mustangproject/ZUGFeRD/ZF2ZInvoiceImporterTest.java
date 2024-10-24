@@ -21,8 +21,8 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import org.mustangproject.FileAttachment;
-import org.mustangproject.Invoice;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.mustangproject.*;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
@@ -33,6 +33,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 
 /***
@@ -324,10 +325,35 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 
-/*
+
+	public void testImportDebit() {
+		File CIIinputFile = getResourceAsFile("cii/minimalDebit.xml");
+		try {
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
+			Invoice i=zii.extractInvoice();
+
+			assertEquals("DE21860000000086001055", i.getSender().getBankDetails().get(0).getIBAN());
+			ObjectMapper mapper = new ObjectMapper();
+
+			String jsonArray = mapper.writeValueAsString(i);
+
+	//		assertEquals("",jsonArray);
+
+		} catch (IOException e) {
+			fail("IOException not expected");
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+
+
+	}
+
+
 	public void testEEISI_300_cii_Import() {
 		boolean hasExceptions = false;
-		File input = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel2.ubl.xml");
+	/*	File input = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.cii.xml");
 
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
@@ -352,8 +378,8 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertFalse(hasExceptions);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("205.00"), tc.getGrandTotal());
-
+*/
 	}
 
-*/
+
 }

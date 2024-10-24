@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.*;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
@@ -37,6 +38,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  * @see IExportableTransaction if you want to implement an interface instead
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Invoice implements IExportableTransaction {
 
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, invoiceReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
@@ -520,6 +522,20 @@ public class Invoice implements IExportableTransaction {
 		}
 	}
 
+	/***
+	 * this is wrong and only used from jackson
+	 * @param iza
+	 * @return
+	 */
+	public Invoice setZFAllowances(Allowance[] iza) {
+		Allowances=new ArrayList<>();
+
+		for (IZUGFeRDAllowanceCharge cz:iza) {
+			Allowances.add(cz);
+		}
+		return this;
+	}
+
 
 	@Override
 	public IZUGFeRDAllowanceCharge[] getZFCharges() {
@@ -530,6 +546,18 @@ public class Invoice implements IExportableTransaction {
 		}
 	}
 
+	/***
+	 * this is wrong and only used from jackson
+	 * @param iza
+	 * @return
+	 */
+	public Invoice setZFCharges(Charge[] iza) {
+		Charges=new ArrayList<>();
+		for (IZUGFeRDAllowanceCharge cz:iza) {
+			Charges.add(cz);
+		}
+		return this;
+	}
 
 	@Override
 	public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {

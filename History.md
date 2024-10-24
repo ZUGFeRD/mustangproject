@@ -1,5 +1,20 @@
+2.15.0
+=======
+2024-
+- 435 use invoiceimporter as common technical basis also for zugferdimporter 
+- also import delivery address
+- 527 
+- make document charges and allowances serializable
+
+
+2.14.2
+=======
+2024-10-14
+
 - also parse BICs in InvoiceImporter not only IBANs
 - #509 CLI currently does not write a logfile
+- #505 crash after invoking ZUGFeRD2PullProvider
+- #506 Fix POM missing dependencies
 
 2.14.1 
 =======

@@ -1,6 +1,7 @@
 package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 import org.mustangproject.util.NodeMap;
@@ -17,6 +18,8 @@ import java.util.Map;
  * describes a product, good or service used in an invoice item line
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+
 public class Product implements IZUGFeRDExportableProduct {
 	protected String unit, name, sellerAssignedID, buyerAssignedID;
 	protected String description="";
