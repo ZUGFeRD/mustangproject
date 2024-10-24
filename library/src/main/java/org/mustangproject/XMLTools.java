@@ -214,4 +214,16 @@ public class XMLTools extends XMLWriter {
 	  return IOUtils.toByteArray (fileinput);
 	}
 
+
+	public static String trimOrNull(Node node) {
+		if (node != null) {
+			String textContent = node.getTextContent();
+			if (textContent != null) {
+				return textContent.trim();
+			}
+		}
+		return null;
+	}
+
+
 }
