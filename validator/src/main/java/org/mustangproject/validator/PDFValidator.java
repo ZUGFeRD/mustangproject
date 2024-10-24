@@ -1,20 +1,16 @@
 package org.mustangproject.validator;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,21 +21,18 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.mustangproject.util.ByteArraySearcher;
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
-import org.riversun.bigdoc.bin.BigFileSearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.verapdf.core.VeraPDFException;
 import org.verapdf.features.FeatureExtractorConfig;
 import org.verapdf.features.FeatureFactory;
+import org.verapdf.gf.foundry.VeraGreenfieldFoundryProvider;
 import org.verapdf.metadata.fixer.FixerFactory;
 import org.verapdf.metadata.fixer.MetadataFixerConfig;
-import org.verapdf.gf.foundry.VeraGreenfieldFoundryProvider;
 import org.verapdf.pdfa.flavours.PDFAFlavour;
 import org.verapdf.pdfa.validation.validators.ValidatorConfig;
 import org.verapdf.pdfa.validation.validators.ValidatorFactory;
-import org.verapdf.processor.BatchProcessor;
-import org.verapdf.processor.FormatOption;
 import org.verapdf.processor.ItemProcessor;
 import org.verapdf.processor.ProcessorConfig;
 import org.verapdf.processor.ProcessorFactory;
@@ -71,6 +64,7 @@ public class PDFValidator extends Validator {
 	private String Signature;
 
 	private String zfXML = null;
+	protected boolean autoload=true;
 
 	protected static boolean stringArrayContains(String[] arr, String targetValue) {
 		return Arrays.asList(arr).contains(targetValue);
@@ -81,7 +75,7 @@ public class PDFValidator extends Validator {
 
 		zfXML = null;
 		// file existence must have been checked before
-		if (!ByteArraySearcher.contains(fileContents, new byte[]{'%', 'P', 'D', 'F'})) {
+		if (!ByteArraySearcher.startsWith(fileContents, new byte[]{'%', 'P', 'D', 'F'})) {
 			context.addResultItem(
 				new ValidationResultItem(ESeverity.fatal, "Not a PDF file " + pdfFilename).setSection(20).setPart(EPart.pdf));
 
@@ -101,7 +95,7 @@ public class PDFValidator extends Validator {
 		// Default fixer config
 		final MetadataFixerConfig fixerConfig = FixerFactory.defaultConfig();
 		// Tasks configuring
-		final EnumSet tasks = EnumSet.noneOf(TaskType.class);
+		final EnumSet<TaskType> tasks = EnumSet.noneOf(TaskType.class);
 		tasks.add(TaskType.VALIDATE);
 		// tasks.add(TaskType.EXTRACT_FEATURES);
 		// tasks.add(TaskType.FIX_METADATA);
@@ -110,7 +104,6 @@ public class PDFValidator extends Validator {
 			fixerConfig, tasks
 		);
 		// Creating processor and output stream.
-		final ByteArrayOutputStream reportStream = new ByteArrayOutputStream();
 		final InputStream inputStream = new ByteArrayInputStream(fileContents);
 		try (ItemProcessor processor = ProcessorFactory.createProcessor(processorConfig)) {
 			// Generating list of files for processing
@@ -135,10 +128,11 @@ public class PDFValidator extends Validator {
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		final Document docXMP;
 
-		if (xmp.length() == 0) {
+		if (xmp == null || xmp.length() == 0) {
 			context.addResultItem(new ValidationResultItem(ESeverity.error, "Invalid XMP Metadata not found")
 				.setSection(17).setPart(EPart.pdf));
 		}
+		else
 		/*
 		 * checking for sth like <zf:ConformanceLevel>EXTENDED</zf:ConformanceLevel>
 		 * <zf:DocumentType>INVOICE</zf:DocumentType>
@@ -245,7 +239,8 @@ public class PDFValidator extends Validator {
 
 			boolean versionValid = false;
 			for (int i = 0; i < nodes.getLength(); i++) {
-				final String[] valueArray = {"1.0", "2p0", "1.2", "2.0", "2.1"}; //1.2, 2.0 and 2.1 are for xrechnung 1.2, 2p0 can be ZF 2.0, 2.1, 2.1.1
+				final String[] valueArray = {"1.0", "2p0", "1.2", "2.0", "2.1", "2.2", "2.3", "3.0"}; //1.2, 2.0, 2.1, 2.2, 2.3 and 3.0 are for xrechnung 1.2, 2p0 can be ZF 2.0, 2.1, 2.1.1
+
 				if (stringArrayContains(valueArray, nodes.item(i).getTextContent())) {
 					versionValid = true;
 				} // e.g. 1.0
@@ -262,36 +257,31 @@ public class PDFValidator extends Validator {
 		zfXML = zi.getUTF8();
 
 		// step 3 find signatures
-		try {
-			final byte[] symtraxSignature = "Symtrax".getBytes("UTF-8");
-			final byte[] mustangSignature = "via mustangproject".getBytes("UTF-8");
-			final byte[] facturxpythonSignature = "by Alexis de Lattre".getBytes("UTF-8");
-			final byte[] intarsysSignature = "intarsys ".getBytes("UTF-8");
-			final byte[] konikSignature = "Konik".getBytes("UTF-8");
-			final byte[] pdfMachineSignature = "pdfMachine from Broadgun Software".getBytes("UTF-8");
-			final byte[] ghostscriptSignature = "%%Invocation:".getBytes("UTF-8");
+		final byte[] symtraxSignature = "Symtrax".getBytes(StandardCharsets.UTF_8);
+		final byte[] mustangSignature = "via mustangproject".getBytes(StandardCharsets.UTF_8);
+		final byte[] facturxpythonSignature = "by Alexis de Lattre".getBytes(StandardCharsets.UTF_8);
+		final byte[] intarsysSignature = "intarsys ".getBytes(StandardCharsets.UTF_8);
+		final byte[] konikSignature = "Konik".getBytes(StandardCharsets.UTF_8);
+		final byte[] pdfMachineSignature = "pdfMachine from Broadgun Software".getBytes(StandardCharsets.UTF_8);
+		final byte[] ghostscriptSignature = "%%Invocation:".getBytes(StandardCharsets.UTF_8);
 
-			if (ByteArraySearcher.contains(fileContents, symtraxSignature)) {
-				Signature = "Symtrax";
-			} else if (ByteArraySearcher.contains(fileContents, mustangSignature)) {
-				Signature = "Mustang";
-			} else if (ByteArraySearcher.contains(fileContents, facturxpythonSignature)) {
-				Signature = "Factur/X Python";
-			} else if (ByteArraySearcher.contains(fileContents, intarsysSignature)) {
-				Signature = "Intarsys";
-			} else if (ByteArraySearcher.contains(fileContents, konikSignature)) {
-				Signature = "Konik";
-			} else if (ByteArraySearcher.contains(fileContents, pdfMachineSignature)) {
-				Signature = "pdfMachine";
-			} else if (ByteArraySearcher.contains(fileContents, ghostscriptSignature)) {
-				Signature = "Ghostscript";
-			}
-
-			context.setSignature(Signature);
-
-		} catch (final UnsupportedEncodingException e) {
-			LOGGER.error(e.getMessage(), e);
+		if (ByteArraySearcher.contains(fileContents, symtraxSignature)) {
+			Signature = "Symtrax";
+		} else if (ByteArraySearcher.contains(fileContents, mustangSignature)) {
+			Signature = "Mustang";
+		} else if (ByteArraySearcher.contains(fileContents, facturxpythonSignature)) {
+			Signature = "Factur/X Python";
+		} else if (ByteArraySearcher.contains(fileContents, intarsysSignature)) {
+			Signature = "Intarsys";
+		} else if (ByteArraySearcher.contains(fileContents, konikSignature)) {
+			Signature = "Konik";
+		} else if (ByteArraySearcher.contains(fileContents, pdfMachineSignature)) {
+			Signature = "pdfMachine";
+		} else if (ByteArraySearcher.contains(fileContents, ghostscriptSignature)) {
+			Signature = "Ghostscript";
 		}
+
+		context.setSignature(Signature);
 
 		// step 4:validate additional data
 		final HashMap<String, byte[]> additionalData = zi.getAdditionalData();
@@ -324,12 +314,23 @@ public class PDFValidator extends Validator {
 	@Override
 	public void setFilename(String filename) throws IrrecoverableValidationError {
 		this.pdfFilename = filename;
-
+		if(autoload) {
+			try {
+				fileContents=Files.readAllBytes(Paths.get(pdfFilename));
+			} catch (IOException ex) {
+				throw new IrrecoverableValidationError("Could not read file");
+			}
+		}
 	}
 
-	public void setFileContents(byte[] fileContents) {
-		this.fileContents = fileContents;
-	}
+  public void setFileContents(byte[] fileContents) {
+    this.fileContents = fileContents;
+  }
+
+  public void setFilenameAndContents(String filename, byte[] fileContents) {
+    this.pdfFilename = filename;
+    this.fileContents = fileContents;
+  }
 
 	public String getRawXML() {
 		return zfXML;

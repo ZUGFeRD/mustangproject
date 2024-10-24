@@ -1,9 +1,8 @@
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.mustangproject.ZUGFeRD.IAbsoluteValueProvider;
-import org.mustangproject.ZUGFeRD.IExportableTransaction;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
 
 import java.math.BigDecimal;
 
@@ -28,6 +27,10 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	 * a simple human readable description
 	 */
 	protected String reason;
+	/**
+	 * Code from list UNTDID 5189
+	 */
+	protected String reasonCode;
 	/**
 	 * the category ID why this charge has been applied
 	 */
@@ -97,13 +100,37 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 
 
 	@Override
+	public String getReasonCode() {
+		return reasonCode;
+	}
+
+	/***
+	 * Reason code for the charge
+	 * @param reasonCode from list UNTDID 5189
+	 * @return fluid setter
+	 */
+	public Charge setReasonCode(String reasonCode) {
+		this.reasonCode = reasonCode;
+		return this;
+	}
+
+	
+	@Override
 	public BigDecimal getTotalAmount(IAbsoluteValueProvider currentItem) {
+		if (percent!=null) {
+			return currentItem.getValue().multiply(getPercent().divide(new BigDecimal(100)));
+		} else if(totalAmount != null) {
+			return totalAmount;
+		} else {
+			throw new RuntimeException("percent must be set");
+		}
+	}
+
+	public BigDecimal getTotalAmount() {
 		if (totalAmount!=null) {
 			return totalAmount;
-		} else if (percent!=null) {
-			return currentItem.getValue().multiply(getPercent().divide(new BigDecimal(100)));
 		} else {
-			throw new RuntimeException("Either totalAmount or percent must be set");
+			throw new RuntimeException("totalAmount must be set");
 		}
 	}
 
@@ -125,6 +152,7 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	 * @return true since it is supposed to be calculated negatively
 	 */
 	@Override
+	@JsonIgnore
 	public boolean isCharge() {
 		return true;
 	}
@@ -139,7 +167,7 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 
 
 	/***
-	 * machine readable reason for this allowance/charge
+	 * the category ID why this has been applied
 	 * @param categoryCode usually S
 	 * @return fluid setter
 	 */

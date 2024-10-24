@@ -20,11 +20,11 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import org.mustangproject.EStandard;
-
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.mustangproject.EStandard;
 
 public class Profiles {
 	static Map<String, Profile> zf2Map = Stream.of(new Object[][]{

@@ -14,9 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xmlunit.builder.Input;
-import org.xmlunit.xpath.JAXPXPathEngine;
-import org.xmlunit.xpath.XPathEngine;
 import org.mustangproject.validator.ZUGFeRDValidator;
 
 import static org.xmlunit.assertj.XmlAssert.assertThat;
@@ -50,25 +47,23 @@ public  class ValidatorFileWalker
         Date date = new Date();
         String expectedString="valid";
         if (!expectValid) {
-			expectedString="invalid";
-		}
+          expectedString="invalid";
+        }
         if ((attr!=null)&&(attr.isRegularFile())) {
         	if (matcher.matches(file.getFileName())) {
-        		boolean thisResultValid=true;
         		String thisResultString="  valid";
-				try {
-					assertThat(zul.validate(file.toAbsolutePath().toString())).valueByXPath("/validation/summary/@status")
-							.asString()
-							.isEqualTo(expectedString);
-
-				} catch (AssertionError ae) {
-					thisResultValid=false;
-					thisResultString="invalid";
-					allValid=false;
-				}
-				LOGGER.info(String.format("\n@%s Testing file %d: %s (%s)", dateFormat.format(date), fileCount++, thisResultString, file));
-
-			}
+    				try {
+    					assertThat(zul.validate(file.toAbsolutePath().toString())).valueByXPath("/validation/summary/@status")
+    							.asString()
+    							.isEqualTo(expectedString);
+    
+    				} catch (AssertionError ae) {
+    					thisResultString="invalid";
+    					allValid=false;
+    				}
+    				LOGGER.info(String.format("\n@%s Testing file %d: %s (%s)", dateFormat.format(date), fileCount++, thisResultString, file));
+    
+    			}
         }
         return FileVisitResult.CONTINUE;
     }

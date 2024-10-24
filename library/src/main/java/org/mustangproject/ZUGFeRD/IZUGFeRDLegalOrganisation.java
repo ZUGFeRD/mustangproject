@@ -18,22 +18,19 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import javax.activation.DataSource;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
+import org.mustangproject.SchemedID;
 
 public interface IZUGFeRDLegalOrganisation   {
 
-	/***
-	 *
-	 * @return the ID of the legal organisation
-	 */
-	public String getID();
-
 	/**
 	 *
-	 * @return the scheme attribute of the legal organization=the type of the identification, e.g. 0002=Siren
+	 * @return the scheme attribute of the legal organization=the type of the identification, e.g. 0002=Siren, and its value
 	 */
-	public String getSchemeID();
+	public SchemedID getSchemedID();
+
+	/***
+	 *
+	 * @return the TradingBusinessName of the legal organisation
+	 */
+	public String getTradingBusinessName();
 }

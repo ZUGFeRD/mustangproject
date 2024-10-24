@@ -20,13 +20,13 @@ Additionally, the Mustang validator now also supports XRechnung 2, can now also 
 
 
 ### Use on command line
-`java -jar Mustang-CLI-2.0.0-alpha3.jar --action=combine` embeds a XML into a PDF (A-1) file and exports as PDF/A-3
+`java -jar Mustang-CLI-2.14.0.jar --action=combine` embeds a XML into a PDF (A-1) file and exports as PDF/A-3
 
-`java -jar mustang-cli.jar --action=extract` extracts XML from a ZUGFeRD file and
+`java -jar Mustang-CLI-2.14.0.jar --action=extract` extracts XML from a ZUGFeRD file and
 
-`java -jar mustang-cli.jar --action=validate` validates XML or PDF files.
+`java -jar Mustang-CLI-2.14.0.jar --action=validate` validates XML or PDF files.
 
-`java -jar mustang-cli.jar --help` still outputs the parameters which can be used
+`java -jar Mustang-CLI-2.14.0.jar --help` still outputs the parameters which can be used
 to for non-interactive (i.e., batch) processing.
 
 
@@ -37,12 +37,13 @@ from `-f` (ZUV) to the usual `--source`.
 
 We're now on maven central, please remove the old github repository. Additionally, the following changed
 
-| What  | old value | new value |
-|---|---|---|
-| Group id  | org.mustangproject.zugferd | org.mustangproject|
-| Artifact ID | mustang | library  |
-| Version | 1.7.8 | 2.0.0-alpha3  |
+| What  | old value | new value          |
+|---|---|--------------------|
+| Group id  | org.mustangproject.zugferd | org.mustangproject |
+| Artifact ID | mustang | library            |
+| Version | 1.7.8 | 2.14.0      |
 
+And please use the shaded classifier.
 If you want you can also embed the validator in your software using validator
 as artifact ID. "validator" includes the library functionality but is >20 MB
 bigger due to its dependencies.
@@ -200,7 +201,7 @@ read/write ZUGFeRD-invoices like the (smaller) library module.
    <dependency>
       <groupId>org.mustangproject</groupId>
       <artifactId>validator</artifactId>
-      <version>2.0.0</version>
+      <version>2.14.0</version>
    </dependency>
 </dependencies>
 

@@ -1,14 +1,13 @@
 package org.mustangproject;
 
-import org.mustangproject.ZUGFeRD.IExportableTransaction;
-import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.math.BigDecimal;
 
 /***
  * (absolute) allowances on item and document level
  */
-public class Allowance extends Charge implements IZUGFeRDAllowanceCharge {
+public class Allowance extends Charge {
 
 	/***
 	 * bean constructor
@@ -31,6 +30,7 @@ public class Allowance extends Charge implements IZUGFeRDAllowanceCharge {
 	 * @return false since its not supposed to be calculated negatively
 	 */
 	@Override
+	@JsonIgnore
 	public boolean isCharge() {
 		return false;
 	}

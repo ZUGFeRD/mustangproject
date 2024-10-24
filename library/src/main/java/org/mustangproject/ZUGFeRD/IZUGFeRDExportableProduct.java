@@ -21,6 +21,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
 
@@ -156,4 +157,19 @@ public interface IZUGFeRDExportableProduct {
 		}
 		return null;
 	}
+
+	default String getCountryOfOrigin() {
+	    return null;
+	}
+
+	default HashMap<String, String> getAttributes() {
+	    return null;
+	}
+
+	/**
+	 * Detailed information about the product
+	 *
+	 * @return an array containing the product classifications or {@code null} if not set
+	 */
+	default IDesignatedProductClassification[] getClassifications() { return null; }
 }

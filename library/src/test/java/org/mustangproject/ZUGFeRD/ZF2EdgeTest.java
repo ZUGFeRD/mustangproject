@@ -37,7 +37,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTransaction {
+public class ZF2EdgeTest extends MustangReaderTestCase {
 	final String TARGET_PDF = "./target/testout-ZF2newEdge.pdf";
 
 	protected class EdgeProduct implements IZUGFeRDExportableProduct {
@@ -293,12 +293,16 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 
 		// the writing part
 
-		try (InputStream SOURCE_PDF = this.getClass()
+		try  {
+			InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
-			 ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("My Application")
-					 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile(Profiles.getByName("Extended")).ignorePDFAErrors()
-					 .load(SOURCE_PDF)) {
+			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1();
+			ze.ignorePDFAErrors();
+			ze.load(SOURCE_PDF);
+			ze.setProducer("My Application")
+				.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile(Profiles.getByName("Extended"));
+
 			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
@@ -322,7 +326,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase implements IExportableTra
 		assertTrue(resultXML.contains("<ram:IssuerAssignedID>123</ram:IssuerAssignedID>"));
 
 		// Reading ZUGFeRD
-		assertEquals("337.60", zi.getAmount());;
+		assertEquals("337.60", zi.getAmount());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 		try {

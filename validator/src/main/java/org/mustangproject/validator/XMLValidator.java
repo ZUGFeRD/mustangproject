@@ -1,7 +1,23 @@
 package org.mustangproject.validator;
-import com.helger.schematron.ISchematronResource;
-import com.helger.schematron.svrl.SVRLMarshaller;
-import com.helger.schematron.svrl.jaxb.SchematronOutputType;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Calendar;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,22 +25,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.helger.schematron.xslt.SchematronResourceXSLT;
 import org.xml.sax.InputSource;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.xpath.*;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Calendar;
+import com.helger.schematron.ISchematronResource;
+import com.helger.schematron.svrl.SVRLMarshaller;
+import com.helger.schematron.svrl.jaxb.SchematronOutputType;
+import com.helger.schematron.xslt.SchematronResourceXSLT;
 
 
 public class XMLValidator extends Validator {
@@ -55,19 +61,27 @@ public class XMLValidator extends Validator {
 	public void setFilename(String name) throws IrrecoverableValidationError { // from XML Filename
 		filename = name;
 		// file existence must have been checked before
+		if (autoload) {
+			try {
+				zfXML = new String(XMLTools.removeBOM(Files.readAllBytes(Paths.get(filename))), StandardCharsets.UTF_8);
+			} catch (final IOException e) {
 
-		try {
-			zfXML = new String(XMLTools.removeBOM(Files.readAllBytes(Paths.get(name))), StandardCharsets.UTF_8);
-		} catch (final IOException e) {
-
-			final ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(9)
+				final ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(9)
 					.setPart(EPart.fx);
-			final StringWriter sw = new StringWriter();
-			final PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			vri.setStacktrace(sw.toString());
-			context.addResultItem(vri);
+				try (final StringWriter sw = new StringWriter();
+			       final PrintWriter pw = new PrintWriter(sw))
+				{
+  				e.printStackTrace(pw);
+  				vri.setStacktrace(sw.toString());
+  				context.addResultItem(vri);
+				}
+        catch (IOException ex) {
+          throw new UncheckedIOException (ex);
+        }
+			}
+
 		}
+
 	}
 
 	/***
@@ -176,7 +190,7 @@ public class XMLValidator extends Validator {
 				boolean isEN16931 = false;
 				boolean isExtended = false;
 				boolean isXRechnung = false;
-				String currentZFVersionDir = "ZF_221";
+				String currentZFVersionDir = "ZF_230";
 				int mainSchematronSectionErrorTypeCode=4;
 				String xsltFilename = null;
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:extended,
@@ -240,8 +254,8 @@ public class XMLValidator extends Validator {
 						the validation against the XRechnung Schematron will happen below but a
 						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.xslt=schematron also has to pass
 						* */
-						//validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/XR_30/XRechnung-CII-validation.xslt";
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
+
 						XrechnungSeverity = ESeverity.error;
 					} else if (isExtended) {
 						LOGGER.debug("is EXTENDED");
@@ -262,7 +276,7 @@ public class XMLValidator extends Validator {
 					// UBL
 					LOGGER.debug("UBL");
 					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "UBL_21/maindoc/UBL-Invoice-2.1.xsd", 18, EPart.fx);
-					xsltFilename = "/xslt/UBL_21/EN16931-UBL-validation.xslt";
+					xsltFilename = "/xslt/en16931schematron/EN16931-UBL-validation.xslt";
 
 					mainSchematronSectionErrorTypeCode=24;
 
@@ -339,15 +353,18 @@ public class XMLValidator extends Validator {
 					}
 				}
 
-				// main schematron validation
-				validateSchematron(zfXML, xsltFilename, mainSchematronSectionErrorTypeCode, ESeverity.error);
+				if (xsltFilename!=null) {
+					// main schematron validation
+					validateSchematron(zfXML, xsltFilename, mainSchematronSectionErrorTypeCode, ESeverity.error);
+
+				}
 
 				if (context.getFormat().equals("CII")) {
 
 					if (context.getGeneration().equals("2")
 							&& (isBasic || isEN16931 || isXRechnung)) {
 						//additionally validate against CEN
-						validateSchematron(zfXML, "/xslt/cii16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
+						validateSchematron(zfXML, "/xslt/en16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
 						if (!disableNotices || XrechnungSeverity != ESeverity.notice) {
 							validateXR(zfXML, XrechnungSeverity);
 						}
@@ -421,6 +438,7 @@ public class XMLValidator extends Validator {
 			} catch (final Exception e) {
 				throw new IrrecoverableValidationError(e.getMessage());
 			}
+			// SVRLHelper.getAllFailedAssertions (sout);
 			Document SVRLReport = new SVRLMarshaller().getAsDocument(sout);
 			XPath xPath = XPathFactory.newInstance().newXPath();
 			String expression = "//*[local-name() = 'failed-assert']";
@@ -481,7 +499,7 @@ public class XMLValidator extends Validator {
 			} catch (XPathExpressionException e) {
 				LOGGER.error(e.getMessage(), e);
 			}
-			int activePatterns=0;
+		/*	int activePatterns=0;
 			expression = "//*[local-name() = 'active-pattern']";
 			 firedAsserts = null;
 			try {
@@ -489,10 +507,10 @@ public class XMLValidator extends Validator {
 				activePatterns = firedAsserts.getLength();
 			} catch (XPathExpressionException e) {
 				LOGGER.error(e.getMessage(), e);
-			}
+			}*/
 
 
-			if (firedRules+activePatterns == 0) {
+			if (firedRules == 0) {
 				context.addResultItem(new ValidationResultItem(ESeverity.error, "No rules matched, XML to minimal?").setSection(26)
 						.setPart(EPart.fx));
 
@@ -515,6 +533,5 @@ public class XMLValidator extends Validator {
 	public int getFailedRules() {
 		return failedRules;
 	}
-
 
 }

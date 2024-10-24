@@ -20,6 +20,13 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
@@ -27,11 +34,11 @@ import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.PDFAIdentificationSchema;
 import org.apache.xmpbox.xml.DomXmpParser;
 import org.apache.xmpbox.xml.XmpParsingException;
+import org.mustangproject.FileAttachment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.activation.DataSource;
-import java.io.*;
+import jakarta.activation.DataSource;
 
 /***
  * Auto-detects the source PDF-A-Version and acts accordingly
@@ -43,16 +50,31 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 
 	protected IZUGFeRDExporter theExporter;
 
+	protected boolean ignorePDFAErrors = false;
+
+	public ZUGFeRDExporterFromPDFA ignorePDFAErrors() {
+		this.ignorePDFAErrors = true;
+		return this;
+	}
 	protected void determineAndSetExporter(int PDFAVersion) {
 		if (PDFAVersion == 3) {
 			theExporter = new ZUGFeRDExporterFromA3();
+			if (ignorePDFAErrors) {
+				((ZUGFeRDExporterFromA3)theExporter).ignorePDFAErrors();
+			}
 		} else if (PDFAVersion == 1) {
 			theExporter = new ZUGFeRDExporterFromA1();
+			if (ignorePDFAErrors) {
+				((ZUGFeRDExporterFromA1)theExporter).ignorePDFAErrors();
+			}
 		} else {
 			throw new IllegalArgumentException("PDF-A version not supported");
 		}
+
+
 	}
-	protected IZUGFeRDExporter getExporter() {
+
+	public IZUGFeRDExporter getExporter() {
 		if (theExporter==null) {
 			throw new RuntimeException("In ZUGFeRDExporterFromPDFA, source must always be loaded before other operations are performed.");
 		}
@@ -79,7 +101,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	 * @throws IOException
 	 */
 	private int getPDFAVersion(byte[] byteArrayInputStream) throws IOException {
-		PDDocument document = PDDocument.load(byteArrayInputStream);
+		PDDocument document = Loader.loadPDF(byteArrayInputStream);
 		PDDocumentCatalog catalog = document.getDocumentCatalog();
 		PDMetadata metadata = catalog.getMetadata();
 		// the PDF version we could get through the document but we want the PDF-A version,
@@ -89,7 +111,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 				DomXmpParser xmpParser = new DomXmpParser();
 				XMPMetadata xmp = xmpParser.parse(metadata.createInputStream());
 
-				PDFAIdentificationSchema pdfaSchema = xmp.getPDFIdentificationSchema();
+				PDFAIdentificationSchema pdfaSchema = xmp.getPDFAIdentificationSchema();
 				if (pdfaSchema != null) {
 					return pdfaSchema.getPart();
 				}
@@ -147,16 +169,16 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		return getExporter().setCreator(creator);
 	}
 
-	public ZUGFeRDExporterFromPDFA setProfile(Profile p) {
-		return (ZUGFeRDExporterFromPDFA) getExporter().setProfile(p);
+	public IZUGFeRDExporter setProfile(Profile p) {
+		return getExporter().setProfile(p);
 	}
 
-	public ZUGFeRDExporterFromPDFA setProfile(String profileName) {
+	public IZUGFeRDExporter setProfile(String profileName) {
 		Profile p = Profiles.getByName(profileName);
 		if (p==null)  {
 			throw new RuntimeException("Profile not found.");
 		}
-		return (ZUGFeRDExporterFromPDFA) getExporter().setProfile(p);
+		return getExporter().setProfile(p);
 	}
 
 	public IZUGFeRDExporter setConformanceLevel(PDFAConformanceLevel newLevel) {
@@ -227,5 +249,14 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	public void export(OutputStream output) throws IOException {
 		getExporter().export(output);
 	}
+
+	public void attachFile(FileAttachment file) {
+		theExporter.attachFile(file);
+	}
+
+	public void attachFile(String filename, byte[] data, String mimetype, String relation) {
+		theExporter.attachFile(filename, data, mimetype, relation);
+	}
+
 }
 

@@ -256,13 +256,13 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					"</ram:ApplicableHeaderTradeSettlement>\n" +
 					"</rsm:SupplyChainTradeTransaction>\n" +
 					"</rsm:CrossIndustryInvoice>";
-			zea1.setXML(ownZUGFeRDXML.getBytes("UTF-8"));
+			zea1.setXML(ownZUGFeRDXML.getBytes(StandardCharsets.UTF_8));
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			zea1.disableAutoClose(true);
 			zea1.export(TARGET_PDF);
 			zea1.export(baos);
 			zea1.close();
-			String pdfContent = baos.toString("UTF-8");
+			String pdfContent = baos.toString(StandardCharsets.UTF_8);
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
 			assertFalse(pdfContent.indexOf("<fx:ConformanceLevel>EN 16931</fx:ConformanceLevel>") == -1);
 
@@ -437,14 +437,14 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					+ "<ram:Name>Heiße Luft pro Liter</ram:Name>\n" + "<ram:Description/>\n"
 					+ "</ram:SpecifiedTradeProduct>\n" + "</ram:IncludedSupplyChainTradeLineItem>\n"
 					+ "</rsm:SpecifiedSupplyChainTradeTransaction>\n" + "</rsm:CrossIndustryDocument>";
-			zea1.setXML(ownZUGFeRDXML.getBytes("UTF-8"));
+			zea1.setXML(ownZUGFeRDXML.getBytes(StandardCharsets.UTF_8));
 
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			zea1.disableAutoClose(true);
 			zea1.export(TARGET_PDF);
 			zea1.export(baos);
 			zea1.close();
-			String pdfContent = baos.toString("UTF-8");
+			String pdfContent = baos.toString(StandardCharsets.UTF_8);
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
 			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>BASIC</zf:ConformanceLevel>") == -1);
 

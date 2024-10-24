@@ -1,0 +1,815 @@
+﻿
+<!--Sample file Order-x.xml - COMFORT Profile, created by Cyrille Sautereau, Admarel-->
+<rsm:SCRDMCCBDACIOMessageStructure
+xmlns:rsm="urn:un:unece:uncefact:data:SCRDMCCBDACIOMessageStructure:100"
+xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:128"
+xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:128"
+xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:128"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+     <rsm:ExchangedDocumentContext>
+          <ram:TestIndicator>
+               <udt:Indicator>false</udt:Indicator>
+          </ram:TestIndicator>
+          <ram:BusinessProcessSpecifiedDocumentContextParameter>
+               <ram:ID>A1</ram:ID>
+          </ram:BusinessProcessSpecifiedDocumentContextParameter>
+          <ram:GuidelineSpecifiedDocumentContextParameter>
+               <ram:ID>urn:order-x.eu:1p0:comfort</ram:ID>
+          </ram:GuidelineSpecifiedDocumentContextParameter>
+     </rsm:ExchangedDocumentContext>
+     <rsm:ExchangedDocument>
+          <ram:ID>PO123456789</ram:ID>
+          <ram:Name>Doc Name</ram:Name>
+          <ram:TypeCode>220</ram:TypeCode>
+          <ram:IssueDateTime>
+               <udt:DateTimeString format="203">202003311232</udt:DateTimeString>
+          </ram:IssueDateTime>
+          <ram:CopyIndicator>
+               <udt:Indicator>false</udt:Indicator>
+          </ram:CopyIndicator>
+          <ram:PurposeCode>9</ram:PurposeCode>
+          <ram:RequestedResponseTypeCode>AC</ram:RequestedResponseTypeCode>
+          <ram:IncludedNote>
+               <ram:Content>Content of Note</ram:Content>
+               <ram:SubjectCode>AAI</ram:SubjectCode>
+          </ram:IncludedNote>
+          <ram:EffectiveSpecifiedPeriod>
+               <ram:StartDateTime>
+                    <udt:DateTimeString format="102">20200331</udt:DateTimeString>
+               </ram:StartDateTime>
+               <ram:EndDateTime>
+                    <udt:DateTimeString format="102">20200630</udt:DateTimeString>
+               </ram:EndDateTime>
+          </ram:EffectiveSpecifiedPeriod>
+     </rsm:ExchangedDocument>
+     <rsm:SupplyChainTradeTransaction>
+          <ram:IncludedSupplyChainTradeLineItem>
+               <ram:AssociatedDocumentLineDocument>
+                    <ram:LineID>1</ram:LineID>
+                    <ram:IncludedNote>
+                         <ram:Content>WEEE Tax of 0,50 euros per item included</ram:Content>
+                         <ram:SubjectCode>TXD</ram:SubjectCode>
+                    </ram:IncludedNote>
+               </ram:AssociatedDocumentLineDocument>
+               <ram:SpecifiedTradeProduct>
+                    <ram:GlobalID schemeID="0160">1234567890123</ram:GlobalID>
+                    <ram:SellerAssignedID>987654321</ram:SellerAssignedID>
+                    <ram:BuyerAssignedID>654987321</ram:BuyerAssignedID>
+                    <ram:Name>Product Name</ram:Name>
+                    <ram:Description>Product Description</ram:Description>
+                    <ram:BatchID>Product Batch ID (lot ID)</ram:BatchID>
+                    <ram:BrandName>Product Brand Name</ram:BrandName>
+                    <ram:ApplicableProductCharacteristic>
+                         <ram:TypeCode>Characteristic_Code</ram:TypeCode>
+                         <ram:Description>Characteristic Description</ram:Description>
+                         <ram:Value>5 meters</ram:Value>
+                    </ram:ApplicableProductCharacteristic>
+                    <ram:DesignatedProductClassification>
+                    <ram:ClassCode listID="TST">Class_code</ram:ClassCode>
+                         <ram:ClassName>Name Class Codification</ram:ClassName>
+                    </ram:DesignatedProductClassification>
+                    <ram:IndividualTradeProductInstance>
+                         <ram:BatchID>Product Instances Batch ID</ram:BatchID>
+                         <ram:SerialID>Product Instances Supplier Serial ID</ram:SerialID>
+                    </ram:IndividualTradeProductInstance>
+                    <ram:ApplicableSupplyChainPackaging>
+                         <ram:TypeCode>7B</ram:TypeCode>
+                         <ram:LinearSpatialDimension>
+                              <ram:WidthMeasure unitCode="MTR">5</ram:WidthMeasure>
+                              <ram:LengthMeasure unitCode="MTR">3</ram:LengthMeasure>
+                              <ram:HeightMeasure unitCode="MTR">1</ram:HeightMeasure>
+                         </ram:LinearSpatialDimension>
+                    </ram:ApplicableSupplyChainPackaging>
+                    <ram:OriginTradeCountry>
+                         <ram:ID>FR</ram:ID>
+                    </ram:OriginTradeCountry>
+                    <ram:AdditionalReferenceReferencedDocument>
+                         <ram:IssuerAssignedID>ADD_REF_PROD_ID</ram:IssuerAssignedID>
+                         <ram:URIID>ADD_REF_PROD_URIID</ram:URIID>
+                         <ram:TypeCode>6</ram:TypeCode>
+                         <ram:Name>ADD_REF_PROD_Desc</ram:Name>
+                    </ram:AdditionalReferenceReferencedDocument>
+               </ram:SpecifiedTradeProduct>
+               <ram:SpecifiedLineTradeAgreement>
+                    <ram:BuyerOrderReferencedDocument>
+                         <ram:LineID>1</ram:LineID>
+                    </ram:BuyerOrderReferencedDocument>
+                    <ram:QuotationReferencedDocument>
+                         <ram:IssuerAssignedID>QUOT_125487</ram:IssuerAssignedID>
+                         <ram:LineID>3</ram:LineID>
+                    </ram:QuotationReferencedDocument>
+                    <ram:AdditionalReferencedDocument>
+                         <ram:IssuerAssignedID>ADD_REF_DOC_ID</ram:IssuerAssignedID>
+                         <ram:URIID>ADD_REF_DOC_URIID</ram:URIID>
+                         <ram:LineID>5</ram:LineID>
+                         <ram:TypeCode>916</ram:TypeCode>
+                         <ram:Name>ADD_REF_DOC_Desc</ram:Name>
+                    </ram:AdditionalReferencedDocument>
+                    <ram:AdditionalReferencedDocument>
+                         <ram:IssuerAssignedID>OBJECT_125487</ram:IssuerAssignedID>
+                         <ram:TypeCode>130</ram:TypeCode>
+                         <ram:ReferenceTypeCode>AWV</ram:ReferenceTypeCode>
+                    </ram:AdditionalReferencedDocument>
+                    <ram:GrossPriceProductTradePrice>
+                         <ram:ChargeAmount>10.50</ram:ChargeAmount>
+                         <ram:BasisQuantity unitCode="C62">1.00</ram:BasisQuantity>
+                         <ram:AppliedTradeAllowanceCharge>
+                              <ram:ChargeIndicator>
+                                   <udt:Indicator>false</udt:Indicator>
+                              </ram:ChargeIndicator>
+                              <ram:ActualAmount>1.00</ram:ActualAmount>
+                              <ram:ReasonCode>95</ram:ReasonCode>
+                              <ram:Reason>DISCOUNT</ram:Reason>
+                         </ram:AppliedTradeAllowanceCharge>
+                         <ram:AppliedTradeAllowanceCharge>
+                              <ram:ChargeIndicator>
+                                   <udt:Indicator>true</udt:Indicator>
+                              </ram:ChargeIndicator>
+                              <ram:ActualAmount>0.50</ram:ActualAmount>
+                              <ram:ReasonCode>AEW</ram:ReasonCode>
+                              <ram:Reason>WEEE</ram:Reason>
+                         </ram:AppliedTradeAllowanceCharge>
+                    </ram:GrossPriceProductTradePrice>
+                    <ram:NetPriceProductTradePrice>
+                         <ram:ChargeAmount>10.00</ram:ChargeAmount>
+                         <ram:BasisQuantity unitCode="C62">1.00</ram:BasisQuantity>
+                    </ram:NetPriceProductTradePrice>
+                    <ram:CatalogueReferencedDocument>
+                         <ram:IssuerAssignedID>CATALOG_REF_ID</ram:IssuerAssignedID>
+                         <ram:LineID>2</ram:LineID>
+                    </ram:CatalogueReferencedDocument>
+                    <ram:BlanketOrderReferencedDocument>
+                         <ram:LineID>2</ram:LineID>
+                    </ram:BlanketOrderReferencedDocument>
+               </ram:SpecifiedLineTradeAgreement>
+               <ram:SpecifiedLineTradeDelivery>
+                    <ram:PartialDeliveryAllowedIndicator>
+                         <udt:Indicator>true</udt:Indicator>
+                    </ram:PartialDeliveryAllowedIndicator>
+                    <ram:RequestedQuantity unitCode="C62">6</ram:RequestedQuantity>
+                    <ram:PackageQuantity unitCode="C62">3</ram:PackageQuantity>
+                    <ram:PerPackageUnitQuantity unitCode="C62">2</ram:PerPackageUnitQuantity>
+                    <ram:RequestedDeliverySupplyChainEvent>
+                         <ram:OccurrenceSpecifiedPeriod>
+                              <ram:StartDateTime>
+                                   <udt:DateTimeString format="203">202004150900</udt:DateTimeString>
+                              </ram:StartDateTime>
+                              <ram:EndDateTime>
+                                   <udt:DateTimeString format="203">202004301800</udt:DateTimeString>
+                              </ram:EndDateTime>
+                         </ram:OccurrenceSpecifiedPeriod>
+                    </ram:RequestedDeliverySupplyChainEvent>
+               </ram:SpecifiedLineTradeDelivery>
+               <ram:SpecifiedLineTradeSettlement>
+                    <ram:ApplicableTradeTax>
+                         <ram:TypeCode>VAT</ram:TypeCode>
+                         <ram:CategoryCode>S</ram:CategoryCode>
+                         <ram:RateApplicablePercent>20.00</ram:RateApplicablePercent>
+                    </ram:ApplicableTradeTax>
+                    <ram:SpecifiedTradeAllowanceCharge>
+                         <ram:ChargeIndicator>
+                              <udt:Indicator>false</udt:Indicator>
+                         </ram:ChargeIndicator>
+                         <ram:CalculationPercent>10.00</ram:CalculationPercent>
+                         <ram:BasisAmount>60.00</ram:BasisAmount>
+                         <ram:ActualAmount>6.00</ram:ActualAmount>
+                         <ram:ReasonCode>64</ram:ReasonCode>
+                         <ram:Reason>SPECIAL AGREEMENT</ram:Reason>
+                    </ram:SpecifiedTradeAllowanceCharge>
+                    <ram:SpecifiedTradeAllowanceCharge>
+                         <ram:ChargeIndicator>
+                              <udt:Indicator>true</udt:Indicator>
+                         </ram:ChargeIndicator>
+                         <ram:CalculationPercent>10.00</ram:CalculationPercent>
+                         <ram:BasisAmount>60.00</ram:BasisAmount>
+                         <ram:ActualAmount>6.00</ram:ActualAmount>
+                         <ram:ReasonCode>FC</ram:ReasonCode>
+                         <ram:Reason>FREIGHT SERVICES</ram:Reason>
+                    </ram:SpecifiedTradeAllowanceCharge>
+                    <ram:SpecifiedTradeSettlementLineMonetarySummation>
+                         <ram:LineTotalAmount>60.00</ram:LineTotalAmount>
+                    </ram:SpecifiedTradeSettlementLineMonetarySummation>
+                    <ram:ReceivableSpecifiedTradeAccountingAccount>
+                         <ram:ID>BUYER_ACCOUNTING_REF</ram:ID>
+                    </ram:ReceivableSpecifiedTradeAccountingAccount>
+               </ram:SpecifiedLineTradeSettlement>
+          </ram:IncludedSupplyChainTradeLineItem>
+          <ram:IncludedSupplyChainTradeLineItem>
+               <ram:AssociatedDocumentLineDocument>
+                    <ram:LineID>2</ram:LineID>
+                    <ram:IncludedNote>
+                         <ram:Content>WEEE Tax of 0,50 euros per item included</ram:Content>
+                         <ram:SubjectCode>TXD</ram:SubjectCode>
+                    </ram:IncludedNote>
+               </ram:AssociatedDocumentLineDocument>
+               <ram:SpecifiedTradeProduct>
+                    <ram:GlobalID schemeID="0160">548796523</ram:GlobalID>
+                    <ram:SellerAssignedID>598632147</ram:SellerAssignedID>
+                    <ram:BuyerAssignedID>698569856</ram:BuyerAssignedID>
+                    <ram:Name>Product Name</ram:Name>
+                    <ram:Description>Product Description</ram:Description>
+                    <ram:BatchID>Product Batch ID (lot ID)</ram:BatchID>
+                    <ram:BrandName>Product Brand Name</ram:BrandName>
+                    <ram:ApplicableProductCharacteristic>
+                         <ram:TypeCode>Characteristic_Code</ram:TypeCode>
+                         <ram:Description>Characteristic Description</ram:Description>
+                         <ram:Value>3 meters</ram:Value>
+                    </ram:ApplicableProductCharacteristic>
+                    <ram:DesignatedProductClassification>
+                    <ram:ClassCode listID="TST">Class_code</ram:ClassCode>
+                         <ram:ClassName>Name Class Codification</ram:ClassName>
+                    </ram:DesignatedProductClassification>
+                    <ram:IndividualTradeProductInstance>
+                         <ram:BatchID>Product Instances Batch ID</ram:BatchID>
+                         <ram:SerialID>Product Instances Supplier Serial ID</ram:SerialID>
+                    </ram:IndividualTradeProductInstance>
+                    <ram:ApplicableSupplyChainPackaging>
+                         <ram:TypeCode>7B</ram:TypeCode>
+                         <ram:LinearSpatialDimension>
+                              <ram:WidthMeasure unitCode="MTR">2</ram:WidthMeasure>
+                              <ram:LengthMeasure unitCode="MTR">1</ram:LengthMeasure>
+                              <ram:HeightMeasure unitCode="MTR">3</ram:HeightMeasure>
+                         </ram:LinearSpatialDimension>
+                    </ram:ApplicableSupplyChainPackaging>
+                    <ram:OriginTradeCountry>
+                         <ram:ID>FR</ram:ID>
+                    </ram:OriginTradeCountry>
+                    <ram:AdditionalReferenceReferencedDocument>
+                         <ram:IssuerAssignedID>ADD_REF_PROD_ID</ram:IssuerAssignedID>
+                         <ram:URIID>ADD_REF_PROD_URIID</ram:URIID>
+                         <ram:TypeCode>6</ram:TypeCode>
+                         <ram:Name>ADD_REF_PROD_Desc</ram:Name>
+                    </ram:AdditionalReferenceReferencedDocument>
+               </ram:SpecifiedTradeProduct>
+               <ram:SpecifiedLineTradeAgreement>
+                    <ram:BuyerOrderReferencedDocument>
+                         <ram:LineID>3</ram:LineID>
+                    </ram:BuyerOrderReferencedDocument>
+                    <ram:QuotationReferencedDocument>
+                         <ram:IssuerAssignedID>QUOT_125487</ram:IssuerAssignedID>
+                         <ram:LineID>2</ram:LineID>
+                    </ram:QuotationReferencedDocument>
+                    <ram:AdditionalReferencedDocument>
+                         <ram:IssuerAssignedID>ADD_REF_DOC_ID</ram:IssuerAssignedID>
+                         <ram:URIID>ADD_REF_DOC_URIID</ram:URIID>
+                         <ram:LineID>5</ram:LineID>
+                         <ram:TypeCode>916</ram:TypeCode>
+                         <ram:Name>ADD_REF_DOC_Desc</ram:Name>
+                    </ram:AdditionalReferencedDocument>
+                    <ram:AdditionalReferencedDocument>
+                         <ram:IssuerAssignedID>OBJECT_125487</ram:IssuerAssignedID>
+                         <ram:TypeCode>130</ram:TypeCode>
+                         <ram:ReferenceTypeCode>AWV</ram:ReferenceTypeCode>
+                    </ram:AdditionalReferencedDocument>
+                    <ram:GrossPriceProductTradePrice>
+                         <ram:ChargeAmount>19.50</ram:ChargeAmount>
+                         <ram:BasisQuantity unitCode="C62">2</ram:BasisQuantity>
+                         <ram:AppliedTradeAllowanceCharge>
+                              <ram:ChargeIndicator>
+                                   <udt:Indicator>true</udt:Indicator>
+                              </ram:ChargeIndicator>
+                              <ram:ActualAmount>0.50</ram:ActualAmount>
+                              <ram:ReasonCode>AEW</ram:ReasonCode>
+                              <ram:Reason>WEEE TAX</ram:Reason>
+                         </ram:AppliedTradeAllowanceCharge>
+                    </ram:GrossPriceProductTradePrice>
+                    <ram:NetPriceProductTradePrice>
+                         <ram:ChargeAmount>20.00</ram:ChargeAmount>
+                         <ram:BasisQuantity unitCode="C62">2</ram:BasisQuantity>
+                    </ram:NetPriceProductTradePrice>
+                    <ram:CatalogueReferencedDocument>
+                         <ram:IssuerAssignedID>CATALOG_REF_ID</ram:IssuerAssignedID>
+                         <ram:LineID>2</ram:LineID>
+                    </ram:CatalogueReferencedDocument>
+                    <ram:BlanketOrderReferencedDocument>
+                         <ram:LineID>3</ram:LineID>
+                    </ram:BlanketOrderReferencedDocument>
+               </ram:SpecifiedLineTradeAgreement>
+               <ram:SpecifiedLineTradeDelivery>
+                    <ram:PartialDeliveryAllowedIndicator>
+                         <udt:Indicator>true</udt:Indicator>
+                    </ram:PartialDeliveryAllowedIndicator>
+                    <ram:RequestedQuantity unitCode="C62">10.00</ram:RequestedQuantity>
+                    <ram:PackageQuantity unitCode="C62">5</ram:PackageQuantity>
+                    <ram:PerPackageUnitQuantity unitCode="C62">2</ram:PerPackageUnitQuantity>
+                    <ram:RequestedDeliverySupplyChainEvent>
+                         <ram:OccurrenceDateTime>
+                                   <udt:DateTimeString format="102">20200415</udt:DateTimeString>
+                         </ram:OccurrenceDateTime>
+                    </ram:RequestedDeliverySupplyChainEvent>
+               </ram:SpecifiedLineTradeDelivery>
+               <ram:SpecifiedLineTradeSettlement>
+                    <ram:ApplicableTradeTax>
+                         <ram:TypeCode>VAT</ram:TypeCode>
+                         <ram:CategoryCode>S</ram:CategoryCode>
+                         <ram:RateApplicablePercent>20.00</ram:RateApplicablePercent>
+                    </ram:ApplicableTradeTax>
+                    <ram:SpecifiedTradeAllowanceCharge>
+                         <ram:ChargeIndicator>
+                              <udt:Indicator>false</udt:Indicator>
+                         </ram:ChargeIndicator>
+                         <ram:CalculationPercent>1.00</ram:CalculationPercent>
+                         <ram:BasisAmount>100.00</ram:BasisAmount>
+                         <ram:ActualAmount>1.00</ram:ActualAmount>
+                         <ram:ReasonCode>64</ram:ReasonCode>
+                         <ram:Reason>SPECIAL AGREEMENT</ram:Reason>
+                    </ram:SpecifiedTradeAllowanceCharge>
+                    <ram:SpecifiedTradeAllowanceCharge>
+                         <ram:ChargeIndicator>
+                              <udt:Indicator>true</udt:Indicator>
+                         </ram:ChargeIndicator>
+                         <ram:CalculationPercent>1.00</ram:CalculationPercent>
+                         <ram:BasisAmount>100.00</ram:BasisAmount>
+                         <ram:ActualAmount>1.00</ram:ActualAmount>
+                         <ram:ReasonCode>FC</ram:ReasonCode>
+                         <ram:Reason>FREIGHT SERVICES</ram:Reason>
+                    </ram:SpecifiedTradeAllowanceCharge>
+                    <ram:SpecifiedTradeSettlementLineMonetarySummation>
+                         <ram:LineTotalAmount>100.00</ram:LineTotalAmount>
+                    </ram:SpecifiedTradeSettlementLineMonetarySummation>
+                    <ram:ReceivableSpecifiedTradeAccountingAccount>
+                         <ram:ID>BUYER_ACCOUNTING_REF</ram:ID>
+                    </ram:ReceivableSpecifiedTradeAccountingAccount>
+               </ram:SpecifiedLineTradeSettlement>
+          </ram:IncludedSupplyChainTradeLineItem>
+          <ram:IncludedSupplyChainTradeLineItem>
+               <ram:AssociatedDocumentLineDocument>
+                    <ram:LineID>3</ram:LineID>
+                    <ram:IncludedNote>
+                         <ram:Content>Content of Note</ram:Content>
+                         <ram:SubjectCode>AAI</ram:SubjectCode>
+                    </ram:IncludedNote>
+               </ram:AssociatedDocumentLineDocument>
+               <ram:SpecifiedTradeProduct>
+                    <ram:GlobalID schemeID="0160">854721548</ram:GlobalID>
+                    <ram:SellerAssignedID>698325417</ram:SellerAssignedID>
+                    <ram:BuyerAssignedID>598674321</ram:BuyerAssignedID>
+                    <ram:Name>Product Name</ram:Name>
+                    <ram:Description>Product Description</ram:Description>
+                    <ram:BatchID>Product Batch ID (lot ID)</ram:BatchID>
+                    <ram:BrandName>Product Brand Name</ram:BrandName>
+                    <ram:ApplicableProductCharacteristic>
+                         <ram:TypeCode>Characteristic_Code</ram:TypeCode>
+                         <ram:Description>Characteristic Description</ram:Description>
+                         <ram:Value>3 meters</ram:Value>
+                    </ram:ApplicableProductCharacteristic>
+                    <ram:DesignatedProductClassification>
+                    <ram:ClassCode listID="TST">Class_code</ram:ClassCode>
+                         <ram:ClassName>Name Class Codification</ram:ClassName>
+                    </ram:DesignatedProductClassification>
+                    <ram:IndividualTradeProductInstance>
+                         <ram:BatchID>Product Instances Batch ID</ram:BatchID>
+                         <ram:SerialID>Product Instances Supplier Serial ID</ram:SerialID>
+                    </ram:IndividualTradeProductInstance>
+                    <ram:ApplicableSupplyChainPackaging>
+                         <ram:TypeCode>7B</ram:TypeCode>
+                         <ram:LinearSpatialDimension>
+                              <ram:WidthMeasure unitCode="MTR">2</ram:WidthMeasure>
+                              <ram:LengthMeasure unitCode="MTR">1</ram:LengthMeasure>
+                              <ram:HeightMeasure unitCode="MTR">3</ram:HeightMeasure>
+                         </ram:LinearSpatialDimension>
+                    </ram:ApplicableSupplyChainPackaging>
+                    <ram:OriginTradeCountry>
+                         <ram:ID>FR</ram:ID>
+                    </ram:OriginTradeCountry>
+                    <ram:AdditionalReferenceReferencedDocument>
+                         <ram:IssuerAssignedID>ADD_REF_PROD_ID</ram:IssuerAssignedID>
+                         <ram:URIID>ADD_REF_PROD_URIID</ram:URIID>
+                         <ram:TypeCode>6</ram:TypeCode>
+                         <ram:Name>ADD_REF_PROD_Desc</ram:Name>
+                    </ram:AdditionalReferenceReferencedDocument>
+               </ram:SpecifiedTradeProduct>
+               <ram:SpecifiedLineTradeAgreement>
+                    <ram:BuyerOrderReferencedDocument>
+                         <ram:LineID>4</ram:LineID>
+                    </ram:BuyerOrderReferencedDocument>
+                    <ram:QuotationReferencedDocument>
+                         <ram:IssuerAssignedID>QUOT_125487</ram:IssuerAssignedID>
+                         <ram:LineID>1</ram:LineID>
+                    </ram:QuotationReferencedDocument>
+                    <ram:AdditionalReferencedDocument>
+                         <ram:IssuerAssignedID>ADD_REF_DOC_ID</ram:IssuerAssignedID>
+                         <ram:URIID>ADD_REF_DOC_URIID</ram:URIID>
+                         <ram:LineID>5</ram:LineID>
+                         <ram:TypeCode>916</ram:TypeCode>
+                         <ram:Name>ADD_REF_DOC_Desc</ram:Name>
+                    </ram:AdditionalReferencedDocument>
+                    <ram:AdditionalReferencedDocument>
+                         <ram:IssuerAssignedID>OBJECT_125487</ram:IssuerAssignedID>
+                         <ram:TypeCode>130</ram:TypeCode>
+                         <ram:ReferenceTypeCode>AWV</ram:ReferenceTypeCode>
+                    </ram:AdditionalReferencedDocument>
+                    <ram:GrossPriceProductTradePrice>
+                         <ram:ChargeAmount>30</ram:ChargeAmount>
+                         <ram:BasisQuantity unitCode="C62">1</ram:BasisQuantity>
+                         <ram:AppliedTradeAllowanceCharge>
+                              <ram:ChargeIndicator>
+                                   <udt:Indicator>false</udt:Indicator>
+                              </ram:ChargeIndicator>
+                              <ram:ActualAmount>5</ram:ActualAmount>
+                         </ram:AppliedTradeAllowanceCharge>
+                    </ram:GrossPriceProductTradePrice>
+                    <ram:NetPriceProductTradePrice>
+                         <ram:ChargeAmount>25</ram:ChargeAmount>
+                         <ram:BasisQuantity unitCode="C62">1</ram:BasisQuantity>
+                    </ram:NetPriceProductTradePrice>
+                    <ram:CatalogueReferencedDocument>
+                         <ram:IssuerAssignedID>CATALOG_REF_ID</ram:IssuerAssignedID>
+                         <ram:LineID>5</ram:LineID>
+                    </ram:CatalogueReferencedDocument>
+                    <ram:BlanketOrderReferencedDocument>
+                         <ram:LineID>4</ram:LineID>
+                    </ram:BlanketOrderReferencedDocument>
+               </ram:SpecifiedLineTradeAgreement>
+               <ram:SpecifiedLineTradeDelivery>
+                    <ram:PartialDeliveryAllowedIndicator>
+                         <udt:Indicator>true</udt:Indicator>
+                    </ram:PartialDeliveryAllowedIndicator>
+                    <ram:RequestedQuantity unitCode="C62">6</ram:RequestedQuantity>
+                    <ram:PackageQuantity unitCode="C62">3</ram:PackageQuantity>
+                    <ram:PerPackageUnitQuantity unitCode="C62">2</ram:PerPackageUnitQuantity>
+                    <ram:RequestedDeliverySupplyChainEvent>
+                         <ram:OccurrenceSpecifiedPeriod>
+                              <ram:StartDateTime>
+                                   <udt:DateTimeString format="102">20200415</udt:DateTimeString>
+                              </ram:StartDateTime>
+                              <ram:EndDateTime>
+                                   <udt:DateTimeString format="102">20200430</udt:DateTimeString>
+                              </ram:EndDateTime>
+                         </ram:OccurrenceSpecifiedPeriod>
+                    </ram:RequestedDeliverySupplyChainEvent>
+               </ram:SpecifiedLineTradeDelivery>
+               <ram:SpecifiedLineTradeSettlement>
+                    <ram:ApplicableTradeTax>
+                         <ram:TypeCode>VAT</ram:TypeCode>
+                         <ram:CategoryCode>S</ram:CategoryCode>
+                         <ram:RateApplicablePercent>20.00</ram:RateApplicablePercent>
+                    </ram:ApplicableTradeTax>
+                    <ram:SpecifiedTradeAllowanceCharge>
+                         <ram:ChargeIndicator>
+                              <udt:Indicator>false</udt:Indicator>
+                         </ram:ChargeIndicator>
+                         <ram:CalculationPercent>10.00</ram:CalculationPercent>
+                         <ram:BasisAmount>150.00</ram:BasisAmount>
+                         <ram:ActualAmount>15.00</ram:ActualAmount>
+                         <ram:ReasonCode>64</ram:ReasonCode>
+                         <ram:Reason>SPECIAL AGREEMENT</ram:Reason>
+                    </ram:SpecifiedTradeAllowanceCharge>
+                    <ram:SpecifiedTradeAllowanceCharge>
+                         <ram:ChargeIndicator>
+                              <udt:Indicator>true</udt:Indicator>
+                         </ram:ChargeIndicator>
+                         <ram:CalculationPercent>10.00</ram:CalculationPercent>
+                         <ram:BasisAmount>150.00</ram:BasisAmount>
+                         <ram:ActualAmount>15.00</ram:ActualAmount>
+                         <ram:ReasonCode>FC</ram:ReasonCode>
+                         <ram:Reason>FREIGHT SERVICES</ram:Reason>
+                    </ram:SpecifiedTradeAllowanceCharge>
+                    <ram:SpecifiedTradeSettlementLineMonetarySummation>
+                         <ram:LineTotalAmount>150.00</ram:LineTotalAmount>
+                    </ram:SpecifiedTradeSettlementLineMonetarySummation>
+                    <ram:ReceivableSpecifiedTradeAccountingAccount>
+                         <ram:ID>BUYER_ACCOUNTING_REF</ram:ID>
+                    </ram:ReceivableSpecifiedTradeAccountingAccount>
+               </ram:SpecifiedLineTradeSettlement>
+          </ram:IncludedSupplyChainTradeLineItem>
+          <ram:ApplicableHeaderTradeAgreement>
+               <ram:BuyerReference>BUYER_REF_BU123</ram:BuyerReference>
+               <ram:SellerTradeParty>
+                    <ram:ID>SUPPLIER_ID_321654</ram:ID>
+                    <ram:GlobalID schemeID="0088">123654879</ram:GlobalID>
+                    <ram:Name>SELLER_NAME</ram:Name>
+                    <ram:Description>SELLER_ADD_LEGAL_INFORMATION</ram:Description>
+                    <ram:SpecifiedLegalOrganization>
+                         <ram:ID schemeID="0002">123456789</ram:ID>
+                         <ram:TradingBusinessName>SELLER_TRADING_NAME</ram:TradingBusinessName>
+                    </ram:SpecifiedLegalOrganization>
+                    <ram:DefinedTradeContact>
+                         <ram:PersonName>SELLER_CONTACT_NAME</ram:PersonName>
+                         <ram:DepartmentName>SELLER_CONTACT_DEP</ram:DepartmentName>
+                         <ram:TypeCode>SR</ram:TypeCode>
+                         <ram:TelephoneUniversalCommunication>
+                              <ram:CompleteNumber>+33 6 25 64 98 75</ram:CompleteNumber>
+                         </ram:TelephoneUniversalCommunication>
+                         <ram:EmailURIUniversalCommunication>
+                              <ram:URIID>contact@seller.com</ram:URIID>
+                         </ram:EmailURIUniversalCommunication>
+                    </ram:DefinedTradeContact>
+                    <ram:PostalTradeAddress>
+                         <ram:PostcodeCode>75001</ram:PostcodeCode>
+                         <ram:LineOne>SELLER_ADDR_1</ram:LineOne>
+                         <ram:LineTwo>SELLER_ADDR_2</ram:LineTwo>
+                         <ram:LineThree>SELLER_ADDR_3</ram:LineThree>
+                         <ram:CityName>SELLER_CITY</ram:CityName>
+                         <ram:CountryID>FR</ram:CountryID>
+                    </ram:PostalTradeAddress>
+                    <ram:URIUniversalCommunication>
+                         <ram:URIID schemeID="EM">sales@seller.com</ram:URIID>
+                    </ram:URIUniversalCommunication>
+                    <ram:SpecifiedTaxRegistration>
+                         <ram:ID schemeID="VA">FR 32 123 456 789</ram:ID>
+                    </ram:SpecifiedTaxRegistration>
+                    <ram:SpecifiedTaxRegistration>
+                         <ram:ID schemeID="FC">SELLER_TAX_ID</ram:ID>
+                    </ram:SpecifiedTaxRegistration>
+               </ram:SellerTradeParty>
+               <ram:BuyerTradeParty>
+                    <ram:ID>BY_ID_9587456</ram:ID>
+                    <ram:GlobalID schemeID="0088">98765432179</ram:GlobalID>
+                    <ram:Name>BUYER_NAME</ram:Name>
+                    <ram:SpecifiedLegalOrganization>
+                         <ram:ID schemeID="0002">987654321</ram:ID>
+                         <ram:TradingBusinessName>BUYER_TRADING_NAME</ram:TradingBusinessName>
+                    </ram:SpecifiedLegalOrganization>
+                    <ram:DefinedTradeContact>
+                         <ram:PersonName>BUYER_CONTACT_NAME</ram:PersonName>
+                         <ram:DepartmentName>BUYER_CONTACT_DEP</ram:DepartmentName>
+                         <ram:TypeCode>LB</ram:TypeCode>
+                         <ram:TelephoneUniversalCommunication>
+                              <ram:CompleteNumber>+33 6 65 98 75 32</ram:CompleteNumber>
+                         </ram:TelephoneUniversalCommunication>
+                         <ram:EmailURIUniversalCommunication>
+                              <ram:URIID>contact@buyer.com</ram:URIID>
+                         </ram:EmailURIUniversalCommunication>
+                    </ram:DefinedTradeContact>
+                    <ram:PostalTradeAddress>
+                         <ram:PostcodeCode>69001</ram:PostcodeCode>
+                         <ram:LineOne>BUYER_ADDR_1</ram:LineOne>
+                         <ram:LineTwo>BUYER_ADDR_2</ram:LineTwo>
+                         <ram:LineThree>BUYER_ADDR_3</ram:LineThree>
+                         <ram:CityName>BUYER_CITY</ram:CityName>
+                         <ram:CountryID>FR</ram:CountryID>
+                    </ram:PostalTradeAddress>
+                    <ram:URIUniversalCommunication>
+                         <ram:URIID schemeID="EM">operation@buyer.com</ram:URIID>
+                    </ram:URIUniversalCommunication>
+                    <ram:SpecifiedTaxRegistration>
+                         <ram:ID schemeID="VA">FR 05 987 654 321</ram:ID>
+                    </ram:SpecifiedTaxRegistration>
+                    <ram:SpecifiedTaxRegistration>
+                         <ram:ID schemeID="FC">BUYER_TAX_ID</ram:ID>
+                    </ram:SpecifiedTaxRegistration>
+               </ram:BuyerTradeParty>
+               <ram:BuyerRequisitionerTradeParty>
+                    <ram:ID>BUYER_REQ_ID_25987</ram:ID>
+                    <ram:GlobalID schemeID="0088">654987321</ram:GlobalID>
+                    <ram:Name>BUYER_REQ_NAME</ram:Name>
+                    <ram:SpecifiedLegalOrganization>
+                         <ram:ID schemeID="0002">654987321</ram:ID>
+                         <ram:TradingBusinessName>BUYER_REQ_TRADING_NAME</ram:TradingBusinessName>
+                    </ram:SpecifiedLegalOrganization>
+                    <ram:DefinedTradeContact>
+                         <ram:PersonName>BUYER_REQ_CONTACT_NAME</ram:PersonName>
+                         <ram:DepartmentName>BUYER_REQ_CONTACT_DEP</ram:DepartmentName>
+                         <ram:TypeCode>PD</ram:TypeCode>
+                         <ram:TelephoneUniversalCommunication>
+                              <ram:CompleteNumber>+33 6 54 98 65 32</ram:CompleteNumber>
+                         </ram:TelephoneUniversalCommunication>
+                         <ram:EmailURIUniversalCommunication>
+                              <ram:URIID>requisitioner@buyer.com</ram:URIID>
+                         </ram:EmailURIUniversalCommunication>
+                    </ram:DefinedTradeContact>
+                    <ram:PostalTradeAddress>
+                         <ram:PostcodeCode>69001</ram:PostcodeCode>
+                         <ram:LineOne>BUYER_REQ_ADDR_1</ram:LineOne>
+                         <ram:LineTwo>BUYER_REQ_ADDR_2</ram:LineTwo>
+                         <ram:LineThree>BUYER_REQ_ADDR_3</ram:LineThree>
+                         <ram:CityName>BUYER_REQ_CITY</ram:CityName>
+                         <ram:CountryID>FR</ram:CountryID>
+                    </ram:PostalTradeAddress>
+                    <ram:URIUniversalCommunication>
+                         <ram:URIID schemeID="EM">purchase@buyer.com</ram:URIID>
+                    </ram:URIUniversalCommunication>
+                    <ram:SpecifiedTaxRegistration>
+                         <ram:ID schemeID="VA">FR 92 654 987 321</ram:ID>
+                    </ram:SpecifiedTaxRegistration>
+               </ram:BuyerRequisitionerTradeParty>
+               <ram:ApplicableTradeDeliveryTerms>
+                    <ram:DeliveryTypeCode>FCA</ram:DeliveryTypeCode>
+                    <ram:Description>Free Carrier</ram:Description>
+                    <ram:FunctionCode>7</ram:FunctionCode>
+                    <ram:RelevantTradeLocation>
+                         <ram:ID>DEL_TERMS_LOC_ID</ram:ID>
+                         <ram:Name>DEL_TERMS_LOC_Name</ram:Name>
+                    </ram:RelevantTradeLocation>
+               </ram:ApplicableTradeDeliveryTerms>
+               <ram:SellerOrderReferencedDocument>
+                    <ram:IssuerAssignedID>SALES_REF_ID_459875</ram:IssuerAssignedID>
+               </ram:SellerOrderReferencedDocument>
+               <ram:BuyerOrderReferencedDocument>
+                    <ram:IssuerAssignedID>PO123456789</ram:IssuerAssignedID>
+               </ram:BuyerOrderReferencedDocument>
+               <ram:QuotationReferencedDocument>
+                    <ram:IssuerAssignedID>QUOT_125487</ram:IssuerAssignedID>
+               </ram:QuotationReferencedDocument>
+               <ram:ContractReferencedDocument>
+                    <ram:IssuerAssignedID>CONTRACT_2020-25987</ram:IssuerAssignedID>
+               </ram:ContractReferencedDocument>
+               <ram:RequisitionReferencedDocument>
+                    <ram:IssuerAssignedID>REQ_875498</ram:IssuerAssignedID>
+               </ram:RequisitionReferencedDocument>
+               <ram:AdditionalReferencedDocument>
+                    <ram:IssuerAssignedID>ADD_REF_DOC_ID</ram:IssuerAssignedID>
+                    <ram:URIID>ADD_REF_DOC_URIID</ram:URIID>
+                    <ram:TypeCode>916</ram:TypeCode>
+                    <ram:Name>ADD_REF_DOC_Desc</ram:Name>
+               </ram:AdditionalReferencedDocument>
+               <ram:AdditionalReferencedDocument>
+                    <ram:IssuerAssignedID>TENDER_ID</ram:IssuerAssignedID>
+                    <ram:TypeCode>50</ram:TypeCode>
+               </ram:AdditionalReferencedDocument>
+               <ram:AdditionalReferencedDocument>
+                    <ram:IssuerAssignedID>OBJECT_ID</ram:IssuerAssignedID>
+                    <ram:TypeCode>130</ram:TypeCode>
+                    <ram:ReferenceTypeCode>AWV</ram:ReferenceTypeCode>
+               </ram:AdditionalReferencedDocument>
+               <ram:CatalogueReferencedDocument>
+                    <ram:IssuerAssignedID>CATALOG_ID</ram:IssuerAssignedID>
+               </ram:CatalogueReferencedDocument>
+               <ram:BlanketOrderReferencedDocument>
+                    <ram:IssuerAssignedID>BLANKET_ORDER_ID</ram:IssuerAssignedID>
+               </ram:BlanketOrderReferencedDocument>
+               <ram:PreviousOrderChangeReferencedDocument>
+                    <ram:IssuerAssignedID>PREV_ORDER_C_ID</ram:IssuerAssignedID>
+               </ram:PreviousOrderChangeReferencedDocument>
+               <ram:PreviousOrderResponseReferencedDocument>
+                    <ram:IssuerAssignedID>PREV_ORDER_R_ID</ram:IssuerAssignedID>
+               </ram:PreviousOrderResponseReferencedDocument>
+               <ram:SpecifiedProcuringProject>
+                    <ram:ID>PROJECT_ID</ram:ID>
+                    <ram:Name>Project Reference</ram:Name>
+               </ram:SpecifiedProcuringProject>
+          </ram:ApplicableHeaderTradeAgreement>
+          <ram:ApplicableHeaderTradeDelivery>
+               <ram:ShipToTradeParty>
+                    <ram:ID>SHIP_TO_ID</ram:ID>
+                    <ram:GlobalID schemeID="0088">5897546912</ram:GlobalID>
+                    <ram:Name>SHIP_TO_NAME</ram:Name>
+                    <ram:SpecifiedLegalOrganization>
+                         <ram:ID schemeID="0002">951632874</ram:ID>
+                         <ram:TradingBusinessName>SHIP_TO_TRADING_NAME</ram:TradingBusinessName>
+                    </ram:SpecifiedLegalOrganization>
+                    <ram:DefinedTradeContact>
+                         <ram:PersonName>SHIP_TO_CONTACT_NAME</ram:PersonName>
+                         <ram:DepartmentName>SHIP_TO_CONTACT_DEP</ram:DepartmentName>
+                         <ram:TypeCode>SD</ram:TypeCode>
+                         <ram:TelephoneUniversalCommunication>
+                              <ram:CompleteNumber>+33 6 85 96 32 41</ram:CompleteNumber>
+                         </ram:TelephoneUniversalCommunication>
+                         <ram:EmailURIUniversalCommunication>
+                              <ram:URIID>shipto@customer.com</ram:URIID>
+                         </ram:EmailURIUniversalCommunication>
+                    </ram:DefinedTradeContact>
+                    <ram:PostalTradeAddress>
+                         <ram:PostcodeCode>69003</ram:PostcodeCode>
+                         <ram:LineOne>SHIP_TO_ADDR_1</ram:LineOne>
+                         <ram:LineTwo>SHIP_TO_ADDR_2</ram:LineTwo>
+                         <ram:LineThree>SHIP_TO_ADDR_3</ram:LineThree>
+                         <ram:CityName>SHIP_TO_CITY</ram:CityName>
+                         <ram:CountryID>FR</ram:CountryID>
+                    </ram:PostalTradeAddress>
+                    <ram:URIUniversalCommunication>
+                         <ram:URIID schemeID="EM">delivery@buyer.com</ram:URIID>
+                    </ram:URIUniversalCommunication>
+                    <ram:SpecifiedTaxRegistration>
+                         <ram:ID schemeID="VA">FR 66 951 632 874</ram:ID>
+                    </ram:SpecifiedTaxRegistration>
+               </ram:ShipToTradeParty>
+               <ram:ShipFromTradeParty>
+                    <ram:ID>SHIP_FROM_ID</ram:ID>
+                    <ram:GlobalID schemeID="0088">875496123</ram:GlobalID>
+                    <ram:Name>SHIP_FROM_NAME</ram:Name>
+                    <ram:SpecifiedLegalOrganization>
+                         <ram:ID schemeID="0002">548963127</ram:ID>
+                         <ram:TradingBusinessName>SHIP_FROM_TRADING_NAME</ram:TradingBusinessName>
+                    </ram:SpecifiedLegalOrganization>
+                    <ram:DefinedTradeContact>
+                         <ram:PersonName>SHIP_FROM_CONTACT_NAME</ram:PersonName>
+                         <ram:DepartmentName>SHIP_FROM_CONTACT_DEP</ram:DepartmentName>
+                         <ram:TypeCode>SD</ram:TypeCode>
+                         <ram:TelephoneUniversalCommunication>
+                              <ram:CompleteNumber>+33 6 85 96 32 41</ram:CompleteNumber>
+                         </ram:TelephoneUniversalCommunication>
+                         <ram:EmailURIUniversalCommunication>
+                              <ram:URIID>shipfrom@seller.com</ram:URIID>
+                         </ram:EmailURIUniversalCommunication>
+                    </ram:DefinedTradeContact>
+                    <ram:PostalTradeAddress>
+                         <ram:PostcodeCode>75003</ram:PostcodeCode>
+                         <ram:LineOne>SHIP_FROM_ADDR_1</ram:LineOne>
+                         <ram:LineTwo>SHIP_FROM_ADDR_2</ram:LineTwo>
+                         <ram:LineThree>SHIP_FROM_ADDR_3</ram:LineThree>
+                         <ram:CityName>SHIP_FROM_CITY</ram:CityName>
+                         <ram:CountryID>FR</ram:CountryID>
+                    </ram:PostalTradeAddress>
+                    <ram:URIUniversalCommunication>
+                         <ram:URIID>warehouse@seller.com</ram:URIID>
+                    </ram:URIUniversalCommunication>
+                    <ram:SpecifiedTaxRegistration>
+                         <ram:ID schemeID="VA">FR 16 548 963 127</ram:ID>
+                    </ram:SpecifiedTaxRegistration>
+               </ram:ShipFromTradeParty>
+               <ram:RequestedDeliverySupplyChainEvent>
+                    <ram:OccurrenceDateTime>
+                         <udt:DateTimeString format="102">20200415</udt:DateTimeString>
+                    </ram:OccurrenceDateTime>
+                    <ram:OccurrenceSpecifiedPeriod>
+                         <ram:StartDateTime>
+                              <udt:DateTimeString format="203">202004150900</udt:DateTimeString>
+                         </ram:StartDateTime>
+                         <ram:EndDateTime>
+                              <udt:DateTimeString format="203">202004301800</udt:DateTimeString>
+                         </ram:EndDateTime>
+                    </ram:OccurrenceSpecifiedPeriod>
+               </ram:RequestedDeliverySupplyChainEvent>
+          </ram:ApplicableHeaderTradeDelivery>
+          <ram:ApplicableHeaderTradeSettlement>
+               <ram:OrderCurrencyCode>EUR</ram:OrderCurrencyCode>
+               <ram:InvoiceeTradeParty>
+                    <ram:ID>INVOICEE_ID_9587456</ram:ID>
+                    <ram:GlobalID schemeID="0088">98765432179</ram:GlobalID>
+                    <ram:Name>INVOICEE_NAME</ram:Name>
+                    <ram:SpecifiedLegalOrganization>
+                         <ram:ID schemeID="0002">987654321</ram:ID>
+                         <ram:TradingBusinessName>INVOICEE_TRADING_NAME</ram:TradingBusinessName>
+                    </ram:SpecifiedLegalOrganization>
+                    <ram:DefinedTradeContact>
+                         <ram:PersonName>INVOICEE_CONTACT_NAME</ram:PersonName>
+                         <ram:DepartmentName>INVOICEE_CONTACT_DEP</ram:DepartmentName>
+                         <ram:TypeCode>LB</ram:TypeCode>
+                         <ram:TelephoneUniversalCommunication>
+                              <ram:CompleteNumber>+33 6 65 98 75 32</ram:CompleteNumber>
+                         </ram:TelephoneUniversalCommunication>
+                         <ram:EmailURIUniversalCommunication>
+                              <ram:URIID>invoicee@buyer.com</ram:URIID>
+                         </ram:EmailURIUniversalCommunication>
+                    </ram:DefinedTradeContact>
+                    <ram:PostalTradeAddress>
+                         <ram:PostcodeCode>69001</ram:PostcodeCode>
+                         <ram:LineOne>INVOICEE_ADDR_1</ram:LineOne>
+                         <ram:LineTwo>INVOICEE_ADDR_2</ram:LineTwo>
+                         <ram:LineThree>INVOICEE_ADDR_3</ram:LineThree>
+                         <ram:CityName>INVOICEE_CITY</ram:CityName>
+                         <ram:CountryID>FR</ram:CountryID>
+                    </ram:PostalTradeAddress>
+                    <ram:URIUniversalCommunication>
+                         <ram:URIID schemeID="EM">invoicee@buyer.com</ram:URIID>
+                    </ram:URIUniversalCommunication>
+                    <ram:SpecifiedTaxRegistration>
+                         <ram:ID schemeID="VA">FR 05 987 654 321</ram:ID>
+                    </ram:SpecifiedTaxRegistration>
+                    <ram:SpecifiedTaxRegistration>
+                         <ram:ID schemeID="FC">INVOICEE_TAX_ID</ram:ID>
+                    </ram:SpecifiedTaxRegistration>
+               </ram:InvoiceeTradeParty>
+               <ram:SpecifiedTradeSettlementPaymentMeans>
+                    <ram:TypeCode>30</ram:TypeCode>
+                    <ram:Information>Credit Transfer</ram:Information>
+               </ram:SpecifiedTradeSettlementPaymentMeans>
+               <ram:SpecifiedTradeAllowanceCharge>
+                    <ram:ChargeIndicator>
+                         <udt:Indicator>false</udt:Indicator>
+                    </ram:ChargeIndicator>
+                    <ram:CalculationPercent>10.00</ram:CalculationPercent>
+                    <ram:BasisAmount>310</ram:BasisAmount>
+                    <ram:ActualAmount>31.00</ram:ActualAmount>
+                    <ram:ReasonCode>64</ram:ReasonCode>
+                    <ram:Reason>SPECIAL AGREEMENT</ram:Reason>
+                    <ram:CategoryTradeTax>
+                         <ram:TypeCode>VAT</ram:TypeCode>
+                         <ram:CategoryCode>S</ram:CategoryCode>
+                         <ram:RateApplicablePercent>20.00</ram:RateApplicablePercent>
+                    </ram:CategoryTradeTax>
+               </ram:SpecifiedTradeAllowanceCharge>
+               <ram:SpecifiedTradeAllowanceCharge>
+                    <ram:ChargeIndicator>
+                         <udt:Indicator>true</udt:Indicator>
+                    </ram:ChargeIndicator>
+                    <ram:CalculationPercent>10.00</ram:CalculationPercent>
+                    <ram:BasisAmount>210.00</ram:BasisAmount>
+                    <ram:ActualAmount>21.00</ram:ActualAmount>
+                    <ram:ReasonCode>FC</ram:ReasonCode>
+                    <ram:Reason>FREIGHT SERVICES</ram:Reason>
+                    <ram:CategoryTradeTax>
+                         <ram:TypeCode>VAT</ram:TypeCode>
+                         <ram:CategoryCode>S</ram:CategoryCode>
+                         <ram:RateApplicablePercent>20.00</ram:RateApplicablePercent>
+                    </ram:CategoryTradeTax>
+               </ram:SpecifiedTradeAllowanceCharge>
+               <ram:SpecifiedTradePaymentTerms>
+                    <ram:Description>PAYMENT_TERMS_DESC</ram:Description>
+               </ram:SpecifiedTradePaymentTerms>
+               <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+                    <ram:LineTotalAmount>310.00</ram:LineTotalAmount>
+                    <ram:ChargeTotalAmount>21.00</ram:ChargeTotalAmount>
+                    <ram:AllowanceTotalAmount>31.00</ram:AllowanceTotalAmount>
+                    <ram:TaxBasisTotalAmount>300.00</ram:TaxBasisTotalAmount>
+                    <ram:TaxTotalAmount currencyID="EUR">60.00</ram:TaxTotalAmount>
+                    <ram:GrandTotalAmount>360.00</ram:GrandTotalAmount>
+               </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+               <ram:ReceivableSpecifiedTradeAccountingAccount>
+                    <ram:ID>BUYER_ACCOUNT_REF</ram:ID>
+               </ram:ReceivableSpecifiedTradeAccountingAccount>
+          </ram:ApplicableHeaderTradeSettlement>
+     </rsm:SupplyChainTradeTransaction>
+</rsm:SCRDMCCBDACIOMessageStructure>

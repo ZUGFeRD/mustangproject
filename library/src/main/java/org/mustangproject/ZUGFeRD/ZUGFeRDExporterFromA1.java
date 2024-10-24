@@ -19,25 +19,21 @@
 package org.mustangproject.ZUGFeRD;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.pdfbox.preflight.PreflightDocument;
+import org.apache.pdfbox.preflight.ValidationResult;
 import org.apache.pdfbox.preflight.exception.ValidationException;
 import org.apache.pdfbox.preflight.parser.PreflightParser;
 import org.mustangproject.EStandard;
 
-import javax.activation.DataSource;
-import java.io.IOException;
-import java.io.InputStream;
+import jakarta.activation.DataSource;
 
-public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 implements IZUGFeRDExporter {
-	protected boolean ignorePDFAErrors = false;
-
-	public ZUGFeRDExporterFromA1 ignorePDFAErrors() {
-		this.ignorePDFAErrors = true;
-		return this;
-	}
+public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 {
 
 	private static boolean isValidA1(DataSource dataSource) throws IOException {
-		return getPDFAParserValidationResult(new PreflightParser(dataSource));
+		return getPDFAParserValidationResult(PreflightParserHelper.createPreflightParser(dataSource));
 	}
 
 	private static boolean getPDFAParserValidationResult(PreflightParser parser) throws IOException {
@@ -46,19 +42,19 @@ public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 implements IZUG
 		 * NonSequentialParser. Some additional controls are present to check a set of
 		 * PDF/A requirements. (Stream length consistency, EOL after some Keyword...)
 		 */
-		parser.parse();// might add a Format.PDF_A1A as parameter and iterate through A1 and A3
+		// might add a Format.PDF_A1A as parameter and iterate through A1 and A3
 
-		try (PreflightDocument document = parser.getPreflightDocument()) {
+		try (PreflightDocument document = (PreflightDocument) parser.parse()) {
 			/*
 			 * Once the syntax validation is done, the parser can provide a
 			 * PreflightDocument (that inherits from PDDocument) This document process the
 			 * end of PDF/A validation.
 			 */
 
-			document.validate();
+			ValidationResult res = document.validate();
 
 			// Get validation result
-			return document.getResult().isValid();
+			return res.isValid();
 		} catch (ValidationException e) {
 			/*
 			 * the parse method can throw a SyntaxValidationException if the PDF file can't
@@ -70,14 +66,17 @@ public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 implements IZUG
 	}
 
 
-	public ZUGFeRDExporterFromA1 setProfile(Profile p) {
+	@Override
+  public ZUGFeRDExporterFromA1 setProfile(Profile p) {
 		return (ZUGFeRDExporterFromA1)super.setProfile(p);
 	}
-	public ZUGFeRDExporterFromA1 setProfile(String profileName) {
+	@Override
+  public ZUGFeRDExporterFromA1 setProfile(String profileName) {
 		return (ZUGFeRDExporterFromA1)super.setProfile(profileName);
 	}
 
-	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
+	@Override
+  public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
 		if (!ignorePDFAErrors && !isValidA1(dataSource)) {
 			throw new IOException("File is not a valid PDF/A-1 input file");
 		}
@@ -85,35 +84,45 @@ public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 implements IZUG
 	}
 
 
-	public ZUGFeRDExporterFromA1 load(String pdfFilename) throws IOException {
+	@Override
+  public ZUGFeRDExporterFromA1 load(String pdfFilename) throws IOException {
 		return (ZUGFeRDExporterFromA1) super.load(pdfFilename);
 	}
-	public ZUGFeRDExporterFromA1 load(byte[] pdfBinary) throws IOException {
+	@Override
+  public ZUGFeRDExporterFromA1 load(byte[] pdfBinary) throws IOException {
 		return (ZUGFeRDExporterFromA1) super.load(pdfBinary);
 	}
-	public ZUGFeRDExporterFromA1 load(InputStream pdfSource) throws IOException{
+	@Override
+  public ZUGFeRDExporterFromA1 load(InputStream pdfSource) throws IOException{
 		return (ZUGFeRDExporterFromA1) super.load(pdfSource);
 	}
-	public ZUGFeRDExporterFromA1 setCreator(String creator) {
+	@Override
+  public ZUGFeRDExporterFromA1 setCreator(String creator) {
 		return (ZUGFeRDExporterFromA1) super.setCreator(creator);
 	}
-	public ZUGFeRDExporterFromA1 setConformanceLevel(PDFAConformanceLevel newLevel) {
+	@Override
+  public ZUGFeRDExporterFromA1 setConformanceLevel(PDFAConformanceLevel newLevel) {
 		return (ZUGFeRDExporterFromA1) super.setConformanceLevel(newLevel);
 	}
-	public ZUGFeRDExporterFromA1 setProducer(String producer){
+	@Override
+  public ZUGFeRDExporterFromA1 setProducer(String producer){
 		return (ZUGFeRDExporterFromA1) super.setProducer(producer);
 	}
-	public ZUGFeRDExporterFromA1 setZUGFeRDVersion(EStandard est, int version){
+	@Override
+  public ZUGFeRDExporterFromA1 setZUGFeRDVersion(EStandard est, int version){
 		return (ZUGFeRDExporterFromA1) super.setZUGFeRDVersion(est, version);
 	}
-	public ZUGFeRDExporterFromA1 setZUGFeRDVersion(int version){
+	@Override
+  public ZUGFeRDExporterFromA1 setZUGFeRDVersion(int version){
 		return (ZUGFeRDExporterFromA1) super.setZUGFeRDVersion(version);
 	}
-	public ZUGFeRDExporterFromA1 setXML(byte[] zugferdData) throws IOException{
+	@Override
+  public ZUGFeRDExporterFromA1 setXML(byte[] zugferdData) throws IOException{
 		return (ZUGFeRDExporterFromA1) super.setXML(zugferdData);
 	}
 
-	public ZUGFeRDExporterFromA1 disableAutoClose(boolean disableAutoClose){
+	@Override
+  public ZUGFeRDExporterFromA1 disableAutoClose(boolean disableAutoClose){
 		return (ZUGFeRDExporterFromA1) super.disableAutoClose(disableAutoClose);
 	}
 	public ZUGFeRDExporterFromA1 convertOnly() {

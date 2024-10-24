@@ -140,6 +140,11 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	default IZUGFeRDCashDiscount[] getCashDiscounts() {	return null; }
+
+	/***
+	 * @return the invoice line items with the positions
+	 */
 	IZUGFeRDExportableItem[] getZFItems();
 
 	/**
@@ -445,8 +450,16 @@ public interface IExportableTransaction {
 	 *
 	 * @return the IZUGFeRDExportableTradeParty delivery address
 	 */
-
 	default IZUGFeRDExportableTradeParty getDeliveryAddress() {
+		return null;
+	}
+
+	/***
+	 * payee / payment receiver, if different from seller, ram:Payee (only supported for zf2)
+	 *
+	 * @return the IZUGFeRDExportableTradeParty payment receiver, if different from sellver
+	 */
+	default IZUGFeRDExportableTradeParty getPayee() {
 		return null;
 	}
 
@@ -517,4 +530,7 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	default String getCreditorReferenceID() {
+		return null;
+	}
 }

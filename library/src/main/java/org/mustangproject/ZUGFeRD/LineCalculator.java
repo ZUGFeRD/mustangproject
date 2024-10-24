@@ -1,6 +1,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /***
  * the linecalculator does the math within an item line, and e.g. calculates quantity*price.
@@ -33,14 +34,18 @@ public class LineCalculator {
 			}
 		}
 		
-		BigDecimal vatPercent = currentItem.getProduct().getVATPercent();
-		if (vatPercent == null)
+		BigDecimal vatPercent = null;
+		if (currentItem.getProduct()!=null) {
+			vatPercent = currentItem.getProduct().getVATPercent();
+		}
+		if (vatPercent == null) {
 			vatPercent = BigDecimal.ZERO;
+		}
 		BigDecimal multiplicator = vatPercent.divide(BigDecimal.valueOf(100));
 		priceGross = currentItem.getPrice(); // see https://github.com/ZUGFeRD/mustangproject/issues/159
 		price = priceGross.subtract(allowance).add(charge);
-		itemTotalNetAmount = currentItem.getQuantity().multiply(getPrice()).divide(currentItem.getBasisQuantity())
-				.subtract(allowanceItemTotal).setScale(2, BigDecimal.ROUND_HALF_UP);
+		itemTotalNetAmount = currentItem.getQuantity().multiply(getPrice()).divide(currentItem.getBasisQuantity(), 18, RoundingMode.HALF_UP)
+				.subtract(allowanceItemTotal).setScale(2, RoundingMode.HALF_UP);
 		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);
 
 	}

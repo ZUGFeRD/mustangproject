@@ -20,8 +20,6 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import org.mustangproject.TradeParty;
-
 /**
  * Mustangproject's ZUGFeRD implementation neccessary interface for ZUGFeRD exporter Licensed under the APLv2
  *
@@ -114,11 +112,16 @@ public interface IZUGFeRDExportableTradeParty {
 	}
 
 	/**
-	 * First and last name of the recipient
+	 * e.g. first and last name of the owner
 	 *
-	 * @return First and last name of the recipient
+	 * @return full name of the party
 	 */
 	String getName();
+
+	/**
+	 * @return description, e.g. if it's a small company
+	 */
+	default String getDescription() { return null; }
 
 	/**
 	 * Postal code of the recipient

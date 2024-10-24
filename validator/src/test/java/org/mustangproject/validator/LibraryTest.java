@@ -1,10 +1,5 @@
 package org.mustangproject.validator;
 
-import org.xmlunit.builder.Input;
-import org.xmlunit.xpath.JAXPXPathEngine;
-import org.xmlunit.xpath.XPathEngine;
-
-import javax.xml.transform.Source;
 import java.io.File;
 
 import static org.xmlunit.assertj.XmlAssert.assertThat;
@@ -174,20 +169,20 @@ public class LibraryTest extends ResourceCase {
 	/**
 	 * automatically test the xrechnung
 	 */
-	public void testXRValidation() {
+	public void testXREdgeValidation() {
 		File tempFile = new File("../library/target/testout-XR-Edge.xml");
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
 
 		String res = zfv.validate(tempFile.getAbsolutePath());
 		assertThat(res).valueByXPath("count(//error)")
 				.asInt()
-				.isEqualTo(1);// there is an error inthe  XRechnung validatoion artefacts: https://github.com/itplr-kosit/validator-configuration-xrechnung/issues/84
+				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("invalid");// expect to be valid because XR notices are, well, only notices
+				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
-				.isEqualTo("invalid");
+				.isEqualTo("valid");
 		
 		assertThat(res).valueByXPath("count(//notice)")
 				.asInt()
@@ -249,8 +244,31 @@ public class LibraryTest extends ResourceCase {
 				.isEqualTo(0);
 	}
 
-	public void testMinimumProfileValidity() {
-		File tempFile = new File("../library/target/testout-Minimum.pdf");
+	public void testMinimumProfileValidityInvoice() {
+		File tempFile = new File("../library/target/testout-Minimum-INV.pdf");
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+		assertThat(res).valueByXPath("count(//error)")
+				.asInt()
+				.isEqualTo(0);
+		assertThat(res).valueByXPath("/validation/summary/@status")
+				.asString()
+				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+				.asString()
+				.isEqualTo("valid");
+		/** end of errors due to version mismatch*/
+
+
+		assertThat(res).valueByXPath("count(//notice)")
+				.asInt()
+				.isEqualTo(0);
+	}
+
+	public void testMinimumProfileValidityCreditNote() {
+		File tempFile = new File("../library/target/testout-Minimum-CN.pdf");
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
 
 		String res = zfv.validate(tempFile.getAbsolutePath());

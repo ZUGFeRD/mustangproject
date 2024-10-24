@@ -1,19 +1,16 @@
 package org.mustangproject;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.AbstractList;
-import java.util.Collections;
-import java.util.List;
-import java.util.RandomAccess;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import org.apache.commons.io.IOUtils;
 import org.dom4j.io.XMLWriter;
+import org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class XMLTools extends XMLWriter {
 	@Override
@@ -24,34 +21,11 @@ public class XMLTools extends XMLWriter {
 	@Override
 	public String escapeElementEntities(String s) {
 		return super.escapeElementEntities(s);
-
-	}
-
-	public static List<Node> asList(NodeList n) {
-		return n.getLength() == 0 ?
-			Collections.<Node>emptyList() : new NodeListWrapper(n);
-	}
-
-	static final class NodeListWrapper extends AbstractList<Node>
-		implements RandomAccess {
-		private final NodeList list;
-
-		NodeListWrapper(NodeList l) {
-			list = l;
-		}
-
-		public Node get(int index) {
-			return list.item(index);
-		}
-
-		public int size() {
-			return list.getLength();
-		}
 	}
 
 	public static String nDigitFormat(BigDecimal value, int scale) {
 		/*
-		 * I needed 123,45, locale independent.I tried
+		 * I needed 123.45, locale independent.I tried
 		 * NumberFormat.getCurrencyInstance().format( 12345.6789 ); but that is locale
 		 * specific.I also tried DecimalFormat df = new DecimalFormat( "0,00" );
 		 * df.setDecimalSeparatorAlwaysShown(true); df.setGroupingUsed(false);
@@ -69,7 +43,105 @@ public class XMLTools extends XMLWriter {
 
 	}
 
+	/**
+	 * returns the value of an node
+	 *
+	 * @param node the Node to get the value from
+	 * @return A String or empty String, if no value was found
+	 */
+	public static String getNodeValue(Node node) {
+		if (node != null && node.getFirstChild() != null) {
+			return node.getFirstChild().getNodeValue();
+		}
+		return "";
+	}
 
+
+	/**
+	 * tries to convert a String to BigDecimal.
+	 *
+	 * @param nodeValue The value as String
+	 * @return a BigDecimal with the value provides as String or a BigDecimal with value 0.00 if an error occurs
+	 */
+	public static BigDecimal tryBigDecimal(String nodeValue) {
+		try {
+			return new BigDecimal(nodeValue);
+		} catch (final Exception e) {
+			try {
+				return BigDecimal.valueOf(Float.valueOf(nodeValue));
+			} catch (final Exception ex) {
+				return new BigDecimal("0.00");
+			}
+		}
+	}
+
+
+	/**
+	 * tries to convert a Node to a BigDecimal.
+	 *
+	 * @param node The value as String
+	 * @return a BigDecimal with the value provides as String or a BigDecimal with value 0.00 if an error occurs
+	 */
+	public static BigDecimal tryBigDecimal(Node node) {
+		final String nodeValue = XMLTools.getNodeValue(node);
+		if (nodeValue.isEmpty()) {
+			return null;
+		}
+		return XMLTools.tryBigDecimal(nodeValue);
+	}
+	/***
+	 * formats a number so that at least minDecimals are displayed but at the maximum maxDecimals are there, i.e.
+	 * cuts potential 0s off the end until minDecimals
+	 * @param value
+	 * @param maxDecimals number of maximal scale
+	 * @param minDecimals number of minimal scale
+	 * @return value as String with decimals in the specified range
+	 */
+	public static String nDigitFormatDecimalRange(BigDecimal value, int maxDecimals, int minDecimals) {
+		if ((maxDecimals<minDecimals)||(maxDecimals<0)||(minDecimals<0)) {
+			throw new IllegalArgumentException("Invalid scale range provided");
+		}
+		int curDecimals=maxDecimals;
+		while  ( (curDecimals>minDecimals) && (value.setScale(curDecimals, RoundingMode.HALF_UP).compareTo(value.setScale(curDecimals-1, RoundingMode.HALF_UP))==0)) {
+			 curDecimals--;
+		}
+		return value.setScale(curDecimals, RoundingMode.HALF_UP).toPlainString();
+
+	}
+
+
+	/***
+	 * returns a util.Date from a 102 String yyyymmdd in a node
+	 * @param node the node
+	 * @return a util.Date, or null, if not parseable
+	 */
+	public static Date tryDate(Node node) {
+		final String nodeValue = XMLTools.getNodeValue(node);
+		if (nodeValue.isEmpty()) {
+			return null;
+		}
+		return tryDate(nodeValue);
+	}
+
+	/***
+	 * returns a util.Date from a 102 String yyyymmdd
+	 * @param toParse the string
+	 * @return a util.Date, or null, if not parseable
+	 */
+	public static Date tryDate(String toParse) {
+		final SimpleDateFormat formatter = ZUGFeRDDateFormat.DATE.getFormatter();
+		try {
+			return formatter.parse(toParse);
+		} catch (final Exception e) {
+			return null;
+		}
+	}
+
+	/***
+	 * relplaces some entities like < , > and & with their escaped pendant like &lt;
+	 * @param s the string
+	 * @return the "safe" string
+	 */
 	public static String encodeXML(CharSequence s) {
 		if (s == null) {
 			return "";
@@ -120,36 +192,6 @@ public class XMLTools extends XMLWriter {
 		return sb.toString();
 	}
 
-
-	/**
-	 * Returns the Byte Order Mark size and thus allows to skips over a BOM
-	 * at the beginning of the given ByteArrayInputStream, if one exists.
-	 *
-	 * @param is the ByteArrayInputStream used
-	 * @throws IOException if can not be read from is
-	 * @see <a href="https://www.w3.org/TR/xml/#sec-guessing">Autodetection of Character Encodings</a>
-	 *
-	public static int guessBOMSize(ByteArrayInputStream is) throws IOException {
-	byte[] pad = new byte[4];
-	is.read(pad);
-	is.reset();
-	int test2 = ((pad[0] & 0xFF) << 8) | (pad[1] & 0xFF);
-	int test3 = ((test2 & 0xFFFF) << 8) | (pad[2] & 0xFF);
-	int test4 = ((test3 & 0xFFFFFF) << 8) | (pad[3] & 0xFF);
-	//
-	if (test4 == 0x0000FEFF || test4 == 0xFFFE0000 || test4 == 0x0000FFFE || test4 == 0xFEFF0000) {
-	// UCS-4: BOM takes 4 bytes
-	return 4;
-	} else if (test3 == 0xEFBBFF) {
-	// UTF-8: BOM takes 3 bytes
-	return 3;
-	} else if (test2 == 0xFEFF || test2 == 0xFFFE) {
-	// UTF-16: BOM takes 2 bytes
-	return 2;
-	}
-	return 0;
-	}*/
-
 	/***
 	 * removes utf8 byte order marks from byte arrays, in case one is there
 	 * @param zugferdRaw the CII XML
@@ -157,6 +199,7 @@ public class XMLTools extends XMLWriter {
 	 */
 	public static byte[] removeBOM(byte[] zugferdRaw) {
 		final byte[] zugferdData;
+		// This handles the UTF-8 BOM 
 		if ((zugferdRaw[0] == (byte) 0xEF) && (zugferdRaw[1] == (byte) 0xBB) && (zugferdRaw[2] == (byte) 0xBF)) {
 			// I don't like BOMs, lets remove it
 			zugferdData = new byte[zugferdRaw.length - 3];
@@ -168,20 +211,19 @@ public class XMLTools extends XMLWriter {
 	}
 
 	public static byte[] getBytesFromStream(InputStream fileinput) throws IOException {
-
-		// we're on java 8 so we cant use inputstream.readallbytes
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-		int nRead;
-		byte[] data = new byte[16384];
-		BufferedInputStream bufferedInput=new BufferedInputStream(fileinput);
-
-		while ((nRead = bufferedInput.read(data, 0, data.length)) != -1) {
-			buffer.write(data, 0, nRead);
-		}
-		return buffer.toByteArray();
-
-		// end of polyfill
+	  return IOUtils.toByteArray (fileinput);
 	}
+
+
+	public static String trimOrNull(Node node) {
+		if (node != null) {
+			String textContent = node.getTextContent();
+			if (textContent != null) {
+				return textContent.trim();
+			}
+		}
+		return null;
+	}
+
 
 }

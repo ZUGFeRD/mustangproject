@@ -1,258 +1,267 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-<parent>
+    <parent>
+        <groupId>org.mustangproject</groupId>
+        <artifactId>core</artifactId>
+        <version>2.15.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
-    <artifactId>core</artifactId>
-    <version>2.10.1-SNAPSHOT</version>
-</parent>
-   <modelVersion>4.0.0</modelVersion>
-   <groupId>org.mustangproject</groupId>
-   <artifactId>Mustang-CLI</artifactId>
-   <name>e-invoices commandline tool, allowing to create(embed), split and validate Factur-X/ZUGFeRD files. Validation should also work for XRechnung/CII. </name>
-   <packaging>jar</packaging>
-   <version>2.10.1-SNAPSHOT</version>
-   <properties>
-      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <maven.compiler.compilerVersion>8</maven.compiler.compilerVersion>
-      <maven.compiler.source>8</maven.compiler.source>
-      <maven.compiler.target>8</maven.compiler.target>
-   </properties>
-   <dependencies>
-      <dependency>
-         <groupId>org.mustangproject</groupId>
-         <artifactId>validator</artifactId>
-         <version>2.10.1-SNAPSHOT</version>
-         <!-- prototypes of new mustangproject versions can be installed by referring to them and installed to the local repo from a jar file with
-        mvn install:install-file -Dfile=mustang-1.5.4-SNAPSHOT.jar -DgroupId=org.mustangproject.ZUGFeRD -DartifactId=mustang -Dversion=1.5.4 -Dpackaging=jar -DgeneratePom=true
-        -->
-      </dependency>
-      <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
-      <dependency><!-- apache commons cli to parse command line -->
-         <groupId>commons-cli</groupId>
-         <artifactId>commons-cli</artifactId>
-         <version>1.5.0</version>
-      </dependency>
+    <artifactId>Mustang-CLI</artifactId>
+    <name>e-invoices commandline tool, allowing to create(embed), split and validate Factur-X/ZUGFeRD files. Validation
+        should also work for XRechnung/CII.
+    </name>
+    <packaging>jar</packaging>
+    <version>2.15.0-SNAPSHOT</version>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.compilerVersion>11</maven.compiler.compilerVersion>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.mustangproject</groupId>
+            <artifactId>validator</artifactId>
+            <version>2.15.0-SNAPSHOT</version>
+            <!-- prototypes of new mustangproject versions can be installed by referring to them and installed to the local repo from a jar file with
+           mvn install:install-file -Dfile=mustang-1.5.4-SNAPSHOT.jar -DgroupId=org.mustangproject.ZUGFeRD -DartifactId=mustang -Dversion=1.5.4 -Dpackaging=jar -DgeneratePom=true
+           -->
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
+        <dependency><!-- apache commons cli to parse command line -->
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>1.8.0</version>
+        </dependency>
 
-      <dependency>
-         <groupId>org.riversun</groupId>
-         <artifactId>bigdoc</artifactId>
-         <version>0.3.0</version>
-      </dependency>
-      <dependency>
-         <groupId>org.junit.jupiter</groupId>
-         <artifactId>junit-jupiter-api</artifactId>
-         <version>5.9.1</version>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.junit.vintage</groupId>
-         <artifactId>junit-vintage-engine</artifactId>
-         <version>5.9.1</version>
-         <scope>test</scope>
-      </dependency>
-<!-- for directory validation: -->
-      <dependency>
-         <groupId>org.xmlunit</groupId>
-         <artifactId>xmlunit-core</artifactId>
-         <version>2.10.0</version>
-      </dependency>
-      <dependency>
-         <groupId>org.xmlunit</groupId>
-         <artifactId>xmlunit-assertj</artifactId>
-         <version>2.9.1</version>
-      </dependency>
 
-<!-- /directory validation: -->
+        <!-- logging -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.13</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.2.13</version>
+        </dependency>
+        <dependency>
+            <!-- This library is needed so that logback stderr output is sent to, well, stderr, otherwise it lands in stdout -->
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>3.1.7</version>
+        </dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>2.0.12</version>
+		</dependency>
+        <!-- end of logging -->
 
-   </dependencies>
-   <build>
-      <pluginManagement>
-         <plugins>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- for directory validation: -->
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-core</artifactId>
+            <version>2.10.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-assertj</artifactId>
+            <version>2.10.0</version>
+        </dependency>
+
+        <!-- /directory validation: -->
+
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.2</version>
+        </dependency>
+
+
+    </dependencies>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <!-- mvn help:effective-pom will otherwise tell it just defaults
+                             to 2.3.2 - which does not release in the maven repo, and neither shows any
+                             error message :-( -->
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
             <plugin>
-               <!-- mvn help:effective-pom will otherwise tell it just defaults 
-						to 2.3.2 - which does not release in the maven repo, and neither shows any 
-						error message :-( -->
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-release-plugin</artifactId>
-               <version>2.5.3</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <runOrder>alphabetical</runOrder>
+                </configuration>
             </plugin>
-         </plugins>
-      </pluginManagement>
-      <plugins>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-               <runOrder>alphabetical</runOrder>
-            </configuration>
-         </plugin>
-         <!-- allow getImplementationVersion for the pom.xml -->
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <version>3.2.0</version>
-            <configuration>
-               <archive>
-                  <manifest>
-                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                     <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                  </manifest>
-                   <manifestSections>
-                       <manifestSection>
-                           <name>FreeSans.ttf</name>
-                           <manifestEntries>
-                               <Content-Type>font/ttf</Content-Type>
-                           </manifestEntries>
-                       </manifestSection>
-                       <manifestSection>
-                           <name>FreeSerif.ttf</name>
-                           <manifestEntries>
-                               <Content-Type>application/x-font</Content-Type>
-                           </manifestEntries>
-                       </manifestSection>
-                       <manifestSection>
-                           <name>Times-Bold.ttf</name>
-                           <manifestEntries>
-                               <Content-Type>application/x-font</Content-Type>
-                           </manifestEntries>
-                       </manifestSection>
-                   </manifestSections>
+            <!-- allow getImplementationVersion for the pom.xml -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
 
-               </archive>
-            </configuration>
-         </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>2.3.2</version>
-            <configuration>
-               <archive>
-                  <manifest>
-                     <addClasspath>true</addClasspath>
-                     <mainClass>org.mustangproject.commandline.main</mainClass>
-                  </manifest>
-               </archive>
-               <descriptorRefs>
-                  <descriptorRef>jar-with-dependencies</descriptorRef>
-               </descriptorRefs>
-               <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven 
-						mvn clean compile assembly:single -->
-               <!-- or whatever version you use -->
-               <source>8</source>
-               <target>8</target>
-            </configuration>
-         </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>2.4.3</version>
-            <configuration>
-               <transformers>
-                  <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                     <mainClass>org.mustangproject.commandline.Main</mainClass>
-                  </transformer>
-               </transformers>
-               <minimizeJar>false</minimizeJar>
-               <filters>
-                  <filter>
-                     <artifact>*:*</artifact>
-                     <excludes>
-                        <exclude>LICENSE</exclude>
-                        <exclude>NOTICE</exclude>
-                        <exclude>META-INF/*.SF</exclude>
-                        <exclude>META-INF/*.DSA</exclude>
-                        <exclude>META-INF/*.RSA</exclude>
-                     </excludes>
-                  </filter>
-                  <filter>
-                     <artifact>log4j:log4j</artifact>
-                     <includes>
-                        <include>**</include>
-                     </includes>
-                  </filter>
-                  <filter>
-                     <artifact>commons-logging:commons-logging</artifact>
-                     <includes>
-                        <include>**</include>
-                     </includes>
-                  </filter>
-                  <filter>
-                     <artifact>com.sun.xml.bind:jaxb-impl</artifact>
-                     <includes>
-                        <include>**</include>
-                     </includes>
-                  </filter>
-               </filters>
-            </configuration>
-            <executions>
-               <execution>
-                  <phase>package</phase>
-                  <goals>
-                     <goal>shade</goal>
-                  </goals>
-                  <configuration>
-                     <artifactSet>
-                        <excludes />
-                     </artifactSet>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
-      </plugins>
-   </build>
-   <profiles>
-      <profile> <!-- enforce building binaries with Java 1.8 for Maven Central, otherwise using them e.g. as jar will
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>org.mustangproject.commandline.main</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
+                             mvn clean compile assembly:single -->
+                    <!-- or whatever version you use -->
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.3</version>
+                <configuration>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <mainClass>org.mustangproject.commandline.Main</mainClass>
+                        </transformer>
+                    </transformers>
+                    <minimizeJar>false</minimizeJar>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>LICENSE</exclude>
+                                <exclude>NOTICE</exclude>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                        <filter>
+                            <artifact>log4j:log4j</artifact>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                        </filter>
+                        <filter>
+                            <artifact>commons-logging:commons-logging</artifact>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                        </filter>
+                        <filter>
+                            <artifact>com.sun.xml.bind:jaxb-impl</artifact>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                        </filter>
+                    </filters>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <excludes />
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile> <!-- enforce building binaries with Java 1.8 for Maven Central, otherwise using them e.g. as jar will
            throw a version exception, triggered automatically on mvn release:release (hopefully) and requires an according
            ~/.m2/toolchains.xml file, @see doc/development_documentation.md -->
-         <id>release-sign-artifacts</id>
-         <activation>
-            <property>
-               <name>performRelease</name>
-               <value>true</value>
-            </property>
-         </activation>
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-toolchains-plugin</artifactId>
-                  <version>3.1.0</version>
-                  <executions>
-                     <execution>
-                        <goals>
-                           <goal>toolchain</goal>
-                        </goals>
-                     </execution>
-                  </executions>
-                  <configuration>
-                     <toolchains>
-                        <jdk>
-                           <version>8</version>
-                           <vendor>adopt</vendor>
-                        </jdk>
-                     </toolchains>
-                  </configuration>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
-   </profiles>
-   <licenses>
-      <license>
-         <name>Apache License, Version 2.0</name>
-         <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-         <distribution>repo</distribution>
-         <comments>A business-friendly OSS license</comments>
-      </license>
-   </licenses>
-   <developers>
-      <developer>
-         <name>Jochen Stärk</name>
-         <email>jstaerk@usegroup.de</email>
-         <roles>
-            <role>architect</role>
-            <role>developer</role>
-         </roles>
-      </developer>
-   </developers>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-toolchains-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>toolchain</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <toolchains>
+                                <jdk>
+                                    <version>11</version>
+                                    <vendor>adopt</vendor>
+                                </jdk>
+                            </toolchains>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Jochen Stärk</name>
+            <email>jstaerk@usegroup.de</email>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
 </project>

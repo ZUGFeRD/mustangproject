@@ -1,5 +1,6 @@
 package org.mustangproject.validator;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -87,74 +88,58 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 	}
 
-	public void testPDFValidationWithInputStream() {
-		File tempFile = getResourceAsFile("invalidPDF.pdf");
-		/**used to be Rule	Status
-		 Specification: ISO 19005-3:2012, Clause: 6.2.11.4, Test number: 4
-		 If the FontDescriptor dictionary of an embedded CID font contains a CIDSet stream, then it shall identify all CIDs which are present in the font program, regardless of whether a CID in the font is referenced or used by the PDF or not.	Failed
-		 2 occurrences	Hide
-		 PDCIDFont
-		 fontFile_size == 0 || fontName.search(/[A-Z]{6}\+/) != 0 || CIDSet_size == 0 || cidSetListsAllGlyphs == true
-		 root/document[0]/pages[1](9 0 obj PDPage)/contentStream[0](18 0 obj PDContentStream)/operators[166]/font[0](WIUIIO+CIDFont+F2)/DescendantFonts[0](WIUIIO+CIDFont+F2)
-		 root/document[0]/pages[1](9 0 obj PDPage)/contentStream[0](18 0 obj PDContentStream)/operators[192]/font[0](VEXQUA+CIDFont+F1)/DescendantFonts[0](VEXQUA+CIDFont+F1)
-		 but new sample since that has been downgraded to warning
-		 */
-		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
-		try (InputStream inputStream = Files.newInputStream(tempFile.toPath())) {
-			String res = zfv.validate(inputStream, tempFile.getName());
+  public void testPDFValidationInputStream() {
+    byte[] fileBytes = getResourceAsByteArray("invalidPDF.pdf");
+    /**used to be Rule  Status
+     Specification: ISO 19005-3:2012, Clause: 6.2.11.4, Test number: 4
+     If the FontDescriptor dictionary of an embedded CID font contains a CIDSet stream, then it shall identify all CIDs which are present in the font program, regardless of whether a CID in the font is referenced or used by the PDF or not. Failed
+     2 occurrences  Hide
+     PDCIDFont
+     fontFile_size == 0 || fontName.search(/[A-Z]{6}\+/) != 0 || CIDSet_size == 0 || cidSetListsAllGlyphs == true
+     root/document[0]/pages[1](9 0 obj PDPage)/contentStream[0](18 0 obj PDContentStream)/operators[166]/font[0](WIUIIO+CIDFont+F2)/DescendantFonts[0](WIUIIO+CIDFont+F2)
+     root/document[0]/pages[1](9 0 obj PDPage)/contentStream[0](18 0 obj PDContentStream)/operators[192]/font[0](VEXQUA+CIDFont+F1)/DescendantFonts[0](VEXQUA+CIDFont+F1)
+     but new sample since that has been downgraded to warning
+     */
+    ZUGFeRDValidator zfv = new ZUGFeRDValidator();
 
-			assertThat(res).valueByXPath("/validation/pdf/summary/@status")
-				.isEqualTo("invalid");
+    String res = zfv.validate(new ByteArrayInputStream (fileBytes), "invalidPDF.pdf");
 
-			assertThat(res).valueByXPath("/validation/xml/summary/@status")
-				.isEqualTo("valid");
 
-			assertThat(res).valueByXPath("/validation/summary/@status")
-				.isEqualTo("invalid");
-		} catch (IOException e) {
-			fail();
-		}
-		tempFile = getResourceAsFile("validAvoir_FR_type380_BASICWL.pdf");
-		zfv = new ZUGFeRDValidator();
-		try (InputStream inputStream = Files.newInputStream(tempFile.toPath())) {
-			String res = zfv.validate(inputStream, tempFile.getName());
-			assertThat(res).valueByXPath("/validation/summary/@status")
-				.isEqualTo("valid");
-		} catch (IOException e) {
-			fail();
-		}
+    assertThat(res).valueByXPath("/validation/pdf/summary/@status")
+        .isEqualTo("invalid");
 
-		tempFile = getResourceAsFile("validAvoir_FR_type380_BASICWL.pdf");
-		zfv = new ZUGFeRDValidator();
-		try (InputStream inputStream = Files.newInputStream(tempFile.toPath())) {
-			String res = zfv.validate(inputStream, tempFile.getName());
-			assertThat(res).valueByXPath("/validation/summary/@status")
-				.isEqualTo("valid");
-		} catch (IOException e) {
-			fail();
-		}
+    assertThat(res).valueByXPath("/validation/xml/summary/@status")
+        .isEqualTo("valid");
 
-		tempFile = getResourceAsFile("validXRechnung.pdf");
-		zfv = new ZUGFeRDValidator();
-		try (InputStream inputStream = Files.newInputStream(tempFile.toPath())) {
-			String res = zfv.validate(inputStream, tempFile.getName());
-			assertThat(res).valueByXPath("/validation/summary/@status")
-				.isEqualTo("valid");
-		} catch (IOException e) {
-			fail();
-		}
+    assertThat(res).valueByXPath("/validation/summary/@status")
+        .isEqualTo("invalid");
 
-		tempFile = getResourceAsFile("invalidXRechnung.pdf");
-		zfv = new ZUGFeRDValidator();
-		try (InputStream inputStream = new FileInputStream(tempFile)) {
-			String res = zfv.validate(inputStream, tempFile.getName());
-			assertThat(res).valueByXPath("/validation/summary/@status")
-				.isEqualTo("invalid");
-		} catch (IOException e) {
-			fail();
-		}
 
-	}
+    fileBytes = getResourceAsByteArray("validAvoir_FR_type380_BASICWL.pdf");
+    zfv = new ZUGFeRDValidator();
+
+    res = zfv.validate(new ByteArrayInputStream (fileBytes), "validAvoir_FR_type380_BASICWL.pdf");
+    assertThat(res).valueByXPath("/validation/summary/@status")
+        .isEqualTo("valid");
+
+    fileBytes = getResourceAsByteArray("validXRechnung.pdf");
+    zfv = new ZUGFeRDValidator();
+    res = zfv.validate(new ByteArrayInputStream (fileBytes), "validXRechnung.pdf");
+    assertThat(res).valueByXPath("/validation/summary/@status")
+        .isEqualTo("valid");
+
+    fileBytes = getResourceAsByteArray("invalidXRechnung.pdf");
+    zfv = new ZUGFeRDValidator();
+    res = zfv.validate(new ByteArrayInputStream (fileBytes), "invalidXRechnung.pdf");
+    assertThat(res).valueByXPath("/validation/summary/@status")
+        .isEqualTo("invalid");
+
+    zfv = new ZUGFeRDValidator();
+    res = zfv.validate(new ByteArrayInputStream (new byte[0]), "/does/not/exist");
+    assertThat(res).valueByXPath("/validation/summary/@status")
+        .isEqualTo("invalid");
+
+  }
 
 	/***
 	 * the XMLValidatorTests only cover the <xml></xml> part, this one includes the root element and
@@ -188,17 +173,17 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("count(//error)")
 			.asInt()
-			.isEqualTo(1);// incorrectly throws an error due to https://awv-git.de/einvoicing/factur-x/-/issues/69
+			.isEqualTo(0);
 
 		assertThat(res).valueByXPath("count(//notice)")
 			.asInt()
 			.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
-			.isEqualTo("invalid");// expect to be valid because XR notices are, well, only notices
+			.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 			.asString()
-			.isEqualTo("invalid");
+			.isEqualTo("valid");
 
 
 	}
@@ -210,17 +195,17 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 		String res = zfv.validate(tempFile.getAbsolutePath());
 		assertThat(res).valueByXPath("count(//error)")
 			.asInt()
-			.isEqualTo(1);// incorrectly throws an error due to https://awv-git.de/einvoicing/factur-x/-/issues/69
+			.isEqualTo(0);
 
 		assertThat(res).valueByXPath("count(//notice)")
 			.asInt()
 			.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
-			.isEqualTo("invalid");// expect to be valid because XR notices are, well, only notices
+			.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 			.asString()
-			.isEqualTo("invalid");
+			.isEqualTo("valid");
 
 		tempFile = getResourceAsFile("invalidXRV30.xml");
 		zfv = new ZUGFeRDValidator();
@@ -228,7 +213,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("count(//error)")
 			.asInt()
-			.isEqualTo(4); //should be 3
+			.isEqualTo(3);
 
 		assertThat(res).valueByXPath("count(//notice)")
 			.asInt()

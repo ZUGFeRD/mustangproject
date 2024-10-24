@@ -27,15 +27,16 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
 
+import javax.xml.xpath.XPathExpressionException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
@@ -44,6 +45,7 @@ import static org.xmlunit.assertj.XmlAssert.assertThat;
 public class XRTest extends TestCase {
 	final String TARGET_XML = "./target/testout-XR.xml";
 	final String TARGET_EDGE_XML = "./target/testout-XR-Edge.xml";
+
 	public void testXRExport() {
 
 		// the writing part
@@ -57,13 +59,13 @@ public class XRTest extends TestCase {
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
-				.asInt()
-				.isEqualTo(1); //2 errors are OK because there is a known bug
+			.asInt()
+			.isEqualTo(1); //2 errors are OK because there is a known bug
 
 
 		assertThat(theXML).valueByXPath("//*[local-name()='DuePayableAmount']")
-				.asDouble()
-				.isEqualTo(1);
+			.asDouble()
+			.isEqualTo(1);
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML));
 			writer.write(theXML);
@@ -83,16 +85,18 @@ public class XRTest extends TestCase {
 		String amountStr = "1.00";
 		BigDecimal amount = new BigDecimal(amountStr);
 		byte[] b = {12, 13};
-		
-		FileAttachment fe1=new FileAttachment("one.pdf", "application/pdf", "Alternative", b);
+
+		FileAttachment fe1 = new FileAttachment("one.pdf", "application/pdf", "Alternative", b);
 		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
-				.setSender(new TradeParty(orgname,"teststr","55232","teststadt","DE").setEmail("sender@example.com").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test","+49123456789","test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890","COBADEFXXX")))
-				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setEmail("recipient@sample.org"))
-				.setReferenceNumber("991-01484-64")//leitweg-id
-				// not using any VAT, this is also a test of zero-rated goods:
-				.setNumber(number).setPaymentTermDescription("#SKONTO#TAGE=14#PROZENT=2.25#\n" +
-						"#SKONTO#TAGE=28#PROZENT=1.00#\n").addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal(1.0)))
-				.embedFileInXML(fe1);
+			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").setEmail("sender@example.com").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890", "COBADEFXXX")))
+			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setEmail("recipient@sample.org"))
+			.addCashDiscount(new CashDiscount(new BigDecimal(2), 7))
+			.addCashDiscount(new CashDiscount(new BigDecimal(3), 14))
+			.setReferenceNumber("991-01484-64")//leitweg-id
+			// not using any VAT, this is also a test of zero-rated goods:
+			.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal(1.0)))
+			.setPayee( new TradeParty().setName("VR Factoring GmbH").setID("DE813838785").setLegalOrganisation(new LegalOrganisation("391200LDDFJDMIPPMZ54", "0199")))
+			.embedFileInXML(fe1);
 
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
@@ -101,14 +105,18 @@ public class XRTest extends TestCase {
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+		assertTrue(theXML.contains("#SKONTO#"));
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
-				.asInt()
-				.isEqualTo(1); //2 errors are OK because there is a known bug
+			.asInt()
+			.isEqualTo(1); //2 errors are OK because there is a known bug
 
+		assertThat(theXML).valueByXPath("count(//*[local-name()='PayeeTradeParty'])")
+			.asInt()
+			.isEqualTo(1);
 
 		assertThat(theXML).valueByXPath("//*[local-name()='DuePayableAmount']")
-				.asDouble()
-				.isEqualTo(1);
+			.asDouble()
+			.isEqualTo(1);
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_EDGE_XML));
 			writer.write(theXML);
@@ -116,6 +124,24 @@ public class XRTest extends TestCase {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+
+		Invoice readInvoice = new Invoice();
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		try {
+			zii.setRawXML(zf2p.getXML(), false);
+			zii.extractInto(readInvoice);
+		} catch (ParseException | XPathExpressionException xp) {
+			fail("ParseException not expected");
+		} catch (IOException e) {
+			fail("IOException not expected");
+        }
+		List<FileAttachment> attachedFiles=zii.getFileAttachmentsXML();
+        assertNotNull(attachedFiles);
+		assertEquals(attachedFiles.size(), 1);
+
+		assertTrue(Arrays.equals(attachedFiles.get(0).getData(), b));
+
 
 	}
 
@@ -131,13 +157,13 @@ public class XRTest extends TestCase {
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
-				.asInt()
-				.isEqualTo(1); //2 errors are OK because there is a known bug
+			.asInt()
+			.isEqualTo(1); //2 errors are OK because there is a known bug
 
 
 		assertThat(theXML).valueByXPath("//*[local-name()='DuePayableAmount']")
-				.asDouble()
-				.isEqualTo(1);
+			.asDouble()
+			.isEqualTo(1);
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML));
 			writer.write(theXML);
@@ -154,11 +180,11 @@ public class XRTest extends TestCase {
 		String amountStr = "1.00";
 		BigDecimal amount = new BigDecimal(amountStr);
 		return new Invoice().setDueDate(new java.util.Date()).setIssueDate(new java.util.Date()).setDeliveryDate(new java.util.Date())
-				.setSender(new TradeParty(orgname,"teststr","55232","teststadt","DE").addTaxID("DE4711").addVATID("DE0815").setEmail("info@example.org").setContact(new org.mustangproject.Contact("Hans Test","+49123456789","test@example.org")).addBankDetails(new org.mustangproject.BankDetails("DE12500105170648489890","COBADEFXXX")))
-				.setRecipient(recipient)
-				.setReferenceNumber("991-01484-64")//leitweg-id
-				// not using any VAT, this is also a test of zero-rated goods:
-				.setNumber(number).addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "C62", java.math.BigDecimal.ZERO), amount, new java.math.BigDecimal(1.0)));
+			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("DE4711").addVATID("DE0815").setEmail("info@example.org").setContact(new org.mustangproject.Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new org.mustangproject.BankDetails("DE12500105170648489890", "COBADEFXXX")))
+			.setRecipient(recipient)
+			.setReferenceNumber("991-01484-64")//leitweg-id
+			// not using any VAT, this is also a test of zero-rated goods:
+			.setNumber(number).addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "C62", java.math.BigDecimal.ZERO), amount, new java.math.BigDecimal(1.0)));
 	}
 
 }

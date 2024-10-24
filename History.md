@@ -1,3 +1,103 @@
+2.15.0
+=======
+2024-
+- 435 use invoiceimporter as common technical basis also for zugferdimporter 
+- also import delivery address
+- 527 metrics raises errors
+- 517
+- 518 corrently validate more XRechnung versions
+- make document charges and allowances serializable
+
+
+2.14.2
+=======
+2024-10-14
+
+- also parse BICs in InvoiceImporter not only IBANs
+- #509 CLI currently does not write a logfile
+- #505 crash after invoking ZUGFeRD2PullProvider
+- #506 Fix POM missing dependencies
+
+2.14.1 
+=======
+2024-10-06
+
+- #481 also be able to convert XRechnung/UBL to PDF not only CII
+- #494 Quantity/Price Decimal Places
+- #391 Runden bei Negativwerten
+- #491/501 non terminating decimal expansion
+- upgraded en16931 cen schematron to 1.3.12 
+- #499/500 PDF layout corrections
+
+2.14.0
+=======
+2024-09-22
+
+- #461 UBL import contacts
+- #463 add support for BT-33, i.e. Tradeparty description #463
+- #456 Provide a way to set uriUniversalCommunicationId on the TradeParty using JSON deserialization
+- #467 Fix test using wrong file
+- #468 Fix validator dependencies
+- #469 Enable EN16931 schema validation for XRechnung
+- #471 Fix LegalOrganisation schemeId
+- #473 Fix UnsupportedOperationException in buildNotes
+- #476 Add DesignatedProductClassification for SpecifiedTradeProduct
+- #482 Fix current validation errors
+- #423 can no longer add attachments via cli
+- #465 cli version should also be able to combine PDF/A-3 source
+- #487 update to zugferd 2.3.0
+- #472 Fix logging implementation missing in CLI
+- #479 Re-Formatted and re-organized POMs - Part 2
+
+
+2.13.0
+=======
+2024-08-28
+
+- Item Attributes and Country of Origin missing on Product.  #420
+- Avoid NullPointerException if dueDate is not set.  #441
+- support reasoncodes #431 
+- Enhance Charges/Allowances with reasonCode. #432
+- Fix build warnings from editing and building. #415
+- ZUGFeRDVisualizer.toPDF(): generate PDF/A-3b. #400
+- allow access to invoice attachments via  ZUGFeRDInvoiceImporter zii.getFileAttachmentsPDF() 
+  and XML (zii.getFileAttachmentsXML)
+- No interface for required field CreditorReferenceID #436 and
+- X-Rechnung direct-debit missing mandatory field BT-90  #370. (langfr)
+- refactor(ZUGFeRDVisualizer): improve PDF visualization performance #438
+- product creation without description now possible empty description
+- filename of embedded file was not xrechnung.xml when using profile xrechnung #452
+- allow legalorganisation to have a tradingbusinessname #447 
+- JSon deserialization does not work with BankDetails #455
+- Fix ClassCastException in CLI (Main.java). #451
+- changed additional references by line from String to List and implemented it on Item #454
+ 
+2.12.0
+=======
+2024-07-20
+
+- support pdf export/visualization to PDF, thanks to Heavenfighter #387 allow embedd fonts from jar-file for pdf creation #388
+- Fix #389: ClassCastException: ZUGFeRDExporterFromA3
+- jakarta support #372
+- Upgrade to PDFBox 3 #373
+- Requires Java 11
+- #397 Build succeeds but file is unusable on alpine/docker
+- #392 CLI: action combine: --ignorefileextension to ignore PDF/A input file errors dosen't work
+- for CLI combine, fx is now default
+- set profile to XR if XR is imported #395
+- Powershell compatibility: added --no-additional-attachments command line option for better batch processing:
+  In cmd also --attachments "" worked but in powershell it was hard to figure out that one had to use --attachments '""'
+- Be able to validate XRechnung/UBL files #337
+- ph-schematron aktualisiert, logback zugungsten log4j entfernt #402
+- java.util Logging zugungsten log4j entfernt #407
+- ZF extended no longer requires deliverydate #411
+- Return all BankDetails from parsed CII xml. Closes #408.
+- ubl visualization: do not require ubl namespace prefix #416
+
+2.11.0
+=======
+2024-05-22
+
 - EN16931 validation 1.3.12 codelists v11 #357
 - Fonts removed #358
 - xrechnungimporter to read from filename, inputstream
@@ -6,7 +106,11 @@
 - zugferdimporter to accept xml files
 - UBL importer to also parse contacts
 - https://github.com/ZUGFeRD/mustangproject/pull/369
-- upgrade ph-schematron from 6.3.3 to 8
+- support inputstreams https://github.com/ZUGFeRD/mustangproject/pull/379
+- #314 ZUGFeRDInvoiceImporter additional constructur
+- add XML cash discount write support (new class, previously only possible for XRechnung, not ZF Extended, using a manually encoded setPaymentTermDescription) 
+- surrendered to XRechnung 3 compromises, e.g. no longer put gross amount if it does not deviate from net
+- be able to programmatically access validation messages  https://github.com/ZUGFeRD/mustangproject/pull/382
 
 2.10.0
 =======

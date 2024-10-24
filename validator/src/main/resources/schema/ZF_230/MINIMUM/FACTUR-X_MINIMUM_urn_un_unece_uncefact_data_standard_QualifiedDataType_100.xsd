@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="urn:un:unece:uncefact:data:standard:QualifiedDataType:100"
+    elementFormDefault="qualified">
+  <xs:simpleType name="CountryIDContentType">
+    <xs:restriction base="xs:token"/>
+  </xs:simpleType>
+  <xs:complexType name="CountryIDType">
+    <xs:simpleContent>
+      <xs:extension base="qdt:CountryIDContentType"/>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="CurrencyCodeContentType">
+    <xs:restriction base="xs:token"/>
+  </xs:simpleType>
+  <xs:complexType name="CurrencyCodeType">
+    <xs:simpleContent>
+      <xs:extension base="qdt:CurrencyCodeContentType"/>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="DocumentCodeContentType">
+    <xs:restriction base="xs:token"/>
+  </xs:simpleType>
+  <xs:complexType name="DocumentCodeType">
+    <xs:simpleContent>
+      <xs:extension base="qdt:DocumentCodeContentType"/>
+    </xs:simpleContent>
+  </xs:complexType>
+</xs:schema>

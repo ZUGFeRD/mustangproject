@@ -26,11 +26,12 @@ package org.mustangproject.ZUGFeRD;
  * @author jstaerk
  * */
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.mustangproject.Item;
-
 import java.math.BigDecimal;
 import java.util.Date;
+
+import org.mustangproject.Item;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(as = Item.class)
 public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
@@ -91,9 +92,19 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 
 	/***
 	 * the ID of an additionally referenced document for this item
+	 * @deprecated use {@link #getAdditionalReferences()} instead.
 	 * @return the id as string
 	 */
+	@Deprecated
 	default String getAdditionalReferencedDocumentID() {
+		return null;
+	}
+
+	/***
+	 * allows to specify multiple references (billing information)
+	 * @return the referenced documents
+	 */
+	default IReferencedDocument[] getAdditionalReferences() {
 		return null;
 	}
 
@@ -140,6 +151,6 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 */
 	default IZUGFeRDAllowanceCharge[] getItemTotalAllowances() {
 		return null;
-	};
+	}
 
 }

@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -65,7 +66,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ze.export(baos);
 			ze.close();
-			String pdfContent = baos.toString("UTF-8");
+			String pdfContent = baos.toString(StandardCharsets.UTF_8);
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
 			// check for pdf-a schema extension
 //			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
@@ -105,7 +106,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ze.export(baos);
 			ze.close();
-			String pdfContent = baos.toString("UTF-8");
+			String pdfContent = baos.toString(StandardCharsets.UTF_8);
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
 			// check for pdf-a schema extension
 //			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
@@ -143,7 +144,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ze.export(baos);
 			ze.close();
-			String pdfContent = baos.toString("UTF-8");
+			String pdfContent = baos.toString(StandardCharsets.UTF_8);
 			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
 			// check for pdf-a schema extension
 //			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
@@ -316,7 +317,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 	
 		
 	//
-	public IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
+  public IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
 		Payment P = new Payment();
 		IZUGFeRDTradeSettlementPayment[] allP = new Payment[1];
 		allP[0] = P;
