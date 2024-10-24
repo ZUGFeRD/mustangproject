@@ -5,6 +5,7 @@
 - also import delivery address
 - 527 metrics raises errors
 - 517
+- 380
 - 518 corrently validate more XRechnung versions
 - make document charges and allowances serializable
 
