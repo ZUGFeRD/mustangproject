@@ -704,7 +704,7 @@ public class ZUGFeRDInvoiceImporter {
 				&& ((!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2)))
 				&& (!ignoreCalculationErrors))) {
 				throw new ParseException(
-					"Could not reproduce the invoice, this could mean that it could not be read properly exp "+expectedStringTotalGross+" is "+XMLTools.nDigitFormat(expectedGrandTotal, 2), 0);
+					"Could not reproduce the invoice, this could mean that it could not be read properly", 0);
 			}
 		}
 		return zpp;

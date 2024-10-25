@@ -717,7 +717,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 								SchemedID globalId = new SchemedID()
 									.setScheme(node.getAttributes()
 										.getNamedItem("schemeID").getNodeValue())
-									.setId(getNodeValue(node));
+									.setId(XMLTools.getNodeValue(node));
 								lineItem.getProduct().addGlobalID(globalId);
 							}
 							node = getNodeByName(nn.getChildNodes(), "SellerAssignedID");
