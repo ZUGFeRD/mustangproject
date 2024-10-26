@@ -9,6 +9,7 @@
 - 518 corrently validate more XRechnung versions
 - make document charges and allowances serializable
 - 523 
+- 530
 
 
 2.14.2
