@@ -419,11 +419,16 @@ public class XMLValidator extends Validator {
 	 * @param xml the xml to be checked
 	 * @param xsltFilename the filename of the intermediate XSLT file
 	 * @param section the error type code, if one arises
-	 * @param severity how serious a error should be treated - may only be notice
+	 * @param defaultSeverity how serious a error should be treated - may only be notice
 	 * @throws IrrecoverableValidationError if anything happened that prevents further checks
 	 */
-	public void validateSchematron(String xml, String xsltFilename, int section, ESeverity severity) throws IrrecoverableValidationError {
+	public void validateSchematron(String xml, String xsltFilename, int section, ESeverity defaultSeverity) throws IrrecoverableValidationError {
 		ISchematronResource aResSCH = null;
+		ESeverity severity=defaultSeverity;
+		if (defaultSeverity!=ESeverity.notice) {
+			severity=ESeverity.error;
+		}
+
 		aResSCH = SchematronResourceXSLT.fromClassPath(xsltFilename);
 
 		if (aResSCH != null) {
@@ -463,6 +468,16 @@ public class XMLValidator extends Validator {
 						}
 						if (currentFailNode.getAttributes().getNamedItem("location") != null) {
 							thisFailLocation = currentFailNode.getAttributes().getNamedItem("location").getNodeValue();
+						}
+
+						if (currentFailNode.getAttributes().getNamedItem("flag") != null) {
+							// the XR issues warnings with flag=warning
+							if  (currentFailNode.getAttributes().getNamedItem("flag").getNodeValue().equals("warning")) {
+								if (defaultSeverity!=ESeverity.notice) {
+									severity=ESeverity.warning;
+								}
+							}
+
 						}
 
 						NodeList failChilds = currentFailNode.getChildNodes();
