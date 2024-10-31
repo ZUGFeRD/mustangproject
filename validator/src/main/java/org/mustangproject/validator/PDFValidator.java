@@ -264,6 +264,7 @@ public class PDFValidator extends Validator {
 		final byte[] konikSignature = "Konik".getBytes(StandardCharsets.UTF_8);
 		final byte[] pdfMachineSignature = "pdfMachine from Broadgun Software".getBytes(StandardCharsets.UTF_8);
 		final byte[] ghostscriptSignature = "%%Invocation:".getBytes(StandardCharsets.UTF_8);
+		final byte[] cibpdfbrewerSignature = "CIB pdf brewer".getBytes(StandardCharsets.UTF_8);
 
 		if (ByteArraySearcher.contains(fileContents, symtraxSignature)) {
 			Signature = "Symtrax";
@@ -279,6 +280,8 @@ public class PDFValidator extends Validator {
 			Signature = "pdfMachine";
 		} else if (ByteArraySearcher.contains(fileContents, ghostscriptSignature)) {
 			Signature = "Ghostscript";
+		} else if (ByteArraySearcher.contains(fileContents, cibpdfbrewerSignature)) {
+			Signature = "CIB pdf brewer";
 		}
 
 		context.setSignature(Signature);
