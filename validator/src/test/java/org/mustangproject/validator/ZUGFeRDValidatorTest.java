@@ -141,6 +141,17 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
   }
 
+	public void testPDFA3AValidation() {
+		File tempFile = getResourceAsFile("zugferd_2p1_EXTENDED_PDFA-3A.pdf");
+
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+		assertThat(res).valueByXPath("/validation/pdf/summary/@status")
+			.isEqualTo("valid");
+	}
+
 	/***
 	 * the XMLValidatorTests only cover the <xml></xml> part, this one includes the root element and
 	 * the global <summary></summary> part as well
