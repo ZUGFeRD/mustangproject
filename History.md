@@ -10,6 +10,9 @@
 - make document charges and allowances serializable
 - 523 
 - 530
+- 532 support validation warnings!
+- 534 new signature
+- 
 
 
 2.14.2
