@@ -52,7 +52,7 @@ public class PDFValidator extends Validator {
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PDFValidator.class.getCanonicalName()); // log output
-	private static final PDFAFlavour[] PDF_A_3_FLAVOURS = {PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_A};
+	private static final PDFAFlavour[] PDF_A_3_FLAVOURS = {PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_B, PDFAFlavour.PDFA_3_U};
 
 	private String pdfFilename;
 
@@ -301,8 +301,10 @@ public class PDFValidator extends Validator {
 		if (!processorResult.getValidationResult().isCompliant()) {
 			context.setInvalid();
 		}
+
+		PDFAFlavour pdfaFlavourFromValidationResult = processorResult.getValidationResult().getPDFAFlavour();
 		if (Arrays.stream(PDF_A_3_FLAVOURS)
-			.anyMatch(pdfaFlavour -> processorResult.getValidationResult().getPDFAFlavour().equals(pdfaFlavour))) {
+			.noneMatch(pdfaFlavourFromValidationResult::equals)) {
 			context.addResultItem(
 				new ValidationResultItem(ESeverity.error, "Not a PDF/A-3").setSection(23).setPart(EPart.pdf));
 
