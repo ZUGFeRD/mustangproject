@@ -84,6 +84,11 @@
     <xsl:variable name="i18n.bt103" select="'Taux de TVA du supplément'"/>
     <xsl:variable name="i18n.bt104" select="'Raison du supplément'"/>
     <xsl:variable name="i18n.bt105" select="'Document level charge reason code'"/>
+    <xsl:variable name="i18n.bgx42" select="'Frais d''expédition'"/>
+    <xsl:variable name="i18n.btx274" select="'Catégorie de TVA des frais de port'"/>
+    <xsl:variable name="i18n.btx272" select="'Montant'"/>
+    <xsl:variable name="i18n.btx273" select="'VAT rate of the shipping cost'"/>
+    <xsl:variable name="i18n.btx271" select="'Taux de TVA des frais de port'"/>
     <xsl:variable name="i18n.bt20" select="'Rabais; autres conditions de paiement'"/>
     <xsl:variable name="i18n.bt9" select="'Date d''échéance'"/>
     <xsl:variable name="i18n.bt81" select="'Code du moyen de paiement'"/>
@@ -216,7 +221,7 @@
     <xsl:variable name="i18n.payment" select="'Détails de paiement'"/>
     <xsl:variable name="i18n.contract_information" select="'Informations sur le contrat'"/>
     <xsl:variable name="i18n.preceding_invoice_reference" select="'Factures précédentes'"/>
-    
+
     <xsl:include href="xrechnung-html.univ.xsl"/>
 
 </xsl:stylesheet>

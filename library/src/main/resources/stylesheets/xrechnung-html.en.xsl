@@ -84,6 +84,11 @@
     <xsl:variable name="i18n.bt103" select="'VAT rate of the charge amount'"/>
     <xsl:variable name="i18n.bt104" select="'Reason for the charge amount:'"/>
     <xsl:variable name="i18n.bt105" select="'Document level charge reason code'"/>
+    <xsl:variable name="i18n.bgx42" select="'Shipping cost'"/>
+    <xsl:variable name="i18n.btx274" select="'VAT category of the shipping cost'"/>
+    <xsl:variable name="i18n.btx272" select="'Amount'"/>
+    <xsl:variable name="i18n.btx273" select="'VAT rate of the shipping cost'"/>
+    <xsl:variable name="i18n.btx271" select="'Shipping cost description'"/>
     <xsl:variable name="i18n.bt20" select="'Discount; other payment terms'"/>
     <xsl:variable name="i18n.bt9" select="'Due date'"/>
     <xsl:variable name="i18n.bt81" select="'Code for the means of payment'"/>
@@ -216,7 +221,7 @@
     <xsl:variable name="i18n.payment" select="'Payment details'"/>
     <xsl:variable name="i18n.contract_information" select="'Contract Information'"/>
     <xsl:variable name="i18n.preceding_invoice_reference" select="'Previous invoices'"/>
-    
+
     <xsl:include href="xrechnung-html.univ.xsl"/>
 
 </xsl:stylesheet>

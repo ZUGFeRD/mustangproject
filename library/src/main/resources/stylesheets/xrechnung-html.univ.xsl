@@ -1151,6 +1151,10 @@ function downloadData (element_id) {
             <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
                 <xsl:apply-templates select="./xr:DOCUMENT_LEVEL_CHARGES"/>
             </div>
+            
+            <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
+            	<xsl:apply-templates select="./xr:LOGISTICS_SERVICE_CHARGES"/>
+            </div>
 
             <div class="boxtabelle boxabstandtop boxtabelleZweispaltig first">
                 <div class="boxzeile">
@@ -1560,6 +1564,37 @@ function downloadData (element_id) {
         </div>
         <div class="boxabstand"></div>
     </xsl:template>
+    
+    
+    <xsl:template name="uebersichtVersandkosten" match="xr:LOGISTICS_SERVICE_CHARGES">
+        <div class="boxzeile">
+            <div id="uebersichtVersandkosten" class="box">
+                <div id="BG-X-42" title="BG-X-42" class="boxtitel"><xsl:value-of select="$i18n.bgx42"/></div>
+                <div class="boxtabelle boxinhalt">
+                    <div class="rechnungsZeile">
+                        <div class="boxdaten rechnungSp1 bold"><xsl:value-of select="$i18n.btx274"/>: <span title="BT-X-274"><xsl:value-of select="xr:Logistics_service_charge_VAT_category_code"/></span></div>
+                        <div class="boxdaten rechnungSp2"></div>
+                        <div class="boxdaten rechnungSp3"></div>
+                    </div>
+                    <div class="rechnungsZeile">
+                        <div class="boxdaten rechnungSp1"><xsl:value-of select="$i18n.btx272"/></div>
+                        <div class="boxdaten rechnungSp2 color2">netto</div>
+                        <div id="BT-X-272" title="BT-X-272" class="boxdaten rechnungSp3 bold"><xsl:value-of select="format-number(xr:Logistics_service_charge_amount,'###.##0,00','decimal')"/></div>
+                    </div>
+                    <div class="rechnungsZeile">
+                        <div class="boxdaten rechnungSp1"><xsl:value-of select="$i18n.btx273"/></div>
+                        <div class="boxdaten rechnungSp2 color2"></div>
+                        <div id="BT-X-273" title="BT-X-273" class="boxdaten rechnungSp3"><xsl:value-of select="xr:Logistics_service_charge_VAT_rate"/></div>
+                    </div>
+                </div>
+                <div class="grund">
+                    <div><xsl:value-of select="$i18n.btx271"/>: <span id="BT-X-271" title="BT-X-271" class="bold"><xsl:value-of select="xr:Logistics_service_charge_description"/></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="boxabstand"></div>
+    </xsl:template>
+
 
     <xsl:template name="uebersichtZahlungsinformationen">
         <div id="uebersichtZahlungsinformationen" class="box subBox">

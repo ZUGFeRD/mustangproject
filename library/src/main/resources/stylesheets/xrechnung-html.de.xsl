@@ -84,6 +84,11 @@
     <xsl:variable name="i18n.bt103" select="'Umsatzsteuersatz des Zuschlages'"/>
     <xsl:variable name="i18n.bt104" select="'Grund für den Zuschlag'"/>
     <xsl:variable name="i18n.bt105" select="'Document level charge reason code'"/>
+    <xsl:variable name="i18n.bgx42" select="'Versandkosten'"/>
+    <xsl:variable name="i18n.btx274" select="'Umsatzsteuerkategorie der Versandkosten'"/>
+    <xsl:variable name="i18n.btx272" select="'Betrag'"/>
+    <xsl:variable name="i18n.btx273" select="'Umsatzsteuersatz der Versandkosten'"/>
+    <xsl:variable name="i18n.btx271" select="'Versandkostenbeschreibung'"/>
     <xsl:variable name="i18n.bt20" select="'Skonto; weitere Zahlungsbed.'"/>
     <xsl:variable name="i18n.bt9" select="'Fälligkeitsdatum'"/>
     <xsl:variable name="i18n.bt81" select="'Code für das Zahlungsmittel'"/>
@@ -216,7 +221,7 @@
     <xsl:variable name="i18n.payment" select="'Zahlungsdaten'"/>
     <xsl:variable name="i18n.contract_information" select="'Vertragsdaten'"/>
     <xsl:variable name="i18n.preceding_invoice_reference" select="'Vorausgegangene Rechnungen'"/>
-    
+
     <xsl:include href="xrechnung-html.univ.xsl"/>
 
 </xsl:stylesheet>
