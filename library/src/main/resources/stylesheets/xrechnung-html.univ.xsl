@@ -1151,7 +1151,7 @@ function downloadData (element_id) {
             <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
                 <xsl:apply-templates select="./xr:DOCUMENT_LEVEL_CHARGES"/>
             </div>
-            
+
             <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
             	<xsl:apply-templates select="./xr:LOGISTICS_SERVICE_CHARGES"/>
             </div>
@@ -1564,8 +1564,8 @@ function downloadData (element_id) {
         </div>
         <div class="boxabstand"></div>
     </xsl:template>
-    
-    
+
+
     <xsl:template name="uebersichtVersandkosten" match="xr:LOGISTICS_SERVICE_CHARGES">
         <div class="boxzeile">
             <div id="uebersichtVersandkosten" class="box">
