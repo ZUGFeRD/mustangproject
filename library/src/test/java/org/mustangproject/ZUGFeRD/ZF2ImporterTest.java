@@ -375,9 +375,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 
 	}
-/*
-this would test if for all elements/attributes
- */
+
 
 	public void testEEISI_300_cii_Import() throws XPathExpressionException, ParseException {
 		boolean hasExceptions = false;
@@ -416,7 +414,7 @@ this would test if for all elements/attributes
 				/*
 				<cbc:Name>Seller contact point</cbc:Name>
         <cbc:Telephone>+41 345 654455</cbc:Telephone>
-        <cbc:ElectronicMail>seller@contact.de);*
+        <cbc:ElectronicMail>seller@contact.de);*/
 		} catch (XPathExpressionException | ParseException e) {
 			hasExceptions = true;
 		} catch (JsonProcessingException e) {
@@ -428,6 +426,6 @@ this would test if for all elements/attributes
 		assertEquals(new BigDecimal("205.00"), tc.getGrandTotal());
 
 	}
-*/
+
 
 }
