@@ -8,11 +8,11 @@
 - 380 Added test for input stream validation
 - 518 corrently validate more XRechnung versions
 - make document charges and allowances serializable
-- 523 
-- 530
+- 523 Verapdf claims PDF-A/3s created witth visualize are invalid
+- 530 duedate can not be set directly
 - 532 support validation warnings!
 - 534 new signature
-- 
+- 538 Mustang validator always claims PDF is invalid if flavour is PDF/A-3A
 
 
 2.14.2
