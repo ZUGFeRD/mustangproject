@@ -21,6 +21,7 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mustangproject.*;
 
@@ -351,34 +352,79 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 
-	public void testEEISI_300_cii_Import() {
+
+
+
+	public void testImportMinimum() {
+		File CIIinputFile = getResourceAsFile("cii/facturFrMinimum.xml");
+		try {
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
+
+
+			CalculatedInvoice i=new CalculatedInvoice();
+			zii.extractInto(i);
+			assertEquals("671.15", i.getGrandTotal().toString());
+
+		} catch (IOException e) {
+			fail("IOException not expected");
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+
+
+	}
+
+
+	public void testEEISI_300_cii_Import() throws XPathExpressionException, ParseException {
 		boolean hasExceptions = false;
-	/*	File input = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.cii.xml");
+		File inputCII = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.cii.xml");
+		File inputUBL = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.ubl.xml");
 
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
 		try {
-			zii.fromXML(new String(Files.readAllBytes(input.toPath()), StandardCharsets.UTF_8));
+			zii.fromXML(new String(Files.readAllBytes(inputCII.toPath()), StandardCharsets.UTF_8));
 
 		} catch (IOException e) {
 			hasExceptions = true;
 		}
 
-		Invoice invoice = null;
+		Invoice invoiceUBL = null;
+		invoiceUBL = zii.extractInvoice();
+
 		try {
-			invoice = zii.extractInvoice();
-			assertEquals("Seller contact point",invoice.getSender().getName());
+			zii.fromXML(new String(Files.readAllBytes(inputUBL.toPath()), StandardCharsets.UTF_8));
+
+		} catch (IOException e) {
+			hasExceptions = true;
+		}
+
+		Invoice invoiceCII = null;
+		try {
+			invoiceCII = zii.extractInvoice();
+			ObjectMapper mapper = new ObjectMapper();
+			String ubl=mapper.writeValueAsString(invoiceUBL);
+			String cii=mapper.writeValueAsString(invoiceCII);
+
+			assertEquals(cii,ubl);
+
+
 				/*
 				<cbc:Name>Seller contact point</cbc:Name>
         <cbc:Telephone>+41 345 654455</cbc:Telephone>
-        <cbc:ElectronicMail>seller@contact.de);*
+        <cbc:ElectronicMail>seller@contact.de);*/
 		} catch (XPathExpressionException | ParseException e) {
 			hasExceptions = true;
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
 		}
 		assertFalse(hasExceptions);
-		TransactionCalculator tc = new TransactionCalculator(invoice);
+
+		TransactionCalculator tc = new TransactionCalculator(invoiceCII);
 		assertEquals(new BigDecimal("205.00"), tc.getGrandTotal());
-*/
+
 	}
 
 

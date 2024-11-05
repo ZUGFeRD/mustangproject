@@ -3,8 +3,16 @@
 2024-
 - 435 use invoiceimporter as common technical basis also for zugferdimporter 
 - also import delivery address
-- 527 
+- 527 metrics raises errors
+- 517 read product GlobalID
+- 380 Added test for input stream validation
+- 518 corrently validate more XRechnung versions
 - make document charges and allowances serializable
+- 523 
+- 530
+- 532 support validation warnings!
+- 534 new signature
+- 
 
 
 2.14.2

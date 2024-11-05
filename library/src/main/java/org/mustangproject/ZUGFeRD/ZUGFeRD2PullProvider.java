@@ -334,7 +334,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		this.trans = trans;
 		this.calc = new TransactionCalculator(trans);
 
-		boolean hasDueDate = false;
+		boolean hasDueDate = trans.getDueDate()!=null;
 		final SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 		String exemptionReason = "";
@@ -818,7 +818,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			}
 		}
 
-
 		if ((trans.getPaymentTerms() == null) && (getProfile() != Profiles.getByName("Minimum")) && ((paymentTermsDescription != null) || (trans.getTradeSettlement() != null) || (hasDueDate))) {
 			xml += "<ram:SpecifiedTradePaymentTerms>";
 
@@ -834,7 +833,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 			}
 
-			if (hasDueDate && (trans.getDueDate() != null)) {
+			if (trans.getDueDate() != null) {
 				xml += "<ram:DueDateDateTime>" // $NON-NLS-2$
 					+ DATE.udtFormat(trans.getDueDate())
 					+ "</ram:DueDateDateTime>";// 20130704

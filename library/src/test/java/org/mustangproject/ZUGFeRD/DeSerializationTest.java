@@ -130,5 +130,60 @@ public class DeSerializationTest extends TestCase {
 
 
 
+	public void testDueDateRoundtrip() throws JsonProcessingException {
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		// [{"stringValue":"a","intValue":1,"booleanValue":true},
+		// {"stringValue":"bc","intValue":3,"booleanValue":false}]
+
+		Invoice fromJSON = mapper.readValue("{\n" +
+			"    \"number\": \"RE - 228\",\n" +
+			"    \"currency\": \"EUR\",\n" +
+			"    \"issueDate\": \"2024-10-24\",\n" +
+			"    \"dueDate\": \"2024-10-26\",\n" +
+			"    \"deliveryDate\": \"2024-10-25\",\n" +
+			"    \"sender\": {\n" +
+			"        \"name\": \"Amazing Company\",\n" +
+			"        \"zip\": \"10000\",\n" +
+			"        \"street\": \"Straße der Kosmonauten 20\",\n" +
+			"        \"location\": \"Berlin\",\n" +
+			"        \"country\": \"DE\",\n" +
+			"        \"taxID\": \"201/113/40209\",\n" +
+			"        \"vatID\": \"DE123456789\",\n" +
+			"        \"globalID\": \"4000001123452\",\n" +
+			"        \"globalIDScheme\": \"0088\"\n" +
+			"    },\n" +
+			"    \"recipient\": {\n" +
+			"        \"name\": \"Amazing Company\",\n" +
+			"        \"zip\": \"1000\",\n" +
+			"        \"street\": \"Straße der Kosmonauten 10\",\n" +
+			"        \"location\": \"Berlin\",\n" +
+			"        \"taxID\": \"201/113/40209\",\n" +
+			"        \"vatID\": \"DE123456789\",\n" +
+			"        \"country\": \"DE\"\n" +
+			"    },\n" +
+			"    \"zfitems\": [\n" +
+			"        {\n" +
+			"            \"price\": 99.9,\n" +
+			"            \"quantity\": 10,\n" +
+			"            \"product\": {\n" +
+			"                \"unit\": \"H87\",\n" +
+			"                \"name\": \"Amazing Archives\",\n" +
+			"                \"description\": \"123\",\n" +
+			"                \"vatpercent\": \"19\",\n" +
+			"                \"taxCategoryCode\": \"3\"\n" +
+			"            }\n" +
+			"        }\n" +
+			"    ]\n" +
+			"}\n", Invoice.class);
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(fromJSON);
+		String theXML = new String(zf2p.getXML());
+		assertTrue(theXML.contains("<udt:DateTimeString format=\"102\">20241026</udt:DateTimeString>"));
+
+	}
+
 
 }
