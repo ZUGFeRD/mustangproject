@@ -253,59 +253,59 @@ public class ZUGFeRDVisualizer {
 	}
 	
 	protected String toFOP(InputStream is, EStandard theStandard)
-			throws FileNotFoundException, TransformerException {
+		throws FileNotFoundException, TransformerException {
 
-			try {
-				if (mXsltPDFTemplate == null) {
-					mXsltPDFTemplate = mFactory.newTemplates(
-						new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/xr-pdf.xsl")));
-				}
-			} catch (TransformerConfigurationException ex) {
-				LOGGER.error("Failed to init XSLT templates", ex);
+		try {
+			if (mXsltPDFTemplate == null) {
+				mXsltPDFTemplate = mFactory.newTemplates(
+					new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/xr-pdf.xsl")));
 			}
-
-			ByteArrayOutputStream iaos = new ByteArrayOutputStream();
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-			//zf2 or fx
-			if (theStandard == EStandard.facturx) {
-				applyZF2XSLT(is, iaos);
-			} else if (theStandard == EStandard.ubl) {
-				applyUBL2XSLT(is, iaos);
-			} else if (theStandard == EStandard.ubl_creditnote) {
-				applyUBLCreditNote2XSLT(is, iaos);
-			}
-
-
-			PipedInputStream in = new PipedInputStream();
-			PipedOutputStream out;
-			try {
-				out = new PipedOutputStream(in);
-				new Thread(new Runnable() {
-					public void run() {
-						try {
-							// write the original OutputStream to the PipedOutputStream
-							// note that in order for the below method to work, you need
-							// to ensure that the data has finished writing to the
-							// ByteArrayOutputStream
-							iaos.writeTo(out);
-						} catch (IOException e) {
-							LOGGER.error("Failed to write to stream", e);
-						} finally {
-							// close the PipedOutputStream here because we're done writing data
-							// once this thread has completed its run
-							StreamHelper.close(out);
-						}
-					}
-				}).start();
-				applyXSLTToPDF(in, baos);
-			} catch (IOException e1) {
-				LOGGER.error("Failed to create PDF", e1);
-			}
-
-
-			return baos.toString(StandardCharsets.UTF_8);
+		} catch (TransformerConfigurationException ex) {
+			LOGGER.error("Failed to init XSLT templates", ex);
 		}
+
+		ByteArrayOutputStream iaos = new ByteArrayOutputStream();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		//zf2 or fx
+		if (theStandard == EStandard.facturx) {
+			applyZF2XSLT(is, iaos);
+		} else if (theStandard == EStandard.ubl) {
+			applyUBL2XSLT(is, iaos);
+		} else if (theStandard == EStandard.ubl_creditnote) {
+			applyUBLCreditNote2XSLT(is, iaos);
+		}
+
+
+		PipedInputStream in = new PipedInputStream();
+		PipedOutputStream out;
+		try {
+			out = new PipedOutputStream(in);
+			new Thread(new Runnable() {
+				public void run() {
+					try {
+						// write the original OutputStream to the PipedOutputStream
+						// note that in order for the below method to work, you need
+						// to ensure that the data has finished writing to the
+						// ByteArrayOutputStream
+						iaos.writeTo(out);
+					} catch (IOException e) {
+						LOGGER.error("Failed to write to stream", e);
+					} finally {
+						// close the PipedOutputStream here because we're done writing data
+						// once this thread has completed its run
+						StreamHelper.close(out);
+					}
+				}
+			}).start();
+			applyXSLTToPDF(in, baos);
+		} catch (IOException e1) {
+			LOGGER.error("Failed to create PDF", e1);
+		}
+
+
+		return baos.toString(StandardCharsets.UTF_8);
+	}
 
 	public void toPDF(String xmlFilename, String pdfFilename) {
 
