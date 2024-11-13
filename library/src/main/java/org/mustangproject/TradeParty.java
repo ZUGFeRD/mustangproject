@@ -90,6 +90,19 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 										}
 									}
 								}
+								if (currentTopElementName.equals("PartyTaxScheme")) {
+
+									NodeList partyTaxScheme = party.item(partyIndex).getChildNodes();
+									for (int partyTaxSchemeIndex = 0; partyTaxSchemeIndex < partyTaxScheme.getLength(); partyTaxSchemeIndex++) {
+										if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName() != null) {
+
+											if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName().equals("CompanyID")) {
+												setTaxID(partyTaxScheme.item(partyTaxSchemeIndex).getTextContent());
+											}
+
+										}
+									}
+								}
 
 								// UBL only: formally it can have a name as well but BT27 party name *should* be stored in
 								// so overwrite if one exists
