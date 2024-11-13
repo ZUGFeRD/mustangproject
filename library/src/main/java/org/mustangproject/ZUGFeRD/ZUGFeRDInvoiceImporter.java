@@ -352,6 +352,34 @@ public class ZUGFeRDInvoiceImporter {
 						}
 					}
 				}
+				List<IncludedNote> includedNotes = new ArrayList<>();
+				if ((item.getLocalName() != null) && (item.getLocalName().equals("IncludedNote"))) {
+					String subjectCode = "";
+					String content = null;
+					NodeList includedNodeChilds = item.getChildNodes();
+					for (int issueDateChildIndex = 0; issueDateChildIndex < includedNodeChilds.getLength(); issueDateChildIndex++) {
+						if ((includedNodeChilds.item(issueDateChildIndex).getLocalName() != null)
+							&& (includedNodeChilds.item(issueDateChildIndex).getLocalName().equals("Content"))) {
+							content = XMLTools.trimOrNull(includedNodeChilds.item(issueDateChildIndex));
+						}
+						if ((includedNodeChilds.item(issueDateChildIndex).getLocalName() != null)
+							&& (includedNodeChilds.item(issueDateChildIndex).getLocalName().equals("SubjectCode"))) {
+							subjectCode = XMLTools.trimOrNull(includedNodeChilds.item(issueDateChildIndex));
+						}
+					}
+					switch (subjectCode){
+						case "AAI": includedNotes.add(IncludedNote.generalNote(content)); break;
+						case "REG": includedNotes.add(IncludedNote.regulatoryNote(content)); break;
+						case "ABL": includedNotes.add(IncludedNote.legalNote(content)); break;
+						case "CUS": includedNotes.add(IncludedNote.customsNote(content)); break;
+						case "SUR": includedNotes.add(IncludedNote.sellerNote(content)); break;
+						case "TXD": includedNotes.add(IncludedNote.taxNote(content)); break;
+						case "ACY": includedNotes.add(IncludedNote.introductionNote(content)); break;
+						case "AAK": includedNotes.add(IncludedNote.discountBonusNote(content)); break;
+						default: includedNotes.add(IncludedNote.unspecifiedNote(content)); break;
+					}
+				}
+				zpp.addNotes(includedNotes);
 			}
 		}
 		String rootNode = extractString("local-name(/*)");
