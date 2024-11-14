@@ -54,15 +54,6 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	}
 
 
-	/***
-	 * Wrapper for protected method extractString
-	 * @param xpathStr the xpath expression to be evaluated
-	 * @return the extracted String for the specific path in the document
-	 */
-	public String wExtractString(String xpathStr) {
-		return extractString(xpathStr);
-	}
-
 
 	////////////////////////////////////
 
