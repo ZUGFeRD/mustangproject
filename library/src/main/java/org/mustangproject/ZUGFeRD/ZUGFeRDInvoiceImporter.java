@@ -9,6 +9,8 @@ import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.mustangproject.*;
+import org.mustangproject.Exceptions.ArithmetricException;
+import org.mustangproject.Exceptions.StructureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -701,15 +703,13 @@ public class ZUGFeRDInvoiceImporter {
 			try {
 				whichType = getStandard();
 			} catch (Exception e) {
-				throw new ParseException("Could not find out if it's an invoice, order, or delivery advice", 0);
-
+				throw new StructureException("Could not find out if it's an invoice, order, or delivery advice", 0);
 			}
 
 			if ((whichType != EStandard.despatchadvice)
 				&& ((!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2)))
 				&& (!ignoreCalculationErrors))) {
-				throw new ParseException(
-					"Could not reproduce the invoice, this could mean that it could not be read properly", 0);
+				throw new ArithmetricException();
 			}
 		}
 		return zpp;
