@@ -269,13 +269,13 @@ public class XMLValidator extends Validator {
 					// saxon java net.sf.saxon.Transform -o tcdl2.0.tsdtf.sch.tmp.xsl -s
 					// tcdl2.0.tsdtf.sch iso_svrl.xsl
 
-				} else if (root.getLocalName().equalsIgnoreCase("Invoice")) {
+				} else if (root.getLocalName().equalsIgnoreCase("Invoice") || root.getLocalName().equalsIgnoreCase("CreditNote") ) {
 					context.setGeneration("2");
 					context.setFormat("UBL");
 					isXRechnung = context.getProfile().contains("xrechnung");
 					// UBL
 					LOGGER.debug("UBL");
-					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "UBL_21/maindoc/UBL-Invoice-2.1.xsd", 18, EPart.fx);
+					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "UBL_21/maindoc/UBL-"+root.getLocalName()+"-2.1.xsd", 18, EPart.fx);
 					xsltFilename = "/xslt/en16931schematron/EN16931-UBL-validation.xslt";
 
 					mainSchematronSectionErrorTypeCode=24;
