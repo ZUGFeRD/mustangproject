@@ -189,7 +189,7 @@ public class CalculationTest {
 
 	/**
 	 * LineCalculator should not throw an exception when calculating a non-terminating decimal expansion
-	 */
+	 * */
 	@Test
 	public void testNonTerminatingDecimalExpansion() {
 		final Product product = new Product();

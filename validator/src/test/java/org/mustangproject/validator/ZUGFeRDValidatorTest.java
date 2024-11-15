@@ -2,6 +2,15 @@ package org.mustangproject.validator;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.xmlunit.builder.Input;
+import org.xmlunit.xpath.JAXPXPathEngine;
+import org.xmlunit.xpath.XPathEngine;
 
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
@@ -132,6 +141,17 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
   }
 
+	public void testPDFA3AValidation() {
+		File tempFile = getResourceAsFile("zugferd_2p1_EXTENDED_PDFA-3A.pdf");
+
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+		assertThat(res).valueByXPath("/validation/pdf/summary/@status")
+			.isEqualTo("valid");
+	}
+
 	/***
 	 * the XMLValidatorTests only cover the <xml></xml> part, this one includes the root element and
 	 * the global <summary></summary> part as well
@@ -205,6 +225,9 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 		assertThat(res).valueByXPath("count(//error)")
 			.asInt()
 			.isEqualTo(3);
+		assertThat(res).valueByXPath("count(//warning)")
+			.asInt()
+			.isEqualTo(1);
 
 		assertThat(res).valueByXPath("count(//notice)")
 			.asInt()

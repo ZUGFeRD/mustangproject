@@ -52,6 +52,15 @@ public class BaseTest extends TestCase {
 		assertEquals("12.00", XMLTools.nDigitFormat(new BigDecimal("12"),2));
 		assertEquals("12", XMLTools.nDigitFormat(new BigDecimal("12"),0));
 		assertEquals("20000123.342", XMLTools.nDigitFormat(new BigDecimal("20000123.3419"),3));
+
+		assertEquals("0.00", XMLTools.nDigitFormatDecimalRange(BigDecimal.ZERO,2, 2));
+		assertEquals("-1.10", XMLTools.nDigitFormatDecimalRange(new BigDecimal("-1.100000"), 4,2));
+		assertEquals("-1.101", XMLTools.nDigitFormatDecimalRange(new BigDecimal("-1.101000"),10, 3));
+		assertEquals("-1.10", XMLTools.nDigitFormatDecimalRange(new BigDecimal("-1.103"), 2,2));
+		assertEquals("4", XMLTools.nDigitFormatDecimalRange(new BigDecimal("4"),2, 0));
+		assertEquals("3.14", XMLTools.nDigitFormatDecimalRange(new BigDecimal("3.141526"),2, 0));
+
+
 	}
 
 }

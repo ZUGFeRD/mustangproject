@@ -269,14 +269,14 @@ public class XMLValidator extends Validator {
 					// saxon java net.sf.saxon.Transform -o tcdl2.0.tsdtf.sch.tmp.xsl -s
 					// tcdl2.0.tsdtf.sch iso_svrl.xsl
 
-				} else if (root.getLocalName().equalsIgnoreCase("Invoice")) {
+				} else if (root.getLocalName().equalsIgnoreCase("Invoice") || root.getLocalName().equalsIgnoreCase("CreditNote") ) {
 					context.setGeneration("2");
 					context.setFormat("UBL");
 					isXRechnung = context.getProfile().contains("xrechnung");
 					// UBL
 					LOGGER.debug("UBL");
-					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "UBL_21/maindoc/UBL-Invoice-2.1.xsd", 18, EPart.fx);
-					xsltFilename = "/xslt/UBL_21/EN16931-UBL-validation.xslt";
+					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "UBL_21/maindoc/UBL-"+root.getLocalName()+"-2.1.xsd", 18, EPart.fx);
+					xsltFilename = "/xslt/en16931schematron/EN16931-UBL-validation.xslt";
 
 					mainSchematronSectionErrorTypeCode=24;
 
@@ -364,7 +364,7 @@ public class XMLValidator extends Validator {
 					if (context.getGeneration().equals("2")
 							&& (isBasic || isEN16931 || isXRechnung)) {
 						//additionally validate against CEN
-						validateSchematron(zfXML, "/xslt/cii16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
+						validateSchematron(zfXML, "/xslt/en16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
 						if (!disableNotices || XrechnungSeverity != ESeverity.notice) {
 							validateXR(zfXML, XrechnungSeverity);
 						}
@@ -419,11 +419,16 @@ public class XMLValidator extends Validator {
 	 * @param xml the xml to be checked
 	 * @param xsltFilename the filename of the intermediate XSLT file
 	 * @param section the error type code, if one arises
-	 * @param severity how serious a error should be treated - may only be notice
+	 * @param defaultSeverity how serious a error should be treated - may only be notice
 	 * @throws IrrecoverableValidationError if anything happened that prevents further checks
 	 */
-	public void validateSchematron(String xml, String xsltFilename, int section, ESeverity severity) throws IrrecoverableValidationError {
+	public void validateSchematron(String xml, String xsltFilename, int section, ESeverity defaultSeverity) throws IrrecoverableValidationError {
 		ISchematronResource aResSCH = null;
+		ESeverity severity=defaultSeverity;
+		if (defaultSeverity!=ESeverity.notice) {
+			severity=ESeverity.error;
+		}
+
 		aResSCH = SchematronResourceXSLT.fromClassPath(xsltFilename);
 
 		if (aResSCH != null) {
@@ -463,6 +468,16 @@ public class XMLValidator extends Validator {
 						}
 						if (currentFailNode.getAttributes().getNamedItem("location") != null) {
 							thisFailLocation = currentFailNode.getAttributes().getNamedItem("location").getNodeValue();
+						}
+
+						if (currentFailNode.getAttributes().getNamedItem("flag") != null) {
+							// the XR issues warnings with flag=warning
+							if  (currentFailNode.getAttributes().getNamedItem("flag").getNodeValue().equals("warning")) {
+								if (defaultSeverity!=ESeverity.notice) {
+									severity=ESeverity.warning;
+								}
+							}
+
 						}
 
 						NodeList failChilds = currentFailNode.getChildNodes();

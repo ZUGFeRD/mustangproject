@@ -21,8 +21,9 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import org.mustangproject.FileAttachment;
-import org.mustangproject.Invoice;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.mustangproject.*;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
@@ -33,6 +34,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 
 /***
@@ -42,23 +44,9 @@ import java.util.Arrays;
 public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 
-	public void testInvoiceImportSupportCase145() {
+	public void testInvoiceImport() {
 
-		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("C:\\Users\\jstaerk\\workspace\\XMLExamples\\zfdiverses\\20241004_\\IGEPA-Rechnung_41102839_00200_20240918.PDF");
-		boolean hasExceptions = false;
-		Invoice invoice = null;
-		try {
-			invoice = zii.extractInvoice();
-		} catch (XPathExpressionException | ParseException e) {
-			hasExceptions = true;
-		}
-		assertFalse(hasExceptions);
-
-	}
-
-		public void testInvoiceImport() {
-
-			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2new.pdf");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2new.pdf");
 
 		boolean hasExceptions = false;
 		Invoice invoice = null;
@@ -301,6 +289,12 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertFalse(hasExceptions);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
+		assertTrue(invoice.getTradeSettlement().length==1);
+		assertTrue(invoice.getTradeSettlement()[0] instanceof IZUGFeRDTradeSettlementPayment);
+		IZUGFeRDTradeSettlementPayment paym=(IZUGFeRDTradeSettlementPayment)invoice.getTradeSettlement()[0];
+		assertEquals("DE12500105170648489890", paym.getOwnIBAN());
+		assertEquals("COBADEFXXX", paym.getOwnBIC());
+
 
 		assertTrue(invoice.getPayee() != null);
 		assertEquals("VR Factoring GmbH", invoice.getPayee().getName());
@@ -333,52 +327,105 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 
 
-	public void testEEISI_300_cii_Import() {
-		boolean hasExceptions = false;
-		File input = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel2.ubl.xml");
-		File inputCorrect = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel2.cii.xml");
-
-
-		ZUGFeRDInvoiceImporter cii = new ZUGFeRDInvoiceImporter();
+	public void testImportDebit() {
+		File CIIinputFile = getResourceAsFile("cii/minimalDebit.xml");
 		try {
-			cii.fromXML(new String(Files.readAllBytes(inputCorrect.toPath()), StandardCharsets.UTF_8));
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
+			Invoice i=zii.extractInvoice();
+
+			assertEquals("DE21860000000086001055", i.getSender().getBankDetails().get(0).getIBAN());
+			ObjectMapper mapper = new ObjectMapper();
+
+			String jsonArray = mapper.writeValueAsString(i);
+
+	//		assertEquals("",jsonArray);
 
 		} catch (IOException e) {
-			hasExceptions = true;
-		}
-
-		Invoice ciiinvoice = null;
-		try {
-			ciiinvoice = cii.extractInvoice();
-
+			fail("IOException not expected");
 		} catch (XPathExpressionException e) {
 			throw new RuntimeException(e);
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
+
+
+	}
+
+
+
+
+
+	public void testImportMinimum() {
+		File CIIinputFile = getResourceAsFile("cii/facturFrMinimum.xml");
+		try {
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
+
+
+			CalculatedInvoice i=new CalculatedInvoice();
+			zii.extractInto(i);
+			assertEquals("671.15", i.getGrandTotal().toString());
+
+		} catch (IOException e) {
+			fail("IOException not expected");
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+
+
+	}
+/*
+this would test if for all elements/attributes
+ */
+
+	public void testEEISI_300_cii_Import() throws XPathExpressionException, ParseException {
+		boolean hasExceptions = false;
+		File inputCII = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.cii.xml");
+		File inputUBL = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.ubl.xml");
+
+
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
 		try {
-			zii.fromXML(new String(Files.readAllBytes(input.toPath()), StandardCharsets.UTF_8));
+			zii.fromXML(new String(Files.readAllBytes(inputCII.toPath()), StandardCharsets.UTF_8));
 
 		} catch (IOException e) {
 			hasExceptions = true;
 		}
 
-		Invoice invoice = null;
+		Invoice invoiceUBL = null;
+		invoiceUBL = zii.extractInvoice();
+
 		try {
-			invoice = zii.extractInvoice();
-			assertEquals("Seller name",invoice.getSender().getName());
-			assertEquals(ciiinvoice.getRecipient().getID(),invoice.getRecipient().getID());
+			zii.fromXML(new String(Files.readAllBytes(inputUBL.toPath()), StandardCharsets.UTF_8));
+
+		} catch (IOException e) {
+			hasExceptions = true;
+		}
+
+		Invoice invoiceCII = null;
+		try {
+			invoiceCII = zii.extractInvoice();
+			ObjectMapper mapper = new ObjectMapper();
+			String ubl=mapper.writeValueAsString(invoiceUBL).replace("," ,"\n");
+			String cii=mapper.writeValueAsString(invoiceCII).replace("," ,"\n");
+
+			assertEquals(cii,ubl);
+
+
 				/*
 				<cbc:Name>Seller contact point</cbc:Name>
         <cbc:Telephone>+41 345 654455</cbc:Telephone>
         <cbc:ElectronicMail>seller@contact.de);*/
 		} catch (XPathExpressionException | ParseException e) {
 			hasExceptions = true;
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
 		}
 		assertFalse(hasExceptions);
-		TransactionCalculator tc = new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("205.00"), tc.getGrandTotal());
+
+//		TransactionCalculator tc = new TransactionCalculator(invoiceCII);
+//		assertEquals(new BigDecimal("205.00"), tc.getGrandTotal());
 
 	}
 

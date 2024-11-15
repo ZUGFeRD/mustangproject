@@ -35,11 +35,30 @@
             <version>1.8.0</version>
         </dependency>
 
+
+        <!-- logging -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.13</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.2.13</version>
+        </dependency>
+        <dependency>
+            <!-- This library is needed so that logback stderr output is sent to, well, stderr, otherwise it lands in stdout -->
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>3.1.7</version>
+        </dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-simple</artifactId>
 			<version>2.0.12</version>
 		</dependency>
+        <!-- end of logging -->
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

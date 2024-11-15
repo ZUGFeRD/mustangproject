@@ -297,7 +297,8 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 			InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
-			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1();ze.ignorePDFAErrors();
+			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1();
+			ze.ignorePDFAErrors();
 			ze.load(SOURCE_PDF);
 			ze.setProducer("My Application")
 				.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile(Profiles.getByName("Extended"));

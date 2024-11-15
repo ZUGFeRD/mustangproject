@@ -298,6 +298,22 @@ public class XMLValidatorTest extends ResourceCase {
 			noExceptions = false;
 		}
 		assertTrue(noExceptions);
+		tempFile = getResourceAsFile("ubl-tc434-creditnote1.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("valid", content);
+
+
+		} catch (IrrecoverableValidationError e) {
+
+			noExceptions = false;
+		}
+		assertTrue(noExceptions);
+
 
 	}
 

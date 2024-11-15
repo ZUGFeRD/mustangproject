@@ -76,11 +76,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	}
 
 	protected String priceFormat(BigDecimal value) {
-		return XMLTools.nDigitFormat(value, 18);
+		// 18 decimals are max for price and qty due  to xml restrictions,
+		// see Chapter 3.2.3 of https://www.w3.org/TR/xmlschema-2/
+		return XMLTools.nDigitFormatDecimalRange(value, 18, 4);
 	}
 
 	protected String quantityFormat(BigDecimal value) {
-		return XMLTools.nDigitFormat(value, 18);
+		return XMLTools.nDigitFormatDecimalRange(value, 18, 4);
 	}
 
 	@Override
@@ -332,7 +334,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		this.trans = trans;
 		this.calc = new TransactionCalculator(trans);
 
-		boolean hasDueDate = false;
+		boolean hasDueDate = trans.getDueDate()!=null;
 		final SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 		String exemptionReason = "";
@@ -816,7 +818,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			}
 		}
 
-
 		if ((trans.getPaymentTerms() == null) && (getProfile() != Profiles.getByName("Minimum")) && ((paymentTermsDescription != null) || (trans.getTradeSettlement() != null) || (hasDueDate))) {
 			xml += "<ram:SpecifiedTradePaymentTerms>";
 
@@ -832,7 +833,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 			}
 
-			if (hasDueDate && (trans.getDueDate() != null)) {
+			if (trans.getDueDate() != null) {
 				xml += "<ram:DueDateDateTime>" // $NON-NLS-2$
 					+ DATE.udtFormat(trans.getDueDate())
 					+ "</ram:DueDateDateTime>";// 20130704

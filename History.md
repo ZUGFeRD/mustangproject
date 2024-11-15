@@ -1,7 +1,41 @@
-- 481 
-- 494
-- 391
-- 491
+2.15.0
+=======
+2024-
+- 435 use invoiceimporter as common technical basis also for zugferdimporter 
+- also import delivery address
+- 527 metrics may raise error on some pdf files
+- 517 read product GlobalID
+- 380 Added test for input stream validation
+- 518 corrently validate more XRechnung versions
+- make document charges and allowances serializable
+- 523 Verapdf claims PDF-A/3s created witth visualize are invalid
+- 530 duedate can not be set directly
+- 532 support validation warnings!
+- 534 new signature
+- 538 Mustang validator always claims PDF is invalid if flavour is PDF/A-3A
+- 555 be able to validate ubl credit notes
+- when parsing now distinguishing between the parseExceptions StructureException and ArithmetricException
+
+
+2.14.2
+=======
+2024-10-14
+
+- also parse BICs in InvoiceImporter not only IBANs
+- #509 CLI currently does not write a logfile
+- #505 crash after invoking ZUGFeRD2PullProvider
+- #506 Fix POM missing dependencies
+
+2.14.1 
+=======
+2024-10-06
+
+- #481 also be able to convert XRechnung/UBL to PDF not only CII
+- #494 Quantity/Price Decimal Places
+- #391 Runden bei Negativwerten
+- #491/501 non terminating decimal expansion
+- upgraded en16931 cen schematron to 1.3.12 
+- #499/500 PDF layout corrections
 
 2.14.0
 =======

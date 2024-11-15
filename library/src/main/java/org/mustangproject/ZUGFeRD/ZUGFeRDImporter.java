@@ -13,92 +13,34 @@ package org.mustangproject.ZUGFeRD;
  * @version 1.1.0
  * @author jstaerk
  */
-
 import java.io.*;
-import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
-import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
-import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
-import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
-import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.mustangproject.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
-public class ZUGFeRDImporter {
+public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDImporter.class);
 
-	/**
-	 * if metadata has been found
-	 */
-	protected boolean containsMeta = false;
-	/**
-	 * map filenames of additional XML files to their contents
-	 */
-	private final HashMap<String, byte[]> additionalXMLs = new HashMap<>();
-	/**
-	 * map filenames of all embedded files in the respective PDF
-	 */
-	private final ArrayList<FileAttachment> PDFAttachments = new ArrayList<>();
-	/**
-	 * Raw XML form of the extracted data - may be directly obtained.
-	 */
-	private byte[] rawXML = null;
-	/**
-	 * XMP metadata
-	 */
-	private String xmpString = null; // XMP metadata
-	/**
-	 * parsed Document
-	 */
-	private Document document;
-	private Integer version;
-
-
-	protected ZUGFeRDImporter() {
-		//constructor for extending classes
+	public ZUGFeRDImporter() {
+		super();
 	}
 
-	public ZUGFeRDImporter(String pdfFilename) {
-		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
-			extractLowLevel(bis);
-		} catch (final IOException e) {
-			LOGGER.error("Failed to extract ZUGFeRD data", e);
-			throw new ZUGFeRDExportException(e);
-		}
+	public ZUGFeRDImporter(String filename) {
+		super(filename);
 	}
 
-
-	public ZUGFeRDImporter(InputStream pdfStream) {
-		try {
-			extractLowLevel(pdfStream);
-		} catch (final IOException e) {
-			LOGGER.error("Failed to extract ZUGFeRD data", e);
-			throw new ZUGFeRDExportException(e);
-		}
+	public ZUGFeRDImporter(InputStream stream) {
+		super(stream);
 	}
 
 
@@ -113,169 +55,21 @@ public class ZUGFeRDImporter {
 
 
 
-	/**
-	 * Extracts a ZUGFeRD invoice from a PDF document represented by an input stream. Errors are reported via exception handling.
-	 *
-	 * @param inStream a inputstream of a pdf file
-	 */
-	private void extractLowLevel(InputStream inStream) throws IOException {
-		BufferedInputStream pdfStream = new BufferedInputStream(inStream);
-		byte[] pad = new byte[4];
-		pdfStream.mark(0);
-		pdfStream.read(pad);
-		pdfStream.reset();
-		byte[] pdfSignature = {'%', 'P', 'D', 'F'};
-		if (Arrays.equals(pad, pdfSignature)) { // we have a pdf
-
-
-			try (PDDocument doc = Loader.loadPDF(IOUtils.toByteArray(pdfStream))) {
-				// PDDocumentInformation info = doc.getDocumentInformation();
-				final PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
-				//start
-
-				if (doc.getDocumentCatalog() == null || doc.getDocumentCatalog().getMetadata() == null) {
-					LOGGER.info("no-xmlpart");
-					return;
-				}
-
-				final InputStream XMP = doc.getDocumentCatalog().getMetadata().exportXMPMetadata();
-				xmpString = convertStreamToString(XMP);
-
-				final PDEmbeddedFilesNameTreeNode etn = names.getEmbeddedFiles();
-				if (etn == null) {
-					return;
-				}
-
-				final Map<String, PDComplexFileSpecification> efMap = etn.getNames();
-				// String filePath = "/tmp/";
-
-				if (efMap != null) {
-					extractFiles(efMap); // see
-					// https://memorynotfound.com/apache-pdfbox-extract-embedded-file-pdf-document/
-				} else {
-
-					final List<PDNameTreeNode<PDComplexFileSpecification>> kids = etn.getKids();
-					if (kids == null) {
-						return;
-					}
-					for (final PDNameTreeNode<PDComplexFileSpecification> node : kids) {
-						final Map<String, PDComplexFileSpecification> namesL = node.getNames();
-						extractFiles(namesL);
-					}
-				}
-			}
-		} else {
-			// no PDF probably XML
-			containsMeta = true;
-			setRawXML(XMLTools.getBytesFromStream(pdfStream));
-
-		}
-	}
-
-
-	private void extractFiles(Map<String, PDComplexFileSpecification> names) throws IOException {
-		for (final String alias : names.keySet()) {
-
-			final PDComplexFileSpecification fileSpec = names.get(alias);
-			final String filename = fileSpec.getFilename();
-			/**
-			 * filenames for invoice data (ZUGFeRD v1 and v2, Factur-X)
-			 */
-
-			final PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
-			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml")) || filename.equals("xrechnung.xml") || filename.equals("order-x.xml") || filename.equals("cida.xml")) {
-				containsMeta = true;
-
-				// String embeddedFilename = filePath + filename;
-				// File file = new File(filePath + filename);
-				// System.out.println("Writing " + embeddedFilename);
-				// ByteArrayOutputStream fileBytes=new
-				// ByteArrayOutputStream();
-				// FileOutputStream fos = new FileOutputStream(file);
-
-				setRawXML(embeddedFile.toByteArray());
-
-				// fos.write(embeddedFile.getByteArray());
-				// fos.close();
-			}
-			if (filename.startsWith("additional_data")) {
-				additionalXMLs.put(filename, embeddedFile.toByteArray());
-			}
-			PDFAttachments.add(new FileAttachment(filename, embeddedFile.getSubtype(), "Data", embeddedFile.toByteArray()));
-		}
-	}
-
-
-	protected Document getDocument() {
-		return document;
-	}
-
-
-	private void setDocument() throws ParserConfigurationException, IOException, SAXException {
-		final DocumentBuilderFactory xmlFact = DocumentBuilderFactory.newInstance();
-		xmlFact.setNamespaceAware(true);
-		final DocumentBuilder builder = xmlFact.newDocumentBuilder();
-		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
-		///	is.skip(guessBOMSize(is));
-		document = builder.parse(is);
-	}
-
-
-	public void setRawXML(byte[] rawXML) throws IOException {
-		this.containsMeta = true;
-		this.rawXML = rawXML;
-		this.version = null;
-		try {
-			setDocument();
-		} catch (ParserConfigurationException | SAXException e) {
-			LOGGER.error("Failed to parse XML", e);
-			throw new ZUGFeRDExportException(e);
-		}
-	}
-
-
-	protected String extractString(String xpathStr) {
-		if (!containsMeta) {
-			throw new ZUGFeRDExportException("No suitable data/ZUGFeRD file could be found.");
-		}
-		final String result;
-		try {
-			final Document document = getDocument();
-			final XPathFactory xpathFact = XPathFactory.newInstance();
-			final XPath xpath = xpathFact.newXPath();
-			result = xpath.evaluate(xpathStr, document);
-		} catch (final XPathExpressionException e) {
-			LOGGER.error("Failed to evaluate XPath", e);
-			throw new ZUGFeRDExportException(e);
-		}
-		return result;
-	}
-
-	/***
-	 * Wrapper for protected method extractString
-	 * @param xpathStr the xpath expression to be evaluated
-	 * @return the extracted String for the specific path in the document
-	 */
-	public String wExtractString(String xpathStr) {
-		return extractString(xpathStr);
-	}
-
+	////////////////////////////////////
 
 	/**
 	 * @return the reference (purpose) the sender specified for this invoice
 	 */
 	public String getForeignReference() {
-		String result = extractString("//*[local-name() = 'ApplicableHeaderTradeSettlement']/*[local-name() = 'PaymentReference']");
-		if (result == null || result.isEmpty()) {
-			result = extractString("//*[local-name() = 'ApplicableSupplyChainTradeSettlement']/*[local-name() = 'PaymentReference']");
-		}
-		return result;
+
+		return importedInvoice.getNumber();
 	}
 
 	/**
 	 * @return the ZUGFeRD Profile
 	 */
 	public String getZUGFeRDProfil() {
+
 		String guideline = extractString("//*[local-name() = 'GuidelineSpecifiedDocumentContextParameter']//*[local-name() = 'ID']");
 		if (guideline.contains("xrechnung")) {
 			return "XRECHNUNG";
@@ -299,21 +93,6 @@ public class ZUGFeRDImporter {
 		}
 	}
 
-	/**
-	 * @return the Invoice Currency Code
-	 */
-	public String getInvoiceCurrencyCode() {
-		try {
-			if (getVersion() == 1) {
-				return extractString("//*[local-name() = 'ApplicableSupplyChainTradeSettlement']//*[local-name() = 'InvoiceCurrencyCode']");
-			} else {
-				return extractString("//*[local-name() = 'ApplicableHeaderTradeSettlement']//*[local-name() = 'InvoiceCurrencyCode']");
-			}
-		} catch (final Exception e) {
-			// Exception was already logged
-			return "";
-		}
-	}
 
 	/**
 	 * @return the IssuerAssigned ID
@@ -336,57 +115,6 @@ public class ZUGFeRDImporter {
 		return extractIssuerAssignedID("ContractReferencedDocument");
 	}
 
-	private String extractIssuerAssignedID(String propertyName) {
-		try {
-			if (getVersion() == 1) {
-				return extractString("//*[local-name() = '" + propertyName + "']//*[local-name() = 'ID']");
-			} else {
-				return extractString("//*[local-name() = '" + propertyName + "']//*[local-name() = 'IssuerAssignedID']");
-			}
-		} catch (final Exception e) {
-			// Exception was already logged
-			return "";
-		}
-	}
-
-	/**
-	 * @return the BuyerTradeParty ID
-	 */
-	public String getBuyerTradePartyID() {
-		return extractString("//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'ID']");
-	}
-
-	/**
-	 * @return the Issue Date()
-	 */
-	public String getIssueDate() {
-		try {
-			if (getVersion() == 1) {
-				return extractString("//*[local-name() = 'HeaderExchangedDocument']//*[local-name() = 'IssueDateTime']//*[local-name() = 'DateTimeString']");
-			} else {
-				return extractString("//*[local-name() = 'ExchangedDocument']//*[local-name() = 'IssueDateTime']//*[local-name() = 'DateTimeString']");
-			}
-		} catch (final Exception e) {
-			// Exception was already logged
-			return "";
-		}
-	}
-
-	public Date getDetailedDeliveryPeriodFrom() {
-		final String toParse = extractString(
-			"//*[local-name() = 'ApplicableHeaderTradeSettlement']" +
-				"//*[local-name() = 'BillingSpecifiedPeriod']" +
-				"//*[local-name() = 'StartDateTime']//*[local-name() = 'DateTimeString']");
-		return tryDate(toParse);
-	}
-
-	public Date getDetailedDeliveryPeriodTo() {
-		final String toParse = extractString(
-			"//*[local-name() = 'ApplicableHeaderTradeSettlement']" +
-				"//*[local-name() = 'BillingSpecifiedPeriod']" +
-				"//*[local-name() = 'EndDateTime']//*[local-name() = 'DateTimeString']");
-		return tryDate(toParse);
-	}
 
 	/**
 	 * @return the TaxBasisTotalAmount
@@ -470,7 +198,16 @@ public class ZUGFeRDImporter {
 	 * @return the BuyerTradeParty SpecifiedTaxRegistration ID
 	 */
 	public String getBuyertradePartySpecifiedTaxRegistrationID() {
-		return extractString("//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'SpecifiedTaxRegistration']//*[local-name() = 'ID']");
+		String id = null;
+		if  ((importedInvoice.getRecipient()!=null) && (importedInvoice.getRecipient().getLegalOrganisation()!=null)) {
+			// this *should* be the official result
+			id = importedInvoice.getRecipient().getLegalOrganisation().getSchemedID().getID();
+		}
+		// but also provide some fallback
+		if (id == null) {
+			id = getBuyerTradePartyID();
+		}
+		return id;
 	}
 
 
@@ -494,14 +231,14 @@ public class ZUGFeRDImporter {
 	 * @return the BuyerTradeParty Name
 	 */
 	public String getBuyerTradePartyName() {
-		return extractString("//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'Name']");
+		return importedInvoice.getRecipient().getName();
 	}
 
 	/**
 	 * @return the BuyerTradeParty Name
 	 */
 	public String getDeliveryTradePartyName() {
-		return extractString("//*[local-name() = 'ShipToTradeParty']//*[local-name() = 'Name']");
+		return importedInvoice.getDeliveryAddress().getName();
 	}
 
 
@@ -548,16 +285,7 @@ public class ZUGFeRDImporter {
 	 * @return the Invoice ID
 	 */
 	public String getInvoiceID() {
-		try {
-			if (getVersion() == 1) {
-				return extractString("//*[local-name() = 'HeaderExchangedDocument']//*[local-name() = 'ID']");
-			} else {
-				return extractString("//*[local-name() = 'ExchangedDocument']//*[local-name() = 'ID']");
-			}
-		} catch (final Exception e) {
-			// Exception was already logged
-			return "";
-		}
+		return importedInvoice.getNumber();
 	}
 
 
@@ -615,11 +343,21 @@ public class ZUGFeRDImporter {
 	 * @return the sender's account IBAN code
 	 */
 	public String getIBAN() {
-		return extractString("//*[local-name() = 'PayeePartyCreditorFinancialAccount']/*[local-name() = 'IBANID']");
+		for (IZUGFeRDTradeSettlement settlement : importedInvoice.getTradeSettlement()) {
+			if (settlement instanceof IZUGFeRDTradeSettlementDebit) {
+				return ((IZUGFeRDTradeSettlementDebit) settlement).getIBAN();
+			}
+			if (settlement instanceof IZUGFeRDTradeSettlementPayment) {
+				return ((IZUGFeRDTradeSettlementPayment) settlement).getOwnIBAN();
+			}
+		}
+		return null;
 	}
 
 
 	public String getHolder() {
+
+
 		return extractString("//*[local-name() = 'SellerTradeParty']/*[local-name() = 'Name']");
 	}
 
@@ -628,14 +366,8 @@ public class ZUGFeRDImporter {
 	 * @return the total payable amount
 	 */
 	public String getAmount() {
-		String result = extractString("//*[local-name() = 'SpecifiedTradeSettlementHeaderMonetarySummation']/*[local-name() = 'DuePayableAmount']");
-		if (result == null || result.isEmpty()) {
 
-			/* fx/zf would be SpecifiedTradeSettlementMonetarySummation
-			 * but ox is SpecifiedTradeSettlementHeaderMonetarySummation...*/
-			result = extractString("//*[local-name() = 'GrandTotalAmount']");
-		}
-		return result;
+		return importedInvoice.getGrandTotal().toPlainString();
 	}
 
 
@@ -643,7 +375,60 @@ public class ZUGFeRDImporter {
 	 * @return when the payment is due
 	 */
 	public String getDueDate() {
-		return extractString("//*[local-name() = 'SpecifiedTradePaymentTerms']/*[local-name() = 'DueDateDateTime']/*[local-name() = 'DateTimeString']");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		return sdf.format(importedInvoice.getDueDate());
+	}
+
+
+	////////////////////
+
+	/**
+	 * @return the Invoice Currency Code
+	 */
+	public String getInvoiceCurrencyCode() {
+		return importedInvoice.getCurrency();
+	}
+
+
+	private String extractIssuerAssignedID(String propertyName) {
+		try {
+			if (getVersion() == 1) {
+				return extractString("//*[local-name() = '" + propertyName + "']//*[local-name() = 'ID']");
+			} else {
+				return extractString("//*[local-name() = '" + propertyName + "']//*[local-name() = 'IssuerAssignedID']");
+			}
+		} catch (final Exception e) {
+			// Exception was already logged
+			return "";
+		}
+	}
+
+	/**
+	 * @return the BuyerTradeParty ID
+	 */
+	public String getBuyerTradePartyID() {
+		String id = importedInvoice.getRecipient().getID();
+		if (id == null) {
+			// provide some fallback
+			id = importedInvoice.getRecipient().getVATID();
+		}
+		return id;
+	}
+
+	/**
+	 * @return the Issue Date()
+	 */
+	public String getIssueDate() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		return sdf.format(importedInvoice.getIssueDate());
+	}
+
+	public Date getDetailedDeliveryPeriodFrom() {
+		return importedInvoice.getDetailedDeliveryPeriodFrom();
+	}
+
+	public Date getDetailedDeliveryPeriodTo() {
+		return importedInvoice.getDetailedDeliveryPeriodTo();
 	}
 
 
@@ -691,28 +476,6 @@ public class ZUGFeRDImporter {
 	}
 
 
-	public EStandard getStandard() throws Exception {
-		if (!containsMeta) {
-			throw new Exception("Not yet parsed");
-		}
-		final String head = getUTF8();
-		String rootNode = extractString("local-name(/*)");
-		if (rootNode.equals("CrossIndustryDocument")) {
-			return EStandard.zugferd;
-		} else if (rootNode.equals("Invoice")) {
-			return EStandard.ubl;
-		} else if (rootNode.equals("CrossIndustryInvoice")) {
-			return EStandard.facturx;
-		} else if (rootNode.equals("SCRDMCCBDACIDAMessageStructure")) {
-			return EStandard.despatchadvice;
-		} else if (head.contains("<rsm:SCRDMCCBDACIOMessageStructure")) {
-			return EStandard.orderx;
-		}
-
-		throw new Exception("ZUGFeRD version could not be determined");
-
-	}
-
 	public int getVersion() throws Exception {
 		if (!containsMeta) {
 			throw new Exception("Not yet parsed");
@@ -733,35 +496,6 @@ public class ZUGFeRDImporter {
 			throw new Exception("ZUGFeRD version could not be determined");
 		}
 		return version;
-	}
-
-
-	/**
-	 * @return return UTF8 XML (without BOM) of the invoice
-	 */
-	public String getUTF8() {
-		if (rawXML == null) {
-			return null;
-		}
-		if (rawXML.length < 3) {
-			return new String(rawXML);
-		}
-
-
-		final byte[] bomlessData;
-
-		if ((rawXML[0] == (byte) 0xEF)
-			&& (rawXML[1] == (byte) 0xBB)
-			&& (rawXML[2] == (byte) 0xBF)) {
-			// I don't like BOMs, lets remove it
-			bomlessData = new byte[rawXML.length - 3];
-			System.arraycopy(rawXML, 3, bomlessData, 0,
-				rawXML.length - 3);
-		} else {
-			bomlessData = rawXML;
-		}
-
-		return new String(bomlessData);
 	}
 
 
@@ -790,14 +524,6 @@ public class ZUGFeRDImporter {
 	}
 
 
-	static String convertStreamToString(java.io.InputStream is) {
-		try {
-			return IOUtils.toString(is, StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-	}
-
 	/**
 	 * returns an instance of PostalTradeAddress for SellerTradeParty section
 	 *
@@ -809,7 +535,7 @@ public class ZUGFeRDImporter {
 
 		try {
 			if (getVersion() == 1) {
-				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryDocument']//*[local-name() = 'SpecifiedSupplyChainTradeTransaction']/*[local-name() = 'ApplicableSupplyChainTradeAgreement']//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'PostalTradeAddress']");
+				nl = getNodeListByPath("//*[localname() = 'CrossIndustryDocument']//*[local-name() = 'SpecifiedSupplyChainTradeTransaction']/*[local-name() = 'ApplicableSupplyChainTradeAgreement']//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'PostalTradeAddress']");
 			} else {
 				nl = getNodeListByPath("//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'PostalTradeAddress']");
 			}
@@ -953,7 +679,7 @@ public class ZUGFeRDImporter {
 							if (node != null) {
 								final NodeList tradeAgreementChildren = node.getChildNodes();
 								node = getNodeByName(tradeAgreementChildren, "ChargeAmount");
-								lineItem.setPrice(tryBigDecimal(getNodeValue(node)));
+								lineItem.setPrice(XMLTools.tryBigDecimal(node));
 								node = getNodeByName(tradeAgreementChildren, "BasisQuantity");
 								if (node != null && node.getAttributes() != null) {
 									final Node unitCodeAttribute = node.getAttributes().getNamedItem("unitCode");
@@ -966,48 +692,55 @@ public class ZUGFeRDImporter {
 							node = getNodeByName(nn.getChildNodes(), "GrossPriceProductTradePrice");
 							if (node != null) {
 								node = getNodeByName(node.getChildNodes(), "ChargeAmount");
-								lineItem.setGrossPrice(tryBigDecimal(getNodeValue(node)));
+								lineItem.setGrossPrice(XMLTools.tryBigDecimal(node));
 							}
 							break;
 
 						case "AssociatedDocumentLineDocument":
 
 							node = getNodeByName(nn.getChildNodes(), "LineID");
-							lineItem.setId(getNodeValue(node));
+							lineItem.setId(XMLTools.getNodeValue(node));
 							break;
 
 						case "SpecifiedTradeProduct":
-
+							node = getNodeByName(nn.getChildNodes(), "GlobalID");
+							if (node != null) {
+								SchemedID globalId = new SchemedID()
+									.setScheme(node.getAttributes()
+										.getNamedItem("schemeID").getNodeValue())
+									.setId(XMLTools.getNodeValue(node));
+								lineItem.getProduct().addGlobalID(globalId);
+							}
 							node = getNodeByName(nn.getChildNodes(), "SellerAssignedID");
-							lineItem.getProduct().setSellerAssignedID(getNodeValue(node));
+							lineItem.getProduct().setSellerAssignedID(XMLTools.getNodeValue(node));
 
 							node = getNodeByName(nn.getChildNodes(), "BuyerAssignedID");
-							lineItem.getProduct().setBuyerAssignedID(getNodeValue(node));
+							lineItem.getProduct().setBuyerAssignedID(XMLTools.getNodeValue(node));
 
 							node = getNodeByName(nn.getChildNodes(), "Name");
-							lineItem.getProduct().setName(getNodeValue(node));
+							lineItem.getProduct().setName(XMLTools.getNodeValue(node));
 
 							node = getNodeByName(nn.getChildNodes(), "Description");
-							lineItem.getProduct().setDescription(getNodeValue(node));
+							lineItem.getProduct().setDescription(XMLTools.getNodeValue(node));
 							break;
 
 						case "SpecifiedLineTradeDelivery":
 						case "SpecifiedSupplyChainTradeDelivery":
 							node = getNodeByName(nn.getChildNodes(), "BilledQuantity");
-							lineItem.setQuantity(tryBigDecimal(getNodeValue(node)));
+							lineItem.setQuantity(XMLTools.tryBigDecimal(node));
 							break;
 
 						case "SpecifiedLineTradeSettlement":
 							node = getNodeByName(nn.getChildNodes(), "ApplicableTradeTax");
 							if (node != null) {
 								node = getNodeByName(node.getChildNodes(), "RateApplicablePercent");
-								lineItem.getProduct().setVATPercent(tryBigDecimal(getNodeValue(node)));
+								lineItem.getProduct().setVATPercent(XMLTools.tryBigDecimal(node));
 							}
 
 							node = getNodeByName(nn.getChildNodes(), "ApplicableTradeTax");
 							if (node != null) {
 								node = getNodeByName(node.getChildNodes(), "CalculatedAmount");
-								lineItem.setTax(tryBigDecimal(getNodeValue(node)));
+								lineItem.setTax(XMLTools.tryBigDecimal(node));
 							}
 							node = getNodeByName(nn.getChildNodes(), "BillingSpecifiedPeriod");
 							if (node != null) {
@@ -1021,13 +754,13 @@ public class ZUGFeRDImporter {
 								if (end != null) {
 									dateTimeEnd = getNodeByName(end.getChildNodes(), "DateTimeString");
 								}
-								lineItem.setDetailedDeliveryPeriod(tryDate(dateTimeStart), tryDate(dateTimeEnd));
+								lineItem.setDetailedDeliveryPeriod(XMLTools.tryDate(dateTimeStart), XMLTools.tryDate(dateTimeEnd));
 							}
 
 							node = getNodeByName(nn.getChildNodes(), "SpecifiedTradeSettlementLineMonetarySummation");
 							if (node != null) {
 								node = getNodeByName(node.getChildNodes(), "LineTotalAmount");
-								lineItem.setLineTotalAmount(tryBigDecimal(getNodeValue(node)));
+								lineItem.setLineTotalAmount(XMLTools.tryBigDecimal(node));
 							}
 							break;
 						case "SpecifiedSupplyChainTradeSettlement":
@@ -1036,19 +769,19 @@ public class ZUGFeRDImporter {
 							node = getNodeByName(nn.getChildNodes(), "ApplicableTradeTax");
 							if (node != null) {
 								node = getNodeByName(node.getChildNodes(), "ApplicablePercent");
-								lineItem.getProduct().setVATPercent(tryBigDecimal(getNodeValue(node)));
+								lineItem.getProduct().setVATPercent(XMLTools.tryBigDecimal(node));
 							}
 
 							node = getNodeByName(nn.getChildNodes(), "ApplicableTradeTax");
 							if (node != null) {
 								node = getNodeByName(node.getChildNodes(), "CalculatedAmount");
-								lineItem.setTax(tryBigDecimal(getNodeValue(node)));
+								lineItem.setTax(XMLTools.tryBigDecimal(node));
 							}
 
 							node = getNodeByName(nn.getChildNodes(), "SpecifiedTradeSettlementMonetarySummation");
 							if (node != null) {
 								node = getNodeByName(node.getChildNodes(), "LineTotalAmount");
-								lineItem.setLineTotalAmount(tryBigDecimal(getNodeValue(node)));
+								lineItem.setLineTotalAmount(XMLTools.tryBigDecimal(node));
 							}
 							break;
 					}
@@ -1123,51 +856,4 @@ public class ZUGFeRDImporter {
 		}
 	}
 
-	/**
-	 * returns the value of an node
-	 *
-	 * @param node the Node to get the value from
-	 * @return A String or empty String, if no value was found
-	 */
-	private String getNodeValue(Node node) {
-		if (node != null && node.getFirstChild() != null) {
-			return node.getFirstChild().getNodeValue();
-		}
-		return "";
-	}
-
-	/**
-	 * tries to convert an String to BigDecimal.
-	 *
-	 * @param nodeValue The value as String
-	 * @return a BigDecimal with the value provides as String or a BigDecimal with value 0.00 if an error occurs
-	 */
-	private BigDecimal tryBigDecimal(String nodeValue) {
-		try {
-			return new BigDecimal(nodeValue);
-		} catch (final Exception e) {
-			try {
-				return BigDecimal.valueOf(Float.valueOf(nodeValue));
-			} catch (final Exception ex) {
-				return new BigDecimal("0.00");
-			}
-		}
-	}
-
-	private Date tryDate(Node node) {
-		final String nodeValue = getNodeValue(node);
-		if (nodeValue.isEmpty()) {
-			return null;
-		}
-		return tryDate(nodeValue);
-	}
-
-	private static Date tryDate(String toParse) {
-		final SimpleDateFormat formatter = ZUGFeRDDateFormat.DATE.getFormatter();
-		try {
-			return formatter.parse(toParse);
-		} catch (final Exception e) {
-			return null;
-		}
-	}
 }

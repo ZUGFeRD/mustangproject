@@ -198,7 +198,7 @@
   <entry key="xr:Third_party_payment_type" id="BT-DEX-001">Art der Fremdforderung</entry>
   <entry key="xr:Third_party_payment_amount" id="BT-DEX-002">Betrag der Fremdforderung</entry>
   <entry key="xr:Third_party_payment_description" id="BT-DEX-003">Beschreibung der Fremdforderung</entry>
-  <entry key="uebersicht">Übersicht</entry>
+  <entry key="uebersicht">Daten der E-Rechnung</entry>
   <entry key="uebersichtKaeufer" id="BG-7">Informationen zum Käufer</entry>
   <entry key="uebersichtVerkaeufer" id="BG-4">Informationen zum Verkäufer</entry>
   <entry key="uebersichtRechnungsInfo" id="invoice-data">Rechnungsdaten</entry>
@@ -214,7 +214,7 @@
   <entry key="uebersichtZahlungLastschrift" id="BG-19">Lastschrift</entry>
   <entry key="uebersichtZahlungUeberweisung" id="BG-17">Überweisung</entry>
   <entry key="uebersichtBemerkungen" id="BG-1">Bemerkungen zur Rechnung</entry>
-  <entry key="details">Details</entry>
+  <entry key="details">Rechnungspositionen</entry>
   <entry key="detailsPositionAbrechnungszeitraum" id="BG-26">Abrechnungszeitraum</entry>
   <entry key="detailsPositionPreiseinzelheiten" id="BG-29">Preiseinzelheiten</entry>
   <entry key="detailsPositionNachlaesse" id="BG-27">Nachlässe auf Ebene der Rechnungsposition</entry>
