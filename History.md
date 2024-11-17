@@ -1,21 +1,23 @@
 2.15.0
 =======
-2024-
-- 435 use invoiceimporter as common technical basis also for zugferdimporter 
+2024-11-
+- #435 use invoiceimporter as common technical basis also for zugferdimporter 
 - also import delivery address
-- 527 metrics may raise error on some pdf files
-- 517 read product GlobalID
-- 380 Added test for input stream validation
-- 518 corrently validate more XRechnung versions
+- #527 metrics may raise error on some pdf files
+- #517 read product GlobalID
+- #380 Added test for input stream validation
+- #518 corrently validate more XRechnung versions
 - make document charges and allowances serializable
-- 523 Verapdf claims PDF-A/3s created witth visualize are invalid
-- 530 duedate can not be set directly
-- 532 support validation warnings!
-- 534 new signature
-- 538 Mustang validator always claims PDF is invalid if flavour is PDF/A-3A
-- 555 be able to validate ubl credit notes
+- #523 Verapdf claims PDF-A/3s created witth visualize are invalid
+- #530 duedate can not be set directly
+- #532 support validation warnings!
+- #534 new signature
+- #538 Mustang validator always claims PDF is invalid if flavour is PDF/A-3A
+- #555 be able to validate ubl credit notes
 - when parsing now distinguishing between the parseExceptions StructureException and ArithmetricException
 - Import IncludedNotes on invoice extraction #554
+- Visualize SpecifiedLogisticsServiceCharge #542
+- #531 Support ZUGFeRD 2.3.2 
 
 2.14.2
 =======
