@@ -22,9 +22,8 @@ package org.mustangproject.ZUGFeRD;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.mustangproject.CalculatedInvoice;
-import org.mustangproject.FileAttachment;
-import org.mustangproject.Invoice;
+import org.junit.jupiter.api.Test;
+import org.mustangproject.*;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.File;
@@ -37,6 +36,10 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 /***
@@ -352,8 +355,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
-
-	public void testImportMinimum() {
+  public void testImportMinimum() {
 		File CIIinputFile = getResourceAsFile("cii/facturFrMinimum.xml");
 		try {
 			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
@@ -373,59 +375,25 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 
 	}
-/*
-this would test if for all elements/attributes
- */
 
-	public void testEEISI_300_cii_Import() throws XPathExpressionException, ParseException {
-		boolean hasExceptions = false;
-		File inputCII = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.cii.xml");
-		File inputUBL = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.ubl.xml");
-
-
-		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
-		try {
-			zii.fromXML(new String(Files.readAllBytes(inputCII.toPath()), StandardCharsets.UTF_8));
-
-		} catch (IOException e) {
-			hasExceptions = true;
-		}
-
-		Invoice invoiceUBL = null;
-		invoiceUBL = zii.extractInvoice();
-
-		try {
-			zii.fromXML(new String(Files.readAllBytes(inputUBL.toPath()), StandardCharsets.UTF_8));
-
-		} catch (IOException e) {
-			hasExceptions = true;
-		}
-
-		Invoice invoiceCII = null;
-		try {
-			invoiceCII = zii.extractInvoice();
-			ObjectMapper mapper = new ObjectMapper();
-			String ubl = mapper.writeValueAsString(invoiceUBL);
-			String cii = mapper.writeValueAsString(invoiceCII);
-
-			//assertEquals(cii,ubl);
-
-
-				/*
-				<cbc:Name>Seller contact point</cbc:Name>
-        <cbc:Telephone>+41 345 654455</cbc:Telephone>
-        <cbc:ElectronicMail>seller@contact.de);*
-		} catch (XPathExpressionException | ParseException e) {
-			hasExceptions = true;
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
-		assertFalse(hasExceptions);
-
-		TransactionCalculator tc = new TransactionCalculator(invoiceCII);
-		assertEquals(new BigDecimal("205.00"), tc.getGrandTotal());
+	@Test
+	public void testImportIncludedNotes() throws XPathExpressionException, ParseException {
+		InputStream inputStream = this.getClass()
+			.getResourceAsStream("/EN16931_Einfach.pdf");
+		ZUGFeRDInvoiceImporter importer = new ZUGFeRDInvoiceImporter(inputStream);
+		Invoice invoice = importer.extractInvoice();
+		List<IncludedNote> notesWithSubjectCode = invoice.getNotesWithSubjectCode();
+		assertThat(notesWithSubjectCode).hasSize(2);
+		assertThat(notesWithSubjectCode.get(0).getSubjectCode()).isNull();
+		assertThat(notesWithSubjectCode.get(0).getContent()).isEqualTo("Rechnung gemäß Bestellung vom 01.11.2024.");
+		assertThat(notesWithSubjectCode.get(1).getSubjectCode()).isEqualTo(SubjectCode.REG);
+		assertThat(notesWithSubjectCode.get(1).getContent()).isEqualTo("Lieferant GmbH\t\t\t\t\n"
+			+ "Lieferantenstraße 20\t\t\t\t\n"
+			+ "80333 München\t\t\t\t\n"
+			+ "Deutschland\t\t\t\t\n"
+			+ "Geschäftsführer: Hans Muster\n"
+			+ "Handelsregisternummer: H A 123");
 
 	}
-*/
 
 }

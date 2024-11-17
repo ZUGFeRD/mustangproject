@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class TradeParty implements IZUGFeRDExportableTradeParty {
 
-	protected String name, zip, street, location, country;
+	protected String name, zip, street, location, country, taxScheme;
 	protected String taxID = null, vatID = null;
 	protected String ID = null;
 	protected String description = null;
@@ -91,14 +91,55 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 									}
 								}
 
-								// UBL only: formally it can have a name as well but BT27 party name *should* be stored in
-								// so overwrite if one exists
+								if (currentTopElementName.equals("PartyTaxScheme")) {
+								NodeList partyTaxScheme = party.item(partyIndex).getChildNodes();
+								for (int partyTaxSchemeIndex = 0; partyTaxSchemeIndex < partyTaxScheme.getLength(); partyTaxSchemeIndex++) {
+										if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName() != null) {
+											if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName().equals("CompanyID")) {
+												setTaxID(partyTaxScheme.item(partyTaxSchemeIndex).getTextContent());
+
+											}
+										}
+								}
+								}
+
+
+//								if (currentTopElementName.equals("PartyTaxScheme")) {
+//									NodeList partyTaxScheme = party.item(partyIndex).getChildNodes();
+//									for (int partyTaxSchemeIndex = 0; partyTaxSchemeIndex < partyTaxScheme.getLength(); partyTaxSchemeIndex++) {
+//										if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName() != null) {
+//												if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName().equals("TaxScheme")) {
+//													NodeList taxScheme = partyTaxScheme.item(partyTaxSchemeIndex).getChildNodes();
+//													for (int taxSchemeIndex = 0 ; taxSchemeIndex < taxScheme.getLength(); taxSchemeIndex++) {
+//														if (taxScheme.item(taxSchemeIndex).getLocalName() != null) {
+//															if(taxScheme.item(taxSchemeIndex).getLocalName().equals("ID")){
+//																if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName().equals("CompanyID")) {
+//																	setTaxID(partyTaxScheme.item(partyTaxSchemeIndex).getTextContent());
+//																} else {
+//																setVATID(partyTaxScheme.item(partyTaxSchemeIndex).getTextContent());
+//															}
+//														}
+//													}
+//												}
+//											}
+//
+//										}
+//									}
+//								}
+								 /*
+								 UBL only: formally it can have a name as well but BT27 party name *should* be stored in
+								 so overwrite if one exists
+								*/
+
 								if (currentTopElementName.equals("PartyLegalEntity")) {
 									NodeList legal = party.item(partyIndex).getChildNodes();
 									for (int legalChildIndex = 0; legalChildIndex < legal.getLength(); legalChildIndex++) {
 										if (legal.item(legalChildIndex).getLocalName() != null) {
 											if (legal.item(legalChildIndex).getLocalName().equals("RegistrationName")) {
 												setName(legal.item(legalChildIndex).getTextContent());
+											}
+											if (legal.item(legalChildIndex).getLocalName().equals("CompanyLegalForm")) {
+												setDescription(legal.item(legalChildIndex).getTextContent());
 											}
 										}
 									}
@@ -212,26 +253,27 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 					}
 
-					if (currentUBLChild.equals("SpecifiedTaxRegistration")) {
+					if (currentUBLChild.equals("PartyTaxScheme")) {
 						NodeList taxChilds = nodes.item(nodeIndex).getChildNodes();
 						for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
 							if (taxChilds.item(taxChildIndex).getLocalName() != null) {
-								if ((taxChilds.item(taxChildIndex).getLocalName().equals("ID"))) {
-									if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID") != null) {
-										Node firstChild = taxChilds.item(taxChildIndex).getFirstChild();
-										if (firstChild != null) {
-											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("VA")) {
-												setVATID(firstChild.getNodeValue());
+								if ((taxChilds.item(taxChildIndex).getLocalName().equals("TaxScheme"))) {
+									if (taxChilds.item(taxChildIndex).getLocalName().equals("CompanyID")) {
+										if (taxChilds.item(taxChildIndex).getLocalName().equals("ID")) {
+											if (taxChilds.item(taxChildIndex).getLocalName().equals("CompanyID")) {
+												setVATID(taxChilds.item(taxChildIndex).getTextContent());
 											}
-											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("FC")) {
-												setTaxID(firstChild.getNodeValue());
+//												setTaxID(partyTaxScheme.item(partyTaxSchemeIndex).getTextContent());
+											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("ID").getNodeValue().equals("FC")) {
+												if (taxChilds.item(taxChildIndex).getLocalName().equals("CompanyID")) {
+													setTaxID(taxChilds.item(taxChildIndex).getTextContent());
+												}
 											}
 										}
 									}
 								}
 							}
 						}
-
 					}
 				}
 			}
