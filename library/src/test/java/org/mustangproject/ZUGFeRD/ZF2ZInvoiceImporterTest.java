@@ -1,4 +1,3 @@
-
 /**
  * *********************************************************************
  * <p>
@@ -27,7 +26,9 @@ import org.junit.jupiter.api.Test;
 import org.mustangproject.*;
 
 import javax.xml.xpath.XPathExpressionException;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -293,9 +294,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertFalse(hasExceptions);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
-		assertTrue(invoice.getTradeSettlement().length==1);
+		assertTrue(invoice.getTradeSettlement().length == 1);
 		assertTrue(invoice.getTradeSettlement()[0] instanceof IZUGFeRDTradeSettlementPayment);
-		IZUGFeRDTradeSettlementPayment paym=(IZUGFeRDTradeSettlementPayment)invoice.getTradeSettlement()[0];
+		IZUGFeRDTradeSettlementPayment paym = (IZUGFeRDTradeSettlementPayment) invoice.getTradeSettlement()[0];
 		assertEquals("DE12500105170648489890", paym.getOwnIBAN());
 		assertEquals("COBADEFXXX", paym.getOwnBIC());
 
@@ -306,19 +307,19 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	/**
 	 * testing if other files embedded in pdf additionally to the invoice can be read correctly
-	 * */
+	 */
 	public void testDetach() {
 		boolean hasExceptions = false;
 
-		byte[] fileA=null;
-		byte[] fileB=null;
+		byte[] fileA = null;
+		byte[] fileB = null;
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushAttachments.pdf");
-		for (FileAttachment fa:zii.getFileAttachmentsPDF()) {
+		for (FileAttachment fa : zii.getFileAttachmentsPDF()) {
 			if (fa.getFilename().equals("one.pdf")) {
-				fileA=fa.getData();
+				fileA = fa.getData();
 			} else if (fa.getFilename().equals("two.pdf")) {
-				fileB=fa.getData();
+				fileB = fa.getData();
 			}
 		}
 		byte[] b = {12, 13}; // the sample data that was used to write the files
@@ -330,19 +331,18 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 
-
 	public void testImportDebit() {
 		File CIIinputFile = getResourceAsFile("cii/minimalDebit.xml");
 		try {
 			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
-			Invoice i=zii.extractInvoice();
+			Invoice i = zii.extractInvoice();
 
 			assertEquals("DE21860000000086001055", i.getSender().getBankDetails().get(0).getIBAN());
 			ObjectMapper mapper = new ObjectMapper();
 
 			String jsonArray = mapper.writeValueAsString(i);
 
-	//		assertEquals("",jsonArray);
+			//		assertEquals("",jsonArray);
 
 		} catch (IOException e) {
 			fail("IOException not expected");
@@ -354,14 +354,14 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 
 	}
-	
-	public void testImportMinimum() {
+
+  public void testImportMinimum() {
 		File CIIinputFile = getResourceAsFile("cii/facturFrMinimum.xml");
 		try {
 			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
 
 
-			CalculatedInvoice i=new CalculatedInvoice();
+			CalculatedInvoice i = new CalculatedInvoice();
 			zii.extractInto(i);
 			assertEquals("671.15", i.getGrandTotal().toString());
 
