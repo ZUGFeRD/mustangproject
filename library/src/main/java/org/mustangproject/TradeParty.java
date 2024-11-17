@@ -700,7 +700,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	@Override
 	public String getCountry() {
-		return taxScheme;
+		return country;
 	}
 
 	/***
@@ -709,7 +709,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	 * @return fluent setter
 	 */
 	public TradeParty setCountry(String country) {
-		this.taxScheme = country;
+		this.country = country;
 		return this;
 	}
 
