@@ -203,12 +203,12 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		assertEquals("street", invoice.getRecipient().getStreet());
 		assertEquals("zip", invoice.getRecipient().getZIP());
-		assertEquals("", invoice.getRecipient().getCountry());
+		assertEquals("DE", invoice.getRecipient().getCountry());
 		assertEquals("city", invoice.getRecipient().getLocation());
 
 		assertEquals("street", invoice.getSender().getStreet());
 		assertEquals("zip", invoice.getSender().getZIP());
-		assertEquals("", invoice.getSender().getCountry());
+		assertEquals("DE", invoice.getSender().getCountry());
 		assertEquals("city", invoice.getSender().getLocation());
 
 		TransactionCalculator tc = new TransactionCalculator(invoice);
@@ -350,7 +350,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 
 	}
-
+	
 	public void testImportMinimum() {
 		File CIIinputFile = getResourceAsFile("cii/facturFrMinimum.xml");
 		try {
