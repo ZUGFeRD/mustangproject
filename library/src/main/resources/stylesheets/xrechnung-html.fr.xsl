@@ -11,6 +11,7 @@
     <xsl:variable name="i18n.history" select="'Historique de traitement'"/>
     <xsl:variable name="i18n.disclaimer" select="'Nous n''assumons aucune responsabilité quant à l''exactitude des données.'"/>
     <xsl:variable name="i18n.recipientInfo" select="'Informations sur l''acheteur'"/>
+    <xsl:variable name="i18n.dateOf" select="' du '"/>
     <xsl:variable name="i18n.bt50" select="'Rue / Numéro de maison'"/>
     <xsl:variable name="i18n.bt51" select="'Boîte postale'"/>
     <xsl:variable name="i18n.bt163" select="'Supplément d''adresse'"/>
