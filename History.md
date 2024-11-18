@@ -1,6 +1,6 @@
 2.15.0
 =======
-2024-11-
+2024-11-18
 - #435 use invoiceimporter as common technical basis also for zugferdimporter 
 - also import delivery address
 - #527 metrics may raise error on some pdf files
