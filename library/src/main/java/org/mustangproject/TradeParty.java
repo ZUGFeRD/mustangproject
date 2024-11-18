@@ -104,6 +104,30 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 								}
 
+								if (currentTopElementName.equals("PartyIdentification")) {
+									NodeList partyID = party.item(partyIndex).getChildNodes();
+									for (int partyIDIndex = 0; partyIDIndex < partyID.getLength(); partyIDIndex++) {
+										if (partyID.item(partyIDIndex).getLocalName() != null) {
+											if (partyID.item(partyIDIndex).getLocalName().equals("ID")) {
+												Node currentNode = partyID.item(partyIDIndex);
+												setID(currentNode.getTextContent());
+												if ((currentNode.getAttributes() != null &&
+													(currentNode.getAttributes().getNamedItem("schemeID") != null))
+												) {
+													//SchemedID gid = new SchemedID().setScheme(nodes.item(nodeIndex).getAttributes().getNamedItem("schemeID").getNodeValue()).setId(nodes.item(nodeIndex).getTextContent());
+													//							addGlobalID(gid);
+													SchemedID sID = new SchemedID().setScheme(currentNode.getAttributes().getNamedItem("schemeID").getTextContent());
+													addGlobalID(sID);
+
+													//&& ((currentNode.getAttributes().getNamedItem("schemeID").getNodeValue().equals("0110") && currentNode.getAttributes().getNamedItem("schemeID").getNodeValue().equals("0100"))
+												}
+
+											}
+										}
+									}
+								}
+
+
 								if (currentTopElementName.equals("PartyTaxScheme")) {
 									NodeList partyTaxScheme = party.item(partyIndex).getChildNodes();
 									String CompanyId = null;
