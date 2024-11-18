@@ -2236,6 +2236,10 @@ function downloadData (element_id) {
                     <div id="BT-16" title="BT-16" class="boxdaten wert"><xsl:value-of select="xr:Despatch_advice_reference"/></div>
                 </div>
                 <div class="boxzeile">
+                    <div class="boxdaten legende"><xsl:value-of select="$i18n.btx202"/>:</div>
+                    <div id="BT-X-202" title="BT-X-202" class="boxdaten wert"><xsl:value-of select="xr:Delivery_note_reference"/></div>
+                </div>
+                <div class="boxzeile">
                     <div class="boxdaten legende"><xsl:value-of select="$i18n.bt23"/>:</div>
                     <div id="BT-23" title="BT-23" class="boxdaten wert"><xsl:value-of select="xr:PROCESS_CONTROL/xr:Business_process_type"/></div>
                 </div>

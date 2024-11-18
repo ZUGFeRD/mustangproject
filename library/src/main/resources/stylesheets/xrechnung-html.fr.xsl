@@ -197,6 +197,7 @@
     <xsl:variable name="i18n.bt17" select="'Numéro d''attribution'"/>
     <xsl:variable name="i18n.bt15" select="'Identifiant de l''accusé de réception'"/>
     <xsl:variable name="i18n.bt16" select="'Identifiant du  bordereau d''expédition'"/>
+    <xsl:variable name="i18n.btx202" select="'Identifiant du bon de livraison'"/>
     <xsl:variable name="i18n.bt23" select="'Identifiant processus'"/>
     <xsl:variable name="i18n.bt24" select="'Identifiant spécification'"/>
     <xsl:variable name="i18n.bt18" select="'Identifiant objet'"/>

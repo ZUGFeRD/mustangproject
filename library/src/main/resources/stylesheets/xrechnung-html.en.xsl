@@ -197,6 +197,7 @@
     <xsl:variable name="i18n.bt17" select="'Assignment number'"/>
     <xsl:variable name="i18n.bt15" select="'Receipt confirmation ID'"/>
     <xsl:variable name="i18n.bt16" select="'Dispatch note ID'"/>
+    <xsl:variable name="i18n.btx202" select="'Delivery note ID'"/>
     <xsl:variable name="i18n.bt23" select="'Process ID'"/>
     <xsl:variable name="i18n.bt24" select="'Specification ID'"/>
     <xsl:variable name="i18n.bt18" select="'Object ID'"/>

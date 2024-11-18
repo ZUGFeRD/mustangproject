@@ -98,6 +98,8 @@
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:IssuerAssignedID"/>
             <xsl:apply-templates mode="BT-16"
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:IssuerAssignedID"/>
+			<xsl:apply-templates mode="BT-X-202"
+                                 select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:IssuerAssignedID"/>
             <xsl:apply-templates mode="BT-17"
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument/ram:IssuerAssignedID[following-sibling::ram:TypeCode='50']"/>
             <xsl:apply-templates mode="BT-18"
@@ -305,6 +307,14 @@
             <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
             <xsl:call-template name="document_reference"/>
         </xr:Despatch_advice_reference>
+    </xsl:template>
+    <xsl:template mode="BT-X-202"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:IssuerAssignedID">
+        <xr:Delivery_note_reference>
+            <xsl:attribute name="xr:id" select="'BT-X-202'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="document_reference"/>
+        </xr:Delivery_note_reference>
     </xsl:template>
     <xsl:template mode="BT-17"
                   match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument/ram:IssuerAssignedID[following-sibling::ram:TypeCode='50']">

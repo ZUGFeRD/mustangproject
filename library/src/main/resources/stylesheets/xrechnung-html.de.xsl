@@ -197,6 +197,7 @@
     <xsl:variable name="i18n.bt17" select="'Vergabenummer'"/>
     <xsl:variable name="i18n.bt15" select="'Kennung der Empfangsbestätigung'"/>
     <xsl:variable name="i18n.bt16" select="'Kennung der Versandanzeige'"/>
+    <xsl:variable name="i18n.btx202" select="'Kennung des Lieferscheins'"/>
     <xsl:variable name="i18n.bt23" select="'Prozesskennung'"/>
     <xsl:variable name="i18n.bt24" select="'Spezifikationskennung'"/>
     <xsl:variable name="i18n.bt18" select="'Objektkennung'"/>
