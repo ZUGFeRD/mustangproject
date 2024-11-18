@@ -101,7 +101,7 @@ public class ZUGFeRDInvoiceImporter {
 
 	/***
 	 * return the file names of all files embedded into the PDF
-	 * @see for XML embedded files please use ZUGFeRDInvoiceImporter.getFileAttachmentsXML
+	 * @see ZUGFeRDInvoiceImporter for XML embedded files please use ZUGFeRDInvoiceImporter.getFileAttachmentsXML
 	 * @return a ArrayList of FileAttachments, empty if none
 	 */
 	public List<FileAttachment> getFileAttachmentsPDF() {
@@ -228,7 +228,7 @@ public class ZUGFeRDInvoiceImporter {
 	 * set the xml of a CII invoice
 	 * @param rawXML the xml string
 	 * @param doParse automatically parse input for zugferdImporter (not ZUGFeRDInvoiceImporter)
-	 * @throws IOException
+	 * @throws IOException if parsing xml throws it (unlikely its string based)
 	 */
 	public void setRawXML(byte[] rawXML, boolean doParse) throws IOException {
 		this.containsMeta = true;
@@ -248,7 +248,7 @@ public class ZUGFeRDInvoiceImporter {
 	/***
 	 * set the xml of a CII invoice, simple version
 	 * @param rawXML the cii(?) as a string
-	 * @throws IOException
+	 * @throws IOException  if parsing xml throws it (unlikely its string based)
 	 */
 	public void setRawXML(byte[] rawXML) throws IOException {
 		setRawXML(rawXML, true);
