@@ -2,6 +2,7 @@ package org.mustangproject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,6 +16,8 @@ import org.w3c.dom.NodeList;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import static org.apache.fop.fonts.type1.AdobeStandardEncoding.a;
 
 /***
  * A organisation, i.e. usually a company
@@ -92,126 +95,102 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 								}
 
 								if (currentTopElementName.equals("PartyTaxScheme")) {
-								NodeList partyTaxScheme = party.item(partyIndex).getChildNodes();
-								for (int partyTaxSchemeIndex = 0; partyTaxSchemeIndex < partyTaxScheme.getLength(); partyTaxSchemeIndex++) {
+									NodeList partyTaxScheme = party.item(partyIndex).getChildNodes();
+									for (int partyTaxSchemeIndex = 0; partyTaxSchemeIndex < partyTaxScheme.getLength(); partyTaxSchemeIndex++) {
 										if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName() != null) {
-											if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName().equals("CompanyID")) {
+											if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName().equals("CompanyID")){
 												setTaxID(partyTaxScheme.item(partyTaxSchemeIndex).getTextContent());
-
 											}
 										}
-								}
+
+									}
 								}
 
 
-//								if (currentTopElementName.equals("PartyTaxScheme")) {
-//									NodeList partyTaxScheme = party.item(partyIndex).getChildNodes();
-//									for (int partyTaxSchemeIndex = 0; partyTaxSchemeIndex < partyTaxScheme.getLength(); partyTaxSchemeIndex++) {
-//										if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName() != null) {
-//												if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName().equals("TaxScheme")) {
-//													NodeList taxScheme = partyTaxScheme.item(partyTaxSchemeIndex).getChildNodes();
-//													for (int taxSchemeIndex = 0 ; taxSchemeIndex < taxScheme.getLength(); taxSchemeIndex++) {
-//														if (taxScheme.item(taxSchemeIndex).getLocalName() != null) {
-//															if(taxScheme.item(taxSchemeIndex).getLocalName().equals("ID")){
-//																if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName().equals("CompanyID")) {
-//																	setTaxID(partyTaxScheme.item(partyTaxSchemeIndex).getTextContent());
-//																} else {
-//																setVATID(partyTaxScheme.item(partyTaxSchemeIndex).getTextContent());
-//															}
-//														}
-//													}
-//												}
-//											}
-//
-//										}
-//									}
-//								}
 								 /*
 								 UBL only: formally it can have a name as well but BT27 party name *should* be stored in
 								 so overwrite if one exists
 								*/
 
-								if (currentTopElementName.equals("PartyLegalEntity")) {
-									NodeList legal = party.item(partyIndex).getChildNodes();
-									for (int legalChildIndex = 0; legalChildIndex < legal.getLength(); legalChildIndex++) {
-										if (legal.item(legalChildIndex).getLocalName() != null) {
-											if (legal.item(legalChildIndex).getLocalName().equals("RegistrationName")) {
-												setName(legal.item(legalChildIndex).getTextContent());
-											}
-											if (legal.item(legalChildIndex).getLocalName().equals("CompanyLegalForm")) {
-												setDescription(legal.item(legalChildIndex).getTextContent());
+									if (currentTopElementName.equals("PartyLegalEntity")) {
+										NodeList legal = party.item(partyIndex).getChildNodes();
+										for (int legalChildIndex = 0; legalChildIndex < legal.getLength(); legalChildIndex++) {
+											if (legal.item(legalChildIndex).getLocalName() != null) {
+												if (legal.item(legalChildIndex).getLocalName().equals("RegistrationName")) {
+													setName(legal.item(legalChildIndex).getTextContent());
+												}
+												if (legal.item(legalChildIndex).getLocalName().equals("CompanyLegalForm")) {
+													setDescription(legal.item(legalChildIndex).getTextContent());
+												}
 											}
 										}
 									}
-								}
-								if (currentTopElementName.equals("PostalAddress")) {
+									if (currentTopElementName.equals("PostalAddress")) {
 
-									NodeList postal = party.item(partyIndex).getChildNodes();
-									for (int postalChildIndex = 0; postalChildIndex < postal.getLength(); postalChildIndex++) {
-										if (postal.item(postalChildIndex).getLocalName() != null) {
+										NodeList postal = party.item(partyIndex).getChildNodes();
+										for (int postalChildIndex = 0; postalChildIndex < postal.getLength(); postalChildIndex++) {
+											if (postal.item(postalChildIndex).getLocalName() != null) {
 
-											if (postal.item(postalChildIndex).getLocalName().equals("StreetName")) {
-												setStreet(postal.item(postalChildIndex).getTextContent());
-											}
-											if (postal.item(postalChildIndex).getLocalName().equals("AdditionalStreetName")) {
-												setAdditionalAddress(postal.item(postalChildIndex).getTextContent());
-											}
-											//unknow correspondence if (postal.item(postalChildIndex).getLocalName().equals("LineThree")) {
+												if (postal.item(postalChildIndex).getLocalName().equals("StreetName")) {
+													setStreet(postal.item(postalChildIndex).getTextContent());
+												}
+												if (postal.item(postalChildIndex).getLocalName().equals("AdditionalStreetName")) {
+													setAdditionalAddress(postal.item(postalChildIndex).getTextContent());
+												}
+												//unknow correspondence if (postal.item(postalChildIndex).getLocalName().equals("LineThree")) {
 
 
-											if (postal.item(postalChildIndex).getLocalName().equals("CityName")) {
-												setLocation(postal.item(postalChildIndex).getTextContent());
-											}
-											if (postal.item(postalChildIndex).getLocalName().equals("PostalZone")) {
-												setZIP(postal.item(postalChildIndex).getTextContent());
-											}
-											if (postal.item(postalChildIndex).getLocalName().equals("Country")) {
-												NodeList country = postal.item(postalChildIndex).getChildNodes();
-												for (int countryIndex = 0; countryIndex < country.getLength(); countryIndex++) {
-													if (country.item(countryIndex).getLocalName() != null) {
+												if (postal.item(postalChildIndex).getLocalName().equals("CityName")) {
+													setLocation(postal.item(postalChildIndex).getTextContent());
+												}
+												if (postal.item(postalChildIndex).getLocalName().equals("PostalZone")) {
+													setZIP(postal.item(postalChildIndex).getTextContent());
+												}
+												if (postal.item(postalChildIndex).getLocalName().equals("Country")) {
+													NodeList country = postal.item(postalChildIndex).getChildNodes();
+													for (int countryIndex = 0; countryIndex < country.getLength(); countryIndex++) {
+														if (country.item(countryIndex).getLocalName() != null) {
 
-														if (country.item(countryIndex).getLocalName().equals("IdentificationCode")) {
-															setCountry(country.item(countryIndex).getTextContent());
+															if (country.item(countryIndex).getLocalName().equals("IdentificationCode")) {
+																setCountry(country.item(countryIndex).getTextContent());
+															}
+
 														}
-
 													}
+
+
 												}
 
+												if (postal.item(postalChildIndex).getLocalName().equals("AddressLine")) {
+													NodeList AddressLine = postal.item(postalChildIndex).getChildNodes();
+													for (int lineIndex = 0; lineIndex < AddressLine.getLength(); lineIndex++) {
+														if (AddressLine.item(lineIndex).getLocalName() != null) {
 
-											}
+															if (AddressLine.item(lineIndex).getLocalName().equals("Line")) {
+																setAdditionalAddressExtension(AddressLine.item(lineIndex).getTextContent());
+															}
 
-											if (postal.item(postalChildIndex).getLocalName().equals("AddressLine")) {
-												NodeList AddressLine = postal.item(postalChildIndex).getChildNodes();
-												for (int lineIndex = 0; lineIndex < AddressLine.getLength(); lineIndex++) {
-													if (AddressLine.item(lineIndex).getLocalName() != null) {
-
-														if (AddressLine.item(lineIndex).getLocalName().equals("Line")) {
-															setAdditionalAddressExtension(AddressLine.item(lineIndex).getTextContent());
 														}
-
 													}
+
+
+												}
+												if (postal.item(postalChildIndex).getLocalName().equals("Name")) {
+													setName(postal.item(postalChildIndex).getTextContent());
 												}
 
-
 											}
-											if (postal.item(postalChildIndex).getLocalName().equals("Name")) {
-												setName(postal.item(postalChildIndex).getTextContent());
-											}
-
 										}
 									}
-								}
 
-								if (currentTopElementName.equals("Contact")) {
-									NodeList contact = party.item(partyIndex).getChildNodes();
-									setContact(new Contact(contact));
+									if (currentTopElementName.equals("Contact")) {
+										NodeList contact = party.item(partyIndex).getChildNodes();
+										setContact(new Contact(contact));
 
+									}
 								}
 							}
 						}
-
-
-					}
 
 					if (currentUBLChild.equals("GlobalID")) {
 						if (nodes.item(nodeIndex).getAttributes().getNamedItem("schemeID") != null) {
@@ -251,29 +230,6 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 							}
 						}
 
-					}
-
-					if (currentUBLChild.equals("PartyTaxScheme")) {
-						NodeList taxChilds = nodes.item(nodeIndex).getChildNodes();
-						for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
-							if (taxChilds.item(taxChildIndex).getLocalName() != null) {
-								if ((taxChilds.item(taxChildIndex).getLocalName().equals("TaxScheme"))) {
-									if (taxChilds.item(taxChildIndex).getLocalName().equals("CompanyID")) {
-										if (taxChilds.item(taxChildIndex).getLocalName().equals("ID")) {
-											if (taxChilds.item(taxChildIndex).getLocalName().equals("CompanyID")) {
-												setVATID(taxChilds.item(taxChildIndex).getTextContent());
-											}
-//												setTaxID(partyTaxScheme.item(partyTaxSchemeIndex).getTextContent());
-											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("ID").getNodeValue().equals("FC")) {
-												if (taxChilds.item(taxChildIndex).getLocalName().equals("CompanyID")) {
-													setTaxID(taxChilds.item(taxChildIndex).getTextContent());
-												}
-											}
-										}
-									}
-								}
-							}
-						}
 					}
 				}
 			}

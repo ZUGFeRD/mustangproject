@@ -84,19 +84,19 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	/***
 	 *  getOwn... methods will be removed in the future in favor of Tradeparty (e.g. Sender) class
 	 * */
-	@Override
-	@Deprecated
-	@JsonIgnore
-	public String getOwnBIC() {
-		return getBIC();
-	}
-
-	@Override
-	@Deprecated
-	@JsonIgnore
-	public String getOwnIBAN() {
-		return getIBAN();
-	}
+//	@Override
+//	@Deprecated
+//	@JsonIgnore
+//	public String getOwnBIC() {
+//		return getBIC();
+//	}
+//
+//	@Override
+//	@Deprecated
+//	@JsonIgnore
+//	public String getOwnIBAN() {
+//		return getIBAN();
+//	}
 
 
 	/**
