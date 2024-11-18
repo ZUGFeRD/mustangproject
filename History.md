@@ -15,9 +15,10 @@
 - #538 Mustang validator always claims PDF is invalid if flavour is PDF/A-3A
 - #555 be able to validate ubl credit notes
 - when parsing now distinguishing between the parseExceptions StructureException and ArithmetricException
-- Import IncludedNotes on invoice extraction #554
-- Visualize SpecifiedLogisticsServiceCharge #542
+- #554 Import IncludedNotes on invoice extraction 
+- #542 Visualize SpecifiedLogisticsServiceCharge 
 - #531 Support ZUGFeRD 2.3.2 
+- #480 Support netherlands Euro
 
 2.14.2
 =======
