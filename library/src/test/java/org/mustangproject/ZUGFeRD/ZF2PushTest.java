@@ -88,6 +88,7 @@ public class ZF2PushTest extends TestCase {
 				.addItem(new Item(new Product("Design (hours)", "Of a sample invoice", "HUR", new BigDecimal(7)), price, new BigDecimal(1.0)))
 				.addItem(new Item(new Product("Ballons", "various colors, ~2000ml", "H87", new BigDecimal(19)), new BigDecimal("0.79"), new BigDecimal(400.0)))
 				.addItem(new Item(new Product("Hot air „heiße Luft“ (litres)", "", "LTR", new BigDecimal(19)), new BigDecimal("0.025"), new BigDecimal(800.0)))
+				.setRoundingAmount(new BigDecimal("1"))
 			);
 
 			ze.export(TARGET_PDF);
@@ -95,6 +96,15 @@ public class ZF2PushTest extends TestCase {
 			fail("Exception should not be raised");
 		}
 
+ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter(TARGET_PDF);
+		Invoice i=new Invoice();
+		try {
+			zii.extractInto(i);
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
 
 
 		// now check the contents (like MustangReaderTest)

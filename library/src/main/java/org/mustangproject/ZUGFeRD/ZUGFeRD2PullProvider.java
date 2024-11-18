@@ -334,7 +334,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		this.trans = trans;
 		this.calc = new TransactionCalculator(trans);
 
-		boolean hasDueDate = trans.getDueDate()!=null;
+		boolean hasDueDate = trans.getDueDate() != null;
 		final SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 		String exemptionReason = "";
@@ -454,7 +454,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				if (currentItem.getProduct().getClassifications() != null && currentItem.getProduct().getClassifications().length > 0) {
 					for (IDesignatedProductClassification classification : currentItem.getProduct().getClassifications()) {
 						xml += "<ram:DesignatedProductClassification>"
-							+ "<ram:ClassCode listId=\"" +  XMLTools.encodeXML(classification.getClassCode().getListID()) + "\"";
+							+ "<ram:ClassCode listId=\"" + XMLTools.encodeXML(classification.getClassCode().getListID()) + "\"";
 						if (classification.getClassCode().getListVersionID() != null) {
 							xml += " listVersionID=\"" + XMLTools.encodeXML(classification.getClassCode().getListVersionID()) + "\"";
 						}
@@ -856,7 +856,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		final String chargesTotalLine = "<ram:ChargeTotalAmount>" + currencyFormat(calc.getChargesForPercent(null)) + "</ram:ChargeTotalAmount>";
 
 		xml += "<ram:SpecifiedTradeSettlementHeaderMonetarySummation>";
-		if (getProfile() != Profiles.getByName("Minimum")) {
+		if ((getProfile() != Profiles.getByName("Minimum")) && (getProfile() != Profiles.getByName("BASICWL"))) {
 			xml += "<ram:LineTotalAmount>" + currencyFormat(calc.getTotal()) + "</ram:LineTotalAmount>";
 			xml += chargesTotalLine
 				+ allowanceTotalLine;
@@ -865,14 +865,18 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			// //
 			// currencyID=\"EUR\"
 			+ "<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
-			+ currencyFormat(calc.getGrandTotal().subtract(calc.getTaxBasis())) + "</ram:TaxTotalAmount>"
-			+ "<ram:GrandTotalAmount>" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>";
+			+ currencyFormat(calc.getGrandTotal().subtract(calc.getTaxBasis())) + "</ram:TaxTotalAmount>";
+		if (trans.getRoundingAmount() != null) {
+			xml += "<ram:RoundingAmount>" + currencyFormat(trans.getRoundingAmount()) + "</ram:RoundingAmount>";
+		}
+
+		xml += "<ram:GrandTotalAmount>" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>";
 		// //
 		// currencyID=\"EUR\"
 		if (getProfile() != Profiles.getByName("Minimum")) {
 			xml += "<ram:TotalPrepaidAmount>" + currencyFormat(calc.getTotalPrepaid()) + "</ram:TotalPrepaidAmount>";
 		}
-		xml += "<ram:DuePayableAmount>" + currencyFormat(calc.getGrandTotal().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>"
+		xml += "<ram:DuePayableAmount>" + currencyFormat(calc.getDuePayable()) + "</ram:DuePayableAmount>"
 			+ "</ram:SpecifiedTradeSettlementHeaderMonetarySummation>";
 		if (trans.getInvoiceReferencedDocumentID() != null) {
 			xml += "<ram:InvoiceReferencedDocument>"

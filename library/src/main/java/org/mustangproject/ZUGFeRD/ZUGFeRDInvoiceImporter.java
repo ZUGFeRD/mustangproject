@@ -621,6 +621,11 @@ public class ZUGFeRDInvoiceImporter {
 
 		zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]|//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyName\"]").trim());
 
+		String rounding=extractString("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"RoundingAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"Party\"]/*[local-name()=\"PayableRoundingAmount\"]");
+		if ((rounding!=null)&&(!rounding.isEmpty())) {
+			zpp.setRoundingAmount(new BigDecimal(rounding.trim()));
+		}
+
 		xpr = xpath.compile("//*[local-name()=\"BuyerReference\"]");
 		String buyerReference = null;
 		prepaidNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
