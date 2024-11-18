@@ -322,6 +322,15 @@ public interface IExportableTransaction {
 	}
 
 	/**
+	 * supplier identification assigned by the costumer
+	 *
+	 * @return the sender's identification
+	 */
+	default BigDecimal getRoundingAmount() {
+		return null;
+	}
+
+	/**
 	 * get reference document number typically used for Invoice Corrections Will be
 	 * added as IncludedNote in comfort profile
 	 *

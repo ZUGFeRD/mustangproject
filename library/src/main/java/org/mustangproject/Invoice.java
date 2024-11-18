@@ -66,6 +66,7 @@ public class Invoice implements IExportableTransaction {
 	protected String despatchAdviceReferencedDocumentID = null;
 	protected String vatDueDateTypeCode = null;
 	protected String creditorReferenceID; // required when direct debit is used.
+	private BigDecimal roundingAmount=null;
 
 	public Invoice() {
 		ZFItems = new ArrayList<>();
@@ -465,6 +466,24 @@ public class Invoice implements IExportableTransaction {
 	@Override
 	public TradeParty getSender() {
 		return sender;
+	}
+
+	/***
+	 * for currency rounding differences to 5ct e.g. in Netherlands ("Rappenrundung")
+	 * @return null if not set, otherwise BigDecimal of Euros
+	 */
+	@Override
+	public BigDecimal getRoundingAmount() {
+		return roundingAmount;
+	}
+
+	/***
+	 * for currency rounding differences to 5ct e.g. in Netherlands ("Rappenrundung")
+	 * @return fluent setter
+	 */
+	public Invoice setRoundingAmount(BigDecimal amount) {
+		 roundingAmount=amount;
+		 return this;
 	}
 
 	/***
