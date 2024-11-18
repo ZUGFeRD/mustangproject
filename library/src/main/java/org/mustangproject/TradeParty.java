@@ -93,13 +93,37 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 										}
 									}
 								}
+								if (party.item(partyIndex).getLocalName().equals("EndpointID")) {
+										Node currentNode = party.item(partyIndex);
+										if ((currentNode.getAttributes() != null &&
+											(currentNode.getAttributes().getNamedItem("schemeID") != null))
+											&& (party.item(partyIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("EM"))
+										) {
+											setEmail(currentNode.getTextContent());
+										}
+
+								}
 
 								if (currentTopElementName.equals("PartyTaxScheme")) {
 									NodeList partyTaxScheme = party.item(partyIndex).getChildNodes();
+									String CompanyId = null;
 									for (int partyTaxSchemeIndex = 0; partyTaxSchemeIndex < partyTaxScheme.getLength(); partyTaxSchemeIndex++) {
 										if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName() != null) {
 											if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName().equals("CompanyID")){
-												setTaxID(partyTaxScheme.item(partyTaxSchemeIndex).getTextContent());
+												CompanyId = (partyTaxScheme.item(partyTaxSchemeIndex).getTextContent());
+											}
+											if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName().equals("TaxScheme")){
+												NodeList taxSchemechilds = partyTaxScheme.item(partyTaxSchemeIndex).getChildNodes();
+												for (int taxSchemechildsIndex = 0; taxSchemechildsIndex < taxSchemechilds.getLength(); taxSchemechildsIndex++) {
+													if (taxSchemechilds.item(taxSchemechildsIndex).getLocalName() != null){
+														if (taxSchemechilds.item(taxSchemechildsIndex).getTextContent().equals("FC")) {
+															setTaxID(CompanyId);
+														}
+														else{
+															setVATID(CompanyId);
+														}
+													}
+												}
 											}
 										}
 
@@ -190,7 +214,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 									}
 								}
 							}
-						}
+
+					}
 
 					if (currentUBLChild.equals("GlobalID")) {
 						if (nodes.item(nodeIndex).getAttributes().getNamedItem("schemeID") != null) {
