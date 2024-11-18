@@ -1144,17 +1144,29 @@ function downloadData (element_id) {
                 <xsl:apply-templates select="./xr:VAT_BREAKDOWN"/>
             </div>
 
-            <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
-                <xsl:apply-templates select="./xr:DOCUMENT_LEVEL_ALLOWANCES"/>
-            </div>
+			<xsl:choose>
+				<xsl:when test="./xr:DOCUMENT_LEVEL_ALLOWANCES">
+					<div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
+		                <xsl:apply-templates select="./xr:DOCUMENT_LEVEL_ALLOWANCES"/>
+		            </div>
+				</xsl:when>
+			</xsl:choose>
 
-            <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
-                <xsl:apply-templates select="./xr:DOCUMENT_LEVEL_CHARGES"/>
-            </div>
-            
-            <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
-            	<xsl:apply-templates select="./xr:LOGISTICS_SERVICE_CHARGES"/>
-            </div>
+			<xsl:choose>
+				<xsl:when test="./xr:DOCUMENT_LEVEL_CHARGES">
+		            <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
+		                <xsl:apply-templates select="./xr:DOCUMENT_LEVEL_CHARGES"/>
+		            </div>
+            	</xsl:when>
+			</xsl:choose>
+
+			<xsl:choose>
+				<xsl:when test="./xr:LOGISTICS_SERVICE_CHARGES">
+		            <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
+		                <xsl:apply-templates select="./xr:LOGISTICS_SERVICE_CHARGES"/>
+		            </div>
+            	</xsl:when>
+			</xsl:choose>
 
             <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
             	<xsl:apply-templates select="./xr:LOGISTICS_SERVICE_CHARGES"/>
