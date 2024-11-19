@@ -74,6 +74,50 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 				if (currentItemNode.getLocalName() != null) {
 					String currentUBLChild = currentItemNode.getLocalName();
+					if (currentUBLChild.equals("Delivery")) {
+						NodeList delivery = currentItemNode.getChildNodes();
+						for (int deliveryIndex = 0; deliveryIndex < delivery.getLength(); deliveryIndex++) {
+							if (delivery.item(deliveryIndex).getLocalName() != null) {
+								Node currentNode = delivery.item(deliveryIndex);
+								if (currentNode.getLocalName().equals("DeliveryLocation")) {
+									NodeList deliveryLocation = currentNode.getChildNodes();
+									for (int deliveryLocationIndex = 0; deliveryLocationIndex < deliveryLocation.getLength(); deliveryLocationIndex++) {
+										if (deliveryLocation.item(deliveryLocationIndex).getLocalName() != null){
+											if (deliveryLocation.item(deliveryLocationIndex).getLocalName().equals("ID")) {
+												//Node currentNode = partyID.item(partyIDIndex);
+												setID(deliveryLocation.item(deliveryLocationIndex).getTextContent());
+												if ((deliveryLocation.item(deliveryLocationIndex).getAttributes() != null &&
+													(deliveryLocation.item(deliveryLocationIndex).getAttributes().getNamedItem("schemeID") != null))
+												) {
+													//SchemedID gid = new SchemedID().setScheme(nodes.item(nodeIndex).getAttributes().getNamedItem("schemeID").getNodeValue()).setId(nodes.item(nodeIndex).getTextContent());
+													//							addGlobalID(gid);
+													SchemedID sID = new SchemedID().setScheme(deliveryLocation.item(deliveryLocationIndex).getAttributes().getNamedItem("schemeID").getTextContent());
+													addGlobalID(sID);
+
+													//&& ((currentNode.getAttributes().getNamedItem("schemeID").getNodeValue().equals("0110") && currentNode.getAttributes().getNamedItem("schemeID").getNodeValue().equals("0100"))
+												}
+
+											}
+											if (deliveryLocation.item(deliveryLocationIndex).getLocalName().equals("Address")) {
+												NodeList address = deliveryLocation.item(deliveryLocationIndex).getChildNodes();
+												for (int addressIndex = 0; addressIndex < address.getLength(); addressIndex++) {
+													if (address.item(addressIndex).getLocalName() != null) {
+														if (address.item(addressIndex).getLocalName().equals("StreetName")) {
+															//Node currentNode = partyID.item(partyIDIndex);
+															setStreet(address.item(addressIndex).getTextContent());
+														}
+													}
+												}
+											}
+
+										}
+									}
+								}
+
+							}
+						}
+					}
+
 					if (currentUBLChild.equals("Party")) {
 
 						NodeList party = currentItemNode.getChildNodes();
@@ -173,6 +217,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 											}
 										}
 									}
+
 									if (currentTopElementName.equals("PostalAddress")) {
 
 										NodeList postal = party.item(partyIndex).getChildNodes();
@@ -280,6 +325,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 						}
 
 					}
+
 				}
 			}
 		}

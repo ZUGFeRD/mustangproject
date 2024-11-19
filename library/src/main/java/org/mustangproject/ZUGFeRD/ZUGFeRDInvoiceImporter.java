@@ -295,7 +295,7 @@ public class ZUGFeRDInvoiceImporter {
 		XPath xpath = xpathFact.newXPath();
 		XPathExpression xpr = xpath.compile("//*[local-name()=\"SellerTradeParty\"]|//*[local-name()=\"AccountingSupplierParty\"]/*");
 		NodeList SellerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-		XPathExpression shipEx = xpath.compile("//*[local-name()=\"ShipToTradeParty\"]");
+		XPathExpression shipEx = xpath.compile("//*[local-name()=\"ShipToTradeParty\"]|//*[local-name()=\"DeliveryLocation\"]");
 		NodeList deliveryNodes = (NodeList) shipEx.evaluate(getDocument(), XPathConstants.NODESET);
 		if (deliveryNodes != null) {
 			zpp.setDeliveryAddress(new TradeParty(deliveryNodes));
@@ -371,7 +371,7 @@ public class ZUGFeRDInvoiceImporter {
 				deliveryDate = new SimpleDateFormat("yyyy-MM-dd").parse(deliveryDt);
 			}
 		}
-		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeDelivery\"]");
+		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeDelivery\"]|//*[local-name()=\"Delivery\"]");
 		NodeList headerTradeDeliveryNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
 		for (int i = 0; i < headerTradeDeliveryNodes.getLength(); i++) {
