@@ -32,9 +32,10 @@ If you set up a Maven project, you can reference the mustang artifact like this:
 
 ```xml
 <dependency>
-  <groupId>org.mustangproject</groupId>
-  <artifactId>library</artifactId>
- <version>2.14.0</version>
+    <groupId>org.mustangproject</groupId>
+    <artifactId>validator</artifactId>
+    <version>2.15.0</version>
+    <classifier>shaded</classifier>
 </dependency>
 ```
 
