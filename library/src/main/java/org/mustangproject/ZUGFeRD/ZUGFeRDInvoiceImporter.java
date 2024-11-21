@@ -305,14 +305,21 @@ public class ZUGFeRDInvoiceImporter {
 		shipEx = xpath.compile("//*[local-name()=\"DeliveryLocation\"]");
 		deliveryNodes = (NodeList) shipEx.evaluate(getDocument(), XPathConstants.NODESET);
 		if (deliveryNodes!=null) {
-			String street = "";
-			if (deliveryNodes != null) {
+			String street, name, additionalStreet, city, postal, countrySubentity, line, country = null;
+			street = extractString("//*[local-name() = \"Address\"]/*[local-name() = \"StreetName\"]");
+			additionalStreet = extractString("//*[local-name() = \"Address\"]/*[local-name() = \"AdditionalStreetName\"]");
+			city = extractString("//*[local-name() = \"Address\"]/*[local-name() = \"CityName\"]");
+			postal = extractString("//*[local-name() = \"Address\"]/*[local-name() = \"PostalZone\"]");
+			countrySubentity = extractString("//*[local-name() = \"Address\"]/*[local-name() = \"CountrySubentity\"]");
+			line = extractString("//*[local-name() = \"Address\"]//*[local-name() = \"AddressLine\"]/*[local-name() = \"Line\"]");
+			country = extractString("//*[local-name() = \"Address\"]//*[local-name() = \"Country\"]/*[local-name() = \"IdentificationCode\"]");
+			name = extractString("//*[local-name() = \"DeliveryParty\"]//*[local-name() = \"PartyName\"]/*[local-name() = \"Name\"]");
 
-				//street=....
-			}
-			name=ectractString("//DeliveryParty/name");
-			zpp.setDeliveryAddress(new TradeParty(name, street...));
+			zpp.setDeliveryAddress(new TradeParty(deliveryNodes).setStreet(street).setAdditionalAddress(additionalStreet).setLocation(city).setZIP(postal).setAdditionalAddressExtension(line).setCountry(country).setName(name));
+
+
 		}
+
 
 
 		xpr = xpath.compile("//*[local-name()=\"BuyerTradeParty\"]|//*[local-name()=\"AccountingCustomerParty\"]/*");
