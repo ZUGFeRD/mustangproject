@@ -89,25 +89,44 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 												if ((deliveryLocation.item(deliveryLocationIndex).getAttributes() != null &&
 													(deliveryLocation.item(deliveryLocationIndex).getAttributes().getNamedItem("schemeID") != null))
 												) {
-													//SchemedID gid = new SchemedID().setScheme(nodes.item(nodeIndex).getAttributes().getNamedItem("schemeID").getNodeValue()).setId(nodes.item(nodeIndex).getTextContent());
-													//							addGlobalID(gid);
 													SchemedID sID = new SchemedID().setScheme(deliveryLocation.item(deliveryLocationIndex).getAttributes().getNamedItem("schemeID").getTextContent());
 													addGlobalID(sID);
-
-													//&& ((currentNode.getAttributes().getNamedItem("schemeID").getNodeValue().equals("0110") && currentNode.getAttributes().getNamedItem("schemeID").getNodeValue().equals("0100"))
 												}
-
-											}
-											if (deliveryLocation.item(deliveryLocationIndex).getLocalName().equals("Address")) {
-												NodeList address = deliveryLocation.item(deliveryLocationIndex).getChildNodes();
-												for (int addressIndex = 0; addressIndex < address.getLength(); addressIndex++) {
-													if (address.item(addressIndex).getLocalName() != null) {
-														if (address.item(addressIndex).getLocalName().equals("StreetName")) {
-															//Node currentNode = partyID.item(partyIDIndex);
-															setStreet(address.item(addressIndex).getTextContent());
+												}
+												if (deliveryLocation.item(deliveryLocationIndex).getLocalName().equals("Address")) {
+													NodeList address = currentNode.getChildNodes();
+													for (int addressChildIndex = 0; addressChildIndex < address.getLength(); addressChildIndex++) {
+														if (address.item(addressChildIndex).getLocalName() != null) {
+															if (address.item(addressChildIndex).getLocalName().equals("StreetName")) {
+																setStreet(address.item(addressChildIndex).getTextContent());
+															}
+															if (address.item(addressChildIndex).getLocalName().equals("AdditionalStreetName")) {
+																setAdditionalAddress(address.item(addressChildIndex).getTextContent());
+															}
+															if (address.item(addressChildIndex).getLocalName().equals("CityName")) {
+																setLocation(address.item(addressChildIndex).getTextContent());
+															}
+															if (address.item(addressChildIndex).getLocalName().equals("PostalZone")) {
+																setZIP(address.item(addressChildIndex).getTextContent());
+															}
 														}
 													}
 												}
+										}
+									}
+								}
+								if (currentNode.getLocalName().equals("DeliveryParty")) {
+									NodeList deliveryParty = currentNode.getChildNodes();
+									for (int deliveryPartyChildIndex = 0; deliveryPartyChildIndex < deliveryParty.getLength(); deliveryPartyChildIndex++) {
+										if (deliveryParty.item(deliveryPartyChildIndex).getLocalName() != null) {
+											if (deliveryParty.item(deliveryPartyChildIndex).getLocalName().equals("PartyName")) {
+												NodeList partyName = deliveryParty.item(deliveryPartyChildIndex).getChildNodes();
+												for (int partyNameIndex = 0; partyNameIndex < partyName.getLength(); partyNameIndex++) {
+													if (partyName.item(partyNameIndex).getLocalName() != null) {
+														setName(partyName.item(partyNameIndex).getTextContent());
+													}
+												}
+
 											}
 
 										}
@@ -154,16 +173,19 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 										if (partyID.item(partyIDIndex).getLocalName() != null) {
 											if (partyID.item(partyIDIndex).getLocalName().equals("ID")) {
 												Node currentNode = partyID.item(partyIDIndex);
-												setID(currentNode.getTextContent());
+
 												if ((currentNode.getAttributes() != null &&
 													(currentNode.getAttributes().getNamedItem("schemeID") != null))
 												) {
 													//SchemedID gid = new SchemedID().setScheme(nodes.item(nodeIndex).getAttributes().getNamedItem("schemeID").getNodeValue()).setId(nodes.item(nodeIndex).getTextContent());
 													//							addGlobalID(gid);
-													SchemedID sID = new SchemedID().setScheme(currentNode.getAttributes().getNamedItem("schemeID").getTextContent());
+													SchemedID sID = new SchemedID(currentNode.getAttributes().getNamedItem("schemeID").getTextContent(), currentNode.getTextContent());
 													addGlobalID(sID);
 
 													//&& ((currentNode.getAttributes().getNamedItem("schemeID").getNodeValue().equals("0110") && currentNode.getAttributes().getNamedItem("schemeID").getNodeValue().equals("0100"))
+												}
+												else{
+													setID(currentNode.getTextContent());
 												}
 
 											}
@@ -297,35 +319,6 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 						NodeList contact = nodes.item(nodeIndex).getChildNodes();
 						setContact(new Contact(contact));
 					}
-
-					if (currentUBLChild.equals("PostalTradeAddress")) {
-						NodeList postal = nodes.item(nodeIndex).getChildNodes();
-						for (int postalChildIndex = 0; postalChildIndex < postal.getLength(); postalChildIndex++) {
-							if (postal.item(postalChildIndex).getLocalName() != null) {
-								if (postal.item(postalChildIndex).getLocalName().equals("LineOne")) {
-									setStreet(postal.item(postalChildIndex).getTextContent());
-								}
-								if (postal.item(postalChildIndex).getLocalName().equals("LineTwo")) {
-									setAdditionalAddress(postal.item(postalChildIndex).getTextContent());
-								}
-								if (postal.item(postalChildIndex).getLocalName().equals("LineThree")) {
-									setAdditionalAddressExtension(postal.item(postalChildIndex).getTextContent());
-								}
-								if (postal.item(postalChildIndex).getLocalName().equals("CityName")) {
-									setLocation(postal.item(postalChildIndex).getTextContent());
-								}
-								if (postal.item(postalChildIndex).getLocalName().equals("PostcodeCode")) {
-									setZIP(postal.item(postalChildIndex).getTextContent());
-								}
-								if (postal.item(postalChildIndex).getLocalName().equals("CountryID")) {
-									setCountry(postal.item(postalChildIndex).getTextContent());
-								}
-
-							}
-						}
-
-					}
-
 				}
 			}
 		}
