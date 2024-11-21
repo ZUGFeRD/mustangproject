@@ -1,3 +1,11 @@
+2.16.0
+=======
+- have a bean contructor for direct debit
+-? lineTotalAmount is null 
+? be able to access ID in error message
+? log  error IDs 
+
+
 2.15.0
 =======
 2024-11-18
