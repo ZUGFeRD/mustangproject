@@ -295,10 +295,23 @@ public class ZUGFeRDInvoiceImporter {
 		XPath xpath = xpathFact.newXPath();
 		XPathExpression xpr = xpath.compile("//*[local-name()=\"SellerTradeParty\"]|//*[local-name()=\"AccountingSupplierParty\"]/*");
 		NodeList SellerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-		XPathExpression shipEx = xpath.compile("//*[local-name()=\"ShipToTradeParty\"]|//*[local-name()=\"DeliveryLocation\"]|//*[local-name()=\"DeliveryParty\"]");
+		XPathExpression shipEx = xpath.compile("//*[local-name()=\"ShipToTradeParty\"]");
 		NodeList deliveryNodes = (NodeList) shipEx.evaluate(getDocument(), XPathConstants.NODESET);
 		if (deliveryNodes != null) {
 			zpp.setDeliveryAddress(new TradeParty(deliveryNodes));
+		}
+
+		//UBL...
+		shipEx = xpath.compile("//*[local-name()=\"DeliveryLocation\"]");
+		deliveryNodes = (NodeList) shipEx.evaluate(getDocument(), XPathConstants.NODESET);
+		if (deliveryNodes!=null) {
+			String street = "";
+			if (deliveryNodes != null) {
+
+				//street=....
+			}
+			name=ectractString("//DeliveryParty/name");
+			zpp.setDeliveryAddress(new TradeParty(name, street...));
 		}
 
 
