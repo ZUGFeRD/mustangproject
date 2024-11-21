@@ -646,89 +646,47 @@ public class ZUGFeRDInvoiceImporter {
 				Item it = new Item(currentItemNode.getChildNodes(), recalcPrice);
 				zpp.addItem(it);
 
-			}
-
-			// now handling base64 encoded attachments AttachmentBinaryObject=CII, EmbeddedDocumentBinaryObject=UBL
-			xpr = xpath.compile("//*[local-name()=\"AttachmentBinaryObject\"]|//*[local-name()=\"EmbeddedDocumentBinaryObject\"]");
-			NodeList attachmentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-			for (int i = 0; i < attachmentNodes.getLength(); i++) {
-				FileAttachment fa = new FileAttachment(attachmentNodes.item(i).getAttributes().getNamedItem("filename").getNodeValue(), attachmentNodes.item(i).getAttributes().getNamedItem("mimeCode").getNodeValue(), "Data", Base64.getDecoder().decode(XMLTools.trimOrNull(attachmentNodes.item(i))));
-				fileAttachments.add(fa);
-				// filename = "Aufmass.png" mimeCode = "image/png"
-				//EmbeddedDocumentBinaryObject cbc:EmbeddedDocumentBinaryObject mimeCode="image/png" filename="Aufmass.png"
-			}
-
-			// item level charges+allowances are not yet handled but a lower item price will
-			// be read,
-			// so the invoice remains arithmetically correct
-			// -> parse document level charges+allowances
-			xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeAllowanceCharge\"]");
-			NodeList chargeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-			for (int i = 0; i < chargeNodes.getLength(); i++) {
-				NodeList chargeNodeChilds = chargeNodes.item(i).getChildNodes();
-				boolean isCharge = true;
-				String chargeAmount = null;
-				String reason = null;
-				String reasonCode = null;
-				String taxPercent = null;
-				for (int chargeChildIndex = 0; chargeChildIndex < chargeNodeChilds.getLength(); chargeChildIndex++) {
-					String chargeChildName = chargeNodeChilds.item(chargeChildIndex).getLocalName();
-					if (chargeChildName != null) {
-
-						if (chargeChildName.equals("ChargeIndicator")) {
-							NodeList indicatorChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
-							for (int indicatorChildIndex = 0; indicatorChildIndex < indicatorChilds.getLength(); indicatorChildIndex++) {
-								if ((indicatorChilds.item(indicatorChildIndex).getLocalName() != null)
-									&& (indicatorChilds.item(indicatorChildIndex).getLocalName().equals("Indicator"))) {
-									isCharge = XMLTools.trimOrNull(indicatorChilds.item(indicatorChildIndex)).equalsIgnoreCase("true");
-								}
-							}
-						} else if (chargeChildName.equals("ActualAmount")) {
-							chargeAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
-						} else if (chargeChildName.equals("Reason")) {
-							reason = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
-						} else if (chargeChildName.equals("ReasonCode")) {
-							reasonCode = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
-						} else if (chargeChildName.equals("CategoryTradeTax")) {
-							NodeList taxChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
-							for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
-								String taxItemName = taxChilds.item(taxChildIndex).getLocalName();
-								if ((taxItemName != null) && (taxItemName.equals("RateApplicablePercent") || taxItemName.equals("ApplicablePercent"))) {
-									taxPercent = XMLTools.trimOrNull(taxChilds.item(taxChildIndex));
-								}
-							}
-						}
+				xpr = xpath.compile(".//*[local-name()=\"SpecifiedTradeAllowanceCharge\"]");
+				NodeList chargeNodes = (NodeList) xpr.evaluate(currentItemNode, XPathConstants.NODESET);
+				for (int k = 0; k < chargeNodes.getLength(); k++) {
+					NodeList chargeNodeChilds = chargeNodes.item(k).getChildNodes();
+					Charge c = parseCharge(chargeNodeChilds, false);
+					if (c instanceof Allowance) {
+						it.addTotalAllowance(c);
+					} else {
+						it.addCharge(c);
 					}
 				}
-
-				if (isCharge) {
-					Charge c = new Charge(new BigDecimal(chargeAmount));
-					if (reason != null) {
-						c.setReason(reason);
-					}
-					if (reasonCode != null) {
-						c.setReasonCode(reasonCode);
-					}
-					if (taxPercent != null) {
-						c.setTaxPercent(new BigDecimal(taxPercent));
-					}
-					zpp.addCharge(c);
-				} else {
-					Allowance a = new Allowance(new BigDecimal(chargeAmount));
-					if (reason != null) {
-						a.setReason(reason);
-					}
-					if (reasonCode != null) {
-						a.setReasonCode(reasonCode);
-					}
-					if (taxPercent != null) {
-						a.setTaxPercent(new BigDecimal(taxPercent));
-					}
-					zpp.addAllowance(a);
-				}
-
 			}
+		}
 
+		// now handling base64 encoded attachments AttachmentBinaryObject=CII, EmbeddedDocumentBinaryObject=UBL
+		xpr = xpath.compile("//*[local-name()=\"AttachmentBinaryObject\"]|//*[local-name()=\"EmbeddedDocumentBinaryObject\"]");
+		NodeList attachmentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		for (int i = 0; i < attachmentNodes.getLength(); i++) {
+			FileAttachment fa = new FileAttachment(attachmentNodes.item(i).getAttributes().getNamedItem("filename").getNodeValue(), attachmentNodes.item(i).getAttributes().getNamedItem("mimeCode").getNodeValue(), "Data", Base64.getDecoder().decode(XMLTools.trimOrNull(attachmentNodes.item(i))));
+			fileAttachments.add(fa);
+			// filename = "Aufmass.png" mimeCode = "image/png"
+			//EmbeddedDocumentBinaryObject cbc:EmbeddedDocumentBinaryObject mimeCode="image/png" filename="Aufmass.png"
+		}
+
+		// item level charges+allowances are not yet handled but a lower item price will
+		// be read,
+		// so the invoice remains arithmetically correct
+		// -> parse document level charges+allowances
+		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]//*[local-name()=\"SpecifiedTradeAllowanceCharge\"]");
+		NodeList chargeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		for (int i = 0; i < chargeNodes.getLength(); i++) {
+			NodeList chargeNodeChilds = chargeNodes.item(i).getChildNodes();
+			Charge c = parseCharge(chargeNodeChilds, true);
+			if (c instanceof Allowance) {
+				zpp.addAllowance(c);
+			} else {
+				zpp.addCharge(c);
+			}
+		}
+
+		if (zpp.getZFItems() != null && zpp.getZFItems().length > 0) {
 			TransactionCalculator tc = new TransactionCalculator(zpp);
 			String expectedStringTotalGross = tc.getGrandTotal()
 				.subtract(Objects.requireNonNullElse(zpp.getTotalPrepaidAmount(), BigDecimal.ZERO)).toPlainString();
@@ -747,6 +705,72 @@ public class ZUGFeRDInvoiceImporter {
 		}
 		return zpp;
 
+	}
+
+	/**
+	 * @param isHeader true = header level charge, false = item level charge
+	 */
+	private Charge parseCharge(NodeList chargeNodeChilds, boolean isHeader) {
+		boolean isCharge = true;
+		String chargeAmount = null;
+		String reason = null;
+		String reasonCode = null;
+		String taxPercent = null;
+		for (int chargeChildIndex = 0; chargeChildIndex < chargeNodeChilds.getLength(); chargeChildIndex++) {
+			String chargeChildName = chargeNodeChilds.item(chargeChildIndex).getLocalName();
+			if (chargeChildName != null) {
+
+				if (chargeChildName.equals("ChargeIndicator")) {
+					NodeList indicatorChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
+					for (int indicatorChildIndex = 0; indicatorChildIndex < indicatorChilds.getLength(); indicatorChildIndex++) {
+						if ((indicatorChilds.item(indicatorChildIndex).getLocalName() != null)
+							&& (indicatorChilds.item(indicatorChildIndex).getLocalName().equals("Indicator"))) {
+							isCharge = XMLTools.trimOrNull(indicatorChilds.item(indicatorChildIndex)).equalsIgnoreCase("true");
+						}
+					}
+				} else if (chargeChildName.equals("ActualAmount")) {
+					chargeAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
+				} else if (chargeChildName.equals("Reason")) {
+					reason = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
+				} else if (chargeChildName.equals("ReasonCode")) {
+					reasonCode = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
+				} else if (isHeader && chargeChildName.equals("CategoryTradeTax")) {
+					NodeList taxChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
+					for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
+						String taxItemName = taxChilds.item(taxChildIndex).getLocalName();
+						if ((taxItemName != null) && (taxItemName.equals("RateApplicablePercent") || taxItemName.equals("ApplicablePercent"))) {
+							taxPercent = XMLTools.trimOrNull(taxChilds.item(taxChildIndex));
+						}
+					}
+				}
+			}
+		}
+
+		if (isCharge) {
+			Charge c = new Charge(new BigDecimal(chargeAmount));
+			if (reason != null) {
+				c.setReason(reason);
+			}
+			if (reasonCode != null) {
+				c.setReasonCode(reasonCode);
+			}
+			if (taxPercent != null) {
+				c.setTaxPercent(new BigDecimal(taxPercent));
+			}
+			return c;
+		} else {
+			Allowance a = new Allowance(new BigDecimal(chargeAmount));
+			if (reason != null) {
+				a.setReason(reason);
+			}
+			if (reasonCode != null) {
+				a.setReasonCode(reasonCode);
+			}
+			if (taxPercent != null) {
+				a.setTaxPercent(new BigDecimal(taxPercent));
+			}
+			return a;
+		}
 	}
 
 	protected Document getDocument() {

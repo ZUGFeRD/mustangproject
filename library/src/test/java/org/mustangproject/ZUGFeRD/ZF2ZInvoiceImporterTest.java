@@ -28,6 +28,7 @@ import org.mustangproject.*;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -397,4 +398,12 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+	public void testPositionAllowance() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("factur-x-with-position-allowance.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
+
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		zii.extractInto(invoice);
+		assertThat(invoice.getGrandTotal()).isEqualByComparingTo(BigDecimal.valueOf(82.63));
+	}
 }
