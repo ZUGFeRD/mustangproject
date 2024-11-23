@@ -272,12 +272,16 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	public void testXRImport() {
 		boolean hasExceptions = false;
 
-		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		ZUGFeRDImporter zii = new ZUGFeRDImporter();
+
+		int version=-1;
 		try {
 			zii.fromXML(new String(Files.readAllBytes(Paths.get("./target/testout-XR-Edge.xml")), StandardCharsets.UTF_8));
-
+			version=zii.getVersion();
 		} catch (IOException e) {
 			hasExceptions = true;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 
 		Invoice invoice = null;
@@ -287,8 +291,17 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
+
+
+
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
+
+		assertEquals(version,2);
+		assertTrue(new BigDecimal("1").compareTo(invoice.getZFItems()[0].getQuantity()) == 0);
+		LineCalculator lc=new LineCalculator(invoice.getZFItems()[0]);
+		assertTrue(new BigDecimal("1").compareTo(lc.getItemTotalNetAmount()) == 0);
+
 		assertTrue(invoice.getTradeSettlement().length==1);
 		assertTrue(invoice.getTradeSettlement()[0] instanceof IZUGFeRDTradeSettlementPayment);
 		IZUGFeRDTradeSettlementPayment paym=(IZUGFeRDTradeSettlementPayment)invoice.getTradeSettlement()[0];
