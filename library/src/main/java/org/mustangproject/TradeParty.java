@@ -65,6 +65,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	}
 
+
 	protected void parseFromUBL(NodeList nodes) {
 		if (nodes.getLength() > 0) {
 
@@ -92,43 +93,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 													SchemedID sID = new SchemedID().setScheme(deliveryLocation.item(deliveryLocationIndex).getAttributes().getNamedItem("schemeID").getTextContent());
 													addGlobalID(sID);
 												}
-												}
-												if (deliveryLocation.item(deliveryLocationIndex).getLocalName().equals("Address")) {
-													NodeList address = currentNode.getChildNodes();
-													for (int addressChildIndex = 0; addressChildIndex < address.getLength(); addressChildIndex++) {
-														if (address.item(addressChildIndex).getLocalName() != null) {
-															if (address.item(addressChildIndex).getLocalName().equals("StreetName")) {
-																setStreet(address.item(addressChildIndex).getTextContent());
-															}
-															if (address.item(addressChildIndex).getLocalName().equals("AdditionalStreetName")) {
-																setAdditionalAddress(address.item(addressChildIndex).getTextContent());
-															}
-															if (address.item(addressChildIndex).getLocalName().equals("CityName")) {
-																setLocation(address.item(addressChildIndex).getTextContent());
-															}
-															if (address.item(addressChildIndex).getLocalName().equals("PostalZone")) {
-																setZIP(address.item(addressChildIndex).getTextContent());
-															}
-														}
-													}
-												}
-										}
-									}
-								}
-								if (currentNode.getLocalName().equals("DeliveryParty")) {
-									NodeList deliveryParty = currentNode.getChildNodes();
-									for (int deliveryPartyChildIndex = 0; deliveryPartyChildIndex < deliveryParty.getLength(); deliveryPartyChildIndex++) {
-										if (deliveryParty.item(deliveryPartyChildIndex).getLocalName() != null) {
-											if (deliveryParty.item(deliveryPartyChildIndex).getLocalName().equals("PartyName")) {
-												NodeList partyName = deliveryParty.item(deliveryPartyChildIndex).getChildNodes();
-												for (int partyNameIndex = 0; partyNameIndex < partyName.getLength(); partyNameIndex++) {
-													if (partyName.item(partyNameIndex).getLocalName() != null) {
-														setName(partyName.item(partyNameIndex).getTextContent());
-													}
-												}
-
 											}
-
 										}
 									}
 								}
