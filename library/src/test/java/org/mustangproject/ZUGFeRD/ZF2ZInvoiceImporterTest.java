@@ -407,6 +407,7 @@ this would test if for all elements/attributes
 		invoiceUBL = zii.extractInvoice();
 
 		try {
+			zii.ignoreCalculationErrors=true;
 			zii.fromXML(new String(Files.readAllBytes(inputUBL.toPath()), StandardCharsets.UTF_8));
 
 		} catch (IOException e) {
