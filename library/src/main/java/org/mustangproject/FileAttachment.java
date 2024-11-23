@@ -21,7 +21,7 @@ public class FileAttachment {
 		this.mimetype = mimetype;
 		this.relation = relation;
 		this.data = data;
-		description = "Additional file attachment";
+		this.description = "Additional file attachment";
 	}
 
 	public String getDescription() {
@@ -68,8 +68,4 @@ public class FileAttachment {
 		this.data = data;
 		return this;
 	}
-
-
-
-
 }

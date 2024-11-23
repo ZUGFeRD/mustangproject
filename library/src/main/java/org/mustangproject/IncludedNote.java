@@ -59,10 +59,20 @@ public class IncludedNote {
     return content;
   }
 
+  public IncludedNote setContent(String content) {
+    this.content = content;
+    return this;
+}
+
   public SubjectCode getSubjectCode() {
     return subjectCode;
   }
-  
+
+  public IncludedNote setSubjectCode(SubjectCode subjectCode) {
+    this.subjectCode = subjectCode;
+    return this;
+  }
+
   public String toCiiXml(){
     String result = INCLUDE_START + CONTENT_START +
         XMLTools.encodeXML(getContent() )+ CONTENT_END;

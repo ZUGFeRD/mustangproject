@@ -9,12 +9,12 @@ public class DirectDebit implements IZUGFeRDTradeSettlementDebit {
 	/**
 	 * Debited account identifier (BT-91)
 	 */
-	protected final String IBAN;
+	protected String IBAN;
 
 	/**
 	 * Mandate reference identifier (BT-89)
 	 */
-	protected final String mandate;
+	protected String mandate;
 
 	/**
 	 * bean constructor
@@ -42,8 +42,18 @@ public class DirectDebit implements IZUGFeRDTradeSettlementDebit {
 		return this.IBAN;
 	}
 
+	public DirectDebit setIBAN(String iBAN) {
+		this.IBAN = iBAN;
+		return this;
+	}
+
 	@Override
 	public String getMandate() {
 		return this.mandate;
+	}
+
+	public DirectDebit setMandate(String mandate) {
+		this.mandate = mandate;
+		return this;
 	}
 }
