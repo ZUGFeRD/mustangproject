@@ -6,6 +6,7 @@ import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 import org.mustangproject.util.NodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 
 public class Product implements IZUGFeRDExportableProduct {
-	protected String unit, name, sellerAssignedID, buyerAssignedID;
+	protected String unit, name, sellerAssignedID, buyerAssignedID,ID;
 	protected String description="";
 	protected String taxExemptionReason=null;
 	protected String taxCategoryCode=null;
@@ -59,14 +60,30 @@ public class Product implements IZUGFeRDExportableProduct {
 			}
 		});
 
+
+
+
 		nodeMap.getAsString("SellerAssignedID").ifPresent(this::setSellerAssignedID);
 		nodeMap.getAsString("BuyerAssignedID").ifPresent(this::setBuyerAssignedID);
 		nodeMap.getAsString("Name").ifPresent(this::setName);
 		nodeMap.getAsString("Description").ifPresent(this::setDescription);
 
+
 		nodeMap.getAsNodeMap("ApplicableProductCharacteristic").ifPresent(apcNodes -> {
 			String key = apcNodes.getAsStringOrNull("Description");
 			String value = apcNodes.getAsStringOrNull("Value");
+			if (key != null && value != null) {
+				if (attributes == null) {
+					attributes = new HashMap<>();
+				}
+				attributes.put(key, value);
+			}
+		});
+
+		//UBL
+		nodeMap.getAsNodeMap("AdditionalItemProperty").ifPresent(aipNodes -> {
+			String key = aipNodes.getAsStringOrNull("Name");
+			String value = aipNodes.getAsStringOrNull("Value");
 			if (key != null && value != null) {
 				if (attributes == null) {
 					attributes = new HashMap<>();
