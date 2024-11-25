@@ -171,7 +171,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 												NodeList taxSchemechilds = partyTaxScheme.item(partyTaxSchemeIndex).getChildNodes();
 												for (int taxSchemechildsIndex = 0; taxSchemechildsIndex < taxSchemechilds.getLength(); taxSchemechildsIndex++) {
 													if (taxSchemechilds.item(taxSchemechildsIndex).getLocalName() != null){
-														if (taxSchemechilds.item(taxSchemechildsIndex).getTextContent().equals("FC")) {
+														if (taxSchemechilds.item(taxSchemechildsIndex).getTextContent().equals("FC") ||(taxSchemechilds.item(taxSchemechildsIndex).getTextContent().equals("NOVAT"))) {
 															setTaxID(CompanyId);
 														}
 														else{
@@ -252,8 +252,6 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 														}
 													}
-
-
 												}
 												if (postal.item(postalChildIndex).getLocalName().equals("Name")) {
 													setName(postal.item(postalChildIndex).getTextContent());
@@ -283,6 +281,41 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 					if (currentUBLChild.equals("DefinedTradeContact")) {
 						NodeList contact = nodes.item(nodeIndex).getChildNodes();
 						setContact(new Contact(contact));
+					}
+					if(currentUBLChild.equals("PayeeParty")){
+						NodeList payeeParty = nodes.item(nodeIndex).getChildNodes();
+						for (int payeePartyIndex = 0; payeePartyIndex < payeeParty.getLength(); payeePartyIndex++) {
+							if (payeeParty.item(payeePartyIndex).getLocalName() != null) {
+								if (payeeParty.item(payeePartyIndex).getLocalName().equals("PartyIdentification")) {
+									NodeList partyID = payeeParty.item(payeePartyIndex).getChildNodes();
+									for (int partyIDIndex = 0; partyIDIndex < partyID.getLength(); partyIDIndex++) {
+										if (partyID.item(partyIDIndex).getLocalName() != null) {
+											if (partyID.item(partyIDIndex).getLocalName().equals("ID")) {
+												Node currentNode = partyID.item(partyIDIndex);
+
+												if ((currentNode.getAttributes() != null &&
+													(currentNode.getAttributes().getNamedItem("schemeID") != null))
+												) {
+													//SchemedID gid = new SchemedID().setScheme(nodes.item(nodeIndex).getAttributes().getNamedItem("schemeID").getNodeValue()).setId(nodes.item(nodeIndex).getTextContent());
+													//							addGlobalID(gid);
+													SchemedID sID = new SchemedID(currentNode.getAttributes().getNamedItem("schemeID").getTextContent(), currentNode.getTextContent());
+													addGlobalID(sID);
+
+													//&& ((currentNode.getAttributes().getNamedItem("schemeID").getNodeValue().equals("0110") && currentNode.getAttributes().getNamedItem("schemeID").getNodeValue().equals("0100"))
+												}
+												else{
+													setID(currentNode.getTextContent());
+												}
+
+											}
+										}
+									}
+								}
+
+
+							}
+						}
+
 					}
 				}
 			}

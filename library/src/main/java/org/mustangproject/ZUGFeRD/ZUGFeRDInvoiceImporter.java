@@ -302,8 +302,8 @@ public class ZUGFeRDInvoiceImporter {
 		}
 
 		//UBL...
-		shipEx = xpath.compile("//*[local-name()=\"DeliveryLocation\"]");
-		deliveryNodes = (NodeList) shipEx.evaluate(getDocument(), XPathConstants.NODESET);
+		XPathExpression shipExUBL = xpath.compile("//*[local-name()=\"DeliveryLocation\"]");
+		deliveryNodes = (NodeList) shipExUBL.evaluate(getDocument(), XPathConstants.NODESET);
 		if (deliveryNodes != null) {
 			String street, name, additionalStreet, city, postal, countrySubentity, line, country = null;
 			street = extractString("//*[local-name() = \"Address\"]/*[local-name() = \"StreetName\"]");
@@ -315,7 +315,15 @@ public class ZUGFeRDInvoiceImporter {
 			country = extractString("//*[local-name() = \"Address\"]//*[local-name() = \"Country\"]/*[local-name() = \"IdentificationCode\"]");
 			name = extractString("//*[local-name() = \"DeliveryParty\"]//*[local-name() = \"PartyName\"]/*[local-name() = \"Name\"]");
 
-			zpp.setDeliveryAddress(new TradeParty(deliveryNodes).setStreet(street).setAdditionalAddress(additionalStreet).setLocation(city).setZIP(postal).setAdditionalAddressExtension(line).setCountry(country).setName(name));
+			zpp.setDeliveryAddress(new TradeParty(deliveryNodes)
+				.setStreet(street)
+				.setAdditionalAddress(additionalStreet)
+				.setLocation(city)
+				.setZIP(postal)
+				.setAdditionalAddressExtension(line)
+				.setCountry(country)
+				.setName(name)
+			);
 
 
 		}
@@ -613,7 +621,7 @@ public class ZUGFeRDInvoiceImporter {
 			zpp.setDespatchAdviceReferencedDocumentID(extractString("//*[local-name()=\"DespatchDocumentReference\"]/*[local-name()=\"ID\"]"));
 		}
 
-		//zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]|//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyName\"]").trim());
+		zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]|//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyName\"]").trim());
 
 		xpr = xpath.compile("//*[local-name()=\"BuyerReference\"]");
 		String buyerReference = null;
@@ -651,7 +659,7 @@ public class ZUGFeRDInvoiceImporter {
 			// be read,
 			// so the invoice remains arithmetically correct
 			// -> parse document level charges+allowances
-			xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeAllowanceCharge\"]|/*[local-name()=\"Invoice\"]/*[local-name()=\"AllowanceCharge\"]");//CII and UBL
+			xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeAllowanceCharge\"]|//*[local-name()=\"AllowanceCharge\"]");//CII and UBL
 			NodeList chargeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			for (int i = 0; i < chargeNodes.getLength(); i++) {
 				NodeList chargeNodeChilds = chargeNodes.item(i).getChildNodes();
