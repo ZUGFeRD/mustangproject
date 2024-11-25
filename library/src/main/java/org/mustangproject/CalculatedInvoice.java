@@ -11,11 +11,13 @@ import java.math.BigDecimal;
 
 public class CalculatedInvoice extends Invoice implements Serializable {
 
-    protected BigDecimal grandTotal=null;
+	protected BigDecimal grandTotal=null;
+	protected BigDecimal lineTotalAmount=null;
 
     public void calculate() {
         TransactionCalculator tc=new TransactionCalculator(this);
         grandTotal=tc.getGrandTotal();
+		lineTotalAmount=tc.getValue();
     }
 	public BigDecimal getGrandTotal() {
 		if (grandTotal==null) {
@@ -27,4 +29,15 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 		grandTotal=grand;
 		return this;
 	}
+	public BigDecimal getLineTotalAmount() {
+		if (lineTotalAmount==null) {
+			calculate();
+		}
+		return lineTotalAmount;
+	}
+	public CalculatedInvoice setLineTotalAmount(BigDecimal total) {
+		lineTotalAmount=total;
+		return this;
+	}
+
 }

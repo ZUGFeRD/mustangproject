@@ -1,4 +1,4 @@
-2.16.0
+2.15.1
 =======
 - #566
 - have a bean contructor for direct debit

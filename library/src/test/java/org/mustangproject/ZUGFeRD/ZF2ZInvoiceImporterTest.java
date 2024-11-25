@@ -384,13 +384,19 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		ZUGFeRDInvoiceImporter importer = new ZUGFeRDInvoiceImporter();
 		importer.doIgnoreCalculationErrors();
 		importer.setInputStream(inputStream);
-		Invoice invoice = importer.extractInvoice();
+
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		importer.extractInto(invoice);
+
 		boolean isBD=invoice.getTotalPrepaidAmount() instanceof BigDecimal;
 		assertTrue(isBD);
-		BigDecimal expected=new BigDecimal(50);
+		BigDecimal expectedPrepaid=new BigDecimal(50);
+		BigDecimal expectedLineTotal=new BigDecimal("180.76");
 		if (isBD) {
 			BigDecimal amread=invoice.getTotalPrepaidAmount();
-			assertTrue(amread.compareTo(expected) == 0);
+			BigDecimal amline=invoice.getLineTotalAmount();
+			assertTrue(amread.compareTo(expectedPrepaid) == 0);
+			assertTrue(amline.compareTo(expectedLineTotal) == 0);
 		}
 
 	}
