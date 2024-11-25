@@ -324,7 +324,7 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
-		xpr = xpath.compile("//*[local-name()=\"PrepaidAmount\"]");
+		xpr = xpath.compile("//*[local-name()=\"TotalPrepaidAmount\"]|//*[local-name()=\"PrepaidAmount\"]");
 		NodeList prepaidNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (prepaidNodes.getLength() > 0) {
 			zpp.setTotalPrepaidAmount(new BigDecimal(XMLTools.trimOrNull(prepaidNodes.item(0))));

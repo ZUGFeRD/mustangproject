@@ -5,6 +5,7 @@
 -? lineTotalAmount is null 
 ? be able to access ID in error message
 ? log  error IDs 
+- closes #579
 
 
 2.15.0
