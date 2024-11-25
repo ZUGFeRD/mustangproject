@@ -82,13 +82,13 @@ public class Product implements IZUGFeRDExportableProduct {
 
 		//UBL
 		nodeMap.getAsNodeMap("AdditionalItemProperty").ifPresent(aipNodes -> {
-			String key = aipNodes.getAsStringOrNull("Name");
-			String value = aipNodes.getAsStringOrNull("Value");
-			if (key != null && value != null) {
+			String name = aipNodes.getAsStringOrNull("Name");
+			String val = aipNodes.getAsStringOrNull("Value");
+			if (name != null && val != null) {
 				if (attributes == null) {
 					attributes = new HashMap<>();
 				}
-				attributes.put(key, value);
+				attributes.put(name, val);
 			}
 		});
 

@@ -66,6 +66,7 @@ public class Item implements IZUGFeRDExportableItem {
 			//and we additionally have vat%
 			setProduct(new Product());
 			icnm.getAsString("Name").ifPresent(product::setName);
+			icnm.getAsString("Description").ifPresent(product::setDescription);
 			icnm.getAsNodeMap("ClassifiedTaxCategory").flatMap(m -> m.getAsBigDecimal("Percent"))
 				.ifPresent(product::setVATPercent);
 		});
