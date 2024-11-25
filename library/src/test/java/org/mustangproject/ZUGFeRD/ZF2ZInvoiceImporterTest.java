@@ -396,6 +396,7 @@ this would test if for all elements/attributes
 
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.doIgnoreCalculationErrors();
 		try {
 			zii.fromXML(new String(Files.readAllBytes(inputCII.toPath()), StandardCharsets.UTF_8));
 
