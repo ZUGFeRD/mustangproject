@@ -11,6 +11,7 @@ import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.mustangproject.*;
 import org.mustangproject.Exceptions.ArithmetricException;
 import org.mustangproject.Exceptions.StructureException;
+import org.mustangproject.util.NodeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -273,6 +274,9 @@ public class ZUGFeRDInvoiceImporter {
 		}
 	}
 
+	public void setID(String id) {
+		String ud=id;
+	}
 	/***
 	 * This will parse a XML into the given invoice object
 	 * @param zpp the invoice to be altered
@@ -302,20 +306,64 @@ public class ZUGFeRDInvoiceImporter {
 		}
 
 		//UBL...
-		XPathExpression shipExUBL = xpath.compile("//*[local-name()=\"DeliveryLocation\"]");
-		deliveryNodes = (NodeList) shipExUBL.evaluate(getDocument(), XPathConstants.NODESET);
-		if (deliveryNodes != null) {
-			String street, name, additionalStreet, city, postal, countrySubentity, line, country = null;
-			street = extractString("//*[local-name() = \"Address\"]/*[local-name() = \"StreetName\"]");
-			additionalStreet = extractString("//*[local-name() = \"Address\"]/*[local-name() = \"AdditionalStreetName\"]");
-			city = extractString("//*[local-name() = \"Address\"]/*[local-name() = \"CityName\"]");
-			postal = extractString("//*[local-name() = \"Address\"]/*[local-name() = \"PostalZone\"]");
-			countrySubentity = extractString("//*[local-name() = \"Address\"]/*[local-name() = \"CountrySubentity\"]");
-			line = extractString("//*[local-name() = \"Address\"]//*[local-name() = \"AddressLine\"]/*[local-name() = \"Line\"]");
-			country = extractString("//*[local-name() = \"Address\"]//*[local-name() = \"Country\"]/*[local-name() = \"IdentificationCode\"]");
-			name = extractString("//*[local-name() = \"DeliveryParty\"]//*[local-name() = \"PartyName\"]/*[local-name() = \"Name\"]");
+		XPathExpression shipExUBL = xpath.compile("//*[local-name()=\"Delivery\"]");
+		Node deliveryNode = (Node) shipExUBL.evaluate(getDocument(), XPathConstants.NODE);
 
-			zpp.setDeliveryAddress(new TradeParty(deliveryNodes)
+		if (deliveryNode != null) {
+			TradeParty delivery=new TradeParty();
+			NodeMap nodeMap = new NodeMap(deliveryNode).getAsNodeMap("DeliveryLocation").get();
+
+			if (nodeMap != null) {
+				nodeMap.getNode("ID").ifPresent(s -> {
+					SchemedID sID = new SchemedID().setScheme(s.getAttributes().getNamedItem("schemeID").getTextContent()).setId(s.getTextContent());
+					delivery.addGlobalID(sID);
+				});
+				nodeMap.getAsNodeMap("Address").ifPresent(s -> {
+					s.getAsString("StreetName").ifPresent(t -> delivery.setStreet(t));
+				});
+				nodeMap.getAsNodeMap("Address").ifPresent(s -> {
+					s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
+				});
+				nodeMap.getAsNodeMap("Address").ifPresent(s -> {
+					s.getAsString("CityName").ifPresent(t -> delivery.setLocation(t));
+				});
+				nodeMap.getAsNodeMap("Address").ifPresent(s -> {
+					s.getAsString("PostalZone").ifPresent(t -> delivery.setZIP(t));
+				});
+				nodeMap.getAsNodeMap("Address").ifPresent(s -> {
+					s.getAsNodeMap("Country").ifPresent(t -> t.getAsString("IdentificationCode").ifPresent(u -> delivery.setCountry(u)));
+				});
+				nodeMap.getAsNodeMap("Address").ifPresent(s -> {
+					s.getAsNodeMap("AddressLine").ifPresent(t -> t.getAsString("Line").ifPresent(u -> delivery.setAdditionalAddressExtension(u)));
+				});
+				nodeMap.getAsNodeMap("Address").ifPresent(s -> {
+					s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
+				});
+				nodeMap.getAsNodeMap("Address").ifPresent(s -> {
+					s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
+				});
+			}
+
+
+			NodeMap partyMap = new NodeMap(deliveryNode).getAsNodeMap("DeliveryParty").get();
+			if (partyMap!=null) {
+				partyMap.getAsNodeMap("PartyName").ifPresent(s->{s.getAsString("Name").ifPresent(t->delivery.setName(t));});
+			}
+			String street, name, additionalStreet, city, postal, countrySubentity, line, country = null;
+/*
+			String idx  = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"ID\"]");
+			street = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name()=\"Address\"]/*[local-name()=\"StreetName\"]");
+			additionalStreet = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"Address\"]/*[local-name() = \"AdditionalStreetName\"]");
+			city = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"Address\"]/*[local-name() = \"CityName\"]");
+			postal = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"Address\"]/*[local-name() = \"PostalZone\"]");
+			countrySubentity = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"Address\"]/*[local-name() = \"CountrySubentity\"]");
+			line = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"Address\"]//*[local-name() = \"AddressLine\"]/*[local-name() = \"Line\"]");
+			country = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"Address\"]//*[local-name() = \"Country\"]/*[local-name() = \"IdentificationCode\"]");
+			name = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"DeliveryParty\"]//*[local-name() = \"PartyName\"]/*[local-name() = \"Name\"]");
+*/
+			zpp.setDeliveryAddress(delivery);
+			/*
+			zpp.setDeliveryAddress(new TradeParty()
 				.setStreet(street)
 				.setAdditionalAddress(additionalStreet)
 				.setLocation(city)
@@ -324,7 +372,7 @@ public class ZUGFeRDInvoiceImporter {
 				.setCountry(country)
 				.setName(name)
 			);
-
+*/
 
 		}
 
