@@ -1,5 +1,6 @@
 2.16.0
 =======
+- #566
 - have a bean contructor for direct debit
 -? lineTotalAmount is null 
 ? be able to access ID in error message
