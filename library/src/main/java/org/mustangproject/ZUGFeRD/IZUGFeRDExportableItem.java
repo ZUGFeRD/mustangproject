@@ -153,4 +153,12 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 		return null;
 	}
 
+
+	/***
+	 *
+	 * @return the line ID
+	 */
+	default String getId()  {
+		return null;
+	}
 }

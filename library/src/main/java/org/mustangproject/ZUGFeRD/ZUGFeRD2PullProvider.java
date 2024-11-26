@@ -401,6 +401,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		int lineID = 0;
 		for (final IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			lineID++;
+			String lineIDStr = Integer.toString(lineID);
+			if (currentItem.getId()!=null) {
+				lineIDStr=currentItem.getId();
+			}
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
@@ -408,7 +412,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if ((getProfile() != Profiles.getByName("Minimum")) && (getProfile() != Profiles.getByName("BasicWL"))) {
 				xml += "<ram:IncludedSupplyChainTradeLineItem>" +
 					"<ram:AssociatedDocumentLineDocument>"
-					+ "<ram:LineID>" + lineID + "</ram:LineID>"
+					+ "<ram:LineID>" + lineIDStr + "</ram:LineID>"
 					+ buildItemNotes(currentItem)
 					+ "</ram:AssociatedDocumentLineDocument>"
 
