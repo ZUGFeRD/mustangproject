@@ -7,6 +7,7 @@
 ? log  error IDs 
 - closes #579
 - #581
+- log error ids
 
 2.15.0
 =======
