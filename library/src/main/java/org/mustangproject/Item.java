@@ -86,7 +86,7 @@ public class Item implements IZUGFeRDExportableItem {
 		itemMap.getAsNodeMap("SpecifiedLineTradeAgreement", "SpecifiedSupplyChainTradeAgreement").ifPresent(icnm -> {
 			icnm.getAsNodeMap("BuyerOrderReferencedDocument")
 				.flatMap(bordNodes -> bordNodes.getAsString("LineID"))
-				.ifPresent(this::addReferencedLineID);
+				.ifPresent(this::setBuyerOrderReferencedDocumentLineID);
 
 			icnm.getAsNodeMap("NetPriceProductTradePrice").ifPresent(npptpNodes -> {
 				npptpNodes.getAsBigDecimal("ChargeAmount").ifPresent(this::setPrice);
@@ -127,7 +127,7 @@ public class Item implements IZUGFeRDExportableItem {
 		});
 	}
 
-	public Item addReferencedLineID(String s) {
+	public Item setBuyerOrderReferencedDocumentLineID(String s) {
 		referencedLineID = s;
 		return this;
 	}
