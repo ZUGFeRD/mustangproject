@@ -1,7 +1,11 @@
 package org.mustangproject;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.mustangproject.ZUGFeRD.IReferencedDocument;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
@@ -9,10 +13,10 @@ import org.mustangproject.util.NodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /***
  * describes any invoice line
@@ -228,6 +232,7 @@ public class Item implements IZUGFeRDExportableItem {
 	}
 
 	@Override
+	@JsonProperty("allowances")
 	public IZUGFeRDAllowanceCharge[] getItemAllowances() {
 		if (Allowances.isEmpty()) {
 			return null;
@@ -236,6 +241,7 @@ public class Item implements IZUGFeRDExportableItem {
 	}
 
 	@Override
+	@JsonProperty("charges")
 	public IZUGFeRDAllowanceCharge[] getItemCharges() {
 		if (Charges.isEmpty()) {
 			return null;
@@ -268,6 +274,12 @@ public class Item implements IZUGFeRDExportableItem {
 		Charges.add(izac);
 		return this;
 	}
+	
+	@JsonDeserialize(contentAs = Charge.class)
+	public Item setCharges(List<IZUGFeRDAllowanceCharge> izac) {
+		Charges.addAll(izac);
+		return this;
+	}
 
 	/***
 	 * Adds a item level reduction the price (will be multiplied by quantity)
@@ -277,6 +289,12 @@ public class Item implements IZUGFeRDExportableItem {
 	 */
 	public Item addAllowance(IZUGFeRDAllowanceCharge izac) {
 		Allowances.add(izac);
+		return this;
+	}
+	
+	@JsonDeserialize(contentAs = Allowance.class)
+	public Item setAllowances(List<IZUGFeRDAllowanceCharge> izac) {
+		Allowances.addAll(izac);
 		return this;
 	}
 

@@ -42,7 +42,7 @@ public class DeSerializationTest extends  ResourceCase {
 	public void testJackson() throws JsonProcessingException {
 
 		ObjectMapper mapper = new ObjectMapper();
-		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty("some org", "teststr", "55232", "teststadt", "DE").addTaxID("taxID").addBankDetails(new BankDetails("DE3600000123456", "ABCDEFG1001").setAccountName("Donald Duck")).setEmail("info@company.com")).setOwnVATID("DE0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE4711").setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE"))).setNumber("0185").addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal("1"), new BigDecimal(1.0)).setBuyerOrderReferencedDocumentLineID("referenceIdforTest"));
+		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty("some org", "teststr", "55232", "teststadt", "DE").addTaxID("taxID").addBankDetails(new BankDetails("DE3600000123456", "ABCDEFG1001").setAccountName("Donald Duck")).setEmail("info@company.com")).setOwnVATID("DE0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE4711").setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE"))).setNumber("0185").addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal("1"), new BigDecimal(1.0)).setBuyerOrderReferencedDocumentLineID("referenceIdforTest").addAllowance(new Allowance(BigDecimal.valueOf(5)).setReason("der Grund")).addCharge(new Charge(BigDecimal.valueOf(11.5)).setPercent(BigDecimal.valueOf(22.0))));
 		String jsonArray = mapper.writeValueAsString(i);
 
 		// [{"stringValue":"a","intValue":1,"booleanValue":true},
@@ -54,6 +54,10 @@ public class DeSerializationTest extends  ResourceCase {
 		assertEquals("info@company.com", fromJSON.getSender().getEmail());
 		assertEquals("info@company.com", fromJSON.getSender().getUriUniversalCommunicationID());
 		assertEquals("referenceIdforTest", fromJSON.getZFItems()[0].getBuyerOrderReferencedDocumentLineID());
+		assertEquals(BigDecimal.valueOf(5),
+				((Allowance) fromJSON.getZFItems()[0].getItemAllowances()[0]).getTotalAmount());
+		assertEquals("der Grund", ((Allowance) fromJSON.getZFItems()[0].getItemAllowances()[0]).getReason());
+		assertEquals(BigDecimal.valueOf(22.0), ((Charge) fromJSON.getZFItems()[0].getItemCharges()[0]).getPercent());
 
 	}
 
