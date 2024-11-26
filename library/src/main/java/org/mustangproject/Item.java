@@ -64,9 +64,17 @@ public class Item implements IZUGFeRDExportableItem {
 			// ubl
 			//we need: name description unitcode
 			//and we additionally have vat%
+
+			// Bhartis homework 20241126:Streams  https://www.youtube.com/watch?v=Lf01cBzmuXw and Lamdas https://www.youtube.com/watch?v=HCyx31NW8xg
 			setProduct(new Product());
 			icnm.getAsString("Name").ifPresent(product::setName);
 			icnm.getAsString("Description").ifPresent(product::setDescription);
+
+			icnm.getAsNodeMap("SellersItemIdentification").ifPresent(SellersItemIdentification -> {
+				SellersItemIdentification.getAsString("ID").ifPresent(product::setSellerAssignedID);
+			});
+//			icnm.getAsString("BuyerAssignedID").ifPresent(this::setBuyerAssignedID);
+
 			icnm.getAsNodeMap("ClassifiedTaxCategory").flatMap(m -> m.getAsBigDecimal("Percent"))
 				.ifPresent(product::setVATPercent);
 		});
@@ -98,7 +106,8 @@ public class Item implements IZUGFeRDExportableItem {
 				.forEach(this::addReferencedDocument);
 		});
 
-		itemMap.getNode("SpecifiedTradeProduct").map(Product::new).ifPresent(this::setProduct);
+		itemMap.getNode("SpecifiedTradeProduct").map(Product::new).ifPresent(this::setProduct);//CII
+		itemMap.getNode("SpecifiedTradeProduct").map(Product::new).ifPresent(this::setProduct);//UBL
 
 		// RequestedQuantity is for Order-X, BilledQuantity for FX and ZF
 		itemMap.getAsNodeMap("SpecifiedLineTradeDelivery", "SpecifiedSupplyChainTradeDelivery")
