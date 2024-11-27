@@ -12,7 +12,9 @@ import org.w3c.dom.NodeList;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /***
  * describes any invoice line
@@ -37,6 +39,7 @@ public class Item implements IZUGFeRDExportableItem {
 	protected ArrayList<ReferencedDocument> additionalReference = null;
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>();
 	protected ArrayList<IZUGFeRDAllowanceCharge> Charges = new ArrayList<>();
+	protected List<IncludedNote> includedNotes = null;
 
 	/***
 	 * default constructor
@@ -124,6 +127,38 @@ public class Item implements IZUGFeRDExportableItem {
 			}
 
 			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).forEach(this::addAdditionalReference);
+		});
+
+		itemMap.getAsString("Note").ifPresent(this::addNote);
+		itemMap.getAsNodeMap("AssociatedDocumentLineDocument").ifPresent(adld -> {
+			List<IncludedNote> includedNotes = new ArrayList<>();
+			adld.getAllNodes("IncludedNote").forEach(item -> {
+				String subjectCode = "";
+				String content = null;
+				NodeList includedNodeChilds = item.getChildNodes();
+				for (int issueDateChildIndex = 0; issueDateChildIndex < includedNodeChilds.getLength(); issueDateChildIndex++) {
+					if ((includedNodeChilds.item(issueDateChildIndex).getLocalName() != null)
+						&& (includedNodeChilds.item(issueDateChildIndex).getLocalName().equals("Content"))) {
+						content = XMLTools.trimOrNull(includedNodeChilds.item(issueDateChildIndex));
+					}
+					if ((includedNodeChilds.item(issueDateChildIndex).getLocalName() != null)
+						&& (includedNodeChilds.item(issueDateChildIndex).getLocalName().equals("SubjectCode"))) {
+						subjectCode = XMLTools.trimOrNull(includedNodeChilds.item(issueDateChildIndex));
+					}
+				}
+				boolean foundCode = false;
+				for (SubjectCode code : SubjectCode.values()) {
+					if (code.toString().equals(subjectCode)) {
+						includedNotes.add(new IncludedNote(content, code));
+						foundCode = true;
+						break;
+					}
+				}
+				if (!foundCode) {
+					includedNotes.add(new IncludedNote(content, null));
+				}
+			});
+			addNotes(includedNotes);
 		});
 	}
 
@@ -372,4 +407,19 @@ public class Item implements IZUGFeRDExportableItem {
 		return detailedDeliveryPeriodTo;
 	}
 
+	public IZUGFeRDExportableItem addNotes(Collection<IncludedNote> notes) {
+		if (notes == null) {
+			return this;
+		}
+		if (includedNotes == null) {
+			includedNotes = new ArrayList<>();
+		}
+		includedNotes.addAll(notes);
+		return this;
+	}
+
+	@Override
+	public List<IncludedNote> getNotesWithSubjectCode() {
+		return includedNotes;
+	}
 }

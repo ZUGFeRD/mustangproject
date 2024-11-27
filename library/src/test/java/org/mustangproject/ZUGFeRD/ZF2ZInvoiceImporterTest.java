@@ -22,12 +22,15 @@ package org.mustangproject.ZUGFeRD;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.commons.codec.binary.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mustangproject.*;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -397,4 +400,25 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+	@Test
+	public void testImportPositionIncludedNotes() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("ZTESTZUGFERD_1_INVDSS_012015738820PDF-1.pdf");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+		assertEquals(1, invoice.getZFItems().length);
+		assertEquals(8, invoice.getZFItems()[0].getNotesWithSubjectCode().size());
+		assertEquals("FB-LE 9999", invoice.getZFItems()[0].getNotesWithSubjectCode().stream().filter(note -> note.getSubjectCode().equals(SubjectCode.ABZ)).findFirst().get().getContent());
+	}
+
+	@Test
+	public void testImportXRechnungPositionNote() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("TESTXRECHNUNG_INVDSS_012015776085.XML");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+		assertEquals(1, invoice.getZFItems().length);
+		assertFalse(invoice.getZFItems()[0].getNotes() == null);
+		assertEquals(1, invoice.getZFItems()[0].getNotes().length);
+	}
 }

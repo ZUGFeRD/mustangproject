@@ -28,7 +28,9 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import org.mustangproject.IncludedNote;
 import org.mustangproject.Item;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -153,4 +155,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 		return null;
 	}
 
+	default List<IncludedNote> getNotesWithSubjectCode() {
+		return null;
+	}
 }
