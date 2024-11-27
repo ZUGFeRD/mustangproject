@@ -305,6 +305,7 @@ public class ZUGFeRDInvoiceImporter {
 			zpp.setDeliveryAddress(new TradeParty(deliveryNodes));
 		}
 
+
 		//UBL...
 		XPathExpression shipExUBL = xpath.compile("//*[local-name()=\"Delivery\"]");
 		Node deliveryNode = (Node) shipExUBL.evaluate(getDocument(), XPathConstants.NODE);
@@ -380,7 +381,7 @@ public class ZUGFeRDInvoiceImporter {
 		xpr = xpath.compile("//*[local-name()=\"BuyerTradeParty\"]|//*[local-name()=\"AccountingCustomerParty\"]/*");
 		NodeList BuyerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
-		xpr = xpath.compile("//*[local-name()=\"PayeeTradeParty\"]|//*[local-name()=\"PayeeParty\"]/*");
+		xpr = xpath.compile("//*[local-name()=\"PayeeTradeParty\"]|//*[local-name()=\"PayeeParty\"]//*");
 		NodeList payeeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
 		xpr = xpath.compile("//*[local-name()=\"ExchangedDocument\"]|//*[local-name()=\"HeaderExchangedDocument\"]");

@@ -111,10 +111,20 @@ public class Item implements IZUGFeRDExportableItem {
 			product.setUnit(icn.getAttributes().getNamedItem("unitCode").getNodeValue());
 		});
 
+		itemMap.getAsNodeMap("OrderLineReference")
+			.flatMap(bordNodes -> bordNodes.getAsString("LineID"))
+			.ifPresent(this::addReferencedLineID);
+
+
+
+			itemMap.getAllNodes("DocumentReference").map(ReferencedDocument::fromNode)
+				.forEach(this::addAdditionalReference);
+
 		itemMap.getAsNodeMap("SpecifiedLineTradeAgreement", "SpecifiedSupplyChainTradeAgreement").ifPresent(icnm -> {
 			icnm.getAsNodeMap("BuyerOrderReferencedDocument")
 				.flatMap(bordNodes -> bordNodes.getAsString("LineID"))
 				.ifPresent(this::addReferencedLineID);
+
 
 			icnm.getAsNodeMap("NetPriceProductTradePrice").ifPresent(npptpNodes -> {
 				npptpNodes.getAsBigDecimal("ChargeAmount").ifPresent(this::setPrice);

@@ -22,7 +22,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 
 public class Product implements IZUGFeRDExportableProduct {
-	protected String unit, name, sellerAssignedID, buyerAssignedID,ID;
+	protected String unit, name, sellerAssignedID, buyerAssignedID;
 	protected String description="";
 	protected String taxExemptionReason=null;
 	protected String taxCategoryCode=null;
