@@ -637,7 +637,21 @@ public class ZUGFeRDInvoiceImporter {
 						}
 					}
 				}
+//				if ((paymentMeansChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("DirectDebitMandateID"))) {
+//				directDebitMandateID = paymentTermChilds.item(paymentTermChildIndex).getTextContent();
+//				}
+				if((paymentMeansChilds.item(meansChildIndex).getLocalName() != null)
+					&& (paymentMeansChilds.item(meansChildIndex).getLocalName().equals("PaymentMandate"))){
+					NodeList paymentMandateChilds = paymentMeansChilds.item(meansChildIndex).getChildNodes();
+					for (int paymentMandateChildIndex = 0; paymentMandateChildIndex < paymentMandateChilds.getLength(); paymentMandateChildIndex++) {
+						if ((paymentMandateChilds.item(paymentMandateChildIndex).getLocalName() != null) && (paymentMandateChilds.item(paymentMandateChildIndex).getLocalName().equals("ID"))) {
+							directDebitMandateID = paymentMandateChilds.item(paymentMandateChildIndex).getTextContent();
+						}
+					}
+
+				}
 			}
+
 		}
 
 		zpp.setDueDate(dueDate).setDeliveryDate(deliveryDate).setIssueDate(issueDate).setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number).setDocumentCode(typeCode);

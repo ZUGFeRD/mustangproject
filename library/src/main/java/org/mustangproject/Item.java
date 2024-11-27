@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /***
  * describes any invoice line
@@ -37,6 +39,7 @@ public class Item implements IZUGFeRDExportableItem {
 	protected ArrayList<ReferencedDocument> additionalReference = null;
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>();
 	protected ArrayList<IZUGFeRDAllowanceCharge> Charges = new ArrayList<>();
+	//protected HashMap<String, String> attributes = new HashMap<>();
 
 	/***
 	 * default constructor
@@ -65,7 +68,8 @@ public class Item implements IZUGFeRDExportableItem {
 			//we need: name description unitcode
 			//and we additionally have vat%
 
-			// Bhartis homework 20241126:Streams  https://www.youtube.com/watch?v=Lf01cBzmuXw and Lamdas https://www.youtube.com/watch?v=HCyx31NW8xg
+			// Bharti's homework 20241126:Streams  https://www.youtube.com/watch?v=Lf01cBzmuXw
+			// and Lambdas https://www.youtube.com/watch?v=HCyx31NW8xg
 			setProduct(new Product());
 			icnm.getAsString("Name").ifPresent(product::setName);
 			icnm.getAsString("Description").ifPresent(product::setDescription);
@@ -73,7 +77,22 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("SellersItemIdentification").ifPresent(SellersItemIdentification -> {
 				SellersItemIdentification.getAsString("ID").ifPresent(product::setSellerAssignedID);
 			});
-//			icnm.getAsString("BuyerAssignedID").ifPresent(this::setBuyerAssignedID);
+
+			icnm.getAsNodeMap("BuyersItemIdentification").ifPresent(BuyersItemIdentification -> {
+				BuyersItemIdentification.getAsString("ID").ifPresent(product::setBuyerAssignedID);
+			});
+
+//				String name = icnm.getAsStringOrNull("Name");
+//				String val = icnm.getAsStringOrNull("Value");
+//				if (name != null && val != null) {
+//					if (attributes == null) {
+//						attributes = new HashMap<>();
+//					}
+//					product.attributes.put(name, val);
+//				}
+			//icnm.getNode("AdditionalItemProperty").flatMap(n ->n.getAttributes()).ifPresent(product::setAttributes);
+
+
 
 			icnm.getAsNodeMap("ClassifiedTaxCategory").flatMap(m -> m.getAsBigDecimal("Percent"))
 				.ifPresent(product::setVATPercent);
