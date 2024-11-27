@@ -453,6 +453,7 @@ public class XMLValidator extends Validator {
 
 				String thisFailText = "";
 				String thisFailID = "";
+				String thisFailIDStr = "";
 				String thisFailTest = "";
 				String thisFailLocation = "";
 				if (failedAsserts.getLength() > 0) {
@@ -461,7 +462,8 @@ public class XMLValidator extends Validator {
 						//nodes.item(i).getTextContent())) {
 						Node currentFailNode = failedAsserts.item(nodeIndex);
 						if (currentFailNode.getAttributes().getNamedItem("id") != null) {
-							thisFailID = " [ID " + currentFailNode.getAttributes().getNamedItem("id").getNodeValue() + "]";
+							thisFailID = currentFailNode.getAttributes().getNamedItem("id").getNodeValue();
+							thisFailIDStr = " [ID " + thisFailID + "]";
 						}
 						if (currentFailNode.getAttributes().getNamedItem("test") != null) {
 							thisFailTest = currentFailNode.getAttributes().getNamedItem("test").getNodeValue();
@@ -494,8 +496,8 @@ public class XMLValidator extends Validator {
 
 						LOGGER.info("FailedAssert ", thisFailText);
 
-						context.addResultItem(new ValidationResultItem(severity, thisFailText + thisFailID + " from " + xsltFilename + ")")
-								.setLocation(thisFailLocation).setCriterion(thisFailTest).setSection(section)
+						context.addResultItem(new ValidationResultItem(severity, thisFailText + thisFailIDStr + " from " + xsltFilename + ")")
+								.setLocation(thisFailLocation).setCriterion(thisFailTest).setSection(section).setID(thisFailID)
 								.setPart(EPart.fx));
 						failedRules++;
 

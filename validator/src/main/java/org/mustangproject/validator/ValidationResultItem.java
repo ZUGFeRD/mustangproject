@@ -12,6 +12,7 @@ public class ValidationResultItem {
 	
 	protected String message, location=null;
 	protected int section =-1;
+	protected String id =""; // e.g. "FX-SCH-A-000026"
 
 
 	private ESeverity severity=ESeverity.error;
@@ -101,6 +102,15 @@ public class ValidationResultItem {
 	}
 	public ESeverity getSeverity() {
 		return severity;
+	}
+
+	public ValidationResultItem setID(String id) {
+		this.id=id;
+		return this;
+	}
+
+	public String getID() {
+		return id;
 	}
 
 	public int getSection() {

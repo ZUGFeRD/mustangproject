@@ -381,6 +381,31 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 	@Test
+	public void testImportPrepaid() throws XPathExpressionException, ParseException {
+		InputStream inputStream = this.getClass()
+			.getResourceAsStream("/EN16931_1_Teilrechnung.pdf");
+		ZUGFeRDInvoiceImporter importer = new ZUGFeRDInvoiceImporter();
+		importer.doIgnoreCalculationErrors();
+		importer.setInputStream(inputStream);
+
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		importer.extractInto(invoice);
+
+		boolean isBD=invoice.getTotalPrepaidAmount() instanceof BigDecimal;
+		assertTrue(isBD);
+		BigDecimal expectedPrepaid=new BigDecimal(50);
+		BigDecimal expectedLineTotal=new BigDecimal("180.76");
+		if (isBD) {
+			BigDecimal amread=invoice.getTotalPrepaidAmount();
+			BigDecimal amline=invoice.getLineTotalAmount();
+			assertTrue(amread.compareTo(expectedPrepaid) == 0);
+			assertTrue(amline.compareTo(expectedLineTotal) == 0);
+		}
+
+	}
+
+
+	@Test
 	public void testImportIncludedNotes() throws XPathExpressionException, ParseException {
 		InputStream inputStream = this.getClass()
 			.getResourceAsStream("/EN16931_Einfach.pdf");

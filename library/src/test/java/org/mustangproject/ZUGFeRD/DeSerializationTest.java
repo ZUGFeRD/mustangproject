@@ -28,11 +28,17 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.mustangproject.*;
 
+import javax.xml.xpath.XPathExpressionException;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.text.ParseException;
 import java.util.Date;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class DeSerializationTest extends TestCase {
+public class DeSerializationTest extends  ResourceCase {
 	public void testJackson() throws JsonProcessingException {
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -47,6 +53,33 @@ public class DeSerializationTest extends TestCase {
 		assertEquals(fromJSON.getZFItems().length, i.getZFItems().length);
 		assertEquals("info@company.com", fromJSON.getSender().getEmail());
 		assertEquals("info@company.com", fromJSON.getSender().getUriUniversalCommunicationID());
+
+	}
+
+	public void testInvoiceLine() throws JsonProcessingException {
+		File inputCII = getResourceAsFile("factur-x.xml");
+		boolean hasExceptions = false;
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		try {
+			zii.fromXML(new String(Files.readAllBytes(inputCII.toPath()), StandardCharsets.UTF_8));
+
+		} catch (IOException e) {
+			hasExceptions = true;
+		}
+
+		CalculatedInvoice ci=new CalculatedInvoice();
+		try {
+			zii.extractInto(ci);
+		} catch (XPathExpressionException e) {
+			hasExceptions = true;
+		} catch (ParseException e) {
+			hasExceptions = true;
+		}
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonArray = mapper.writeValueAsString(ci);
+		assertFalse(hasExceptions);
+		assertTrue(jsonArray.contains("lineTotalAmount"));
 
 	}
 
