@@ -199,6 +199,9 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 												}
 												lo.setTradingBusinessName(legal.item(legalChildIndex).getTextContent());
 											}
+											if (legal.item(legalChildIndex).getLocalName().equals("CompanyLegalForm")) {
+												setDescription(legal.item(legalChildIndex).getTextContent());
+											}
 											if (legal.item(legalChildIndex).getLocalName().equals("CompanyID")) {
 												if (lo == null) {
 													lo = new LegalOrganisation();
