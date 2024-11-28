@@ -1,9 +1,11 @@
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.mustangproject.ZUGFeRD.IReferencedDocument;
 import org.mustangproject.util.NodeMap;
 import org.w3c.dom.Node;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ReferencedDocument implements IReferencedDocument {
 
 	String issuerAssignedID;

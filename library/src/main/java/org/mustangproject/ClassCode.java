@@ -20,12 +20,14 @@
  */
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
  * A schemed classification for products. The scheme can be anything defined in UNTDID 7143.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ClassCode {
 	private final String listID;
 	private final String code;

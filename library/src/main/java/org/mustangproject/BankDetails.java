@@ -7,6 +7,7 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlementPayment;
 /**
  * provides e.g. the IBAN to transfer money to :-)
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	/**
 	 * the bank account number

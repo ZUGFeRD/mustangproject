@@ -1,10 +1,12 @@
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlementDebit;
 
 /**
  * provides e.g. the IBAN to transfer money to :-)
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DirectDebit implements IZUGFeRDTradeSettlementDebit {
 	/**
 	 * Debited account identifier (BT-91)

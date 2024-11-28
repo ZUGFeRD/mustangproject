@@ -1,12 +1,14 @@
 package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
 
 /***
  * (absolute) allowances on item and document level
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Allowance extends Charge {
 
 	/***

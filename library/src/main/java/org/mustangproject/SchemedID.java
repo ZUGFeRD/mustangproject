@@ -1,5 +1,9 @@
 package org.mustangproject;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SchemedID {
 	protected String scheme;
 	protected String id;

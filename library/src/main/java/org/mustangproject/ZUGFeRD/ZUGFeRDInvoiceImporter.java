@@ -415,6 +415,14 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
+		xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"DuePayableAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"PayableAmount\"]");
+		NodeList lineDueNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (lineDueNodes.getLength() > 0) {
+			if (zpp instanceof CalculatedInvoice) {
+				((CalculatedInvoice) zpp).setDuePayable(new BigDecimal(XMLTools.trimOrNull(lineDueNodes.item(0))));
+			}
+		}
+
 		Date issueDate = null;
 		Date dueDate = null;
 		Date deliveryDate = null;
