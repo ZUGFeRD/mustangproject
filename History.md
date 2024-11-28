@@ -4,12 +4,14 @@
 ? be able to access ID in error message
 - closes #579 prepaidamount is only read in UBL
 - #581 parse lineTotalAmount
+- also parse TaxBasisAmount
 - #576 read lineid, #578 set lineid
 - log error ids
 - #503 import more ubl
 - allow jackson to run over more classes, e.g., DirectDebit, bean contructor for direct debit
 - allow json includedNotes 
 - support importing duePayableAmount
+
 
 2.15.0
 =======

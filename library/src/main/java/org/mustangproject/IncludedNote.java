@@ -1,11 +1,13 @@
 package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * A grouping of business terms to indicate accounting-relevant free texts including a qualification of these.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class IncludedNote {
 	private String content;
 

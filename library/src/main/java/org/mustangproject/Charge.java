@@ -2,6 +2,7 @@ package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IAbsoluteValueProvider;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
  * Absolute and relative charges for document and item level
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Charge implements IZUGFeRDAllowanceCharge {
 
 	/**

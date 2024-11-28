@@ -400,6 +400,19 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
+		xpr = xpath.compile("//*[local-name()=\"TaxBasisTotalAmount\"]|//*[local-name()=\"TaxExclusiveAmount\"]");
+		BigDecimal expectedTaxBasis = null;
+		NodeList basisNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (basisNodes.getLength() > 0) {
+			expectedTaxBasis = new BigDecimal(XMLTools.trimOrNull(basisNodes.item(0)));
+			if (zpp instanceof CalculatedInvoice) {
+				// usually we would re-calculate the invoice to get expectedGrandTotal
+				// however, for "minimal" invoices or other invoices without lines
+				// this will not work
+				((CalculatedInvoice) zpp).setTaxBasis(expectedTaxBasis);
+			}
+		}
+
 		xpr = xpath.compile("//*[local-name()=\"TotalPrepaidAmount\"]|//*[local-name()=\"PrepaidAmount\"]");
 		NodeList prepaidNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (prepaidNodes.getLength() > 0) {

@@ -21,6 +21,7 @@
 package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
 
 /**
@@ -28,6 +29,7 @@ import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class DesignatedProductClassification implements IDesignatedProductClassification {
 	private final ClassCode classCode;
 	private String className;
