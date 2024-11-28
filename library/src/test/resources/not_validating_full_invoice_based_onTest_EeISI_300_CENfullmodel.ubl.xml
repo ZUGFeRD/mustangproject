@@ -65,9 +65,6 @@
             <cac:PartyIdentification>
                 <cbc:ID schemeID="0110">Seller identifier 2</cbc:ID>
             </cac:PartyIdentification>
-            <cac:PartyIdentification>
-                <cbc:ID schemeID="SEPA">Bank assigned creditor identifier</cbc:ID>
-            </cac:PartyIdentification>
             <cac:PartyName>
                 <cbc:Name>Seller trading name</cbc:Name>
             </cac:PartyName>

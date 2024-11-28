@@ -70,7 +70,7 @@ public class Item implements IZUGFeRDExportableItem {
 
 			// Bharti's homework 20241126:Streams  https://www.youtube.com/watch?v=Lf01cBzmuXw
 			// and Lambdas https://www.youtube.com/watch?v=HCyx31NW8xg
-			setProduct(new Product());
+			setProduct(new Product(itemMap.getNode("Item").get()));
 			icnm.getAsString("Name").ifPresent(product::setName);
 			icnm.getAsString("Description").ifPresent(product::setDescription);
 
@@ -111,14 +111,19 @@ public class Item implements IZUGFeRDExportableItem {
 			product.setUnit(icn.getAttributes().getNamedItem("unitCode").getNodeValue());
 		});
 
+		itemMap.getAllNodes("DocumentReference").map(ReferencedDocument::fromNode)
+				.forEach(this::addReferencedDocument);
+
+		// ubl
+
 		itemMap.getAsNodeMap("OrderLineReference")
+			// ubl
 			.flatMap(bordNodes -> bordNodes.getAsString("LineID"))
 			.ifPresent(this::addReferencedLineID);
 
 
 
-			itemMap.getAllNodes("DocumentReference").map(ReferencedDocument::fromNode)
-				.forEach(this::addAdditionalReference);
+
 
 		itemMap.getAsNodeMap("SpecifiedLineTradeAgreement", "SpecifiedSupplyChainTradeAgreement").ifPresent(icnm -> {
 			icnm.getAsNodeMap("BuyerOrderReferencedDocument")
@@ -131,8 +136,8 @@ public class Item implements IZUGFeRDExportableItem {
 				npptpNodes.getAsBigDecimal("BasisQuantity").ifPresent(this::setBasisQuantity);
 			});
 
-			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode)
-				.forEach(this::addReferencedDocument);
+			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).
+				forEach(this::addReferencedDocument);
 		});
 
 		itemMap.getNode("SpecifiedTradeProduct").map(Product::new).ifPresent(this::setProduct);//CII

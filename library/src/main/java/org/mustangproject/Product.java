@@ -80,6 +80,7 @@ public class Product implements IZUGFeRDExportableProduct {
 			}
 		});
 
+
 		//UBL
 		nodeMap.getAsNodeMap("AdditionalItemProperty").ifPresent(aipNodes -> {
 			String name = aipNodes.getAsStringOrNull("Name");
@@ -92,6 +93,13 @@ public class Product implements IZUGFeRDExportableProduct {
 			}
 		});
 
+		nodeMap.getAsNodeMap("CommodityClassification").ifPresent(dpcNodes -> {
+			String className = dpcNodes.getAsStringOrNull("ClassName");
+			dpcNodes.getNode("ItemClassificationCode").map(ClassCode::fromNode).ifPresent(classCode ->
+				classifications.add(new DesignatedProductClassification(classCode, className)));
+		});
+
+		//UBL
 		nodeMap.getAsNodeMap("DesignatedProductClassification").ifPresent(dpcNodes -> {
 			String className = dpcNodes.getAsStringOrNull("ClassName");
 			dpcNodes.getNode("ClassCode").map(ClassCode::fromNode).ifPresent(classCode ->
@@ -131,6 +139,7 @@ public class Product implements IZUGFeRDExportableProduct {
 		globalId = schemedID;
 		return this;
 	}
+
 
 	/***
 	 *

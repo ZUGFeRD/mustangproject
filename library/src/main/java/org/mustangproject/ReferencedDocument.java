@@ -22,7 +22,7 @@ public class ReferencedDocument implements IReferencedDocument {
 		this.referenceTypeCode = referenceTypeCode;
 	}
 
-	/***
+    /***
 	 * sets an ID assigned by the sender
 	 * @param issuerAssignedID the ID as a string :-)
 	 */

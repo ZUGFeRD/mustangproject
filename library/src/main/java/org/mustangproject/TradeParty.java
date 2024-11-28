@@ -226,9 +226,10 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 								if (currentTopElementName.equals("PartyLegalEntity")) {
 									NodeList legal = party.item(partyIndex).getChildNodes();
+									LegalOrganisation lo = null;
 									for (int legalChildIndex = 0; legalChildIndex < legal.getLength(); legalChildIndex++) {
 										if (legal.item(legalChildIndex).getLocalName() != null) {
-											LegalOrganisation lo = null;
+
 											if (legal.item(legalChildIndex).getLocalName().equals("RegistrationName")) {
 												if (lo == null) {
 													lo = new LegalOrganisation();
