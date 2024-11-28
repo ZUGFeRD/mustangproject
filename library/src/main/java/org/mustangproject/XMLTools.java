@@ -92,7 +92,7 @@ public class XMLTools extends XMLWriter {
 	/***
 	 * formats a number so that at least minDecimals are displayed but at the maximum maxDecimals are there, i.e.
 	 * cuts potential 0s off the end until minDecimals
-	 * @param value
+	 * @param value the value to be formatted
 	 * @param maxDecimals number of maximal scale
 	 * @param minDecimals number of minimal scale
 	 * @return value as String with decimals in the specified range
@@ -138,7 +138,7 @@ public class XMLTools extends XMLWriter {
 	}
 
 	/***
-	 * relplaces some entities like < , > and & with their escaped pendant like &lt;
+	 * relplaces some entities like &lt; , &gt; and &amp; with their escaped pendant like &amp;lt;
 	 * @param s the string
 	 * @return the "safe" string
 	 */

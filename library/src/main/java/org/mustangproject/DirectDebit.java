@@ -9,12 +9,19 @@ public class DirectDebit implements IZUGFeRDTradeSettlementDebit {
 	/**
 	 * Debited account identifier (BT-91)
 	 */
-	protected final String IBAN;
+	protected String IBAN;
 
 	/**
 	 * Mandate reference identifier (BT-89)
 	 */
-	protected final String mandate;
+	protected String mandate;
+
+	/**
+	 * bean constructor
+	 */
+	public DirectDebit() {
+
+	}
 
 	/***
 	 * constructor for normal use :-)

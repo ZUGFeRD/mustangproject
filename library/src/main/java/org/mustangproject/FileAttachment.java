@@ -8,6 +8,14 @@ public class FileAttachment {
 	protected String description;
 	protected byte[] data;
 
+
+	/***
+	 * bean contructor
+	 */
+	public FileAttachment() {
+
+	}
+
 	public FileAttachment(String filename, String mimetype, String relation, byte[] data) {
 		this.filename = filename;
 		this.mimetype = mimetype;

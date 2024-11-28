@@ -655,6 +655,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 
 	/**
 	 * returns a list of LineItems
+	 * @deprecated use invoiceimporter getZFItems
 	 *
 	 * @return a List of LineItem instances
 	 */

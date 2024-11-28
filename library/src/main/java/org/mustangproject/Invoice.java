@@ -66,6 +66,7 @@ public class Invoice implements IExportableTransaction {
 	protected String despatchAdviceReferencedDocumentID = null;
 	protected String vatDueDateTypeCode = null;
 	protected String creditorReferenceID; // required when direct debit is used.
+	private BigDecimal roundingAmount=null;
 
 	public Invoice() {
 		ZFItems = new ArrayList<>();
@@ -468,6 +469,26 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	/***
+	 * for currency rounding differences to 5ct e.g. in Netherlands ("Rappenrundung")
+	 * @return null if not set, otherwise BigDecimal of Euros
+	 */
+	@Override
+	public BigDecimal getRoundingAmount() {
+		return roundingAmount;
+	}
+
+	/***
+	 * set the cent e.g. to reach the next 5ct mark for currencies in certain countries
+	 * e.g. in the Netherlands ("Rappenrundung")
+	 * @param amount
+	 * @return fluent setter
+	 */
+	public Invoice setRoundingAmount(BigDecimal amount) {
+		 roundingAmount=amount;
+		 return this;
+	}
+
+	/***
 	 * sets a named sender contact
 	 * @deprecated use setSender
 	 * @see Contact
@@ -524,8 +545,8 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * this is wrong and only used from jackson
-	 * @param iza
-	 * @return
+	 * @param iza the Array of allowances/charges
+	 * @return fluent setter
 	 */
 	public Invoice setZFAllowances(Allowance[] iza) {
 		Allowances=new ArrayList<>();
@@ -548,8 +569,8 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * this is wrong and only used from jackson
-	 * @param iza
-	 * @return
+	 * @param iza the array of charges
+	 * @return fluent setter
 	 */
 	public Invoice setZFCharges(Charge[] iza) {
 		Charges=new ArrayList<>();

@@ -97,6 +97,9 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("ClassifiedTaxCategory").flatMap(m -> m.getAsBigDecimal("Percent"))
 				.ifPresent(product::setVATPercent);
 		});
+		itemMap.getAsNodeMap("AssociatedDocumentLineDocument").ifPresent(icnm -> {
+			icnm.getAsString("LineID").ifPresent(this::setId);
+		});
 
 		itemMap.getAsNodeMap("Price").ifPresent(icnm -> {
 			// ubl

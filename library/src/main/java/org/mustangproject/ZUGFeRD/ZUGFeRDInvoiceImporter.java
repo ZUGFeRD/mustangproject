@@ -102,7 +102,7 @@ public class ZUGFeRDInvoiceImporter {
 
 	/***
 	 * return the file names of all files embedded into the PDF
-	 * @see for XML embedded files please use ZUGFeRDInvoiceImporter.getFileAttachmentsXML
+	 * @see ZUGFeRDInvoiceImporter for XML embedded files please use ZUGFeRDInvoiceImporter.getFileAttachmentsXML
 	 * @return a ArrayList of FileAttachments, empty if none
 	 */
 	public List<FileAttachment> getFileAttachmentsPDF() {
@@ -229,7 +229,7 @@ public class ZUGFeRDInvoiceImporter {
 	 * set the xml of a CII invoice
 	 * @param rawXML the xml string
 	 * @param doParse automatically parse input for zugferdImporter (not ZUGFeRDInvoiceImporter)
-	 * @throws IOException
+	 * @throws IOException if parsing xml throws it (unlikely its string based)
 	 */
 	public void setRawXML(byte[] rawXML, boolean doParse) throws IOException {
 		this.containsMeta = true;
@@ -249,7 +249,7 @@ public class ZUGFeRDInvoiceImporter {
 	/***
 	 * set the xml of a CII invoice, simple version
 	 * @param rawXML the cii(?) as a string
-	 * @throws IOException
+	 * @throws IOException  if parsing xml throws it (unlikely its string based)
 	 */
 	public void setRawXML(byte[] rawXML) throws IOException {
 		setRawXML(rawXML, true);
@@ -400,10 +400,19 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
-		xpr = xpath.compile("//*[local-name()=\"PrepaidAmount\"]");
+		xpr = xpath.compile("//*[local-name()=\"TotalPrepaidAmount\"]|//*[local-name()=\"PrepaidAmount\"]");
 		NodeList prepaidNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (prepaidNodes.getLength() > 0) {
 			zpp.setTotalPrepaidAmount(new BigDecimal(XMLTools.trimOrNull(prepaidNodes.item(0))));
+		}
+
+
+		xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"LineTotalAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"LineExtensionAmount\"]");
+		NodeList lineTotalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (lineTotalNodes.getLength() > 0) {
+			if (zpp instanceof CalculatedInvoice) {
+				((CalculatedInvoice) zpp).setLineTotalAmount(new BigDecimal(XMLTools.trimOrNull(lineTotalNodes.item(0))));
+			}
 		}
 
 		Date issueDate = null;
@@ -430,6 +439,34 @@ public class ZUGFeRDInvoiceImporter {
 						}
 					}
 				}
+				List<IncludedNote> includedNotes = new ArrayList<>();
+				if ((item.getLocalName() != null) && (item.getLocalName().equals("IncludedNote"))) {
+					String subjectCode = "";
+					String content = null;
+					NodeList includedNodeChilds = item.getChildNodes();
+					for (int issueDateChildIndex = 0; issueDateChildIndex < includedNodeChilds.getLength(); issueDateChildIndex++) {
+						if ((includedNodeChilds.item(issueDateChildIndex).getLocalName() != null)
+							&& (includedNodeChilds.item(issueDateChildIndex).getLocalName().equals("Content"))) {
+							content = XMLTools.trimOrNull(includedNodeChilds.item(issueDateChildIndex));
+						}
+						if ((includedNodeChilds.item(issueDateChildIndex).getLocalName() != null)
+							&& (includedNodeChilds.item(issueDateChildIndex).getLocalName().equals("SubjectCode"))) {
+							subjectCode = XMLTools.trimOrNull(includedNodeChilds.item(issueDateChildIndex));
+						}
+					}
+					switch (subjectCode){
+						case "AAI": includedNotes.add(IncludedNote.generalNote(content)); break;
+						case "REG": includedNotes.add(IncludedNote.regulatoryNote(content)); break;
+						case "ABL": includedNotes.add(IncludedNote.legalNote(content)); break;
+						case "CUS": includedNotes.add(IncludedNote.customsNote(content)); break;
+						case "SUR": includedNotes.add(IncludedNote.sellerNote(content)); break;
+						case "TXD": includedNotes.add(IncludedNote.taxNote(content)); break;
+						case "ACY": includedNotes.add(IncludedNote.introductionNote(content)); break;
+						case "AAK": includedNotes.add(IncludedNote.discountBonusNote(content)); break;
+						default: includedNotes.add(IncludedNote.unspecifiedNote(content)); break;
+					}
+				}
+				zpp.addNotes(includedNotes);
 			}
 		}
 		String rootNode = extractString("local-name(/*)");
@@ -686,11 +723,16 @@ public class ZUGFeRDInvoiceImporter {
 
 		zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]|//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyName\"]").trim());
 
+		String rounding=extractString("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"RoundingAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"Party\"]/*[local-name()=\"PayableRoundingAmount\"]");
+		if ((rounding!=null)&&(!rounding.isEmpty())) {
+			zpp.setRoundingAmount(new BigDecimal(rounding.trim()));
+		}
+
 		xpr = xpath.compile("//*[local-name()=\"BuyerReference\"]");
 		String buyerReference = null;
-		prepaidNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-		if (prepaidNodes.getLength() > 0) {
-			buyerReference = XMLTools.trimOrNull(prepaidNodes.item(0));
+		lineTotalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (lineTotalNodes.getLength() > 0) {
+			buyerReference = XMLTools.trimOrNull(lineTotalNodes.item(0));
 		}
 		if (buyerReference != null) {
 			zpp.setReferenceNumber(buyerReference);

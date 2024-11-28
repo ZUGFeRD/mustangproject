@@ -154,6 +154,8 @@
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']"/>
             <xsl:apply-templates mode="BG-21"
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']"/>
+            <xsl:apply-templates mode="BG-X-42"
+                                 select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge"/>                     
             <xsl:apply-templates mode="BG-22"
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation"/>
             <xsl:apply-templates mode="BG-23"
@@ -1632,6 +1634,57 @@
             </xsl:call-template>
             <!-- End: Jan Thiele -->
         </xr:Document_level_charge_reason_code>
+    </xsl:template>
+    <xsl:template mode="BG-X-42"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge">
+        <xsl:variable name="bg-contents"
+                      as="item()*"><!--Der Pfad /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge der Instanz in konkreter Syntax wird auf 4 Objekte abgebildet. -->
+            <xsl:apply-templates mode="BT-X-271" select="./ram:Description"/>
+            <xsl:apply-templates mode="BT-X-272" select="./ram:AppliedAmount"/>
+            <xsl:apply-templates mode="BT-X-273" select="./ram:AppliedTradeTax/ram:CategoryCode"/>
+            <xsl:apply-templates mode="BT-X-274" select="./ram:AppliedTradeTax/ram:RateApplicablePercent"/>
+        </xsl:variable>
+        <xsl:if test="$bg-contents">
+            <xr:LOGISTICS_SERVICE_CHARGES>
+                <xsl:attribute name="xr:id" select="'BG-X-42'"/>
+                <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+                <xsl:sequence select="$bg-contents"/>
+            </xr:LOGISTICS_SERVICE_CHARGES>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template mode="BT-X-271"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:Description">
+        <xr:Logistics_service_charge_description>
+            <xsl:attribute name="xr:id" select="'BT-X-271'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="amount"/>
+        </xr:Logistics_service_charge_description>
+    </xsl:template>
+    <xsl:template mode="BT-X-272"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedAmount">
+        <xr:Logistics_service_charge_amount>
+            <xsl:attribute name="xr:id" select="'BT-X-272'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="amount"/>
+        </xr:Logistics_service_charge_amount>
+    </xsl:template>
+    <xsl:template mode="BT-X-273"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax/ram:CategoryCode">
+        <xr:Logistics_service_charge_VAT_category_code>
+            <xsl:attribute name="xr:id" select="'BT-X-273'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="code.UNTDID.5305">
+                <xsl:with-param name="myparam" select="."/>
+            </xsl:call-template>
+        </xr:Logistics_service_charge_VAT_category_code>
+    </xsl:template>
+    <xsl:template mode="BT-X-274"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax/ram:RateApplicablePercent">
+        <xr:Logistics_service_charge_VAT_rate>
+            <xsl:attribute name="xr:id" select="'BT-X-274'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="percentage"/>
+        </xr:Logistics_service_charge_VAT_rate>
     </xsl:template>
     <xsl:template mode="BG-22"
                   match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation">
