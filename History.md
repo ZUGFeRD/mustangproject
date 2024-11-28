@@ -4,12 +4,12 @@
 - have a bean contructor for direct debit
 -? lineTotalAmount is null 
 ? be able to access ID in error message
-? log  error IDs 
 - closes #579
 - #581
 - #576
 - #578
 - log error ids
+- #503 import more ubl
 
 2.15.0
 =======
