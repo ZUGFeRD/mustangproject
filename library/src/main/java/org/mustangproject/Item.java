@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /***
  * describes any invoice line
@@ -37,6 +39,7 @@ public class Item implements IZUGFeRDExportableItem {
 	protected ArrayList<ReferencedDocument> additionalReference = null;
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>();
 	protected ArrayList<IZUGFeRDAllowanceCharge> Charges = new ArrayList<>();
+	//protected HashMap<String, String> attributes = new HashMap<>();
 
 	/***
 	 * default constructor
@@ -64,8 +67,33 @@ public class Item implements IZUGFeRDExportableItem {
 			// ubl
 			//we need: name description unitcode
 			//and we additionally have vat%
+
+			// Bharti's homework 20241126:Streams  https://www.youtube.com/watch?v=Lf01cBzmuXw
+			// and Lambdas https://www.youtube.com/watch?v=HCyx31NW8xg
 			setProduct(new Product());
 			icnm.getAsString("Name").ifPresent(product::setName);
+			icnm.getAsString("Description").ifPresent(product::setDescription);
+
+			icnm.getAsNodeMap("SellersItemIdentification").ifPresent(SellersItemIdentification -> {
+				SellersItemIdentification.getAsString("ID").ifPresent(product::setSellerAssignedID);
+			});
+
+			icnm.getAsNodeMap("BuyersItemIdentification").ifPresent(BuyersItemIdentification -> {
+				BuyersItemIdentification.getAsString("ID").ifPresent(product::setBuyerAssignedID);
+			});
+
+//				String name = icnm.getAsStringOrNull("Name");
+//				String val = icnm.getAsStringOrNull("Value");
+//				if (name != null && val != null) {
+//					if (attributes == null) {
+//						attributes = new HashMap<>();
+//					}
+//					product.attributes.put(name, val);
+//				}
+			//icnm.getNode("AdditionalItemProperty").flatMap(n ->n.getAttributes()).ifPresent(product::setAttributes);
+
+
+
 			icnm.getAsNodeMap("ClassifiedTaxCategory").flatMap(m -> m.getAsBigDecimal("Percent"))
 				.ifPresent(product::setVATPercent);
 		});
@@ -86,10 +114,20 @@ public class Item implements IZUGFeRDExportableItem {
 			product.setUnit(icn.getAttributes().getNamedItem("unitCode").getNodeValue());
 		});
 
+		itemMap.getAsNodeMap("OrderLineReference")
+			.flatMap(bordNodes -> bordNodes.getAsString("LineID"))
+			.ifPresent(this::addReferencedLineID);
+
+
+
+			itemMap.getAllNodes("DocumentReference").map(ReferencedDocument::fromNode)
+				.forEach(this::addAdditionalReference);
+
 		itemMap.getAsNodeMap("SpecifiedLineTradeAgreement", "SpecifiedSupplyChainTradeAgreement").ifPresent(icnm -> {
 			icnm.getAsNodeMap("BuyerOrderReferencedDocument")
 				.flatMap(bordNodes -> bordNodes.getAsString("LineID"))
 				.ifPresent(this::addReferencedLineID);
+
 
 			icnm.getAsNodeMap("NetPriceProductTradePrice").ifPresent(npptpNodes -> {
 				npptpNodes.getAsBigDecimal("ChargeAmount").ifPresent(this::setPrice);
@@ -100,7 +138,8 @@ public class Item implements IZUGFeRDExportableItem {
 				.forEach(this::addReferencedDocument);
 		});
 
-		itemMap.getNode("SpecifiedTradeProduct").map(Product::new).ifPresent(this::setProduct);
+		itemMap.getNode("SpecifiedTradeProduct").map(Product::new).ifPresent(this::setProduct);//CII
+		itemMap.getNode("SpecifiedTradeProduct").map(Product::new).ifPresent(this::setProduct);//UBL
 
 		// RequestedQuantity is for Order-X, BilledQuantity for FX and ZF
 		itemMap.getAsNodeMap("SpecifiedLineTradeDelivery", "SpecifiedSupplyChainTradeDelivery")
