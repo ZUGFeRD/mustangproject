@@ -70,8 +70,8 @@ public class ReferencedDocument implements IReferencedDocument {
 			return null;
 		}
 		NodeMap nodes = new NodeMap(node);
-		return new ReferencedDocument(nodes.getAsStringOrNull("IssuerAssignedID"),
-			nodes.getAsStringOrNull("TypeCode"),
+		return new ReferencedDocument(nodes.getAsStringOrNull("IssuerAssignedID", "ID"),
+			nodes.getAsStringOrNull("TypeCode", "DocumentTypeCode"),
 			nodes.getAsStringOrNull("ReferenceTypeCode"));
 	}
 }

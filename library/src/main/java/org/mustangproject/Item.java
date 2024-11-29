@@ -115,7 +115,7 @@ public class Item implements IZUGFeRDExportableItem {
 		});
 
 		itemMap.getAllNodes("DocumentReference").map(ReferencedDocument::fromNode)
-				.forEach(this::addReferencedDocument);
+				.forEach(this::addAdditionalReference);
 
 		// ubl
 

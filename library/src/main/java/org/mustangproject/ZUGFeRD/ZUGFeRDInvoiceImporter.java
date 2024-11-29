@@ -306,6 +306,7 @@ public class ZUGFeRDInvoiceImporter {
 		}
 
 
+
 		//UBL...
 		XPathExpression shipExUBL = xpath.compile("//*[local-name()=\"Delivery\"]");
 		Node deliveryNode = (Node) shipExUBL.evaluate(getDocument(), XPathConstants.NODE);
@@ -381,8 +382,39 @@ public class ZUGFeRDInvoiceImporter {
 		xpr = xpath.compile("//*[local-name()=\"BuyerTradeParty\"]|//*[local-name()=\"AccountingCustomerParty\"]/*");
 		NodeList BuyerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
-		xpr = xpath.compile("//*[local-name()=\"PayeeTradeParty\"]|//*[local-name()=\"PayeeParty\"]/*");
+		xpr = xpath.compile("//*[local-name()=\"PayeeTradeParty\"]");
 		NodeList payeeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+
+		// UBL
+		XPathExpression shipPayee = xpath.compile("//*[local-name()=\"PayeeParty\"]/*");
+		NodeList ublPayeeNodes = (NodeList) shipPayee.evaluate(getDocument(), XPathConstants.NODESET);
+
+//		if(ublPayeeNodes != null) {
+//			TradeParty payee = new TradeParty();
+//			NodeMap nodeMap = new NodeMap(ublPayeeNodes).getAsNodeMap("PayeeParty").get();
+//			nodeMap.getNode("ID").ifPresent(s -> {
+//				SchemedID sID = new SchemedID().setScheme(s.getAttributes().getNamedItem("schemeID").getTextContent()).setId(s.getTextContent());
+//				payee.addGlobalID(sID);
+//			});
+//		}
+		//NodeList UBLpayeeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		zpp.setPayee(new TradeParty(ublPayeeNodes));
+//		TradeParty payee =new TradeParty();
+//		NodeMap payeeID = new NodeMap(UBLpayeeNodes).getAsNodeMap("PartyIdentification").get();
+//		if (payeeID !=null) {
+//			payeeID.getAsString("Name").ifPresent(t->payee.setName(t));
+//		}
+//		if (payeeNodes != null) {
+//			TradeParty payee =new TradeParty();
+//			NodeMap nodeMap = new NodeMap(payeeNodes).getAsNodeMap("PartyIdentification").get();
+//			if (nodeMap != null) {
+//				nodeMap.getNode("ID").ifPresent(s -> {
+//					SchemedID sID = new SchemedID().setScheme(s.getAttributes().getNamedItem("schemeID").getTextContent()).setId(s.getTextContent());
+//					payee.addGlobalID(sID);
+//				});
+//			}
+//		}
+
 
 		xpr = xpath.compile("//*[local-name()=\"ExchangedDocument\"]|//*[local-name()=\"HeaderExchangedDocument\"]");
 		NodeList ExchangedDocumentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
@@ -505,6 +537,9 @@ public class ZUGFeRDInvoiceImporter {
 				deliveryDate = new SimpleDateFormat("yyyy-MM-dd").parse(deliveryDt);
 			}
 		}
+		xpr = xpath.compile("//*[local-name()=\"Invoice\"]/*[local-name()=\"Note\"]");
+		Node note = (Node) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+
 		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeDelivery\"]|//*[local-name()=\"Delivery\"]");
 		NodeList headerTradeDeliveryNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
