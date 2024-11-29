@@ -18,15 +18,17 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	/**
 	 * BIC, I believe it's optional
 	 */
-	protected String BIC=null;
+	protected String BIC = null;
 	/**
 	 * the "name" of the bank account (holder)
 	 */
-	protected String accountName=null;
+	protected String accountName = null;
+
 	/***
 	 * bean constructor
 	 */
-	public BankDetails() {	}
+	public BankDetails() {
+	}
 
 	/***
 	 * constructor for IBAN only :-)
@@ -35,6 +37,7 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	public BankDetails(String IBAN) {
 		this.IBAN = IBAN;
 	}
+
 	/***
 	 * constructor for normal use :-)
 	 * @param IBAN the IBAN as string
@@ -58,6 +61,7 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	 * identify the IBAN. Of course you will specify your own IBAN in full length but
 	 * if you deduct from a customer's account you may e.g. leave out the first or last
 	 * digits so that nobody spying on the invoice gets to know the complete number
+	 *
 	 * @param IBAN the "IBAN ID", i.e. the IBAN or parts of it
 	 * @return fluent setter
 	 */
@@ -84,31 +88,33 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 		return this;
 	}
 
-	/***
-	 *  getOwn... methods will be removed in the future in favor of Tradeparty (e.g. Sender) class
-	 * */
-//	@Override
-//	@Deprecated
-//	@JsonIgnore
-//	public String getOwnBIC() {
-//		return getBIC();
-//	}
-//
-//	@Override
-//	@Deprecated
-//	@JsonIgnore
-//	public String getOwnIBAN() {
-//		return getIBAN();
-//	}
+
+	/*
+	I'd really like to get rid of all those getOwn... methods some time but in this case they are in the interface :-(
+	 */
+	@Override
+	@Deprecated
+	@JsonIgnore
+	public String getOwnBIC() {
+		return getBIC();
+	}
+
+	@Override
+	@Deprecated
+	@JsonIgnore
+	public String getOwnIBAN() {
+		return getIBAN();
+	}
 
 
 	/**
 	 * set Holder
+	 *
 	 * @param name account name (usually account holder if != sender)
 	 * @return fluent setter
 	 */
 	public BankDetails setAccountName(String name) {
-		accountName=name;
+		accountName = name;
 		return this;
 	}
 
@@ -116,7 +122,6 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	public String getAccountName() {
 		return accountName;
 	}
-
 
 
 }
