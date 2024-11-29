@@ -537,8 +537,6 @@ public class ZUGFeRDInvoiceImporter {
 				deliveryDate = new SimpleDateFormat("yyyy-MM-dd").parse(deliveryDt);
 			}
 		}
-		xpr = xpath.compile("//*[local-name()=\"Invoice\"]/*[local-name()=\"Note\"]");
-		Node note = (Node) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
 		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeDelivery\"]|//*[local-name()=\"Delivery\"]");
 		NodeList headerTradeDeliveryNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
