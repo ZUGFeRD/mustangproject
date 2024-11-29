@@ -2,11 +2,14 @@ package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlementPayment;
 
 /**
  * provides e.g. the IBAN to transfer money to :-)
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	/**
 	 * the bank account number

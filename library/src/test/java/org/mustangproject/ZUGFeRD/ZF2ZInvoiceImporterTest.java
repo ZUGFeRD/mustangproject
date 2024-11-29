@@ -461,11 +461,14 @@ this would test if for all elements/attributes
 		assertTrue(isBD);
 		BigDecimal expectedPrepaid=new BigDecimal(50);
 		BigDecimal expectedLineTotal=new BigDecimal("180.76");
+		BigDecimal expectedDue=new BigDecimal("147.65");
 		if (isBD) {
 			BigDecimal amread=invoice.getTotalPrepaidAmount();
-			BigDecimal amline=invoice.getLineTotalAmount();
+			BigDecimal importedLineTotal=invoice.getLineTotalAmount();
+			BigDecimal importedDuePayable=invoice.getDuePayable();
 			assertTrue(amread.compareTo(expectedPrepaid) == 0);
-			assertTrue(amline.compareTo(expectedLineTotal) == 0);
+			assertTrue(importedLineTotal.compareTo(expectedLineTotal) == 0);
+			assertTrue(importedDuePayable.compareTo(expectedDue) == 0);
 		}
 
 	}
