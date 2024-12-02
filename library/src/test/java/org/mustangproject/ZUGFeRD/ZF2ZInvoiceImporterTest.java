@@ -390,61 +390,6 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
-	/*
-this would test if for all elements/attributes
- */
-
-	public void testEEISI_300_cii_Import() throws XPathExpressionException, ParseException {
-		boolean hasExceptions = false;
-		File inputCII = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.cii.xml");
-		File inputUBL = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.ubl.xml");
-
-
-		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
-		zii.doIgnoreCalculationErrors();
-		try {
-			zii.fromXML(new String(Files.readAllBytes(inputCII.toPath()), StandardCharsets.UTF_8));
-
-		} catch (IOException e) {
-			hasExceptions = true;
-		}
-
-		Invoice invoiceUBL = null;
-		invoiceUBL = zii.extractInvoice();
-
-		try {
-			zii.ignoreCalculationErrors=true;
-			zii.fromXML(new String(Files.readAllBytes(inputUBL.toPath()), StandardCharsets.UTF_8));
-
-		} catch (IOException e) {
-			hasExceptions = true;
-		}
-
-		Invoice invoiceCII = null;
-		try {
-			invoiceCII = zii.extractInvoice();
-			ObjectMapper mapper = new ObjectMapper();
-			String ubl=mapper.writeValueAsString(invoiceUBL).replace("," ,"\n");
-			String cii=mapper.writeValueAsString(invoiceCII).replace("," ,"\n");
-
-			assertEquals(cii,ubl);
-
-
-				/*
-				<cbc:Name>Seller contact point</cbc:Name>
-        <cbc:Telephone>+41 345 654455</cbc:Telephone>
-        <cbc:ElectronicMail>seller@contact.de);*/
-		} catch (XPathExpressionException | ParseException e) {
-			hasExceptions = true;
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
-		assertFalse(hasExceptions);
-
-//		TransactionCalculator tc = new TransactionCalculator(invoiceCII);
-//		assertEquals(new BigDecimal("205.00"), tc.getGrandTotal());
-
-	}
 
 	@Test
 	public void testImportPrepaid() throws XPathExpressionException, ParseException {
