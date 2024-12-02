@@ -279,12 +279,16 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	public void testXRImport() {
 		boolean hasExceptions = false;
 
-		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		ZUGFeRDImporter zii = new ZUGFeRDImporter();
+
+		int version=-1;
 		try {
 			zii.fromXML(new String(Files.readAllBytes(Paths.get("./target/testout-XR-Edge.xml")), StandardCharsets.UTF_8));
-
+			version=zii.getVersion();
 		} catch (IOException e) {
 			hasExceptions = true;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 
 		Invoice invoice = null;
@@ -294,8 +298,17 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
+
+
+
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
+
+		assertEquals(version,2);
+		assertTrue(new BigDecimal("1").compareTo(invoice.getZFItems()[0].getQuantity()) == 0);
+		LineCalculator lc=new LineCalculator(invoice.getZFItems()[0]);
+		assertTrue(new BigDecimal("1").compareTo(lc.getItemTotalNetAmount()) == 0);
+
 		assertTrue(invoice.getTradeSettlement().length == 1);
 		assertTrue(invoice.getTradeSettlement()[0] instanceof IZUGFeRDTradeSettlementPayment);
 		IZUGFeRDTradeSettlementPayment paym = (IZUGFeRDTradeSettlementPayment) invoice.getTradeSettlement()[0];
@@ -377,6 +390,90 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 
 	}
+
+	/*
+this would test if for all elements/attributes
+ *
+
+	public void testEEISI_300_cii_Import() throws XPathExpressionException, ParseException {
+		boolean hasExceptions = false;
+		File inputCII = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.cii.xml");
+		File inputUBL = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.ubl.xml");
+
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.doIgnoreCalculationErrors();
+		try {
+			zii.fromXML(new String(Files.readAllBytes(inputCII.toPath()), StandardCharsets.UTF_8));
+
+		} catch (IOException e) {
+			hasExceptions = true;
+		}
+
+		Invoice invoiceUBL = null;
+		invoiceUBL = zii.extractInvoice();
+
+		try {
+			zii.ignoreCalculationErrors=true;
+			zii.fromXML(new String(Files.readAllBytes(inputUBL.toPath()), StandardCharsets.UTF_8));
+
+		} catch (IOException e) {
+			hasExceptions = true;
+		}
+
+		Invoice invoiceCII = null;
+		try {
+			invoiceCII = zii.extractInvoice();
+			ObjectMapper mapper = new ObjectMapper();
+			String ubl=mapper.writeValueAsString(invoiceUBL).replace("," ,"\n");
+			String cii=mapper.writeValueAsString(invoiceCII).replace("," ,"\n");
+
+			assertEquals(cii,ubl);
+
+
+				/*
+				<cbc:Name>Seller contact point</cbc:Name>
+        <cbc:Telephone>+41 345 654455</cbc:Telephone>
+        <cbc:ElectronicMail>seller@contact.de);*
+		} catch (XPathExpressionException | ParseException e) {
+			hasExceptions = true;
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+		assertFalse(hasExceptions);
+
+//		TransactionCalculator tc = new TransactionCalculator(invoiceCII);
+//		assertEquals(new BigDecimal("205.00"), tc.getGrandTotal());
+
+	}
+*/
+	@Test
+	public void testImportPrepaid() throws XPathExpressionException, ParseException {
+		InputStream inputStream = this.getClass()
+			.getResourceAsStream("/EN16931_1_Teilrechnung.pdf");
+		ZUGFeRDInvoiceImporter importer = new ZUGFeRDInvoiceImporter();
+		importer.doIgnoreCalculationErrors();
+		importer.setInputStream(inputStream);
+
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		importer.extractInto(invoice);
+
+		boolean isBD=invoice.getTotalPrepaidAmount() instanceof BigDecimal;
+		assertTrue(isBD);
+		BigDecimal expectedPrepaid=new BigDecimal(50);
+		BigDecimal expectedLineTotal=new BigDecimal("180.76");
+		BigDecimal expectedDue=new BigDecimal("147.65");
+		if (isBD) {
+			BigDecimal amread=invoice.getTotalPrepaidAmount();
+			BigDecimal importedLineTotal=invoice.getLineTotalAmount();
+			BigDecimal importedDuePayable=invoice.getDuePayable();
+			assertTrue(amread.compareTo(expectedPrepaid) == 0);
+			assertTrue(importedLineTotal.compareTo(expectedLineTotal) == 0);
+			assertTrue(importedDuePayable.compareTo(expectedDue) == 0);
+		}
+
+	}
+
 
 	@Test
 	public void testImportIncludedNotes() throws XPathExpressionException, ParseException {

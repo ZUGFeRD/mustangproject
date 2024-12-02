@@ -1,20 +1,24 @@
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlementDebit;
 
 /**
  * provides e.g. the IBAN to transfer money to :-)
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class DirectDebit implements IZUGFeRDTradeSettlementDebit {
 	/**
 	 * Debited account identifier (BT-91)
 	 */
-	protected final String IBAN;
+	protected String IBAN;
 
 	/**
 	 * Mandate reference identifier (BT-89)
 	 */
-	protected final String mandate;
+	protected String mandate;
 
 	/**
 	 * bean constructor

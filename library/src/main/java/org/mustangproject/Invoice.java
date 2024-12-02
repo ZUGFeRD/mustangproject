@@ -413,6 +413,11 @@ public class Invoice implements IExportableTransaction {
 		return includedNotes;
 	}
 
+	public Invoice setNotesWithSubjectCode(List<IncludedNote> theList) {
+		includedNotes=theList;
+		return this;
+	}
+
 	@Override
 	public String getCurrency() {
 		return currency;
