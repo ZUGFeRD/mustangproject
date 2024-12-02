@@ -149,7 +149,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	 *
 	 * @return item sum +- charges/allowances
 	 */
-	protected BigDecimal getTaxBasis() {
+	public BigDecimal getTaxBasis() {
 		return getTotal().add(getChargesForPercent(null).setScale(2, RoundingMode.HALF_UP))
 			.subtract(getAllowancesForPercent(null).setScale(2, RoundingMode.HALF_UP))
 			.setScale(2, RoundingMode.HALF_UP);
