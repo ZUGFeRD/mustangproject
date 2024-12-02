@@ -548,9 +548,9 @@ public class ZUGFeRDInvoiceImporter {
 							break;
 					}
 				}
-				zpp.addNotes(includedNotes);
 			}
 		}
+		zpp.addNotes(includedNotes);
 		String rootNode = extractString("local-name(/*)");
 		if (rootNode.equals("Invoice")) {
 			// UBL...
