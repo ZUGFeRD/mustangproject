@@ -327,8 +327,10 @@ public class ZUGFeRDInvoiceImporter {
 				deliveryLocationNodeMap -> {
 
 					deliveryLocationNodeMap.getNode("ID").ifPresent(s -> {
-						SchemedID sID = new SchemedID().setScheme(s.getAttributes().getNamedItem("schemeID").getTextContent()).setId(s.getTextContent());
-						delivery.addGlobalID(sID);
+						if (s.getAttributes().getNamedItem("schemeID") != null) {
+							SchemedID sID = new SchemedID().setScheme(s.getAttributes().getNamedItem("schemeID").getTextContent()).setId(s.getTextContent());
+							delivery.addGlobalID(sID);
+						}
 					});
 					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
 						s.getAsString("StreetName").ifPresent(t -> delivery.setStreet(t));
