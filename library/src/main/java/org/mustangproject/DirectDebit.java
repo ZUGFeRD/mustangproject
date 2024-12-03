@@ -24,7 +24,8 @@ public class DirectDebit implements IZUGFeRDTradeSettlementDebit {
 	 * bean constructor
 	 */
 	public DirectDebit() {
-
+		this.IBAN = "";
+		this.mandate = "";
 	}
 
 	/***
@@ -46,8 +47,18 @@ public class DirectDebit implements IZUGFeRDTradeSettlementDebit {
 		return this.IBAN;
 	}
 
+	public DirectDebit setIBAN(String iBAN) {
+		this.IBAN = iBAN;
+		return this;
+	}
+
 	@Override
 	public String getMandate() {
 		return this.mandate;
+	}
+
+	public DirectDebit setMandate(String mandate) {
+		this.mandate = mandate;
+		return this;
 	}
 }
