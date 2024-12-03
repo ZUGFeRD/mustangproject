@@ -116,6 +116,12 @@
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>
             <version>2.1.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 		<!-- CII to UBL conversion -->
 		<dependency>
