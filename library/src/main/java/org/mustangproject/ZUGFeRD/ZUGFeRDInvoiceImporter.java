@@ -306,8 +306,18 @@ public class ZUGFeRDInvoiceImporter {
 			zpp.setDeliveryAddress(new TradeParty(deliveryNodes));
 		}
 
+		List<IncludedNote> includedNotes = new ArrayList<>();
 
 		//UBL...
+		XPathExpression UBLNotesEx = xpath.compile("/*[local-name()=\"Invoice\"]/*[local-name()=\"Note\"]");
+		NodeList UBLNotesNd = (NodeList) UBLNotesEx.evaluate(getDocument(), XPathConstants.NODESET);
+		if ((UBLNotesNd != null) && (UBLNotesNd.getLength() > 0)) {
+			for (int nodeIndex = 0; nodeIndex < UBLNotesNd.getLength(); nodeIndex++) {
+				includedNotes.add(IncludedNote.generalNote(UBLNotesNd.item(nodeIndex).getTextContent()));
+			}
+			zpp.addNotes(includedNotes);
+		}
+
 		XPathExpression shipExUBL = xpath.compile("//*[local-name()=\"Delivery\"]");
 		Node deliveryNode = (Node) shipExUBL.evaluate(getDocument(), XPathConstants.NODE);
 
@@ -317,8 +327,10 @@ public class ZUGFeRDInvoiceImporter {
 				deliveryLocationNodeMap -> {
 
 					deliveryLocationNodeMap.getNode("ID").ifPresent(s -> {
+						if (s.getAttributes().getNamedItem("schemeID") != null) {
 						SchemedID sID = new SchemedID().setScheme(s.getAttributes().getNamedItem("schemeID").getTextContent()).setId(s.getTextContent());
 						delivery.addGlobalID(sID);
+						}
 					});
 					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
 						s.getAsString("StreetName").ifPresent(t -> delivery.setStreet(t));
@@ -473,6 +485,7 @@ public class ZUGFeRDInvoiceImporter {
 		Date dueDate = null;
 		Date deliveryDate = null;
 		String despatchAdviceReferencedDocument = null;
+
 		for (int i = 0; i < ExchangedDocumentNodes.getLength(); i++) {
 			Node exchangedDocumentNode = ExchangedDocumentNodes.item(i);
 			NodeList exchangedDocumentChilds = exchangedDocumentNode.getChildNodes();
@@ -493,7 +506,6 @@ public class ZUGFeRDInvoiceImporter {
 						}
 					}
 				}
-				List<IncludedNote> includedNotes = new ArrayList<>();
 				if ((item.getLocalName() != null) && (item.getLocalName().equals("IncludedNote"))) {
 					String subjectCode = "";
 					String content = null;
@@ -538,9 +550,9 @@ public class ZUGFeRDInvoiceImporter {
 							break;
 					}
 				}
-				zpp.addNotes(includedNotes);
 			}
 		}
+		zpp.addNotes(includedNotes);
 		String rootNode = extractString("local-name(/*)");
 		if (rootNode.equals("Invoice")) {
 			// UBL...

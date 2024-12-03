@@ -424,11 +424,6 @@ public class XMLValidator extends Validator {
 	 */
 	public void validateSchematron(String xml, String xsltFilename, int section, ESeverity defaultSeverity) throws IrrecoverableValidationError {
 		ISchematronResource aResSCH = null;
-		ESeverity severity=defaultSeverity;
-		if (defaultSeverity!=ESeverity.notice) {
-			severity=ESeverity.error;
-		}
-
 		aResSCH = SchematronResourceXSLT.fromClassPath(xsltFilename);
 
 		if (aResSCH != null) {
@@ -472,14 +467,15 @@ public class XMLValidator extends Validator {
 							thisFailLocation = currentFailNode.getAttributes().getNamedItem("location").getNodeValue();
 						}
 
-						if (currentFailNode.getAttributes().getNamedItem("flag") != null) {
+						ESeverity severity;
+						if (defaultSeverity == ESeverity.notice) {
+							severity = defaultSeverity;
+						} else if (currentFailNode.getAttributes().getNamedItem("flag") != null
+							    && currentFailNode.getAttributes().getNamedItem("flag").getNodeValue().equals("warning")) {
 							// the XR issues warnings with flag=warning
-							if  (currentFailNode.getAttributes().getNamedItem("flag").getNodeValue().equals("warning")) {
-								if (defaultSeverity!=ESeverity.notice) {
-									severity=ESeverity.warning;
-								}
-							}
-
+							severity = ESeverity.warning;
+						} else {
+							severity = ESeverity.error;
 						}
 
 						NodeList failChilds = currentFailNode.getChildNodes();

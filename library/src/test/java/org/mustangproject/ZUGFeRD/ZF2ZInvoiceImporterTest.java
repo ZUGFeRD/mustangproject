@@ -22,6 +22,8 @@ package org.mustangproject.ZUGFeRD;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.commons.codec.binary.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mustangproject.*;
 
@@ -391,62 +393,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
-	/*
-this would test if for all elements/attributes
- *
 
-	public void testEEISI_300_cii_Import() throws XPathExpressionException, ParseException {
-		boolean hasExceptions = false;
-		File inputCII = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.cii.xml");
-		File inputUBL = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.ubl.xml");
-
-
-		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
-		zii.doIgnoreCalculationErrors();
-		try {
-			zii.fromXML(new String(Files.readAllBytes(inputCII.toPath()), StandardCharsets.UTF_8));
-
-		} catch (IOException e) {
-			hasExceptions = true;
-		}
-
-		Invoice invoiceUBL = null;
-		invoiceUBL = zii.extractInvoice();
-
-		try {
-			zii.ignoreCalculationErrors=true;
-			zii.fromXML(new String(Files.readAllBytes(inputUBL.toPath()), StandardCharsets.UTF_8));
-
-		} catch (IOException e) {
-			hasExceptions = true;
-		}
-
-		Invoice invoiceCII = null;
-		try {
-			invoiceCII = zii.extractInvoice();
-			ObjectMapper mapper = new ObjectMapper();
-			String ubl=mapper.writeValueAsString(invoiceUBL).replace("," ,"\n");
-			String cii=mapper.writeValueAsString(invoiceCII).replace("," ,"\n");
-
-			assertEquals(cii,ubl);
-
-
-				/*
-				<cbc:Name>Seller contact point</cbc:Name>
-        <cbc:Telephone>+41 345 654455</cbc:Telephone>
-        <cbc:ElectronicMail>seller@contact.de);*
-		} catch (XPathExpressionException | ParseException e) {
-			hasExceptions = true;
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
-		assertFalse(hasExceptions);
-
-//		TransactionCalculator tc = new TransactionCalculator(invoiceCII);
-//		assertEquals(new BigDecimal("205.00"), tc.getGrandTotal());
-
-	}
-*/
 	@Test
 	public void testImportPrepaid() throws XPathExpressionException, ParseException {
 		InputStream inputStream = this.getClass()
@@ -503,5 +450,26 @@ this would test if for all elements/attributes
 		CalculatedInvoice invoice = new CalculatedInvoice();
 		zii.extractInto(invoice);
 		assertThat(invoice.getGrandTotal()).isEqualByComparingTo(BigDecimal.valueOf(82.63));
+	}
+
+	public void testImportPositionIncludedNotes() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("ZTESTZUGFERD_1_INVDSS_012015738820PDF-1.pdf");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+		assertEquals(1, invoice.getZFItems().length);
+		assertEquals(8, invoice.getZFItems()[0].getNotesWithSubjectCode().size());
+		assertEquals("FB-LE 9999", invoice.getZFItems()[0].getNotesWithSubjectCode().stream().filter(note -> note.getSubjectCode().equals(SubjectCode.ABZ)).findFirst().get().getContent());
+	}
+
+	@Test
+	public void testImportXRechnungPositionNote() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("TESTXRECHNUNG_INVDSS_012015776085.XML");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+		assertEquals(1, invoice.getZFItems().length);
+		assertFalse(invoice.getZFItems()[0].getNotes() == null);
+		assertEquals(1, invoice.getZFItems()[0].getNotes().length);
 	}
 }
