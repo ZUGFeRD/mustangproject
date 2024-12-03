@@ -72,10 +72,15 @@ public class IncludedNote {
     return content;
   }
 
+  public IncludedNote setContent(String content) {
+    this.content = content;
+    return this;
+}
+
   public SubjectCode getSubjectCode() {
     return subjectCode;
   }
-  
+
 
 	public IncludedNote setSubjectCode(SubjectCode subjectCode) {
 		this.subjectCode = subjectCode;
