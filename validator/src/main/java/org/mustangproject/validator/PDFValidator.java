@@ -122,7 +122,9 @@ public class PDFValidator extends Validator {
 		}
 
 		// step 2 validate XMP
-		final ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
+		final ZUGFeRDImporter zi = new ZUGFeRDImporter();
+		zi.doIgnoreCalculationErrors();//of course the calculation will still be schematron checked
+		zi.setInputStream(inputStream);
 		final String xmp = zi.getXMP();
 
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

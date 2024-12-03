@@ -1,5 +1,7 @@
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IZUGFeRDCashDiscount;
 
 import java.math.BigDecimal;
@@ -7,6 +9,8 @@ import java.math.BigDecimal;
 /***
  * A class to represent discounts for early payments ("Skonto")
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class CashDiscount implements IZUGFeRDCashDiscount {
 
 	/***
@@ -29,6 +33,31 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	public CashDiscount(BigDecimal percent, int days) {
 		this.percent = percent;
 		this.days = days;
+	}
+
+	/***
+	 * bean contructor
+	 */
+	public CashDiscount() {
+
+	}
+
+	public BigDecimal getPercent() {
+		return percent;
+	}
+
+	public CashDiscount setPercent(BigDecimal percent) {
+		this.percent = percent;
+		return this;
+	}
+
+	public Integer getDays() {
+		return days;
+	}
+
+	public CashDiscount setDays(Integer days) {
+		this.days = days;
+		return this;
 	}
 
 	/***

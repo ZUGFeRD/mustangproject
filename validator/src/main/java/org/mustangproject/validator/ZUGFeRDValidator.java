@@ -318,7 +318,7 @@ public class ZUGFeRDValidator {
 		LOGGER.info("Parsed PDF:" + pdfResult + " XML:" + (xmlValidity ? "valid" : "invalid")
 			+ " Signature:" + Signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
 			+ " Version:" + context.getGeneration() + " Took:" + duration + "ms Errors:[" + context.getCSVResult()
-			+ "] " + toBeAppended);
+			+ "] ErrorIDs: [" + context.getCSVIDResult()  + "]" + toBeAppended);
 		wasCompletelyValid = ((pdfValidity) && (xmlValidity));
 		return sw.toString();
 	}

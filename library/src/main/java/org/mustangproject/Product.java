@@ -6,6 +6,7 @@ import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 import org.mustangproject.util.NodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -59,10 +60,14 @@ public class Product implements IZUGFeRDExportableProduct {
 			}
 		});
 
+
+
+
 		nodeMap.getAsString("SellerAssignedID").ifPresent(this::setSellerAssignedID);
 		nodeMap.getAsString("BuyerAssignedID").ifPresent(this::setBuyerAssignedID);
 		nodeMap.getAsString("Name").ifPresent(this::setName);
 		nodeMap.getAsString("Description").ifPresent(this::setDescription);
+
 
 		nodeMap.getAsNodeMap("ApplicableProductCharacteristic").ifPresent(apcNodes -> {
 			String key = apcNodes.getAsStringOrNull("Description");
@@ -75,6 +80,26 @@ public class Product implements IZUGFeRDExportableProduct {
 			}
 		});
 
+
+		//UBL
+		nodeMap.getAsNodeMap("AdditionalItemProperty").ifPresent(aipNodes -> {
+			String name = aipNodes.getAsStringOrNull("Name");
+			String val = aipNodes.getAsStringOrNull("Value");
+			if (name != null && val != null) {
+				if (attributes == null) {
+					attributes = new HashMap<>();
+				}
+				attributes.put(name, val);
+			}
+		});
+
+		nodeMap.getAsNodeMap("CommodityClassification").ifPresent(dpcNodes -> {
+			String className = dpcNodes.getAsStringOrNull("ClassName");
+			dpcNodes.getNode("ItemClassificationCode").map(ClassCode::fromNode).ifPresent(classCode ->
+				classifications.add(new DesignatedProductClassification(classCode, className)));
+		});
+
+		//UBL
 		nodeMap.getAsNodeMap("DesignatedProductClassification").ifPresent(dpcNodes -> {
 			String className = dpcNodes.getAsStringOrNull("ClassName");
 			dpcNodes.getNode("ClassCode").map(ClassCode::fromNode).ifPresent(classCode ->
@@ -114,6 +139,7 @@ public class Product implements IZUGFeRDExportableProduct {
 		globalId = schemedID;
 		return this;
 	}
+
 
 	/***
 	 *
