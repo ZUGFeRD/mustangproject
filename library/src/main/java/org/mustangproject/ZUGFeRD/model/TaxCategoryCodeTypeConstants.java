@@ -29,6 +29,7 @@ public class TaxCategoryCodeTypeConstants {
 	public static final String ZEROTAXPRODUCTS = "Z";
 	public static final String UNTAXEDSERVICE = "O";
 	public static final String INTRACOMMUNITY = "K";
-	
-	public static Set<String> CATEGORY_CODES_WITH_EXEMPTION_REASON = Stream.of(INTRACOMMUNITY, REVERSECHARGE, TAXEXEMPT).collect(Collectors.toSet());
+	public static final String FREEEXPORT = "G";
+
+	public static Set<String> CATEGORY_CODES_WITH_EXEMPTION_REASON = Stream.of(INTRACOMMUNITY, REVERSECHARGE, TAXEXEMPT, FREEEXPORT).collect(Collectors.toSet());
 }
