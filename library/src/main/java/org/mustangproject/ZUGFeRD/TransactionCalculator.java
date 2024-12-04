@@ -167,7 +167,11 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		final String vatDueDateTypeCode = trans.getVATDueDateTypeCode();
 
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
-			BigDecimal percent = currentItem.getProduct().getVATPercent();
+			BigDecimal percent = null;
+			if (currentItem.getProduct()!=null)
+			{
+				percent=currentItem.getProduct().getVATPercent();
+			}
 			if (percent != null) {
 				LineCalculator lc = new LineCalculator(currentItem);
 				VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(),
