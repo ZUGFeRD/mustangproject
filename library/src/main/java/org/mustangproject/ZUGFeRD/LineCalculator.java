@@ -50,10 +50,14 @@ public class LineCalculator {
 			quantity=currentItem.getQuantity();
 		}
 
-		itemTotalNetAmount = quantity.multiply(getPrice()).divide(currentItem.getBasisQuantity(), 18, RoundingMode.HALF_UP)
+		// Division/Zero occurred here.
+		// Used the setScale only because that's also done in getBasisQuantity
+		BigDecimal basisQuantity = currentItem.getBasisQuantity().compareTo(BigDecimal.ZERO) == 0
+			? BigDecimal.ONE.setScale(4)
+			: currentItem.getBasisQuantity();
+		itemTotalNetAmount = quantity.multiply(getPrice()).divide(basisQuantity, 18, RoundingMode.HALF_UP)
 				.subtract(allowanceItemTotal).setScale(2, RoundingMode.HALF_UP);
 		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);
-
 	}
 
 	public BigDecimal getPrice() {

@@ -743,6 +743,15 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 								node = getNodeByName(node.getChildNodes(), "CalculatedAmount");
 								lineItem.setTax(XMLTools.tryBigDecimal(node));
 							}
+
+							node = getNodeByName(nn.getChildNodes(), "ApplicableTradeTax");
+							if (node != null) {
+								node = getNodeByName(node.getChildNodes(), "CategoryCode");
+								if(node != null){
+									lineItem.getProduct().setTaxCategoryCode(XMLTools.getNodeValue(node));
+								}
+							}
+
 							node = getNodeByName(nn.getChildNodes(), "BillingSpecifiedPeriod");
 							if (node != null) {
 								final Node start = getNodeByName(node.getChildNodes(), "StartDateTime");
