@@ -232,6 +232,11 @@ public class Item implements IZUGFeRDExportableItem {
 		return lineTotalAmount;
 	}
 
+	public Item setNotesWithSubjectCode(List<IncludedNote> theList) {
+		includedNotes=theList;
+		return this;
+	}
+
 	/**
 	 * should only be set by calculator classes or maybe when reading from XML
 	 *
