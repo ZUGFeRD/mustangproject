@@ -124,6 +124,8 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		// Reading ZUGFeRD
 		assertEquals("Bei Spiel GmbH", invoice.getOwnOrganisationName());
 		assertEquals(3, invoice.getZFItems().length);
+		assertEquals(invoice.getZFItems()[0].getNotesWithSubjectCode().get(0).getContent(),"Something");
+		assertEquals(invoice.getZFItems()[0].getNotesWithSubjectCode().size(),1);
 		assertEquals("400", invoice.getZFItems()[1].getQuantity().toString());
 
 		assertEquals("AB321", invoice.getReferenceNumber());
