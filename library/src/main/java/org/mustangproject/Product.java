@@ -23,9 +23,9 @@ import java.util.Map;
 
 public class Product implements IZUGFeRDExportableProduct {
 	protected String unit, name, sellerAssignedID, buyerAssignedID;
-	protected String description="";
-	protected String taxExemptionReason=null;
-	protected String taxCategoryCode=null;
+	protected String description = "";
+	protected String taxExemptionReason = null;
+	protected String taxCategoryCode = null;
 	protected BigDecimal VATPercent;
 	protected boolean isReverseCharge = false;
 	protected boolean isIntraCommunitySupply = false;
@@ -59,8 +59,6 @@ public class Product implements IZUGFeRDExportableProduct {
 					.setId(idNode.getTextContent());
 			}
 		});
-
-
 
 
 		nodeMap.getAsString("SellerAssignedID").ifPresent(this::setSellerAssignedID);
@@ -155,7 +153,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @param taxExemptionReasonText String e.g. Kleinunternehmer gemäß §19 UStG https://github.com/ZUGFeRD/mustangproject/issues/463
 	 * @return fluent setter
 	 */
-	public Product setTaxExemptionReason(String  taxExemptionReasonText) {
+	public Product setTaxExemptionReason(String taxExemptionReasonText) {
 		taxExemptionReason = taxExemptionReasonText;
 		return this;
 	}
@@ -177,7 +175,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @param code e.g. S (normal tax), Z=zero rated,  E (e.g. small business) or K (intrra community supply) see also https://github.com/ZUGFeRD/mustangproject/issues/463
 	 * @return fluent setter
 	 */
-	public Product setTaxCategoryCode(String  code) {
+	public Product setTaxCategoryCode(String code) {
 		taxCategoryCode = code;
 		return this;
 	}
@@ -304,18 +302,22 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @return fluent setter
 	 */
 	public Product setVATPercent(BigDecimal VATPercent) {
-		this.VATPercent = VATPercent;
+		if (VATPercent == null) {
+			this.VATPercent = BigDecimal.ZERO;
+		} else {
+			this.VATPercent = VATPercent;
+		}
 		return this;
 	}
 
 	@Override
 	public String getCountryOfOrigin() {
-	    return this.countryOfOrigin;
+		return this.countryOfOrigin;
 	}
 
 	public Product setCountryOfOrigin(String countryOfOrigin) {
-	    this.countryOfOrigin = countryOfOrigin;
-	    return this;
+		this.countryOfOrigin = countryOfOrigin;
+		return this;
 	}
 
 	@Override
@@ -328,16 +330,16 @@ public class Product implements IZUGFeRDExportableProduct {
 	}
 
 	public Product setAttributes(Map<String, String> attributes) {
-	    this.attributes.clear();
+		this.attributes.clear();
 		if (attributes != null) {
 			this.attributes.putAll(attributes);
 		}
-	    return this;
+		return this;
 	}
 
-	public Product addAttribute(String name, String value ) {
-	    this.attributes.put(name, value);
-	    return this;
+	public Product addAttribute(String name, String value) {
+		this.attributes.put(name, value);
+		return this;
 	}
 
 	@Override
