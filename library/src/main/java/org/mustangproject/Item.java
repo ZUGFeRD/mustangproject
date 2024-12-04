@@ -127,6 +127,12 @@ public class Item implements IZUGFeRDExportableItem {
 			.flatMap(bordNodes -> bordNodes.getAsString("LineID"))
 			.ifPresent(this::addReferencedLineID);
 
+		itemMap.getAsString("ID")
+			.ifPresent(this::setId);
+
+
+		itemMap.getAsString("Note")
+			.ifPresent(this::addNote);
 
 
 
