@@ -106,7 +106,14 @@ public class NodeMap {
 	 * @return the text content of the matching node, converted to BigDecimal
 	 */
 	public Optional<BigDecimal> getAsBigDecimal(String... localNames) {
-		return getNode(localNames).map(Node::getTextContent).map(s->new BigDecimal(s.trim()));
+		return getNode(localNames).map(Node::getTextContent).map(s->{
+			try {
+				return new BigDecimal(s.trim());
+			} catch (NumberFormatException e) {
+				return null;
+			}
+
+		});
 	}
 
 	/**
