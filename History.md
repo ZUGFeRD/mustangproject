@@ -1,19 +1,16 @@
 2.15.1
 =======
-
+2024-12-07
 - #566 Failed to parse PDF - Could not reproduce the invoice
-? be able to access ID in error message
 - closes #579 prepaidamount is only read in UBL
-- #581 parse lineTotalAmount
-- also parse TaxBasisAmount
+- #581 parse lineTotalAmount, TaxBasisAmount, duePayableAmount
 - #576 read lineid, #578 set lineid
-- log error ids
+- log error ids, be able to access them from context
 - #503 import more ubl
 - allow jackson to run over more classes, e.g., DirectDebit, bean contructor for direct debit
-- allow json includedNotes 
-- support importing duePayableAmount
+- allow json in document includedNotes and 
+- #591 Import IncludedNotes also on item level
 - #595 Treat all fatal XR schematron rules as errors, not as warnings.
-- #591 Import IncludedNotes on item extraction
 - #577 dom4j: exclude all (optional) dependencies to avoid potential conflicts.
 - #575 Fix compilation problems.
 - #573 Feature/category code
