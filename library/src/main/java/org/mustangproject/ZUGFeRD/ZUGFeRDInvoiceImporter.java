@@ -808,6 +808,7 @@ public class ZUGFeRDInvoiceImporter {
 		} else {
 			zpp.setDespatchAdviceReferencedDocumentID(extractString("//*[local-name()=\"DespatchDocumentReference\"]/*[local-name()=\"ID\"]"));
 		}
+		zpp.setInvoiceReferencedDocumentID(extractString("//*[local-name()=\"InvoiceReferencedDocument\"]/*[local-name()=\"IssuerAssignedID\"]|//*[local-name()=\"BillingReference\"]/*[local-name()=\"InvoiceDocumentReference\"]/*[local-name()=\"ID\"]"));
 
 		zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]|//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyName\"]").trim());
 
@@ -928,6 +929,7 @@ public class ZUGFeRDInvoiceImporter {
 				}
 
 			}
+
 
 			TransactionCalculator tc = new TransactionCalculator(zpp);
 			String expectedStringTotalGross = tc.getGrandTotal()
