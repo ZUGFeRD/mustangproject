@@ -388,14 +388,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "</ram:GuidelineSpecifiedDocumentContextParameter>"
 				+ "</rsm:ExchangedDocumentContext>"
 				+ "<rsm:ExchangedDocument>"
-				+ "<ram:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:ID>"
-				// + "<ram:Name>RECHNUNG</ram:Name>"
-				// + "<ram:TypeCode>380</ram:TypeCode>"
-				+ "<ram:TypeCode>" + typecode + "</ram:TypeCode>"
-				+ "<ram:IssueDateTime>"
-				+ DATE.udtFormat(trans.getIssueDate()) + "</ram:IssueDateTime>" // date
+				+ "<ram:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:ID>";
+				if (profile == Profiles.getByName("Extended") && trans.getDocumentName() != null) {
+					xml += "<ram:Name>" + XMLTools.encodeXML(trans.getDocumentName()) + "</ram:Name>";
+				}
+			xml += "<ram:TypeCode>" + typecode + "</ram:TypeCode>"
+				+ "<ram:IssueDateTime>" + DATE.udtFormat(trans.getIssueDate()) + "</ram:IssueDateTime>" // date
 				+ buildNotes(trans)
-
 				+ "</rsm:ExchangedDocument>"
 				+ "<rsm:SupplyChainTradeTransaction>";
 		int lineID = 0;
@@ -662,8 +661,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if ((trans.getCreditorReferenceID() != null) && (getProfile() != Profiles.getByName("Minimum"))) {
 			xml += "<ram:CreditorReferenceID>" + XMLTools.encodeXML(trans.getCreditorReferenceID()) + "</ram:CreditorReferenceID>";
 		}
-		if ((trans.getNumber() != null) && (getProfile() != Profiles.getByName("Minimum"))) {
-			xml += "<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>";
+		if ((trans.getPaymentReference() != null) && (getProfile() != Profiles.getByName("Minimum"))) {
+			xml += "<ram:PaymentReference>" + XMLTools.encodeXML(trans.getPaymentReference()) + "</ram:PaymentReference>";
 		}
 		xml += "<ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>";
 		if (this.trans.getPayee() != null) {

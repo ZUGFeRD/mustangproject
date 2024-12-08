@@ -312,6 +312,10 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	default String getPaymentReference() {
+		return null;
+	}
+
 	/**
 	 * returns if a rebate agreements exists
 	 *

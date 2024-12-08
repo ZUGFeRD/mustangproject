@@ -526,7 +526,7 @@ public class ZF2PushTest extends TestCase {
 			try {
 				SchemedID gtin = new SchemedID("0160", "2001015001325");
 				SchemedID gln = new SchemedID("0088", "4304171000002");
-				ze.setTransaction(new Invoice().setCurrency("CHF").addNote("document level 1/2").addNote("document level 2/2").setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
+				ze.setTransaction(new Invoice().setCurrency("CHF").addNote("document level 1/2").addNote("document level 2/2").setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setPaymentReference("Verwendungszweck").setDocumentName("Rechnung")
 					.setSellerOrderReferencedDocumentID("9384").setBuyerOrderReferencedDocumentID("28934")
 					.setDetailedDeliveryPeriod(new SimpleDateFormat("yyyyMMdd").parse(occurrenceFrom), new SimpleDateFormat("yyyyMMdd").parse(occurrenceTo))
 					.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID(taxID).setEmail("sender@test.org").setID(orgID).addVATID("DE0815"))
@@ -578,6 +578,7 @@ public class ZF2PushTest extends TestCase {
 		assertTrue(zi.getUTF8().contains("++49555123456"));
 		assertTrue(zi.getUTF8().contains("Cash Discount")); // default description for cash discounts
 		assertThat(zi.getUTF8()).valueByXPath("//*[local-name()='ApplicableTradeTax']/*[local-name()='DueDateTypeCode']").asString().isEqualTo(EventTimeCodeTypeConstants.PAYMENT_DATE);
+		assertTrue(zi.getUTF8().contains("<ram:Name>Rechnung</ram:Name>"));
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_PUSHEDGE);
 		try {
@@ -587,6 +588,8 @@ public class ZF2PushTest extends TestCase {
 			assertEquals("4304171000002", i.getRecipient().getGlobalID());
 			assertEquals("2001015001325", i.getZFItems()[0].getProduct().getGlobalID());
 			assertEquals(orgID, i.getSender().getID());
+			assertEquals("Verwendungszweck", i.getPaymentReference());
+			assertEquals("Rechnung", i.getDocumentName());
 
 		} catch (XPathExpressionException e) {
 			fail("XPathExpressionException should not be raised");

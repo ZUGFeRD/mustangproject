@@ -288,6 +288,7 @@ public class ZUGFeRDInvoiceImporter {
 	public Invoice extractInto(Invoice zpp) throws XPathExpressionException, ParseException {
 
 		String number = "";
+		String documentName = null;
 		String typeCode = null;
 		String deliveryPeriodStart = null;
 		String deliveryPeriodEnd = null;
@@ -494,6 +495,9 @@ public class ZUGFeRDInvoiceImporter {
 				if ((item.getLocalName() != null) && (item.getLocalName().equals("ID"))) {
 					number = XMLTools.trimOrNull(item);
 				}
+				if ((item.getLocalName() != null) && (item.getLocalName().equals("Name"))) {
+					documentName = XMLTools.trimOrNull(item);
+				}
 				if ((item.getLocalName() != null) && (item.getLocalName().equals("TypeCode"))) {
 					typeCode = XMLTools.trimOrNull(item);
 				}
@@ -660,6 +664,12 @@ public class ZUGFeRDInvoiceImporter {
 			NodeList headerTradeSettlementChilds = headerTradeSettlementNode.getChildNodes();
 			for (int settlementChildIndex = 0; settlementChildIndex < headerTradeSettlementChilds.getLength(); settlementChildIndex++) {
 				if ((headerTradeSettlementChilds.item(settlementChildIndex).getLocalName() != null)
+					&& (headerTradeSettlementChilds.item(settlementChildIndex).getLocalName().equals("PaymentReference"))) {
+					String paymentReference = headerTradeSettlementChilds.item(settlementChildIndex).getTextContent();
+					zpp.setPaymentReference(paymentReference);
+				}
+
+				if ((headerTradeSettlementChilds.item(settlementChildIndex).getLocalName() != null)
 					&& (headerTradeSettlementChilds.item(settlementChildIndex).getLocalName().equals("SpecifiedTradePaymentTerms"))) {
 					NodeList paymentTermChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
 					for (int paymentTermChildIndex = 0; paymentTermChildIndex < paymentTermChilds.getLength(); paymentTermChildIndex++) {
@@ -780,7 +790,7 @@ public class ZUGFeRDInvoiceImporter {
 
 		}
 
-		zpp.setIssueDate(issueDate).setDueDate(dueDate).setDeliveryDate(deliveryDate).setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number).setDocumentCode(typeCode);
+		zpp.setIssueDate(issueDate).setDueDate(dueDate).setDeliveryDate(deliveryDate).setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number).setDocumentName(documentName).setDocumentCode(typeCode);
 
 		if ((directDebitMandateID != null) && (IBAN != null)) {
 			DirectDebit d = new DirectDebit(IBAN, directDebitMandateID);
