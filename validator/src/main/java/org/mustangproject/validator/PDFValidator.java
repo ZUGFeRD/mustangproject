@@ -267,6 +267,7 @@ public class PDFValidator extends Validator {
 		final byte[] pdfMachineSignature = "pdfMachine from Broadgun Software".getBytes(StandardCharsets.UTF_8);
 		final byte[] ghostscriptSignature = "%%Invocation:".getBytes(StandardCharsets.UTF_8);
 		final byte[] cibpdfbrewerSignature = "CIB pdf brewer".getBytes(StandardCharsets.UTF_8);
+		final byte[] lexofficeSignature = "lexoffice".getBytes(StandardCharsets.UTF_8);
 
 		if (ByteArraySearcher.contains(fileContents, symtraxSignature)) {
 			Signature = "Symtrax";
@@ -284,6 +285,8 @@ public class PDFValidator extends Validator {
 			Signature = "Ghostscript";
 		} else if (ByteArraySearcher.contains(fileContents, cibpdfbrewerSignature)) {
 			Signature = "CIB pdf brewer";
+		} else if (ByteArraySearcher.contains(fileContents, lexofficeSignature)) {
+			Signature = "Lexware office";
 		}
 
 		context.setSignature(Signature);

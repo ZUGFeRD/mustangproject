@@ -31,7 +31,7 @@ import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class DesignatedProductClassification implements IDesignatedProductClassification {
-	private final ClassCode classCode;
+	private ClassCode classCode;
 	private String className;
 
 	/**
@@ -52,6 +52,13 @@ public class DesignatedProductClassification implements IDesignatedProductClassi
 	 */
 	public DesignatedProductClassification(ClassCode classCode) {
 		this(classCode, null);
+	}
+
+	/**
+	 * Bean constructor for schemed product descriptor
+	 */
+	public DesignatedProductClassification() {
+		classCode = null;// we need this constructor for jackson, i.e. to be able to JSON
 	}
 
 	@Override
