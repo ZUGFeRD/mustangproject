@@ -128,6 +128,12 @@ public class Item implements IZUGFeRDExportableItem {
 			.flatMap(bordNodes -> bordNodes.getAsString("LineID"))
 			.ifPresent(this::addReferencedLineID);
 
+		itemMap.getAsString("ID")
+			.ifPresent(this::setId);
+
+
+		itemMap.getAsString("Note")
+			.ifPresent(this::addNote);
 
 
 
@@ -177,7 +183,6 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).forEach(this::addAdditionalReference);
 		});
 
-		itemMap.getAsString("Note").ifPresent(this::addNote);
 		itemMap.getAsNodeMap("AssociatedDocumentLineDocument").ifPresent(adld -> {
 			List<IncludedNote> includedNotes = new ArrayList<>();
 			adld.getAllNodes("IncludedNote").forEach(item -> {
@@ -226,6 +231,11 @@ public class Item implements IZUGFeRDExportableItem {
 
 	public BigDecimal getLineTotalAmount() {
 		return lineTotalAmount;
+	}
+
+	public Item setNotesWithSubjectCode(List<IncludedNote> theList) {
+		includedNotes=theList;
+		return this;
 	}
 
 	/**
@@ -387,6 +397,13 @@ public class Item implements IZUGFeRDExportableItem {
 			notes = new ArrayList<>();
 		}
 		notes.add(text);
+
+		if (includedNotes == null) {
+			includedNotes = new ArrayList<>();
+		}
+		includedNotes.add(IncludedNote.unspecifiedNote(text));
+
+
 		return this;
 	}
 

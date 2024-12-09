@@ -123,6 +123,7 @@
   </cac:LegalMonetaryTotal>
   <cac:InvoiceLine>
     <cbc:ID>1</cbc:ID>
+      <cbc:Note>Something</cbc:Note>
     <cbc:InvoicedQuantity unitCode="HUR">1</cbc:InvoicedQuantity>
     <cbc:LineExtensionAmount currencyID="EUR">160</cbc:LineExtensionAmount>
     <cac:Item>

@@ -558,7 +558,10 @@ public class ZUGFeRDInvoiceImporter {
 			// UBL...
 			number = extractString("//*[local-name()=\"Invoice\"]/*[local-name()=\"ID\"]").trim();
 			typeCode = extractString("//*[local-name()=\"Invoice\"]/*[local-name()=\"InvoiceTypeCode\"]").trim();
-			issueDate = new SimpleDateFormat("yyyy-MM-dd").parse(extractString("//*[local-name()=\"Invoice\"]/*[local-name()=\"IssueDate\"]").trim());
+			String issueDateStr = extractString("//*[local-name()=\"Invoice\"]/*[local-name()=\"IssueDate\"]").trim();
+			if (issueDateStr.length()>0) {
+				issueDate = new SimpleDateFormat("yyyy-MM-dd").parse(issueDateStr);
+			}
 			String dueDt = extractString("//*[local-name()=\"Invoice\"]/*[local-name()=\"DueDate\"]").trim();
 			if (dueDt.length() > 0) {
 				dueDate = new SimpleDateFormat("yyyy-MM-dd").parse(dueDt);
@@ -777,7 +780,7 @@ public class ZUGFeRDInvoiceImporter {
 
 		}
 
-		zpp.setDueDate(dueDate).setDeliveryDate(deliveryDate).setIssueDate(issueDate).setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number).setDocumentCode(typeCode);
+		zpp.setIssueDate(issueDate).setDueDate(dueDate).setDeliveryDate(deliveryDate).setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number).setDocumentCode(typeCode);
 
 		if ((directDebitMandateID != null) && (IBAN != null)) {
 			DirectDebit d = new DirectDebit(IBAN, directDebitMandateID);
@@ -805,6 +808,7 @@ public class ZUGFeRDInvoiceImporter {
 		} else {
 			zpp.setDespatchAdviceReferencedDocumentID(extractString("//*[local-name()=\"DespatchDocumentReference\"]/*[local-name()=\"ID\"]"));
 		}
+		zpp.setInvoiceReferencedDocumentID(extractString("//*[local-name()=\"InvoiceReferencedDocument\"]/*[local-name()=\"IssuerAssignedID\"]|//*[local-name()=\"BillingReference\"]/*[local-name()=\"InvoiceDocumentReference\"]/*[local-name()=\"ID\"]"));
 
 		zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]|//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyName\"]").trim());
 
