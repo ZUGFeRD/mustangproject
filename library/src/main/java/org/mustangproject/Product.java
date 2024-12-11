@@ -2,6 +2,7 @@ package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 import org.mustangproject.util.NodeMap;
@@ -32,6 +33,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	protected SchemedID globalId = null;
 	protected String countryOfOrigin = null;
 	protected HashMap<String, String> attributes = new HashMap<>();
+
 	protected List<IDesignatedProductClassification> classifications = new ArrayList<>();
 
 	/***
@@ -358,6 +360,23 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @return the modified object
 	 */
 	public Product setClassifications(IDesignatedProductClassification[] classifications) {
+		this.classifications.clear();
+		if (classifications != null) {
+			this.classifications.addAll(Arrays.asList(classifications));
+		}
+		return this;
+	}
+
+
+	/**
+	 * Provide Jackson a hint as to use DesignatedProductClassification for the
+	 * IDesignatedProductClassification product classifications
+	 *
+	 * @param classifications the new set of classifications
+	 * @return fluent setter
+	 */
+	@JsonSetter("classifications")
+	public Product setClassificationsClass(DesignatedProductClassification[] classifications) {
 		this.classifications.clear();
 		if (classifications != null) {
 			this.classifications.addAll(Arrays.asList(classifications));

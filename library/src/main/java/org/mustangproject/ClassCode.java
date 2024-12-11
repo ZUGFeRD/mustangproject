@@ -31,8 +31,8 @@ import org.w3c.dom.Node;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ClassCode {
-	private final String listID;
-	private final String code;
+	private String listID;
+	private String code;
 	private String listVersionID;
 
 	/**
@@ -57,6 +57,13 @@ public class ClassCode {
 	public ClassCode(String listID, String code) {
 		this(listID, code, null);
 	}
+
+	/***
+	 * bean constructor
+	 */
+	public ClassCode() {
+	}
+
 
 	/***
 	 * Set the version for the scheme returned by {@link #getListID()}
