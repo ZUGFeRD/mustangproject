@@ -21,6 +21,7 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import junit.framework.TestCase;
@@ -165,6 +166,34 @@ public class DeSerializationTest extends ResourceCase {
 
 	}
 
+	public void testFull300Roundtrip() {
+		File inputCII = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.cii.xml");
+
+		Invoice i=new Invoice();
+		String exText=null;
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.doIgnoreCalculationErrors();
+		try {
+			zii.fromXML(new String(Files.readAllBytes(inputCII.toPath()), StandardCharsets.UTF_8));
+			ObjectMapper mapper = new ObjectMapper();
+			zii.extractInto(i);
+			String json = mapper.writeValueAsString(i);
+			Invoice newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
+
+			assertEquals("Test_EeISI_100",i.getNumber());
+			assertEquals(newInvoiceFromJSON.getNumber(),i.getNumber());
+
+		} catch (IOException e) {
+			exText=e.getMessage();
+		} catch (XPathExpressionException e) {
+			exText=e.getMessage();
+		} catch (ParseException e) {
+			exText=e.getMessage();
+		}
+		assertNull(exText);
+
+
+	}
 
 	public void testIssuerAssignedIDRoundtrip() {
 		String occurrenceFrom = "20201001";
