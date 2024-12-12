@@ -465,4 +465,17 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertFalse(invoice.getZFItems()[0].getNotes() == null);
 		assertEquals(1, invoice.getZFItems()[0].getNotes().length);
 	}
+
+	@Test
+	public void testReadDescription() throws XPathExpressionException, ParseException {
+		// given
+		var inputStream = this.getClass().getResourceAsStream("/cii/minimalDebit.xml");
+
+		// when
+		var zii = new ZUGFeRDInvoiceImporter(inputStream);
+		var invoice = zii.extractInvoice();
+
+		// then
+		assertThat(invoice.getPaymentTermDescription()).startsWith("Der Betrag in Höhe von");
+	}
 }
