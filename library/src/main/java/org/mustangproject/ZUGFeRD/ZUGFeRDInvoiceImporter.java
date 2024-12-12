@@ -483,6 +483,7 @@ public class ZUGFeRDInvoiceImporter {
 
 		Date issueDate = null;
 		Date dueDate = null;
+		String paymentTermDescription = null;
 		Date deliveryDate = null;
 		String despatchAdviceReferencedDocument = null;
 
@@ -663,6 +664,12 @@ public class ZUGFeRDInvoiceImporter {
 					&& (headerTradeSettlementChilds.item(settlementChildIndex).getLocalName().equals("SpecifiedTradePaymentTerms"))) {
 					NodeList paymentTermChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
 					for (int paymentTermChildIndex = 0; paymentTermChildIndex < paymentTermChilds.getLength(); paymentTermChildIndex++) {
+						if ("Description".equals(paymentTermChilds.item(paymentTermChildIndex).getLocalName())) {
+							var description = paymentTermChilds.item(paymentTermChildIndex).getTextContent();
+							if (description != null && !description.isEmpty()) {
+								paymentTermDescription = description;
+							}
+						}
 						if ((paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("DueDateDateTime"))) {
 							NodeList dueDateChilds = paymentTermChilds.item(paymentTermChildIndex).getChildNodes();
 							for (int dueDateChildIndex = 0; dueDateChildIndex < dueDateChilds.getLength(); dueDateChildIndex++) {
@@ -780,7 +787,14 @@ public class ZUGFeRDInvoiceImporter {
 
 		}
 
-		zpp.setIssueDate(issueDate).setDueDate(dueDate).setDeliveryDate(deliveryDate).setSender(new TradeParty(SellerNodes)).setRecipient(new TradeParty(BuyerNodes)).setNumber(number).setDocumentCode(typeCode);
+		zpp.setIssueDate(issueDate)
+			.setDueDate(dueDate)
+			.setPaymentTermDescription(paymentTermDescription)
+			.setDeliveryDate(deliveryDate)
+			.setSender(new TradeParty(SellerNodes))
+			.setRecipient(new TradeParty(BuyerNodes))
+			.setNumber(number)
+			.setDocumentCode(typeCode);
 
 		if ((directDebitMandateID != null) && (IBAN != null)) {
 			DirectDebit d = new DirectDebit(IBAN, directDebitMandateID);
