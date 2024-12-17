@@ -1,3 +1,5 @@
+- correcly write charge reason codes also for non-Xrechnung
+
 2.15.1
 =======
 2024-12-07
