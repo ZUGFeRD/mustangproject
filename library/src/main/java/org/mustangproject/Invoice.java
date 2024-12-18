@@ -21,10 +21,7 @@
 package org.mustangproject;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.*;
@@ -114,6 +111,16 @@ public class Invoice implements IExportableTransaction {
 		}
 		return xmlEmbeddedFiles.toArray(new FileAttachment[0]);
 
+	}
+
+	/***
+	 * setter in case e.g. jackson tries to map attachments (normal use embedFileInXML)
+	 * @param fileArr Array of FileAttachments
+	 * @return fluent setter
+	 */
+	public Invoice setAdditionalReferencedDocuments(FileAttachment[] fileArr) {
+		xmlEmbeddedFiles = new ArrayList<>(Arrays.asList(fileArr));
+		return this;
 	}
 
 	@Override
