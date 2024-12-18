@@ -68,7 +68,6 @@ public class ZUGFeRDInvoiceImporter {
 	protected CalculatedInvoice importedInvoice = null;
 	protected boolean recalcPrice = false;
 	protected boolean ignoreCalculationErrors = false;
-	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<>();
 
 	public ZUGFeRDInvoiceImporter() {
 		//constructor for extending classes
@@ -239,7 +238,7 @@ public class ZUGFeRDInvoiceImporter {
 
 		try {
 			setDocument();
-		} catch (ParserConfigurationException | SAXException e) {
+		} catch (ParserConfigurationException | SAXException | ParseException e) {
 			LOGGER.error("Failed to parse XML", e);
 			throw new ZUGFeRDExportException(e);
 		}
@@ -255,7 +254,7 @@ public class ZUGFeRDInvoiceImporter {
 		setRawXML(rawXML, true);
 	}
 
-	private void setDocument() throws ParserConfigurationException, IOException, SAXException {
+	private void setDocument() throws ParserConfigurationException, IOException, SAXException, ParseException {
 		final DocumentBuilderFactory xmlFact = DocumentBuilderFactory.newInstance();
 		xmlFact.setNamespaceAware(true);
 		final DocumentBuilder builder = xmlFact.newDocumentBuilder();
@@ -267,8 +266,6 @@ public class ZUGFeRDInvoiceImporter {
 				importedInvoice = new CalculatedInvoice();
 				extractInto(importedInvoice);
 			} catch (XPathExpressionException e) {
-				throw new RuntimeException(e);
-			} catch (ParseException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -844,7 +841,7 @@ public class ZUGFeRDInvoiceImporter {
 			NodeList attachmentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			for (int i = 0; i < attachmentNodes.getLength(); i++) {
 				FileAttachment fa = new FileAttachment(attachmentNodes.item(i).getAttributes().getNamedItem("filename").getNodeValue(), attachmentNodes.item(i).getAttributes().getNamedItem("mimeCode").getNodeValue(), "Data", Base64.getDecoder().decode(XMLTools.trimOrNull(attachmentNodes.item(i))));
-				fileAttachments.add(fa);
+				zpp.embedFileInXML(fa);
 				// filename = "Aufmass.png" mimeCode = "image/png"
 				//EmbeddedDocumentBinaryObject cbc:EmbeddedDocumentBinaryObject mimeCode="image/png" filename="Aufmass.png"
 			}
@@ -1028,9 +1025,10 @@ public class ZUGFeRDInvoiceImporter {
 	 *
 	 * @return the file attachments embedded in XML (using base64) decoded as byte array,
 	 * for PDF embedded files in FX use getFileAttachmentsPDF()
+	 * @deprecated use invoice.getAdditionalReferencedDocuments
 	 */
 	public List<FileAttachment> getFileAttachmentsXML() {
-		return fileAttachments;
+		return new ArrayList<>(Arrays.asList(importedInvoice.getAdditionalReferencedDocuments()));
 	}
 
 	/***
