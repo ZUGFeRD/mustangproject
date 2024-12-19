@@ -262,7 +262,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return the Payment Terms
 	 */
 	public String getPaymentTerms() {
-		return extractString("//*[local-name() = 'SpecifiedTradePaymentTerms']//*[local-name() = 'Description']");
+		return importedInvoice.getPaymentTermDescription();
 	}
 
 	/**
