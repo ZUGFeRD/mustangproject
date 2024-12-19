@@ -126,6 +126,7 @@
                     <fo:table>
                         <fo:table-column border-style="solid" />
                         <fo:table-column border-style="solid" />
+                        <fo:table-column border-style="solid" />
                         <fo:table-column column-width="70%" border-style="solid" />
                         <fo:table-header>
                             <fo:table-row background-color="#E0E0E0" font-weight="bold">
@@ -134,6 +135,9 @@
                                 </fo:table-cell>
                                 <fo:table-cell>
                                     <fo:block>Code</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell>
+                                    <fo:block>Schwere</fo:block>
                                 </fo:table-cell>
                                 <fo:table-cell>
                                     <fo:block>Text</fo:block>
@@ -150,7 +154,7 @@
         </fo:root>
     </xsl:template>
 
-    <xsl:template match="notice">
+    <xsl:template match="notice|error">
         <fo:table-row font-size="12px" border-style="solid">
             <fo:table-cell number-rows-spanned="2">
                 <fo:block>
@@ -164,15 +168,35 @@
                     </xsl:call-template>
                 </fo:block>
             </fo:table-cell>
+            <fo:table-cell number-rows-spanned="2">
+                <fo:block >
+                    <xsl:choose>
+                        <xsl:when test="name() = 'error'">
+                            <xsl:attribute name="color">red</xsl:attribute>
+                            Fehler
+                        </xsl:when>
+                        <xsl:otherwise>
+                            Hinweis
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </fo:block>
+            </fo:table-cell>
             <fo:table-cell>
                 <fo:block>
+                    <xsl:if test="name() = 'error'">
+                        <xsl:attribute name="color">red</xsl:attribute>
+                    </xsl:if>
                     <xsl:value-of select="substring-before(.,' [ID')" />
                 </fo:block>
             </fo:table-cell>
         </fo:table-row>
         <fo:table-row font-size="12px" border-style="solid">
             <fo:table-cell>
-                <fo:block>Pfad:
+                <fo:block>
+                    <xsl:if test="name() = 'error'">
+                        <xsl:attribute name="color">red</xsl:attribute>
+                    </xsl:if>
+                    Pfad:
                     <xsl:value-of select="@location" />
                 </fo:block>
             </fo:table-cell>
