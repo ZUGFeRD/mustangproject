@@ -1007,7 +1007,7 @@ Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können
 																											<xsl:for-each select="ram:ChargeIndicator">
 																												<xsl:for-each select="udt:Indicator">
 																													<span>
-																														<xsl:value-of select="if (. eq fn:true())then &apos;Zuschlag&apos; else &apos;Abschlag&apos;"/>
+																														<xsl:value-of select="if (xs:boolean(.) eq fn:true())then &apos;Zuschlag&apos; else &apos;Abschlag&apos;"/>
 																													</span>
 																												</xsl:for-each>
 																											</xsl:for-each>
@@ -1924,7 +1924,7 @@ Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können
 																				<xsl:for-each select="ram:ChargeIndicator">
 																					<xsl:for-each select="udt:Indicator">
 																						<span>
-																							<xsl:value-of select="if (. eq fn:true())then &apos;Zuschlag&apos; else &apos;Abschlag&apos;"/>
+																							<xsl:value-of select="if (xs:boolean(.) eq fn:true())then &apos;Zuschlag&apos; else &apos;Abschlag&apos;"/>
 																						</span>
 																					</xsl:for-each>
 																				</xsl:for-each>
@@ -1982,7 +1982,7 @@ Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können
 																				<xsl:for-each select="ram:ActualAmount">
 																					<span>
 																						<xsl:variable name="altova:seqContentStrings_37">
-																							<xsl:value-of select="format-number(number(if (../ram:ChargeIndicator/udt:Indicator eq fn:true()) then . else -1 * .), '##0,00', 'format1')"/>
+																							<xsl:value-of select="format-number(number(if (xs:boolean(../ram:ChargeIndicator/udt:Indicator) eq fn:true()) then . else -1 * .), '##0,00', 'format1')"/>
 																						</xsl:variable>
 																						<xsl:variable name="altova:sContent_37" select="string($altova:seqContentStrings_37)"/>
 																						<xsl:value-of select="$altova:sContent_37"/>
@@ -2079,9 +2079,11 @@ Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können
 													<br/>
 												</xsl:for-each>
 											</xsl:for-each>
+											<!--
 											<xsl:for-each select="rsm:SpecifiedSupplyChainTradeTransaction">
 												<xsl:for-each select="ram:ApplicableSupplyChainTradeSettlement"/>
 											</xsl:for-each>
+											-->
 										</td>
 									</tr>
 									<tr>
@@ -2949,7 +2951,7 @@ if (. eq &apos;SH&apos;) then &apos;Spezielle Handhabungsdienstleistungen&apos; 
 	</xsl:function>
 	<xsl:function name="altova:GetChartLabelForPos" as="xs:string">
 		<xsl:param name="nodeParam" as="node()"/>
-		<xsl:value-of select="string-join($nodeParam/ancestor-or-self::altova:Pos/@altova:sLabel, ' ')"/>
+		<xsl:sequence select="string-join($nodeParam/ancestor-or-self::altova:Pos/@altova:sLabel, ' ')"/>
 	</xsl:function>
 	<xsl:function name="altova:convert-length-to-pixel" as="xs:decimal">
 		<xsl:param name="altova:length"/>
