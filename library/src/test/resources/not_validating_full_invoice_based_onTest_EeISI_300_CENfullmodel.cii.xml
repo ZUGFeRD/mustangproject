@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"
-                          xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100"
-                          xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100"
-                          xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
+<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
     <rsm:ExchangedDocumentContext>
         <ram:BusinessProcessSpecifiedDocumentContextParameter>
             <ram:ID>BT-23 Business Process Type</ram:ID>
@@ -19,11 +16,11 @@
         </ram:IssueDateTime>
         <ram:IncludedNote>
             <ram:Content>invoice note text</ram:Content>
-            <ram:SubjectCode>AAA</ram:SubjectCode>
+            <ram:SubjectCode>#AAA#</ram:SubjectCode>
         </ram:IncludedNote>
         <ram:IncludedNote>
             <ram:Content>invoice note text 2</ram:Content>
-            <ram:SubjectCode>AAA</ram:SubjectCode>
+            <ram:SubjectCode>#AAA#</ram:SubjectCode>
         </ram:IncludedNote>
     </rsm:ExchangedDocument>
     <rsm:SupplyChainTradeTransaction>
@@ -35,9 +32,7 @@
                 </ram:IncludedNote>
             </ram:AssociatedDocumentLineDocument>
             <ram:SpecifiedTradeProduct>
-                <ram:GlobalID schemeID="0060">Item standar identifier
-                </ram:GlobalID>
-
+                <ram:GlobalID>Item standar identifier</ram:GlobalID>
                 <ram:SellerAssignedID>Item seller's identifier</ram:SellerAssignedID>
                 <ram:BuyerAssignedID>Item buyer's identifier</ram:BuyerAssignedID>
                 <ram:Name>Item name</ram:Name>
@@ -98,9 +93,9 @@
                         <udt:Indicator>false</udt:Indicator>
                     </ram:ChargeIndicator>
                     <ram:CalculationPercent>1.00</ram:CalculationPercent>
-                    <ram:BasisAmount>100.00</ram:BasisAmount>
+                    <ram:BasisAmount>1000.00</ram:BasisAmount>
                     <ram:ActualAmount>10.00</ram:ActualAmount>
-                    <ram:ReasonCode>95</ram:ReasonCode>
+                    <ram:ReasonCode>55</ram:ReasonCode>
                     <ram:Reason>Invoice line allowance reason</ram:Reason>
                 </ram:SpecifiedTradeAllowanceCharge>
                 <ram:SpecifiedTradeAllowanceCharge>
@@ -108,17 +103,18 @@
                         <udt:Indicator>true</udt:Indicator>
                     </ram:ChargeIndicator>
                     <ram:CalculationPercent>1.00</ram:CalculationPercent>
-                    <ram:BasisAmount>100.00</ram:BasisAmount>
+                    <ram:BasisAmount>1000.00</ram:BasisAmount>
                     <ram:ActualAmount>10.00</ram:ActualAmount>
                     <ram:ReasonCode>AAA</ram:ReasonCode>
                     <ram:Reason>Invoice line charge reason</ram:Reason>
                 </ram:SpecifiedTradeAllowanceCharge>
                 <ram:SpecifiedTradeSettlementLineMonetarySummation>
-                    <ram:LineTotalAmount>100.00</ram:LineTotalAmount>
+                    <ram:LineTotalAmount>1000.00</ram:LineTotalAmount>
                 </ram:SpecifiedTradeSettlementLineMonetarySummation>
                 <ram:AdditionalReferencedDocument>
                     <ram:IssuerAssignedID>Line object identifier</ram:IssuerAssignedID>
                     <ram:TypeCode>130</ram:TypeCode>
+                    <ram:ReferenceTypeCode />
                 </ram:AdditionalReferencedDocument>
                 <ram:ReceivableSpecifiedTradeAccountingAccount>
                     <ram:ID>6789</ram:ID>
@@ -147,7 +143,7 @@
                     <ram:RateApplicablePercent>0.00</ram:RateApplicablePercent>
                 </ram:ApplicableTradeTax>
                 <ram:SpecifiedTradeSettlementLineMonetarySummation>
-                    <ram:LineTotalAmount>100.00</ram:LineTotalAmount>
+                    <ram:LineTotalAmount>1000.00</ram:LineTotalAmount>
                 </ram:SpecifiedTradeSettlementLineMonetarySummation>
             </ram:SpecifiedLineTradeSettlement>
         </ram:IncludedSupplyChainTradeLineItem>
@@ -159,7 +155,7 @@
                 <ram:Name>Seller name</ram:Name>
                 <ram:Description>Seller additional legal information</ram:Description>
                 <ram:SpecifiedLegalOrganization>
-                    <!-- <ram:ID schemeID="0310">Seller legal identifier</ram:ID> -->
+                    <ram:ID schemeID="0310">Seller legal identifier</ram:ID>
                     <ram:TradingBusinessName>Seller trading name</ram:TradingBusinessName>
                 </ram:SpecifiedLegalOrganization>
                 <ram:DefinedTradeContact>
@@ -181,7 +177,7 @@
                     <ram:CountrySubDivisionName>Seller country subdivision</ram:CountrySubDivisionName>
                 </ram:PostalTradeAddress>
                 <ram:URIUniversalCommunication>
-                    <ram:URIID schemeID="EM">Seller electronic address</ram:URIID>
+                    <ram:URIID schemeID="SMTP">Seller electronic address</ram:URIID>
                 </ram:URIUniversalCommunication>
                 <ram:SpecifiedTaxRegistration>
                     <ram:ID schemeID="VA">DE12345677</ram:ID>
@@ -216,7 +212,7 @@
                     <ram:CountrySubDivisionName>Buyer country subdivision</ram:CountrySubDivisionName>
                 </ram:PostalTradeAddress>
                 <ram:URIUniversalCommunication>
-                    <ram:URIID schemeID="EM">Buyer electronic address</ram:URIID>
+                    <ram:URIID schemeID="DE:SMTP">Buyer electronic address</ram:URIID>
                 </ram:URIUniversalCommunication>
                 <ram:SpecifiedTaxRegistration>
                     <ram:ID schemeID="VA">IE394838894</ram:ID>
@@ -256,7 +252,7 @@
             <ram:AdditionalReferencedDocument>
                 <ram:IssuerAssignedID>rst</ram:IssuerAssignedID>
                 <ram:TypeCode>130</ram:TypeCode>
-                <ram:ReferenceTypeCode>AAA</ram:ReferenceTypeCode>
+                <ram:ReferenceTypeCode>0090</ram:ReferenceTypeCode>
             </ram:AdditionalReferencedDocument>
             <ram:SpecifiedProcuringProject>
                 <ram:ID>456</ram:ID>
@@ -315,32 +311,32 @@
                     <ram:IBANID>IT1212341234123412</ram:IBANID>
                     <ram:AccountName>Payment account name</ram:AccountName>
                 </ram:PayeePartyCreditorFinancialAccount>
-                <!-- <ram:BICID>BSCTCH22</ram:BICID> -->
-                <!-- <ram:PayerSpecifiedDebtorFinancialInstitution>
-                </ram:PayerSpecifiedDebtorFinancialInstitution> -->
-                <!-- <ram:PayeePartyCreditorFinancialAccount>
-                  <ram:IBANID>IT1212341234123413</ram:IBANID>
-                  <ram:AccountName>Payment account name 2</ram:AccountName>
+                <ram:PayerSpecifiedDebtorFinancialInstitution>
+                    <ram:BICID>BSCTCH22</ram:BICID>
+                </ram:PayerSpecifiedDebtorFinancialInstitution>
+                <ram:PayeePartyCreditorFinancialAccount>
+                    <ram:IBANID>IT1212341234123413</ram:IBANID>
+                    <ram:AccountName>Payment account name 2</ram:AccountName>
                 </ram:PayeePartyCreditorFinancialAccount>
                 <ram:PayerSpecifiedDebtorFinancialInstitution>
-                  <ram:BICID>BSCTCH22</ram:BICID>
-                </ram:PayerSpecifiedDebtorFinancialInstitution> -->
+                    <ram:BICID>BSCTCH22</ram:BICID>
+                </ram:PayerSpecifiedDebtorFinancialInstitution>
             </ram:SpecifiedTradeSettlementPaymentMeans>
             <ram:ApplicableTradeTax>
-                <ram:CalculatedAmount>5.00</ram:CalculatedAmount>
+                <ram:CalculatedAmount>50.00</ram:CalculatedAmount>
                 <ram:TypeCode>VAT</ram:TypeCode>
-                <ram:BasisAmount>100.00</ram:BasisAmount>
+                <ram:BasisAmount>1000.00</ram:BasisAmount>
                 <ram:CategoryCode>S</ram:CategoryCode>
-                <!-- <ram:DueDateTypeCode>29</ram:DueDateTypeCode> -->
+                <ram:DueDateTypeCode>29</ram:DueDateTypeCode>
                 <ram:RateApplicablePercent>5.00</ram:RateApplicablePercent>
             </ram:ApplicableTradeTax>
             <ram:ApplicableTradeTax>
                 <ram:CalculatedAmount>0.00</ram:CalculatedAmount>
                 <ram:TypeCode>VAT</ram:TypeCode>
                 <ram:ExemptionReason>Exemtion reason text</ram:ExemptionReason>
-                <ram:BasisAmount>100.00</ram:BasisAmount>
+                <ram:BasisAmount>1000.00</ram:BasisAmount>
                 <ram:CategoryCode>E</ram:CategoryCode>
-                <ram:ExemptionReasonCode>VATEX-EU-O</ram:ExemptionReasonCode>
+                <ram:ExemptionReasonCode>Exemption reason code</ram:ExemptionReasonCode>
                 <ram:DueDateTypeCode>29</ram:DueDateTypeCode>
                 <ram:RateApplicablePercent>0.00</ram:RateApplicablePercent>
             </ram:ApplicableTradeTax>
@@ -357,9 +353,9 @@
                     <udt:Indicator>false</udt:Indicator>
                 </ram:ChargeIndicator>
                 <ram:CalculationPercent>1.00</ram:CalculationPercent>
-                <ram:BasisAmount>100.00</ram:BasisAmount>
+                <ram:BasisAmount>1000.00</ram:BasisAmount>
                 <ram:ActualAmount>10.00</ram:ActualAmount>
-                <ram:ReasonCode>95</ram:ReasonCode>
+                <ram:ReasonCode>55</ram:ReasonCode>
                 <ram:Reason>Doc allowance reason text</ram:Reason>
                 <ram:CategoryTradeTax>
                     <ram:TypeCode>VAT</ram:TypeCode>
@@ -372,7 +368,7 @@
                     <udt:Indicator>true</udt:Indicator>
                 </ram:ChargeIndicator>
                 <ram:CalculationPercent>1.00</ram:CalculationPercent>
-                <ram:BasisAmount>100.00</ram:BasisAmount>
+                <ram:BasisAmount>1000.00</ram:BasisAmount>
                 <ram:ActualAmount>10.00</ram:ActualAmount>
                 <ram:ReasonCode>AAA</ram:ReasonCode>
                 <ram:Reason>Doc charge reason text</ram:Reason>
@@ -390,16 +386,16 @@
                 <ram:DirectDebitMandateID>Mandate reference identifier</ram:DirectDebitMandateID>
             </ram:SpecifiedTradePaymentTerms>
             <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
-                <ram:LineTotalAmount>200.00</ram:LineTotalAmount>
+                <ram:LineTotalAmount>2000.00</ram:LineTotalAmount>
                 <ram:ChargeTotalAmount>10.00</ram:ChargeTotalAmount>
                 <ram:AllowanceTotalAmount>10.00</ram:AllowanceTotalAmount>
-                <ram:TaxBasisTotalAmount>200.00</ram:TaxBasisTotalAmount>
-                <ram:TaxTotalAmount currencyID="EUR">5.00</ram:TaxTotalAmount>
-                <ram:TaxTotalAmount currencyID="NOK">4.60</ram:TaxTotalAmount>
+                <ram:TaxBasisTotalAmount>2000.00</ram:TaxBasisTotalAmount>
+                <ram:TaxTotalAmount currencyID="EUR">50.00</ram:TaxTotalAmount>
+                <ram:TaxTotalAmount currencyID="NOK">46.00</ram:TaxTotalAmount>
                 <ram:RoundingAmount>0.00</ram:RoundingAmount>
-                <ram:GrandTotalAmount>205.00</ram:GrandTotalAmount>
+                <ram:GrandTotalAmount>2050.00</ram:GrandTotalAmount>
                 <ram:TotalPrepaidAmount>0.00</ram:TotalPrepaidAmount>
-                <ram:DuePayableAmount>205.00</ram:DuePayableAmount>
+                <ram:DuePayableAmount>2050.00</ram:DuePayableAmount>
             </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
             <ram:InvoiceReferencedDocument>
                 <ram:IssuerAssignedID>abc123</ram:IssuerAssignedID>

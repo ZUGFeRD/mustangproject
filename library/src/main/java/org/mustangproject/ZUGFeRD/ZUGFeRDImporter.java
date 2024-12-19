@@ -262,7 +262,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return the Payment Terms
 	 */
 	public String getPaymentTerms() {
-		return extractString("//*[local-name() = 'SpecifiedTradePaymentTerms']//*[local-name() = 'Description']");
+		return importedInvoice.getPaymentTermDescription();
 	}
 
 	/**
@@ -343,6 +343,9 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return the sender's account IBAN code
 	 */
 	public String getIBAN() {
+		if ((importedInvoice==null)||(importedInvoice.getTradeSettlement()==null)) {
+			return null;
+		}
 		for (IZUGFeRDTradeSettlement settlement : importedInvoice.getTradeSettlement()) {
 			if (settlement instanceof IZUGFeRDTradeSettlementDebit) {
 				return ((IZUGFeRDTradeSettlementDebit) settlement).getIBAN();
@@ -356,8 +359,6 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 
 
 	public String getHolder() {
-
-
 		return extractString("//*[local-name() = 'SellerTradeParty']/*[local-name() = 'Name']");
 	}
 
@@ -366,7 +367,6 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return the total payable amount
 	 */
 	public String getAmount() {
-
 		return importedInvoice.getGrandTotal().toPlainString();
 	}
 
@@ -655,6 +655,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 
 	/**
 	 * returns a list of LineItems
+	 * @deprecated use invoiceimporter getZFItems
 	 *
 	 * @return a List of LineItem instances
 	 */
@@ -742,6 +743,15 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 								node = getNodeByName(node.getChildNodes(), "CalculatedAmount");
 								lineItem.setTax(XMLTools.tryBigDecimal(node));
 							}
+
+							node = getNodeByName(nn.getChildNodes(), "ApplicableTradeTax");
+							if (node != null) {
+								node = getNodeByName(node.getChildNodes(), "CategoryCode");
+								if(node != null){
+									lineItem.getProduct().setTaxCategoryCode(XMLTools.getNodeValue(node));
+								}
+							}
+
 							node = getNodeByName(nn.getChildNodes(), "BillingSpecifiedPeriod");
 							if (node != null) {
 								final Node start = getNodeByName(node.getChildNodes(), "StartDateTime");

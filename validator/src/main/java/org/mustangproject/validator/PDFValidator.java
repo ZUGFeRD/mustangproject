@@ -122,7 +122,9 @@ public class PDFValidator extends Validator {
 		}
 
 		// step 2 validate XMP
-		final ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
+		final ZUGFeRDImporter zi = new ZUGFeRDImporter();
+		zi.doIgnoreCalculationErrors();//of course the calculation will still be schematron checked
+		zi.setInputStream(inputStream);
 		final String xmp = zi.getXMP();
 
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -239,7 +241,7 @@ public class PDFValidator extends Validator {
 
 			boolean versionValid = false;
 			for (int i = 0; i < nodes.getLength(); i++) {
-				final String[] valueArray = {"1.0", "2p0", "1.2", "2.0", "2.1", "2.2", "2.3", "3.0"}; //1.2, 2.0, 2.1, 2.2, 2.3 and 3.0 are for xrechnung 1.2, 2p0 can be ZF 2.0, 2.1, 2.1.1
+				final String[] valueArray = {"1.0", "1p0", "2p0", "1.2", "2.0", "2.1", "2.2", "2.3", "3.0"}; //1.2, 2.0, 2.1, 2.2, 2.3 and 3.0 are for xrechnung 1.2, 2p0 can be ZF 2.0, 2.1, 2.1.1
 
 				if (stringArrayContains(valueArray, nodes.item(i).getTextContent())) {
 					versionValid = true;
@@ -265,6 +267,7 @@ public class PDFValidator extends Validator {
 		final byte[] pdfMachineSignature = "pdfMachine from Broadgun Software".getBytes(StandardCharsets.UTF_8);
 		final byte[] ghostscriptSignature = "%%Invocation:".getBytes(StandardCharsets.UTF_8);
 		final byte[] cibpdfbrewerSignature = "CIB pdf brewer".getBytes(StandardCharsets.UTF_8);
+		final byte[] lexofficeSignature = "lexoffice".getBytes(StandardCharsets.UTF_8);
 
 		if (ByteArraySearcher.contains(fileContents, symtraxSignature)) {
 			Signature = "Symtrax";
@@ -282,6 +285,8 @@ public class PDFValidator extends Validator {
 			Signature = "Ghostscript";
 		} else if (ByteArraySearcher.contains(fileContents, cibpdfbrewerSignature)) {
 			Signature = "CIB pdf brewer";
+		} else if (ByteArraySearcher.contains(fileContents, lexofficeSignature)) {
+			Signature = "Lexware office";
 		}
 
 		context.setSignature(Signature);

@@ -1,9 +1,13 @@
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IReferencedDocument;
 import org.mustangproject.util.NodeMap;
 import org.w3c.dom.Node;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ReferencedDocument implements IReferencedDocument {
 
 	String issuerAssignedID;
@@ -22,7 +26,7 @@ public class ReferencedDocument implements IReferencedDocument {
 		this.referenceTypeCode = referenceTypeCode;
 	}
 
-	/***
+    /***
 	 * sets an ID assigned by the sender
 	 * @param issuerAssignedID the ID as a string :-)
 	 */
@@ -66,8 +70,8 @@ public class ReferencedDocument implements IReferencedDocument {
 			return null;
 		}
 		NodeMap nodes = new NodeMap(node);
-		return new ReferencedDocument(nodes.getAsStringOrNull("IssuerAssignedID"),
-			nodes.getAsStringOrNull("TypeCode"),
+		return new ReferencedDocument(nodes.getAsStringOrNull("IssuerAssignedID", "ID"),
+			nodes.getAsStringOrNull("TypeCode", "DocumentTypeCode"),
 			nodes.getAsStringOrNull("ReferenceTypeCode"));
 	}
 }

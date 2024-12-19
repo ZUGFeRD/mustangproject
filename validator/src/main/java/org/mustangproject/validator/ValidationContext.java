@@ -135,6 +135,22 @@ public class ValidationContext {
 		return String.join(",", errorcodes);
 	}
 
+	/***
+	 *
+	 * @return the unique error IDs as comma separated string
+	 */
+	public String getCSVIDResult() {
+		final ArrayList<String> errorIDs = new ArrayList<>();
+		for (final ValidationResultItem validationResultItem : results) {
+			if (!validationResultItem.getID().isEmpty()) {
+				final String errorID=validationResultItem.getID();
+				errorIDs.add(errorID);
+
+			}
+		}
+		return String.join(",", errorIDs);
+	}
+
 	public void setInvalid() {
 		isValid = false;
 	}

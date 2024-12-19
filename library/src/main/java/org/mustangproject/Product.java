@@ -2,10 +2,12 @@ package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 import org.mustangproject.util.NodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -22,15 +24,16 @@ import java.util.Map;
 
 public class Product implements IZUGFeRDExportableProduct {
 	protected String unit, name, sellerAssignedID, buyerAssignedID;
-	protected String description="";
-	protected String taxExemptionReason=null;
-	protected String taxCategoryCode=null;
+	protected String description = "";
+	protected String taxExemptionReason = null;
+	protected String taxCategoryCode = null;
 	protected BigDecimal VATPercent;
 	protected boolean isReverseCharge = false;
 	protected boolean isIntraCommunitySupply = false;
 	protected SchemedID globalId = null;
 	protected String countryOfOrigin = null;
 	protected HashMap<String, String> attributes = new HashMap<>();
+
 	protected List<IDesignatedProductClassification> classifications = new ArrayList<>();
 
 	/***
@@ -59,10 +62,12 @@ public class Product implements IZUGFeRDExportableProduct {
 			}
 		});
 
+
 		nodeMap.getAsString("SellerAssignedID").ifPresent(this::setSellerAssignedID);
 		nodeMap.getAsString("BuyerAssignedID").ifPresent(this::setBuyerAssignedID);
 		nodeMap.getAsString("Name").ifPresent(this::setName);
 		nodeMap.getAsString("Description").ifPresent(this::setDescription);
+
 
 		nodeMap.getAsNodeMap("ApplicableProductCharacteristic").ifPresent(apcNodes -> {
 			String key = apcNodes.getAsStringOrNull("Description");
@@ -75,6 +80,26 @@ public class Product implements IZUGFeRDExportableProduct {
 			}
 		});
 
+
+		//UBL
+		nodeMap.getAsNodeMap("AdditionalItemProperty").ifPresent(aipNodes -> {
+			String name = aipNodes.getAsStringOrNull("Name");
+			String val = aipNodes.getAsStringOrNull("Value");
+			if (name != null && val != null) {
+				if (attributes == null) {
+					attributes = new HashMap<>();
+				}
+				attributes.put(name, val);
+			}
+		});
+
+		nodeMap.getAsNodeMap("CommodityClassification").ifPresent(dpcNodes -> {
+			String className = dpcNodes.getAsStringOrNull("ClassName");
+			dpcNodes.getNode("ItemClassificationCode").map(ClassCode::fromNode).ifPresent(classCode ->
+				classifications.add(new DesignatedProductClassification(classCode, className)));
+		});
+
+		//UBL
 		nodeMap.getAsNodeMap("DesignatedProductClassification").ifPresent(dpcNodes -> {
 			String className = dpcNodes.getAsStringOrNull("ClassName");
 			dpcNodes.getNode("ClassCode").map(ClassCode::fromNode).ifPresent(classCode ->
@@ -115,6 +140,7 @@ public class Product implements IZUGFeRDExportableProduct {
 		return this;
 	}
 
+
 	/***
 	 *
 	 * @return e.g. intra-commnunity supply or small business
@@ -129,7 +155,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @param taxExemptionReasonText String e.g. Kleinunternehmer gemäß §19 UStG https://github.com/ZUGFeRD/mustangproject/issues/463
 	 * @return fluent setter
 	 */
-	public Product setTaxExemptionReason(String  taxExemptionReasonText) {
+	public Product setTaxExemptionReason(String taxExemptionReasonText) {
 		taxExemptionReason = taxExemptionReasonText;
 		return this;
 	}
@@ -151,7 +177,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @param code e.g. S (normal tax), Z=zero rated,  E (e.g. small business) or K (intrra community supply) see also https://github.com/ZUGFeRD/mustangproject/issues/463
 	 * @return fluent setter
 	 */
-	public Product setTaxCategoryCode(String  code) {
+	public Product setTaxCategoryCode(String code) {
 		taxCategoryCode = code;
 		return this;
 	}
@@ -278,18 +304,22 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @return fluent setter
 	 */
 	public Product setVATPercent(BigDecimal VATPercent) {
-		this.VATPercent = VATPercent;
+		if (VATPercent == null) {
+			this.VATPercent = BigDecimal.ZERO;
+		} else {
+			this.VATPercent = VATPercent;
+		}
 		return this;
 	}
 
 	@Override
 	public String getCountryOfOrigin() {
-	    return this.countryOfOrigin;
+		return this.countryOfOrigin;
 	}
 
 	public Product setCountryOfOrigin(String countryOfOrigin) {
-	    this.countryOfOrigin = countryOfOrigin;
-	    return this;
+		this.countryOfOrigin = countryOfOrigin;
+		return this;
 	}
 
 	@Override
@@ -302,16 +332,16 @@ public class Product implements IZUGFeRDExportableProduct {
 	}
 
 	public Product setAttributes(Map<String, String> attributes) {
-	    this.attributes.clear();
+		this.attributes.clear();
 		if (attributes != null) {
 			this.attributes.putAll(attributes);
 		}
-	    return this;
+		return this;
 	}
 
-	public Product addAttribute(String name, String value ) {
-	    this.attributes.put(name, value);
-	    return this;
+	public Product addAttribute(String name, String value) {
+		this.attributes.put(name, value);
+		return this;
 	}
 
 	@Override
@@ -330,6 +360,23 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @return the modified object
 	 */
 	public Product setClassifications(IDesignatedProductClassification[] classifications) {
+		this.classifications.clear();
+		if (classifications != null) {
+			this.classifications.addAll(Arrays.asList(classifications));
+		}
+		return this;
+	}
+
+
+	/**
+	 * Provide Jackson a hint as to use DesignatedProductClassification for the
+	 * IDesignatedProductClassification product classifications
+	 *
+	 * @param classifications the new set of classifications
+	 * @return fluent setter
+	 */
+	@JsonSetter("classifications")
+	public Product setClassificationsClass(DesignatedProductClassification[] classifications) {
 		this.classifications.clear();
 		if (classifications != null) {
 			this.classifications.addAll(Arrays.asList(classifications));

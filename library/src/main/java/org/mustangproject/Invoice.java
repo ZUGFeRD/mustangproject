@@ -21,10 +21,7 @@
 package org.mustangproject;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.*;
@@ -66,6 +63,7 @@ public class Invoice implements IExportableTransaction {
 	protected String despatchAdviceReferencedDocumentID = null;
 	protected String vatDueDateTypeCode = null;
 	protected String creditorReferenceID; // required when direct debit is used.
+	private BigDecimal roundingAmount=null;
 
 	public Invoice() {
 		ZFItems = new ArrayList<>();
@@ -113,6 +111,16 @@ public class Invoice implements IExportableTransaction {
 		}
 		return xmlEmbeddedFiles.toArray(new FileAttachment[0]);
 
+	}
+
+	/***
+	 * setter in case e.g. jackson tries to map attachments (normal use embedFileInXML)
+	 * @param fileArr Array of FileAttachments
+	 * @return fluent setter
+	 */
+	public Invoice setAdditionalReferencedDocuments(FileAttachment[] fileArr) {
+		xmlEmbeddedFiles = new ArrayList<>(Arrays.asList(fileArr));
+		return this;
 	}
 
 	@Override
@@ -412,6 +420,11 @@ public class Invoice implements IExportableTransaction {
 		return includedNotes;
 	}
 
+	public Invoice setNotesWithSubjectCode(List<IncludedNote> theList) {
+		includedNotes=theList;
+		return this;
+	}
+
 	@Override
 	public String getCurrency() {
 		return currency;
@@ -465,6 +478,26 @@ public class Invoice implements IExportableTransaction {
 	@Override
 	public TradeParty getSender() {
 		return sender;
+	}
+
+	/***
+	 * for currency rounding differences to 5ct e.g. in Netherlands ("Rappenrundung")
+	 * @return null if not set, otherwise BigDecimal of Euros
+	 */
+	@Override
+	public BigDecimal getRoundingAmount() {
+		return roundingAmount;
+	}
+
+	/***
+	 * set the cent e.g. to reach the next 5ct mark for currencies in certain countries
+	 * e.g. in the Netherlands ("Rappenrundung")
+	 * @param amount
+	 * @return fluent setter
+	 */
+	public Invoice setRoundingAmount(BigDecimal amount) {
+		 roundingAmount=amount;
+		 return this;
 	}
 
 	/***
@@ -524,8 +557,8 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * this is wrong and only used from jackson
-	 * @param iza
-	 * @return
+	 * @param iza the Array of allowances/charges
+	 * @return fluent setter
 	 */
 	public Invoice setZFAllowances(Allowance[] iza) {
 		Allowances=new ArrayList<>();
@@ -548,8 +581,8 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * this is wrong and only used from jackson
-	 * @param iza
-	 * @return
+	 * @param iza the array of charges
+	 * @return fluent setter
 	 */
 	public Invoice setZFCharges(Charge[] iza) {
 		Charges=new ArrayList<>();
