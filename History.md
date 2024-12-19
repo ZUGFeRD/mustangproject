@@ -1,6 +1,7 @@
 - correcly write charge reason codes also for non-Xrechnung
 - correctly import additional referenced documents into invoice/corrected setting of attachments from jackson
 - corrected parseException structure
+- allow 1p0 as potential xmp version number
 
 2.15.1
 =======
