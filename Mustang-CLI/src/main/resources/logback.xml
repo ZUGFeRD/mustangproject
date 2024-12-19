@@ -1,38 +1,36 @@
 <configuration>
-
-    <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
-        <target>System.err</target>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <if condition='property("FILE_APPENDER_ENABLED").contains("true")'>
-        <then>
-            <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender" >
-                <!--<appender name="FILE" class="org.mustangproject.commandline.LazyRollingFileAppender" >-->
-                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                    <!-- Daily rollover -->
-                    <fileNamePattern>log/ZUV-%d{yyyy-MM}.log</fileNamePattern>
-
-                    <!-- Keep 5 years worth of history -->
-                    <maxHistory>60</maxHistory>
-                </rollingPolicy>
-
-                <encoder>
-                    <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-                </encoder>
-            </appender>
-        </then>
-    </if>
-
-    <!-- Configure so that it outputs to both console and log file -->
-    <root level="INFO">
-        <if condition='property("FILE_APPENDER_ENABLED").contains("true")'>
-            <then>
-                <appender-ref ref="FILE" />
-            </then>
-        </if>
-        <appender-ref ref="STDERR" />
-    </root>
+	<appender name="STDERR"
+	          class="ch.qos.logback.core.ConsoleAppender">
+		<target>System.err</target>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+	<if condition='property("FILE_APPENDER_ENABLED").contains("true")'>
+		<then>
+			<appender name="FILE"
+			          class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+					<!-- Daily rollover -->
+					<fileNamePattern>log/ZUV-%d{yyyy-MM}.log</fileNamePattern>
+					<!-- Keep 5 years worth of history -->
+					<maxHistory>60</maxHistory>
+				</rollingPolicy>
+				<encoder>
+					<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+				</encoder>
+			</appender>
+		</then>
+	</if>
+	<!-- Configure so that it outputs to both console and log file -->
+	<if condition='property("FILE_APPENDER_ENABLED").contains("true")'>
+		<then>
+			<root level="INFO">
+				<appender-ref ref="FILE"/>
+			</root>
+		</then>
+	</if>
+	<root level="INFO">
+		<appender-ref ref="STDERR"/>
+	</root>
 </configuration>   
