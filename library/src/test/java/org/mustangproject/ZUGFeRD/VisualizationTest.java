@@ -24,9 +24,7 @@ import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.mustangproject.ZUGFeRD.ZUGFeRDVisualizer.Language;
 import org.mustangproject.util.ByteArraySearcher;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
@@ -76,10 +74,6 @@ public class VisualizationTest extends ResourceCase {
 			fail("TransformerException should not happen: " + e.getMessage());
 		} catch (IOException e) {
 			fail("IOException should not happen: " + e.getMessage());
-		} catch (ParserConfigurationException e) {
-			fail("ParserConfigurationException should not happen: " + e.getMessage());
-		} catch (SAXException e) {
-			fail("SAXException should not happen: " + e.getMessage());
 		}
 
 
