@@ -659,6 +659,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 *
 	 * @return a List of LineItem instances
 	 */
+	@Deprecated
 	public List<Item> getLineItemList() {
 		final List<Node> nodeList = getLineItemNodes();
 		final List<Item> lineItemList = new ArrayList<>();
