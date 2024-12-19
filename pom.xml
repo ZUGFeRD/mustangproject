@@ -80,12 +80,12 @@
 		<jaxb-runtime.version>4.0.5</jaxb-runtime.version>
 		<junit.version>4.13.2</junit.version>
 		<junit-jupiter.version>5.11.4</junit-jupiter.version>
-		<logback.version>1.5.12</logback.version>
+		<logback.version>1.5.13</logback.version>
 		<ph-commons.version>11.1.11</ph-commons.version>
 		<ph-ubl23.version>9.0.3</ph-ubl23.version>
 		<pdfbox.version>3.0.3</pdfbox.version>
 		<saxon.version>12.5</saxon.version>
-		<schematron.version>8.0.4</schematron.version>
+		<schematron.version>8.0.5</schematron.version>
 		<slf4j.version>2.0.16</slf4j.version>
 		<templating-maven-plugin.version>3.0.0</templating-maven-plugin.version>
 		<core-jakarta.version>1.26.1</core-jakarta.version>
