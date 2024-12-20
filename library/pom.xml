@@ -3,13 +3,13 @@
     <parent>
         <groupId>org.mustangproject</groupId>
         <artifactId>core</artifactId>
-        <version>2.15.2-SNAPSHOT</version>
+        <version>2.15.3-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
     <artifactId>library</artifactId>
-    <version>2.15.2-SNAPSHOT</version>
+    <version>2.15.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Library to write, read and validate e-invoices (Factur-X, ZUGFeRD, Order-X, XRechnung/CII)</name>
     <description>FOSS Java library to read, write and validate european electronic invoices and orders in the UN/CEFACT
@@ -200,21 +200,51 @@
                         </manifest>
                         <manifestSections>
                             <manifestSection>
-                                <name>FreeSans.ttf</name>
+                                <name>SourceSansPro-Regular.ttf</name>
                                 <manifestEntries>
                                     <Content-Type>font/ttf</Content-Type>
                                 </manifestEntries>
                             </manifestSection>
                             <manifestSection>
-                                <name>FreeSerif.ttf</name>
+                                <name>SourceSansPro-It.ttf</name>
                                 <manifestEntries>
-                                    <Content-Type>application/x-font</Content-Type>
+                                    <Content-Type>font/ttf</Content-Type>
                                 </manifestEntries>
                             </manifestSection>
                             <manifestSection>
-                                <name>Times-Bold.ttf</name>
+                                <name>SourceSansPro-Bold.ttf</name>
                                 <manifestEntries>
-                                    <Content-Type>application/x-font</Content-Type>
+                                    <Content-Type>font/ttf</Content-Type>
+                                </manifestEntries>
+                            </manifestSection>
+                            <manifestSection>
+                                <name>SourceSansPro-BoldIt.ttf</name>
+                                <manifestEntries>
+                                    <Content-Type>font/ttf</Content-Type>
+                                </manifestEntries>
+                            </manifestSection>
+                            <manifestSection>
+                                <name>SourceSerifPro-Regular.ttf</name>
+                                <manifestEntries>
+                                    <Content-Type>font/ttf</Content-Type>
+                                </manifestEntries>
+                            </manifestSection>
+                            <manifestSection>
+                                <name>SourceSerifPro-It.ttf</name>
+                                <manifestEntries>
+                                    <Content-Type>font/ttf</Content-Type>
+                                </manifestEntries>
+                            </manifestSection>
+                            <manifestSection>
+                                <name>SourceSerifPro-Bold.ttf</name>
+                                <manifestEntries>
+                                    <Content-Type>font/ttf</Content-Type>
+                                </manifestEntries>
+                            </manifestSection>
+                            <manifestSection>
+                                <name>SourceSerifPro-BoldIt.ttf</name>
+                                <manifestEntries>
+                                    <Content-Type>font/ttf</Content-Type>
                                 </manifestEntries>
                             </manifestSection>
                         </manifestSections>

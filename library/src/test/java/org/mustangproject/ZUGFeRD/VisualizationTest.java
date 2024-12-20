@@ -62,9 +62,11 @@ public class VisualizationTest extends ResourceCase {
 		try {
 			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
 			result = zvi.visualize(CIIinputFile.getAbsolutePath(), lang);
+			Files.write(Paths.get("./target/testout-" + resultFileName), result.getBytes(StandardCharsets.UTF_8));
 
 			File expectedResult = getResourceAsFile(resultFileName);
-			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8);
+			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8)
+				;
 
 		} catch (UnsupportedOperationException e) {
 			fail("UnsupportedOperationException should not happen: " + e.getMessage());
