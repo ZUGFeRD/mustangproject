@@ -542,7 +542,7 @@ public class ZF2PushTest extends TestCase {
 					.addAllowance(new Allowance(new BigDecimal(0.2)).setReason("discount").setTaxPercent(new BigDecimal(16)))
 					.addCashDiscount(new CashDiscount(new BigDecimal(2), 14))
 					.setDeliveryDate(sdf.parse("2020-11-02")).setNumber(number).setVATDueDateTypeCode(EventTimeCodeTypeConstants.PAYMENT_DATE)
-					.setInvoiceReferencedDocumentID("abc123")
+					.setInvoiceReferencedDocumentID("abc123").addInvoiceReferencedDocument(new ReferencedDocument("abcd1234"))
 				);
 			} catch (ParseException e) {
 				e.printStackTrace();
@@ -587,6 +587,8 @@ public class ZF2PushTest extends TestCase {
 			Invoice i = zii.extractInvoice();
 
 			assertEquals("abc123", i.getInvoiceReferencedDocumentID());
+			assertEquals(1, i.getInvoiceReferencedDocuments().size());
+			assertEquals("abcd1234", i.getInvoiceReferencedDocuments().get(0).getIssuerAssignedID());
 			assertEquals("4304171000002", i.getRecipient().getGlobalID());
 			assertEquals("2001015001325", i.getZFItems()[0].getProduct().getGlobalID());
 			assertEquals(orgID, i.getSender().getID());

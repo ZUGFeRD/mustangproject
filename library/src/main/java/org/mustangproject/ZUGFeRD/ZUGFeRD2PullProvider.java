@@ -893,6 +893,19 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			}
 			xml += "</ram:InvoiceReferencedDocument>";
 		}
+		if (trans.getInvoiceReferencedDocuments() != null) {
+			for (var doc : trans.getInvoiceReferencedDocuments()) {
+				xml += "<ram:InvoiceReferencedDocument>"
+						+ "<ram:IssuerAssignedID>"
+						+ XMLTools.encodeXML(doc.getIssuerAssignedID()) + "</ram:IssuerAssignedID>";
+				if (doc.getFormattedIssueDateTime() != null) {
+					xml += "<ram:FormattedIssueDateTime>"
+							+ DATE.qdtFormat(doc.getFormattedIssueDateTime())
+							+ "</ram:FormattedIssueDateTime>";
+				}
+				xml += "</ram:InvoiceReferencedDocument>";
+			}
+		}
 
 		xml += "</ram:ApplicableHeaderTradeSettlement>";
 		// + "<IncludedSupplyChainTradeLineItem>\n"
