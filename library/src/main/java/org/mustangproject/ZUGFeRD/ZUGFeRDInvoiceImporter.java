@@ -1036,6 +1036,7 @@ public class ZUGFeRDInvoiceImporter {
 	 * for PDF embedded files in FX use getFileAttachmentsPDF()
 	 * @deprecated use invoice.getAdditionalReferencedDocuments
 	 */
+	@Deprecated
 	public List<FileAttachment> getFileAttachmentsXML() {
 		return new ArrayList<>(Arrays.asList(importedInvoice.getAdditionalReferencedDocuments()));
 	}
