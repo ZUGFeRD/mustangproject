@@ -67,7 +67,7 @@
 		<github.global.server>github</github.global.server>
 		<additionalparam>-Xdoclint:none</additionalparam>
 		<!-- dependencies -->
-		<assertj-core.version>3.26.3</assertj-core.version>
+		<assertj-core.version>3.27.0</assertj-core.version>
 		<cii2ubl.version>2.2.5</cii2ubl.version>
 		<commons-cli.version>1.9.0</commons-cli.version>
 		<commons-io.version>2.18.0</commons-io.version>
@@ -80,7 +80,7 @@
 		<jaxb-runtime.version>4.0.5</jaxb-runtime.version>
 		<junit.version>4.13.2</junit.version>
 		<junit-jupiter.version>5.11.4</junit-jupiter.version>
-		<logback.version>1.5.13</logback.version>
+		<logback.version>1.5.14</logback.version>
 		<ph-commons.version>11.1.11</ph-commons.version>
 		<ph-ubl23.version>9.0.3</ph-ubl23.version>
 		<pdfbox.version>3.0.3</pdfbox.version>
