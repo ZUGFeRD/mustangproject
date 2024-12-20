@@ -261,7 +261,7 @@ public class ZF2PushTest extends TestCase {
 				.setNumber(number)
 				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance(new BigDecimal("0.1"))))
 				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance().setPercent(new BigDecimal(50))))
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(2.0)).addCharge(new Charge(new BigDecimal(1)).setReasonCode("AK")))
+				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(2.0)).addCharge(new Charge(new BigDecimal(1)).setReasonCode("ABK")))
 				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addCharge(new Charge(new BigDecimal(1))).addAllowance(new Allowance(new BigDecimal("1"))))
 			);
 
@@ -796,25 +796,6 @@ public class ZF2PushTest extends TestCase {
 			Invoice i = zii.extractInvoice();
 
 			assertEquals(despatchAdviceReferencedDocumentID, i.getDespatchAdviceReferencedDocumentID());
-
-		} catch (XPathExpressionException e) {
-			fail("XPathExpressionException should not be raised");
-		} catch (ParseException e) {
-			fail("ParseException should not be raised");
-			/* a parseException would also be fired if the calculated grand total does not
-			match the read grand total */
-		}
-	}
-	public void testRead() {
-
-
-
-		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("\\Users\\jstaerk\\temp\\1424413_anonymized.xml");
-		try {
-			Invoice i = zii.extractInvoice();
-
-			TransactionCalculator tc=new TransactionCalculator(i);
-			assertEquals(0,tc.getGrandTotal().compareTo(new BigDecimal("442.83")));
 
 		} catch (XPathExpressionException e) {
 			fail("XPathExpressionException should not be raised");

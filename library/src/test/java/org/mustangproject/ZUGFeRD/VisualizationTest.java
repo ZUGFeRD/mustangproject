@@ -52,7 +52,9 @@ public class VisualizationTest extends ResourceCase {
 			/* remove file endings so that tests can also pass after checking
 			   out from git with arbitrary options (which may include CSRF changes)
 			 */
-			result = zvi.visualize(CIIinputFile.getAbsolutePath(), ZUGFeRDVisualizer.Language.FR)
+			result = zvi.visualize(CIIinputFile.getAbsolutePath(), ZUGFeRDVisualizer.Language.FR);
+			Files.write(Paths.get("./target/testout-factur-x-vis.fr.html"), result.getBytes(StandardCharsets.UTF_8));
+			result = result
 				.replace("\r", "")
 				.replace("\n", "")
 				.replace("\t", "")
@@ -99,12 +101,18 @@ public class VisualizationTest extends ResourceCase {
 			/* remove file endings so that tests can also pass after checking
 			   out from git with arbitrary options (which may include CSRF changes)
 			 */
-			result = zvi.visualize(CIIinputFile.getAbsolutePath(), ZUGFeRDVisualizer.Language.DE).replace("\r", "").replace("\n", "")
+			result = zvi.visualize(CIIinputFile.getAbsolutePath(), ZUGFeRDVisualizer.Language.DE);
+			Files.write(Paths.get("./target/testout-factur-x-vis-extended.de.html"), result.getBytes(StandardCharsets.UTF_8));
+			result = result
+				.replace("\r", "")
+				.replace("\n", "")
 				.replace("\t", "")
 				.replace(" ", "");
 
 			File expectedResult = getResourceAsFile("factur-x-vis-extended.de.html");
-			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r", "").replace("\n", "")
+			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8)
+				.replace("\r", "")
+				.replace("\n", "")
 				.replace("\t", "")
 				.replace(" ", "");
 			// remove linebreaks as well...
@@ -141,10 +149,20 @@ public class VisualizationTest extends ResourceCase {
 			/* remove file endings so that tests can also pass after checking
 			   out from git with arbitrary options (which may include CSRF changes)
 			 */
-			result = zvi.visualize(UBLinputFile.getAbsolutePath(), ZUGFeRDVisualizer.Language.EN).replace("\r", "").replace("\n", "").replace("\t", "").replace(" ", "");
+			result = zvi.visualize(UBLinputFile.getAbsolutePath(), ZUGFeRDVisualizer.Language.EN);
+			Files.write(Paths.get("./target/testout-factur-x-vis-ubl-creditnote.en.html"), result.getBytes(StandardCharsets.UTF_8));
+			result = result
+				.replace("\r", "")
+				.replace("\n", "")
+				.replace("\t", "")
+				.replace(" ", "");
 
 			File expectedResult = getResourceAsFile("factur-x-vis-ubl-creditnote.en.html");
-			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r", "").replace("\n", "").replace("\t", "").replace(" ", "");
+			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8)
+				.replace("\r", "")
+				.replace("\n", "")
+				.replace("\t", "")
+				.replace(" ", "");
 			// remove linebreaks as well...
 
 		} catch (UnsupportedOperationException e) {
@@ -180,12 +198,18 @@ public class VisualizationTest extends ResourceCase {
 			/* remove file endings so that tests can also pass after checking
 			   out from git with arbitrary options (which may include CSRF changes)
 			 */
-			result = zvi.visualize(UBLinputFile.getAbsolutePath(), ZUGFeRDVisualizer.Language.EN).replace("\r", "").replace("\n", "")
+			result = zvi.visualize(UBLinputFile.getAbsolutePath(), ZUGFeRDVisualizer.Language.EN);
+			Files.write(Paths.get("./target/testout-factur-x-vis-ubl.en.html"), result.getBytes(StandardCharsets.UTF_8));
+			result = result
+				.replace("\r", "")
+				.replace("\n", "")
 				.replace("\t", "")
 				.replace(" ", "");
 
 			File expectedResult = getResourceAsFile("factur-x-vis-ubl.en.html");
-			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r", "").replace("\n", "")
+			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8)
+				.replace("\r", "")
+				.replace("\n", "")
 				.replace("\t", "")
 				.replace(" ", "");
 			// remove linebreaks as well...
