@@ -19,6 +19,7 @@
 package org.mustangproject.commandline;
 
 import org.apache.commons.cli.*;
+import org.apache.commons.io.FilenameUtils;
 import org.mustangproject.CII.CIIToUBL;
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
@@ -84,6 +85,7 @@ public class Main {
 			+ "                [--logAppend <text>]: text to be added to log line\n"
 			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 			+ "                [--source <filename>]: input PDF or XML file\n"
+			+ "                [--log-as-pdf]: save log output as pdf\n"
 			+ "        --action validateExpectInvalid  validate directory expecting negative results \n"
 			+ "                [--no-notices]: refrain from reporting notices\n"
 			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
@@ -357,6 +359,7 @@ public class Main {
 			options.addOption(new Option("d", "directory", true, "which directory to operate on"));
 			options.addOption(new Option("i", "ignorefileextension", false, "ignore non-matching file extensions"));
 			options.addOption(new Option("l", "listfromstdin", false, "take list of files from commandline"));
+			options.addOption(new Option("log-as-pdf", "log-as-pdf", false, "saving log output to pdf file"));
 
 			boolean optionsRecognized = false;
 			String action = "";
@@ -380,6 +383,7 @@ public class Main {
 				String format = cmd.getOptionValue("format");
 				String lang = cmd.getOptionValue("language");
 				Boolean noNotices = cmd.hasOption("no-notices");
+				Boolean LogAsPDF = cmd.hasOption("log-as-pdf");
 
 				String zugferdVersion = cmd.getOptionValue("version");
 				String zugferdProfile = cmd.getOptionValue("profile");
@@ -427,7 +431,7 @@ public class Main {
 					performUBL(sourceName, outName);
 					optionsRecognized = true;
 				} else if ((action != null) && (action.equals("validate"))) {
-					optionsRecognized = performValidate(sourceName, noNotices, cmd.getOptionValue("logAppend"));
+					optionsRecognized = performValidate(sourceName, noNotices, cmd.getOptionValue("logAppend"), LogAsPDF);
 				} else if ((action != null) && (action.equals("validateExpectValid"))) {
 					optionsRecognized = performValidateExpect(true, directoryName);
 				} else if ((action != null) && (action.equals("validateExpectInvalid"))) {
@@ -454,7 +458,7 @@ public class Main {
 
 	}
 
-	private static boolean performValidate(String sourceName, boolean noNotices, String logAppend) {
+	private static boolean performValidate(String sourceName, boolean noNotices, String logAppend, boolean createLogAsPDF) {
 		boolean optionsRecognized;
 		if (sourceName == null) {
 			sourceName = getFilenameFromUser("Source PDF or XML", "invoice.pdf", "pdf|xml", true, false);
@@ -466,7 +470,16 @@ public class Main {
 		if (noNotices) {
 			zfv.disableNotices();
 		}
-		System.out.println(zfv.validate(sourceName));
+
+		String validationResultXML = zfv.validate(sourceName);
+		System.out.println(validationResultXML);
+
+		if( createLogAsPDF) {
+			ValidationLogVisualizer vlvi = new ValidationLogVisualizer();
+			String fileBasename = FilenameUtils.getBaseName(sourceName);
+
+			vlvi.toPDF(validationResultXML, fileBasename + "_result.pdf");
+		}
 		optionsRecognized = !zfv.hasOptionsError();
 		if (!zfv.wasCompletelyValid()) {
 			System.exit(-1);
