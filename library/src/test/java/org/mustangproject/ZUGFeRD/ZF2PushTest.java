@@ -803,24 +803,5 @@ public class ZF2PushTest extends TestCase {
 			match the read grand total */
 		}
 	}
-	public void testRead() {
-
-
-
-		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("\\Users\\jstaerk\\temp\\1424413_anonymized.xml");
-		try {
-			Invoice i = zii.extractInvoice();
-
-			TransactionCalculator tc=new TransactionCalculator(i);
-			assertEquals(0,tc.getGrandTotal().compareTo(new BigDecimal("442.83")));
-
-		} catch (XPathExpressionException e) {
-			fail("XPathExpressionException should not be raised");
-		} catch (ParseException e) {
-			fail("ParseException should not be raised");
-			/* a parseException would also be fired if the calculated grand total does not
-			match the read grand total */
-		}
-	}
 
 }
