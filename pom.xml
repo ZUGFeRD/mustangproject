@@ -88,7 +88,7 @@
 		<schematron.version>8.0.5</schematron.version>
 		<slf4j.version>2.0.16</slf4j.version>
 		<templating-maven-plugin.version>3.0.0</templating-maven-plugin.version>
-		<core-jakarta.version>1.26.1</core-jakarta.version>
+		<core-jakarta.version>1.26.2</core-jakarta.version>
 		<validation-model-jakarta.version>1.26.2</validation-model-jakarta.version>
 		<xml-apis.version>1.4.01</xml-apis.version>
 		<xmlunit.version>2.10.0</xmlunit.version>
