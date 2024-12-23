@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.mustangproject</groupId>
 	<artifactId>core</artifactId>
-	<version>2.15.2-SNAPSHOT</version>
+	<version>2.15.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Mustang</name>
 	<description>Mustangproject is a java library and commandline tool to read, validate, write and convert EN16931 e-invoices, e.g. Factur-X and XRechnung (read and writing CII and reading also UBL).</description>
@@ -80,14 +80,13 @@
 		<jaxb-runtime.version>4.0.5</jaxb-runtime.version>
 		<junit.version>4.13.2</junit.version>
 		<junit-jupiter.version>5.11.4</junit-jupiter.version>
-		<logback.version>1.5.14</logback.version>
+		<logback.version>1.5.15</logback.version>
 		<ph-commons.version>11.1.11</ph-commons.version>
 		<ph-ubl23.version>9.0.3</ph-ubl23.version>
 		<pdfbox.version>3.0.3</pdfbox.version>
 		<saxon.version>12.5</saxon.version>
 		<schematron.version>8.0.5</schematron.version>
 		<slf4j.version>2.0.16</slf4j.version>
-		<templating-maven-plugin.version>3.0.0</templating-maven-plugin.version>
 		<core-jakarta.version>1.26.2</core-jakarta.version>
 		<validation-model-jakarta.version>1.26.2</validation-model-jakarta.version>
 		<xml-apis.version>1.4.01</xml-apis.version>
@@ -109,6 +108,7 @@
 		<maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
 		<maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
 		<nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
+		<templating-maven-plugin.version>3.0.0</templating-maven-plugin.version>
 		<versions-maven-plugin.version>2.18.0</versions-maven-plugin.version>
 		<!-- other -->
 		<maven.version>3.6.3</maven.version>
