@@ -32,6 +32,9 @@ import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 
 public class ZUGFeRDInvoiceImporter {
 
@@ -472,9 +475,11 @@ public class ZUGFeRDInvoiceImporter {
 
 		xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"DuePayableAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"PayableAmount\"]");
 		NodeList lineDueNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		BigDecimal duePayableAmount = null;
 		if (lineDueNodes.getLength() > 0) {
+			duePayableAmount = new BigDecimal(XMLTools.trimOrNull(lineDueNodes.item(0)));
 			if (zpp instanceof CalculatedInvoice) {
-				((CalculatedInvoice) zpp).setDuePayable(new BigDecimal(XMLTools.trimOrNull(lineDueNodes.item(0))));
+				((CalculatedInvoice) zpp).setDuePayable(duePayableAmount);
 			}
 		}
 
@@ -938,8 +943,7 @@ public class ZUGFeRDInvoiceImporter {
 
 
 			TransactionCalculator tc = new TransactionCalculator(zpp);
-			String expectedStringTotalGross = tc.getGrandTotal()
-				.subtract(Objects.requireNonNullElse(zpp.getTotalPrepaidAmount(), BigDecimal.ZERO)).toPlainString();
+			String calculatedPayableTotal = tc.getDuePayable().toPlainString();
 			EStandard whichType;
 			try {
 				whichType = getStandard();
@@ -947,10 +951,21 @@ public class ZUGFeRDInvoiceImporter {
 				throw new StructureException("Could not find out if it's an invoice, order, or delivery advice", 0);
 			}
 
-			if ((whichType != EStandard.despatchadvice)
-				&& ((!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2)))
-				&& (!ignoreCalculationErrors))) {
-				throw new ArithmetricException();
+			if (whichType != EStandard.despatchadvice && !ignoreCalculationErrors) {
+				// Check calculation if document type allows it and calculation errors should not be ignored
+
+				String payableTotalFromXml = XMLTools.nDigitFormat(Objects.requireNonNullElse(duePayableAmount, expectedGrandTotal), 2);
+				if (!calculatedPayableTotal.equals(payableTotalFromXml)) {
+					String moreDetails = "";
+					try {
+						moreDetails = " with tax basis " + tc.getTaxBasis() + " and with positions " + tc.getTotal() + " = "
+							+ Stream.of(tc.trans.getZFItems())
+							.map(item -> new LineCalculator(item).getItemTotalNetAmount().toPlainString())
+							.collect(Collectors.joining(" + "));
+					} catch (Exception ignored) {
+					}
+					throw new ArithmetricException("Payable total in XML is " + payableTotalFromXml + ", but calculated total is " + calculatedPayableTotal + moreDetails);
+				}
 			}
 		}
 		return zpp;
@@ -1068,5 +1083,4 @@ public class ZUGFeRDInvoiceImporter {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
-
 }
