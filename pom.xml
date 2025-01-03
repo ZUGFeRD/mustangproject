@@ -67,8 +67,8 @@
 		<github.global.server>github</github.global.server>
 		<additionalparam>-Xdoclint:none</additionalparam>
 		<!-- dependencies -->
-		<assertj-core.version>3.27.0</assertj-core.version>
-		<cii2ubl.version>2.2.5</cii2ubl.version>
+		<assertj-core.version>3.27.1</assertj-core.version>
+		<cii2ubl.version>2.2.6</cii2ubl.version>
 		<commons-cli.version>1.9.0</commons-cli.version>
 		<commons-io.version>2.18.0</commons-io.version>
 		<dom4j.version>2.1.4</dom4j.version>
@@ -83,6 +83,7 @@
 		<logback.version>1.5.15</logback.version>
 		<ph-commons.version>11.1.11</ph-commons.version>
 		<ph-ubl23.version>9.0.3</ph-ubl23.version>
+		<ph-ubl24.version>9.0.3</ph-ubl24.version>
 		<pdfbox.version>3.0.3</pdfbox.version>
 		<saxon.version>12.5</saxon.version>
 		<schematron.version>8.0.5</schematron.version>
@@ -91,7 +92,6 @@
 		<validation-model-jakarta.version>1.26.2</validation-model-jakarta.version>
 		<xml-apis.version>1.4.01</xml-apis.version>
 		<xmlunit.version>2.10.0</xmlunit.version>
-		<zf.version>ZF_232</zf.version>
 		<!-- plugins -->
 		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
 		<maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
@@ -108,14 +108,17 @@
 		<maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
 		<maven-toolchains-plugin.version>3.2.0</maven-toolchains-plugin.version>
 		<nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
+		<rewrite-maven-plugin.version>5.47.3</rewrite-maven-plugin.version>
+		<rewrite-logging-frameworks.version>2.18.1</rewrite-logging-frameworks.version>
+		<rewrite-static-analysis.version>1.22.0</rewrite-static-analysis.version>
+		<rewrite-migrate-java.version>2.31.0</rewrite-migrate-java.version>
 		<templating-maven-plugin.version>3.0.0</templating-maven-plugin.version>
 		<versions-maven-plugin.version>2.18.0</versions-maven-plugin.version>
 		<!-- other -->
 		<maven.version>3.6.3</maven.version>
 		<java.version>11</java.version>
-		<maven.compiler.source>${java.version}</maven.compiler.source>
-		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<maven.deploy.skip>true</maven.deploy.skip>
+		<zf.version>ZF_232</zf.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -173,6 +176,11 @@
 				<groupId>com.helger.ubl</groupId>
 				<artifactId>ph-ubl23</artifactId>
 				<version>${ph-ubl23.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.helger.ubl</groupId>
+				<artifactId>ph-ubl24</artifactId>
+				<version>${ph-ubl24.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-cli</groupId>
@@ -320,8 +328,7 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>${maven-compiler-plugin.version}</version>
 					<configuration>
-						<source>${maven.compiler.source}</source>
-						<target>${maven.compiler.target}</target>
+						<release>${java.version}</release>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -499,42 +506,96 @@
 					</configuration>
 				</plugin>
 				<plugin>
+					<groupId>org.openrewrite.maven</groupId>
+					<artifactId>rewrite-maven-plugin</artifactId>
+					<version>${rewrite-maven-plugin.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>org.openrewrite.recipe</groupId>
+							<artifactId>rewrite-logging-frameworks</artifactId>
+							<version>${rewrite-logging-frameworks.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.openrewrite.recipe</groupId>
+							<artifactId>rewrite-migrate-java</artifactId>
+							<version>${rewrite-migrate-java.version}</version>
+						</dependency>
+						<dependency>
+							<groupId>org.openrewrite.recipe</groupId>
+							<artifactId>rewrite-static-analysis</artifactId>
+							<version>${rewrite-static-analysis.version}</version>
+						</dependency>
+					</dependencies>
+					<configuration>
+						<activeRecipes>
+							<recipe>org.openrewrite.maven.BestPractices</recipe>
+							<recipe>org.openrewrite.maven.ModernizeObsoletePoms</recipe>
+							<recipe>org.openrewrite.java.OrderImports</recipe>
+							<recipe>org.openrewrite.java.RemoveUnusedImports</recipe>
+							<recipe>org.openrewrite.java.ShortenFullyQualifiedTypeReferences</recipe>
+							<recipe>org.openrewrite.java.format.AutoFormat</recipe>
+							<recipe>org.openrewrite.java.format.BlankLines</recipe>
+							<recipe>org.openrewrite.java.format.EmptyNewlineAtEndOfFile</recipe>
+							<recipe>org.openrewrite.java.format.MethodParamPad</recipe>
+							<recipe>org.openrewrite.java.format.NoWhitespaceAfter</recipe>
+							<recipe>org.openrewrite.java.format.NoWhitespaceBefore</recipe>
+							<recipe>org.openrewrite.java.format.NormalizeFormat</recipe>
+							<recipe>org.openrewrite.java.format.NormalizeLineBreaks</recipe>
+							<recipe>org.openrewrite.java.format.NormalizeTabsOrSpaces</recipe>
+							<recipe>org.openrewrite.java.format.RemoveTrailingWhitespace</recipe>
+							<recipe>org.openrewrite.java.format.SingleLineComments</recipe>
+							<recipe>org.openrewrite.java.format.Spaces</recipe>
+							<recipe>org.openrewrite.java.format.TabsAndIndents</recipe>
+							<recipe>org.openrewrite.java.format.TypecastParenPad</recipe>
+							<recipe>org.openrewrite.java.format.WrappingAndBraces</recipe>
+							<recipe>org.openrewrite.java.logging.PrintStackTraceToLogError</recipe>
+							<recipe>org.openrewrite.java.logging.slf4j.Slf4jBestPractices</recipe>
+							<recipe>org.openrewrite.java.migrate.Java8toJava11</recipe>
+							<recipe>org.openrewrite.staticanalysis.UnnecessaryParentheses</recipe>
+						</activeRecipes>
+						<activeStyles>
+							<style>org.openrewrite.java.IntelliJ</style>
+						</activeStyles>
+						<checkstyleDetectionEnabled>false</checkstyleDetectionEnabled>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>dryRunNoFork</goal>
+							</goals>
+							<phase>verify</phase>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
 					<groupId>org.sonatype.plugins</groupId>
 					<artifactId>nexus-staging-maven-plugin</artifactId>
 					<version>${nexus-staging-maven-plugin.version}</version>
-					<extensions>true</extensions>
 					<configuration>
 						<serverId>ossrh</serverId>
 						<nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
 						<autoReleaseAfterClose>true</autoReleaseAfterClose>
 					</configuration>
+					<extensions>true</extensions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
+				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -544,6 +605,18 @@
 						<id>attach-javadoc</id>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.openrewrite.maven</groupId>
+				<artifactId>rewrite-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
