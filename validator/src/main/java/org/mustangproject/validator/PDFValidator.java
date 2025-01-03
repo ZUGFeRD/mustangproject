@@ -241,7 +241,7 @@ public class PDFValidator extends Validator {
 
 			boolean versionValid = false;
 			for (int i = 0; i < nodes.getLength(); i++) {
-				final String[] valueArray = {"1.0", "2p0", "1.2", "2.0", "2.1", "2.2", "2.3", "3.0"}; //1.2, 2.0, 2.1, 2.2, 2.3 and 3.0 are for xrechnung 1.2, 2p0 can be ZF 2.0, 2.1, 2.1.1
+				final String[] valueArray = {"1.0", "1p0", "2p0", "1.2", "2.0", "2.1", "2.2", "2.3", "3.0"}; //1.2, 2.0, 2.1, 2.2, 2.3 and 3.0 are for xrechnung 1.2, 2p0 can be ZF 2.0, 2.1, 2.1.1
 
 				if (stringArrayContains(valueArray, nodes.item(i).getTextContent())) {
 					versionValid = true;

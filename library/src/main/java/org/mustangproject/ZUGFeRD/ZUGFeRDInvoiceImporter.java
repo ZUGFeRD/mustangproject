@@ -32,6 +32,9 @@ import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 
 public class ZUGFeRDInvoiceImporter {
 
@@ -68,7 +71,6 @@ public class ZUGFeRDInvoiceImporter {
 	protected CalculatedInvoice importedInvoice = null;
 	protected boolean recalcPrice = false;
 	protected boolean ignoreCalculationErrors = false;
-	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<>();
 
 	public ZUGFeRDInvoiceImporter() {
 		//constructor for extending classes
@@ -239,7 +241,7 @@ public class ZUGFeRDInvoiceImporter {
 
 		try {
 			setDocument();
-		} catch (ParserConfigurationException | SAXException e) {
+		} catch (ParserConfigurationException | SAXException | ParseException e) {
 			LOGGER.error("Failed to parse XML", e);
 			throw new ZUGFeRDExportException(e);
 		}
@@ -255,7 +257,7 @@ public class ZUGFeRDInvoiceImporter {
 		setRawXML(rawXML, true);
 	}
 
-	private void setDocument() throws ParserConfigurationException, IOException, SAXException {
+	private void setDocument() throws ParserConfigurationException, IOException, SAXException, ParseException {
 		final DocumentBuilderFactory xmlFact = DocumentBuilderFactory.newInstance();
 		xmlFact.setNamespaceAware(true);
 		final DocumentBuilder builder = xmlFact.newDocumentBuilder();
@@ -267,8 +269,6 @@ public class ZUGFeRDInvoiceImporter {
 				importedInvoice = new CalculatedInvoice();
 				extractInto(importedInvoice);
 			} catch (XPathExpressionException e) {
-				throw new RuntimeException(e);
-			} catch (ParseException e) {
 				throw new RuntimeException(e);
 			}
 		}
@@ -475,9 +475,11 @@ public class ZUGFeRDInvoiceImporter {
 
 		xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"DuePayableAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"PayableAmount\"]");
 		NodeList lineDueNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		BigDecimal duePayableAmount = null;
 		if (lineDueNodes.getLength() > 0) {
+			duePayableAmount = new BigDecimal(XMLTools.trimOrNull(lineDueNodes.item(0)));
 			if (zpp instanceof CalculatedInvoice) {
-				((CalculatedInvoice) zpp).setDuePayable(new BigDecimal(XMLTools.trimOrNull(lineDueNodes.item(0))));
+				((CalculatedInvoice) zpp).setDuePayable(duePayableAmount);
 			}
 		}
 
@@ -647,6 +649,12 @@ public class ZUGFeRDInvoiceImporter {
 		String currency = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"InvoiceCurrencyCode\"]|//*[local-name()=\"DocumentCurrencyCode\"]");
 		zpp.setCurrency(currency);
 
+		String paymentTermsDescription = extractString("//*[local-name()=\"SpecifiedTradePaymentTerms\"]/*[local-name()=\"Description\"]|//*[local-name()=\"PaymentTerms\"]/*[local-name()=\"Note\"]");
+		if ((paymentTermsDescription!=null)&&(!paymentTermsDescription.isEmpty())) {
+			zpp.setPaymentTermDescription(paymentTermsDescription);
+		}
+
+
 		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]|//*[local-name()=\"ApplicableSupplyChainTradeSettlement\"]");
 		NodeList headerTradeSettlementNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		List<BankDetails> bankDetails = new ArrayList<>();
@@ -663,6 +671,9 @@ public class ZUGFeRDInvoiceImporter {
 					&& (headerTradeSettlementChilds.item(settlementChildIndex).getLocalName().equals("SpecifiedTradePaymentTerms"))) {
 					NodeList paymentTermChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
 					for (int paymentTermChildIndex = 0; paymentTermChildIndex < paymentTermChilds.getLength(); paymentTermChildIndex++) {
+						if ((paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("Description"))) {
+							zpp.setPaymentTermDescription(paymentTermChilds.item(paymentTermChildIndex).getTextContent());
+						}
 						if ((paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("DueDateDateTime"))) {
 							NodeList dueDateChilds = paymentTermChilds.item(paymentTermChildIndex).getChildNodes();
 							for (int dueDateChildIndex = 0; dueDateChildIndex < dueDateChilds.getLength(); dueDateChildIndex++) {
@@ -856,7 +867,7 @@ public class ZUGFeRDInvoiceImporter {
 			NodeList attachmentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			for (int i = 0; i < attachmentNodes.getLength(); i++) {
 				FileAttachment fa = new FileAttachment(attachmentNodes.item(i).getAttributes().getNamedItem("filename").getNodeValue(), attachmentNodes.item(i).getAttributes().getNamedItem("mimeCode").getNodeValue(), "Data", Base64.getDecoder().decode(XMLTools.trimOrNull(attachmentNodes.item(i))));
-				fileAttachments.add(fa);
+				zpp.embedFileInXML(fa);
 				// filename = "Aufmass.png" mimeCode = "image/png"
 				//EmbeddedDocumentBinaryObject cbc:EmbeddedDocumentBinaryObject mimeCode="image/png" filename="Aufmass.png"
 			}
@@ -879,24 +890,33 @@ public class ZUGFeRDInvoiceImporter {
 
 			if (zpp.getZFItems() != null && zpp.getZFItems().length > 0) {
 				TransactionCalculator tc = new TransactionCalculator(zpp);
-				String expectedStringTotalGross = tc.getGrandTotal()
-					.subtract(Objects.requireNonNullElse(zpp.getTotalPrepaidAmount(), BigDecimal.ZERO)).toPlainString();
+				String calculatedPayableTotal = tc.getDuePayable().toPlainString();
 				EStandard whichType;
 				try {
 					whichType = getStandard();
 				} catch (Exception e) {
 					throw new StructureException("Could not find out if it's an invoice, order, or delivery advice", 0);
 				}
-	
-				if ((whichType != EStandard.despatchadvice)
-					&& ((!expectedStringTotalGross.equals(XMLTools.nDigitFormat(expectedGrandTotal, 2)))
-					&& (!ignoreCalculationErrors))) {
-					throw new ArithmetricException();
+
+				if (whichType != EStandard.despatchadvice && !ignoreCalculationErrors) {
+					// Check calculation if document type allows it and calculation errors should not be ignored
+
+					String payableTotalFromXml = XMLTools.nDigitFormat(Objects.requireNonNullElse(duePayableAmount, expectedGrandTotal), 2);
+					if (!calculatedPayableTotal.equals(payableTotalFromXml)) {
+						String moreDetails = "";
+						try {
+							moreDetails = " with tax basis " + tc.getTaxBasis() + " and with positions " + tc.getTotal() + " = "
+								+ Stream.of(tc.trans.getZFItems())
+								.map(item -> new LineCalculator(item).getItemTotalNetAmount().toPlainString())
+								.collect(Collectors.joining(" + "));
+						} catch (Exception ignored) {
+						}
+						throw new ArithmetricException("Payable total in XML is " + payableTotalFromXml + ", but calculated total is " + calculatedPayableTotal + moreDetails);
+					}
 				}
 			}
 		}
 		return zpp;
-
 	}
 
 	/**
@@ -1052,9 +1072,11 @@ public class ZUGFeRDInvoiceImporter {
 	 *
 	 * @return the file attachments embedded in XML (using base64) decoded as byte array,
 	 * for PDF embedded files in FX use getFileAttachmentsPDF()
+	 * @deprecated use invoice.getAdditionalReferencedDocuments
 	 */
+	@Deprecated
 	public List<FileAttachment> getFileAttachmentsXML() {
-		return fileAttachments;
+		return new ArrayList<>(Arrays.asList(importedInvoice.getAdditionalReferencedDocuments()));
 	}
 
 	/***
@@ -1084,5 +1106,4 @@ public class ZUGFeRDInvoiceImporter {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
-
 }

@@ -21,6 +21,7 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import junit.framework.TestCase;
@@ -165,6 +166,146 @@ public class DeSerializationTest extends ResourceCase {
 
 	}
 
+	public void testDeserializedFiles() {
+		File inputUBL = getResourceAsFile("XRECHNUNG_Elektron.ubl.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.doIgnoreCalculationErrors();
+		Invoice i = new Invoice();
+		String exText = null;
+
+		try {
+			zii.fromXML(new String(Files.readAllBytes(inputUBL.toPath()), StandardCharsets.UTF_8));
+			ObjectMapper mapper = new ObjectMapper();
+			zii.extractInto(i);
+			String json = mapper.writeValueAsString(i);
+			Invoice newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
+
+			assertEquals("181301674", i.getNumber());
+			assertEquals(newInvoiceFromJSON.getNumber(), i.getNumber());
+			assertEquals(newInvoiceFromJSON.getAdditionalReferencedDocuments()[0].getFilename(), i.getAdditionalReferencedDocuments()[0].getFilename());
+			assertEquals(newInvoiceFromJSON.getAdditionalReferencedDocuments().length, 2);
+
+
+		} catch (IOException e) {
+			exText = e.getMessage();
+		} catch (XPathExpressionException e) {
+			exText = e.getMessage();
+		} catch (ParseException e) {
+			exText = e.getMessage();
+		}
+		assertNull(exText);
+
+	}
+
+	public void testFileSerialization() {
+
+		String base64 = "b25ldHdvdGhyZWU=";
+		String json = "{\n" +
+			"    \"additionalReferencedDocuments\": [\n" +
+			"        {\n" +
+			"            \"data\": \"" + base64 + "\",\n" +
+			"            \"description\": \"Additional file attachment\",\n" +
+			"            \"filename\": \"text.txt\",\n" +
+			"            \"mimetype\": \"text/plain\",\n" +
+			"            \"relation\": \"Data\"\n" +
+			"        }\n" +
+			"],\n" +
+			"\n" +
+			"  \"number\": \"471102\",\n" +
+			"  \"currency\": \"EUR\",\n" +
+			"  \"issueDate\": \"2018-03-04T00:00:00.000+01:00\",\n" +
+			"  \"dueDate\": \"2018-03-04T00:00:00.000+01:00\",\n" +
+			"  \"deliveryDate\": \"2018-03-04T00:00:00.000+01:00\",\n" +
+			"  \"sender\": {\n" +
+			"    \"name\": \"Lieferant GmbH\",\n" +
+			"    \"zip\": \"80333\",\n" +
+			"    \"street\": \"Lieferantenstraße 20\",\n" +
+			"    \"location\": \"München\",\n" +
+			"    \"country\": \"DE\",\n" +
+			"    \"taxID\": \"201/113/40209\",\n" +
+			"    \"vatID\": \"DE123456789\",\n" +
+			"    \"globalID\": \"4000001123452\",\n" +
+			"    \"globalIDScheme\": \"0088\"\n" +
+			"  },\n" +
+			"  \"recipient\": {\n" +
+			"    \"name\": \"Kunden AG Mitte\",\n" +
+			"    \"zip\": \"69876\",\n" +
+			"    \"street\": \"Kundenstraße 15\",\n" +
+			"    \"location\": \"Frankfurt\",\n" +
+			"    \"country\": \"DE\"\n" +
+			"  },\n" +
+			"  \"zfitems\": [\n" +
+			"    {\n" +
+			"      \"price\": 9.9,\n" +
+			"      \"quantity\": 20,\n" +
+			"      \"product\": {\n" +
+			"        \"unit\": \"H87\",\n" +
+			"        \"name\": \"Trennblätter A4\",\n" +
+			"        \"description\": \"\",\n" +
+			"        \"vatpercent\": 19,\n" +
+			"        \"taxCategoryCode\": \"S\"\n" +
+			"      }\n" +
+			"    },\n" +
+			"    {\n" +
+			"      \"price\": 5.5,\n" +
+			"      \"quantity\": 50,\n" +
+			"      \"product\": {\n" +
+			"        \"unit\": \"H87\",\n" +
+			"        \"name\": \"Joghurt Banane\",\n" +
+			"        \"description\": \"\",\n" +
+			"        \"vatpercent\": 7,\n" +
+			"        \"taxCategoryCode\": \"S\"\n" +
+			"      }\n" +
+			"    }\n" +
+			"  ]\n" +
+			"}\n";
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			Invoice newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
+			ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+			zf2p.setProfile(Profiles.getByName("XRechnung"));
+			zf2p.generateXML(newInvoiceFromJSON);
+			String theXML = new String(zf2p.getXML());
+			assertTrue(theXML.contains("<udt:DateTimeString format=\"102\">20180304</udt:DateTimeString>"));
+			assertTrue(theXML.contains(base64));
+
+		} catch (Exception e) {
+			fail("No exception expected");
+		}
+
+	}
+
+
+	public void testFull300Roundtrip() {
+		File inputCII = getResourceAsFile("not_validating_full_invoice_based_onTest_EeISI_300_CENfullmodel.cii.xml");
+
+		Invoice i = new Invoice();
+		String exText = null;
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.doIgnoreCalculationErrors();
+		try {
+			zii.fromXML(new String(Files.readAllBytes(inputCII.toPath()), StandardCharsets.UTF_8));
+			ObjectMapper mapper = new ObjectMapper();
+			zii.extractInto(i);
+			String json = mapper.writeValueAsString(i);
+			Invoice newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
+
+			assertEquals("Test_EeISI_100", i.getNumber());
+			assertEquals(newInvoiceFromJSON.getNumber(), i.getNumber());
+
+		} catch (IOException e) {
+			exText = e.getMessage();
+		} catch (XPathExpressionException e) {
+			exText = e.getMessage();
+		} catch (ParseException e) {
+			exText = e.getMessage();
+		}
+		assertNull(exText);
+
+
+	}
 
 	public void testIssuerAssignedIDRoundtrip() {
 		String occurrenceFrom = "20201001";

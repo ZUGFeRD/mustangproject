@@ -76,6 +76,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("LTR", invoice.getZFItems()[2].getProduct().getUnit());
 		assertEquals("7.00", invoice.getZFItems()[0].getProduct().getVATPercent().toString());
 		assertEquals("RE-20170509/505", invoice.getNumber());
+		assertEquals("Zahlbar ohne Abzug bis zum 30.05.2017", invoice.getPaymentTermDescription());
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		assertEquals("2017-05-09", sdf.format(invoice.getIssueDate()));
@@ -127,7 +128,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals(invoice.getZFItems()[0].getNotesWithSubjectCode().get(0).getContent(),"Something");
 		assertEquals(invoice.getZFItems()[0].getNotesWithSubjectCode().size(),1);
 		assertEquals("400", invoice.getZFItems()[1].getQuantity().toString());
-
+		assertEquals("Zahlbar ohne Abzug bis zum 30.05.2017", invoice.getPaymentTermDescription());
 		assertEquals("AB321", invoice.getReferenceNumber());
 		assertEquals("160", invoice.getZFItems()[0].getPrice().toString());
 		assertEquals("Heiße Luft pro Liter", invoice.getZFItems()[2].getProduct().getName());
@@ -473,5 +474,13 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals(1, invoice.getZFItems().length);
 		assertFalse(invoice.getZFItems()[0].getNotes() == null);
 		assertEquals(1, invoice.getZFItems()[0].getNotes().length);
+	}
+
+	@Test
+	public void testImportXRechnungWithoutCalculationErrors() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("cii/02.03a-INVOICE_uncefact.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
+
+		assertEquals("0", zii.importedInvoice.getDuePayable().toPlainString());
 	}
 }
