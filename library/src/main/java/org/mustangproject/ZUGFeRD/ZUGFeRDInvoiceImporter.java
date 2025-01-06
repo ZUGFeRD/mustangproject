@@ -821,6 +821,23 @@ public class ZUGFeRDInvoiceImporter {
 		}
 		zpp.setInvoiceReferencedDocumentID(extractString("//*[local-name()=\"InvoiceReferencedDocument\"]/*[local-name()=\"IssuerAssignedID\"]|//*[local-name()=\"BillingReference\"]/*[local-name()=\"InvoiceDocumentReference\"]/*[local-name()=\"ID\"]"));
 
+		xpr = xpath.compile("//*[local-name()=\"InvoiceReferencedDocument\"]");
+		NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+
+		if (nodes.getLength() != 0) {
+			for (int i = 0; i < nodes.getLength(); i++) {
+
+				Node currentItemNode = nodes.item(i);
+				ReferencedDocument doc = ReferencedDocument.fromNode(currentItemNode);
+				if (doc != null 
+						&& (!Objects.equals(zpp.getInvoiceReferencedDocumentID(), doc.getIssuerAssignedID()) 
+						|| !Objects.equals(zpp.getInvoiceReferencedIssueDate(), doc.getFormattedIssueDateTime())))
+				{
+					zpp.addInvoiceReferencedDocument(doc);
+				}
+			}
+		}
+		
 		zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]|//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyName\"]").trim());
 
 		String rounding = extractString("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"RoundingAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"Party\"]/*[local-name()=\"PayableRoundingAmount\"]");
@@ -839,7 +856,7 @@ public class ZUGFeRDInvoiceImporter {
 		}
 
 		xpr = xpath.compile("//*[local-name()=\"IncludedSupplyChainTradeLineItem\"]|//*[local-name()=\"InvoiceLine\"]");
-		NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
 		if (nodes.getLength() != 0) {
 			for (int i = 0; i < nodes.getLength(); i++) {
