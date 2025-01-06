@@ -11,6 +11,7 @@
     <xsl:variable name="i18n.history" select="'Historique de traitement'"/>
     <xsl:variable name="i18n.disclaimer" select="'Nous n''assumons aucune responsabilité quant à l''exactitude des données.'"/>
     <xsl:variable name="i18n.recipientInfo" select="'Informations sur l''acheteur'"/>
+    <xsl:variable name="i18n.dateOf" select="' du '"/>
     <xsl:variable name="i18n.bt50" select="'Rue / Numéro de maison'"/>
     <xsl:variable name="i18n.bt51" select="'Boîte postale'"/>
     <xsl:variable name="i18n.bt163" select="'Supplément d''adresse'"/>
@@ -197,6 +198,7 @@
     <xsl:variable name="i18n.bt17" select="'Numéro d''attribution'"/>
     <xsl:variable name="i18n.bt15" select="'Identifiant de l''accusé de réception'"/>
     <xsl:variable name="i18n.bt16" select="'Identifiant du  bordereau d''expédition'"/>
+    <xsl:variable name="i18n.btx202" select="'Identifiant du bon de livraison'"/>
     <xsl:variable name="i18n.bt23" select="'Identifiant processus'"/>
     <xsl:variable name="i18n.bt24" select="'Identifiant spécification'"/>
     <xsl:variable name="i18n.bt18" select="'Identifiant objet'"/>

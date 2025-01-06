@@ -352,7 +352,7 @@ public class Item implements IZUGFeRDExportableItem {
 
 	/***
 	 * Adds a item level addition to the price (will be multiplied by quantity)
-	 * @see org.mustangproject.Charge
+	 * @see Charge
 	 * @param izac a relative or absolute charge
 	 * @return fluent setter
 	 */
@@ -363,7 +363,7 @@ public class Item implements IZUGFeRDExportableItem {
 
 	/***
 	 * Adds a item level reduction the price (will be multiplied by quantity)
-	 * @see org.mustangproject.Allowance
+	 * @see Allowance
 	 * @param izac a relative or absolute allowance
 	 * @return fluent setter
 	 */
@@ -383,10 +383,23 @@ public class Item implements IZUGFeRDExportableItem {
 		}
 		notes.add(text);
 
+		addNote(IncludedNote.unspecifiedNote(text));
+
+
+		return this;
+	}
+
+	/***
+	 * adds categorized item level freetext fields (includednote)
+	 * @param theNote IncludedNote to add
+	 * @return fluent setter
+	 */
+	public Item addNote(IncludedNote theNote) {
+
 		if (includedNotes == null) {
 			includedNotes = new ArrayList<>();
 		}
-		includedNotes.add(IncludedNote.unspecifiedNote(text));
+		includedNotes.add(theNote);
 
 
 		return this;

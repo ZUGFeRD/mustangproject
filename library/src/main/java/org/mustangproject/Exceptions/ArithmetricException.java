@@ -3,11 +3,14 @@ package org.mustangproject.Exceptions;
 import java.text.ParseException;
 
 /***
- * will be thrown if a invoice cant be reproduced numerically
+ * will be thrown if an invoice cant be reproduced numerically
  */
 public class ArithmetricException extends ParseException {
 	public ArithmetricException() {
-		super(
-			"Could not reproduce the invoice, this could mean that it could not be read properly", 0);
+		this("");
+	}
+
+	public ArithmetricException(String details) {
+		super("Could not reproduce the invoice. " + details, 0);
 	}
 }

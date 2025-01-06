@@ -1,5 +1,7 @@
 package org.mustangproject.ZUGFeRD;
 
+import java.util.Date;
+
 public interface IReferencedDocument {
 
 	/***
@@ -19,5 +21,13 @@ public interface IReferencedDocument {
 	 * @return String of a code
 	 */
 	String getReferenceTypeCode();
+
+	/***
+	 * 
+	 * issue date of this line
+	 *
+	 * @return date of the issue
+	 */
+	Date getFormattedIssueDateTime();
 
 }
