@@ -828,6 +828,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if (paymentTermsDescription != null) {
 				xml += "<ram:Description>" + paymentTermsDescription + "</ram:Description>";
 			}
+			
+			if (trans.getDueDate() != null) {
+				xml += "<ram:DueDateDateTime>" // $NON-NLS-2$
+					+ DATE.udtFormat(trans.getDueDate())
+					+ "</ram:DueDateDateTime>";// 20130704
+			}
 
 			if (trans.getTradeSettlement() != null) {
 				for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
@@ -837,12 +843,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 			}
 
-			if (trans.getDueDate() != null) {
-				xml += "<ram:DueDateDateTime>" // $NON-NLS-2$
-					+ DATE.udtFormat(trans.getDueDate())
-					+ "</ram:DueDateDateTime>";// 20130704
-
-			}
 			xml += "</ram:SpecifiedTradePaymentTerms>";
 		} else {
 			xml += buildPaymentTermsXml();
