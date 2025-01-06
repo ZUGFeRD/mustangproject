@@ -1144,17 +1144,29 @@ function downloadData (element_id) {
                 <xsl:apply-templates select="./xr:VAT_BREAKDOWN"/>
             </div>
 
-            <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
-                <xsl:apply-templates select="./xr:DOCUMENT_LEVEL_ALLOWANCES"/>
-            </div>
+			<xsl:choose>
+				<xsl:when test="./xr:DOCUMENT_LEVEL_ALLOWANCES">
+					<div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
+		                <xsl:apply-templates select="./xr:DOCUMENT_LEVEL_ALLOWANCES"/>
+		            </div>
+				</xsl:when>
+			</xsl:choose>
 
-            <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
-                <xsl:apply-templates select="./xr:DOCUMENT_LEVEL_CHARGES"/>
-            </div>
-            
-            <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
-            	<xsl:apply-templates select="./xr:LOGISTICS_SERVICE_CHARGES"/>
-            </div>
+			<xsl:choose>
+				<xsl:when test="./xr:DOCUMENT_LEVEL_CHARGES">
+		            <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
+		                <xsl:apply-templates select="./xr:DOCUMENT_LEVEL_CHARGES"/>
+		            </div>
+            	</xsl:when>
+			</xsl:choose>
+
+			<xsl:choose>
+				<xsl:when test="./xr:LOGISTICS_SERVICE_CHARGES">
+		            <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
+		                <xsl:apply-templates select="./xr:LOGISTICS_SERVICE_CHARGES"/>
+		            </div>
+            	</xsl:when>
+			</xsl:choose>
 
             <div class="boxtabelle boxabstandtop boxtabelleZweispaltig first">
                 <div class="boxzeile">
@@ -2182,11 +2194,24 @@ function downloadData (element_id) {
                 </div>
                 <div class="boxzeile">
                     <div class="boxdaten legende"><xsl:value-of select="$i18n.bt15"/>:</div>
-                    <div id="BT-15" title="BT-15" class="boxdaten wert"><xsl:value-of select="xr:Receiving_advice_reference"/></div>
+                    <div id="BT-15" title="BT-15" class="boxdaten wert">
+                    	<xsl:value-of select="xr:Receiving_advice_reference"/>
+                    	<xsl:if test="xr:Receiving_advice_reference/@bt-x-201"><xsl:value-of select="concat($i18n.dateOf, format-date(xr:Receiving_advice_reference/@bt-x-201,'[D].[M].[Y]'))"/></xsl:if>
+                    </div>
                 </div>
                 <div class="boxzeile">
                     <div class="boxdaten legende"><xsl:value-of select="$i18n.bt16"/>:</div>
-                    <div id="BT-16" title="BT-16" class="boxdaten wert"><xsl:value-of select="xr:Despatch_advice_reference"/></div>
+                    <div id="BT-16" title="BT-16" class="boxdaten wert">
+                    	<xsl:value-of select="xr:Despatch_advice_reference"/>
+                    	<xsl:if test="xr:Despatch_advice_reference/@bt-x-200"><xsl:value-of select="concat($i18n.dateOf, format-date(xr:Despatch_advice_reference/@bt-x-200,'[D].[M].[Y]'))"/></xsl:if>
+                    </div>
+                </div>
+                <div class="boxzeile">
+                    <div class="boxdaten legende"><xsl:value-of select="$i18n.btx202"/>:</div>
+                    <div id="BT-X-202" title="BT-X-202" class="boxdaten wert">
+                    	<xsl:value-of select="xr:Delivery_note_reference"/>
+                    	<xsl:if test="xr:Delivery_note_reference/@bt-x-203"><xsl:value-of select="concat($i18n.dateOf, format-date(xr:Delivery_note_reference/@bt-x-203,'[D].[M].[Y]'))"/></xsl:if>
+                   	</div>
                 </div>
                 <div class="boxzeile">
                     <div class="boxdaten legende"><xsl:value-of select="$i18n.bt23"/>:</div>

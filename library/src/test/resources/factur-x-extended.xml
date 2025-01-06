@@ -359,6 +359,9 @@ GLN 4304171000002
 			</ram:ActualDeliverySupplyChainEvent>
 			<ram:DeliveryNoteReferencedDocument>
 				<ram:IssuerAssignedID>L87654321012</ram:IssuerAssignedID>
+				<ram:FormattedIssueDateTime>
+					<qdt:DateTimeString format="102">20241031</qdt:DateTimeString>
+				</ram:FormattedIssueDateTime>
 			</ram:DeliveryNoteReferencedDocument>
 		</ram:ApplicableHeaderTradeDelivery>
 		<ram:ApplicableHeaderTradeSettlement>
