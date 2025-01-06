@@ -21,10 +21,7 @@
 package org.mustangproject;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.*;
@@ -41,7 +38,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Invoice implements IExportableTransaction {
 
-	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, invoiceReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
+	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
 	protected TradeParty sender = null, recipient = null, deliveryAddress = null, payee = null;
 	protected ArrayList<CashDiscount> cashDiscounts = null;
@@ -60,7 +57,12 @@ public class Invoice implements IExportableTransaction {
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
 		Charges = new ArrayList<>(), LogisticsServiceCharges = new ArrayList<>();
 	protected IZUGFeRDPaymentTerms paymentTerms = null;
+
+	protected String invoiceReferencedDocumentID = null;
 	protected Date invoiceReferencedIssueDate;
+	// New field for storing Invoiced Object Identifier (BG-3)
+	protected ArrayList<ReferencedDocument> invoiceReferencedDocuments = null;
+
 	protected String specifiedProcuringProjectID = null;
 	protected String specifiedProcuringProjectName = null;
 	protected String despatchAdviceReferencedDocumentID = null;
@@ -116,6 +118,16 @@ public class Invoice implements IExportableTransaction {
 
 	}
 
+	/***
+	 * setter in case e.g. jackson tries to map attachments (normal use embedFileInXML)
+	 * @param fileArr Array of FileAttachments
+	 * @return fluent setter
+	 */
+	public Invoice setAdditionalReferencedDocuments(FileAttachment[] fileArr) {
+		xmlEmbeddedFiles = new ArrayList<>(Arrays.asList(fileArr));
+		return this;
+	}
+
 	@Override
 	public IZUGFeRDCashDiscount[] getCashDiscounts() {
 		return cashDiscounts.toArray(new IZUGFeRDCashDiscount[0]);
@@ -141,6 +153,7 @@ public class Invoice implements IExportableTransaction {
 	 */
 	public Invoice setCorrection(String number) {
 		setInvoiceReferencedDocumentID(number);
+		addInvoiceReferencedDocument(new ReferencedDocument(number));
 		documentCode = DocumentCodeTypeConstants.CORRECTEDINVOICE;
 		return this;
 	}
@@ -536,6 +549,26 @@ public class Invoice implements IExportableTransaction {
 			// convert bankdetails
 
 		}
+		return this;
+	}
+
+	// Getter for BG-3
+	@Override
+	public ArrayList<ReferencedDocument> getInvoiceReferencedDocuments() {
+		return invoiceReferencedDocuments;
+	}
+
+	// Setter for BG-3
+	public void setInvoiceReferencedDocuments(ArrayList<ReferencedDocument> invoiceReferencedDocuments) {
+		this.invoiceReferencedDocuments = invoiceReferencedDocuments;
+	}
+
+	// Method to add a single ReferencedDocument for BG-3
+	public Invoice addInvoiceReferencedDocument(ReferencedDocument doc) {
+		if (invoiceReferencedDocuments == null) {
+			invoiceReferencedDocuments = new ArrayList<>();
+		}
+		invoiceReferencedDocuments.add(doc);
 		return this;
 	}
 

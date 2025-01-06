@@ -12,7 +12,7 @@
   == Schriften
   =========================================================================== -->
 
-  <xsl:variable name="fontSans">SourceSerifPro</xsl:variable>
+  <xsl:variable name="fontSans">SourceSansPro</xsl:variable>
   <xsl:variable name="fontSerif">SourceSerifPro</xsl:variable>
 
   <xsl:variable name="amount-picture" select="xrf:_('amount-format')"/>
