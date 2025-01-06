@@ -4,7 +4,10 @@ import static java.math.BigDecimal.ZERO;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /***
@@ -91,17 +94,14 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	}
 
 	private String getAllowanceChargeReasonForPercent(BigDecimal percent, IZUGFeRDAllowanceCharge[] charges) {
-		String res = " ";
-		if ((charges != null) && (charges.length > 0)) {
-			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
-				if ((percent == null) || (currentCharge.getTaxPercent().compareTo(percent) == 0)
-					&& currentCharge.getReason() != null) {
-					res += currentCharge.getReason() + " ";
-				}
-			}
+		if (charges == null) {
+			return "";
 		}
-		res = res.substring(0, res.length() - 1);
-		return res;
+		return Arrays.stream(charges)
+			.filter(currentCharge -> (percent == null || currentCharge.getTaxPercent().compareTo(percent) == 0))
+			.map(IZUGFeRDAllowanceCharge::getReason)
+			.filter(Objects::nonNull)
+			.collect(Collectors.joining(" "));
 	}
 
 	/***
