@@ -324,19 +324,20 @@ public interface IExportableTransaction {
 	}
 
 	/**
-	 * supplier identification assigned by the costumer
+	 * get the rounding amount 
+   * (only to be usef for NL whose currency requires a rounding to 5ct)
 	 *
-	 * @return the sender's identification
+	 * @return the Bigdecimal
 	 */
 	default BigDecimal getRoundingAmount() {
 		return null;
 	}
 
 	/**
-	 * get reference document number typically used for Invoice Corrections Will be
-	 * added as IncludedNote in comfort profile
-	 *
-	 * @return the ID of the document this document refers to
+	 * get BuyerReference (BT-10) an identifier assigned by the buyer and used
+	 * for internal routing. Used for the Leitweg-ID.
+	 * 
+	 * @return the BuyerReference of this document
 	 */
 	default String getReferenceNumber() {
 		return null;
