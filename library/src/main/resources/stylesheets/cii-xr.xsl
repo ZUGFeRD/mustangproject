@@ -98,6 +98,8 @@
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:IssuerAssignedID"/>
             <xsl:apply-templates mode="BT-16"
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:IssuerAssignedID"/>
+			<xsl:apply-templates mode="BT-X-202"
+                                 select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:IssuerAssignedID"/>
             <xsl:apply-templates mode="BT-17"
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument/ram:IssuerAssignedID[following-sibling::ram:TypeCode='50']"/>
             <xsl:apply-templates mode="BT-18"
@@ -154,6 +156,8 @@
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']"/>
             <xsl:apply-templates mode="BG-21"
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']"/>
+            <xsl:apply-templates mode="BG-X-42"
+                                 select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge"/>                     
             <xsl:apply-templates mode="BG-22"
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation"/>
             <xsl:apply-templates mode="BG-23"
@@ -293,6 +297,14 @@
         <xr:Receiving_advice_reference>
             <xsl:attribute name="xr:id" select="'BT-15'"/>
             <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:choose>
+            	<xsl:when test="../ram:FormattedIssueDateTime/qdt:DateTimeString[@format = '102']">
+            		<xsl:call-template name="dateAsAttribute">
+		            	<xsl:with-param name="dateString" select="../ram:FormattedIssueDateTime/qdt:DateTimeString[@format = '102']"/>
+		            	<xsl:with-param name="attributeName" select="'bt-x-201'"/>
+		            </xsl:call-template>
+            	</xsl:when>
+            </xsl:choose>
             <xsl:call-template name="document_reference"/>
         </xr:Receiving_advice_reference>
     </xsl:template>
@@ -301,8 +313,32 @@
         <xr:Despatch_advice_reference>
             <xsl:attribute name="xr:id" select="'BT-16'"/>
             <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:choose>
+            	<xsl:when test="../ram:FormattedIssueDateTime/qdt:DateTimeString[@format = '102']">
+            		<xsl:call-template name="dateAsAttribute">
+		            	<xsl:with-param name="dateString" select="../ram:FormattedIssueDateTime/qdt:DateTimeString[@format = '102']"/>
+		            	<xsl:with-param name="attributeName" select="'bt-x-200'"/>
+		            </xsl:call-template>
+            	</xsl:when>
+            </xsl:choose>
             <xsl:call-template name="document_reference"/>
         </xr:Despatch_advice_reference>
+    </xsl:template>
+    <xsl:template mode="BT-X-202"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:IssuerAssignedID">
+        <xr:Delivery_note_reference>
+            <xsl:attribute name="xr:id" select="'BT-X-202'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:choose>
+            	<xsl:when test="../ram:FormattedIssueDateTime/qdt:DateTimeString[@format = '102']">
+            		<xsl:call-template name="dateAsAttribute">
+		            	<xsl:with-param name="dateString" select="../ram:FormattedIssueDateTime/qdt:DateTimeString[@format = '102']"/>
+		            	<xsl:with-param name="attributeName" select="'bt-x-203'"/>
+		            </xsl:call-template>
+            	</xsl:when>
+            </xsl:choose>
+            <xsl:call-template name="document_reference"/>
+        </xr:Delivery_note_reference>
     </xsl:template>
     <xsl:template mode="BT-17"
                   match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument/ram:IssuerAssignedID[following-sibling::ram:TypeCode='50']">
@@ -1633,6 +1669,57 @@
             <!-- End: Jan Thiele -->
         </xr:Document_level_charge_reason_code>
     </xsl:template>
+    <xsl:template mode="BG-X-42"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge">
+        <xsl:variable name="bg-contents"
+                      as="item()*"><!--Der Pfad /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge der Instanz in konkreter Syntax wird auf 4 Objekte abgebildet. -->
+            <xsl:apply-templates mode="BT-X-271" select="./ram:Description"/>
+            <xsl:apply-templates mode="BT-X-272" select="./ram:AppliedAmount"/>
+            <xsl:apply-templates mode="BT-X-273" select="./ram:AppliedTradeTax/ram:CategoryCode"/>
+            <xsl:apply-templates mode="BT-X-274" select="./ram:AppliedTradeTax/ram:RateApplicablePercent"/>
+        </xsl:variable>
+        <xsl:if test="$bg-contents">
+            <xr:LOGISTICS_SERVICE_CHARGES>
+                <xsl:attribute name="xr:id" select="'BG-X-42'"/>
+                <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+                <xsl:sequence select="$bg-contents"/>
+            </xr:LOGISTICS_SERVICE_CHARGES>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template mode="BT-X-271"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:Description">
+        <xr:Logistics_service_charge_description>
+            <xsl:attribute name="xr:id" select="'BT-X-271'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="amount"/>
+        </xr:Logistics_service_charge_description>
+    </xsl:template>
+    <xsl:template mode="BT-X-272"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedAmount">
+        <xr:Logistics_service_charge_amount>
+            <xsl:attribute name="xr:id" select="'BT-X-272'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="amount"/>
+        </xr:Logistics_service_charge_amount>
+    </xsl:template>
+    <xsl:template mode="BT-X-273"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax/ram:CategoryCode">
+        <xr:Logistics_service_charge_VAT_category_code>
+            <xsl:attribute name="xr:id" select="'BT-X-273'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="code.UNTDID.5305">
+                <xsl:with-param name="myparam" select="."/>
+            </xsl:call-template>
+        </xr:Logistics_service_charge_VAT_category_code>
+    </xsl:template>
+    <xsl:template mode="BT-X-274"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax/ram:RateApplicablePercent">
+        <xr:Logistics_service_charge_VAT_rate>
+            <xsl:attribute name="xr:id" select="'BT-X-274'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="percentage"/>
+        </xr:Logistics_service_charge_VAT_rate>
+    </xsl:template>
     <xsl:template mode="BG-22"
                   match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation">
         <xsl:variable name="bg-contents"
@@ -2384,11 +2471,30 @@
     <xsl:template name="text">
         <xsl:value-of select="."/>
     </xsl:template>
+    
     <xsl:template name="date">
-        <xsl:variable name="normalizeddate" select="normalize-space(replace(., '-', ''))"/>
+    	<xsl:variable name="normalizeddate" select="normalize-space(replace(., '-', ''))"/>
         <xsl:choose>
             <xsl:when test="matches($normalizeddate, '^[0-9]{8}$')">
                 <xsl:value-of
+                        select="xs:date( concat(substring($normalizeddate,1,4), '-', substring($normalizeddate,5,2), '-', substring($normalizeddate,7,2) ) )"/>
+            </xsl:when>
+            <xsl:otherwise>ILLEGAL DATE FORMAT: &lt;para&gt;Mit diesem Datentyp wird ein kalendarisches Datum
+                abgebildet, wie es in der ISO 8601 Spezifikation &lt;quote&gt;Calendar date complete representation&lt;/quote&gt;
+                beschrieben ist (siehe ISO 8601:2004, Abschnitt 5.2.1.1). Das Datum beinhaltet keine Zeitangabe. Das
+                konkret zu verwendende Format ist abhängig von der genutzten Syntax.&lt;/para&gt;
+                &lt;para&gt;Der Datentyp basiert auf dem Typ &lt;quote&gt;Date Time. Type&lt;/quote&gt;, wie in ISO
+                15000-5:2014 Anhang B definiert.&lt;/para&gt;
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    <xsl:template name="dateAsAttribute">
+    	<xsl:param name="dateString"/>
+    	<xsl:param name="attributeName" select="'date'"/>
+    	<xsl:variable name="normalizeddate" select="normalize-space(replace($dateString, '-', ''))"/>
+        <xsl:choose>
+            <xsl:when test="matches($normalizeddate, '^[0-9]{8}$')">
+                <xsl:attribute name="{$attributeName}"
                         select="xs:date( concat(substring($normalizeddate,1,4), '-', substring($normalizeddate,5,2), '-', substring($normalizeddate,7,2) ) )"/>
             </xsl:when>
             <xsl:otherwise>ILLEGAL DATE FORMAT: &lt;para&gt;Mit diesem Datentyp wird ein kalendarisches Datum

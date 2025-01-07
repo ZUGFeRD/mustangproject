@@ -36,5 +36,9 @@ public enum SubjectCode {
   /**
    * Discount and bonus agreements
    */
-  AAK
+  AAK,
+  /**
+   * Vehicle licence number
+   */
+  ABZ
 }

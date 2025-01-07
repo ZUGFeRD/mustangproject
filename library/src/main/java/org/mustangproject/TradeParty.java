@@ -2,9 +2,11 @@ package org.mustangproject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTradeParty;
 import org.mustangproject.ZUGFeRD.IZUGFeRDLegalOrganisation;
@@ -15,13 +17,15 @@ import org.w3c.dom.NodeList;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+
 /***
  * A organisation, i.e. usually a company
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class TradeParty implements IZUGFeRDExportableTradeParty {
 
-	protected String name, zip, street, location, country;
+	protected String name, zip, street, location, country, taxScheme;
 	protected String taxID = null, vatID = null;
 	protected String ID = null;
 	protected String description = null;
@@ -60,6 +64,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	}
 
+
 	protected void parseFromUBL(NodeList nodes) {
 		if (nodes.getLength() > 0) {
 
@@ -69,8 +74,34 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 				if (currentItemNode.getLocalName() != null) {
 					String currentUBLChild = currentItemNode.getLocalName();
-					if (currentUBLChild.equals("Party")) {
+//					if (currentUBLChild.equals("Delivery")) {
+//						NodeList delivery = currentItemNode.getChildNodes();
+//						for (int deliveryIndex = 0; deliveryIndex < delivery.getLength(); deliveryIndex++) {
+//							if (delivery.item(deliveryIndex).getLocalName() != null) {
+//								Node currentNode = delivery.item(deliveryIndex);
+//								if (currentNode.getLocalName().equals("DeliveryLocation")) {
+//									NodeList deliveryLocation = currentNode.getChildNodes();
+//									for (int deliveryLocationIndex = 0; deliveryLocationIndex < deliveryLocation.getLength(); deliveryLocationIndex++) {
+//										if (deliveryLocation.item(deliveryLocationIndex).getLocalName() != null) {
+//											if (deliveryLocation.item(deliveryLocationIndex).getLocalName().equals("ID")) {
+//												//Node currentNode = partyID.item(partyIDIndex);
+//												setID(deliveryLocation.item(deliveryLocationIndex).getTextContent());
+//												if ((deliveryLocation.item(deliveryLocationIndex).getAttributes() != null &&
+//													(deliveryLocation.item(deliveryLocationIndex).getAttributes().getNamedItem("schemeID") != null))
+//												) {
+//													SchemedID sID = new SchemedID().setScheme(deliveryLocation.item(deliveryLocationIndex).getAttributes().getNamedItem("schemeID").getTextContent());
+//													addGlobalID(sID);
+//												}
+//											}
+//										}
+//									}
+//								}
+//
+//							}
+//						}
+//					}
 
+					if (currentUBLChild.equals("Party")) {
 						NodeList party = currentItemNode.getChildNodes();
 						for (int partyIndex = 0; partyIndex < party.getLength(); partyIndex++) {
 							if (party.item(partyIndex).getLocalName() != null) {
@@ -88,19 +119,102 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 										}
 									}
 								}
+								if (party.item(partyIndex).getLocalName().equals("EndpointID")) {
+									Node currentNode = party.item(partyIndex);
+									if ((currentNode.getAttributes() != null &&
+										(currentNode.getAttributes().getNamedItem("schemeID") != null))
+										&& (party.item(partyIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("EM"))
+									) {
+										setEmail(currentNode.getTextContent());
+									}
 
-								// UBL only: formally it can have a name as well but BT27 party name *should* be stored in
-								// so overwrite if one exists
-								if (currentTopElementName.equals("PartyLegalEntity")) {
-									NodeList legal = party.item(partyIndex).getChildNodes();
-									for (int legalChildIndex = 0; legalChildIndex < legal.getLength(); legalChildIndex++) {
-										if (legal.item(legalChildIndex).getLocalName() != null) {
-											if (legal.item(legalChildIndex).getLocalName().equals("RegistrationName")) {
-												setName(legal.item(legalChildIndex).getTextContent());
+								}
+								if (currentTopElementName.equals("PartyIdentification")) {
+									NodeList partyID = party.item(partyIndex).getChildNodes();
+									for (int partyIDIndex = 0; partyIDIndex < partyID.getLength(); partyIDIndex++) {
+										if (partyID.item(partyIDIndex).getLocalName() != null) {
+											if (partyID.item(partyIDIndex).getLocalName().equals("ID")) {
+												Node currentNode = partyID.item(partyIDIndex);
+												if ((currentNode.getAttributes() != null &&
+													(currentNode.getAttributes().getNamedItem("schemeID") != null))
+												) {
+													SchemedID sID = new SchemedID().setScheme(currentNode.getAttributes().getNamedItem("schemeID").getTextContent()).setId(currentNode.getTextContent());
+													addGlobalID(sID);
+
+												}
+												else {
+													setID(currentNode.getTextContent());
+												}
+
 											}
 										}
 									}
 								}
+
+								if (currentTopElementName.equals("PartyTaxScheme")) {
+									NodeList partyTaxScheme = party.item(partyIndex).getChildNodes();
+									String CompanyId = null;
+									for (int partyTaxSchemeIndex = 0; partyTaxSchemeIndex < partyTaxScheme.getLength(); partyTaxSchemeIndex++) {
+										if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName() != null) {
+											if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName().equals("CompanyID")) {
+												CompanyId = (partyTaxScheme.item(partyTaxSchemeIndex).getTextContent());
+											}
+											if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName().equals("TaxScheme")) {
+												NodeList taxSchemechilds = partyTaxScheme.item(partyTaxSchemeIndex).getChildNodes();
+												for (int taxSchemechildsIndex = 0; taxSchemechildsIndex < taxSchemechilds.getLength(); taxSchemechildsIndex++) {
+													if (taxSchemechilds.item(taxSchemechildsIndex).getLocalName() != null) {
+														if (taxSchemechilds.item(taxSchemechildsIndex).getTextContent().equals("FC") || (taxSchemechilds.item(taxSchemechildsIndex).getTextContent().equals("NOVAT"))) {
+															setTaxID(CompanyId);
+														} else {
+															setVATID(CompanyId);
+														}
+													}
+												}
+											}
+										}
+
+									}
+								}
+
+
+								 /*
+								 UBL only: formally it can have a name as well but BT27 party name *should* be stored in
+								 so overwrite if one exists
+								*/
+
+								if (currentTopElementName.equals("PartyLegalEntity")) {
+									NodeList legal = party.item(partyIndex).getChildNodes();
+									LegalOrganisation lo = null;
+									for (int legalChildIndex = 0; legalChildIndex < legal.getLength(); legalChildIndex++) {
+										if (legal.item(legalChildIndex).getLocalName() != null) {
+
+											if (legal.item(legalChildIndex).getLocalName().equals("RegistrationName")) {
+												if (lo == null) {
+													lo = new LegalOrganisation();
+												}
+												lo.setTradingBusinessName(legal.item(legalChildIndex).getTextContent());
+											}
+											if (legal.item(legalChildIndex).getLocalName().equals("CompanyLegalForm")) {
+												setDescription(legal.item(legalChildIndex).getTextContent());
+											}
+											if (legal.item(legalChildIndex).getLocalName().equals("CompanyID")) {
+												if (lo == null) {
+													lo = new LegalOrganisation();
+												}
+												if (legal.item(legalChildIndex).getAttributes().getNamedItem("schemeID")!=null) {
+													SchemedID sid = new SchemedID(legal.item(legalChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue(), legal.item(legalChildIndex).getTextContent());
+													lo.setSchemedID(sid);
+												}
+											}
+											// we dont have that attribute yet in the legalorganisation: CompanyLegalForm
+											if (lo != null) {
+												setLegalOrganisation(lo);
+											}
+
+										}
+									}
+								}
+
 								if (currentTopElementName.equals("PostalAddress")) {
 
 									NodeList postal = party.item(partyIndex).getChildNodes();
@@ -148,8 +262,6 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 													}
 												}
-
-
 											}
 											if (postal.item(postalChildIndex).getLocalName().equals("Name")) {
 												setName(postal.item(postalChildIndex).getTextContent());
@@ -167,7 +279,6 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 							}
 						}
 
-
 					}
 
 					if (currentUBLChild.equals("GlobalID")) {
@@ -180,56 +291,6 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 					if (currentUBLChild.equals("DefinedTradeContact")) {
 						NodeList contact = nodes.item(nodeIndex).getChildNodes();
 						setContact(new Contact(contact));
-					}
-
-					if (currentUBLChild.equals("PostalTradeAddress")) {
-						NodeList postal = nodes.item(nodeIndex).getChildNodes();
-						for (int postalChildIndex = 0; postalChildIndex < postal.getLength(); postalChildIndex++) {
-							if (postal.item(postalChildIndex).getLocalName() != null) {
-								if (postal.item(postalChildIndex).getLocalName().equals("LineOne")) {
-									setStreet(postal.item(postalChildIndex).getTextContent());
-								}
-								if (postal.item(postalChildIndex).getLocalName().equals("LineTwo")) {
-									setAdditionalAddress(postal.item(postalChildIndex).getTextContent());
-								}
-								if (postal.item(postalChildIndex).getLocalName().equals("LineThree")) {
-									setAdditionalAddressExtension(postal.item(postalChildIndex).getTextContent());
-								}
-								if (postal.item(postalChildIndex).getLocalName().equals("CityName")) {
-									setLocation(postal.item(postalChildIndex).getTextContent());
-								}
-								if (postal.item(postalChildIndex).getLocalName().equals("PostcodeCode")) {
-									setZIP(postal.item(postalChildIndex).getTextContent());
-								}
-								if (postal.item(postalChildIndex).getLocalName().equals("CountryID")) {
-									setCountry(postal.item(postalChildIndex).getTextContent());
-								}
-
-							}
-						}
-
-					}
-
-					if (currentUBLChild.equals("SpecifiedTaxRegistration")) {
-						NodeList taxChilds = nodes.item(nodeIndex).getChildNodes();
-						for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
-							if (taxChilds.item(taxChildIndex).getLocalName() != null) {
-								if ((taxChilds.item(taxChildIndex).getLocalName().equals("ID"))) {
-									if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID") != null) {
-										Node firstChild = taxChilds.item(taxChildIndex).getFirstChild();
-										if (firstChild != null) {
-											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("VA")) {
-												setVATID(firstChild.getNodeValue());
-											}
-											if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("FC")) {
-												setTaxID(firstChild.getNodeValue());
-											}
-										}
-									}
-								}
-							}
-						}
-
 					}
 				}
 			}
@@ -500,6 +561,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		return this;
 	}
 
+
 	/**
 	 * (optional)
 	 *
@@ -509,6 +571,15 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	public TradeParty addDebitDetails(DirectDebit debitDetail) {
 		debitDetails.add(debitDetail);
 		return this;
+	}
+
+	/**
+	 * primarily for invoiceimporter and JSON
+	 *
+	 * @return the list of sepa mandates
+	 */
+	public List<DirectDebit> getDebitDetails() {
+		return debitDetails;
 	}
 
 	@Override
@@ -670,6 +741,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		return contact;
 	}
 
+	@JsonIgnore
 	public IZUGFeRDTradeSettlement[] getAsTradeSettlement() {
 		if (bankDetails.isEmpty() && debitDetails.isEmpty()) {
 			return null;

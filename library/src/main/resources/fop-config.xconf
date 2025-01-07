@@ -22,16 +22,36 @@
   <!-- etc. etc..... -->
   
   <renderers>
-   <renderer mime="application/pdf">
-   <fonts><!-- https://xmlgraphics.apache.org/fop/1.1/fonts.html auto-embed -->
-       <auto-detect/>
-       <font kerning="no" embed-url="classpath:FreeSans.ttf" embedding-mode="subset">
-           <font-triplet name="SourceSerifPro" style="normal" weight="normal" />
-           <font-triplet name="Times-Bold" style="normal" weight="normal" />
-       </font>
-   </fonts>
-   <output-profile>classpath:AdobeCompat-v2.icc</output-profile>
-   </renderer>
-</renderers>
-
+    <renderer mime="application/pdf">
+      <fonts>
+        <!-- https://xmlgraphics.apache.org/fop/1.1/fonts.html auto-embed -->
+        <auto-detect/>
+        <font kerning="yes" embed-url="classpath:fonts/SourceSansPro-Regular.ttf" embedding-mode="subset">
+          <font-triplet name="SourceSansPro" style="normal" weight="400"/>
+        </font>
+        <font kerning="yes" embed-url="classpath:fonts/SourceSansPro-It.ttf" embedding-mode="subset">
+          <font-triplet name="SourceSansPro" style="italic" weight="400"/>
+        </font>
+        <font kerning="yes" embed-url="classpath:fonts/SourceSansPro-Bold.ttf" embedding-mode="subset">
+          <font-triplet name="SourceSansPro" style="normal" weight="700"/>
+        </font>
+        <font kerning="yes" embed-url="classpath:fonts/SourceSansPro-BoldIt.ttf" embedding-mode="subset">
+          <font-triplet name="SourceSansPro" style="italic" weight="700"/>
+        </font>
+        <font kerning="yes" embed-url="classpath:fonts/SourceSerifPro-Regular.ttf" embedding-mode="subset">
+          <font-triplet name="SourceSerifPro" style="normal" weight="400"/>
+        </font>
+        <font kerning="yes" embed-url="classpath:fonts/SourceSerifPro-It.ttf" embedding-mode="subset">
+          <font-triplet name="SourceSerifPro" style="italic" weight="400"/>
+        </font>
+        <font kerning="yes" embed-url="classpath:fonts/SourceSerifPro-Bold.ttf" embedding-mode="subset">
+          <font-triplet name="SourceSerifPro" style="normal" weight="700"/>
+        </font>
+        <font kerning="yes" embed-url="classpath:fonts/SourceSerifPro-BoldIt.ttf" embedding-mode="subset">
+          <font-triplet name="SourceSerifPro" style="italic" weight="700"/>
+        </font>
+      </fonts>
+      <output-profile>classpath:AdobeCompat-v2.icc</output-profile>
+    </renderer>
+  </renderers>
 </fop>

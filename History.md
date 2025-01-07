@@ -1,3 +1,77 @@
+- 639
+- 633
+-626,
+-622,
+-356
+allow to add includedNotes with type
+- - 645
+- 631  multiple invoice referenced documents
+- 629
+- 630 #296 #565
+- 
+
+2.15.2
+=======
+2024-12-19
+- correcly write charge reason codes also for non-Xrechnung #617
+- correctly import additional referenced documents into invoice/corrected setting of attachments from jackson
+- corrected parseException structure
+- allow 1p0 as potential xmp version number
+- #618 import BT-20
+- #599 add tax category code for free export
+- #600 Fixes a problem where a stream was not safely closed
+
+2.15.1
+=======
+2024-12-07
+- #566 Failed to parse PDF - Could not reproduce the invoice
+- closes #579 prepaidamount is only read in UBL
+- #581 parse lineTotalAmount, TaxBasisAmount, duePayableAmount
+- #576 read lineid, #578 set lineid
+- log error ids, be able to access them from context
+- #503 import more ubl
+- allow jackson to run over more classes, e.g., DirectDebit, bean contructor for direct debit
+- allow json in document includedNotes and 
+- #591 Import IncludedNotes also on item level
+- #595 Treat all fatal XR schematron rules as errors, not as warnings.
+- #577 dom4j: exclude all (optional) dependencies to avoid potential conflicts.
+- #575 Fix compilation problems.
+- #573 Feature/category code
+- #601 exceptions in metrics
+- #606 also parse BT-25
+
+
+2.15.0
+=======
+2024-11-18
+- #435 use invoiceimporter as common technical basis also for zugferdimporter 
+- also import delivery address
+- #527 metrics may raise error on some pdf files
+- #517 read product GlobalID
+- #380 Added test for input stream validation
+- #518 corrently validate more XRechnung versions
+- make document charges and allowances serializable
+- #523 Verapdf claims PDF-A/3s created witth visualize are invalid
+- #530 duedate can not be set directly
+- #532 support validation warnings!
+- #534 new signature
+- #538 Mustang validator always claims PDF is invalid if flavour is PDF/A-3A
+- #555 be able to validate ubl credit notes
+- when parsing now distinguishing between the parseExceptions StructureException and ArithmetricException
+- #554 Import IncludedNotes on invoice extraction 
+- #542 Visualize SpecifiedLogisticsServiceCharge 
+- #531 Support ZUGFeRD 2.3.2 
+- #480 Support netherlands Euro
+
+2.14.2
+=======
+2024-10-14
+
+- also parse BICs in InvoiceImporter not only IBANs
+- #509 CLI currently does not write a logfile
+- #505 crash after invoking ZUGFeRD2PullProvider
+- #506 Fix POM missing dependencies
+
 2.14.1 
 =======
 2024-10-06

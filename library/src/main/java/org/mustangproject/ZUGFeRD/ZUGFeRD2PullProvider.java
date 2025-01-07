@@ -277,11 +277,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 
 		String reason = "";
-		if ((allowance.getReason() != null) && (profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung"))) {
+		if ((allowance.getReason() != null) && (profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung")) || profile == Profiles.getByName("EN16931")) {
 			reason = "<ram:Reason>" + XMLTools.encodeXML(allowance.getReason()) + "</ram:Reason>";
 		}
 		String reasonCode = "";
-		if ((allowance.getReasonCode() != null) && (profile == Profiles.getByName("XRechnung"))) {
+		if (allowance.getReasonCode() != null) {
 			// only in XRechnung profile
 			reasonCode = "<ram:ReasonCode>" + allowance.getReasonCode() + "</ram:ReasonCode>";
 		}
@@ -334,7 +334,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		this.trans = trans;
 		this.calc = new TransactionCalculator(trans);
 
-		boolean hasDueDate = false;
+		boolean hasDueDate = trans.getDueDate() != null;
 		final SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
 		String exemptionReason = "";
@@ -401,6 +401,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		int lineID = 0;
 		for (final IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			lineID++;
+			String lineIDStr = Integer.toString(lineID);
+			if (currentItem.getId()!=null) {
+				lineIDStr=currentItem.getId();
+			}
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
@@ -408,7 +412,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if ((getProfile() != Profiles.getByName("Minimum")) && (getProfile() != Profiles.getByName("BasicWL"))) {
 				xml += "<ram:IncludedSupplyChainTradeLineItem>" +
 					"<ram:AssociatedDocumentLineDocument>"
-					+ "<ram:LineID>" + lineID + "</ram:LineID>"
+					+ "<ram:LineID>" + lineIDStr + "</ram:LineID>"
 					+ buildItemNotes(currentItem)
 					+ "</ram:AssociatedDocumentLineDocument>"
 
@@ -454,7 +458,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				if (currentItem.getProduct().getClassifications() != null && currentItem.getProduct().getClassifications().length > 0) {
 					for (IDesignatedProductClassification classification : currentItem.getProduct().getClassifications()) {
 						xml += "<ram:DesignatedProductClassification>"
-							+ "<ram:ClassCode listId=\"" +  XMLTools.encodeXML(classification.getClassCode().getListID()) + "\"";
+							+ "<ram:ClassCode listId=\"" + XMLTools.encodeXML(classification.getClassCode().getListID()) + "\"";
 						if (classification.getClassCode().getListVersionID() != null) {
 							xml += " listVersionID=\"" + XMLTools.encodeXML(classification.getClassCode().getListVersionID()) + "\"";
 						}
@@ -818,12 +822,17 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			}
 		}
 
-
 		if ((trans.getPaymentTerms() == null) && (getProfile() != Profiles.getByName("Minimum")) && ((paymentTermsDescription != null) || (trans.getTradeSettlement() != null) || (hasDueDate))) {
 			xml += "<ram:SpecifiedTradePaymentTerms>";
 
 			if (paymentTermsDescription != null) {
 				xml += "<ram:Description>" + paymentTermsDescription + "</ram:Description>";
+			}
+			
+			if (trans.getDueDate() != null) {
+				xml += "<ram:DueDateDateTime>" // $NON-NLS-2$
+					+ DATE.udtFormat(trans.getDueDate())
+					+ "</ram:DueDateDateTime>";// 20130704
 			}
 
 			if (trans.getTradeSettlement() != null) {
@@ -834,12 +843,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 			}
 
-			if (hasDueDate && (trans.getDueDate() != null)) {
-				xml += "<ram:DueDateDateTime>" // $NON-NLS-2$
-					+ DATE.udtFormat(trans.getDueDate())
-					+ "</ram:DueDateDateTime>";// 20130704
-
-			}
 			xml += "</ram:SpecifiedTradePaymentTerms>";
 		} else {
 			xml += buildPaymentTermsXml();
@@ -857,7 +860,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		final String chargesTotalLine = "<ram:ChargeTotalAmount>" + currencyFormat(calc.getChargesForPercent(null)) + "</ram:ChargeTotalAmount>";
 
 		xml += "<ram:SpecifiedTradeSettlementHeaderMonetarySummation>";
-		if (getProfile() != Profiles.getByName("Minimum")) {
+		if ((getProfile() != Profiles.getByName("Minimum")) && (getProfile() != Profiles.getByName("BASICWL"))) {
 			xml += "<ram:LineTotalAmount>" + currencyFormat(calc.getTotal()) + "</ram:LineTotalAmount>";
 			xml += chargesTotalLine
 				+ allowanceTotalLine;
@@ -866,14 +869,18 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			// //
 			// currencyID=\"EUR\"
 			+ "<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
-			+ currencyFormat(calc.getGrandTotal().subtract(calc.getTaxBasis())) + "</ram:TaxTotalAmount>"
-			+ "<ram:GrandTotalAmount>" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>";
+			+ currencyFormat(calc.getGrandTotal().subtract(calc.getTaxBasis())) + "</ram:TaxTotalAmount>";
+		if (trans.getRoundingAmount() != null) {
+			xml += "<ram:RoundingAmount>" + currencyFormat(trans.getRoundingAmount()) + "</ram:RoundingAmount>";
+		}
+
+		xml += "<ram:GrandTotalAmount>" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>";
 		// //
 		// currencyID=\"EUR\"
 		if (getProfile() != Profiles.getByName("Minimum")) {
 			xml += "<ram:TotalPrepaidAmount>" + currencyFormat(calc.getTotalPrepaid()) + "</ram:TotalPrepaidAmount>";
 		}
-		xml += "<ram:DuePayableAmount>" + currencyFormat(calc.getGrandTotal().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>"
+		xml += "<ram:DuePayableAmount>" + currencyFormat(calc.getDuePayable()) + "</ram:DuePayableAmount>"
 			+ "</ram:SpecifiedTradeSettlementHeaderMonetarySummation>";
 		if (trans.getInvoiceReferencedDocumentID() != null) {
 			xml += "<ram:InvoiceReferencedDocument>"
@@ -885,6 +892,19 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "</ram:FormattedIssueDateTime>";
 			}
 			xml += "</ram:InvoiceReferencedDocument>";
+		}
+		if (trans.getInvoiceReferencedDocuments() != null) {
+			for (var doc : trans.getInvoiceReferencedDocuments()) {
+				xml += "<ram:InvoiceReferencedDocument>"
+						+ "<ram:IssuerAssignedID>"
+						+ XMLTools.encodeXML(doc.getIssuerAssignedID()) + "</ram:IssuerAssignedID>";
+				if (doc.getFormattedIssueDateTime() != null) {
+					xml += "<ram:FormattedIssueDateTime>"
+							+ DATE.qdtFormat(doc.getFormattedIssueDateTime())
+							+ "</ram:FormattedIssueDateTime>";
+				}
+				xml += "</ram:InvoiceReferencedDocument>";
+			}
 		}
 
 		xml += "</ram:ApplicableHeaderTradeSettlement>";

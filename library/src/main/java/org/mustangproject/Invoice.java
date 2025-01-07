@@ -21,11 +21,9 @@
 package org.mustangproject;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.*;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
@@ -37,9 +35,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  * @see IExportableTransaction if you want to implement an interface instead
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Invoice implements IExportableTransaction {
 
-	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, invoiceReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
+	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
 	protected TradeParty sender = null, recipient = null, deliveryAddress = null, payee = null;
 	protected ArrayList<CashDiscount> cashDiscounts = null;
@@ -58,12 +57,18 @@ public class Invoice implements IExportableTransaction {
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
 		Charges = new ArrayList<>(), LogisticsServiceCharges = new ArrayList<>();
 	protected IZUGFeRDPaymentTerms paymentTerms = null;
+
+	protected String invoiceReferencedDocumentID = null;
 	protected Date invoiceReferencedIssueDate;
+	// New field for storing Invoiced Object Identifier (BG-3)
+	protected ArrayList<ReferencedDocument> invoiceReferencedDocuments = null;
+
 	protected String specifiedProcuringProjectID = null;
 	protected String specifiedProcuringProjectName = null;
 	protected String despatchAdviceReferencedDocumentID = null;
 	protected String vatDueDateTypeCode = null;
 	protected String creditorReferenceID; // required when direct debit is used.
+	private BigDecimal roundingAmount=null;
 
 	public Invoice() {
 		ZFItems = new ArrayList<>();
@@ -113,6 +118,16 @@ public class Invoice implements IExportableTransaction {
 
 	}
 
+	/***
+	 * setter in case e.g. jackson tries to map attachments (normal use embedFileInXML)
+	 * @param fileArr Array of FileAttachments
+	 * @return fluent setter
+	 */
+	public Invoice setAdditionalReferencedDocuments(FileAttachment[] fileArr) {
+		xmlEmbeddedFiles = new ArrayList<>(Arrays.asList(fileArr));
+		return this;
+	}
+
 	@Override
 	public IZUGFeRDCashDiscount[] getCashDiscounts() {
 		return cashDiscounts.toArray(new IZUGFeRDCashDiscount[0]);
@@ -138,6 +153,7 @@ public class Invoice implements IExportableTransaction {
 	 */
 	public Invoice setCorrection(String number) {
 		setInvoiceReferencedDocumentID(number);
+		addInvoiceReferencedDocument(new ReferencedDocument(number));
 		documentCode = DocumentCodeTypeConstants.CORRECTEDINVOICE;
 		return this;
 	}
@@ -410,6 +426,11 @@ public class Invoice implements IExportableTransaction {
 		return includedNotes;
 	}
 
+	public Invoice setNotesWithSubjectCode(List<IncludedNote> theList) {
+		includedNotes=theList;
+		return this;
+	}
+
 	@Override
 	public String getCurrency() {
 		return currency;
@@ -466,6 +487,26 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	/***
+	 * for currency rounding differences to 5ct e.g. in Netherlands ("Rappenrundung")
+	 * @return null if not set, otherwise BigDecimal of Euros
+	 */
+	@Override
+	public BigDecimal getRoundingAmount() {
+		return roundingAmount;
+	}
+
+	/***
+	 * set the cent e.g. to reach the next 5ct mark for currencies in certain countries
+	 * e.g. in the Netherlands ("Rappenrundung")
+	 * @param amount
+	 * @return fluent setter
+	 */
+	public Invoice setRoundingAmount(BigDecimal amount) {
+		 roundingAmount=amount;
+		 return this;
+	}
+
+	/***
 	 * sets a named sender contact
 	 * @deprecated use setSender
 	 * @see Contact
@@ -511,6 +552,26 @@ public class Invoice implements IExportableTransaction {
 		return this;
 	}
 
+	// Getter for BG-3
+	@Override
+	public ArrayList<ReferencedDocument> getInvoiceReferencedDocuments() {
+		return invoiceReferencedDocuments;
+	}
+
+	// Setter for BG-3
+	public void setInvoiceReferencedDocuments(ArrayList<ReferencedDocument> invoiceReferencedDocuments) {
+		this.invoiceReferencedDocuments = invoiceReferencedDocuments;
+	}
+
+	// Method to add a single ReferencedDocument for BG-3
+	public Invoice addInvoiceReferencedDocument(ReferencedDocument doc) {
+		if (invoiceReferencedDocuments == null) {
+			invoiceReferencedDocuments = new ArrayList<>();
+		}
+		invoiceReferencedDocuments.add(doc);
+		return this;
+	}
+
 	@Override
 	public IZUGFeRDAllowanceCharge[] getZFAllowances() {
 		if (Allowances.isEmpty()) {
@@ -518,6 +579,20 @@ public class Invoice implements IExportableTransaction {
 		} else {
 			return Allowances.toArray(new IZUGFeRDAllowanceCharge[0]);
 		}
+	}
+
+	/***
+	 * this is wrong and only used from jackson
+	 * @param iza the Array of allowances/charges
+	 * @return fluent setter
+	 */
+	public Invoice setZFAllowances(Allowance[] iza) {
+		Allowances=new ArrayList<>();
+
+		for (IZUGFeRDAllowanceCharge cz:iza) {
+			Allowances.add(cz);
+		}
+		return this;
 	}
 
 
@@ -530,6 +605,18 @@ public class Invoice implements IExportableTransaction {
 		}
 	}
 
+	/***
+	 * this is wrong and only used from jackson
+	 * @param iza the array of charges
+	 * @return fluent setter
+	 */
+	public Invoice setZFCharges(Charge[] iza) {
+		Charges=new ArrayList<>();
+		for (IZUGFeRDAllowanceCharge cz:iza) {
+			Charges.add(cz);
+		}
+		return this;
+	}
 
 	@Override
 	public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {

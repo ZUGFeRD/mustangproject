@@ -129,19 +129,18 @@ public class XRTest extends TestCase {
 		Invoice readInvoice = new Invoice();
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
 		try {
-
-			zii.setRawXML(zf2p.getXML());
+			zii.setRawXML(zf2p.getXML(), false);
 			zii.extractInto(readInvoice);
 		} catch (ParseException | XPathExpressionException xp) {
-			fail("Exception not expected");
+			fail("ParseException not expected");
 		} catch (IOException e) {
-            throw new RuntimeException(e);
+			fail("IOException not expected");
         }
-		List<FileAttachment> attachedFiles=zii.getFileAttachmentsXML();
+		FileAttachment[] attachedFiles=readInvoice.getAdditionalReferencedDocuments();
         assertNotNull(attachedFiles);
-		assertEquals(attachedFiles.size(), 1);
+		assertEquals(attachedFiles.length, 1);
 
-		assertTrue(Arrays.equals(attachedFiles.get(0).getData(), b));
+		assertTrue(Arrays.equals(attachedFiles[0].getData(), b));
 
 
 	}

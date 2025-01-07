@@ -28,7 +28,9 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import org.mustangproject.IncludedNote;
 import org.mustangproject.Item;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -153,4 +155,21 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 		return null;
 	}
 
+	/***
+	 *
+	 * @return the line ID
+	 */
+	default String getId()  {
+		return null;
+	}
+
+	/**
+	 * A grouping of business terms to indicate accounting-relevant free texts including a qualification of these.
+	 *
+	 * The information are written to the same xml nodes like {@link #getNotes()} but with explicit subjectCode.
+	 * @return list of the notes
+	 */
+	default List<IncludedNote> getNotesWithSubjectCode() {
+		return null;
+	}
 }
