@@ -109,6 +109,16 @@ public class DXTest extends MustangReaderTestCase {
 			return "DE99XX12345";
 		}
 
+		@Override
+		public String getPaymentMeansCode() {
+			return "54";
+		}
+
+		@Override
+		public String getPaymentMeansInformation() {
+			return "Credit Card";
+		}
+
 	}
 
 	@Override

@@ -659,7 +659,7 @@ public class ZUGFeRDInvoiceImporter {
 		NodeList headerTradeSettlementNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		List<BankDetails> bankDetails = new ArrayList<>();
 		String directDebitMandateID = null;
-		String IBAN = null, BIC = null;
+		String IBAN = null, BIC = null, paymentMeansCode = null, paymentMeansInformation = null;
 
 		for (int i = 0; i < headerTradeSettlementNodes.getLength(); i++) {
 			// XMLTools.trimOrNull(nodes.item(i)))) {
@@ -693,7 +693,17 @@ public class ZUGFeRDInvoiceImporter {
 					NodeList paymentMeansChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
 					IBAN = null;
 					BIC = null;
+					paymentMeansCode = null;
+					paymentMeansInformation = null;
 					for (int paymentMeansChildIndex = 0; paymentMeansChildIndex < paymentMeansChilds.getLength(); paymentMeansChildIndex++) {
+
+						if ((paymentMeansChilds.item(paymentMeansChildIndex).getLocalName() != null) && (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("TypeCode"))) {
+							paymentMeansCode = XMLTools.trimOrNull(paymentMeansChilds.item(paymentMeansChildIndex));
+						}
+
+						if ((paymentMeansChilds.item(paymentMeansChildIndex).getLocalName() != null) && (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("Information"))) {
+							paymentMeansInformation = XMLTools.trimOrNull(paymentMeansChilds.item(paymentMeansChildIndex));
+						}
 
 						if ((paymentMeansChilds.item(paymentMeansChildIndex).getLocalName() != null) && (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayeePartyCreditorFinancialAccount") || paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayerPartyDebtorFinancialAccount"))) {
 							NodeList accountChilds = paymentMeansChilds.item(paymentMeansChildIndex).getChildNodes();
@@ -795,6 +805,12 @@ public class ZUGFeRDInvoiceImporter {
 
 		if ((directDebitMandateID != null) && (IBAN != null)) {
 			DirectDebit d = new DirectDebit(IBAN, directDebitMandateID);
+			if (paymentMeansCode != null) {
+				d.setPaymentMeansCode(paymentMeansCode);
+			}
+			if (paymentMeansInformation != null) {
+				d.setPaymentMeansInformation(paymentMeansInformation);
+			}
 			zpp.getSender().addDebitDetails(d);
 		}
 

@@ -185,7 +185,7 @@ Permissive Open Source APL2, see LICENSE
 | 23  | Not a PDF/A-3  |
 | 24  | Issues in CEN EN16931 Schematron Check |
 | 25  | Unsupported profile type  |
-| 26  | No rules matched, XML to minimal?  |
+| 26  | No rules matched, XML too minimal?  |
 
 ## History
 
