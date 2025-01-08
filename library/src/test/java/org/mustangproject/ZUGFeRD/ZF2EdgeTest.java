@@ -274,16 +274,6 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		return "123";
 	}
 
-	@Override
-	public String getPaymentMeansCode() {
-		return "42";
-	}
-
-	@Override
-	public String getPaymentMeansInformation() {
-		return "Überweisung";
-	}
-
 	/**
 	 * Create the test case
 	 *
