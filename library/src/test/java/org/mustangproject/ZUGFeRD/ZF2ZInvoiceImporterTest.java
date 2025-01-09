@@ -103,6 +103,32 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+
+	public void testTheInvoiceImport() {
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("C:\\Users\\jstaerk\\workspace\\XMLExamples\\zfdiverses\\20250108_\\xmlDieWirLesenSollten.xml");
+
+		boolean hasExceptions = false;
+		Invoice invoice = null;
+		try {
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		// Reading ZUGFeRD
+
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("0.00"), tc.getDuePayable());
+		assertEquals(new BigDecimal("0.00"), tc.getGrandTotal());
+
+
+		// name street location zip country, contact name phone email, total amount
+
+	}
+
+
+
 	public void testInvoiceImportUBL() {
 
 
