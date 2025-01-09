@@ -737,7 +737,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 
 		if ((trans.getZFCharges() != null) && (trans.getZFCharges().length > 0)) {
-			if (profile == Profiles.getByName("XRechnung")) {
+			if ((profile == Profiles.getByName("XRechnung")) || (profile == Profiles.getByName("EN16931")) || (profile == Profiles.getByName("EXTENDED")))  {
 				for (IZUGFeRDAllowanceCharge charge : trans.getZFCharges()) {
 					xml += "<ram:SpecifiedTradeAllowanceCharge>" +
 						"<ram:ChargeIndicator>" +
