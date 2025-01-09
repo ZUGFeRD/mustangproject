@@ -114,7 +114,9 @@ public class Contact implements IZUGFeRDExportableContact {
 				if (currentItemNode.getLocalName() != null) {
 
 					if (currentItemNode.getLocalName().equals("PersonName")/*CII*/||currentItemNode.getLocalName().equals("Name")/*UBL*/) {
-						setName(currentItemNode.getFirstChild().getNodeValue());
+						if (currentItemNode.getFirstChild()!=null) {
+							setName(currentItemNode.getFirstChild().getNodeValue());
+						}
 					}
 					if (currentItemNode.getLocalName().equals("TelephoneUniversalCommunication")) { /*CII*/
 						NodeList tel = currentItemNode.getChildNodes();
