@@ -310,16 +310,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return the referred document
 	 */
 	public String getReference() {
-		try {
-			if (getVersion() == 1) {
-				return extractString("//*[local-name() = 'ApplicableSupplyChainTradeAgreement']/*[local-name() = 'BuyerReference']");
-			} else {
-				return extractString("//*[local-name() = 'ApplicableHeaderTradeAgreement']/*[local-name() = 'BuyerReference']");
-			}
-		} catch (final Exception e) {
-			// Exception was already logged
-			return "";
-		}
+		return importedInvoice.getReferenceNumber();
 	}
 
 
