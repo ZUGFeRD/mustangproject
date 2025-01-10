@@ -13,6 +13,9 @@ allow to add includedNotes with type
 - 648
 - 651
 - 652
+- -620
+- 653
+- 654
 
 2.15.2
 =======
