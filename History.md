@@ -8,7 +8,9 @@ allow to add includedNotes with type
 - 631  multiple invoice referenced documents
 - 629
 - 630 #296 #565
-- 
+- 648
+- 651
+- 652
 
 2.15.2
 =======
