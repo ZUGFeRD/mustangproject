@@ -9,11 +9,11 @@
     <xsl:import href="common-xr.xsl"/>
     <xsl:import href="xr-pdf/lib/konstanten.xsl"/>
     <!--
-      FO engine used can be specified.
-      Specific extensions will be then enabled.
-      Supported values are:
-         axf - Antenna House XSL Formatter
-         fop - Apache FOP
+        FO engine used can be specified.
+        Specific extensions will be then enabled.
+        Supported values are:
+            axf - Antenna House XSL Formatter
+            fop - Apache FOP
     -->
     <xsl:param name="foengine"/>
     <xsl:param name="axf.extensions"
@@ -46,7 +46,7 @@
     </xsl:variable>
     <xsl:variable name="result_text">
         <xsl:if test="/validation/xml/summary/@status = 'valid'">
-            <xsl:text>Es wird empfohlen, das Dokument anzunehmen und weiterzuverarbeiten.</xsl:text>
+            <xsl:text>Es wird empfohlen, das Dokument anzunehmen und es weiterzuverarbeiten.</xsl:text>
         </xsl:if>
         <xsl:if test="/validation/xml/summary/@status = 'invalid'">
             <xsl:text>Es wird empfohlen, das Dokument zurückzuweisen.</xsl:text>
@@ -71,47 +71,59 @@
                     </fo:block>
                     <xsl:call-template name="SubHeader">
                         <xsl:with-param name="text"
-                                        select="&#34;Angaben zum geprüften Dokument&#34;"/>
+                                        select="'Angaben zum geprüften Dokument'"/>
                         <xsl:with-param name="color"
-                                        select="&#34;black&#34;"/>
+                                        select="'black'"/>
                     </xsl:call-template>
-                    <fo:block>
-                        <fo:block text-align="justify">
-                            <fo:float float="right">
-                                <fo:block>
-                                    <xsl:value-of select="/validation/@filename"/>
-                                </fo:block>
-                            </fo:float>
-                            <xsl:text>Referenz:</xsl:text>
-                        </fo:block>
-                    </fo:block>
-                    <fo:block>
-                        <fo:block text-align="justify">
-                            <fo:float float="right">
-                                <fo:block>
-                                    <xsl:value-of select="/validation/@datetime"/>
-                                </fo:block>
-                            </fo:float>
-                            <xsl:text>Zeitpunkt der Prüfung:</xsl:text>
-                        </fo:block>
-                    </fo:block>
-                    <fo:block>
-                        <fo:block text-align="justify">
-                            <fo:float float="right">
-                                <fo:block>
-                                    <xsl:value-of select="/validation/xml/info/profile"/>
-                                </fo:block>
-                            </fo:float>
-                            <xsl:text>Erkannter Dokumenttyp:</xsl:text>
-                        </fo:block>
-                    </fo:block>
-                    <xsl:apply-templates select="/validation/pdf"/>
+                    <fo:table>
+                        <fo:table-column border-style="none"/>
+                        <fo:table-column column-width="70%"
+                                         border-style="none"/>
+                        <fo:table-body>
+                            <fo:table-row>
+                                <fo:table-cell>
+                                    <fo:block text-align="left">Referenz:</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell>
+                                    <fo:block text-align="right">
+                                        <xsl:value-of select="./@filename"/>
+                                    </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                            <fo:table-row>
+                                <fo:table-cell>
+                                    <fo:block text-align="left">Zeitpunkt der Prüfung:</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell>
+                                    <fo:block text-align="right">
+                                        <xsl:value-of select="./@datetime"/>
+                                    </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                            <fo:table-row>
+                                <fo:table-cell>
+                                    <fo:block text-align="left">Erkannter Dokumenttyp:</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell>
+                                    <fo:block text-align="right">
+                                        <xsl:call-template name="EnableLineBreaks">
+                                            <xsl:with-param name="text"
+                                                            select="./xml/info/profile"/>
+                                            <xsl:with-param name="separator"
+                                                            select="'#'"/>
+                                        </xsl:call-template>
+                                    </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <xsl:apply-templates select="./pdf"/>
                     <!--
                     <xsl:call-template name="SubHeader">
                         <xsl:with-param name="text"
-                                        select='"Konformitätsprüfung:"'/>
+                                        select=="'Konformitätsprüfung:'"/>
                         <xsl:with-param name="color"
-                                        select='"black"'/>
+                                        select=="'black'"/>
                     </xsl:call-template>
                     -->
                     <xsl:call-template name="SubHeader">
@@ -125,35 +137,44 @@
                         <fo:table-column border-style="solid"/>
                         <fo:table-column border-style="solid"/>
                         <fo:table-column border-style="solid"/>
-                        <fo:table-column column-width="70%"
-                                         border-style="solid"/>
+                        <fo:table-column border-style="solid"
+                                         column-width="68%"/>
                         <fo:table-header>
                             <fo:table-row background-color="#E0E0E0"
-                                          font-weight="bold">
+                                          font-weight="bold"
+                                          border-style="solid">
                                 <fo:table-cell>
-                                    <fo:block>Type</fo:block>
+                                    <fo:block margin="0mm"
+                                              padding="1mm">Type</fo:block>
                                 </fo:table-cell>
                                 <fo:table-cell>
-                                    <fo:block>Code</fo:block>
+                                    <fo:block margin="0mm"
+                                              padding="1mm">Code</fo:block>
                                 </fo:table-cell>
                                 <fo:table-cell>
-                                    <fo:block>Schwere</fo:block>
+                                    <fo:block margin="0mm"
+                                              padding="1mm">Schwere</fo:block>
                                 </fo:table-cell>
                                 <fo:table-cell>
-                                    <fo:block>Text</fo:block>
+                                    <fo:block margin="0mm"
+                                              padding="1mm">Text</fo:block>
                                 </fo:table-cell>
                             </fo:table-row>
                         </fo:table-header>
-                        <fo:table-body>
+                        <fo:table-body page-break-after="auto"
+                                       page-break-before="auto"
+                                       page-break-inside="avoid">
                             <xsl:choose>
-                                <xsl:when test="/validation/xml/messages">
-                                    <xsl:apply-templates select="/validation/xml/messages"/>
+                                <xsl:when test="./xml/messages">
+                                    <xsl:apply-templates select="./xml/messages"/>
                                 </xsl:when>
                                 <xsl:otherwise>
-                                    <fo:table-row font-size="12px"
-                                                  border-style="solid">
+                                    <fo:table-row border-style="solid"
+                                                  font-size="12px">
                                         <fo:table-cell number-columns-spanned="4">
-                                            <fo:block text-align="center">Es gibt weder Hinweise noch Fehler.</fo:block>
+                                            <fo:block margin="0mm"
+                                                      padding="1mm"
+                                                      text-align="center">Es gibt keine Hinweise, Warnungen oder Fehler.</fo:block>
                                         </fo:table-cell>
                                     </fo:table-row>
                                 </xsl:otherwise>
@@ -164,62 +185,113 @@
             </fo:page-sequence>
         </fo:root>
     </xsl:template>
-    <xsl:template match="notice|error">
-        <fo:table-row font-size="12px"
-                      border-style="solid">
-            <fo:table-cell number-rows-spanned="2">
-                <fo:block>
-                    <xsl:value-of select="@type"/>
-                </fo:block>
-            </fo:table-cell>
-            <fo:table-cell number-rows-spanned="2">
-                <fo:block>
-                    <xsl:call-template name="SUBID">
-                        <xsl:with-param name="myparam"
-                                        select="substring-after(.,' [ID ')"/>
-                    </xsl:call-template>
-                </fo:block>
-            </fo:table-cell>
-            <fo:table-cell number-rows-spanned="2">
-                <fo:block>
-                    <xsl:choose>
-                        <xsl:when test="name() = 'error'">
-                            <xsl:attribute name="color">red</xsl:attribute>
-                            <xsl:text>Fehler</xsl:text>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:text>Hinweis</xsl:text>
-                        </xsl:otherwise>
-                    </xsl:choose>
+    <xsl:template match="notice|warning|error">
+        <xsl:variable name="msg_color">
+            <xsl:choose>
+                <xsl:when test="name() = 'error'">
+                    <xsl:text>red</xsl:text>
+                </xsl:when>
+                <xsl:when test="name() = 'warning'">
+                    <xsl:text>orange</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>black</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="msg_label">
+            <xsl:choose>
+                <xsl:when test="name() = 'error'">
+                    <xsl:text>Fehler</xsl:text>
+                </xsl:when>
+                <xsl:when test="name() = 'warning'">
+                    <xsl:text>Warnung</xsl:text>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:text>Hinweis</xsl:text>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="msg_text">
+            <xsl:choose>
+                <xsl:when test="contains(., ' [ID ')">
+                    <xsl:value-of select="substring-before(., ' [ID')"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="."/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <xsl:variable name="rows-spanned">
+            <xsl:choose>
+                <xsl:when test="./@location">
+                    <xsl:value-of select="'2'"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="'1'"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <fo:table-row border-style="solid"
+                      font-size="12px"
+                      keep-with-previous="auto"
+                      keep-with-next="always">
+            <fo:table-cell number-rows-spanned="{$rows-spanned}">
+                <fo:block margin="0mm"
+                          padding="1mm">
+                    <xsl:value-of select="./@type"/>
                 </fo:block>
             </fo:table-cell>
             <fo:table-cell>
-                <fo:block>
-                    <xsl:if test="name() = 'error'">
-                        <xsl:attribute name="color">red</xsl:attribute>
-                    </xsl:if>
-                    <xsl:value-of select="substring-before(.,' [ID')"/>
+                <fo:block margin="0mm"
+                          padding="1mm">
+                    <xsl:value-of select="substring-before(substring-after(., ' [ID '), ']')"/>
                 </fo:block>
             </fo:table-cell>
-        </fo:table-row>
-        <fo:table-row font-size="10px"
-                      border-style="solid">
             <fo:table-cell>
-                <fo:block>
-                    <xsl:if test="name() = 'error'">
-                        <xsl:attribute name="color">red</xsl:attribute>
-                    </xsl:if>
-                    <xsl:value-of select="concat('Pfad: ', @location)"/>
+                <fo:block color="{$msg_color}"
+                          margin="0mm"
+                          padding="1mm">
+                    <xsl:value-of select="$msg_label"/>
+                </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+                <fo:block color="{$msg_color}"
+                          margin="0mm"
+                          padding="1mm">
+                    <xsl:value-of select="$msg_text"/>
                 </fo:block>
             </fo:table-cell>
         </fo:table-row>
+        <xsl:if test="./@location">
+            <fo:table-row border-style="solid"
+                          font-size="8px"
+                          keep-with-previous="always"
+                          keep-with-next="auto">
+                <fo:table-cell number-columns-spanned="3">
+                    <fo:block color="{$msg_color}"
+                              margin="0mm"
+                              padding="1mm">
+                        <fo:block font-size="12px">
+                            <xsl:value-of select="'Pfad: '"/>
+                        </fo:block>
+                        <xsl:call-template name="EnableLineBreaks">
+                            <xsl:with-param name="text"
+                                            select="./@location"/>
+                            <xsl:with-param name="separator"
+                                            select="'/'"/>
+                        </xsl:call-template>
+                    </fo:block>
+                </fo:table-cell>
+            </fo:table-row>
+        </xsl:if>
     </xsl:template>
     <xsl:template match="pdf">
         <xsl:call-template name="SubHeader">
             <xsl:with-param name="text"
                             select="concat('ZUGFeRD-PDF: ', $pdf_result_text)"/>
             <xsl:with-param name="color"
-                            select="&#34;black&#34;"/>
+                            select="'black'"/>
         </xsl:call-template>
     </xsl:template>
     <xsl:template name="SubHeader">
@@ -234,10 +306,22 @@
             <xsl:value-of select="$text"/>
         </fo:block>
     </xsl:template>
-    <xsl:template name="SUBID">
-        <xsl:param name="myparam"/>
-        <xsl:variable name="myparam.end"
-                      select="substring-before($myparam, ']')"/>
-        <xsl:value-of select="$myparam.end"/>
+    <xsl:template name="EnableLineBreaks">
+        <xsl:param name="text"/>
+        <xsl:param name="separator"/>
+        <xsl:for-each select="tokenize($text, $separator)">
+            <xsl:choose>
+                <xsl:when test="position() eq 1">
+                    <fo:block>
+                        <xsl:value-of select="."/>
+                    </fo:block>
+                </xsl:when>
+                <xsl:otherwise>
+                    <fo:block>
+                        <xsl:value-of select="concat($separator, .)"/>
+                    </fo:block>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:for-each>
     </xsl:template>
 </xsl:stylesheet>
