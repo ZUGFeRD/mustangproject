@@ -55,7 +55,7 @@ public class LineCalculator {
 		BigDecimal basisQuantity = currentItem.getBasisQuantity().compareTo(BigDecimal.ZERO) == 0
 			? BigDecimal.ONE.setScale(4)
 			: currentItem.getBasisQuantity();
-		itemTotalNetAmount = quantity.multiply(getPrice()).divide(basisQuantity, 18, RoundingMode.HALF_UP)
+		itemTotalNetAmount = quantity.multiply(price).divide(basisQuantity, 18, RoundingMode.HALF_UP)
 				.subtract(allowanceItemTotal).setScale(2, RoundingMode.HALF_UP);
 		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);
 	}
