@@ -1,143 +1,128 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.mustangproject</groupId>
         <artifactId>core</artifactId>
-        <version>2.15.3-SNAPSHOT</version>
+        <version>2.16.1-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.mustangproject</groupId>
     <artifactId>validator</artifactId>
-    <name>Library to validate e-invoices (ZUGFeRD, Factur-X and Xrechnung)</name>
-
     <packaging>jar</packaging>
-    <version>2.15.3-SNAPSHOT</version>
-    <repositories>
-        <repository>
-            <!-- for jargs -->
-            <id>sonatype-oss-public</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+    <name>Library to validate e-invoices (ZUGFeRD, Factur-X and Xrechnung)</name>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Jochen Stärk</name>
+            <email>jstaerk@usegroup.de</email>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.deploy.skip>false
-        </maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
-        <maven.compiler.compilerVersion>11</maven.compiler.compilerVersion>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-
+        <maven.deploy.skip>false</maven.deploy.skip>
     </properties>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>library</artifactId>
-            <version>2.15.3-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
-		<dependency>
-			<groupId>org.dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-			<version>2.1.4</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.16.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.pdfbox</groupId>
-			<artifactId>pdfbox</artifactId>
-			<version>3.0.2</version>
-		</dependency>
         <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>4.0.2</version>
+            <groupId>com.helger.commons</groupId>
+            <artifactId>ph-commons</artifactId>
         </dependency>
-
-        <!-- Verapdf plugin <dependency> <groupId>org.verapdf</groupId> <artifactId>core</artifactId>
-              <version>1.6.2</version> </dependency> -->
-        <!-- embedded verapdf -->
         <dependency>
-            <groupId>org.verapdf</groupId>
-            <artifactId>validation-model-jakarta</artifactId>
-            <version>1.26.1</version>
+            <groupId>com.helger.schematron</groupId>
+            <artifactId>ph-schematron-api</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.helger/ph-schematron -->
         <dependency>
             <groupId>com.helger.schematron</groupId>
             <artifactId>ph-schematron-xslt</artifactId>
-            <version>8.0.0</version>
         </dependency>
         <dependency>
-            <groupId>org.xmlunit</groupId>
-            <artifactId>xmlunit-core</artifactId>
-            <version>2.10.0</version>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.verapdf</groupId>
+            <artifactId>core-jakarta</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.verapdf</groupId>
+            <artifactId>validation-model-jakarta</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+        </dependency>
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.xmlunit</groupId>
-            <artifactId>xmlunit-assertj</artifactId>
-            <version>2.10.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.10.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <version>5.10.2</version>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>2.0.9</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-assertj</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <!-- mvn help:effective-pom will otherwise tell it just defaults
-                             to 2.3.2 - which does not release in the maven repo, and neither shows any
-                             error message :-( -->
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
                 <configuration>
-                    <runOrder>alphabetical</runOrder>
+                    <usedDependencies>
+                        <dependency>org.slf4j:slf4j-simple</dependency>
+                    </usedDependencies>
                 </configuration>
             </plugin>
-            <!-- allow getImplementationVersion for the pom.xml -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>
@@ -150,26 +135,35 @@
                     </archive>
                 </configuration>
             </plugin>
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
-                             mvn clean compile assembly:single -->
-                    <!-- or whatever version you use -->
-                    <source>11</source>
-                    <target>11</target>
-                </configuration>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-zf-schematron-xml-dependencies</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.basedir}/src/main/resources/xslt/${zf.version}/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src/main/resources/schematron/${zf.version}/</directory>
+                                    <includes>
+                                        <include>**/*.xml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
-            <!-- /ZUV -->
+            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
                 <configuration>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
                     <minimizeJar>false</minimizeJar>
@@ -212,61 +206,29 @@
                         </goals>
                         <configuration>
                             <artifactSet>
-                                <excludes />
+                                <excludes/>
                             </artifactSet>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-zf-schematron-xml-dependencies</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-
-                        <configuration>
-                            <outputDirectory>src/main/resources/xslt/ZF_232/</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/src/main/resources/schematron/ZF_232/</directory>
-                                    <includes>
-                                        <include>**/*.xml</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xml-maven-plugin</artifactId>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>target/generated-resources</directory>
+            </resource>
+        </resources>
     </build>
-    <licenses>
-        <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-            <comments>A business-friendly OSS license</comments>
-        </license>
-    </licenses>
-    <developers>
-        <developer>
-            <name>Jochen Stärk</name>
-            <email>jstaerk@usegroup.de</email>
-            <roles>
-                <role>architect</role>
-                <role>developer</role>
-            </roles>
-        </developer>
-    </developers>
     <profiles>
-        <profile> <!-- enforce building binaries with Java 1.8 for Maven Central, otherwise using them e.g. as jar will
-        throw a version exception, triggered automatically on mvn release:release (hopefully) and requires an according
-        ~/.m2/toolchains.xml file, @see doc/development_documentation.md -->
+        <profile>
             <id>release-sign-artifacts</id>
             <activation>
                 <property>
@@ -279,28 +241,16 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-toolchains-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>toolchain</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <toolchains>
-                                <jdk>
-                                    <version>11</version>
-                                    <vendor>adopt</vendor>
-                                </jdk>
-                            </toolchains>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
         </profile>
-        <profile> <!-- build the intermediate XSLT files from schematron takes 30min+ and is only required if there actually is a change in the schematron,
-         -> invoke manually with commandline -P generateXSLTFromSchematron on demand -->
+        <profile>
+            <!--
+                Build the intermediate XSLT files from schematron takes 30min+. (May be in the nineties ... ;))
+                It is only required if there actually is a change in the schematron.
+                On demand, invoke manually with commandline: call mvn -P generateXSLTFromSchematron generate-resources
+            -->
             <id>generateXSLTFromSchematron</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -310,18 +260,44 @@
                     <plugin>
                         <groupId>com.helger.maven</groupId>
                         <artifactId>ph-schematron-maven-plugin</artifactId>
-                        <version>8.0.0</version>
-                        <configuration>
-                            <schematronDirectory>${basedir}/src/main/resources/schematron</schematronDirectory>
-                            <xsltDirectory>${basedir}/src/main/resources/xslt</xsltDirectory>
-                        </configuration>
                         <executions>
                             <execution>
+                                <id>orderx</id>
+                                <configuration>
+                                    <schematronDirectory>${project.basedir}/src/main/resources/orderx10en</schematronDirectory>
+                                    <xsltDirectory>${project.basedir}/src/main/resources/orderx10en</xsltDirectory>
+                                </configuration>
+                                <goals>
+                                    <goal>convert</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>zugferd10</id>
+                                <configuration>
+                                    <schematronDirectory>${project.basedir}/src/main/resources/zugferd10-en</schematronDirectory>
+                                    <xsltDirectory>${project.basedir}/src/main/resources/zugferd10-en</xsltDirectory>
+                                    <schematronPattern>**/*.scmt</schematronPattern>
+                                </configuration>
+                                <goals>
+                                    <goal>convert</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>xrechnung</id>
+                                <configuration>
+                                    <schematronDirectory>${project.basedir}/src/main/resources</schematronDirectory>
+                                    <xsltDirectory>${project.basedir}/src/main/resources</xsltDirectory>
+                                    <schematronPattern>xrechnung-?.?.?-schematron-?.?.?/**/*-validation*.sch</schematronPattern>
+                                </configuration>
                                 <goals>
                                     <goal>convert</goal>
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>xml-maven-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>
