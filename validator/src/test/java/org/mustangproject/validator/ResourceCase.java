@@ -14,45 +14,47 @@ import junit.framework.TestCase;
 
 @Ignore
 public class ResourceCase extends TestCase {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCase.class.getCanonicalName()); // log output is
-	
-	public static File getResourceAsFile(String resourcePath) {
-		try {
-			InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
-			if (in == null) {
-				return null;
-			}
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCase.class.getCanonicalName()); // log output is
+    
+    public static File getResourceAsFile(String resourcePath) {
+        LOGGER.debug("public static File getResourceAsFile(String resourcePath='{}')", resourcePath);
+        try {
+            InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
+            if (in == null) {
+                return null;
+            }
 
-			File tempFile = File.createTempFile(String.valueOf(in.hashCode()), ".tmp");
-			tempFile.deleteOnExit();
+            File tempFile = File.createTempFile(String.valueOf(in.hashCode()), ".tmp");
+            tempFile.deleteOnExit();
 
-			try (FileOutputStream out = new FileOutputStream(tempFile)) {
-				// copy stream
-				byte[] buffer = new byte[1024];
-				int bytesRead;
-				while ((bytesRead = in.read(buffer)) != -1) {
-					out.write(buffer, 0, bytesRead);
-				}
-			}
-			return tempFile;
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-			return null;
-		}
-	}
+            try (FileOutputStream out = new FileOutputStream(tempFile)) {
+                // copy stream
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, bytesRead);
+                }
+            }
+            return tempFile;
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+            return null;
+        }
+    }
 
-	public static byte[] getResourceAsByteArray(String resourcePath) {
-		try {
-			InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
-			if (in == null) {
-				return null;
-			}
-			return IOUtils.toByteArray(in);
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage(), e);
-			return null;
-		}
-	}
+    public static byte[] getResourceAsByteArray(String resourcePath) {
+        LOGGER.debug("public static byte[] getResourceAsByteArray(String resourcePath='{}')", resourcePath);
+        try {
+            InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
+            if (in == null) {
+                return null;
+            }
+            return IOUtils.toByteArray(in);
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage(), e);
+            return null;
+        }
+    }
 
 
 }
