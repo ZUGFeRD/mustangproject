@@ -22,7 +22,6 @@ package org.mustangproject.ZUGFeRD;
 
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import org.mustangproject.ZUGFeRD.ZUGFeRDVisualizer.Language;
 import org.mustangproject.util.ByteArraySearcher;
 
 import javax.xml.transform.TransformerException;
@@ -35,137 +34,137 @@ import java.nio.file.Paths;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class VisualizationTest extends ResourceCase {
 
-	final String TARGET_PDF_CII = "./target/testout-Visualization-cii.pdf";
-	final String TARGET_PDF_UBL = "./target/testout-Visualization-cii.pdf";
+    final String TARGET_PDF_CII = "./target/testout-Visualization-cii.pdf";
+    final String TARGET_PDF_UBL = "./target/testout-Visualization-cii.pdf";
 
-	public void testCIIVisualizationBasic() {
-		this.runZUGFeRDVisualization("factur-x.xml", "factur-x-vis.fr.html", Language.FR);
-	}
+    public void testCIIVisualizationBasic() {
+        this.runZUGFeRDVisualization("factur-x.xml", "factur-x-vis.fr.html", ELanguage.FR);
+    }
 
-	public void testCIIVisualizationExtended() {
-		this.runZUGFeRDVisualization("factur-x-extended.xml", "factur-x-vis-extended.de.html", Language.DE);
-	}
+    public void testCIIVisualizationExtended() {
+        this.runZUGFeRDVisualization("factur-x-extended.xml", "factur-x-vis-extended.de.html", ELanguage.DE);
+    }
 
-	public void testUBLCreditNoteVisualizationBasic() {
-		this.runZUGFeRDVisualization("ubl-creditnote.xml", "factur-x-vis-ubl-creditnote.en.html", Language.EN);
-	}
+    public void testUBLCreditNoteVisualizationBasic() {
+        this.runZUGFeRDVisualization("ubl-creditnote.xml", "factur-x-vis-ubl-creditnote.en.html", ELanguage.EN);
+    }
 
-	public void testUBLVisualizationBasic() {
-		this.runZUGFeRDVisualization("ubl/01.01a-INVOICE.ubl.xml", "factur-x-vis-ubl.en.html", Language.EN);
-	}
+    public void testUBLVisualizationBasic() {
+        this.runZUGFeRDVisualization("ubl/01.01a-INVOICE.ubl.xml", "factur-x-vis-ubl.en.html", ELanguage.EN);
+    }
 
-	private void runZUGFeRDVisualization(String inputFilename, String resultFileName, Language lang) {
-		File CIIinputFile = getResourceAsFile(inputFilename);
+    private void runZUGFeRDVisualization(String inputFilename, String resultFileName, ELanguage lang) {
+        File CIIinputFile = getResourceAsFile(inputFilename);
 
-		String expected = null;
-		String result = null;
-		try {
-			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
-			result = zvi.visualize(CIIinputFile.getAbsolutePath(), lang);
-			Files.write(Paths.get("./target/testout-" + resultFileName), result.getBytes(StandardCharsets.UTF_8));
+        String expected = null;
+        String result = null;
+        try {
+            ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+            result = zvi.visualize(CIIinputFile.getAbsolutePath(), lang);
+            Files.write(Paths.get("./target/testout-" + resultFileName), result.getBytes(StandardCharsets.UTF_8));
 
-			File expectedResult = getResourceAsFile(resultFileName);
-			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8)
-				;
+            File expectedResult = getResourceAsFile(resultFileName);
+            expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8)
+                ;
 
-		} catch (UnsupportedOperationException e) {
-			fail("UnsupportedOperationException should not happen: " + e.getMessage());
-		} catch (IllegalArgumentException e) {
-			fail("IllegalArgumentException should not happen: " + e.getMessage());
-		} catch (TransformerException e) {
-			fail("TransformerException should not happen: " + e.getMessage());
-		} catch (IOException e) {
-			fail("IOException should not happen: " + e.getMessage());
-		}
+        } catch (UnsupportedOperationException e) {
+            fail("UnsupportedOperationException should not happen: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            fail("IllegalArgumentException should not happen: " + e.getMessage());
+        } catch (TransformerException e) {
+            fail("TransformerException should not happen: " + e.getMessage());
+        } catch (IOException e) {
+            fail("IOException should not happen: " + e.getMessage());
+        }
 
 
-		assertNotNull(result);
+        assertNotNull(result);
         /* remove file endings so that tests can also pass after checking
-		   out from git with arbitrary options (which may include CSRF changes)
-		 */
-		assertEquals(expected.replace("\r", "")
-			.replace("\n", "")
-			.replace("\t", "")
-			.replace(" ", ""), result.replace("\r", "")
-			.replace("\n", "")
-			.replace("\t", "")
-			.replace(" ", ""));
-	}
+           out from git with arbitrary options (which may include CSRF changes)
+         */
+        assertEquals(expected.replace("\r", "")
+            .replace("\n", "")
+            .replace("\t", "")
+            .replace(" ", ""), result.replace("\r", "")
+            .replace("\n", "")
+            .replace("\t", "")
+            .replace(" ", ""));
+    }
 
-	public void testPDFVisualizationCII() {
+    public void testPDFVisualizationCII() {
 
-		File CIIinputFile = getResourceAsFile("cii/01.01a-INVOICE.cii.xml");
+        File CIIinputFile = getResourceAsFile("cii/01.01a-INVOICE.cii.xml");
 
-		// the writing part
+        // the writing part
 
-		String expected = null;
-		String result = null;
-		try {
-			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
-			zvi.toPDF(CIIinputFile.getAbsolutePath(), TARGET_PDF_CII);
-		} catch (UnsupportedOperationException e) {
-			fail("UnsupportedOperationException should not happen: " + e.getMessage());
-		} catch (IllegalArgumentException e) {
-			fail("IllegalArgumentException should not happen: " + e.getMessage());
-		}
+        String expected = null;
+        String result = null;
+        try {
+            ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+            zvi.toPDF(CIIinputFile.getAbsolutePath(), TARGET_PDF_CII);
+        } catch (UnsupportedOperationException e) {
+            fail("UnsupportedOperationException should not happen: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            fail("IllegalArgumentException should not happen: " + e.getMessage());
+        }
 
-		try {
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
-		} catch (IOException e) {
-			fail("IOException should not occur");
-		}
-	}
+        try {
+            assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+        } catch (IOException e) {
+            fail("IOException should not occur");
+        }
+    }
 
-	public void testPDFVisualizationUBL() {
+    public void testPDFVisualizationUBL() {
 
-		File UBLinputFile = getResourceAsFile("ubl/01.01a-INVOICE.ubl.xml");
+        File UBLinputFile = getResourceAsFile("ubl/01.01a-INVOICE.ubl.xml");
 
-		// the writing part
-		String sourceFilename = "factur-x.xml";
+        // the writing part
+        String sourceFilename = "factur-x.xml";
 
-		String expected = null;
-		String result = null;
-		try {
-			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
-			zvi.toPDF(UBLinputFile.getAbsolutePath(), TARGET_PDF_UBL);
-		} catch (UnsupportedOperationException e) {
-			fail("UnsupportedOperationException should not happen: " + e.getMessage());
-		} catch (IllegalArgumentException e) {
-			fail("IllegalArgumentException should not happen: " + e.getMessage());
-		}
-
-
-		try {
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
-		} catch (IOException e) {
-			fail("IOException should not occur");
-		}
-	}
-
-	public void testPDFVisualizationUBLCreditNote() {
-
-		File UBLinputFile = getResourceAsFile("ubl/UBL-CreditNote-2.1-Example.ubl.xml");
-
-		// the writing part
-		String sourceFilename = "factur-x.xml";
-
-		String expected = null;
-		String result = null;
-		try {
-			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
-			zvi.toPDF(UBLinputFile.getAbsolutePath(), TARGET_PDF_UBL);
-		} catch (UnsupportedOperationException e) {
-			fail("UnsupportedOperationException should not happen: " + e.getMessage());
-		} catch (IllegalArgumentException e) {
-			fail("IllegalArgumentException should not happen: " + e.getMessage());
-		}
+        String expected = null;
+        String result = null;
+        try {
+            ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+            zvi.toPDF(UBLinputFile.getAbsolutePath(), TARGET_PDF_UBL);
+        } catch (UnsupportedOperationException e) {
+            fail("UnsupportedOperationException should not happen: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            fail("IllegalArgumentException should not happen: " + e.getMessage());
+        }
 
 
-		try {
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
-		} catch (IOException e) {
-			fail("IOException should not occur");
-		}
-	}
+        try {
+            assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+        } catch (IOException e) {
+            fail("IOException should not occur");
+        }
+    }
+
+    public void testPDFVisualizationUBLCreditNote() {
+
+        File UBLinputFile = getResourceAsFile("ubl/UBL-CreditNote-2.1-Example.ubl.xml");
+
+        // the writing part
+        String sourceFilename = "factur-x.xml";
+
+        String expected = null;
+        String result = null;
+        try {
+            ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+            zvi.toPDF(UBLinputFile.getAbsolutePath(), TARGET_PDF_UBL);
+        } catch (UnsupportedOperationException e) {
+            fail("UnsupportedOperationException should not happen: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            fail("IllegalArgumentException should not happen: " + e.getMessage());
+        }
+
+
+        try {
+            assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+        } catch (IOException e) {
+            fail("IOException should not occur");
+        }
+    }
 
 }
