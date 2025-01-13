@@ -12,30 +12,30 @@ import org.slf4j.LoggerFactory;
 
 public class ClasspathResolverURIAdapter implements ResourceResolver {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClasspathResolverURIAdapter.class);
-    private final ResourceResolver wrapped;
+	private static final Logger LOGGER = LoggerFactory.getLogger(ClasspathResolverURIAdapter.class);
+	private final ResourceResolver wrapped;
 
 
-    public ClasspathResolverURIAdapter() {
-        this.wrapped = ResourceResolverFactory.createDefaultResourceResolver();
-    }
+	public ClasspathResolverURIAdapter() {
+		this.wrapped = ResourceResolverFactory.createDefaultResourceResolver();
+	}
 
 
-    @Override
-    public Resource getResource(URI uri) throws IOException {
-        LOGGER.debug("public Resource getResource(URI uri='{}')", uri);
-        if (uri.getScheme().equals("classpath")) {
-            URL url = getClass().getClassLoader().getResource(uri.getSchemeSpecificPart());
+	@Override
+	public Resource getResource(URI uri) throws IOException {
+		LOGGER.debug("public Resource getResource(URI uri='{}')", uri);
+		if (uri.getScheme().equals("classpath")) {
+			URL url = getClass().getClassLoader().getResource(uri.getSchemeSpecificPart());
 
-            return new Resource(url.openStream());
-        } else {
-            return wrapped.getResource(uri);
-        }
-    }
+			return new Resource(url.openStream());
+		} else {
+			return wrapped.getResource(uri);
+		}
+	}
 
-    @Override
-    public OutputStream getOutputStream(URI uri) throws IOException {
-        return wrapped.getOutputStream(uri);
-    }
+	@Override
+	public OutputStream getOutputStream(URI uri) throws IOException {
+		return wrapped.getOutputStream(uri);
+	}
 
 }
