@@ -102,9 +102,7 @@ public class ZF2PushTest extends TestCase {
 		Invoice i = new Invoice();
 		try {
 			zii.extractInto(i);
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -170,9 +168,7 @@ public class ZF2PushTest extends TestCase {
 		Invoice i = null;
 		try {
 			i = zii.extractInvoice();
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -383,9 +379,7 @@ public class ZF2PushTest extends TestCase {
 		Invoice i = null;
 		try {
 			i = zii.extractInvoice();
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 

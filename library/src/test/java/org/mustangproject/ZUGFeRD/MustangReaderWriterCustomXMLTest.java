@@ -263,8 +263,8 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			zea1.export(baos);
 			zea1.close();
 			String pdfContent = baos.toString(StandardCharsets.UTF_8);
-			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
-			assertFalse(pdfContent.indexOf("<fx:ConformanceLevel>EN 16931</fx:ConformanceLevel>") == -1);
+			assertFalse(!pdfContent.contains("(via mustangproject.org"));
+			assertFalse(!pdfContent.contains("<fx:ConformanceLevel>EN 16931</fx:ConformanceLevel>"));
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -445,8 +445,8 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			zea1.export(baos);
 			zea1.close();
 			String pdfContent = baos.toString(StandardCharsets.UTF_8);
-			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
-			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>BASIC</zf:ConformanceLevel>") == -1);
+			assertFalse(!pdfContent.contains("(via mustangproject.org"));
+			assertFalse(!pdfContent.contains("<zf:ConformanceLevel>BASIC</zf:ConformanceLevel>"));
 
 		} catch (IOException e) {
 			e.printStackTrace();
