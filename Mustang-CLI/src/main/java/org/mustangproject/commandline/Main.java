@@ -44,80 +44,80 @@ public class Main {
 
 	private static String getUsage() {
 		return "Usage: --action metrics|combine|extract|a3only|ubl|validate|validateExpectInvalid|validateExpectValid|visualize [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] [--disable-file-logging] | [-h,--help] \r\n"
-				+ "		   --action license	  display open source license and notice\n"
-				+ "		   --action metrics\n"
-				+ "			 -d, --directory count ZUGFeRD files in directory to be scanned\n"
-				+ "				   If it is a directory, it will recurse.\n"
-				+ "			 -l, --listfromstdin	 count ZUGFeRD files from a list of linefeed separated files on runtime.\n"
-				+ "				   It will start once a blank line has been entered.\n" + "\n"
-				+ "		   Additional parameter for both count operations\n"
-				+ "		   [-i, --ignorefileextension]	   Check for all files (*.*) instead of PDF files only (*.pdf) in metrics, ignore PDF/A input file errors in combine\n"
-				+ "		   [--disable-file-logging]		   disable logging to file.\n"
-				+ "		   --action extract	  extract Factur-X PDF to XML file\n"
-				+ "				   Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "				   [--source <filename>]: set input PDF file\n"
-				+ "				   [--out <filename>]: set output XML file\n"
-				+ "		   --action a3only	  upgrade from PDF/A1 to A3 only (no ZUGFeRD data attached)\n"
-				+ "				   Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "				   [--source <filename>]: set input PDF file\n"
-				+ "				   [--out <filename>]: set output PDF file\n"
-				+ "		   --action combine	  combine XML and PDF file to Factur-X PDF file\n"
-				+ "				   Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "				   [--source <filename>]: set input PDF file\n"
-				+ "				   [--source-xml <filename>]: set input XML file\n"
-				+ "				   [--out <filename>]: set output PDF file\n"
-				+ "				   [--format <fx|zf|ox|da>]: set Factur-X, ZUGFeRD, Order-X or Cross Industry Despatch Advice\n"
-				+ "				   [--version <1|2>]: set ZUGFeRD version\n"
-				+ "				   [--profile <...>]: set ZUGFeRD profile\n"
-				+ "						   For ZUGFeRD v1 or Order-X: <B>ASIC, <C>OMFORT or EX<T>ENDED\n"
-				+ "						   For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED\n"
-				+ "				   [--attachments <filenames>]: list of file attachments (passing a single empty file name prevents prompting)\n"
-				+ "				   [--no-additional-attachments]: prevent prompting for attachments\n"
-				+ "		   --action ubl	  convert UN/CEFACT 2016b CII XML to UBL XML\n"
-				+ "				   [--source <filename>]: set input XML file\n"
-				+ "				   [--out <filename>]: set output XML file\n"
-				+ "		   --action upgrade	  upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
-				+ "				   Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "				   [--source <filename>]: set input XML ZUGFeRD 1 file\n"
-				+ "				   [--out <filename>]: set output XML ZUGFeRD 2 file\n"
-				+ "		   --action validate  validate XML or PDF file \n"
-				+ "				   [--no-notices]: refrain from reporting notices\n"
-				+ "				   [--logAppend <text>]: text to be added to log line\n"
-				+ "				   Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "				   [--source <filename>]: input PDF or XML file\n"
-				+ "				   [--log-as-pdf]: save log output as pdf\n"
-				+ "		   --action validateExpectInvalid  validate directory expecting negative results \n"
-				+ "				   [--no-notices]: refrain from reporting notices\n"
-				+ "				   Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "					   -d, --directory to check recursively\n"
-				+ "		   --action validateExpectValid	 validate directory expecting positive results \n"
-				+ "				   [--no-notices]: refrain from reporting notices\n"
-				+ "				   Additional parameters (optional - user will be prompted if not defined)\n"
-				+ "					   -d, --directory to check recursively \n"
-				+ "		   --action visualize  convert XML to HTML \n"
-				+ "				   [--language <lang>]: set output lang (en, fr or de)\n"
-				+ "				   [--source <filename>]: set input XML file\n"
-				+ "				   [--out <filename>]: set output HTML file\n"
-				+ "		   --action pdf	 convert XML to PDF \n"
-				+ "				   [--language <lang>]: set output lang (en, fr or de)\n"
-				+ "				   [--source <filename>]: set input XML file\n"
-				+ "				   [--out <filename>]: set output PDF file\n"
-				;
+			 + "       --action license   display open source license and notice\n"
+			 + "       --action metrics\n"
+			 + "         -d, --directory count ZUGFeRD files in directory to be scanned\n"
+			 + "               If it is a directory, it will recurse.\n"
+			 + "         -l, --listfromstdin     count ZUGFeRD files from a list of linefeed separated files on runtime.\n"
+			 + "               It will start once a blank line has been entered.\n" + "\n"
+			 + "       Additional parameter for both count operations\n"
+			 + "       [-i, --ignorefileextension]     Check for all files (*.*) instead of PDF files only (*.pdf) in metrics, ignore PDF/A input file errors in combine\n"
+			 + "       [--disable-file-logging]        disable logging to file.\n"
+			 + "       --action extract   extract Factur-X PDF to XML file\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: set input PDF file\n"
+			 + "               [--out <filename>]: set output XML file\n"
+			 + "       --action a3only    upgrade from PDF/A1 to A3 only (no ZUGFeRD data attached)\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: set input PDF file\n"
+			 + "               [--out <filename>]: set output PDF file\n"
+			 + "       --action combine   combine XML and PDF file to Factur-X PDF file\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: set input PDF file\n"
+			 + "               [--source-xml <filename>]: set input XML file\n"
+			 + "               [--out <filename>]: set output PDF file\n"
+			 + "               [--format <fx|zf|ox|da>]: set Factur-X, ZUGFeRD, Order-X or Cross Industry Despatch Advice\n"
+			 + "               [--version <1|2>]: set ZUGFeRD version\n"
+			 + "               [--profile <...>]: set ZUGFeRD profile\n"
+			 + "                       For ZUGFeRD v1 or Order-X: <B>ASIC, <C>OMFORT or EX<T>ENDED\n"
+			 + "                       For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED\n"
+			 + "               [--attachments <filenames>]: list of file attachments (passing a single empty file name prevents prompting)\n"
+			 + "               [--no-additional-attachments]: prevent prompting for attachments\n"
+			 + "       --action ubl   convert UN/CEFACT 2016b CII XML to UBL XML\n"
+			 + "               [--source <filename>]: set input XML file\n"
+			 + "               [--out <filename>]: set output XML file\n"
+			 + "       --action upgrade   upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: set input XML ZUGFeRD 1 file\n"
+			 + "               [--out <filename>]: set output XML ZUGFeRD 2 file\n"
+			 + "       --action validate  validate XML or PDF file \n"
+			 + "               [--no-notices]: refrain from reporting notices\n"
+			 + "               [--logAppend <text>]: text to be added to log line\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: input PDF or XML file\n"
+			 + "               [--log-as-pdf]: save log output as pdf\n"
+			 + "       --action validateExpectInvalid  validate directory expecting negative results \n"
+			 + "               [--no-notices]: refrain from reporting notices\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "                   -d, --directory to check recursively\n"
+			 + "       --action validateExpectValid  validate directory expecting positive results \n"
+			 + "               [--no-notices]: refrain from reporting notices\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "                   -d, --directory to check recursively \n"
+			 + "       --action visualize  convert XML to HTML \n"
+			 + "               [--language <lang>]: set output lang (en, fr or de)\n"
+			 + "               [--source <filename>]: set input XML file\n"
+			 + "               [--out <filename>]: set output HTML file\n"
+			 + "       --action pdf  convert XML to PDF \n"
+			 + "               [--language <lang>]: set output lang (en, fr or de)\n"
+			 + "               [--source <filename>]: set input XML file\n"
+			 + "               [--out <filename>]: set output PDF file\n"
+			;
 	}
 
 	private static void printHelp() {
 		System.out.println("Mustangproject.org " + org.mustangproject.ZUGFeRD.Version.VERSION + " \r\n"
-				+ "A Apache Public License tool for e-invoices with\r\n"
-				+ "ZUGFeRD Metadata (http://www.zugferd.org)\r\n" + "\r\n" + getUsage() + "\r\n");
+			+ "A Apache Public License tool for e-invoices with\r\n"
+			+ "ZUGFeRD Metadata (http://www.zugferd.org)\r\n" + "\r\n" + getUsage() + "\r\n");
 	}
 
 	/**
 	 * Asks the user (repeatedly, if necessary) on the command line for a String
 	 * (offering a defaultValue) conforming to a Regex pattern
 	 *
-	 * @param prompt	   the question to be asked to the user
+	 * @param prompt       the question to be asked to the user
 	 * @param defaultValue the default return value if user hits enter
-	 * @param pattern	   a regex of acceptable values
+	 * @param pattern      a regex of acceptable values
 	 * @return the user answer conforming to pattern
 	 * @throws Exception if pattern not compilable or IOException on input
 	 */
@@ -158,10 +158,10 @@ public class Main {
 	/**
 	 * Prompts the user for a input or output filename
 	 *
-	 * @param prompt			  the text the user is asked
-	 * @param defaultFilename	  a default Filename. Passing an empty string indicates that specifying a file is optional
-	 * @param expectedExtension	  will warn if filename does not match expected file extension, "or" possible with e.g. pdf|xml
-	 * @param ensureFileExists	  will warn if file does NOT exist (for input files)
+	 * @param prompt              the text the user is asked
+	 * @param defaultFilename     a default Filename. Passing an empty string indicates that specifying a file is optional
+	 * @param expectedExtension   will warn if filename does not match expected file extension, "or" possible with e.g. pdf|xml
+	 * @param ensureFileExists    will warn if file does NOT exist (for input files)
 	 * @param ensureFileNotExists will warn if file DOES exist (for output files)
 	 * @return String
 	 */
@@ -184,7 +184,7 @@ public class Main {
 			if (selectedName.isEmpty()) {
 				// pressed return without entering anything
 				if (defaultFilename.isEmpty()) {
-					return "";	//no default -> this is an optional filename
+					return "";  //no default -> this is an optional filename
 				}
 				selectedName = defaultFilename;
 			}
@@ -208,7 +208,7 @@ public class Main {
 				}
 			} else if (!hasCorrectExtension) {
 				System.err.println("Expected " + expectedExtension
-						+ " extension, this may corrupt your file. Do you still want to continue?(Y|N)");
+					+ " extension, this may corrupt your file. Do you still want to continue?(Y|N)");
 				String selectedAnswer = "";
 				try {
 					selectedAnswer = buffer.readLine();
@@ -650,8 +650,8 @@ public class Main {
 						zfProfile = getStringFromUser("Profile (p)ilot", "p", "P|p");
 					} else {
 						zfProfile = getStringFromUser(
-								"Profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" + "[C]IUS, [E]N16931, EX[T]ENDED or [X]RECHNUNG", "E",
-								"M|m|W|w|B|b|C|c|E|e|T|t|X|x|");
+							"Profile  [M]INIMUM, BASIC [W]L, [B]ASIC,\n" + "[C]IUS, [E]N16931, EX[T]ENDED or [X]RECHNUNG", "E",
+							"M|m|W|w|B|b|C|c|E|e|T|t|X|x|");
 					}
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);
@@ -739,8 +739,8 @@ public class Main {
 
 			ze.load(pdfName);
 			ze.setProducer("Mustang-cli")
-					.setZUGFeRDVersion(zfIntVersion)
-					.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile);
+				.setZUGFeRDVersion(zfIntVersion)
+				.setCreator(System.getProperty("user.name")).setProfile(zfConformanceLevelProfile);
 
 			if (format.equals("zf")) {
 				ze.disableFacturX();
@@ -765,7 +765,7 @@ public class Main {
 	}
 
 	private static void performMetrics(String directoryName, Boolean filesFromStdIn, Boolean ignoreFileExt)
-			throws IOException {
+		throws IOException {
 
 		StatRun sr = new StatRun();
 		if (ignoreFileExt) {
