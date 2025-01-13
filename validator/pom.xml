@@ -9,7 +9,6 @@
     <groupId>org.mustangproject</groupId>
     <artifactId>validator</artifactId>
     <name>Library to validate e-invoices (ZUGFeRD, Factur-X and Xrechnung)</name>
-
     <packaging>jar</packaging>
     <version>2.15.3-SNAPSHOT</version>
     <repositories>
@@ -32,7 +31,6 @@
         <maven.compiler.compilerVersion>11</maven.compiler.compilerVersion>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-
     </properties>
     <dependencies>
         <dependency>
@@ -40,35 +38,40 @@
             <artifactId>library</artifactId>
             <version>2.15.3-SNAPSHOT</version>
         </dependency>
-		<dependency>
-			<groupId>org.dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-			<version>2.1.4</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.16.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.pdfbox</groupId>
-			<artifactId>pdfbox</artifactId>
-			<version>3.0.2</version>
-		</dependency>
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>2.1.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.16.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.2</version>
+        </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>4.0.2</version>
         </dependency>
-
-        <!-- Verapdf plugin <dependency> <groupId>org.verapdf</groupId> <artifactId>core</artifactId>
-              <version>1.6.2</version> </dependency> -->
+        <!-- Verapdf plugin -->
+        <!--
+        <dependency>
+            <groupId>org.verapdf</groupId>
+            <artifactId>core</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        -->
         <!-- embedded verapdf -->
         <dependency>
             <groupId>org.verapdf</groupId>
@@ -228,7 +231,6 @@
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
-
                         <configuration>
                             <outputDirectory>src/main/resources/xslt/ZF_232/</outputDirectory>
                             <resources>

@@ -5,13 +5,11 @@
     <artifactId>core</artifactId>
     <version>2.15.3-SNAPSHOT</version>    <packaging>pom</packaging>
     <name>Mustang</name>
-
     <modules>
         <module>library</module>
         <module>validator</module>
         <module>Mustang-CLI</module>
     </modules>
-
     <description>Mustangproject is a java library and commandline tool to read, validate, write and convert EN16931 e-invoices, e.g. Factur-X and XRechnung (read and writing CII and reading also UBL).
     </description>
     <url>http://www.mustangproject.org/</url>
@@ -19,14 +17,14 @@
         <connection>scm:git:git://github.com/dexecutor/dependent-tasks-executor.git</connection>
         <developerConnection>scm:git:git@github.com:dexecutor/dexecutor.git</developerConnection>
         <url>https://github.com/dexecutor/dependent-tasks-executor</url>
-      <tag>core-2.3.2</tag>
-  </scm>
+        <tag>core-2.3.2</tag>
+    </scm>
     <build>
         <pluginManagement>
             <plugins>
                 <plugin><!-- mvn help:effective-pom will otherwise tell it just defaults
-						to 2.3.2 - which does not release in the maven repo, and neither shows any
-						error message :-( -->
+                        to 2.3.2 - which does not release in the maven repo, and neither shows any
+                        error message :-( -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>2.5.3</version>
@@ -47,15 +45,12 @@
             </plugins>
         </pluginManagement>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.0.1</version>
                 <configuration>
-
                     <excludePackageNames>org.mustangproject.ZUGFeRD.model.*</excludePackageNames>
-
                 </configuration>
             </plugin>
             <plugin>
@@ -66,7 +61,6 @@
                     </altDeploymentRepository>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -98,10 +92,8 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
-
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
@@ -123,7 +115,6 @@
         <maven.deploy.skip>true</maven.deploy.skip><!-- prevent this to be deployed to maven central as "core",
         we only want submodules, see also https://stackoverflow.com/questions/7446599/how-to-deploy-only-the-sub-modules-using-maven-deploy-->
     </properties>
-
     <mailingLists>
         <mailingList>
             <name>User List</name>
@@ -156,10 +147,7 @@
         </developer>
     </developers>
     <profiles>
-
-
         <!-- GPG Signature on release -->
-
         <profile>
             <id>release-sign-artifacts</id>
             <activation>
