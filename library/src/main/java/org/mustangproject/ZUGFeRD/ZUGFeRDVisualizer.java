@@ -57,7 +57,7 @@ public class ZUGFeRDVisualizer {
     private static final String UBL_INVOICE_XR_XSL = "ubl-invoice-xr.xsl";
     private static final String XR_HTML_XSL = "xrechnung-html.xsl";
     private static final String XR_PDF_XSL = "xr-pdf.xsl";
-    private static final String ZUGFERD1_XSL = "ZUGFeRD_1p0_c1p0_s1p0.xslt";
+    private static final String ZF1_HTML_XSL = "ZUGFeRD_1p0_c1p0_s1p0.xslt";
 
     private final TransformerFactory mFactory;
     private final Map<String, Templates> mapOfTemplates = new LinkedHashMap<>();
@@ -87,7 +87,7 @@ public class ZUGFeRDVisualizer {
         ByteArrayOutputStream outputStream;
         switch (eStandard) {
             case zugferd:
-                outputStream = applyXSLT(ZUGFERD1_XSL, inputStream);
+                outputStream = applyXSLT(ZF1_HTML_XSL, inputStream);
                 break;
             case orderx:
                 outputStream = applyXSLT(CIO_XR_XSL, inputStream);
@@ -109,31 +109,6 @@ public class ZUGFeRDVisualizer {
                 throw new IllegalArgumentException(String.format("Cannot process doc type '%s'.", eStandard));
         }
         return outputStream != null ? outputStream.toString(StandardCharsets.UTF_8) : null;
-    }
-
-    private void initTemplates() {
-        initTemplates(ClasspathResourceURIResolver.CUSTOM_BASE_PATH, CIO_XR_XSL);
-        initTemplates(ClasspathResourceURIResolver.MAIN_BASE_PATH, CII_XR_XSL);
-        initTemplates(ClasspathResourceURIResolver.MAIN_BASE_PATH, UBL_CREDIT_NOTE_XR_XSL);
-        initTemplates(ClasspathResourceURIResolver.MAIN_BASE_PATH, UBL_INVOICE_XR_XSL);
-        initTemplates(ClasspathResourceURIResolver.MAIN_BASE_PATH, XR_PDF_XSL);
-        initTemplates(ClasspathResourceURIResolver.MAIN_BASE_PATH, XR_HTML_XSL);
-        initTemplates(ClasspathResourceURIResolver.ZF10_BASE_PATH, ZUGFERD1_XSL);
-    }
-
-    private void initTemplates(final String basePath, final String fileName) {
-        if (!mapOfTemplates.containsKey(fileName)) {
-            try {
-                mapOfTemplates.put(
-                        fileName,
-                        mFactory.newTemplates(
-                                ClasspathResourceURIResolver.getSource(basePath + fileName)
-                        )
-                );
-            } catch (TransformerConfigurationException e) {
-                LOGGER.error("Cannot retrieve transformation script '{}'.", fileName);
-            }
-        }
     }
 
     /***
@@ -190,6 +165,31 @@ public class ZUGFeRDVisualizer {
             LOGGER.error("Cannot parse XML file.", e);
         }
         return rv;
+    }
+
+    private void initTemplates() {
+        initTemplates(ClasspathResourceURIResolver.CUSTOM_BASE_PATH, CIO_XR_XSL);
+        initTemplates(ClasspathResourceURIResolver.MAIN_BASE_PATH, CII_XR_XSL);
+        initTemplates(ClasspathResourceURIResolver.MAIN_BASE_PATH, UBL_CREDIT_NOTE_XR_XSL);
+        initTemplates(ClasspathResourceURIResolver.MAIN_BASE_PATH, UBL_INVOICE_XR_XSL);
+        initTemplates(ClasspathResourceURIResolver.MAIN_BASE_PATH, XR_PDF_XSL);
+        initTemplates(ClasspathResourceURIResolver.MAIN_BASE_PATH, XR_HTML_XSL);
+        initTemplates(ClasspathResourceURIResolver.ZF10_BASE_PATH, ZF1_HTML_XSL);
+    }
+
+    private void initTemplates(final String basePath, final String fileName) {
+        if (!mapOfTemplates.containsKey(fileName)) {
+            try {
+                mapOfTemplates.put(
+                        fileName,
+                        mFactory.newTemplates(
+                                ClasspathResourceURIResolver.getSource(basePath + fileName)
+                        )
+                );
+            } catch (TransformerConfigurationException e) {
+                LOGGER.error("Cannot retrieve transformation script '{}'.", fileName);
+            }
+        }
     }
 
     protected ByteArrayOutputStream applyXSLT(final String fileName, final InputStream inputStream) {
@@ -290,25 +290,16 @@ public class ZUGFeRDVisualizer {
         ByteArrayOutputStream outputStream;
         switch (eStandard) {
             case facturx:
-                outputStream = applyXSLT(
-                        XR_PDF_XSL,
-                        applyXSLT(CII_XR_XSL, inputStream),
-                        lang
-                );
+                outputStream = applyXSLT(CII_XR_XSL, inputStream);
+                outputStream = applyXSLT(XR_PDF_XSL, outputStream, lang);
                 break;
             case ubl:
-                outputStream = applyXSLT(
-                        XR_PDF_XSL,
-                        applyXSLT(UBL_INVOICE_XR_XSL, inputStream),
-                        lang
-                );
+                outputStream = applyXSLT(UBL_INVOICE_XR_XSL, inputStream);
+                outputStream = applyXSLT(XR_PDF_XSL, outputStream, lang);
                 break;
             case ubl_creditnote:
-                outputStream = applyXSLT(
-                        XR_PDF_XSL,
-                        applyXSLT(UBL_CREDIT_NOTE_XR_XSL, inputStream),
-                        lang
-                );
+                outputStream = applyXSLT(UBL_CREDIT_NOTE_XR_XSL, inputStream);
+                outputStream = applyXSLT(XR_PDF_XSL, outputStream, lang);
                 break;
             default:
                 throw new IllegalArgumentException(String.format("Cannot process doc type '%s'.", eStandard));
