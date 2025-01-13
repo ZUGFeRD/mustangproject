@@ -366,9 +366,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		} catch (IOException e) {
 			fail("IOException not expected");
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -387,14 +385,12 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		} catch (IOException e) {
 			fail("IOException not expected");
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 
 
-	}
+  }
 
 
 	@Test

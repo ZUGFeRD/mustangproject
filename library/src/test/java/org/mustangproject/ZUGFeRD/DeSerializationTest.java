@@ -76,9 +76,7 @@ public class DeSerializationTest extends ResourceCase {
 		CalculatedInvoice ci = new CalculatedInvoice();
 		try {
 			zii.extractInto(ci);
-		} catch (XPathExpressionException e) {
-			hasExceptions = true;
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			hasExceptions = true;
 		}
 		ObjectMapper mapper = new ObjectMapper();
@@ -186,11 +184,7 @@ public class DeSerializationTest extends ResourceCase {
 			assertEquals(newInvoiceFromJSON.getAdditionalReferencedDocuments().length, 2);
 
 
-		} catch (IOException e) {
-			exText = e.getMessage();
-		} catch (XPathExpressionException e) {
-			exText = e.getMessage();
-		} catch (ParseException e) {
+		} catch (IOException | ParseException | XPathExpressionException e) {
 			exText = e.getMessage();
 		}
 		assertNull(exText);
@@ -295,11 +289,7 @@ public class DeSerializationTest extends ResourceCase {
 			assertEquals("Test_EeISI_100", i.getNumber());
 			assertEquals(newInvoiceFromJSON.getNumber(), i.getNumber());
 
-		} catch (IOException e) {
-			exText = e.getMessage();
-		} catch (XPathExpressionException e) {
-			exText = e.getMessage();
-		} catch (ParseException e) {
+		} catch (IOException | ParseException | XPathExpressionException e) {
 			exText = e.getMessage();
 		}
 		assertNull(exText);
@@ -340,9 +330,7 @@ public class DeSerializationTest extends ResourceCase {
 			ObjectMapper mapper = new ObjectMapper();
 			String json = mapper.writeValueAsString(i);
 			newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
-		} catch (ParseException e) {
-			hasExceptions = true;
-		} catch (JsonProcessingException e) {
+		} catch (ParseException | JsonProcessingException e) {
 			hasExceptions = true;
 		}
 		assertEquals(newInvoiceFromJSON.getBuyerOrderReferencedDocumentID(), "28934");
