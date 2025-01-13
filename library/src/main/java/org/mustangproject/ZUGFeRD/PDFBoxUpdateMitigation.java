@@ -22,48 +22,48 @@ final class ByteArrayDataSource implements DataSource
 
   public ByteArrayDataSource (InputStream is) throws IOException
   {
-    data = new ByteArrayOutputStream ();
-    IOUtils.copy (is, data);
-    IOUtils.closeQuietly (is);
+	data = new ByteArrayOutputStream ();
+	IOUtils.copy (is, data);
+	IOUtils.closeQuietly (is);
   }
 
   public String getContentType ()
   {
-    return this.type;
+	return this.type;
   }
 
   /**
    * @param type
-   *        the type to set
+   *		the type to set
    */
   public void setType (String type)
   {
-    this.type = type;
+	this.type = type;
   }
 
   /**
    * @param name
-   *        the name to set
+   *		the name to set
    */
   public void setName (String name)
   {
-    this.name = name;
+	this.name = name;
   }
 
   public InputStream getInputStream () throws IOException
   {
-    return new ByteArrayInputStream (data.toByteArray ());
+	return new ByteArrayInputStream (data.toByteArray ());
   }
 
   public String getName ()
   {
-    return this.name;
+	return this.name;
   }
 
   public OutputStream getOutputStream () throws IOException
   {
-    this.data = new ByteArrayOutputStream ();
-    return data;
+	this.data = new ByteArrayOutputStream ();
+	return data;
   }
 }
 
@@ -72,24 +72,24 @@ final class PreflightParserHelper
 {
   private static File createTmpFile (InputStream input) throws IOException
   {
-    FileOutputStream fos = null;
-    try
-    {
-      File tmpFile = File.createTempFile ("mustang-pdf", ".pdf");
-      fos = new FileOutputStream (tmpFile);
-      IOUtils.copy (input, fos);
-      return tmpFile;
-    }
-    finally
-    {
-      IOUtils.closeQuietly (input);
-      IOUtils.closeQuietly (fos);
-    }
+	FileOutputStream fos = null;
+	try
+	{
+	  File tmpFile = File.createTempFile ("mustang-pdf", ".pdf");
+	  fos = new FileOutputStream (tmpFile);
+	  IOUtils.copy (input, fos);
+	  return tmpFile;
+	}
+	finally
+	{
+	  IOUtils.closeQuietly (input);
+	  IOUtils.closeQuietly (fos);
+	}
   }
 
   public static PreflightParser createPreflightParser (DataSource dataSource) throws IOException
   {
-    return new PreflightParser (createTmpFile (dataSource.getInputStream ()));
+	return new PreflightParser (createTmpFile (dataSource.getInputStream ()));
   }
 }
 
