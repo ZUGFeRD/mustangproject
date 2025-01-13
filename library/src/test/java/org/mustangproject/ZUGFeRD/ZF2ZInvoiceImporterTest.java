@@ -113,7 +113,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		Invoice invoice = null;
 		try {
-			String xml = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r", "").replace("\n", "");
+			String xml = Files.readString(expectedResult.toPath()).replace("\r", "").replace("\n", "");
 
 			zii.fromXML(xml);
 
@@ -288,7 +288,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		int version=-1;
 		try {
-			zii.fromXML(new String(Files.readAllBytes(Paths.get("./target/testout-XR-Edge.xml")), StandardCharsets.UTF_8));
+			zii.fromXML(Files.readString(Paths.get("./target/testout-XR-Edge.xml")));
 			version=zii.getVersion();
 		} catch (IOException e) {
 			hasExceptions = true;
@@ -366,9 +366,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		} catch (IOException e) {
 			fail("IOException not expected");
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -387,14 +385,12 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		} catch (IOException e) {
 			fail("IOException not expected");
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 
 
-	}
+  }
 
 
 	@Test

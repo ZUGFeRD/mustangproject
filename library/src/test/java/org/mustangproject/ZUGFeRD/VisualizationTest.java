@@ -65,7 +65,7 @@ public class VisualizationTest extends ResourceCase {
 			Files.write(Paths.get("./target/testout-" + resultFileName), result.getBytes(StandardCharsets.UTF_8));
 
 			File expectedResult = getResourceAsFile(resultFileName);
-			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8)
+			expected = Files.readString(expectedResult.toPath())
 				;
 
 		} catch (UnsupportedOperationException e) {
@@ -80,7 +80,7 @@ public class VisualizationTest extends ResourceCase {
 
 
 		assertNotNull(result);
-        /* remove file endings so that tests can also pass after checking
+		/* remove file endings so that tests can also pass after checking
 		   out from git with arbitrary options (which may include CSRF changes)
 		 */
 		assertEquals(expected.replace("\r", "")
