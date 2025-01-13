@@ -30,11 +30,13 @@ package org.mustangproject.ZUGFeRD;
  * */
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Date; 
 import java.util.List;
 
 import org.mustangproject.FileAttachment;
 import org.mustangproject.IncludedNote;
+import org.mustangproject.ReferencedDocument;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 /***
@@ -322,19 +324,20 @@ public interface IExportableTransaction {
 	}
 
 	/**
-	 * supplier identification assigned by the costumer
+	 * get the rounding amount 
+   * (only to be usef for NL whose currency requires a rounding to 5ct)
 	 *
-	 * @return the sender's identification
+	 * @return the Bigdecimal
 	 */
 	default BigDecimal getRoundingAmount() {
 		return null;
 	}
 
 	/**
-	 * get reference document number typically used for Invoice Corrections Will be
-	 * added as IncludedNote in comfort profile
-	 *
-	 * @return the ID of the document this document refers to
+	 * get BuyerReference (BT-10) an identifier assigned by the buyer and used
+	 * for internal routing. Used for the Leitweg-ID.
+	 * 
+	 * @return the BuyerReference of this document
 	 */
 	default String getReferenceNumber() {
 		return null;
@@ -424,11 +427,21 @@ public interface IExportableTransaction {
 	 *
 	 * @return the ID of the document
 	 */
+	@Deprecated
 	default String getInvoiceReferencedDocumentID() {
 		return null;
 	}
 
+	@Deprecated
 	default Date getInvoiceReferencedIssueDate() {
+		return null;
+	}
+	
+	/**
+	 * Getter for BG-3
+	 * @return list of documents
+	 */
+	default ArrayList<ReferencedDocument> getInvoiceReferencedDocuments() {
 		return null;
 	}
 

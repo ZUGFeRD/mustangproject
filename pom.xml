@@ -3,8 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
     <artifactId>core</artifactId>
-    <version>2.15.3-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <version>2.15.3-SNAPSHOT</version>    <packaging>pom</packaging>
     <name>Mustang</name>
 
     <modules>

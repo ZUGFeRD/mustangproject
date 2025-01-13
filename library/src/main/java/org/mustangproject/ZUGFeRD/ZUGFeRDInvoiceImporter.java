@@ -659,7 +659,7 @@ public class ZUGFeRDInvoiceImporter {
 		NodeList headerTradeSettlementNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		List<BankDetails> bankDetails = new ArrayList<>();
 		String directDebitMandateID = null;
-		String IBAN = null, BIC = null;
+		String IBAN = null, BIC = null, paymentMeansCode = null, paymentMeansInformation = null;
 
 		for (int i = 0; i < headerTradeSettlementNodes.getLength(); i++) {
 			// XMLTools.trimOrNull(nodes.item(i)))) {
@@ -693,7 +693,17 @@ public class ZUGFeRDInvoiceImporter {
 					NodeList paymentMeansChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
 					IBAN = null;
 					BIC = null;
+					paymentMeansCode = null;
+					paymentMeansInformation = null;
 					for (int paymentMeansChildIndex = 0; paymentMeansChildIndex < paymentMeansChilds.getLength(); paymentMeansChildIndex++) {
+
+						if ((paymentMeansChilds.item(paymentMeansChildIndex).getLocalName() != null) && (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("TypeCode"))) {
+							paymentMeansCode = XMLTools.trimOrNull(paymentMeansChilds.item(paymentMeansChildIndex));
+						}
+
+						if ((paymentMeansChilds.item(paymentMeansChildIndex).getLocalName() != null) && (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("Information"))) {
+							paymentMeansInformation = XMLTools.trimOrNull(paymentMeansChilds.item(paymentMeansChildIndex));
+						}
 
 						if ((paymentMeansChilds.item(paymentMeansChildIndex).getLocalName() != null) && (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayeePartyCreditorFinancialAccount") || paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayerPartyDebtorFinancialAccount"))) {
 							NodeList accountChilds = paymentMeansChilds.item(paymentMeansChildIndex).getChildNodes();
@@ -795,6 +805,12 @@ public class ZUGFeRDInvoiceImporter {
 
 		if ((directDebitMandateID != null) && (IBAN != null)) {
 			DirectDebit d = new DirectDebit(IBAN, directDebitMandateID);
+			if (paymentMeansCode != null) {
+				d.setPaymentMeansCode(paymentMeansCode);
+			}
+			if (paymentMeansInformation != null) {
+				d.setPaymentMeansInformation(paymentMeansInformation);
+			}
 			zpp.getSender().addDebitDetails(d);
 		}
 
@@ -821,6 +837,23 @@ public class ZUGFeRDInvoiceImporter {
 		}
 		zpp.setInvoiceReferencedDocumentID(extractString("//*[local-name()=\"InvoiceReferencedDocument\"]/*[local-name()=\"IssuerAssignedID\"]|//*[local-name()=\"BillingReference\"]/*[local-name()=\"InvoiceDocumentReference\"]/*[local-name()=\"ID\"]"));
 
+		xpr = xpath.compile("//*[local-name()=\"InvoiceReferencedDocument\"]");
+		NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+
+		if (nodes.getLength() != 0) {
+			for (int i = 0; i < nodes.getLength(); i++) {
+
+				Node currentItemNode = nodes.item(i);
+				ReferencedDocument doc = ReferencedDocument.fromNode(currentItemNode);
+				if (doc != null 
+						&& (!Objects.equals(zpp.getInvoiceReferencedDocumentID(), doc.getIssuerAssignedID()) 
+						|| !Objects.equals(zpp.getInvoiceReferencedIssueDate(), doc.getFormattedIssueDateTime())))
+				{
+					zpp.addInvoiceReferencedDocument(doc);
+				}
+			}
+		}
+		
 		zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]|//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyName\"]").trim());
 
 		String rounding = extractString("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"RoundingAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"Party\"]/*[local-name()=\"PayableRoundingAmount\"]");
@@ -839,7 +872,7 @@ public class ZUGFeRDInvoiceImporter {
 		}
 
 		xpr = xpath.compile("//*[local-name()=\"IncludedSupplyChainTradeLineItem\"]|//*[local-name()=\"InvoiceLine\"]");
-		NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
 		if (nodes.getLength() != 0) {
 			for (int i = 0; i < nodes.getLength(); i++) {
@@ -876,7 +909,7 @@ public class ZUGFeRDInvoiceImporter {
 			// be read,
 			// so the invoice remains arithmetically correct
 			// -> parse document level charges+allowances
-			xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]//*[local-name()=\"SpecifiedTradeAllowanceCharge\"]|//*[local-name()=\"AllowanceCharge\"]");//CII and UBL
+			xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"SpecifiedTradeAllowanceCharge\"]|/*[local-name()=\"AllowanceCharge\"]");//CII and UBL
 			NodeList chargeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			for (int i = 0; i < chargeNodes.getLength(); i++) {
 				NodeList chargeNodeChilds = chargeNodes.item(i).getChildNodes();

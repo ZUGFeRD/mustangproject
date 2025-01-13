@@ -523,7 +523,7 @@ public class XMLValidator extends Validator {
 
 
 			if (firedRules == 0) {
-				context.addResultItem(new ValidationResultItem(ESeverity.error, "No rules matched, XML to minimal?").setSection(26)
+				context.addResultItem(new ValidationResultItem(ESeverity.error, "No rules matched, XML too minimal?").setSection(26)
 					.setPart(EPart.fx));
 
 			}

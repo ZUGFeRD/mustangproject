@@ -737,7 +737,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 
 		if ((trans.getZFCharges() != null) && (trans.getZFCharges().length > 0)) {
-			if (profile == Profiles.getByName("XRechnung")) {
+			if ((profile == Profiles.getByName("XRechnung")) || (profile == Profiles.getByName("EN16931")) || (profile == Profiles.getByName("EXTENDED")))  {
 				for (IZUGFeRDAllowanceCharge charge : trans.getZFCharges()) {
 					xml += "<ram:SpecifiedTradeAllowanceCharge>" +
 						"<ram:ChargeIndicator>" +
@@ -828,6 +828,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if (paymentTermsDescription != null) {
 				xml += "<ram:Description>" + paymentTermsDescription + "</ram:Description>";
 			}
+			
+			if (trans.getDueDate() != null) {
+				xml += "<ram:DueDateDateTime>" // $NON-NLS-2$
+					+ DATE.udtFormat(trans.getDueDate())
+					+ "</ram:DueDateDateTime>";// 20130704
+			}
 
 			if (trans.getTradeSettlement() != null) {
 				for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
@@ -837,12 +843,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 			}
 
-			if (trans.getDueDate() != null) {
-				xml += "<ram:DueDateDateTime>" // $NON-NLS-2$
-					+ DATE.udtFormat(trans.getDueDate())
-					+ "</ram:DueDateDateTime>";// 20130704
-
-			}
 			xml += "</ram:SpecifiedTradePaymentTerms>";
 		} else {
 			xml += buildPaymentTermsXml();
@@ -892,6 +892,19 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "</ram:FormattedIssueDateTime>";
 			}
 			xml += "</ram:InvoiceReferencedDocument>";
+		}
+		if (trans.getInvoiceReferencedDocuments() != null) {
+			for (var doc : trans.getInvoiceReferencedDocuments()) {
+				xml += "<ram:InvoiceReferencedDocument>"
+						+ "<ram:IssuerAssignedID>"
+						+ XMLTools.encodeXML(doc.getIssuerAssignedID()) + "</ram:IssuerAssignedID>";
+				if (doc.getFormattedIssueDateTime() != null) {
+					xml += "<ram:FormattedIssueDateTime>"
+							+ DATE.qdtFormat(doc.getFormattedIssueDateTime())
+							+ "</ram:FormattedIssueDateTime>";
+				}
+				xml += "</ram:InvoiceReferencedDocument>";
+			}
 		}
 
 		xml += "</ram:ApplicableHeaderTradeSettlement>";

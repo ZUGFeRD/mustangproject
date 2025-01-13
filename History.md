@@ -1,4 +1,26 @@
 
+2.16.0
+=======
+2025-01-10
+- #657 allow allowancechargereasoncodes on document level
+- allow to add includedNotes with type
+- #356 print version of xml report
+- #645 Fix visualization of validation logs
+- #639 Fix invoice calculation if rounding amount is present
+- #633 Bump ch.qos.logback:logback-core from 1.2.13 to 1.5.13
+- #626 Fix minor java issues
+- #622 Fix FOP config 
+- #631  multiple invoice referenced documents
+- #629 Visualizing xml
+- #630 Fix issue #296 (Validation-Error: Ungültiger Content wurde beginnend mit Element 'ram:DueDateDateTime' ) (duplicate of #565)
+- #658 prevent nullpointerexception
+- #648 Fix log visualization
+- #651 ZUGFeRDInvoiceImporter: Item-Allowances not imported
+- #652 Discount VAT is not subtracted from duepayable
+- #620 Fix logback config
+- #653 ZF2EdgeTest: methods 'getPaymentMeansCode()' & 'getPaymentMeansInformation()' does not override super methods
+- #654 remove wrong test methods
+
 2.15.2
 =======
 2024-12-19

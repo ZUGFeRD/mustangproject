@@ -40,7 +40,6 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -102,6 +101,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		// name street location zip country, contact name phone email, total amount
 
 	}
+
 
 	public void testInvoiceImportUBL() {
 

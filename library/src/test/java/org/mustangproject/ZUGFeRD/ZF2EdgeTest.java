@@ -100,6 +100,16 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 			return "DE99XX12345";
 		}
 
+		@Override
+		public String getPaymentMeansCode() {
+			return "54";
+		}
+
+		@Override
+		public String getPaymentMeansInformation() {
+			return "Credit Card";
+		}
+
 	}
 
 	@Override
@@ -314,7 +324,8 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 		String resultXML=zi.getUTF8();
-		assertTrue(resultXML.contains("<ram:TypeCode>59</ram:TypeCode>"));
+		assertTrue(resultXML.contains("<ram:TypeCode>54</ram:TypeCode>"));
+		assertTrue(resultXML.contains("<ram:Information>Credit Card</ram:Information>"));
 		assertTrue(resultXML.contains("<ram:ShipToTradeParty>"));
 		assertTrue(resultXML.contains("<ram:IBANID>DE540815</ram:IBANID>"));
 		assertTrue(resultXML.contains("<ram:ApplicableTradePaymentDiscountTerms"));
