@@ -207,23 +207,7 @@ public class ZUGFeRDVisualizer {
     }
 
     protected ByteArrayOutputStream applyXSLT(final String fileName, final ByteArrayOutputStream outputStream, final ELanguage lang) {
-        ByteArrayOutputStream rv = new ByteArrayOutputStream();
-        try (PipedInputStream pis = new PipedInputStream()) {
-            Thread thread = new Thread(
-                    () -> {
-                        try (PipedOutputStream pos = new PipedOutputStream(pis)) {
-                            outputStream.writeTo(pos);
-                        } catch (IOException e) {
-                            LOGGER.error("Cannot process piped output: {}.", e.getMessage());
-                        }
-                    }
-            );
-            thread.start();
-            rv = applyXSLT(fileName, pis, lang);
-        } catch (IOException e) {
-            LOGGER.error("Cannot process piped input: {}.", e.getMessage());
-        }
-        return rv;
+        return applyXSLT(fileName, new ByteArrayInputStream(outputStream.toByteArray()), lang);
     }
 
     protected ByteArrayOutputStream applyXSLT(final String fileName, final InputStream inputStream, final ELanguage lang) {
