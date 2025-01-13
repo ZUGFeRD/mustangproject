@@ -174,20 +174,22 @@ public class Item implements IZUGFeRDExportableItem {
 				.ifPresent(product::setVATPercent);
 			icnm.getAsNodeMap("SpecifiedTradeAllowanceCharge").ifPresent(stac -> {
 				stac.getAsNodeMap("ChargeIndicator").ifPresent(ci -> {
-					String isChargeString=ci.getAsString("Indicator").get();
-					String percentString=stac.getAsStringOrNull("CalculationPercent");
-					String amountString=stac.getAsStringOrNull("ActualAmount");
-					String reason=stac.getAsStringOrNull("Reason");
-					Charge izac= new Charge();
+					String isChargeString = ci.getAsString("Indicator").get();
+					String percentString = stac.getAsStringOrNull("CalculationPercent");
+					String amountString = stac.getAsStringOrNull("ActualAmount");
+					String reason = stac.getAsStringOrNull("Reason");
+					Charge izac = new Charge();
 					if (isChargeString.equalsIgnoreCase("false")) {
 						izac = new Allowance();
 					} else {
 						izac = new Charge();
 					}
-					if (amountString!=null) {
+					if (amountString != null) {
 						izac.setTotalAmount(new BigDecimal(amountString));
 					}
-					izac.setPercent(new BigDecimal(percentString));
+					if (percentString != null) {
+						izac.setPercent(new BigDecimal(percentString));
+					}
 					izac.setReason(reason);
 
 					if (isChargeString.equalsIgnoreCase("false")) {
