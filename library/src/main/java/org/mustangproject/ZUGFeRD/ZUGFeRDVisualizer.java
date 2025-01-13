@@ -306,16 +306,25 @@ public class ZUGFeRDVisualizer {
         ByteArrayOutputStream outputStream;
         switch (eStandard) {
             case facturx:
-                outputStream = applyXSLT(CII_XR_XSL, inputStream);
-                outputStream = applyXSLT(XR_PDF_XSL, outputStream, lang);
+                outputStream = applyXSLT(
+                        XR_PDF_XSL,
+                        applyXSLT(CII_XR_XSL, inputStream),
+                        lang
+                );
                 break;
             case ubl:
-                outputStream = applyXSLT(UBL_INVOICE_XR_XSL, inputStream);
-                outputStream = applyXSLT(XR_PDF_XSL, outputStream, lang);
+                outputStream = applyXSLT(
+                        XR_PDF_XSL,
+                        applyXSLT(UBL_INVOICE_XR_XSL, inputStream),
+                        lang
+                );
                 break;
             case ubl_creditnote:
-                outputStream = applyXSLT(UBL_CREDIT_NOTE_XR_XSL, inputStream);
-                outputStream = applyXSLT(XR_PDF_XSL, outputStream, lang);
+                outputStream = applyXSLT(
+                        XR_PDF_XSL,
+                        applyXSLT(UBL_CREDIT_NOTE_XR_XSL, inputStream),
+                        lang
+                );
                 break;
             default:
                 throw new IllegalArgumentException(String.format("Cannot process doc type '%s'.", eStandard));
