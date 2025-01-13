@@ -93,22 +93,22 @@ public class ZUGFeRDValidator {
 			if (contextFilename == null || contextFilename.isEmpty()) {
 				optionsRecognized = false;
 				context.addResultItem(new ValidationResultItem(ESeverity.fatal, "Filename not specified").setSection(10)
-					.setPart(EPart.pdf));
+						.setPart(EPart.pdf));
 			}
 
 			PDFValidator pdfv = new PDFValidator(context);
 			if (inputStream == null) {
 				context.addResultItem(
-					new ValidationResultItem(ESeverity.fatal, "File not found").setSection(1).setPart(EPart.pdf));
+						new ValidationResultItem(ESeverity.fatal, "File not found").setSection(1).setPart(EPart.pdf));
 			} else if (inputLength < 32) {
 				// with less than 32 bytes it can not even be a proper XML file
 				// Except it is "<?xml version='1.0'?><xml/>" LOL
 				context.addResultItem(
-					new ValidationResultItem(ESeverity.fatal, "File too small").setSection(5).setPart(EPart.pdf));
+						new ValidationResultItem(ESeverity.fatal, "File too small").setSection(5).setPart(EPart.pdf));
 			} else if (inputLength >= Integer.MAX_VALUE) {
 				// Byte arrays are limited to 2GB in Java
 				context.addResultItem(
-					new ValidationResultItem(ESeverity.fatal, "File too big").setSection(5).setPart(EPart.pdf));
+						new ValidationResultItem(ESeverity.fatal, "File too big").setSection(5).setPart(EPart.pdf));
 			} else {
 				content = IOUtils.toByteArray(inputStream);
 				XMLValidator xv = new XMLValidator(context);
@@ -171,7 +171,7 @@ public class ZUGFeRDValidator {
 					} else {
 						optionsRecognized = false;
 						context.addResultItem(new ValidationResultItem(ESeverity.exception,
-							"File does not look like PDF nor XML (contains neither %PDF nor <?xml)").setSection(8));
+								"File does not look like PDF nor XML (contains neither %PDF nor <?xml)").setSection(8));
 
 					}
 				}
@@ -211,6 +211,7 @@ public class ZUGFeRDValidator {
 	 * @return a xml string with the validation result
 	 */
 	public String validate(String filename) {
+		LOGGER.debug("public String validate(String filename='{}')", filename);
 		String contextFilename;
 		InputStream inputStream;
 		long inputLength;
@@ -276,8 +277,8 @@ public class ZUGFeRDValidator {
 			displayXMLValidationOutput = true;
 		} else {
 			context.addResultItem(
-				new ValidationResultItem(ESeverity.exception, "XML could not be extracted")
-					.setSection(17));
+					new ValidationResultItem(ESeverity.exception, "XML could not be extracted")
+							.setSection(17));
 		}
 	}
 
@@ -316,9 +317,9 @@ public class ZUGFeRDValidator {
 
 
 		LOGGER.info("Parsed PDF:" + pdfResult + " XML:" + (xmlValidity ? "valid" : "invalid")
-			+ " Signature:" + Signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
-			+ " Version:" + context.getGeneration() + " Took:" + duration + "ms Errors:[" + context.getCSVResult()
-			+ "] ErrorIDs: [" + context.getCSVIDResult()  + "]" + toBeAppended);
+				+ " Signature:" + Signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
+				+ " Version:" + context.getGeneration() + " Took:" + duration + "ms Errors:[" + context.getCSVResult()
+				+ "] ErrorIDs: [" + context.getCSVIDResult() + "]" + toBeAppended);
 		wasCompletelyValid = ((pdfValidity) && (xmlValidity));
 		return sw.toString();
 	}
@@ -335,10 +336,10 @@ public class ZUGFeRDValidator {
 	 *
 	 * @param data the InputStream to read
 	 * @return the hex representation of the SHA-1 using uppercase chars
-	 * @throws FileNotFoundException    if the file does not exist, is a directory
-	 *                                  rather than a regular file, or for some
-	 *                                  other reason cannot be opened for reading
-	 * @throws IOException              if an I/O error occurs
+	 * @throws FileNotFoundException	if the file does not exist, is a directory
+	 *									rather than a regular file, or for some
+	 *									other reason cannot be opened for reading
+	 * @throws IOException				if an I/O error occurs
 	 * @throws NoSuchAlgorithmException should never happen
 	 */
 	private static String calcSHA1(byte[] data) {

@@ -7,9 +7,12 @@ import java.net.URL;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.xmlgraphics.io.Resource;
 import org.apache.xmlgraphics.io.ResourceResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClasspathResolverURIAdapter implements ResourceResolver {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(ClasspathResolverURIAdapter.class);
 	private final ResourceResolver wrapped;
 
 
@@ -20,6 +23,7 @@ public class ClasspathResolverURIAdapter implements ResourceResolver {
 
 	@Override
 	public Resource getResource(URI uri) throws IOException {
+		LOGGER.debug("public Resource getResource(URI uri='{}')", uri);
 		if (uri.getScheme().equals("classpath")) {
 			URL url = getClass().getClassLoader().getResource(uri.getSchemeSpecificPart());
 

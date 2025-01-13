@@ -44,63 +44,64 @@ public class Main {
 
 	private static String getUsage() {
 		return "Usage: --action metrics|combine|extract|a3only|ubl|validate|validateExpectInvalid|validateExpectValid|visualize [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] [--disable-file-logging] | [-h,--help] \r\n"
-			+ "        --action license   display open source license and notice\n"
-			+ "        --action metrics\n"
-			+ "          -d, --directory count ZUGFeRD files in directory to be scanned\n"
-			+ "                If it is a directory, it will recurse.\n"
-			+ "          -l, --listfromstdin     count ZUGFeRD files from a list of linefeed separated files on runtime.\n"
-			+ "                It will start once a blank line has been entered.\n" + "\n"
-			+ "        Additional parameter for both count operations\n"
-			+ "        [-i, --ignorefileextension]     Check for all files (*.*) instead of PDF files only (*.pdf) in metrics, ignore PDF/A input file errors in combine\n"
-			+ "        [--disable-file-logging]		disable logging to file.\n"
-			+ "        --action extract   extract Factur-X PDF to XML file\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-			+ "                [--source <filename>]: set input PDF file\n"
-			+ "                [--out <filename>]: set output XML file\n"
-			+ "        --action a3only    upgrade from PDF/A1 to A3 only (no ZUGFeRD data attached)\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-			+ "                [--source <filename>]: set input PDF file\n"
-			+ "                [--out <filename>]: set output PDF file\n"
-			+ "        --action combine   combine XML and PDF file to Factur-X PDF file\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-			+ "                [--source <filename>]: set input PDF file\n"
-			+ "                [--source-xml <filename>]: set input XML file\n"
-			+ "                [--out <filename>]: set output PDF file\n"
-			+ "                [--format <fx|zf|ox|da>]: set Factur-X, ZUGFeRD, Order-X or Cross Industry Despatch Advice\n"
-			+ "                [--version <1|2>]: set ZUGFeRD version\n"
-			+ "                [--profile <...>]: set ZUGFeRD profile\n"
-			+ "                        For ZUGFeRD v1 or Order-X: <B>ASIC, <C>OMFORT or EX<T>ENDED\n"
-			+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED\n"
-			+ "                [--attachments <filenames>]: list of file attachments (passing a single empty file name prevents prompting)\n"
-			+ "                [--no-additional-attachments]: prevent prompting for attachments\n"
-			+ "        --action ubl   convert UN/CEFACT 2016b CII XML to UBL XML\n"
-			+ "                [--source <filename>]: set input XML file\n"
-			+ "                [--out <filename>]: set output XML file\n"
-			+ "        --action upgrade   upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-			+ "                [--source <filename>]: set input XML ZUGFeRD 1 file\n"
-			+ "                [--out <filename>]: set output XML ZUGFeRD 2 file\n"
-			+ "        --action validate  validate XML or PDF file \n"
-			+ "                [--no-notices]: refrain from reporting notices\n"
-			+ "                [--logAppend <text>]: text to be added to log line\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-			+ "                [--source <filename>]: input PDF or XML file\n"
-			+ "                [--log-as-pdf]: save log output as pdf\n"
-			+ "        --action validateExpectInvalid  validate directory expecting negative results \n"
-			+ "                [--no-notices]: refrain from reporting notices\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-			+ "					-d, --directory to check recursively\n"
-			+ "        --action validateExpectValid  validate directory expecting positive results \n"
-			+ "                [--no-notices]: refrain from reporting notices\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-			+ "					-d, --directory to check recursively \n"
-			+ "        --action visualize  convert XML to HTML \n"
-			+ "                [--language <lang>]: set output lang (en, fr or de)\n"
-			+ "                [--source <filename>]: set input XML file\n"
-			+ "                [--out <filename>]: set output HTML file\n"
-			+ "        --action pdf  convert XML to PDF \n"
-			+ "                [--source <filename>]: set input XML file\n"
-			+ "                [--out <filename>]: set output PDF file\n"
+			 + "       --action license   display open source license and notice\n"
+			 + "       --action metrics\n"
+			 + "         -d, --directory count ZUGFeRD files in directory to be scanned\n"
+			 + "               If it is a directory, it will recurse.\n"
+			 + "         -l, --listfromstdin     count ZUGFeRD files from a list of linefeed separated files on runtime.\n"
+			 + "               It will start once a blank line has been entered.\n" + "\n"
+			 + "       Additional parameter for both count operations\n"
+			 + "       [-i, --ignorefileextension]     Check for all files (*.*) instead of PDF files only (*.pdf) in metrics, ignore PDF/A input file errors in combine\n"
+			 + "       [--disable-file-logging]        disable logging to file.\n"
+			 + "       --action extract   extract Factur-X PDF to XML file\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: set input PDF file\n"
+			 + "               [--out <filename>]: set output XML file\n"
+			 + "       --action a3only    upgrade from PDF/A1 to A3 only (no ZUGFeRD data attached)\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: set input PDF file\n"
+			 + "               [--out <filename>]: set output PDF file\n"
+			 + "       --action combine   combine XML and PDF file to Factur-X PDF file\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: set input PDF file\n"
+			 + "               [--source-xml <filename>]: set input XML file\n"
+			 + "               [--out <filename>]: set output PDF file\n"
+			 + "               [--format <fx|zf|ox|da>]: set Factur-X, ZUGFeRD, Order-X or Cross Industry Despatch Advice\n"
+			 + "               [--version <1|2>]: set ZUGFeRD version\n"
+			 + "               [--profile <...>]: set ZUGFeRD profile\n"
+			 + "                       For ZUGFeRD v1 or Order-X: <B>ASIC, <C>OMFORT or EX<T>ENDED\n"
+			 + "                       For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED\n"
+			 + "               [--attachments <filenames>]: list of file attachments (passing a single empty file name prevents prompting)\n"
+			 + "               [--no-additional-attachments]: prevent prompting for attachments\n"
+			 + "       --action ubl   convert UN/CEFACT 2016b CII XML to UBL XML\n"
+			 + "               [--source <filename>]: set input XML file\n"
+			 + "               [--out <filename>]: set output XML file\n"
+			 + "       --action upgrade   upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: set input XML ZUGFeRD 1 file\n"
+			 + "               [--out <filename>]: set output XML ZUGFeRD 2 file\n"
+			 + "       --action validate  validate XML or PDF file \n"
+			 + "               [--no-notices]: refrain from reporting notices\n"
+			 + "               [--logAppend <text>]: text to be added to log line\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: input PDF or XML file\n"
+			 + "               [--log-as-pdf]: save log output as pdf\n"
+			 + "       --action validateExpectInvalid  validate directory expecting negative results \n"
+			 + "               [--no-notices]: refrain from reporting notices\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "                   -d, --directory to check recursively\n"
+			 + "       --action validateExpectValid  validate directory expecting positive results \n"
+			 + "               [--no-notices]: refrain from reporting notices\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "                   -d, --directory to check recursively \n"
+			 + "       --action visualize  convert XML to HTML \n"
+			 + "               [--language <lang>]: set output lang (en, fr or de)\n"
+			 + "               [--source <filename>]: set input XML file\n"
+			 + "               [--out <filename>]: set output HTML file\n"
+			 + "       --action pdf  convert XML to PDF \n"
+			 + "               [--language <lang>]: set output lang (en, fr or de)\n"
+			 + "               [--source <filename>]: set input XML file\n"
+			 + "               [--out <filename>]: set output PDF file\n"
 			;
 	}
 
@@ -111,14 +112,14 @@ public class Main {
 	}
 
 	/**
-	 * Asks the user (repeatedly, if neccessary) on the command line for a String
+	 * Asks the user (repeatedly, if necessary) on the command line for a String
 	 * (offering a defaultValue) conforming to a Regex pattern
 	 *
 	 * @param prompt       the question to be asked to the user
 	 * @param defaultValue the default return value if user hits enter
 	 * @param pattern      a regex of acceptable values
 	 * @return the user answer conforming to pattern
-	 * @throws Exception if pattern not compielable or IOexception on input
+	 * @throws Exception if pattern not compilable or IOException on input
 	 */
 	protected static String getStringFromUser(String prompt, String defaultValue, String pattern) throws Exception {
 		String input = "";
@@ -431,7 +432,7 @@ public class Main {
 					performUBL(sourceName, outName);
 					optionsRecognized = true;
 				} else if ((action != null) && (action.equals("validate"))) {
-					optionsRecognized = performValidate(sourceName, noNotices, cmd.getOptionValue("logAppend"), LogAsPDF);
+					optionsRecognized = performValidate(sourceName, lang, noNotices, cmd.getOptionValue("logAppend"), LogAsPDF);
 				} else if ((action != null) && (action.equals("validateExpectValid"))) {
 					optionsRecognized = performValidateExpect(true, directoryName);
 				} else if ((action != null) && (action.equals("validateExpectInvalid"))) {
@@ -458,7 +459,7 @@ public class Main {
 
 	}
 
-	private static boolean performValidate(String sourceName, boolean noNotices, String logAppend, boolean createLogAsPDF) {
+	private static boolean performValidate(String sourceName, String lang, boolean noNotices, String logAppend, boolean createLogAsPDF) {
 		boolean optionsRecognized;
 		if (sourceName == null) {
 			sourceName = getFilenameFromUser("Source PDF or XML", "invoice.pdf", "pdf|xml", true, false);
@@ -474,11 +475,11 @@ public class Main {
 		String validationResultXML = zfv.validate(sourceName);
 		System.out.println(validationResultXML);
 
-		if( createLogAsPDF) {
+		if (createLogAsPDF) {
 			ValidationLogVisualizer vlvi = new ValidationLogVisualizer();
 			String fileBasename = FilenameUtils.getBaseName(sourceName);
 
-			vlvi.toPDF(validationResultXML, fileBasename + "_result.pdf");
+			vlvi.toPDF(validationResultXML, fileBasename + "_result.pdf", getLanguage(lang));
 		}
 		optionsRecognized = !zfv.hasOptionsError();
 		if (!zfv.wasCompletelyValid()) {
@@ -533,9 +534,9 @@ public class Main {
 
 		// All params are good! continue...
 		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
-		  ze.convertOnly().load(pdfName);
-		  ze.export(outName);
-		  System.out.println("Written to " + outName);
+			ze.convertOnly().load(pdfName);
+			ze.export(outName);
+			System.out.println("Written to " + outName);
 		}
 	}
 
@@ -710,7 +711,7 @@ public class Main {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}
 			} else {
-				throw new Exception(String.format("Unknown version '%i'", zfIntVersion));
+				throw new Exception(String.format("Unknown version '%d'", zfIntVersion));
 			}
 
 			IZUGFeRDExporter ze = null;
@@ -814,11 +815,15 @@ public class Main {
 					lang = getStringFromUser("Output language", "en", "en|de|fr");
 				} catch (Exception e) {
 					LOGGER.error(e.getMessage(), e);
+					lang = "en";
 				}
-			} else {
-				System.out.println("Output language set to " + lang);
+			}
+		} else {
+			if (lang == null) {
+				lang = "en";
 			}
 		}
+		System.out.println("Output language set to " + lang);
 
 		if (outName == null) {
 			String defaultFilename = "factur-x.html";
@@ -836,8 +841,6 @@ public class Main {
 		try {
 			ensureFileExists(sourceName);
 			ensureFileNotExists(outName);
-
-			// stylesheets/ZUGFeRD_1p0_c1p0_s1p0.xslt
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -845,38 +848,44 @@ public class Main {
 		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
 		String xml = null;
 		try {
+			ELanguage langCode = getLanguage(lang);
 			if (!intoPDF) {
-				ZUGFeRDVisualizer.Language langCode = ZUGFeRDVisualizer.Language.EN;
-				if (lang.equalsIgnoreCase("de")) {
-					langCode = ZUGFeRDVisualizer.Language.DE;
-				}
-				if (lang.equalsIgnoreCase("fr")) {
-					langCode = ZUGFeRDVisualizer.Language.FR;
-				}
 				xml = zvi.visualize(sourceName, langCode);
 				Files.write(Paths.get(outName), xml.getBytes());
 			} else {
-				zvi.toPDF(sourceName, outName);
+				zvi.toPDF(sourceName, outName, langCode);
 			}
+			System.out.println("Written to " + outName);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			System.err.println(e.getMessage());
 		}
-		System.out.println("Written to " + outName);
 
+		// The following is not needed anymore:
+		/*
 		if (!intoPDF) {
-
 			try {
-				ExportResource("/xrechnung-viewer.css");
-				ExportResource("/xrechnung-viewer.js");
-
-				System.out.println("xrechnung-viewer.css and xrechnung-viewer.js written as well (to local working dir)");
+				ExportResource("xrechnung-viewer.css");
+				ExportResource("xrechnung-viewer.js");
+				ExportResource("FileSaver-v2.0.5.js");
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(), e);
 			}
 		}
+		 */
+	}
 
-
+	private static ELanguage getLanguage(final String s) {
+		ELanguage rv = ELanguage.EN;
+		if (s != null && !s.isEmpty()) {
+			if (s.equalsIgnoreCase("de")) {
+				rv = ELanguage.DE;
+			}
+			if (s.equalsIgnoreCase("fr")) {
+				rv = ELanguage.FR;
+			}
+		}
+		return rv;
 	}
 
 	/**
@@ -886,29 +895,31 @@ public class Main {
 	 * @return The path to the exported resource
 	 * @throws Exception e.g. if the specified resource does not exist at the specified location
 	 */
-	static public String ExportResource(String resourceName) throws Exception {
-		String jarFolder;
-		try (InputStream stream = Main.class.getResourceAsStream(resourceName)) {//note that each / is a directory down in the "jar tree" been the jar the root of the tree
-			if (stream == null) {
-				throw new Exception("Cannot get resource \"" + resourceName + "\" from Jar file.");
-			}
-
-			int readBytes;
-			byte[] buffer = new byte[4096];
-			jarFolder = System.getProperty("user.dir");
-			try (FileOutputStream resStreamOut = new FileOutputStream(jarFolder + resourceName)) {
-  			while ((readBytes = stream.read(buffer)) > 0) {
-  				resStreamOut.write(buffer, 0, readBytes);
-  			}
+	@SuppressWarnings("unused")
+	public static String ExportResource(final String resourceName) throws Exception {
+		String jarFolder = System.getProperty("user.dir");
+		String resourcePath = ClasspathResourceURIResolver.MAIN_BASE_PATH + resourceName;
+		try (InputStream is = Main.class.getClassLoader().getResourceAsStream(resourcePath)) {
+			// note that each / is a directory down in the "jar tree" been the jar the root of the tree
+			if (is != null) {
+				int readBytes;
+				byte[] buffer = new byte[4096];
+				try (FileOutputStream fos = new FileOutputStream(jarFolder + resourceName)) {
+					while ((readBytes = is.read(buffer)) > 0) {
+						fos.write(buffer, 0, readBytes);
+					}
+				}
+			} else {
+				throw new Exception(String.format("Cannot get resource '%s' from JAR file.", resourceName));
 			}
 		}
-
+		System.out.printf("'%s' written (to local working directory).%n", resourceName);
 		return jarFolder + resourceName;
 	}
 
 	private static void ensureFileExists(String fileName) throws IOException {
 		if (!fileExists(fileName)) {
-			throw new IOException(String.format("File %s does not exists", fileName));
+			throw new IOException(String.format("File %s does not exist.", fileName));
 		}
 	}
 

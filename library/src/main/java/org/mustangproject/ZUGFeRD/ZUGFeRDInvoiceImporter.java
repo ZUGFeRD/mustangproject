@@ -9,7 +9,7 @@ import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.mustangproject.*;
-import org.mustangproject.Exceptions.ArithmetricException;
+import org.mustangproject.Exceptions.ArithmeticException;
 import org.mustangproject.Exceptions.StructureException;
 import org.mustangproject.util.NodeMap;
 import org.slf4j.Logger;
@@ -251,7 +251,7 @@ public class ZUGFeRDInvoiceImporter {
 	/***
 	 * set the xml of a CII invoice, simple version
 	 * @param rawXML the cii(?) as a string
-	 * @throws IOException  if parsing xml throws it (unlikely its string based)
+	 * @throws IOException	if parsing xml throws it (unlikely its string based)
 	 */
 	public void setRawXML(byte[] rawXML) throws IOException {
 		setRawXML(rawXML, true);
@@ -262,7 +262,7 @@ public class ZUGFeRDInvoiceImporter {
 		xmlFact.setNamespaceAware(true);
 		final DocumentBuilder builder = xmlFact.newDocumentBuilder();
 		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
-		///    is.skip(guessBOMSize(is));
+		///	   is.skip(guessBOMSize(is));
 		document = builder.parse(is);
 		if (parseAutomatically) {
 			try {
@@ -366,7 +366,7 @@ public class ZUGFeRDInvoiceImporter {
 			});
 			String street, name, additionalStreet, city, postal, countrySubentity, line, country = null;
 /*
-			String idx  = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"ID\"]");
+			String idx	= extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"ID\"]");
 			street = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name()=\"Address\"]/*[local-name()=\"StreetName\"]");
 			additionalStreet = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"Address\"]/*[local-name() = \"AdditionalStreetName\"]");
 			city = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"Address\"]/*[local-name() = \"CityName\"]");
@@ -402,31 +402,31 @@ public class ZUGFeRDInvoiceImporter {
 		XPathExpression shipPayee = xpath.compile("//*[local-name()=\"PayeeParty\"]/*");
 		NodeList ublPayeeNodes = (NodeList) shipPayee.evaluate(getDocument(), XPathConstants.NODESET);
 
-//		if(ublPayeeNodes != null) {
-//			TradeParty payee = new TradeParty();
-//			NodeMap nodeMap = new NodeMap(ublPayeeNodes).getAsNodeMap("PayeeParty").get();
-//			nodeMap.getNode("ID").ifPresent(s -> {
-//				SchemedID sID = new SchemedID().setScheme(s.getAttributes().getNamedItem("schemeID").getTextContent()).setId(s.getTextContent());
-//				payee.addGlobalID(sID);
-//			});
-//		}
+//		  if(ublPayeeNodes != null) {
+//			  TradeParty payee = new TradeParty();
+//			  NodeMap nodeMap = new NodeMap(ublPayeeNodes).getAsNodeMap("PayeeParty").get();
+//			  nodeMap.getNode("ID").ifPresent(s -> {
+//				  SchemedID sID = new SchemedID().setScheme(s.getAttributes().getNamedItem("schemeID").getTextContent()).setId(s.getTextContent());
+//				  payee.addGlobalID(sID);
+//			  });
+//		  }
 		//NodeList UBLpayeeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		zpp.setPayee(new TradeParty(ublPayeeNodes));
-//		TradeParty payee =new TradeParty();
-//		NodeMap payeeID = new NodeMap(UBLpayeeNodes).getAsNodeMap("PartyIdentification").get();
-//		if (payeeID !=null) {
-//			payeeID.getAsString("Name").ifPresent(t->payee.setName(t));
-//		}
-//		if (payeeNodes != null) {
-//			TradeParty payee =new TradeParty();
-//			NodeMap nodeMap = new NodeMap(payeeNodes).getAsNodeMap("PartyIdentification").get();
-//			if (nodeMap != null) {
-//				nodeMap.getNode("ID").ifPresent(s -> {
-//					SchemedID sID = new SchemedID().setScheme(s.getAttributes().getNamedItem("schemeID").getTextContent()).setId(s.getTextContent());
-//					payee.addGlobalID(sID);
-//				});
-//			}
-//		}
+//		  TradeParty payee =new TradeParty();
+//		  NodeMap payeeID = new NodeMap(UBLpayeeNodes).getAsNodeMap("PartyIdentification").get();
+//		  if (payeeID !=null) {
+//			  payeeID.getAsString("Name").ifPresent(t->payee.setName(t));
+//		  }
+//		  if (payeeNodes != null) {
+//			  TradeParty payee =new TradeParty();
+//			  NodeMap nodeMap = new NodeMap(payeeNodes).getAsNodeMap("PartyIdentification").get();
+//			  if (nodeMap != null) {
+//				  nodeMap.getNode("ID").ifPresent(s -> {
+//					  SchemedID sID = new SchemedID().setScheme(s.getAttributes().getNamedItem("schemeID").getTextContent()).setId(s.getTextContent());
+//					  payee.addGlobalID(sID);
+//				  });
+//			  }
+//		  }
 
 
 		xpr = xpath.compile("//*[local-name()=\"ExchangedDocument\"]|//*[local-name()=\"HeaderExchangedDocument\"]");
@@ -784,9 +784,9 @@ public class ZUGFeRDInvoiceImporter {
 						}
 					}
 				}
-//				if ((paymentMeansChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("DirectDebitMandateID"))) {
-//				directDebitMandateID = paymentTermChilds.item(paymentTermChildIndex).getTextContent();
-//				}
+//				  if ((paymentMeansChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("DirectDebitMandateID"))) {
+//				  directDebitMandateID = paymentTermChilds.item(paymentTermChildIndex).getTextContent();
+//				  }
 				if ((paymentMeansChilds.item(meansChildIndex).getLocalName() != null)
 					&& (paymentMeansChilds.item(meansChildIndex).getLocalName().equals("PaymentMandate"))) {
 					NodeList paymentMandateChilds = paymentMeansChilds.item(meansChildIndex).getChildNodes();
@@ -997,7 +997,7 @@ public class ZUGFeRDInvoiceImporter {
 							.collect(Collectors.joining(" + "));
 					} catch (Exception ignored) {
 					}
-					throw new ArithmetricException("Payable total in XML is " + payableTotalFromXml + ", but calculated total is " + calculatedPayableTotal + moreDetails);
+					throw new ArithmeticException("Payable total in XML is " + payableTotalFromXml + ", but calculated total is " + calculatedPayableTotal + moreDetails);
 				}
 			}
 		}

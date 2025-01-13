@@ -22,7 +22,6 @@ package org.mustangproject.ZUGFeRD;
 
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
-import org.mustangproject.ZUGFeRD.ZUGFeRDVisualizer.Language;
 import org.mustangproject.util.ByteArraySearcher;
 
 import javax.xml.transform.TransformerException;
@@ -39,22 +38,22 @@ public class VisualizationTest extends ResourceCase {
 	final String TARGET_PDF_UBL = "./target/testout-Visualization-cii.pdf";
 
 	public void testCIIVisualizationBasic() {
-		this.runZUGFeRDVisualization("factur-x.xml", "factur-x-vis.fr.html", Language.FR);
+		this.runZUGFeRDVisualization("factur-x.xml", "factur-x-vis.fr.html", ELanguage.FR);
 	}
 
 	public void testCIIVisualizationExtended() {
-		this.runZUGFeRDVisualization("factur-x-extended.xml", "factur-x-vis-extended.de.html", Language.DE);
+		this.runZUGFeRDVisualization("factur-x-extended.xml", "factur-x-vis-extended.de.html", ELanguage.DE);
 	}
 
 	public void testUBLCreditNoteVisualizationBasic() {
-		this.runZUGFeRDVisualization("ubl-creditnote.xml", "factur-x-vis-ubl-creditnote.en.html", Language.EN);
+		this.runZUGFeRDVisualization("ubl-creditnote.xml", "factur-x-vis-ubl-creditnote.en.html", ELanguage.EN);
 	}
 
 	public void testUBLVisualizationBasic() {
-		this.runZUGFeRDVisualization("ubl/01.01a-INVOICE.ubl.xml", "factur-x-vis-ubl.en.html", Language.EN);
+		this.runZUGFeRDVisualization("ubl/01.01a-INVOICE.ubl.xml", "factur-x-vis-ubl.en.html", ELanguage.EN);
 	}
 
-	private void runZUGFeRDVisualization(String inputFilename, String resultFileName, Language lang) {
+	private void runZUGFeRDVisualization(String inputFilename, String resultFileName, ELanguage lang) {
 		File CIIinputFile = getResourceAsFile(inputFilename);
 
 		String expected = null;
@@ -80,7 +79,7 @@ public class VisualizationTest extends ResourceCase {
 
 
 		assertNotNull(result);
-        /* remove file endings so that tests can also pass after checking
+		/* remove file endings so that tests can also pass after checking
 		   out from git with arbitrary options (which may include CSRF changes)
 		 */
 		assertEquals(expected.replace("\r", "")

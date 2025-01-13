@@ -17,14 +17,14 @@ import org.xml.sax.SAXException;
 //abstract class
 public abstract class Validator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Validator.class.getCanonicalName()); // log output
-	
+
 	protected ValidationContext context;
-	protected boolean autoload=true;
-	
-	public Validator(ValidationContext ctx){
-		this.context=ctx;
+	protected boolean autoload = true;
+
+	public Validator(ValidationContext ctx) {
+		this.context = ctx;
 	}
-	
+
 	//abstract method
 
 	/***
@@ -42,12 +42,13 @@ public abstract class Validator {
 
 	/**
 	 * get validation result
+	 *
 	 * @return validation result as xml string
 	 */
 	public String getXMLResult() {
 		return context.getXMLResult();
 	}
-	
+
 	/***
 	 * validates a schema, which can only be needed in XML validation - and in pdf validation for additional data
 	 * @param xmlRawData the XML to be validated
@@ -57,7 +58,13 @@ public abstract class Validator {
 	 * @throws IrrecoverableValidationError when any fatal errors arise, e.g. when the source file can not be found
 	 */
 	protected void validateSchema(byte[] xmlRawData, String schemaPath, int section, EPart part) throws IrrecoverableValidationError {
-		URL schemaFile = Thread.currentThread().getContextClassLoader().getResource("schema/" + schemaPath);
+		LOGGER.debug(
+				"protected void validateSchema(byte[] xmlRawData, String schemaPath='{}', int section={}, EPart part={})",
+				schemaPath,
+				section,
+				part
+		);
+		URL schemaFile = Thread.currentThread().getContextClassLoader().getResource(schemaPath); // Prefix "schema/" not needed anymore.
 		Source xmlData = new StreamSource(new ByteArrayInputStream(xmlRawData));
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		try {
@@ -81,7 +88,6 @@ public abstract class Validator {
 	public void setAutoload(boolean autoload) {
 		this.autoload = autoload;
 	}
-
 
 
 }

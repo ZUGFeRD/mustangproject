@@ -9,10 +9,11 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 	public void testPDFValidation() {
 		File tempFile = getResourceAsFile("invalidPDF.pdf");
-		/**used to be Rule	Status
+		/*
+		 used to be Rule	Status
 		 Specification: ISO 19005-3:2012, Clause: 6.2.11.4, Test number: 4
-		 If the FontDescriptor dictionary of an embedded CID font contains a CIDSet stream, then it shall identify all CIDs which are present in the font program, regardless of whether a CID in the font is referenced or used by the PDF or not.	Failed
-		 2 occurrences	Hide
+		 If the FontDescriptor dictionary of an embedded CID font contains a CIDSet stream, then it shall identify all CIDs which are present in the font program, regardless of whether a CID in the font is referenced or used by the PDF or not.	   Failed
+		 2 occurrences	  Hide
 		 PDCIDFont
 		 fontFile_size == 0 || fontName.search(/[A-Z]{6}\+/) != 0 || CIDSet_size == 0 || cidSetListsAllGlyphs == true
 		 root/document[0]/pages[1](9 0 obj PDPage)/contentStream[0](18 0 obj PDContentStream)/operators[166]/font[0](WIUIIO+CIDFont+F2)/DescendantFonts[0](WIUIIO+CIDFont+F2)
@@ -81,10 +82,11 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 	public void testPDFValidationInputStream() {
 		byte[] fileBytes = getResourceAsByteArray("invalidPDF.pdf");
-		/**used to be Rule  Status
+		/*
+		 used to be Rule  Status
 		 Specification: ISO 19005-3:2012, Clause: 6.2.11.4, Test number: 4
 		 If the FontDescriptor dictionary of an embedded CID font contains a CIDSet stream, then it shall identify all CIDs which are present in the font program, regardless of whether a CID in the font is referenced or used by the PDF or not. Failed
-		 2 occurrences  Hide
+		 2 occurrences	Hide
 		 PDCIDFont
 		 fontFile_size == 0 || fontName.search(/[A-Z]{6}\+/) != 0 || CIDSet_size == 0 || cidSetListsAllGlyphs == true
 		 root/document[0]/pages[1](9 0 obj PDPage)/contentStream[0](18 0 obj PDContentStream)/operators[166]/font[0](WIUIIO+CIDFont+F2)/DescendantFonts[0](WIUIIO+CIDFont+F2)
@@ -216,20 +218,20 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("count(//error)")
 			.asInt()
-			.isEqualTo(2);
+			.isEqualTo(2); // xrechnung-3.0.1-schematron-2.0.2
 		assertThat(res).valueByXPath("count(//warning)")
 			.asInt()
-			.isEqualTo(2);
+			.isEqualTo(2); // xrechnung-3.0.1-schematron-2.0.2
 
 		assertThat(res).valueByXPath("count(//notice)")
 			.asInt()
-			.isEqualTo(0); // 12 notices RE XRechnung 3.0
+			.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
-			.isEqualTo("invalid");// expect to be valid
+			.isEqualTo("invalid");
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 			.asString()
-			.isEqualTo("invalid");// expect to be valid
+			.isEqualTo("invalid");
 
 
 	}
@@ -250,10 +252,11 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("count(//notice)")
 			.asInt()
-			.isEqualTo(12); // 12 notices RE XRechnung 3.0
+			/* .isEqualTo(12); // xrechnung-3.0.1-schematron-2.0.2 */
+			.isEqualTo(9); // xrechnung-3.0.2-schematron-2.1.0
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
-			.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+			.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 			.asString()
 			.isEqualTo("valid");

@@ -39,7 +39,7 @@ public class ValidationResultItem {
 	public ValidationResultItem setSection(int sec) {
 		section=sec;
 		return this;
-	}	
+	}	 
 	public ValidationResultItem setLocation(String loc) {
 		location=loc;
 		return this;
