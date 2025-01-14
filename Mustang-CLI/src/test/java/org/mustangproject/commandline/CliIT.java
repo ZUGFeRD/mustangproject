@@ -1,7 +1,6 @@
 package org.mustangproject.commandline;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -52,7 +51,7 @@ public class CliIT {
 		if (!result.isEmpty()) {
 			System.out.println(result);
 		}
-		assertTrue(new String(Files.readAllBytes(output), StandardCharsets.UTF_8).contains("Invoice"));
+		assertTrue(Files.readString(output).contains("Invoice"));
 	}
 
 	private String getOutput(Process process) throws IOException {
@@ -61,7 +60,7 @@ public class CliIT {
 		String line;
 		while ((line = reader.readLine()) != null) {
 			builder.append(line);
-			builder.append(System.getProperty("line.separator"));
+			builder.append(System.lineSeparator());
 		}
 		return builder.toString();
 	}

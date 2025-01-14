@@ -251,7 +251,7 @@ public class ZUGFeRDInvoiceImporter {
 	/***
 	 * set the xml of a CII invoice, simple version
 	 * @param rawXML the cii(?) as a string
-	 * @throws IOException	if parsing xml throws it (unlikely its string based)
+	 * @throws IOException  if parsing xml throws it (unlikely its string based)
 	 */
 	public void setRawXML(byte[] rawXML) throws IOException {
 		setRawXML(rawXML, true);
@@ -262,7 +262,7 @@ public class ZUGFeRDInvoiceImporter {
 		xmlFact.setNamespaceAware(true);
 		final DocumentBuilder builder = xmlFact.newDocumentBuilder();
 		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
-		///	   is.skip(guessBOMSize(is));
+		///    is.skip(guessBOMSize(is));
 		document = builder.parse(is);
 		if (parseAutomatically) {
 			try {
@@ -332,41 +332,21 @@ public class ZUGFeRDInvoiceImporter {
 							delivery.addGlobalID(sID);
 						}
 					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("StreetName").ifPresent(t -> delivery.setStreet(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("CityName").ifPresent(t -> delivery.setLocation(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("PostalZone").ifPresent(t -> delivery.setZIP(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsNodeMap("Country").ifPresent(t -> t.getAsString("IdentificationCode").ifPresent(u -> delivery.setCountry(u)));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsNodeMap("AddressLine").ifPresent(t -> t.getAsString("Line").ifPresent(u -> delivery.setAdditionalAddressExtension(u)));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
-					});
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("StreetName").ifPresent(delivery::setStreet));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("AdditionalStreetName").ifPresent(delivery::setAdditionalAddress));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("CityName").ifPresent(delivery::setLocation));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("PostalZone").ifPresent(delivery::setZIP));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsNodeMap("Country").ifPresent(t -> t.getAsString("IdentificationCode").ifPresent(delivery::setCountry)));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsNodeMap("AddressLine").ifPresent(t -> t.getAsString("Line").ifPresent(delivery::setAdditionalAddressExtension)));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("AdditionalStreetName").ifPresent(delivery::setAdditionalAddress));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("AdditionalStreetName").ifPresent(delivery::setAdditionalAddress));
 				});
 
 
-			new NodeMap(deliveryNode).getAsNodeMap("DeliveryParty").ifPresent(partyMap -> {
-				partyMap.getAsNodeMap("PartyName").ifPresent(s -> {
-					s.getAsString("Name").ifPresent(t -> delivery.setName(t));
-				});
-			});
+			new NodeMap(deliveryNode).getAsNodeMap("DeliveryParty").ifPresent(partyMap -> partyMap.getAsNodeMap("PartyName").ifPresent(s -> s.getAsString("Name").ifPresent(delivery::setName)));
 			String street, name, additionalStreet, city, postal, countrySubentity, line, country = null;
 /*
-			String idx	= extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"ID\"]");
+			String idx  = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"ID\"]");
 			street = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name()=\"Address\"]/*[local-name()=\"StreetName\"]");
 			additionalStreet = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"Address\"]/*[local-name() = \"AdditionalStreetName\"]");
 			city = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"Address\"]/*[local-name() = \"CityName\"]");
@@ -402,31 +382,31 @@ public class ZUGFeRDInvoiceImporter {
 		XPathExpression shipPayee = xpath.compile("//*[local-name()=\"PayeeParty\"]/*");
 		NodeList ublPayeeNodes = (NodeList) shipPayee.evaluate(getDocument(), XPathConstants.NODESET);
 
-//		  if(ublPayeeNodes != null) {
-//			  TradeParty payee = new TradeParty();
-//			  NodeMap nodeMap = new NodeMap(ublPayeeNodes).getAsNodeMap("PayeeParty").get();
-//			  nodeMap.getNode("ID").ifPresent(s -> {
-//				  SchemedID sID = new SchemedID().setScheme(s.getAttributes().getNamedItem("schemeID").getTextContent()).setId(s.getTextContent());
-//				  payee.addGlobalID(sID);
-//			  });
-//		  }
+//		if(ublPayeeNodes != null) {
+//			TradeParty payee = new TradeParty();
+//			NodeMap nodeMap = new NodeMap(ublPayeeNodes).getAsNodeMap("PayeeParty").get();
+//			nodeMap.getNode("ID").ifPresent(s -> {
+//				SchemedID sID = new SchemedID().setScheme(s.getAttributes().getNamedItem("schemeID").getTextContent()).setId(s.getTextContent());
+//				payee.addGlobalID(sID);
+//			});
+//		}
 		//NodeList UBLpayeeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		zpp.setPayee(new TradeParty(ublPayeeNodes));
-//		  TradeParty payee =new TradeParty();
-//		  NodeMap payeeID = new NodeMap(UBLpayeeNodes).getAsNodeMap("PartyIdentification").get();
-//		  if (payeeID !=null) {
-//			  payeeID.getAsString("Name").ifPresent(t->payee.setName(t));
-//		  }
-//		  if (payeeNodes != null) {
-//			  TradeParty payee =new TradeParty();
-//			  NodeMap nodeMap = new NodeMap(payeeNodes).getAsNodeMap("PartyIdentification").get();
-//			  if (nodeMap != null) {
-//				  nodeMap.getNode("ID").ifPresent(s -> {
-//					  SchemedID sID = new SchemedID().setScheme(s.getAttributes().getNamedItem("schemeID").getTextContent()).setId(s.getTextContent());
-//					  payee.addGlobalID(sID);
-//				  });
-//			  }
-//		  }
+//		TradeParty payee =new TradeParty();
+//		NodeMap payeeID = new NodeMap(UBLpayeeNodes).getAsNodeMap("PartyIdentification").get();
+//		if (payeeID !=null) {
+//			payeeID.getAsString("Name").ifPresent(t->payee.setName(t));
+//		}
+//		if (payeeNodes != null) {
+//			TradeParty payee =new TradeParty();
+//			NodeMap nodeMap = new NodeMap(payeeNodes).getAsNodeMap("PartyIdentification").get();
+//			if (nodeMap != null) {
+//				nodeMap.getNode("ID").ifPresent(s -> {
+//					SchemedID sID = new SchemedID().setScheme(s.getAttributes().getNamedItem("schemeID").getTextContent()).setId(s.getTextContent());
+//					payee.addGlobalID(sID);
+//				});
+//			}
+//		}
 
 
 		xpr = xpath.compile("//*[local-name()=\"ExchangedDocument\"]|//*[local-name()=\"HeaderExchangedDocument\"]");
@@ -785,9 +765,9 @@ public class ZUGFeRDInvoiceImporter {
 						}
 					}
 				}
-//				  if ((paymentMeansChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("DirectDebitMandateID"))) {
-//				  directDebitMandateID = paymentTermChilds.item(paymentTermChildIndex).getTextContent();
-//				  }
+//				if ((paymentMeansChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("DirectDebitMandateID"))) {
+//				directDebitMandateID = paymentTermChilds.item(paymentTermChildIndex).getTextContent();
+//				}
 				if ((paymentMeansChilds.item(meansChildIndex).getLocalName() != null)
 					&& (paymentMeansChilds.item(meansChildIndex).getLocalName().equals("PaymentMandate"))) {
 					NodeList paymentMandateChilds = paymentMeansChilds.item(meansChildIndex).getChildNodes();
@@ -911,38 +891,48 @@ public class ZUGFeRDInvoiceImporter {
 					String chargeChildName = chargeNodeChilds.item(chargeChildIndex).getLocalName();
 					if (chargeChildName != null) {
 
-						if (chargeChildName.equals("ChargeIndicator")) {
-							if (chargeNodeChilds.item(chargeChildIndex).getTextContent().trim().equalsIgnoreCase("false")) {
-								// UBL
-								isCharge = false;
-							} else if (chargeNodeChilds.item(chargeChildIndex).getTextContent().trim().equalsIgnoreCase("true")) {
-								// still UBL
-								isCharge = true;
-							} else {
-								//CII
-								NodeList indicatorChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
-								for (int indicatorChildIndex = 0; indicatorChildIndex < indicatorChilds.getLength(); indicatorChildIndex++) {
-									if ((indicatorChilds.item(indicatorChildIndex).getLocalName() != null)
-										&& (indicatorChilds.item(indicatorChildIndex).getLocalName().equals("Indicator"))) {
-										isCharge = XMLTools.trimOrNull(indicatorChilds.item(indicatorChildIndex)).equalsIgnoreCase("true");
+						switch (chargeChildName) {
+							case "ChargeIndicator":
+								if (chargeNodeChilds.item(chargeChildIndex).getTextContent().trim().equalsIgnoreCase("false")) {
+									// UBL
+									isCharge = false;
+								} else if (chargeNodeChilds.item(chargeChildIndex).getTextContent().trim().equalsIgnoreCase("true")) {
+									// still UBL
+									isCharge = true;
+								} else {
+									//CII
+									NodeList indicatorChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
+									for (int indicatorChildIndex = 0; indicatorChildIndex < indicatorChilds.getLength(); indicatorChildIndex++) {
+										if ((indicatorChilds.item(indicatorChildIndex).getLocalName() != null)
+											&& (indicatorChilds.item(indicatorChildIndex).getLocalName().equals("Indicator"))) {
+											isCharge = XMLTools.trimOrNull(indicatorChilds.item(indicatorChildIndex)).equalsIgnoreCase("true");
+										}
 									}
 								}
-							}
 
-						} else if (chargeChildName.equals("ActualAmount") || chargeChildName.equals("Amount")) {
-							chargeAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
-						} else if (chargeChildName.equals("Reason") || chargeChildName.equals("AllowanceChargeReason")) {
-							reason = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
-						} else if (chargeChildName.equals("ReasonCode") || chargeChildName.equals("AllowanceChargeReasonCode")) {
-							reasonCode = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
-						} else if (chargeChildName.equals("CategoryTradeTax") || chargeChildName.equals("TaxCategory")) {
-							NodeList taxChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
-							for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
-								String taxItemName = taxChilds.item(taxChildIndex).getLocalName();
-								if ((taxItemName != null) && (taxItemName.equals("RateApplicablePercent") || taxItemName.equals("ApplicablePercent") || taxItemName.equals("Percent"))) {
-									taxPercent = XMLTools.trimOrNull(taxChilds.item(taxChildIndex));
+								break;
+							case "ActualAmount":
+							case "Amount":
+								chargeAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
+								break;
+							case "Reason":
+							case "AllowanceChargeReason":
+								reason = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
+								break;
+							case "ReasonCode":
+							case "AllowanceChargeReasonCode":
+								reasonCode = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
+								break;
+							case "CategoryTradeTax":
+							case "TaxCategory":
+								NodeList taxChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
+								for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
+									String taxItemName = taxChilds.item(taxChildIndex).getLocalName();
+									if ((taxItemName != null) && (taxItemName.equals("RateApplicablePercent") || taxItemName.equals("ApplicablePercent") || taxItemName.equals("Percent"))) {
+										taxPercent = XMLTools.trimOrNull(taxChilds.item(taxChildIndex));
+									}
 								}
-							}
+								break;
 						}
 					}
 				}

@@ -610,8 +610,7 @@ public class Main {
 					}
 				}
 			} else {
-				for (int i = 0; i < attachmentFilenames.length; i++) {
-					String attachmentFilename = attachmentFilenames[i];
+				for (String attachmentFilename : attachmentFilenames) {
 					if (!attachmentFilename.isEmpty()) {
 						byte[] attachmentContents = Files.readAllBytes(Paths.get(attachmentFilename));
 						String attachmentMime = Files.probeContentType(Paths.get(attachmentFilename));
@@ -640,7 +639,7 @@ public class Main {
 			} else {
 				System.out.println("Version set to " + zfVersion);
 			}
-			zfIntVersion = Integer.valueOf(zfVersion);
+			zfIntVersion = Integer.parseInt(zfVersion);
 
 			if (zfProfile == null) {
 				try {
@@ -683,32 +682,44 @@ public class Main {
 				if (format.equals("ox")) {
 					standard = EStandard.orderx;
 				}
-				if (zfProfile.equals("b")) {
-					zfConformanceLevelProfile = Profiles.getByName(standard, "BASIC", zfIntVersion);
-				} else if (zfProfile.equals("c")) {
-					zfConformanceLevelProfile = Profiles.getByName(standard, "COMFORT", zfIntVersion);
-				} else if (zfProfile.equals("t")) {
-					zfConformanceLevelProfile = Profiles.getByName(standard, "EXTENDED", zfIntVersion);
-				} else {
-					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
+				switch (zfProfile) {
+					case "b":
+						zfConformanceLevelProfile = Profiles.getByName(standard, "BASIC", zfIntVersion);
+						break;
+					case "c":
+						zfConformanceLevelProfile = Profiles.getByName(standard, "COMFORT", zfIntVersion);
+						break;
+					case "t":
+						zfConformanceLevelProfile = Profiles.getByName(standard, "EXTENDED", zfIntVersion);
+						break;
+					default:
+						throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}
 			} else if (((format.equals("zf")) && (zfIntVersion == 2)) || (format.equals("fx"))) {
-				if (zfProfile.equals("m")) {
-					zfConformanceLevelProfile = Profiles.getByName(standard, "MINIMUM", zfIntVersion);
-				} else if (zfProfile.equals("w")) {
-					zfConformanceLevelProfile = Profiles.getByName(standard, "BASICWL", zfIntVersion);
-				} else if (zfProfile.equals("b")) {
-					zfConformanceLevelProfile = Profiles.getByName(standard, "BASIC", zfIntVersion);
-				} else if (zfProfile.equals("c")) {
-					zfConformanceLevelProfile = Profiles.getByName(standard, "CIUS", zfIntVersion);
-				} else if (zfProfile.equals("e")) {
-					zfConformanceLevelProfile = Profiles.getByName(standard, "EN16931", zfIntVersion);
-				} else if (zfProfile.equals("t")) {
-					zfConformanceLevelProfile = Profiles.getByName(standard, "EXTENDED", zfIntVersion);
-				} else if (zfProfile.equals("x")) {
-					zfConformanceLevelProfile = Profiles.getByName(standard, "XRECHNUNG", zfIntVersion);
-				} else {
-					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
+				switch (zfProfile) {
+					case "m":
+						zfConformanceLevelProfile = Profiles.getByName(standard, "MINIMUM", zfIntVersion);
+						break;
+					case "w":
+						zfConformanceLevelProfile = Profiles.getByName(standard, "BASICWL", zfIntVersion);
+						break;
+					case "b":
+						zfConformanceLevelProfile = Profiles.getByName(standard, "BASIC", zfIntVersion);
+						break;
+					case "c":
+						zfConformanceLevelProfile = Profiles.getByName(standard, "CIUS", zfIntVersion);
+						break;
+					case "e":
+						zfConformanceLevelProfile = Profiles.getByName(standard, "EN16931", zfIntVersion);
+						break;
+					case "t":
+						zfConformanceLevelProfile = Profiles.getByName(standard, "EXTENDED", zfIntVersion);
+						break;
+					case "x":
+						zfConformanceLevelProfile = Profiles.getByName(standard, "XRECHNUNG", zfIntVersion);
+						break;
+					default:
+						throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}
 			} else {
 				throw new Exception(String.format("Unknown version '%d'", zfIntVersion));

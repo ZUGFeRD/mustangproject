@@ -20,10 +20,8 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mustangproject.*;
 
@@ -34,7 +32,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
@@ -113,7 +110,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		Invoice invoice = null;
 		try {
-			String xml = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r", "").replace("\n", "");
+			String xml = Files.readString(expectedResult.toPath()).replace("\r", "").replace("\n", "");
 
 			zii.fromXML(xml);
 
@@ -288,7 +285,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		int version=-1;
 		try {
-			zii.fromXML(new String(Files.readAllBytes(Paths.get("./target/testout-XR-Edge.xml")), StandardCharsets.UTF_8));
+			zii.fromXML(Files.readString(Paths.get("./target/testout-XR-Edge.xml")));
 			version=zii.getVersion();
 		} catch (IOException e) {
 			hasExceptions = true;
@@ -366,9 +363,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		} catch (IOException e) {
 			fail("IOException not expected");
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -387,9 +382,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		} catch (IOException e) {
 			fail("IOException not expected");
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -409,9 +402,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		} catch (IOException e) {
 			fail("IOException not expected");
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 
