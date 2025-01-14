@@ -373,7 +373,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
-  public void testImportMinimum() {
+	public void testImportMinimum() {
 		File CIIinputFile = getResourceAsFile("cii/facturFrMinimum.xml");
 		try {
 			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
@@ -391,6 +391,28 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 
   }
+
+	public void testImportUBLCreditnote() { // Confirm some basics also work with UBL credit notes
+		File CIIinputFile = getResourceAsFile("ubl/UBL-CreditNote-2.1-Example.ubl.xml");
+		try {
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
+
+
+			CalculatedInvoice i = new CalculatedInvoice();
+			zii.extractInto(i);
+			assertEquals("TOSL108", i.getNumber());
+			assertEquals("729", i.getGrandTotal().toString());
+
+		} catch (IOException e) {
+			fail("IOException not expected");
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+
+
+	}
 
 
 	@Test
