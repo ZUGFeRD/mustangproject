@@ -22,7 +22,6 @@
 package org.mustangproject.ZUGFeRD;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -30,7 +29,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import org.mustangproject.*;
 import org.junit.FixMethodOrder;
@@ -102,9 +100,7 @@ public class ZF2PushTest extends TestCase {
 		Invoice i = new Invoice();
 		try {
 			zii.extractInto(i);
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -170,9 +166,7 @@ public class ZF2PushTest extends TestCase {
 		Invoice i = null;
 		try {
 			i = zii.extractInvoice();
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -383,9 +377,7 @@ public class ZF2PushTest extends TestCase {
 		Invoice i = null;
 		try {
 			i = zii.extractInvoice();
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 

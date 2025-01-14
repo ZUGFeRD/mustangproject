@@ -309,7 +309,7 @@ public class ZUGFeRDInvoiceImporter {
 		List<IncludedNote> includedNotes = new ArrayList<>();
 
 		//UBL...
-		XPathExpression UBLNotesEx = xpath.compile("/*[local-name()=\"Invoice\"  or local-name()=\"CreditNote\"]/*[local-name()=\"Note\"]");
+		XPathExpression UBLNotesEx = xpath.compile("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"Note\"]");
 		NodeList UBLNotesNd = (NodeList) UBLNotesEx.evaluate(getDocument(), XPathConstants.NODESET);
 		if ((UBLNotesNd != null) && (UBLNotesNd.getLength() > 0)) {
 			for (int nodeIndex = 0; nodeIndex < UBLNotesNd.getLength(); nodeIndex++) {
@@ -332,38 +332,18 @@ public class ZUGFeRDInvoiceImporter {
 							delivery.addGlobalID(sID);
 						}
 					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("StreetName").ifPresent(t -> delivery.setStreet(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("CityName").ifPresent(t -> delivery.setLocation(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("PostalZone").ifPresent(t -> delivery.setZIP(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsNodeMap("Country").ifPresent(t -> t.getAsString("IdentificationCode").ifPresent(u -> delivery.setCountry(u)));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsNodeMap("AddressLine").ifPresent(t -> t.getAsString("Line").ifPresent(u -> delivery.setAdditionalAddressExtension(u)));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
-					});
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("StreetName").ifPresent(delivery::setStreet));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("AdditionalStreetName").ifPresent(delivery::setAdditionalAddress));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("CityName").ifPresent(delivery::setLocation));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("PostalZone").ifPresent(delivery::setZIP));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsNodeMap("Country").ifPresent(t -> t.getAsString("IdentificationCode").ifPresent(delivery::setCountry)));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsNodeMap("AddressLine").ifPresent(t -> t.getAsString("Line").ifPresent(delivery::setAdditionalAddressExtension)));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("AdditionalStreetName").ifPresent(delivery::setAdditionalAddress));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("AdditionalStreetName").ifPresent(delivery::setAdditionalAddress));
 				});
 
 
-			new NodeMap(deliveryNode).getAsNodeMap("DeliveryParty").ifPresent(partyMap -> {
-				partyMap.getAsNodeMap("PartyName").ifPresent(s -> {
-					s.getAsString("Name").ifPresent(t -> delivery.setName(t));
-				});
-			});
+			new NodeMap(deliveryNode).getAsNodeMap("DeliveryParty").ifPresent(partyMap -> partyMap.getAsNodeMap("PartyName").ifPresent(s -> s.getAsString("Name").ifPresent(delivery::setName)));
 			String street, name, additionalStreet, city, postal, countrySubentity, line, country = null;
 /*
 			String idx  = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"ID\"]");
@@ -558,14 +538,14 @@ public class ZUGFeRDInvoiceImporter {
 		String rootNode = extractString("local-name(/*)");
 		if (rootNode.equals("Invoice")||rootNode.equals("CreditNote")) {
 			// UBL...
-			// //*[local-name()="Invoice" or local-name()="CreditNote"]
-			number = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"ID\"]").trim();
-			typeCode = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"InvoiceTypeCode\"]").trim();
-			String issueDateStr = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"IssueDate\"]").trim();
+			// //*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]
+			number = extractString("//*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"ID\"]").trim();
+			typeCode = extractString("//*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"InvoiceTypeCode\"]").trim();
+			String issueDateStr = extractString("//*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"IssueDate\"]").trim();
 			if (issueDateStr.length()>0) {
 				issueDate = new SimpleDateFormat("yyyy-MM-dd").parse(issueDateStr);
 			}
-			String dueDt = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"DueDate\"]").trim();
+			String dueDt = extractString("//*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"DueDate\"]").trim();
 			if (dueDt.length() > 0) {
 				dueDate = new SimpleDateFormat("yyyy-MM-dd").parse(dueDt);
 			}
@@ -911,38 +891,48 @@ public class ZUGFeRDInvoiceImporter {
 					String chargeChildName = chargeNodeChilds.item(chargeChildIndex).getLocalName();
 					if (chargeChildName != null) {
 
-						if (chargeChildName.equals("ChargeIndicator")) {
-							if (chargeNodeChilds.item(chargeChildIndex).getTextContent().trim().equalsIgnoreCase("false")) {
-								// UBL
-								isCharge = false;
-							} else if (chargeNodeChilds.item(chargeChildIndex).getTextContent().trim().equalsIgnoreCase("true")) {
-								// still UBL
-								isCharge = true;
-							} else {
-								//CII
-								NodeList indicatorChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
-								for (int indicatorChildIndex = 0; indicatorChildIndex < indicatorChilds.getLength(); indicatorChildIndex++) {
-									if ((indicatorChilds.item(indicatorChildIndex).getLocalName() != null)
-										&& (indicatorChilds.item(indicatorChildIndex).getLocalName().equals("Indicator"))) {
-										isCharge = XMLTools.trimOrNull(indicatorChilds.item(indicatorChildIndex)).equalsIgnoreCase("true");
+						switch (chargeChildName) {
+							case "ChargeIndicator":
+								if (chargeNodeChilds.item(chargeChildIndex).getTextContent().trim().equalsIgnoreCase("false")) {
+									// UBL
+									isCharge = false;
+								} else if (chargeNodeChilds.item(chargeChildIndex).getTextContent().trim().equalsIgnoreCase("true")) {
+									// still UBL
+									isCharge = true;
+								} else {
+									//CII
+									NodeList indicatorChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
+									for (int indicatorChildIndex = 0; indicatorChildIndex < indicatorChilds.getLength(); indicatorChildIndex++) {
+										if ((indicatorChilds.item(indicatorChildIndex).getLocalName() != null)
+											&& (indicatorChilds.item(indicatorChildIndex).getLocalName().equals("Indicator"))) {
+											isCharge = XMLTools.trimOrNull(indicatorChilds.item(indicatorChildIndex)).equalsIgnoreCase("true");
+										}
 									}
 								}
-							}
 
-						} else if (chargeChildName.equals("ActualAmount") || chargeChildName.equals("Amount")) {
-							chargeAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
-						} else if (chargeChildName.equals("Reason") || chargeChildName.equals("AllowanceChargeReason")) {
-							reason = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
-						} else if (chargeChildName.equals("ReasonCode") || chargeChildName.equals("AllowanceChargeReasonCode")) {
-							reasonCode = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
-						} else if (chargeChildName.equals("CategoryTradeTax") || chargeChildName.equals("TaxCategory")) {
-							NodeList taxChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
-							for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
-								String taxItemName = taxChilds.item(taxChildIndex).getLocalName();
-								if ((taxItemName != null) && (taxItemName.equals("RateApplicablePercent") || taxItemName.equals("ApplicablePercent") || taxItemName.equals("Percent"))) {
-									taxPercent = XMLTools.trimOrNull(taxChilds.item(taxChildIndex));
+								break;
+							case "ActualAmount":
+							case "Amount":
+								chargeAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
+								break;
+							case "Reason":
+							case "AllowanceChargeReason":
+								reason = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
+								break;
+							case "ReasonCode":
+							case "AllowanceChargeReasonCode":
+								reasonCode = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
+								break;
+							case "CategoryTradeTax":
+							case "TaxCategory":
+								NodeList taxChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
+								for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
+									String taxItemName = taxChilds.item(taxChildIndex).getLocalName();
+									if ((taxItemName != null) && (taxItemName.equals("RateApplicablePercent") || taxItemName.equals("ApplicablePercent") || taxItemName.equals("Percent"))) {
+										taxPercent = XMLTools.trimOrNull(taxChilds.item(taxChildIndex));
+									}
 								}
-							}
+								break;
 						}
 					}
 				}
