@@ -813,9 +813,11 @@ public class ZUGFeRDInvoiceImporter {
 				d.setPaymentMeansInformation(paymentMeansInformation);
 			}
 			zpp.getSender().addDebitDetails(d);
+			bankDetails.forEach(bankDetail -> zpp.getRecipient().addBankDetails(bankDetail));
+		} else {
+			bankDetails.forEach(bankDetail -> zpp.getSender().addBankDetails(bankDetail));
 		}
 
-		bankDetails.forEach(bankDetail -> zpp.getSender().addBankDetails(bankDetail));
 
 		if (payeeNodes.getLength() > 0) {
 			zpp.setPayee(new TradeParty(payeeNodes));
