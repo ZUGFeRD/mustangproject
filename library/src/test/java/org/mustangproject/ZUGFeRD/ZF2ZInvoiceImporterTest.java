@@ -463,6 +463,30 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+
+	@Test
+	public void testIBANparsing() throws XPathExpressionException, ParseException, FileNotFoundException {
+
+		File inputFile = getResourceAsFile("cii/minimalDebit.xml");
+
+		ZUGFeRDInvoiceImporter importer = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
+		Invoice invoice = importer.extractInvoice();
+		assertEquals(1,invoice.getRecipient().getBankDetails().size());
+		// IBAN belongs to recipient in invoice with sepa debit
+		assertEquals("DE21860000000086001055",invoice.getRecipient().getBankDetails().get(0).getIBAN());
+		assertEquals(0,invoice.getSender().getBankDetails().size());
+
+		inputFile = getResourceAsFile("factur-x.xml");
+
+		importer = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
+		invoice = importer.extractInvoice();
+		assertEquals(1,invoice.getSender().getBankDetails().size());
+		// IBAN belongs to sender in normal invoice
+		assertEquals("DE88200800000970375700",invoice.getSender().getBankDetails().get(0).getIBAN());
+		assertEquals(0,invoice.getRecipient().getBankDetails().size());
+
+	}
+
 	@Test
 	public void testImportPositionIncludedNotes() throws FileNotFoundException, XPathExpressionException, ParseException {
 		File inputFile = getResourceAsFile("ZTESTZUGFERD_1_INVDSS_012015738820PDF-1.pdf");
