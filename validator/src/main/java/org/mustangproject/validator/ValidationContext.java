@@ -70,7 +70,7 @@ public class ValidationContext {
 	}
 
 	public ValidationContext setProfile(String profile) {
-		this.profile = profile;
+		this.profile = profile.trim();
 		return this;
 	}
 
