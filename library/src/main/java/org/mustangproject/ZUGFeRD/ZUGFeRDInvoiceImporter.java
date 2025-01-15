@@ -309,7 +309,7 @@ public class ZUGFeRDInvoiceImporter {
 		List<IncludedNote> includedNotes = new ArrayList<>();
 
 		//UBL...
-		XPathExpression UBLNotesEx = xpath.compile("/*[local-name()=\"Invoice\"]/*[local-name()=\"Note\"]");
+		XPathExpression UBLNotesEx = xpath.compile("/*[local-name()=\"Invoice\"  or local-name()=\"CreditNote\"]/*[local-name()=\"Note\"]");
 		NodeList UBLNotesNd = (NodeList) UBLNotesEx.evaluate(getDocument(), XPathConstants.NODESET);
 		if ((UBLNotesNd != null) && (UBLNotesNd.getLength() > 0)) {
 			for (int nodeIndex = 0; nodeIndex < UBLNotesNd.getLength(); nodeIndex++) {
@@ -556,15 +556,16 @@ public class ZUGFeRDInvoiceImporter {
 		}
 		zpp.addNotes(includedNotes);
 		String rootNode = extractString("local-name(/*)");
-		if (rootNode.equals("Invoice")) {
+		if (rootNode.equals("Invoice")||rootNode.equals("CreditNote")) {
 			// UBL...
-			number = extractString("//*[local-name()=\"Invoice\"]/*[local-name()=\"ID\"]").trim();
-			typeCode = extractString("//*[local-name()=\"Invoice\"]/*[local-name()=\"InvoiceTypeCode\"]").trim();
-			String issueDateStr = extractString("//*[local-name()=\"Invoice\"]/*[local-name()=\"IssueDate\"]").trim();
+			// //*[local-name()="Invoice" or local-name()="CreditNote"]
+			number = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"ID\"]").trim();
+			typeCode = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"InvoiceTypeCode\"]").trim();
+			String issueDateStr = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"IssueDate\"]").trim();
 			if (issueDateStr.length()>0) {
 				issueDate = new SimpleDateFormat("yyyy-MM-dd").parse(issueDateStr);
 			}
-			String dueDt = extractString("//*[local-name()=\"Invoice\"]/*[local-name()=\"DueDate\"]").trim();
+			String dueDt = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"DueDate\"]").trim();
 			if (dueDt.length() > 0) {
 				dueDate = new SimpleDateFormat("yyyy-MM-dd").parse(dueDt);
 			}
@@ -812,9 +813,11 @@ public class ZUGFeRDInvoiceImporter {
 				d.setPaymentMeansInformation(paymentMeansInformation);
 			}
 			zpp.getSender().addDebitDetails(d);
+			bankDetails.forEach(bankDetail -> zpp.getRecipient().addBankDetails(bankDetail));
+		} else {
+			bankDetails.forEach(bankDetail -> zpp.getSender().addBankDetails(bankDetail));
 		}
 
-		bankDetails.forEach(bankDetail -> zpp.getSender().addBankDetails(bankDetail));
 
 		if (payeeNodes.getLength() > 0) {
 			zpp.setPayee(new TradeParty(payeeNodes));
