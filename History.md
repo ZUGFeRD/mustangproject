@@ -1,6 +1,7 @@
 - #678
 - #679
-- #681 
+- #681
+- #689
 - be able to set detailedDeliveryPeriodFrom, detailedDeliveryPeriodTo MS188
 - updated verapdf from 1.26.1 to 1.26.2
 
