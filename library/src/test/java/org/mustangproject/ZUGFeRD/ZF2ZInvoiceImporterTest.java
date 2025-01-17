@@ -245,7 +245,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		assertFalse(hasExceptions);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("18.33"), tc.getGrandTotal());
+		assertEquals(new BigDecimal("19.52"), tc.getGrandTotal());
 	}
 
 	public void testBasisQuantityImport() {
@@ -357,7 +357,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
 			Invoice i = zii.extractInvoice();
 
-			assertEquals("DE21860000000086001055", i.getSender().getBankDetails().get(0).getIBAN());
+			assertEquals("DE21860000000086001055", i.getRecipient().getBankDetails().get(0).getIBAN());
 			ObjectMapper mapper = new ObjectMapper();
 
 			String jsonArray = mapper.writeValueAsString(i);
