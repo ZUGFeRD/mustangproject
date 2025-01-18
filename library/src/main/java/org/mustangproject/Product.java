@@ -10,11 +10,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /***
  * describes a product, good or service used in an invoice item line
@@ -304,11 +300,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @return fluent setter
 	 */
 	public Product setVATPercent(BigDecimal VATPercent) {
-		if (VATPercent == null) {
-			this.VATPercent = BigDecimal.ZERO;
-		} else {
-			this.VATPercent = VATPercent;
-		}
+		this.VATPercent = Objects.requireNonNullElse(VATPercent, BigDecimal.ZERO);
 		return this;
 	}
 

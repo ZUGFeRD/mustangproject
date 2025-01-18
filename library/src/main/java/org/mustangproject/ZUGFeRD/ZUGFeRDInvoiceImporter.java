@@ -332,38 +332,18 @@ public class ZUGFeRDInvoiceImporter {
 							delivery.addGlobalID(sID);
 						}
 					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("StreetName").ifPresent(t -> delivery.setStreet(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("CityName").ifPresent(t -> delivery.setLocation(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("PostalZone").ifPresent(t -> delivery.setZIP(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsNodeMap("Country").ifPresent(t -> t.getAsString("IdentificationCode").ifPresent(u -> delivery.setCountry(u)));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsNodeMap("AddressLine").ifPresent(t -> t.getAsString("Line").ifPresent(u -> delivery.setAdditionalAddressExtension(u)));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
-					});
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("StreetName").ifPresent(delivery::setStreet));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("AdditionalStreetName").ifPresent(delivery::setAdditionalAddress));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("CityName").ifPresent(delivery::setLocation));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("PostalZone").ifPresent(delivery::setZIP));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsNodeMap("Country").ifPresent(t -> t.getAsString("IdentificationCode").ifPresent(delivery::setCountry)));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsNodeMap("AddressLine").ifPresent(t -> t.getAsString("Line").ifPresent(delivery::setAdditionalAddressExtension)));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("AdditionalStreetName").ifPresent(delivery::setAdditionalAddress));
+					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> s.getAsString("AdditionalStreetName").ifPresent(delivery::setAdditionalAddress));
 				});
 
 
-			new NodeMap(deliveryNode).getAsNodeMap("DeliveryParty").ifPresent(partyMap -> {
-				partyMap.getAsNodeMap("PartyName").ifPresent(s -> {
-					s.getAsString("Name").ifPresent(t -> delivery.setName(t));
-				});
-			});
+			new NodeMap(deliveryNode).getAsNodeMap("DeliveryParty").ifPresent(partyMap -> partyMap.getAsNodeMap("PartyName").ifPresent(s -> s.getAsString("Name").ifPresent(delivery::setName)));
 			String street, name, additionalStreet, city, postal, countrySubentity, line, country = null;
 /*
 			String idx  = extractString("//*[local-name()=\"DeliveryLocation\"]/*[local-name() = \"ID\"]");
