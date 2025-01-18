@@ -372,7 +372,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 			ze.export(baos);
 			ze.close();
 			String pdfContent = baos.toString(StandardCharsets.UTF_8);
-			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
+			assertFalse(!pdfContent.contains("(via mustangproject.org"));
 			// check for pdf-a schema extension
 //			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
 //			assertFalse(pdfContent.indexOf("<pdfaSchema:prefix>zf</pdfaSchema:prefix>") == -1);
@@ -416,9 +416,9 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 			ze.export(baos);
 			ze.close();
 			String pdfContent = baos.toString(StandardCharsets.UTF_8);
-			assertFalse(pdfContent.indexOf(DocumentContextParameterTypeConstants.BASIC) >= 0);
-			assertFalse(pdfContent.indexOf(DocumentContextParameterTypeConstants.EXTENDED) >= 0);
-			assertTrue(pdfContent.indexOf(DocumentContextParameterTypeConstants.COMFORT) >= 0);
+			assertFalse(pdfContent.contains(DocumentContextParameterTypeConstants.BASIC));
+			assertFalse(pdfContent.contains(DocumentContextParameterTypeConstants.EXTENDED));
+			assertTrue(pdfContent.contains(DocumentContextParameterTypeConstants.COMFORT));
 
 		} catch (IOException e) {
 			fail("IOException should not happen in testZExport");
@@ -452,11 +452,11 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 			ze.export(baos);
 			ze.close();
 			String pdfContent = baos.toString(StandardCharsets.UTF_8);
-			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
+			assertFalse(!pdfContent.contains("(via mustangproject.org"));
 			// check for pdf-a schema extension
-			assertFalse(pdfContent.indexOf("<fx:ConformanceLevel>EN 16931</fx:ConformanceLevel>") == -1);
-			assertFalse(pdfContent.indexOf("<pdfaSchema:prefix>fx</pdfaSchema:prefix>") == -1);
-			assertFalse(pdfContent.indexOf("urn:cen.eu:en16931:2017") == -1);
+			assertFalse(!pdfContent.contains("<fx:ConformanceLevel>EN 16931</fx:ConformanceLevel>"));
+			assertFalse(!pdfContent.contains("<pdfaSchema:prefix>fx</pdfaSchema:prefix>"));
+			assertFalse(!pdfContent.contains("urn:cen.eu:en16931:2017"));
 		}
 
 		// now check the contents (like MustangReaderTest)

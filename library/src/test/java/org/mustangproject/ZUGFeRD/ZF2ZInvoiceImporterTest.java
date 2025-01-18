@@ -366,9 +366,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		} catch (IOException e) {
 			fail("IOException not expected");
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -387,14 +385,12 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		} catch (IOException e) {
 			fail("IOException not expected");
-		} catch (XPathExpressionException e) {
-			throw new RuntimeException(e);
-		} catch (ParseException e) {
+		} catch (XPathExpressionException | ParseException e) {
 			throw new RuntimeException(e);
 		}
 
 
-	}
+  }
 
 	public void testImportUBLCreditnote() { // Confirm some basics also work with UBL credit notes
 		File CIIinputFile = getResourceAsFile("ubl/UBL-CreditNote-2.1-Example.ubl.xml");

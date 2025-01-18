@@ -80,7 +80,7 @@ public class VisualizationTest extends ResourceCase {
 
 
 		assertNotNull(result);
-        /* remove file endings so that tests can also pass after checking
+		/* remove file endings so that tests can also pass after checking
 		   out from git with arbitrary options (which may include CSRF changes)
 		 */
 		assertEquals(expected.replace("\r", "")
