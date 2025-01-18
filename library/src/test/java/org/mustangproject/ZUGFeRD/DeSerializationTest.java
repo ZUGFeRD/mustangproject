@@ -100,6 +100,8 @@ public class DeSerializationTest extends ResourceCase {
 			"  \"currency\": \"EUR\",\n" +
 			"  \"issueDate\": \"2018-03-03T23:00:00.000+00:00\",\n" +
 			"  \"deliveryDate\": \"2018-03-03T23:00:00.000+00:00\",\n" +
+			"  \"detailedDeliveryPeriodFrom\": \"2017-03-03T13:00:00.000+00:00\",\n" +
+			"  \"detailedDeliveryPeriodTo\": \"2017-03-04T13:00:00.000+00:00\",\n" +
 			"  \"sender\": {\n" +
 			"    \"name\": \"Lieferant GmbH\",\n" +
 			"    \"zip\": \"80333\",\n" +
@@ -160,7 +162,15 @@ public class DeSerializationTest extends ResourceCase {
 		TransactionCalculator tc = new TransactionCalculator(fromJSON);
 		assertEquals(tc.getGrandTotal(), new BigDecimal("234.43"));
 		assertEquals(fromJSON.getNumber(), fromJSON.getNumber());
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(fromJSON);
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+
 		assertEquals(fromJSON.getZFItems().length, fromJSON.getZFItems().length);
+		assertTrue(theXML.contains("20170303"));
+		assertTrue(theXML.contains("20170304"));
 
 	}
 
