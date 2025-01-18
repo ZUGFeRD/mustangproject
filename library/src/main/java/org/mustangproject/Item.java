@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 /***
  * describes any invoice line
@@ -77,13 +75,9 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsString("Name").ifPresent(product::setName);
 			icnm.getAsString("Description").ifPresent(product::setDescription);
 
-			icnm.getAsNodeMap("SellersItemIdentification").ifPresent(SellersItemIdentification -> {
-				SellersItemIdentification.getAsString("ID").ifPresent(product::setSellerAssignedID);
-			});
+			icnm.getAsNodeMap("SellersItemIdentification").ifPresent(SellersItemIdentification -> SellersItemIdentification.getAsString("ID").ifPresent(product::setSellerAssignedID));
 
-			icnm.getAsNodeMap("BuyersItemIdentification").ifPresent(BuyersItemIdentification -> {
-				BuyersItemIdentification.getAsString("ID").ifPresent(product::setBuyerAssignedID);
-			});
+			icnm.getAsNodeMap("BuyersItemIdentification").ifPresent(BuyersItemIdentification -> BuyersItemIdentification.getAsString("ID").ifPresent(product::setBuyerAssignedID));
 
 //				String name = icnm.getAsStringOrNull("Name");
 //				String val = icnm.getAsStringOrNull("Value");
@@ -100,9 +94,7 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("ClassifiedTaxCategory").flatMap(m -> m.getAsBigDecimal("Percent"))
 				.ifPresent(product::setVATPercent);
 		});
-		itemMap.getAsNodeMap("AssociatedDocumentLineDocument").ifPresent(icnm -> {
-			icnm.getAsString("LineID").ifPresent(this::setId);
-		});
+		itemMap.getAsNodeMap("AssociatedDocumentLineDocument").ifPresent(icnm -> icnm.getAsString("LineID").ifPresent(this::setId));
 
 		itemMap.getAsNodeMap("Price").ifPresent(icnm -> {
 			// ubl
@@ -172,32 +164,29 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("ApplicableTradeTax")
 				.flatMap(cnm -> cnm.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent"))
 				.ifPresent(product::setVATPercent);
-			icnm.getAsNodeMap("SpecifiedTradeAllowanceCharge").ifPresent(stac -> {
-				stac.getAsNodeMap("ChargeIndicator").ifPresent(ci -> {
-					String isChargeString=ci.getAsString("Indicator").get();
-					String percentString=stac.getAsStringOrNull("CalculationPercent");
-					String amountString=stac.getAsStringOrNull("ActualAmount");
-					String reason=stac.getAsStringOrNull("Reason");
-					Charge izac= new Charge();
-					if (isChargeString.equalsIgnoreCase("false")) {
-						izac = new Allowance();
-					} else {
-						izac = new Charge();
-					}
-					if (amountString!=null) {
-						izac.setTotalAmount(new BigDecimal(amountString));
-					}
-					izac.setPercent(new BigDecimal(percentString));
-					izac.setReason(reason);
+			icnm.getAsNodeMap("SpecifiedTradeAllowanceCharge").ifPresent(stac -> stac.getAsNodeMap("ChargeIndicator").ifPresent(ci -> {
+				String isChargeString=ci.getAsString("Indicator").get();
+				String percentString=stac.getAsStringOrNull("CalculationPercent");
+				String amountString=stac.getAsStringOrNull("ActualAmount");
+				String reason=stac.getAsStringOrNull("Reason");
+				Charge izac= new Charge();
+				if (isChargeString.equalsIgnoreCase("false")) {
+					izac = new Allowance();
+				} else {
+					izac = new Charge();
+				}
+				if (amountString!=null) {
+					izac.setTotalAmount(new BigDecimal(amountString));
+				}
+				izac.setPercent(new BigDecimal(percentString));
+				izac.setReason(reason);
 
-					if (isChargeString.equalsIgnoreCase("false")) {
-						addAllowance(izac);
-					} else {
-						addCharge(izac);
-					}
-				});
-
-			});
+				if (isChargeString.equalsIgnoreCase("false")) {
+					addAllowance(izac);
+				} else {
+					addCharge(izac);
+				}
+			}));
 
 			if (recalcPrice && !BigDecimal.ZERO.equals(quantity)) {
 				icnm.getAsNodeMap("SpecifiedTradeSettlementLineMonetarySummation")

@@ -36,7 +36,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
