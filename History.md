@@ -4,6 +4,7 @@
 - #689
 - be able to set detailedDeliveryPeriodFrom, detailedDeliveryPeriodTo MS188
 - updated verapdf from 1.26.1 to 1.26.2
+- cashDiscount JSON now corrently ignores values for cii and xr methods 
 
 2.16.0
 =======

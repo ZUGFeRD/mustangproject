@@ -1,5 +1,6 @@
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IZUGFeRDCashDiscount;
@@ -63,6 +64,7 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	/***
 	 * @return this particular cash discount as cross industry invoice XML
 	 */
+	@JsonIgnore
 	public String getAsCII() {
 		return  "<ram:SpecifiedTradePaymentTerms>"+
 				"<ram:Description>Cash Discount</ram:Description>"+
@@ -78,6 +80,7 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	 * XRechnung CIUS defined it's own proprietary format for a freetext field
 	 * @return this particular cash discount in proprietary xrechnung format
 	 */
+	@JsonIgnore
 	public String getAsXRechnung() {
 		return "#SKONTO#TAGE="+days+"#PROZENT="+XMLTools.nDigitFormat(percent,2)+"#\n";
 	}
