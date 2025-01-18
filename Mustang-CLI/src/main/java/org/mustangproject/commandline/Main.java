@@ -44,63 +44,63 @@ public class Main {
 
 	private static String getUsage() {
 		return "Usage: --action metrics|combine|extract|a3only|ubl|validate|validateExpectInvalid|validateExpectValid|visualize [-d,--directory] [-l,--listfromstdin] [-i,--ignore fileextension, PDF/A errors] [--disable-file-logging] | [-h,--help] \r\n"
-			+ "        --action license   display open source license and notice\n"
-			+ "        --action metrics\n"
-			+ "          -d, --directory count ZUGFeRD files in directory to be scanned\n"
-			+ "                If it is a directory, it will recurse.\n"
-			+ "          -l, --listfromstdin     count ZUGFeRD files from a list of linefeed separated files on runtime.\n"
-			+ "                It will start once a blank line has been entered.\n" + "\n"
-			+ "        Additional parameter for both count operations\n"
-			+ "        [-i, --ignorefileextension]     Check for all files (*.*) instead of PDF files only (*.pdf) in metrics, ignore PDF/A input file errors in combine\n"
-			+ "        [--disable-file-logging]		disable logging to file.\n"
-			+ "        --action extract   extract Factur-X PDF to XML file\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-			+ "                [--source <filename>]: set input PDF file\n"
-			+ "                [--out <filename>]: set output XML file\n"
-			+ "        --action a3only    upgrade from PDF/A1 to A3 only (no ZUGFeRD data attached)\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-			+ "                [--source <filename>]: set input PDF file\n"
-			+ "                [--out <filename>]: set output PDF file\n"
-			+ "        --action combine   combine XML and PDF file to Factur-X PDF file\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-			+ "                [--source <filename>]: set input PDF file\n"
-			+ "                [--source-xml <filename>]: set input XML file\n"
-			+ "                [--out <filename>]: set output PDF file\n"
-			+ "                [--format <fx|zf|ox|da>]: set Factur-X, ZUGFeRD, Order-X or Cross Industry Despatch Advice\n"
-			+ "                [--version <1|2>]: set ZUGFeRD version\n"
-			+ "                [--profile <...>]: set ZUGFeRD profile\n"
-			+ "                        For ZUGFeRD v1 or Order-X: <B>ASIC, <C>OMFORT or EX<T>ENDED\n"
-			+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED\n"
-			+ "                [--attachments <filenames>]: list of file attachments (passing a single empty file name prevents prompting)\n"
-			+ "                [--no-additional-attachments]: prevent prompting for attachments\n"
-			+ "        --action ubl   convert UN/CEFACT 2016b CII XML to UBL XML\n"
-			+ "                [--source <filename>]: set input XML file\n"
-			+ "                [--out <filename>]: set output XML file\n"
-			+ "        --action upgrade   upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-			+ "                [--source <filename>]: set input XML ZUGFeRD 1 file\n"
-			+ "                [--out <filename>]: set output XML ZUGFeRD 2 file\n"
-			+ "        --action validate  validate XML or PDF file \n"
-			+ "                [--no-notices]: refrain from reporting notices\n"
-			+ "                [--logAppend <text>]: text to be added to log line\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-			+ "                [--source <filename>]: input PDF or XML file\n"
-			+ "                [--log-as-pdf]: save log output as pdf\n"
-			+ "        --action validateExpectInvalid  validate directory expecting negative results \n"
-			+ "                [--no-notices]: refrain from reporting notices\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-			+ "					-d, --directory to check recursively\n"
-			+ "        --action validateExpectValid  validate directory expecting positive results \n"
-			+ "                [--no-notices]: refrain from reporting notices\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
-			+ "					-d, --directory to check recursively \n"
-			+ "        --action visualize  convert XML to HTML \n"
-			+ "                [--language <lang>]: set output lang (en, fr or de)\n"
-			+ "                [--source <filename>]: set input XML file\n"
-			+ "                [--out <filename>]: set output HTML file\n"
-			+ "        --action pdf  convert XML to PDF \n"
-			+ "                [--source <filename>]: set input XML file\n"
-			+ "                [--out <filename>]: set output PDF file\n"
+			 + "       --action license   display open source license and notice\n"
+			 + "       --action metrics\n"
+			 + "         -d, --directory count ZUGFeRD files in directory to be scanned\n"
+			 + "               If it is a directory, it will recurse.\n"
+			 + "         -l, --listfromstdin     count ZUGFeRD files from a list of linefeed separated files on runtime.\n"
+			 + "               It will start once a blank line has been entered.\n" + "\n"
+			 + "       Additional parameter for both count operations\n"
+			 + "       [-i, --ignorefileextension]     Check for all files (*.*) instead of PDF files only (*.pdf) in metrics, ignore PDF/A input file errors in combine\n"
+			 + "       [--disable-file-logging]        disable logging to file.\n"
+			 + "       --action extract   extract Factur-X PDF to XML file\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: set input PDF file\n"
+			 + "               [--out <filename>]: set output XML file\n"
+			 + "       --action a3only    upgrade from PDF/A1 to A3 only (no ZUGFeRD data attached)\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: set input PDF file\n"
+			 + "               [--out <filename>]: set output PDF file\n"
+			 + "       --action combine   combine XML and PDF file to Factur-X PDF file\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: set input PDF file\n"
+			 + "               [--source-xml <filename>]: set input XML file\n"
+			 + "               [--out <filename>]: set output PDF file\n"
+			 + "               [--format <fx|zf|ox|da>]: set Factur-X, ZUGFeRD, Order-X or Cross Industry Despatch Advice\n"
+			 + "               [--version <1|2>]: set ZUGFeRD version\n"
+			 + "               [--profile <...>]: set ZUGFeRD profile\n"
+			 + "                       For ZUGFeRD v1 or Order-X: <B>ASIC, <C>OMFORT or EX<T>ENDED\n"
+			 + "                       For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED\n"
+			 + "               [--attachments <filenames>]: list of file attachments (passing a single empty file name prevents prompting)\n"
+			 + "               [--no-additional-attachments]: prevent prompting for attachments\n"
+			 + "       --action ubl   convert UN/CEFACT 2016b CII XML to UBL XML\n"
+			 + "               [--source <filename>]: set input XML file\n"
+			 + "               [--out <filename>]: set output XML file\n"
+			 + "       --action upgrade   upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: set input XML ZUGFeRD 1 file\n"
+			 + "               [--out <filename>]: set output XML ZUGFeRD 2 file\n"
+			 + "       --action validate  validate XML or PDF file \n"
+			 + "               [--no-notices]: refrain from reporting notices\n"
+			 + "               [--logAppend <text>]: text to be added to log line\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "               [--source <filename>]: input PDF or XML file\n"
+			 + "               [--log-as-pdf]: save log output as pdf\n"
+			 + "       --action validateExpectInvalid  validate directory expecting negative results \n"
+			 + "               [--no-notices]: refrain from reporting notices\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "                   -d, --directory to check recursively\n"
+			 + "       --action validateExpectValid  validate directory expecting positive results \n"
+			 + "               [--no-notices]: refrain from reporting notices\n"
+			 + "               Additional parameters (optional - user will be prompted if not defined)\n"
+			 + "                   -d, --directory to check recursively \n"
+			 + "       --action visualize  convert XML to HTML \n"
+			 + "               [--language <lang>]: set output lang (en, fr or de)\n"
+			 + "               [--source <filename>]: set input XML file\n"
+			 + "               [--out <filename>]: set output HTML file\n"
+			 + "       --action pdf  convert XML to PDF \n"
+			 + "               [--source <filename>]: set input XML file\n"
+			 + "               [--out <filename>]: set output PDF file\n"
 			;
 	}
 
@@ -474,7 +474,7 @@ public class Main {
 		String validationResultXML = zfv.validate(sourceName);
 		System.out.println(validationResultXML);
 
-		if( createLogAsPDF) {
+		if (createLogAsPDF) {
 			ValidationLogVisualizer vlvi = new ValidationLogVisualizer();
 			String fileBasename = FilenameUtils.getBaseName(sourceName);
 
@@ -533,9 +533,9 @@ public class Main {
 
 		// All params are good! continue...
 		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
-		  ze.convertOnly().load(pdfName);
-		  ze.export(outName);
-		  System.out.println("Written to " + outName);
+			ze.convertOnly().load(pdfName);
+			ze.export(outName);
+			System.out.println("Written to " + outName);
 		}
 	}
 
@@ -609,8 +609,7 @@ public class Main {
 					}
 				}
 			} else {
-				for (int i = 0; i < attachmentFilenames.length; i++) {
-					String attachmentFilename = attachmentFilenames[i];
+				for (String attachmentFilename : attachmentFilenames) {
 					if (!attachmentFilename.isEmpty()) {
 						byte[] attachmentContents = Files.readAllBytes(Paths.get(attachmentFilename));
 						String attachmentMime = Files.probeContentType(Paths.get(attachmentFilename));
@@ -639,7 +638,7 @@ public class Main {
 			} else {
 				System.out.println("Version set to " + zfVersion);
 			}
-			zfIntVersion = Integer.valueOf(zfVersion);
+			zfIntVersion = Integer.parseInt(zfVersion);
 
 			if (zfProfile == null) {
 				try {
@@ -897,9 +896,9 @@ public class Main {
 			byte[] buffer = new byte[4096];
 			jarFolder = System.getProperty("user.dir");
 			try (FileOutputStream resStreamOut = new FileOutputStream(jarFolder + resourceName)) {
-  			while ((readBytes = stream.read(buffer)) > 0) {
-  				resStreamOut.write(buffer, 0, readBytes);
-  			}
+			while ((readBytes = stream.read(buffer)) > 0) {
+				resStreamOut.write(buffer, 0, readBytes);
+			}
 			}
 		}
 

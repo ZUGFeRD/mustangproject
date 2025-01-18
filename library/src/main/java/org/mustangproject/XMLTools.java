@@ -68,7 +68,7 @@ public class XMLTools extends XMLWriter {
 			return new BigDecimal(nodeValue);
 		} catch (final Exception e) {
 			try {
-				return BigDecimal.valueOf(Float.valueOf(nodeValue));
+				return BigDecimal.valueOf(Float.parseFloat(nodeValue));
 			} catch (final Exception ex) {
 				return new BigDecimal("0.00");
 			}

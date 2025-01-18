@@ -5,40 +5,40 @@ package org.mustangproject;
  * In the first step only the recommended codes are implemented. 
  */
 public enum SubjectCode {
-  /**
-   * general information
-   */
-  AAI,
-  /**
-   * seller notes
-   */
-  SUR,
-  /**
-   * regulatory information
-   */
-  REG,
-  /**
-   * legal information
-   */
-  ABL,
-  /**
-   * tax information
-   */
-  TXD,
-  /**
-   * Customs information
-   */
-  CUS,
-  /**
-   * introduction
-   */
-  ACY,
-  /**
-   * Discount and bonus agreements
-   */
-  AAK,
-  /**
-   * Vehicle licence number
-   */
-  ABZ
+	/**
+	 * general information
+	 */
+	AAI,
+	/**
+	 * seller notes
+	 */
+	SUR,
+	/**
+	 * regulatory information
+	 */
+	REG,
+	/**
+	 * legal information
+	 */
+	ABL,
+	/**
+	 * tax information
+	 */
+	TXD,
+	/**
+	 * Customs information
+	 */
+	CUS,
+	/**
+	 * introduction
+	 */
+	ACY,
+	/**
+	 * Discount and bonus agreements
+	 */
+	AAK,
+	/**
+	 * Vehicle licence number
+	 */
+	ABZ
 }
