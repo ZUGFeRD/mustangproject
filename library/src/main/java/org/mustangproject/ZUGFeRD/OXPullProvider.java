@@ -505,7 +505,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 
 	private String buildPaymentTermsXml() {
 
-		final IZUGFeRDPaymentTerms[] paymentTerms = trans.getPaymentTerms();
+		final IZUGFeRDPaymentTerms[] paymentTerms = trans.getExtendedPaymentTerms();
 
 		String paymentTermsXml = "";
 		if (paymentTerms == null || paymentTerms.length == 0) {

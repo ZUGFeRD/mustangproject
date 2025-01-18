@@ -57,7 +57,7 @@ public class Invoice implements IExportableTransaction {
 
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
 		Charges = new ArrayList<>(), LogisticsServiceCharges = new ArrayList<>();
-	protected IZUGFeRDPaymentTerms[] paymentTerms = null;
+	protected ArrayList<IZUGFeRDPaymentTerms> paymentTerms = new ArrayList<>();
 
 	protected String invoiceReferencedDocumentID = null;
 	protected Date invoiceReferencedIssueDate;
@@ -642,24 +642,41 @@ public class Invoice implements IExportableTransaction {
 
 
 	@Override
-	public IZUGFeRDPaymentTerms[] getPaymentTerms() {
-		return paymentTerms;
+	public IZUGFeRDPaymentTerms getPaymentTerms() {
+		if (!paymentTerms.isEmpty()) {
+			return paymentTerms.get(0);
+		}
+		return null;
 	}
 
 	@JsonProperty
-	public Invoice setPaymentTerms(IZUGFeRDPaymentTerms[] paymentTerms) {
-		this.paymentTerms = paymentTerms;
+	public Invoice setPaymentTerms(IZUGFeRDPaymentTerms paymentTerm) {
+		if (paymentTerms.isEmpty()) {
+			paymentTerms.add(paymentTerm);
+		}
+		else {
+			paymentTerms.set(0, paymentTerm);
+		}
 		return this;
 	}
 
-	public Invoice setPaymentTerms(IZUGFeRDPaymentTerms paymentTerms) {
-		if (null != paymentTerms) {
-			this.paymentTerms = new IZUGFeRDPaymentTerms[] { paymentTerms };
-		}
-		else {
-			this.paymentTerms = null;
-		}
+	@Override
+	public IZUGFeRDPaymentTerms[] getExtendedPaymentTerms() {
+		return paymentTerms.toArray(new IZUGFeRDPaymentTerms[0]);
+	}
 
+	public Invoice setExtendedPaymentTerms(IZUGFeRDPaymentTerms[] paymentTerms) {
+		this.paymentTerms.clear();
+		this.paymentTerms.addAll(Arrays.asList(paymentTerms));
+		return this;
+	}
+
+	/**
+	 * Set multiple payment terms when using the EXTENDED profile.
+	 * @return
+	 */
+	public Invoice addPaymentTerms(IZUGFeRDPaymentTerms paymentTerm) {
+		paymentTerms.add(paymentTerm);
 		return this;
 	}
 
