@@ -61,7 +61,7 @@ public  class ValidatorFileWalker
     					thisResultString="invalid";
     					allValid=false;
     				}
-    				LOGGER.info(String.format("\n@%s Testing file %d: %s (%s)", dateFormat.format(date), fileCount++, thisResultString, file));
+    				LOGGER.info(String.format("%n@%s Testing file %d: %s (%s)", dateFormat.format(date), fileCount++, thisResultString, file));
     
     			}
         }
@@ -72,7 +72,7 @@ public  class ValidatorFileWalker
     @Override
     public FileVisitResult postVisitDirectory(Path dir,
                                           IOException exc) {
-        LOGGER.info("\nDirectory: %s%n", dir);
+        LOGGER.info("%nDirectory: {}%n", dir);
         return FileVisitResult.CONTINUE;
     }
 
