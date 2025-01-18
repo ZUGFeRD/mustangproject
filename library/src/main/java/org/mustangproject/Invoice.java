@@ -28,7 +28,6 @@ import org.mustangproject.ZUGFeRD.*;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /***
@@ -649,7 +648,6 @@ public class Invoice implements IExportableTransaction {
 		return null;
 	}
 
-	@JsonProperty
 	public Invoice setPaymentTerms(IZUGFeRDPaymentTerms paymentTerm) {
 		if (paymentTerms.isEmpty()) {
 			paymentTerms.add(paymentTerm);
