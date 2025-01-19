@@ -492,6 +492,15 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 	@Test
+	public void testPositionAllowance() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("factur-x-with-position-allowance.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
+
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		zii.extractInto(invoice);
+		assertThat(invoice.getGrandTotal()).isEqualByComparingTo(BigDecimal.valueOf(82.63));
+	}
+
 	public void testImportPositionIncludedNotes() throws FileNotFoundException, XPathExpressionException, ParseException {
 		File inputFile = getResourceAsFile("ZTESTZUGFERD_1_INVDSS_012015738820PDF-1.pdf");
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
