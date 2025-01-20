@@ -783,11 +783,20 @@ public class Invoice implements IExportableTransaction {
 		return detailedDeliveryDateStart;
 	}
 
+	public Invoice setDetailedDeliveryPeriodFrom(Date dt) {
+		detailedDeliveryDateStart=dt;
+		return this;
+	}
+
 	@Override
 	public Date getDetailedDeliveryPeriodTo() {
 		return detailedDeliveryPeriodEnd;
 	}
 
+	public Invoice setDetailedDeliveryPeriodTo(Date dt) {
+		detailedDeliveryPeriodEnd=dt;
+		return this;
+	}
 
 	/**
 	 * adds a free text paragraph, which will become an includedNote element
