@@ -34,8 +34,6 @@
             <artifactId>commons-cli</artifactId>
             <version>1.8.0</version>
         </dependency>
-
-
         <!-- logging -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -48,13 +46,12 @@
             <artifactId>janino</artifactId>
             <version>3.1.7</version>
         </dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>2.0.12</version>
-		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.12</version>
+        </dependency>
         <!-- end of logging -->
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -78,16 +75,12 @@
             <artifactId>xmlunit-assertj</artifactId>
             <version>2.10.0</version>
         </dependency>
-
         <!-- /directory validation: -->
-
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>4.0.2</version>
         </dependency>
-
-
     </dependencies>
     <build>
         <pluginManagement>
@@ -121,7 +114,6 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
-
                     </archive>
                 </configuration>
             </plugin>
