@@ -69,6 +69,7 @@ public class Invoice implements IExportableTransaction {
 	protected String vatDueDateTypeCode = null;
 	protected String creditorReferenceID; // required when direct debit is used.
 	private BigDecimal roundingAmount=null;
+	private String paymentReference; // Remittance information / Verwendungszweck, BT-83
 
 	public Invoice() {
 		ZFItems = new ArrayList<>();
@@ -647,6 +648,16 @@ public class Invoice implements IExportableTransaction {
 
 	public Invoice setPaymentTerms(IZUGFeRDPaymentTerms paymentTerms) {
 		this.paymentTerms = paymentTerms;
+		return this;
+	}
+
+	@Override
+	public String getPaymentReference() {
+		return paymentReference;
+	}
+
+	public Invoice setPaymentReference(String paymentReference) {
+		this.paymentReference = paymentReference;
 		return this;
 	}
 
