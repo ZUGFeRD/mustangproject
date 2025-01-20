@@ -45,6 +45,9 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ZUGFeRDVisualizer {
 
@@ -254,16 +257,61 @@ public class ZUGFeRDVisualizer {
 		// the writing part
 		File XMLinputFile = new File(xmlFilename);
 
-		String result = null;
+		String fopInput = null;
 
 			/* remove file endings so that tests can also pass after checking
 			   out from git with arbitrary options (which may include CSRF changes)
 			 */
 		try {
-			result = this.toFOP(XMLinputFile.getAbsolutePath());
+			fopInput = this.toFOP(XMLinputFile.getAbsolutePath());
 		} catch (TransformerException | IOException e) {
 			LOGGER.error("Failed to apply FOP", e);
 		}
+		
+		toPDFfromFOP(fopInput, () -> {
+				try {
+					return new FileOutputStream(pdfFilename);
+				} catch (FileNotFoundException e) {
+					LOGGER.error("Failed to create PDF", e);
+				}
+			return null;
+		}, (OutputStream out) -> {});
+	}
+	
+	public byte[] toPDF(String xmlContent) {
+
+		String fopInput = null;
+
+			/* remove file endings so that tests can also pass after checking
+			   out from git with arbitrary options (which may include CSRF changes)
+			 */
+		try {
+			ByteArrayInputStream fis = new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8));
+			EStandard theStandard = findOutStandardFromRootNode(fis);
+			fis = new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8));//rewind :-(
+			
+			fopInput = toFOP(fis, theStandard);
+		} catch (TransformerException | IOException e) {
+			LOGGER.error("Failed to apply FOP", e);
+		}
+
+		AtomicReference<byte[]> byteHolder = new AtomicReference<>();
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		toPDFfromFOP(fopInput, () -> new BufferedOutputStream(os), (OutputStream out) -> {
+			
+			try {
+				out.flush();
+			} catch (IOException e) {
+				LOGGER.error("Failed to create PDF", e);
+			}
+			byteHolder.set(os.toByteArray());
+		});
+		
+		return byteHolder.get();
+	}
+	
+	private void toPDFfromFOP(String fopInput, Supplier<OutputStream> outputStreamDelegate, Consumer<OutputStream> consumerDelegate) {
+
 		DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
 
 		Configuration cfg = null;
@@ -291,7 +339,7 @@ public class ZUGFeRDVisualizer {
 // Step 2: Set up output stream.
 // Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
 
-		try (OutputStream out = new BufferedOutputStream(new FileOutputStream(pdfFilename))) {
+		try (OutputStream out = new BufferedOutputStream(outputStreamDelegate.get())) {
 
 			// Step 3: Construct fop with desired output format
 			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
@@ -302,13 +350,15 @@ public class ZUGFeRDVisualizer {
 
 			// Step 5: Setup input and output for XSLT transformation
 			// Setup input stream
-			Source src = new StreamSource(new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8)));
+			Source src = new StreamSource(new ByteArrayInputStream(fopInput.getBytes(StandardCharsets.UTF_8)));
 
 			// Resulting SAX events (the generated FO) must be piped through to FOP
 			Result res = new SAXResult(fop.getDefaultHandler());
 
 			// Step 6: Start XSLT transformation and FOP processing
 			transformer.transform(src, res);
+			
+			consumerDelegate.accept(out);
 
 		} catch (FOPException | IOException | TransformerException e) {
 			LOGGER.error("Failed to create PDF", e);
