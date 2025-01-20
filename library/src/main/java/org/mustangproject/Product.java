@@ -69,7 +69,7 @@ public class Product implements IZUGFeRDExportableProduct {
 		nodeMap.getAsString("Description").ifPresent(this::setDescription);
 
 
-		nodeMap.getAsNodeMap("ApplicableProductCharacteristic").ifPresent(apcNodes -> {
+		nodeMap.getAllNodes("ApplicableProductCharacteristic").map(NodeMap::new).forEach(apcNodes -> { // ApplicableProductCharacteristic is 0 .. unbounded
 			String key = apcNodes.getAsStringOrNull("Description");
 			String value = apcNodes.getAsStringOrNull("Value");
 			if (key != null && value != null) {
@@ -79,7 +79,6 @@ public class Product implements IZUGFeRDExportableProduct {
 				attributes.put(key, value);
 			}
 		});
-
 
 		//UBL
 		nodeMap.getAsNodeMap("AdditionalItemProperty").ifPresent(aipNodes -> {

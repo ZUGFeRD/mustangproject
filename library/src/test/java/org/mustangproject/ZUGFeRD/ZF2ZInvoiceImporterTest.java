@@ -40,6 +40,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -492,6 +493,17 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 	@Test
+	public void testItemsBillingSpecifiedPeriod() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("factur-x_invoicingPeriod.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
+
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		zii.extractInto(invoice);
+		assertEquals(3, invoice.getZFItems().length);
+		assertEquals(new Date(2022-1900, 8-1, 29), invoice.getZFItems()[0].getDetailedDeliveryPeriodFrom());
+		assertEquals(new Date(2022-1900, 8-1, 31), invoice.getZFItems()[0].getDetailedDeliveryPeriodTo());
+	}
+
 	public void testImportPositionIncludedNotes() throws FileNotFoundException, XPathExpressionException, ParseException {
 		File inputFile = getResourceAsFile("ZTESTZUGFERD_1_INVDSS_012015738820PDF-1.pdf");
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
