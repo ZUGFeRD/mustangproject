@@ -28,6 +28,14 @@
             <xsl:text>red</xsl:text>
         </xsl:if>
     </xsl:variable>
+    <xsl:variable name="xml_result_text">
+        <xsl:if test="/validation/xml/summary/@status = 'valid'">
+            <xsl:text>Das XML ist valide.</xsl:text>
+        </xsl:if>
+        <xsl:if test="/validation/xml/summary/@status = 'invalid'">
+            <xsl:text>Das XML ist nicht valide.</xsl:text>
+        </xsl:if>
+    </xsl:variable>
     <xsl:variable name="pdf_result_color">
         <xsl:if test="/validation/pdf/summary/@status = 'valid'">
             <xsl:text>green</xsl:text>
@@ -37,18 +45,26 @@
         </xsl:if>
     </xsl:variable>
     <xsl:variable name="pdf_result_text">
-        <xsl:if test="/validation/xml/summary/@status = 'valid'">
+        <xsl:if test="/validation/pdf/summary/@status = 'valid'">
             <xsl:text>Das ZUGFeRD-PDF ist valide.</xsl:text>
         </xsl:if>
-        <xsl:if test="/validation/xml/summary/@status = 'invalid'">
+        <xsl:if test="/validation/pdf/summary/@status = 'invalid'">
             <xsl:text>Das ZUGFeRD-PDF ist nicht valide.</xsl:text>
         </xsl:if>
     </xsl:variable>
+    <xsl:variable name="result_color">
+        <xsl:if test="/validation/summary/@status = 'valid'">
+            <xsl:text>green</xsl:text>
+        </xsl:if>
+        <xsl:if test="/validation/summary/@status = 'invalid'">
+            <xsl:text>red</xsl:text>
+        </xsl:if>
+    </xsl:variable>
     <xsl:variable name="result_text">
-        <xsl:if test="/validation/xml/summary/@status = 'valid'">
+        <xsl:if test="/validation/summary/@status = 'valid'">
             <xsl:text>Es wird empfohlen, das Dokument anzunehmen und es weiterzuverarbeiten.</xsl:text>
         </xsl:if>
-        <xsl:if test="/validation/xml/summary/@status = 'invalid'">
+        <xsl:if test="/validation/summary/@status = 'invalid'">
             <xsl:text>Es wird empfohlen, das Dokument zurückzuweisen.</xsl:text>
         </xsl:if>
     </xsl:variable>
@@ -118,6 +134,7 @@
                         </fo:table-body>
                     </fo:table>
                     <xsl:apply-templates select="./pdf"/>
+                    <xsl:apply-templates select="./xml"/>
                     <!--
                     <xsl:call-template name="SubHeader">
                         <xsl:with-param name="text"
@@ -130,7 +147,7 @@
                         <xsl:with-param name="text"
                                         select="concat('Bewertung: ', $result_text)"/>
                         <xsl:with-param name="color"
-                                        select="$xml_result_color"/>
+                                        select="$result_color"/>
                     </xsl:call-template>
                     <fo:block>Validierungsergebnisse im Detail:</fo:block>
                     <fo:table>
@@ -165,8 +182,8 @@
                                        page-break-before="auto"
                                        page-break-inside="avoid">
                             <xsl:choose>
-                                <xsl:when test="./xml/messages">
-                                    <xsl:apply-templates select="./xml/messages"/>
+                                <xsl:when test="./pdf/messages|./xml/messages|./messages">
+                                    <xsl:apply-templates select="./pdf/messages|./xml/messages|./messages"/>
                                 </xsl:when>
                                 <xsl:otherwise>
                                     <fo:table-row border-style="solid"
@@ -185,10 +202,10 @@
             </fo:page-sequence>
         </fo:root>
     </xsl:template>
-    <xsl:template match="notice|warning|error">
+    <xsl:template match="notice|warning|error|exception|fatal">
         <xsl:variable name="msg_color">
             <xsl:choose>
-                <xsl:when test="name() = 'error'">
+                <xsl:when test="name() = 'error' or name() = 'exception' or name() = 'fatal'">
                     <xsl:text>red</xsl:text>
                 </xsl:when>
                 <xsl:when test="name() = 'warning'">
@@ -201,7 +218,7 @@
         </xsl:variable>
         <xsl:variable name="msg_label">
             <xsl:choose>
-                <xsl:when test="name() = 'error'">
+                <xsl:when test="name() = 'error' or name() = 'exception' or name() = 'fatal'">
                     <xsl:text>Fehler</xsl:text>
                 </xsl:when>
                 <xsl:when test="name() = 'warning'">
@@ -291,7 +308,15 @@
             <xsl:with-param name="text"
                             select="concat('ZUGFeRD-PDF: ', $pdf_result_text)"/>
             <xsl:with-param name="color"
-                            select="'black'"/>
+                            select="$pdf_result_color"/>
+        </xsl:call-template>
+    </xsl:template>
+    <xsl:template match="xml">
+        <xsl:call-template name="SubHeader">
+            <xsl:with-param name="text"
+                            select="concat('E-Rechnung XML: ', $xml_result_text)"/>
+            <xsl:with-param name="color"
+                            select="$xml_result_color"/>
         </xsl:call-template>
     </xsl:template>
     <xsl:template name="SubHeader">
