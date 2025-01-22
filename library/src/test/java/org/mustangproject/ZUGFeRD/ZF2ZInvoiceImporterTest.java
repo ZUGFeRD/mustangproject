@@ -314,6 +314,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		LineCalculator lc = new LineCalculator(invoice.getZFItems()[0]);
 		assertTrue(new BigDecimal("1").compareTo(lc.getItemTotalNetAmount()) == 0);
 
+		assertEquals("Z", invoice.getZFItems()[0].getProduct().getTaxCategoryCode());
+		assertEquals("Kleinunternehmer", invoice.getZFItems()[0].getProduct().getTaxExemptionReason());
+
 		assertTrue(invoice.getTradeSettlement().length == 1);
 		assertTrue(invoice.getTradeSettlement()[0] instanceof IZUGFeRDTradeSettlementPayment);
 		IZUGFeRDTradeSettlementPayment paym = (IZUGFeRDTradeSettlementPayment) invoice.getTradeSettlement()[0];
