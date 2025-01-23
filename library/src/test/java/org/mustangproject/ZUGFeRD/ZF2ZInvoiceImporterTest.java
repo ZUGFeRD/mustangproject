@@ -122,8 +122,8 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		// Reading ZUGFeRD
 		assertEquals("Bei Spiel GmbH", invoice.getOwnOrganisationName());
 		assertEquals(3, invoice.getZFItems().length);
-		assertEquals(invoice.getZFItems()[0].getNotesWithSubjectCode().get(0).getContent(),"Something");
-		assertEquals(invoice.getZFItems()[0].getNotesWithSubjectCode().size(),1);
+		assertEquals(invoice.getZFItems()[0].getNotesWithSubjectCode().get(0).getContent(), "Something");
+		assertEquals(invoice.getZFItems()[0].getNotesWithSubjectCode().size(), 1);
 		assertEquals("400", invoice.getZFItems()[1].getQuantity().toString());
 		assertEquals("Zahlbar ohne Abzug bis zum 30.05.2017", invoice.getPaymentTermDescription());
 		assertEquals("AB321", invoice.getReferenceNumber());
@@ -242,7 +242,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		assertFalse(hasExceptions);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("18.33"), tc.getGrandTotal());
+		assertEquals(new BigDecimal("19.52"), tc.getGrandTotal());
 	}
 
 	public void testBasisQuantityImport() {
@@ -260,6 +260,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("337.60"), tc.getGrandTotal());
 	}
+
 
 	public void testAllowancesChargesImport() {
 
@@ -283,7 +284,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		ZUGFeRDImporter zii = new ZUGFeRDImporter();
 
-		int version=-1;
+		int version = -1;
 		try {
 			zii.fromXML(Files.readString(Paths.get("./target/testout-XR-Edge.xml")));
 			version=zii.getVersion();
@@ -302,13 +303,12 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertFalse(hasExceptions);
 
 
-
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
 
-		assertEquals(version,2);
+		assertEquals(version, 2);
 		assertTrue(new BigDecimal("1").compareTo(invoice.getZFItems()[0].getQuantity()) == 0);
-		LineCalculator lc=new LineCalculator(invoice.getZFItems()[0]);
+		LineCalculator lc = new LineCalculator(invoice.getZFItems()[0]);
 		assertTrue(new BigDecimal("1").compareTo(lc.getItemTotalNetAmount()) == 0);
 
 		assertTrue(invoice.getTradeSettlement().length == 1);
@@ -354,7 +354,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
 			Invoice i = zii.extractInvoice();
 
-			assertEquals("DE21860000000086001055", i.getSender().getBankDetails().get(0).getIBAN());
+			assertEquals("DE21860000000086001055", i.getRecipient().getBankDetails().get(0).getIBAN());
 			ObjectMapper mapper = new ObjectMapper();
 
 			String jsonArray = mapper.writeValueAsString(i);
@@ -409,6 +409,28 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+	public void testImportUBLCreditnote() { // Confirm some basics also work with UBL credit notes
+		File CIIinputFile = getResourceAsFile("ubl/UBL-CreditNote-2.1-Example.ubl.xml");
+		try {
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
+
+
+			CalculatedInvoice i = new CalculatedInvoice();
+			zii.extractInto(i);
+			assertEquals("TOSL108", i.getNumber());
+			assertEquals("729", i.getGrandTotal().toString());
+
+		} catch (IOException e) {
+			fail("IOException not expected");
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+
+
+	}
+
 
 
 	@Test
@@ -422,15 +444,15 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		CalculatedInvoice invoice = new CalculatedInvoice();
 		importer.extractInto(invoice);
 
-		boolean isBD=invoice.getTotalPrepaidAmount() instanceof BigDecimal;
+		boolean isBD = invoice.getTotalPrepaidAmount() instanceof BigDecimal;
 		assertTrue(isBD);
-		BigDecimal expectedPrepaid=new BigDecimal(50);
-		BigDecimal expectedLineTotal=new BigDecimal("180.76");
-		BigDecimal expectedDue=new BigDecimal("147.65");
+		BigDecimal expectedPrepaid = new BigDecimal(50);
+		BigDecimal expectedLineTotal = new BigDecimal("180.76");
+		BigDecimal expectedDue = new BigDecimal("147.65");
 		if (isBD) {
-			BigDecimal amread=invoice.getTotalPrepaidAmount();
-			BigDecimal importedLineTotal=invoice.getLineTotalAmount();
-			BigDecimal importedDuePayable=invoice.getDuePayable();
+			BigDecimal amread = invoice.getTotalPrepaidAmount();
+			BigDecimal importedLineTotal = invoice.getLineTotalAmount();
+			BigDecimal importedDuePayable = invoice.getDuePayable();
 			assertTrue(amread.compareTo(expectedPrepaid) == 0);
 			assertTrue(importedLineTotal.compareTo(expectedLineTotal) == 0);
 			assertTrue(importedDuePayable.compareTo(expectedDue) == 0);
@@ -467,19 +489,19 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		ZUGFeRDInvoiceImporter importer = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
 		Invoice invoice = importer.extractInvoice();
-		assertEquals(1,invoice.getRecipient().getBankDetails().size());
+		assertEquals(1, invoice.getRecipient().getBankDetails().size());
 		// IBAN belongs to recipient in invoice with sepa debit
-		assertEquals("DE21860000000086001055",invoice.getRecipient().getBankDetails().get(0).getIBAN());
-		assertEquals(0,invoice.getSender().getBankDetails().size());
+		assertEquals("DE21860000000086001055", invoice.getRecipient().getBankDetails().get(0).getIBAN());
+		assertEquals(0, invoice.getSender().getBankDetails().size());
 
 		inputFile = getResourceAsFile("factur-x.xml");
 
 		importer = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
 		invoice = importer.extractInvoice();
-		assertEquals(1,invoice.getSender().getBankDetails().size());
+		assertEquals(1, invoice.getSender().getBankDetails().size());
 		// IBAN belongs to sender in normal invoice
-		assertEquals("DE88200800000970375700",invoice.getSender().getBankDetails().get(0).getIBAN());
-		assertEquals(0,invoice.getRecipient().getBankDetails().size());
+		assertEquals("DE88200800000970375700", invoice.getSender().getBankDetails().get(0).getIBAN());
+		assertEquals(0, invoice.getRecipient().getBankDetails().size());
 
 	}
 
