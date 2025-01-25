@@ -187,8 +187,12 @@ public class Item implements IZUGFeRDExportableItem {
 					if (amountString!=null) {
 						izac.setTotalAmount(new BigDecimal(amountString));
 					}
-					izac.setPercent(new BigDecimal(percentString));
-					izac.setReason(reason);
+					if(percentString!=null) {
+						izac.setPercent(new BigDecimal(percentString));
+					}
+					if(reason!=null) {
+						izac.setReason(reason);
+					}
 
 					if (isChargeString.equalsIgnoreCase("false")) {
 						addAllowance(izac);
