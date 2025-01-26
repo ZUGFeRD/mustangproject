@@ -536,13 +536,13 @@ public class ZUGFeRDInvoiceImporter {
 		}
 		zpp.addNotes(includedNotes);
 		String rootNode = extractString("local-name(/*)");
-		if (rootNode.equals("Invoice")||rootNode.equals("CreditNote")) {
+		if (rootNode.equals("Invoice") || rootNode.equals("CreditNote")) {
 			// UBL...
-			// //*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]
-			number = extractString("//*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"ID\"]").trim();
-			typeCode = extractString("//*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"InvoiceTypeCode\"]").trim();
-			String issueDateStr = extractString("//*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"IssueDate\"]").trim();
-			if (issueDateStr.length()>0) {
+			// //*[local-name()="Invoice" or local-name()="CreditNote"]
+			number = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"ID\"]").trim();
+			typeCode = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"InvoiceTypeCode\"]").trim();
+			String issueDateStr = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"IssueDate\"]").trim();
+			if (issueDateStr.length() > 0) {
 				issueDate = new SimpleDateFormat("yyyy-MM-dd").parse(issueDateStr);
 			}
 			String dueDt = extractString("//*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"DueDate\"]").trim();
@@ -631,7 +631,7 @@ public class ZUGFeRDInvoiceImporter {
 		zpp.setCurrency(currency);
 
 		String paymentTermsDescription = extractString("//*[local-name()=\"SpecifiedTradePaymentTerms\"]/*[local-name()=\"Description\"]|//*[local-name()=\"PaymentTerms\"]/*[local-name()=\"Note\"]");
-		if ((paymentTermsDescription!=null)&&(!paymentTermsDescription.isEmpty())) {
+		if ((paymentTermsDescription != null) && (!paymentTermsDescription.isEmpty())) {
 			zpp.setPaymentTermDescription(paymentTermsDescription);
 		}
 
@@ -828,15 +828,14 @@ public class ZUGFeRDInvoiceImporter {
 
 				Node currentItemNode = nodes.item(i);
 				ReferencedDocument doc = ReferencedDocument.fromNode(currentItemNode);
-				if (doc != null 
-						&& (!Objects.equals(zpp.getInvoiceReferencedDocumentID(), doc.getIssuerAssignedID()) 
-						|| !Objects.equals(zpp.getInvoiceReferencedIssueDate(), doc.getFormattedIssueDateTime())))
-				{
+				if (doc != null
+					&& (!Objects.equals(zpp.getInvoiceReferencedDocumentID(), doc.getIssuerAssignedID())
+					|| !Objects.equals(zpp.getInvoiceReferencedIssueDate(), doc.getFormattedIssueDateTime()))) {
 					zpp.addInvoiceReferencedDocument(doc);
 				}
 			}
 		}
-		
+
 		zpp.setOwnOrganisationName(extractString("//*[local-name()=\"SellerTradeParty\"]/*[local-name()=\"Name\"]|//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyName\"]").trim());
 
 		String rounding = extractString("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"RoundingAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"Party\"]/*[local-name()=\"PayableRoundingAmount\"]");
@@ -965,6 +964,38 @@ public class ZUGFeRDInvoiceImporter {
 					zpp.addAllowance(a);
 				}
 
+			}
+			xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"SpecifiedLogisticsServiceCharge\"]");// UBL unknown
+			chargeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+			for (int i = 0; i < chargeNodes.getLength(); i++) {
+				NodeList chargeNodeChilds = chargeNodes.item(i).getChildNodes();
+				String chargeAmount = null;
+				String taxPercent = null;
+				for (int chargeChildIndex = 0; chargeChildIndex < chargeNodeChilds.getLength(); chargeChildIndex++) {
+					String chargeChildName = chargeNodeChilds.item(chargeChildIndex).getLocalName();
+					if (chargeChildName != null) {
+						if (chargeChildName.equals("AppliedAmount")) {
+							chargeAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
+						} else if (chargeChildName.equals("AppliedTradeTax")) {
+							NodeList taxChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
+							for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
+								String taxItemName = taxChilds.item(taxChildIndex).getLocalName();
+								if ((taxItemName != null) && (taxItemName.equals("RateApplicablePercent"))) {
+									taxPercent = XMLTools.trimOrNull(taxChilds.item(taxChildIndex));
+								}
+							}
+						}
+					}
+					//appliedAmount
+					//AppliedTradeTax
+				}
+				if (chargeAmount != null) {
+					Charge c = new Charge(new BigDecimal(chargeAmount));
+					if (taxPercent != null) {
+						c.setTaxPercent(new BigDecimal(taxPercent));
+					}
+					zpp.addCharge(c);
+				}
 			}
 
 
