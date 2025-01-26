@@ -164,22 +164,34 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("ApplicableTradeTax")
 				.flatMap(cnm -> cnm.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent"))
 				.ifPresent(product::setVATPercent);
-			icnm.getAsNodeMap("SpecifiedTradeAllowanceCharge").ifPresent(stac -> stac.getAsNodeMap("ChargeIndicator").ifPresent(ci -> {
-				String isChargeString=ci.getAsString("Indicator").get();
-				String percentString=stac.getAsStringOrNull("CalculationPercent");
-				String amountString=stac.getAsStringOrNull("ActualAmount");
-				String reason=stac.getAsStringOrNull("Reason");
-				Charge izac= new Charge();
-				if (isChargeString.equalsIgnoreCase("false")) {
-					izac = new Allowance();
-				} else {
-					izac = new Charge();
-				}
-				if (amountString!=null) {
-					izac.setTotalAmount(new BigDecimal(amountString));
-				}
-				izac.setPercent(new BigDecimal(percentString));
-				izac.setReason(reason);
+			icnm.getAsNodeMap("SpecifiedTradeAllowanceCharge").ifPresent(stac -> {
+				stac.getAsNodeMap("ChargeIndicator").ifPresent(ci -> {
+					String isChargeString=ci.getAsString("Indicator").get();
+					String percentString=stac.getAsStringOrNull("CalculationPercent");
+					String amountString=stac.getAsStringOrNull("ActualAmount");
+					String reason=stac.getAsStringOrNull("Reason");
+					Charge izac= new Charge();
+					if (isChargeString.equalsIgnoreCase("false")) {
+						izac = new Allowance();
+					} else {
+						izac = new Charge();
+					}
+					if (amountString!=null) {
+						izac.setTotalAmount(new BigDecimal(amountString));
+					}
+					if(percentString!=null) {
+						izac.setPercent(new BigDecimal(percentString));
+					}
+					if(reason!=null) {
+						izac.setReason(reason);
+					}
+
+					if (isChargeString.equalsIgnoreCase("false")) {
+						addAllowance(izac);
+					} else {
+						addCharge(izac);
+					}
+				});
 
 				if (isChargeString.equalsIgnoreCase("false")) {
 					addAllowance(izac);
