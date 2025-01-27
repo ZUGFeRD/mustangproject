@@ -351,6 +351,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		byte[] fileA = null;
 		byte[] fileB = null;
+		boolean facturXFound=false;
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushAttachments.pdf");
 		for (FileAttachment fa : zii.getFileAttachmentsPDF()) {
@@ -358,16 +359,18 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				fileA = fa.getData();
 			} else if (fa.getFilename().equals("two.pdf")) {
 				fileB = fa.getData();
+			} else if (fa.getFilename().equals("factur-x.xml")) {
+				facturXFound=true;
 			}
 		}
 		byte[] b = {12, 13}; // the sample data that was used to write the files
 
+		assertTrue(facturXFound);
 		assertTrue(Arrays.equals(fileA, b));
 		assertEquals(fileA.length, 2);
 		assertTrue(Arrays.equals(fileB, b));
 		assertEquals(fileB.length, 2);
 	}
-
 
 	public void testImportDebit() {
 		File CIIinputFile = getResourceAsFile("cii/minimalDebit.xml");
