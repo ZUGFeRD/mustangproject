@@ -1081,7 +1081,7 @@ public class ZUGFeRDInvoiceImporter {
 		} else if (rootNode.equals("Invoice")) {
 			return EStandard.ubl;
 		} else if (rootNode.equals("CreditNote")) {
-			return EStandard.ubl;
+			return EStandard.ubl_creditnote;
 		} else if (rootNode.equals("CrossIndustryInvoice")) {
 			return EStandard.facturx;
 		} else if (rootNode.equals("SCRDMCCBDACIDAMessageStructure")) {
