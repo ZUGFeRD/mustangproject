@@ -1116,11 +1116,17 @@ public class ZUGFeRDInvoiceImporter {
 	 *
 	 * @return the file attachments embedded in XML (using base64) decoded as byte array,
 	 * for PDF embedded files in FX use getFileAttachmentsPDF()
+	 * may return empty array
 	 * @deprecated use invoice.getAdditionalReferencedDocuments
 	 */
 	@Deprecated
 	public List<FileAttachment> getFileAttachmentsXML() {
-		return new ArrayList<>(Arrays.asList(importedInvoice.getAdditionalReferencedDocuments()));
+		if (importedInvoice.getAdditionalReferencedDocuments()!=null) {
+			return new ArrayList<>(Arrays.asList(importedInvoice.getAdditionalReferencedDocuments()));
+		} else {
+			return new ArrayList<>();
+		}
+
 	}
 
 	/***
