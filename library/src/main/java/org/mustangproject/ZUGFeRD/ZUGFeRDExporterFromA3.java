@@ -58,6 +58,7 @@ import org.apache.pdfbox.pdmodel.font.PDCIDFontType2;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDFontDescriptor;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.color.PDOutputIntent;
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.AdobePDFSchema;
@@ -559,6 +560,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		// https://github.com/ZUGFeRD/mustangproject/issues/249
 
 		COSName cidSet = COSName.getPDFName("CIDSet");
+		COSName resources = COSName.getPDFName("Resources");
 
 		// iterate over all pdf pages
 
@@ -567,29 +569,45 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 				PDPage page = (PDPage) object;
 				PDResources res = page.getResources();
-				for (COSName fontName : res.getFontNames()) {
-					try {
-						PDFont pdFont = res.getFont(fontName);
-						if (pdFont instanceof PDType0Font) {
-							PDType0Font typedFont = (PDType0Font) pdFont;
 
-							if (typedFont.getDescendantFont() instanceof PDCIDFontType2) {
-								@SuppressWarnings("unused")
-								PDCIDFontType2 f = (PDCIDFontType2) typedFont.getDescendantFont();
-								PDFontDescriptor fontDescriptor = pdFont.getFontDescriptor();
-
-								fontDescriptor.getCOSObject().removeItem(cidSet);
-							}
-						}
-					} catch (IOException e) {
-						throw e;
+				// Check for fonts in PDXObjects:
+				for (COSName xObjectName : res.getXObjectNames()) {
+					PDXObject xObject = res.getXObject(xObjectName);
+					COSDictionary d = xObject.getCOSObject().getCOSDictionary(resources);
+					if (d != null) {
+						PDResources xr = new PDResources(d);
+						removeCIDSetFromPDResources(cidSet, xr);
 					}
-					// do stuff with the font
 				}
+				
+				// Check for fonts in document-resources:
+				removeCIDSetFromPDResources(cidSet, res);
 			}
 		}
 	}
 
+	private void removeCIDSetFromPDResources(COSName cidSet, PDResources res) throws IOException {
+		for (COSName fontName : res.getFontNames()) {
+			try {
+				PDFont pdFont = res.getFont(fontName);
+				if (pdFont instanceof PDType0Font) {
+					PDType0Font typedFont = (PDType0Font) pdFont;
+
+					if (typedFont.getDescendantFont() instanceof PDCIDFontType2) {
+						@SuppressWarnings("unused")
+						PDCIDFontType2 f = (PDCIDFontType2) typedFont.getDescendantFont();
+						PDFontDescriptor fontDescriptor = pdFont.getFontDescriptor();
+
+						fontDescriptor.getCOSObject().removeItem(cidSet);
+					}
+				}
+			} catch (IOException e) {
+				throw e;
+			}
+			// do stuff with the font
+		}
+	}
+	
 	protected void prepareDocument() throws IOException {
 
 		PDDocumentCatalog cat = doc.getDocumentCatalog();
