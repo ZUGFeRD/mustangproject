@@ -1,13 +1,5 @@
 package org.mustangproject.ZUGFeRD;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringReader;
 import org.apache.fop.apps.*;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.configuration.Configuration;
@@ -22,7 +14,7 @@ import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class ValidationLogVisualizer {
@@ -78,7 +70,7 @@ public class ValidationLogVisualizer {
 		return baos.toString(StandardCharsets.UTF_8);
 	}
 
-	public byte[] createPDFBytes(String xmlLogfileContent) {
+	public void toPDF(String xmlLogfileContent, String pdfFilename) {
 
 		// the writing part
 
@@ -119,8 +111,7 @@ public class ValidationLogVisualizer {
 // Step 2: Set up output stream.
 // Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try (OutputStream out = new BufferedOutputStream(baos)) {
+		try (OutputStream out = new BufferedOutputStream(new FileOutputStream(pdfFilename))) {
 
 			// Step 3: Construct fop with desired output format
 			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
@@ -141,20 +132,6 @@ public class ValidationLogVisualizer {
 
 		} catch (FOPException | IOException | TransformerException e) {
 			LOGGER.error("Failed to create PDF", e);
-		}
-		return baos.toByteArray();
-	}
-
-	public byte[] toPDF(String xmlLogfileContent) {
-		return createPDFBytes(xmlLogfileContent);
-	}
-
-	public void toPDF(String xmlLogfileContent, String pdfFilename) {
-		byte[] pdfData = createPDFBytes(xmlLogfileContent);
-		try (FileOutputStream fos = new FileOutputStream(pdfFilename)) {
-			fos.write(pdfData);
-		} catch (IOException e) {
-			LOGGER.error("Failed to write PDF to file", e);
 		}
 	}
 
