@@ -1,5 +1,6 @@
 package org.mustangproject.ZUGFeRD;
 
+import javax.xml.XMLConstants;
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -258,9 +259,14 @@ public class ZUGFeRDInvoiceImporter {
 	}
 
 	private void setDocument() throws ParserConfigurationException, IOException, SAXException, ParseException {
-		final DocumentBuilderFactory xmlFact = DocumentBuilderFactory.newInstance();
-		xmlFact.setNamespaceAware(true);
-		final DocumentBuilder builder = xmlFact.newDocumentBuilder();
+		final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware(true);
+		dbf.setExpandEntityReferences(false);
+		dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		final DocumentBuilder builder = dbf.newDocumentBuilder();
 		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
 		///    is.skip(guessBOMSize(is));
 		document = builder.parse(is);
