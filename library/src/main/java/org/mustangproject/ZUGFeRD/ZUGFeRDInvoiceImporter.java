@@ -901,7 +901,7 @@ public class ZUGFeRDInvoiceImporter {
 					if (c instanceof Allowance) {
 						it.addTotalAllowance(c);
 					} else {
-						it.addCharge(c);
+						it.addTotalCharge(c);
 					}
 				}
 			}

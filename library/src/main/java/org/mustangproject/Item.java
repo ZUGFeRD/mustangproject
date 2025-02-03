@@ -42,6 +42,7 @@ public class Item implements IZUGFeRDExportableItem {
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>();
 	protected ArrayList<IZUGFeRDAllowanceCharge> totalAllowances = new ArrayList<>();
 	protected ArrayList<IZUGFeRDAllowanceCharge> Charges = new ArrayList<>();
+	protected ArrayList<IZUGFeRDAllowanceCharge> totalCharges = new ArrayList<>();
 	protected List<IncludedNote> includedNotes = null;
 	//protected HashMap<String, String> attributes = new HashMap<>();
 
@@ -333,6 +334,15 @@ public class Item implements IZUGFeRDExportableItem {
 	}
 
 	@Override
+	public IZUGFeRDAllowanceCharge[] getItemTotalCharges() {
+		if (totalCharges.isEmpty()) {
+			return null;
+		} else {
+			return totalCharges.toArray(new IZUGFeRDAllowanceCharge[0]);
+		}
+	}
+
+	@Override
 	public IZUGFeRDAllowanceCharge[] getItemTotalAllowances() {
 		if (totalAllowances.isEmpty()) {
 			return null;
@@ -388,6 +398,11 @@ public class Item implements IZUGFeRDExportableItem {
 
 	public Item addTotalAllowance(IZUGFeRDAllowanceCharge izac) {
 		totalAllowances.add(izac);
+		return this;
+	}
+
+	public Item addTotalCharge(IZUGFeRDAllowanceCharge izac) {
+		totalCharges.add(izac);
 		return this;
 	}
 

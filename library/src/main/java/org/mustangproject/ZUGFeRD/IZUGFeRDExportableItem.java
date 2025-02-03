@@ -147,6 +147,15 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	}
 	
 	/***
+	 * specify charges amount for the line item total
+	 *
+	 * @return the sum of allowances for this item
+	 */
+	default IZUGFeRDAllowanceCharge[] getItemTotalCharges() {
+		return null;
+	}
+
+	/***
 	 * specify allowances amount for the line item total
 	 *
 	 * @return the sum of allowances for this item
