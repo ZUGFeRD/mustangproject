@@ -172,6 +172,9 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("ApplicableTradeTax")
 				.flatMap(cnm -> cnm.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent"))
 				.ifPresent(product::setVATPercent);
+			icnm.getAsNodeMap("ApplicableTradeTax")
+				.flatMap(cnm -> cnm.getAsString("ExemptionReason"))
+				.ifPresent(product::setTaxExemptionReason);
 			icnm.getAsNodeMap("SpecifiedTradeAllowanceCharge").ifPresent(stac -> {
 				stac.getAsNodeMap("ChargeIndicator").ifPresent(ci -> {
 					String isChargeString=ci.getAsString("Indicator").get();
@@ -187,8 +190,12 @@ public class Item implements IZUGFeRDExportableItem {
 					if (amountString!=null) {
 						izac.setTotalAmount(new BigDecimal(amountString));
 					}
+					if(percentString!=null) {
 					izac.setPercent(new BigDecimal(percentString));
+					}
+					if(reason!=null) {
 					izac.setReason(reason);
+					}
 
 					if (isChargeString.equalsIgnoreCase("false")) {
 						addAllowance(izac);

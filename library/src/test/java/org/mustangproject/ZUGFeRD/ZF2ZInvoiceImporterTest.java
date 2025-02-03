@@ -233,6 +233,24 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+	public void testSpecifiedLogisticsChargeImport() {
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		File expectedResult = getResourceAsFile("cii/extended_warenrechnung.xml");
+
+
+		boolean hasExceptions = false;
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		try {
+			zii.setInputStream(new FileInputStream(expectedResult));
+			zii.extractInto(invoice);
+		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("518.99"), tc.getGrandTotal());
+
+	}
 	public void testItemAllowancesChargesImport() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushItemChargesAllowances.pdf");
@@ -246,7 +264,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		assertFalse(hasExceptions);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("18.33"), tc.getGrandTotal());
+		assertEquals(new BigDecimal("19.52"), tc.getGrandTotal());
 	}
 
 	public void testBasisQuantityImport() {
@@ -264,6 +282,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("337.60"), tc.getGrandTotal());
 	}
+
 
 	public void testAllowancesChargesImport() {
 
@@ -306,7 +325,6 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertFalse(hasExceptions);
 
 
-
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
 
@@ -314,6 +332,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertTrue(new BigDecimal("1").compareTo(invoice.getZFItems()[0].getQuantity()) == 0);
 		LineCalculator lc=new LineCalculator(invoice.getZFItems()[0]);
 		assertTrue(new BigDecimal("1").compareTo(lc.getItemTotalNetAmount()) == 0);
+
+		assertEquals("Z", invoice.getZFItems()[0].getProduct().getTaxCategoryCode());
+		assertEquals("Kleinunternehmer", invoice.getZFItems()[0].getProduct().getTaxExemptionReason());
 
 		assertTrue(invoice.getTradeSettlement().length == 1);
 		assertTrue(invoice.getTradeSettlement()[0] instanceof IZUGFeRDTradeSettlementPayment);
@@ -334,6 +355,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		byte[] fileA = null;
 		byte[] fileB = null;
+		boolean facturXFound=false;
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushAttachments.pdf");
 		for (FileAttachment fa : zii.getFileAttachmentsPDF()) {
@@ -341,16 +363,18 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				fileA = fa.getData();
 			} else if (fa.getFilename().equals("two.pdf")) {
 				fileB = fa.getData();
+			} else if (fa.getFilename().equals("factur-x.xml")) {
+				facturXFound=true;
 			}
 		}
 		byte[] b = {12, 13}; // the sample data that was used to write the files
 
+		assertTrue(facturXFound);
 		assertTrue(Arrays.equals(fileA, b));
 		assertEquals(fileA.length, 2);
 		assertTrue(Arrays.equals(fileB, b));
 		assertEquals(fileB.length, 2);
 	}
-
 
 	public void testImportDebit() {
 		File CIIinputFile = getResourceAsFile("cii/minimalDebit.xml");
@@ -358,7 +382,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
 			Invoice i = zii.extractInvoice();
 
-			assertEquals("DE21860000000086001055", i.getSender().getBankDetails().get(0).getIBAN());
+			assertEquals("DE21860000000086001055", i.getRecipient().getBankDetails().get(0).getIBAN());
 			ObjectMapper mapper = new ObjectMapper();
 
 			String jsonArray = mapper.writeValueAsString(i);
