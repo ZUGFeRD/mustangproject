@@ -232,6 +232,24 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+	public void testSpecifiedLogisticsChargeImport() {
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		File expectedResult = getResourceAsFile("cii/extended_warenrechnung.xml");
+
+
+		boolean hasExceptions = false;
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		try {
+			zii.setInputStream(new FileInputStream(expectedResult));
+			zii.extractInto(invoice);
+		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("518.99"), tc.getGrandTotal());
+
+	}
 	public void testItemAllowancesChargesImport() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushItemChargesAllowances.pdf");
@@ -245,7 +263,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		assertFalse(hasExceptions);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("18.33"), tc.getGrandTotal());
+		assertEquals(new BigDecimal("19.52"), tc.getGrandTotal());
 	}
 
 	public void testBasisQuantityImport() {
@@ -263,6 +281,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("337.60"), tc.getGrandTotal());
 	}
+
 
 	public void testAllowancesChargesImport() {
 
@@ -305,7 +324,6 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertFalse(hasExceptions);
 
 
-
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
 
@@ -313,6 +331,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertTrue(new BigDecimal("1").compareTo(invoice.getZFItems()[0].getQuantity()) == 0);
 		LineCalculator lc=new LineCalculator(invoice.getZFItems()[0]);
 		assertTrue(new BigDecimal("1").compareTo(lc.getItemTotalNetAmount()) == 0);
+
+		assertEquals("Z", invoice.getZFItems()[0].getProduct().getTaxCategoryCode());
+		assertEquals("Kleinunternehmer", invoice.getZFItems()[0].getProduct().getTaxExemptionReason());
 
 		assertTrue(invoice.getTradeSettlement().length == 1);
 		assertTrue(invoice.getTradeSettlement()[0] instanceof IZUGFeRDTradeSettlementPayment);
@@ -333,6 +354,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		byte[] fileA = null;
 		byte[] fileB = null;
+		boolean facturXFound=false;
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushAttachments.pdf");
 		for (FileAttachment fa : zii.getFileAttachmentsPDF()) {
@@ -340,16 +362,18 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				fileA = fa.getData();
 			} else if (fa.getFilename().equals("two.pdf")) {
 				fileB = fa.getData();
+			} else if (fa.getFilename().equals("factur-x.xml")) {
+				facturXFound=true;
 			}
 		}
 		byte[] b = {12, 13}; // the sample data that was used to write the files
 
+		assertTrue(facturXFound);
 		assertTrue(Arrays.equals(fileA, b));
 		assertEquals(fileA.length, 2);
 		assertTrue(Arrays.equals(fileB, b));
 		assertEquals(fileB.length, 2);
 	}
-
 
 	public void testImportDebit() {
 		File CIIinputFile = getResourceAsFile("cii/minimalDebit.xml");
@@ -357,7 +381,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
 			Invoice i = zii.extractInvoice();
 
-			assertEquals("DE21860000000086001055", i.getSender().getBankDetails().get(0).getIBAN());
+			assertEquals("DE21860000000086001055", i.getRecipient().getBankDetails().get(0).getIBAN());
 			ObjectMapper mapper = new ObjectMapper();
 
 			String jsonArray = mapper.writeValueAsString(i);
@@ -384,6 +408,28 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			CalculatedInvoice i = new CalculatedInvoice();
 			zii.extractInto(i);
 			assertEquals("671.15", i.getGrandTotal().toString());
+
+		} catch (IOException e) {
+			fail("IOException not expected");
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+
+
+	}
+
+	public void testImportUBLCreditnote() { // Confirm some basics also work with UBL credit notes
+		File CIIinputFile = getResourceAsFile("ubl/UBL-CreditNote-2.1-Example.ubl.xml");
+		try {
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
+
+
+			CalculatedInvoice i = new CalculatedInvoice();
+			zii.extractInto(i);
+			assertEquals("TOSL108", i.getNumber());
+			assertEquals("729", i.getGrandTotal().toString());
 
 		} catch (IOException e) {
 			fail("IOException not expected");
@@ -442,6 +488,30 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			+ "Deutschland\t\t\t\t\n"
 			+ "Geschäftsführer: Hans Muster\n"
 			+ "Handelsregisternummer: H A 123");
+
+	}
+
+
+	@Test
+	public void testIBANparsing() throws XPathExpressionException, ParseException, FileNotFoundException {
+
+		File inputFile = getResourceAsFile("cii/minimalDebit.xml");
+
+		ZUGFeRDInvoiceImporter importer = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
+		Invoice invoice = importer.extractInvoice();
+		assertEquals(1, invoice.getRecipient().getBankDetails().size());
+		// IBAN belongs to recipient in invoice with sepa debit
+		assertEquals("DE21860000000086001055", invoice.getRecipient().getBankDetails().get(0).getIBAN());
+		assertEquals(0, invoice.getSender().getBankDetails().size());
+
+		inputFile = getResourceAsFile("factur-x.xml");
+
+		importer = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
+		invoice = importer.extractInvoice();
+		assertEquals(1, invoice.getSender().getBankDetails().size());
+		// IBAN belongs to sender in normal invoice
+		assertEquals("DE88200800000970375700", invoice.getSender().getBankDetails().get(0).getIBAN());
+		assertEquals(0, invoice.getRecipient().getBankDetails().size());
 
 	}
 

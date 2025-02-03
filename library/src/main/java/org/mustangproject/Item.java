@@ -174,6 +174,10 @@ public class Item implements IZUGFeRDExportableItem {
 				.flatMap(cnm -> cnm.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent"))
 				.ifPresent(product::setVATPercent);
 
+			icnm.getAsNodeMap("ApplicableTradeTax")
+				.flatMap(cnm -> cnm.getAsString("ExemptionReason"))
+				.ifPresent(product::setTaxExemptionReason);
+
 			if (recalcPrice && !BigDecimal.ZERO.equals(quantity)) {
 				icnm.getAsNodeMap("SpecifiedTradeSettlementLineMonetarySummation")
 					.flatMap(cnm -> cnm.getAsBigDecimal("LineTotalAmount"))

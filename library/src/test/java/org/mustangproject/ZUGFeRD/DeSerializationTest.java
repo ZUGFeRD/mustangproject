@@ -21,26 +21,35 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import junit.framework.TestCase;
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-import org.mustangproject.*;
-import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
-
-import javax.xml.xpath.XPathExpressionException;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
+
+import javax.xml.xpath.XPathExpressionException;
+
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import org.mustangproject.Allowance;
+import org.mustangproject.BankDetails;
+import org.mustangproject.CalculatedInvoice;
+import org.mustangproject.CashDiscount;
+import org.mustangproject.Charge;
+import org.mustangproject.Contact;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
+import org.mustangproject.SchemedID;
+import org.mustangproject.TradeParty;
+import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DeSerializationTest extends ResourceCase {
@@ -102,6 +111,8 @@ public class DeSerializationTest extends ResourceCase {
 			"  \"currency\": \"EUR\",\n" +
 			"  \"issueDate\": \"2018-03-03T23:00:00.000+00:00\",\n" +
 			"  \"deliveryDate\": \"2018-03-03T23:00:00.000+00:00\",\n" +
+			"  \"detailedDeliveryPeriodFrom\": \"2017-03-03T13:00:00.000+00:00\",\n" +
+			"  \"detailedDeliveryPeriodTo\": \"2017-03-04T13:00:00.000+00:00\",\n" +
 			"  \"sender\": {\n" +
 			"    \"name\": \"Lieferant GmbH\",\n" +
 			"    \"zip\": \"80333\",\n" +
@@ -162,7 +173,15 @@ public class DeSerializationTest extends ResourceCase {
 		TransactionCalculator tc = new TransactionCalculator(fromJSON);
 		assertEquals(tc.getGrandTotal(), new BigDecimal("234.43"));
 		assertEquals(fromJSON.getNumber(), fromJSON.getNumber());
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(fromJSON);
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+
 		assertEquals(fromJSON.getZFItems().length, fromJSON.getZFItems().length);
+		assertTrue(theXML.contains("20170303"));
+		assertTrue(theXML.contains("20170304"));
 
 	}
 
@@ -213,7 +232,7 @@ public class DeSerializationTest extends ResourceCase {
 			"\n" +
 			"  \"number\": \"471102\",\n" +
 			"  \"currency\": \"EUR\",\n" +
-			"  \"issueDate\": \"2018-03-04T00:00:00.000+01:00\",\n" +
+			"  \"issueDate\": \"2018-03-04T00:00:00.000\",\n" +
 			"  \"dueDate\": \"2018-03-04T00:00:00.000+01:00\",\n" +
 			"  \"deliveryDate\": \"2018-03-04T00:00:00.000+01:00\",\n" +
 			"  \"sender\": {\n" +

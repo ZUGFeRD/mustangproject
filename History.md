@@ -1,3 +1,30 @@
+#705
+#707
+-#708
+-#709
+607
+649
+650
+665
+684
+703
+701
+691
+
+
+
+
+
+2.16.1
+=======
+2025-01-21
+- #678 some ubl creditnote attributes are not parsed
+- #679 validation of a XR does not ignore whitespace
+- #681 IBAN assigned to invoice sender not recipient on direct debit
+- #689 incorrect element order when both charge reason and reasoncode are specified
+- be able to set detailedDeliveryPeriodFrom, detailedDeliveryPeriodTo MS188
+- updated verapdf from 1.26.1 to 1.26.2
+- cashDiscount JSON now corrently ignores values for cii and xr methods 
 
 2.16.0
 =======
