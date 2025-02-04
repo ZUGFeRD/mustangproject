@@ -136,7 +136,7 @@
   <entry key="xr:Tender_or_lot_reference" id="BT-17">Vergabenummer</entry>
   <entry key="xr:Receiving_advice_reference" id="BT-15">Kennung der Empfangsbestätigung</entry>
   <entry key="xr:Despatch_advice_reference" id="BT-16">Kennung der Versandanzeige</entry>
-  <entry key="xr:Business_process_type_identifier" id="BT-23">Prozesskennung</entry>
+  <entry key="xr:Business_process_type" id="BT-23">Prozesskennung</entry>
   <entry key="xr:Specification_identifier" id="BT-24">Spezifikationskennung</entry>
   <entry key="xr:Invoiced_object_identifier" id="BT-18">Objektkennung</entry>
   <entry key="xr:Invoiced_object_identifier/@scheme_identifier" id="BT-18_scheme">Schema der Objektkennung</entry>
