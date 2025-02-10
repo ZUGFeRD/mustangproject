@@ -665,6 +665,7 @@ public class ZUGFeRDInvoiceImporter {
 		List<BankDetails> bankDetails = new ArrayList<>();
 		String directDebitMandateID = null;
 		String IBAN = null, BIC = null, paymentMeansCode = null, paymentMeansInformation = null;
+		String accountName = null;
 
 		for (int i = 0; i < headerTradeSettlementNodes.getLength(); i++) {
 			// XMLTools.trimOrNull(nodes.item(i)))) {
@@ -704,7 +705,6 @@ public class ZUGFeRDInvoiceImporter {
 					NodeList paymentMeansChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
 					IBAN = null;
 					BIC = null;
-					String accountName = null;
 					paymentMeansCode = null;
 					paymentMeansInformation = null;
 					for (int paymentMeansChildIndex = 0; paymentMeansChildIndex < paymentMeansChilds.getLength(); paymentMeansChildIndex++) {
@@ -793,12 +793,12 @@ public class ZUGFeRDInvoiceImporter {
 					&& (paymentMeansChilds.item(meansChildIndex).getLocalName().equals("PayeeFinancialAccount"))) {
 					NodeList paymentTermChilds = paymentMeansChilds.item(meansChildIndex).getChildNodes();
 					for (int paymentTermChildIndex = 0; paymentTermChildIndex < paymentTermChilds.getLength(); paymentTermChildIndex++) {
+
+						if ((paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("Name"))) {
+							accountName = XMLTools.trimOrNull(paymentTermChilds.item(paymentTermChildIndex));
+						}
 						if ((paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("ID"))) {
 							IBAN = XMLTools.trimOrNull(paymentTermChilds.item(paymentTermChildIndex));
-							if (IBAN != null) {
-								BankDetails bd = new BankDetails(IBAN);
-								bankDetails.add(bd);
-							}
 						}
 					}
 				}
@@ -816,6 +816,14 @@ public class ZUGFeRDInvoiceImporter {
 
 				}
 			}
+			if (IBAN != null) {
+				BankDetails bd = new BankDetails(IBAN);
+				if (accountName!=null) {
+					bd.setAccountName(accountName);
+				}
+				bankDetails.add(bd);
+			}
+
 
 		}
 
