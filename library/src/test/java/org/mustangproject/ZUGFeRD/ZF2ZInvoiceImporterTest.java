@@ -340,6 +340,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		IZUGFeRDTradeSettlementPayment paym = (IZUGFeRDTradeSettlementPayment) invoice.getTradeSettlement()[0];
 		assertEquals("DE12500105170648489890", paym.getOwnIBAN());
 		assertEquals("COBADEFXXX", paym.getOwnBIC());
+		assertEquals("kontoInhaber",paym.getAccountName());
 
 
 		assertTrue(invoice.getPayee() != null);

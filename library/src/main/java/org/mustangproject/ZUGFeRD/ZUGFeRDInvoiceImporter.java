@@ -704,6 +704,7 @@ public class ZUGFeRDInvoiceImporter {
 					NodeList paymentMeansChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
 					IBAN = null;
 					BIC = null;
+					String accountName = null;
 					paymentMeansCode = null;
 					paymentMeansInformation = null;
 					for (int paymentMeansChildIndex = 0; paymentMeansChildIndex < paymentMeansChilds.getLength(); paymentMeansChildIndex++) {
@@ -722,6 +723,9 @@ public class ZUGFeRDInvoiceImporter {
 								if ((accountChilds.item(accountChildIndex).getLocalName() != null) && (accountChilds.item(accountChildIndex).getLocalName().equals("IBANID"))) {//CII
 									IBAN = XMLTools.trimOrNull(accountChilds.item(accountChildIndex));
 								}
+								if ((accountChilds.item(accountChildIndex).getLocalName() != null) && (accountChilds.item(accountChildIndex).getLocalName().equals("AccountName"))) {//CII
+									accountName = XMLTools.trimOrNull(accountChilds.item(accountChildIndex));
+								}
 							}
 						}
 						if ((paymentMeansChilds.item(paymentMeansChildIndex).getLocalName() != null) && (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayeeSpecifiedCreditorFinancialInstitution"))) {
@@ -738,6 +742,9 @@ public class ZUGFeRDInvoiceImporter {
 						BankDetails bd = new BankDetails(IBAN);
 						if (BIC != null) {
 							bd.setBIC(BIC);
+						}
+						if (accountName!=null) {
+							bd.setAccountName(accountName);
 						}
 						bankDetails.add(bd);
 					}
