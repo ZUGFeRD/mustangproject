@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 /***
  * describes any invoice line
@@ -96,7 +94,6 @@ public class Item implements IZUGFeRDExportableItem {
 			//icnm.getNode("AdditionalItemProperty").flatMap(n ->n.getAttributes()).ifPresent(product::setAttributes);
 
 
-
 			icnm.getAsNodeMap("ClassifiedTaxCategory").flatMap(m -> m.getAsBigDecimal("Percent"))
 				.ifPresent(product::setVATPercent);
 		});
@@ -118,7 +115,7 @@ public class Item implements IZUGFeRDExportableItem {
 		});
 
 		itemMap.getAllNodes("DocumentReference").map(ReferencedDocument::fromNode)
-				.forEach(this::addAdditionalReference);
+			.forEach(this::addAdditionalReference);
 
 		// ubl
 
@@ -133,8 +130,6 @@ public class Item implements IZUGFeRDExportableItem {
 
 		itemMap.getAsString("Note")
 			.ifPresent(this::addNote);
-
-
 
 
 		itemMap.getAsNodeMap("SpecifiedLineTradeAgreement", "SpecifiedSupplyChainTradeAgreement").ifPresent(icnm -> {
@@ -175,25 +170,28 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("ApplicableTradeTax")
 				.flatMap(cnm -> cnm.getAsString("ExemptionReason"))
 				.ifPresent(product::setTaxExemptionReason);
+			icnm.getAsNodeMap("ApplicableTradeTax")
+				.flatMap(cnm -> cnm.getAsString("CategoryCode"))
+				.ifPresent(product::setTaxCategoryCode);
 			icnm.getAsNodeMap("SpecifiedTradeAllowanceCharge").ifPresent(stac -> {
 				stac.getAsNodeMap("ChargeIndicator").ifPresent(ci -> {
-					String isChargeString=ci.getAsString("Indicator").get();
-					String percentString=stac.getAsStringOrNull("CalculationPercent");
-					String amountString=stac.getAsStringOrNull("ActualAmount");
-					String reason=stac.getAsStringOrNull("Reason");
-					Charge izac= new Charge();
+					String isChargeString = ci.getAsString("Indicator").get();
+					String percentString = stac.getAsStringOrNull("CalculationPercent");
+					String amountString = stac.getAsStringOrNull("ActualAmount");
+					String reason = stac.getAsStringOrNull("Reason");
+					Charge izac = new Charge();
 					if (isChargeString.equalsIgnoreCase("false")) {
 						izac = new Allowance();
 					} else {
 						izac = new Charge();
 					}
-					if (amountString!=null) {
+					if (amountString != null) {
 						izac.setTotalAmount(new BigDecimal(amountString));
 					}
-					if(percentString!=null) {
+					if (percentString != null) {
 						izac.setPercent(new BigDecimal(percentString));
 					}
-					if(reason!=null) {
+					if (reason != null) {
 						izac.setReason(reason);
 					}
 
@@ -266,7 +264,7 @@ public class Item implements IZUGFeRDExportableItem {
 	}
 
 	public Item setNotesWithSubjectCode(List<IncludedNote> theList) {
-		includedNotes=theList;
+		includedNotes = theList;
 		return this;
 	}
 
