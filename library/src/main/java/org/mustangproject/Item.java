@@ -191,10 +191,10 @@ public class Item implements IZUGFeRDExportableItem {
 						izac.setTotalAmount(new BigDecimal(amountString));
 					}
 					if(percentString!=null) {
-						izac.setPercent(new BigDecimal(percentString));
+					izac.setPercent(new BigDecimal(percentString));
 					}
 					if(reason!=null) {
-						izac.setReason(reason);
+					izac.setReason(reason);
 					}
 
 					if (isChargeString.equalsIgnoreCase("false")) {
@@ -213,6 +213,12 @@ public class Item implements IZUGFeRDExportableItem {
 			}
 
 			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).forEach(this::addAdditionalReference);
+
+			icnm.getAsNodeMap("BillingSpecifiedPeriod").ifPresent(periodNode -> {
+				Date start = periodNode.getAsNodeMap("StartDateTime").flatMap(dateTimeNode -> dateTimeNode.getNode("DateTimeString")).map(dts -> XMLTools.tryDate(dts)).orElse(null);
+				Date end = periodNode.getAsNodeMap("EndDateTime").flatMap(dateTimeNode -> dateTimeNode.getNode("DateTimeString")).map(dts -> XMLTools.tryDate(dts)).orElse(null);
+				setDetailedDeliveryPeriod(start, end);
+			});
 		});
 
 		itemMap.getAsNodeMap("AssociatedDocumentLineDocument").ifPresent(adld -> {
