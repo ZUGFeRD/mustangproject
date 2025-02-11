@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Calendar;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.stream.StreamSource;
@@ -151,6 +152,11 @@ public class XMLValidator extends Validator {
 				final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 				dbf.setNamespaceAware(true); // otherwise we can not act namespace independently, i.e. use
 				// document.getElementsByTagNameNS("*",...
+				dbf.setExpandEntityReferences(false);
+				dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+				dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+				dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+				dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 
 				final DocumentBuilder db = dbf.newDocumentBuilder();
 				final InputSource is = new InputSource(new StringReader(zfXML));
