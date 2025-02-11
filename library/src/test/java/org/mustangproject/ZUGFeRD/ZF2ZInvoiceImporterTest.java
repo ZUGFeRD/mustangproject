@@ -443,6 +443,34 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+	public void testImportUBLPeriods() { // Confirm some basics also work with UBL credit notes
+		File ublinputFile = getResourceAsFile("ubl/periods.ubl.xml");
+		try {
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+			zii.doIgnoreCalculationErrors();
+			zii.setInputStream(new FileInputStream(ublinputFile));
+
+
+			CalculatedInvoice i = new CalculatedInvoice();
+			zii.extractInto(i);
+			assertEquals("123", i.getNumber());
+			assertEquals("1.48", i.getGrandTotal().toString());
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+			assertEquals("2020-10-01", sdf.format(i.getDetailedDeliveryPeriodFrom()));
+			assertEquals("2020-10-05", sdf.format(i.getDetailedDeliveryPeriodTo()));
+
+		} catch (IOException e) {
+			fail("IOException not expected");
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+
+
+	}
+
 
 	@Test
 	public void testImportPrepaid() throws XPathExpressionException, ParseException {

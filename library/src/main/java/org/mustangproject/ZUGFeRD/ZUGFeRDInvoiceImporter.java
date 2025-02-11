@@ -775,6 +775,21 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
+		xpr = xpath.compile("/*[local-name()=\"Invoice\"]/*[local-name()=\"InvoicePeriod\"]/*"); //UBL only
+		NodeList periodNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+
+		for (int periodChildIndex = 0; periodChildIndex < periodNodes.getLength(); periodChildIndex++) {
+			String localName=periodNodes.item(periodChildIndex).getLocalName();
+			if ((localName != null) && (periodNodes.item(periodChildIndex).getLocalName().equals("StartDate"))) {
+				deliveryPeriodStart = XMLTools.trimOrNull(periodNodes.item(periodChildIndex));
+			}
+			if ((localName != null) && (periodNodes.item(periodChildIndex).getLocalName().equals("EndDate"))) {
+				deliveryPeriodEnd = XMLTools.trimOrNull(periodNodes.item(periodChildIndex));
+			}
+
+		}
+
+
 		if ((deliveryPeriodStart != null) && (deliveryPeriodEnd != null)) {
 			zpp.setDetailedDeliveryPeriod(XMLTools.tryDate(deliveryPeriodStart), XMLTools.tryDate(deliveryPeriodEnd));
 		} else if (deliveryPeriodStart != null) {
