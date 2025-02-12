@@ -401,7 +401,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
-	public void testImportMinimum() {
+  public void testImportMinimum() {
 		File CIIinputFile = getResourceAsFile("cii/facturFrMinimum.xml");
 		try {
 			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
@@ -529,29 +529,40 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		ZUGFeRDInvoiceImporter importer = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
 		Invoice invoice = importer.extractInvoice();
-		assertEquals(1,invoice.getRecipient().getBankDetails().size());
+		assertEquals(1, invoice.getRecipient().getBankDetails().size());
 		// IBAN belongs to recipient in invoice with sepa debit
-		assertEquals("DE21860000000086001055",invoice.getRecipient().getBankDetails().get(0).getIBAN());
-		assertEquals(0,invoice.getSender().getBankDetails().size());
+		assertEquals("DE21860000000086001055", invoice.getRecipient().getBankDetails().get(0).getIBAN());
+		assertEquals(0, invoice.getSender().getBankDetails().size());
 
 		inputFile = getResourceAsFile("factur-x.xml");
 
 		importer = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
 		invoice = importer.extractInvoice();
-		assertEquals(1,invoice.getSender().getBankDetails().size());
+		assertEquals(1, invoice.getSender().getBankDetails().size());
 		// IBAN belongs to sender in normal invoice
-		assertEquals("DE88200800000970375700",invoice.getSender().getBankDetails().get(0).getIBAN());
-		assertEquals(0,invoice.getRecipient().getBankDetails().size());
+		assertEquals("DE88200800000970375700", invoice.getSender().getBankDetails().get(0).getIBAN());
+		assertEquals(0, invoice.getRecipient().getBankDetails().size());
 
 	}
 
 	@Test
+	public void testPositionAllowance() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("factur-x-with-position-allowance.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
+
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		zii.extractInto(invoice);
+
+		assertThat(invoice.getGrandTotal()).isEqualByComparingTo(BigDecimal.valueOf(82.63));
+	}
+
 	public void testItemsBillingSpecifiedPeriod() throws FileNotFoundException, XPathExpressionException, ParseException {
 		File inputFile = getResourceAsFile("factur-x_invoicingPeriod.xml");
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
 
 		CalculatedInvoice invoice = new CalculatedInvoice();
 		zii.extractInto(invoice);
+
 		assertEquals(3, invoice.getZFItems().length);
 		assertEquals(new Date(2022-1900, 8-1, 29), invoice.getZFItems()[0].getDetailedDeliveryPeriodFrom());
 		assertEquals(new Date(2022-1900, 8-1, 31), invoice.getZFItems()[0].getDetailedDeliveryPeriodTo());
