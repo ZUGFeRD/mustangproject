@@ -125,7 +125,11 @@ public class Invoice implements IExportableTransaction {
 	 * @return fluent setter
 	 */
 	public Invoice setAdditionalReferencedDocuments(FileAttachment[] fileArr) {
-		xmlEmbeddedFiles = new ArrayList<>(Arrays.asList(fileArr));
+		if (fileArr!=null) {
+			xmlEmbeddedFiles = new ArrayList<>(Arrays.asList(fileArr));
+		} else {
+			xmlEmbeddedFiles = new ArrayList<>();
+		}
 		return this;
 	}
 

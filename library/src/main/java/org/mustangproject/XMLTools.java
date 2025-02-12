@@ -129,7 +129,13 @@ public class XMLTools extends XMLWriter {
 	 * @return a util.Date, or null, if not parseable
 	 */
 	public static Date tryDate(String toParse) {
-		final SimpleDateFormat formatter = ZUGFeRDDateFormat.DATE.getFormatter();
+		SimpleDateFormat formatter = null;
+		if (toParse.contains("-")) {
+			// from ubl
+			 formatter = new SimpleDateFormat("yyyy-MM-dd");
+		} else {
+			formatter = ZUGFeRDDateFormat.DATE.getFormatter();
+		}
 		try {
 			return formatter.parse(toParse);
 		} catch (final Exception e) {

@@ -134,7 +134,10 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 		if (totalAmount!=null) {
 			return totalAmount;
 		} else {
-			throw new RuntimeException("totalAmount must be set");
+			if (percent==null) {
+				throw new RuntimeException("totalAmount must be set");
+			}
+			return null;
 		}
 	}
 

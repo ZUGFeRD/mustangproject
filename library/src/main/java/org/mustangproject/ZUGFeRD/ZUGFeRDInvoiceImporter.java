@@ -665,6 +665,7 @@ public class ZUGFeRDInvoiceImporter {
 		List<BankDetails> bankDetails = new ArrayList<>();
 		String directDebitMandateID = null;
 		String IBAN = null, BIC = null, paymentMeansCode = null, paymentMeansInformation = null;
+		String accountName = null;
 
 		for (int i = 0; i < headerTradeSettlementNodes.getLength(); i++) {
 			// XMLTools.trimOrNull(nodes.item(i)))) {
@@ -722,6 +723,9 @@ public class ZUGFeRDInvoiceImporter {
 								if ((accountChilds.item(accountChildIndex).getLocalName() != null) && (accountChilds.item(accountChildIndex).getLocalName().equals("IBANID"))) {//CII
 									IBAN = XMLTools.trimOrNull(accountChilds.item(accountChildIndex));
 								}
+								if ((accountChilds.item(accountChildIndex).getLocalName() != null) && (accountChilds.item(accountChildIndex).getLocalName().equals("AccountName"))) {//CII
+									accountName = XMLTools.trimOrNull(accountChilds.item(accountChildIndex));
+								}
 							}
 						}
 						if ((paymentMeansChilds.item(paymentMeansChildIndex).getLocalName() != null) && (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayeeSpecifiedCreditorFinancialInstitution"))) {
@@ -738,6 +742,9 @@ public class ZUGFeRDInvoiceImporter {
 						BankDetails bd = new BankDetails(IBAN);
 						if (BIC != null) {
 							bd.setBIC(BIC);
+						}
+						if (accountName!=null) {
+							bd.setAccountName(accountName);
 						}
 						bankDetails.add(bd);
 					}
@@ -768,6 +775,21 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
+		xpr = xpath.compile("/*[local-name()=\"Invoice\"]/*[local-name()=\"InvoicePeriod\"]/*"); //UBL only
+		NodeList periodNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+
+		for (int periodChildIndex = 0; periodChildIndex < periodNodes.getLength(); periodChildIndex++) {
+			String localName=periodNodes.item(periodChildIndex).getLocalName();
+			if ((localName != null) && (periodNodes.item(periodChildIndex).getLocalName().equals("StartDate"))) {
+				deliveryPeriodStart = XMLTools.trimOrNull(periodNodes.item(periodChildIndex));
+			}
+			if ((localName != null) && (periodNodes.item(periodChildIndex).getLocalName().equals("EndDate"))) {
+				deliveryPeriodEnd = XMLTools.trimOrNull(periodNodes.item(periodChildIndex));
+			}
+
+		}
+
+
 		if ((deliveryPeriodStart != null) && (deliveryPeriodEnd != null)) {
 			zpp.setDetailedDeliveryPeriod(XMLTools.tryDate(deliveryPeriodStart), XMLTools.tryDate(deliveryPeriodEnd));
 		} else if (deliveryPeriodStart != null) {
@@ -786,12 +808,12 @@ public class ZUGFeRDInvoiceImporter {
 					&& (paymentMeansChilds.item(meansChildIndex).getLocalName().equals("PayeeFinancialAccount"))) {
 					NodeList paymentTermChilds = paymentMeansChilds.item(meansChildIndex).getChildNodes();
 					for (int paymentTermChildIndex = 0; paymentTermChildIndex < paymentTermChilds.getLength(); paymentTermChildIndex++) {
+
+						if ((paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("Name"))) {
+							accountName = XMLTools.trimOrNull(paymentTermChilds.item(paymentTermChildIndex));
+						}
 						if ((paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("ID"))) {
 							IBAN = XMLTools.trimOrNull(paymentTermChilds.item(paymentTermChildIndex));
-							if (IBAN != null) {
-								BankDetails bd = new BankDetails(IBAN);
-								bankDetails.add(bd);
-							}
 						}
 					}
 				}
@@ -809,6 +831,14 @@ public class ZUGFeRDInvoiceImporter {
 
 				}
 			}
+			if (IBAN != null) {
+				BankDetails bd = new BankDetails(IBAN);
+				if (accountName!=null) {
+					bd.setAccountName(accountName);
+				}
+				bankDetails.add(bd);
+			}
+
 
 		}
 
