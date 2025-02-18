@@ -52,12 +52,17 @@ public class XRTest extends TestCase {
 		TradeParty recipient = new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE");
 		recipient.setEmail("quack@ducktown.org");
 		Invoice i = createInvoice(recipient);
-
+		String legalOrgID="aCustomSellerLegalOrgId";
+		String sellerID="aSellerTradePartyID";
+		i.getSender().setLegalOrganisation(new LegalOrganisation(legalOrgID));
+		i.getSender().setID(sellerID);
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 		zf2p.setProfile(Profiles.getByName("XRechnung"));
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+		assertTrue(theXML.contains("<ram:ID>"+sellerID+"</ram:ID>"));// must be possible without scheme #
+		assertTrue(theXML.contains("<ram:ID>"+legalOrgID+"</ram:ID>"));// must be possible without scheme #
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
 			.asInt()
 			.isEqualTo(1); //2 errors are OK because there is a known bug
