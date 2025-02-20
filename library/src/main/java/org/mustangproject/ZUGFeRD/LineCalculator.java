@@ -15,6 +15,7 @@ public class LineCalculator {
 	private BigDecimal allowance = BigDecimal.ZERO;
 	private BigDecimal charge = BigDecimal.ZERO;
 	private BigDecimal allowanceItemTotal = BigDecimal.ZERO;
+	private BigDecimal chargeItemTotal = BigDecimal.ZERO;
 
 	public LineCalculator(IZUGFeRDExportableItem currentItem) {
 
@@ -26,6 +27,11 @@ public class LineCalculator {
 		if (currentItem.getItemCharges() != null && currentItem.getItemCharges().length > 0) {
 			for (IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
 				addCharge(charge.getTotalAmount(currentItem));
+			}
+		}
+		if (currentItem.getItemTotalCharges() != null && currentItem.getItemTotalCharges().length > 0) {
+			for (final IZUGFeRDAllowanceCharge itemTotalCharge : currentItem.getItemTotalCharges()) {
+				addChargeItemTotal(itemTotalCharge.getTotalAmount(currentItem));
 			}
 		}
 		if (currentItem.getItemTotalAllowances() != null && currentItem.getItemTotalAllowances().length > 0) {
@@ -56,7 +62,7 @@ public class LineCalculator {
 			? BigDecimal.ONE.setScale(4)
 			: currentItem.getBasisQuantity();
 		itemTotalNetAmount = quantity.multiply(price).divide(basisQuantity, 18, RoundingMode.HALF_UP)
-				.subtract(allowanceItemTotal).setScale(2, RoundingMode.HALF_UP);
+				.add(chargeItemTotal).subtract(allowanceItemTotal).setScale(2, RoundingMode.HALF_UP);
 		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);
 	}
 
@@ -92,4 +98,7 @@ public class LineCalculator {
 		allowanceItemTotal = allowanceItemTotal.add(b);
 	}
 
+	public void addChargeItemTotal(BigDecimal b) {
+		chargeItemTotal = chargeItemTotal.add(b);
+	}
 }
