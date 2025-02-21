@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsm:CrossIndustryInvoice xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100">
+	<rsm:ExchangedDocumentContext>
+		<ram:GuidelineSpecifiedDocumentContextParameter>
+			<ram:ID>urn:cen.eu:en16931:2017</ram:ID>
+		</ram:GuidelineSpecifiedDocumentContextParameter>
+	</rsm:ExchangedDocumentContext>
+	<rsm:ExchangedDocument>
+		<ram:ID>25/641123456/001</ram:ID>
+		<ram:TypeCode>380</ram:TypeCode>
+		<ram:IssueDateTime>
+			<udt:DateTimeString format="102">20250115</udt:DateTimeString>
+		</ram:IssueDateTime>
+		<ram:IncludedNote>
+			<ram:Content>SEPA direct debit</ram:Content>
+			<ram:SubjectCode>AAB</ram:SubjectCode>
+		</ram:IncludedNote>
+		<ram:IncludedNote>
+			<ram:Content>PAYMENTAMOUNT:107.51</ram:Content>
+			<ram:SubjectCode>PMD</ram:SubjectCode>
+		</ram:IncludedNote>
+		<ram:IncludedNote>
+			<ram:Content>PAYMENTCURRENCY:EUR</ram:Content>
+			<ram:SubjectCode>PMD</ram:SubjectCode>
+		</ram:IncludedNote>
+	</rsm:ExchangedDocument>
+	<rsm:SupplyChainTradeTransaction>
+		<ram:IncludedSupplyChainTradeLineItem>
+			<ram:AssociatedDocumentLineDocument>
+				<ram:LineID>1</ram:LineID>
+			</ram:AssociatedDocumentLineDocument>
+			<ram:SpecifiedTradeProduct>
+				<ram:SellerAssignedID>0038</ram:SellerAssignedID>
+				<ram:Name>SUPER PLUS</ram:Name>
+				<ram:ApplicableProductCharacteristic>
+					<ram:Description>LeoID</ram:Description>
+					<ram:Value>704310.0106597948</ram:Value>
+				</ram:ApplicableProductCharacteristic>
+				<ram:ApplicableProductCharacteristic>
+					<ram:Description>Uhrzeit</ram:Description>
+					<ram:Value>19:46</ram:Value>
+				</ram:ApplicableProductCharacteristic>
+				<ram:ApplicableProductCharacteristic>
+					<ram:Description>Ort</ram:Description>
+					<ram:Value>VOJTANOV</ram:Value>
+				</ram:ApplicableProductCharacteristic>
+				<ram:ApplicableProductCharacteristic>
+					<ram:Description>Marke</ram:Description>
+					<ram:Value>ONO</ram:Value>
+				</ram:ApplicableProductCharacteristic>
+				<ram:ApplicableProductCharacteristic>
+					<ram:Description>Servicestelle</ram:Description>
+					<ram:Value>SS2498209</ram:Value>
+				</ram:ApplicableProductCharacteristic>
+				<ram:ApplicableProductCharacteristic>
+					<ram:Description>Lieferscheinnummer</ram:Description>
+					<ram:Value>0000442424</ram:Value>
+				</ram:ApplicableProductCharacteristic>
+				<ram:ApplicableProductCharacteristic>
+					<ram:Description>Kilometerstand</ram:Description>
+					<ram:Value>0000001</ram:Value>
+				</ram:ApplicableProductCharacteristic>
+				<ram:OriginTradeCountry>
+					<ram:ID>CZ</ram:ID>
+				</ram:OriginTradeCountry>
+			</ram:SpecifiedTradeProduct>
+			<ram:SpecifiedLineTradeAgreement>
+				<ram:NetPriceProductTradePrice>
+					<ram:ChargeAmount>2966.99</ram:ChargeAmount>
+					<ram:BasisQuantity unitCode="LTR">100.</ram:BasisQuantity>
+				</ram:NetPriceProductTradePrice>
+			</ram:SpecifiedLineTradeAgreement>
+			<ram:SpecifiedLineTradeDelivery>
+				<ram:BilledQuantity unitCode="LTR">69.01</ram:BilledQuantity>
+			</ram:SpecifiedLineTradeDelivery>
+			<ram:SpecifiedLineTradeSettlement>
+				<ram:ApplicableTradeTax>
+					<ram:TypeCode>VAT</ram:TypeCode>
+					<ram:CategoryCode>S</ram:CategoryCode>
+					<ram:RateApplicablePercent>21.00</ram:RateApplicablePercent>
+				</ram:ApplicableTradeTax>
+				<ram:BillingSpecifiedPeriod>
+					<ram:StartDateTime>
+						<udt:DateTimeString format="102">20250104</udt:DateTimeString>
+					</ram:StartDateTime>
+					<ram:EndDateTime>
+						<udt:DateTimeString format="102">20250104</udt:DateTimeString>
+					</ram:EndDateTime>
+				</ram:BillingSpecifiedPeriod>
+				<ram:SpecifiedTradeAllowanceCharge>
+					<ram:ChargeIndicator>
+						<udt:Indicator>true</udt:Indicator>
+					</ram:ChargeIndicator>
+					<ram:ActualAmount>61.94</ram:ActualAmount>
+					<ram:Reason>Fee</ram:Reason>
+				</ram:SpecifiedTradeAllowanceCharge>
+				<ram:SpecifiedTradeSettlementLineMonetarySummation>
+					<ram:LineTotalAmount>2109.46</ram:LineTotalAmount>
+				</ram:SpecifiedTradeSettlementLineMonetarySummation>
+				<ram:AdditionalReferencedDocument>
+					<ram:IssuerAssignedID>V-FW 2505</ram:IssuerAssignedID>
+					<ram:TypeCode>130</ram:TypeCode>
+					<ram:ReferenceTypeCode>ABZ</ram:ReferenceTypeCode>
+				</ram:AdditionalReferencedDocument>
+				<ram:ReceivableSpecifiedTradeAccountingAccount>
+					<ram:ID>1200</ram:ID>
+				</ram:ReceivableSpecifiedTradeAccountingAccount>
+			</ram:SpecifiedLineTradeSettlement>
+		</ram:IncludedSupplyChainTradeLineItem>
+		<ram:ApplicableHeaderTradeAgreement>
+			<ram:SellerTradeParty>
+				<ram:ID>CZ123456789</ram:ID>
+				<ram:Name>Service GmbH + Co. KG</ram:Name>
+				<ram:DefinedTradeContact>
+					<ram:PersonName>Kundenberatung</ram:PersonName>
+					<ram:TelephoneUniversalCommunication>
+						<ram:CompleteNumber>0049 (2345) 5518-444</ram:CompleteNumber>
+					</ram:TelephoneUniversalCommunication>
+					<ram:EmailURIUniversalCommunication>
+						<ram:URIID>kundenberatung@service.com</ram:URIID>
+					</ram:EmailURIUniversalCommunication>
+				</ram:DefinedTradeContact>
+				<ram:PostalTradeAddress>
+					<ram:PostcodeCode>12345</ram:PostcodeCode>
+					<ram:LineOne>Baum-Allee 3</ram:LineOne>
+					<ram:CityName>Rabenburg</ram:CityName>
+					<ram:CountryID>DE</ram:CountryID>
+				</ram:PostalTradeAddress>
+				<ram:SpecifiedTaxRegistration>
+					<ram:ID schemeID="VA">CZ2344566</ram:ID>
+				</ram:SpecifiedTaxRegistration>
+			</ram:SellerTradeParty>
+			<ram:BuyerTradeParty>
+				<ram:ID>666666</ram:ID>
+				<ram:Name>Name und Adresse geaendert</ram:Name>
+				<ram:PostalTradeAddress>
+					<ram:PostcodeCode>55555</ram:PostcodeCode>
+					<ram:LineOne>Forkstr. 9</ram:LineOne>
+					<ram:CityName>Stadt</ram:CityName>
+					<ram:CountryID>DE</ram:CountryID>
+				</ram:PostalTradeAddress>
+			</ram:BuyerTradeParty>
+			<ram:AdditionalReferencedDocument>
+				<ram:IssuerAssignedID>25/123456789/001</ram:IssuerAssignedID>
+				<ram:TypeCode>130</ram:TypeCode>
+			</ram:AdditionalReferencedDocument>
+		</ram:ApplicableHeaderTradeAgreement>
+		<ram:ApplicableHeaderTradeDelivery/>
+		<ram:ApplicableHeaderTradeSettlement>
+			<ram:InvoiceCurrencyCode>CZK</ram:InvoiceCurrencyCode>
+			<ram:SpecifiedTradeSettlementPaymentMeans>
+				<ram:TypeCode>70</ram:TypeCode>
+				<ram:PayeePartyCreditorFinancialAccount>
+					<ram:IBANID>DE12345678987654321900</ram:IBANID>
+				</ram:PayeePartyCreditorFinancialAccount>
+			</ram:SpecifiedTradeSettlementPaymentMeans>
+			<ram:ApplicableTradeTax>
+				<ram:CalculatedAmount>442.99</ram:CalculatedAmount>
+				<ram:TypeCode>VAT</ram:TypeCode>
+				<ram:BasisAmount>2109.46</ram:BasisAmount>
+				<ram:CategoryCode>S</ram:CategoryCode>
+				<ram:RateApplicablePercent>21.00</ram:RateApplicablePercent>
+			</ram:ApplicableTradeTax>
+			<ram:SpecifiedTradePaymentTerms>
+				<ram:Description>27.01.2025 00:00:00</ram:Description>
+				<ram:DueDateDateTime>
+					<udt:DateTimeString format="102">20250127</udt:DateTimeString>
+				</ram:DueDateDateTime>
+			</ram:SpecifiedTradePaymentTerms>
+			<ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+				<ram:LineTotalAmount>2109.46</ram:LineTotalAmount>
+				<ram:TaxBasisTotalAmount>2109.46</ram:TaxBasisTotalAmount>
+				<ram:TaxTotalAmount currencyID="CZK">442.99</ram:TaxTotalAmount>
+				<ram:GrandTotalAmount>2552.45</ram:GrandTotalAmount>
+				<ram:TotalPrepaidAmount>0.00</ram:TotalPrepaidAmount>
+				<ram:DuePayableAmount>2552.45</ram:DuePayableAmount>
+			</ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+		</ram:ApplicableHeaderTradeSettlement>
+	</rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>

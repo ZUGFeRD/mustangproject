@@ -1,46 +1,48 @@
-/** **********************************************************************
- *
+/**
+ * *********************************************************************
+ * <p>
  * Copyright 2018 Jochen Staerk
- *
+ * <p>
  * Use is subject to license terms.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0.
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *
+ * <p>
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *********************************************************************** */
+ * <p>
+ * **********************************************************************
+ */
 package org.mustangproject.ZUGFeRD;
 /**
  * Mustangproject's ZUGFeRD implementation
  * Neccessary interface for ZUGFeRD exporter
  * Licensed under the APLv2
+ *
  * @date 2014-05-10
  * @version 1.2.0
  * @author jstaerk
- * */
+ */
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.mustangproject.IncludedNote;
+import org.mustangproject.Item;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import org.mustangproject.IncludedNote;
-import org.mustangproject.Item;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 @JsonDeserialize(as = Item.class)
-public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
+public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider {
 	IZUGFeRDExportableProduct getProduct();
 
 	/**
-	 * item level discounts
+	 * item level discounts for the line item total (BG-27)
 	 * @return array of the discounts on a single item
 	 */
 	default IZUGFeRDAllowanceCharge[] getItemAllowances() {
@@ -48,7 +50,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	}
 
 	/**
-	 * item level price additions
+	 * item level additions for the line item total (BG-27)
 	 * @return array of the additional charges on the item
 	 */
 	default IZUGFeRDAllowanceCharge[] getItemCharges() {
@@ -76,6 +78,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	default BigDecimal getValue() {
 		return getPrice();
 	}
+
 	/**
 	 * how many get billed
 	 *
@@ -85,7 +88,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 
 	/**
 	 * how many items units per price
-	 * 
+	 *
 	 * @return item units per price
 	 */
 	default BigDecimal getBasisQuantity() {
@@ -118,6 +121,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	default IReferencedDocument[] getReferencedDocuments() {
 		return null;
 	}
+
 	/***
 	 * descriptive texts
 	 * @return an array of strings of item specific "includedNotes", text values
@@ -125,7 +129,6 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	default String[] getNotes() {
 		return null;
 	}
-
 
 
 	/***
@@ -145,11 +148,11 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	default Date getDetailedDeliveryPeriodTo() {
 		return null;
 	}
-	
+
 	/***
-	 * specify allowances amount for the line item total
+	 * specify applied allowances amount for the item price
 	 *
-	 * @return the sum of allowances for this item
+	 * @return applied allowance amount (BT-147)
 	 */
 	default IZUGFeRDAllowanceCharge[] getItemTotalAllowances() {
 		return null;
@@ -159,7 +162,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 *
 	 * @return the line ID
 	 */
-	default String getId()  {
+	default String getId() {
 		return null;
 	}
 

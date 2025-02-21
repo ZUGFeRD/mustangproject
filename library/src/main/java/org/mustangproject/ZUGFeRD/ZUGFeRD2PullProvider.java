@@ -20,24 +20,6 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
-import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATEGORY_CODES_WITH_EXEMPTION_REASON;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -49,6 +31,18 @@ import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
+import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATEGORY_CODES_WITH_EXEMPTION_REASON;
 
 public class ZUGFeRD2PullProvider implements IXMLProvider {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRD2PullProvider.class);
@@ -270,33 +264,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	 * @param item the item
 	 * @return CII XML
 	 */
-	protected String getAllowanceChargeStr(IZUGFeRDAllowanceCharge allowance, IAbsoluteValueProvider item) {
-		String percentage = "";
-		String chargeIndicator = "false";
-		if ((allowance.getPercent() != null) && (profile == Profiles.getByName("Extended"))) {
-			percentage = "<ram:CalculationPercent>" + vatFormat(allowance.getPercent()) + "</ram:CalculationPercent>";
-			percentage += "<ram:BasisAmount>" + item.getValue() + "</ram:BasisAmount>";
-		}
-		if (allowance.isCharge()) {
-			chargeIndicator = "true";
-		}
-
-		String reason = "";
-		if ((allowance.getReason() != null) && (profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung") || profile == Profiles.getByName("EN16931"))) {
-			reason = "<ram:Reason>" + XMLTools.encodeXML(allowance.getReason()) + "</ram:Reason>";
-		}
-		String reasonCode = "";
-		if (allowance.getReasonCode() != null) {
-			// only in XRechnung profile
-			reasonCode = "<ram:ReasonCode>" + allowance.getReasonCode() + "</ram:ReasonCode>";
-		}
-		final String allowanceChargeStr = "<ram:AppliedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>" +
-			chargeIndicator + "</udt:Indicator></ram:ChargeIndicator>" + percentage +
+	protected String getAppliedAllowanceStr(IZUGFeRDAllowanceCharge allowance, IAbsoluteValueProvider item) {
+		return "<ram:AppliedTradeAllowanceCharge>" +
+			"<ram:ChargeIndicator><udt:Indicator>false</udt:Indicator></ram:ChargeIndicator>" +
 			"<ram:ActualAmount>" + priceFormat(allowance.getTotalAmount(item)) + "</ram:ActualAmount>" +
-			reasonCode +
-			reason +
 			"</ram:AppliedTradeAllowanceCharge>";
-		return allowanceChargeStr;
 	}
 
 	/***
@@ -325,13 +297,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			// only in XRechnung profile
 			reasonCode = "<ram:ReasonCode>" + allowance.getReasonCode() + "</ram:ReasonCode>";
 		}
-		final String itemTotalAllowanceChargeStr = "<ram:SpecifiedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>" +
+		return "<ram:SpecifiedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>" +
 			chargeIndicator + "</udt:Indicator></ram:ChargeIndicator>" + percentage +
 			"<ram:ActualAmount>" + currencyFormat(allowance.getTotalAmount(item)) + "</ram:ActualAmount>" +
 			reasonCode +
 			reason +
 			"</ram:SpecifiedTradeAllowanceCharge>";
-		return itemTotalAllowanceChargeStr;
 	}
 
 	@Override
@@ -394,20 +365,20 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "</rsm:ExchangedDocumentContext>"
 				+ "<rsm:ExchangedDocument>"
 				+ "<ram:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:ID>";
-				if (profile == Profiles.getByName("Extended") && trans.getDocumentName() != null) {
-					xml += "<ram:Name>" + XMLTools.encodeXML(trans.getDocumentName()) + "</ram:Name>";
-				}
-			xml += "<ram:TypeCode>" + typecode + "</ram:TypeCode>"
-				+ "<ram:IssueDateTime>" + DATE.udtFormat(trans.getIssueDate()) + "</ram:IssueDateTime>" // date
-				+ buildNotes(trans)
-				+ "</rsm:ExchangedDocument>"
-				+ "<rsm:SupplyChainTradeTransaction>";
+		if (profile == Profiles.getByName("Extended") && trans.getDocumentName() != null) {
+			xml += "<ram:Name>" + XMLTools.encodeXML(trans.getDocumentName()) + "</ram:Name>";
+		}
+		xml += "<ram:TypeCode>" + typecode + "</ram:TypeCode>"
+			+ "<ram:IssueDateTime>" + DATE.udtFormat(trans.getIssueDate()) + "</ram:IssueDateTime>" // date
+			+ buildNotes(trans)
+			+ "</rsm:ExchangedDocument>"
+			+ "<rsm:SupplyChainTradeTransaction>";
 		int lineID = 0;
 		for (final IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			lineID++;
 			String lineIDStr = Integer.toString(lineID);
-			if (currentItem.getId()!=null) {
-				lineIDStr=currentItem.getId();
+			if (currentItem.getId() != null) {
+				lineIDStr = currentItem.getId();
 			}
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
@@ -433,23 +404,22 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml += "<ram:BuyerAssignedID>"
 						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>";
 				}
-				String allowanceChargeStr = "";
-				if (currentItem.getItemAllowances() != null && currentItem.getItemAllowances().length > 0) {
-					for (final IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
-						allowanceChargeStr += getAllowanceChargeStr(allowance, currentItem);
-					}
-				}
-				if (currentItem.getItemCharges() != null && currentItem.getItemCharges().length > 0) {
-					for (final IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
-						allowanceChargeStr += getAllowanceChargeStr(charge, currentItem);
-
+				String appliedAllowance = "";
+				if (currentItem.getItemTotalAllowances() != null) {
+					for (final IZUGFeRDAllowanceCharge allowance : currentItem.getItemTotalAllowances()) {
+						appliedAllowance += getAppliedAllowanceStr(allowance, currentItem);
 					}
 				}
 
 				String itemTotalAllowanceChargeStr = "";
-				if (currentItem.getItemTotalAllowances() != null && currentItem.getItemTotalAllowances().length > 0) {
-					for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getItemTotalAllowances()) {
+				if (currentItem.getItemAllowances() != null) {
+					for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getItemAllowances()) {
 						itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalAllowance, currentItem);
+					}
+				}
+				if (currentItem.getItemCharges() != null) {
+					for (final IZUGFeRDAllowanceCharge itemTotalCharge : currentItem.getItemCharges()) {
+						itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalCharge, currentItem);
 					}
 				}
 
@@ -504,18 +474,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "</ram:BuyerOrderReferencedDocument>";
 				}
 
-				if (!allowanceChargeStr.isEmpty()) {
+				if (!appliedAllowance.isEmpty()) {
 					xml += "<ram:GrossPriceProductTradePrice>"
 						+ "<ram:ChargeAmount>" + priceFormat(lc.getPriceGross())
 						+ "</ram:ChargeAmount>" //currencyID=\"EUR\"
 						+ "<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
 						+ "\">" + quantityFormat(currentItem.getBasisQuantity()) + "</ram:BasisQuantity>"
-						+ allowanceChargeStr
-						// + "<AppliedTradeAllowanceCharge>"
-						// + "<ChargeIndicator>false</ChargeIndicator>"
-						// + "<ActualAmount currencyID=\"EUR\">0.6667</ActualAmount>"
-						// + "<Reason>Rabatt</Reason>"
-						// + "</AppliedTradeAllowanceCharge>"
+						+ appliedAllowance
 						+ "</ram:GrossPriceProductTradePrice>";
 				}
 
@@ -741,7 +706,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 
 		if ((trans.getZFCharges() != null) && (trans.getZFCharges().length > 0)) {
-			if ((profile == Profiles.getByName("XRechnung")) || (profile == Profiles.getByName("EN16931")) || (profile == Profiles.getByName("EXTENDED")))  {
+			if ((profile == Profiles.getByName("XRechnung")) || (profile == Profiles.getByName("EN16931")) || (profile == Profiles.getByName("EXTENDED"))) {
 				for (IZUGFeRDAllowanceCharge charge : trans.getZFCharges()) {
 					xml += "<ram:SpecifiedTradeAllowanceCharge>" +
 						"<ram:ChargeIndicator>" +
@@ -832,7 +797,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if (paymentTermsDescription != null) {
 				xml += "<ram:Description>" + paymentTermsDescription + "</ram:Description>";
 			}
-			
+
 			if (trans.getDueDate() != null) {
 				xml += "<ram:DueDateDateTime>" // $NON-NLS-2$
 					+ DATE.udtFormat(trans.getDueDate())
@@ -900,12 +865,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if (trans.getInvoiceReferencedDocuments() != null) {
 			for (var doc : trans.getInvoiceReferencedDocuments()) {
 				xml += "<ram:InvoiceReferencedDocument>"
-						+ "<ram:IssuerAssignedID>"
-						+ XMLTools.encodeXML(doc.getIssuerAssignedID()) + "</ram:IssuerAssignedID>";
+					+ "<ram:IssuerAssignedID>"
+					+ XMLTools.encodeXML(doc.getIssuerAssignedID()) + "</ram:IssuerAssignedID>";
 				if (doc.getFormattedIssueDateTime() != null) {
 					xml += "<ram:FormattedIssueDateTime>"
-							+ DATE.qdtFormat(doc.getFormattedIssueDateTime())
-							+ "</ram:FormattedIssueDateTime>";
+						+ DATE.qdtFormat(doc.getFormattedIssueDateTime())
+						+ "</ram:FormattedIssueDateTime>";
 				}
 				xml += "</ram:InvoiceReferencedDocument>";
 			}

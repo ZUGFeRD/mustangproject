@@ -1,16 +1,16 @@
 package org.mustangproject;
 
+import org.apache.commons.io.IOUtils;
+import org.dom4j.io.XMLWriter;
+import org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat;
+import org.w3c.dom.Node;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import org.apache.commons.io.IOUtils;
-import org.dom4j.io.XMLWriter;
-import org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat;
-import org.w3c.dom.Node;
 
 public class XMLTools extends XMLWriter {
 	@Override
@@ -89,6 +89,7 @@ public class XMLTools extends XMLWriter {
 		}
 		return XMLTools.tryBigDecimal(nodeValue);
 	}
+
 	/***
 	 * formats a number so that at least minDecimals are displayed but at the maximum maxDecimals are there, i.e.
 	 * cuts potential 0s off the end until minDecimals
@@ -98,12 +99,12 @@ public class XMLTools extends XMLWriter {
 	 * @return value as String with decimals in the specified range
 	 */
 	public static String nDigitFormatDecimalRange(BigDecimal value, int maxDecimals, int minDecimals) {
-		if ((maxDecimals<minDecimals)||(maxDecimals<0)||(minDecimals<0)) {
+		if ((maxDecimals < minDecimals) || (maxDecimals < 0) || (minDecimals < 0)) {
 			throw new IllegalArgumentException("Invalid scale range provided");
 		}
-		int curDecimals=maxDecimals;
-		while  ( (curDecimals>minDecimals) && (value.setScale(curDecimals, RoundingMode.HALF_UP).compareTo(value.setScale(curDecimals-1, RoundingMode.HALF_UP))==0)) {
-			 curDecimals--;
+		int curDecimals = maxDecimals;
+		while ((curDecimals > minDecimals) && (value.setScale(curDecimals, RoundingMode.HALF_UP).compareTo(value.setScale(curDecimals - 1, RoundingMode.HALF_UP)) == 0)) {
+			curDecimals--;
 		}
 		return value.setScale(curDecimals, RoundingMode.HALF_UP).toPlainString();
 
@@ -130,9 +131,12 @@ public class XMLTools extends XMLWriter {
 	 */
 	public static Date tryDate(String toParse) {
 		SimpleDateFormat formatter = null;
+		if (toParse == null) {
+			return null;
+		}
 		if (toParse.contains("-")) {
 			// from ubl
-			 formatter = new SimpleDateFormat("yyyy-MM-dd");
+			formatter = new SimpleDateFormat("yyyy-MM-dd");
 		} else {
 			formatter = ZUGFeRDDateFormat.DATE.getFormatter();
 		}
@@ -217,7 +221,7 @@ public class XMLTools extends XMLWriter {
 	}
 
 	public static byte[] getBytesFromStream(InputStream fileinput) throws IOException {
-	  return IOUtils.toByteArray (fileinput);
+		return IOUtils.toByteArray(fileinput);
 	}
 
 
