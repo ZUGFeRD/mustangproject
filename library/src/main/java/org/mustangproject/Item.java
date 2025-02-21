@@ -34,11 +34,12 @@ public class Item implements IZUGFeRDExportableItem {
 	protected String id;
 	protected String referencedLineID = null;
 	protected Product product;
-	protected ArrayList<String> notes = null;
-	protected ArrayList<ReferencedDocument> referencedDocuments = null;
-	protected ArrayList<ReferencedDocument> additionalReference = null;
-	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>();
-	protected ArrayList<IZUGFeRDAllowanceCharge> Charges = new ArrayList<>();
+	protected List<String> notes = null;
+	protected List<ReferencedDocument> referencedDocuments = null;
+	protected List<ReferencedDocument> additionalReference = null;
+	protected List<IZUGFeRDAllowanceCharge> allowances = new ArrayList<>();
+	protected List<IZUGFeRDAllowanceCharge> charges = new ArrayList<>();
+	protected List<IZUGFeRDAllowanceCharge> totalAllowanceCharges = new ArrayList<>();
 	protected List<IncludedNote> includedNotes = null;
 	//protected HashMap<String, String> attributes = new HashMap<>();
 
@@ -115,7 +116,7 @@ public class Item implements IZUGFeRDExportableItem {
 		});
 
 		itemMap.getAllNodes("DocumentReference").map(ReferencedDocument::fromNode)
-				.forEach(this::addAdditionalReference);
+			.forEach(this::addAdditionalReference);
 
 		// ubl
 
@@ -141,6 +142,21 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("NetPriceProductTradePrice").ifPresent(npptpNodes -> {
 				npptpNodes.getAsBigDecimal("ChargeAmount").ifPresent(this::setPrice);
 				npptpNodes.getAsBigDecimal("BasisQuantity").ifPresent(this::setBasisQuantity);
+			});
+			icnm.getAsNodeMap("GrossPriceProductTradePrice").ifPresent(npptpNodes -> {
+				npptpNodes.getAsBigDecimal("ChargeAmount").ifPresent(this::setGrossPrice);
+				icnm.getAsNodeMap("AppliedTradeAllowanceCharge").ifPresent(stac -> {
+					stac.getAsNodeMap("ChargeIndicator").ifPresent(ci -> {
+						String amountString = stac.getAsStringOrNull("ActualAmount");
+						Allowance
+							izac = new Allowance();
+						if (amountString != null) {
+							izac.setTotalAmount(new BigDecimal(amountString));
+						}
+						addAppliedAllowance(izac);
+					});
+
+				});
 			});
 
 			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).
@@ -179,11 +195,13 @@ public class Item implements IZUGFeRDExportableItem {
 					String percentString = stac.getAsStringOrNull("CalculationPercent");
 					String amountString = stac.getAsStringOrNull("ActualAmount");
 					String reason = stac.getAsStringOrNull("Reason");
-					Charge izac = new Charge();
+					Charge izac;
 					if (isChargeString.equalsIgnoreCase("false")) {
 						izac = new Allowance();
+						addAllowance(izac);
 					} else {
 						izac = new Charge();
+						addCharge(izac);
 					}
 					if (amountString != null) {
 						izac.setTotalAmount(new BigDecimal(amountString));
@@ -193,12 +211,6 @@ public class Item implements IZUGFeRDExportableItem {
 					}
 					if (reason != null) {
 						izac.setReason(reason);
-					}
-
-					if (isChargeString.equalsIgnoreCase("false")) {
-						addAllowance(izac);
-					} else {
-						addCharge(izac);
 					}
 				});
 
@@ -358,18 +370,18 @@ public class Item implements IZUGFeRDExportableItem {
 
 	@Override
 	public IZUGFeRDAllowanceCharge[] getItemAllowances() {
-		if (Allowances.isEmpty()) {
+		if (allowances.isEmpty()) {
 			return null;
-		} else
-			return Allowances.toArray(new IZUGFeRDAllowanceCharge[0]);
+		}
+		return allowances.toArray(new IZUGFeRDAllowanceCharge[0]);
 	}
 
 	@Override
 	public IZUGFeRDAllowanceCharge[] getItemCharges() {
-		if (Charges.isEmpty()) {
+		if (charges.isEmpty()) {
 			return null;
-		} else
-			return Charges.toArray(new IZUGFeRDAllowanceCharge[0]);
+		}
+		return charges.toArray(new IZUGFeRDAllowanceCharge[0]);
 	}
 
 
@@ -394,7 +406,7 @@ public class Item implements IZUGFeRDExportableItem {
 	 * @return fluent setter
 	 */
 	public Item addCharge(IZUGFeRDAllowanceCharge izac) {
-		Charges.add(izac);
+		charges.add(izac);
 		return this;
 	}
 
@@ -405,7 +417,7 @@ public class Item implements IZUGFeRDExportableItem {
 	 * @return fluent setter
 	 */
 	public Item addAllowance(IZUGFeRDAllowanceCharge izac) {
-		Allowances.add(izac);
+		allowances.add(izac);
 		return this;
 	}
 
@@ -535,5 +547,19 @@ public class Item implements IZUGFeRDExportableItem {
 	@Override
 	public List<IncludedNote> getNotesWithSubjectCode() {
 		return includedNotes;
+	}
+
+
+	public Item addAppliedAllowance(IZUGFeRDAllowanceCharge allowanceCharge) {
+		this.totalAllowanceCharges.add(allowanceCharge);
+		return this;
+	}
+
+	@Override
+	public IZUGFeRDAllowanceCharge[] getItemTotalAllowances() {
+		if (totalAllowanceCharges.isEmpty()) {
+			return null;
+		}
+		return totalAllowanceCharges.toArray(new IZUGFeRDAllowanceCharge[0]);
 	}
 }

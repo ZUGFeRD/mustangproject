@@ -1,4 +1,3 @@
-
 /**
  * *********************************************************************
  * <p>
@@ -21,8 +20,15 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import junit.framework.TestCase;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import org.mustangproject.*;
+import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
+import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
+
+import javax.xml.xpath.XPathExpressionException;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -30,20 +36,8 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.mustangproject.*;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-
-import junit.framework.TestCase;
-
-import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
-import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
-
-import javax.xml.xpath.XPathExpressionException;
-
+import static java.math.BigDecimal.ONE;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 
@@ -141,7 +135,7 @@ public class ZF2PushTest extends TestCase {
 
 		String senderDescription = "Kleinunternehmer";
 		String taxID = "9990815";
-		String theNote="oh lala";
+		String theNote = "oh lala";
 		BigDecimal price = new BigDecimal(priceStr);
 		try {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
@@ -177,7 +171,7 @@ public class ZF2PushTest extends TestCase {
 			throw new RuntimeException(e);
 		}
 
-		assertEquals(i.getZFItems()[0].getNotesWithSubjectCode().get(0).getContent(),theNote);
+		assertEquals(i.getZFItems()[0].getNotesWithSubjectCode().get(0).getContent(), theNote);
 		assertEquals(senderDescription, i.getSender().getDescription());
 
 		// now check the contents (like MustangReaderTest)
@@ -242,8 +236,6 @@ public class ZF2PushTest extends TestCase {
 
 		String orgname = "Test company";
 		String number = "123";
-		String amountStr = "3.00";
-		BigDecimal amount = new BigDecimal(amountStr);
 		try {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
@@ -255,18 +247,26 @@ public class ZF2PushTest extends TestCase {
 			//	ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(orgname,"teststr", "55232","teststadt","DE")).setOwnTaxID("4711").setOwnVATID("DE0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number)
 			//					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance().setPercent(new BigDecimal(50)))));
 
-			Invoice i=new Invoice().setDueDate(new Date()).setIssueDate(new Date())
-				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
-				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")
-					.setContact(new Contact("contact testname", "123456", "contact.testemail@example.org").setFax("0911623562")))
-				.setNumber(number)
-				.addCharge(new Charge(new BigDecimal(1)).setReasonCode("ABK").setReason("AReason").setTaxPercent(new BigDecimal(19)))
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance(new BigDecimal("0.1"))))
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance().setPercent(new BigDecimal(50))))
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(2.0)).addCharge(new Charge(new BigDecimal(1)).setReasonCode("ABK").setReason("AnotherReason")))
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addCharge(new Charge(new BigDecimal(1))).addAllowance(new Allowance(new BigDecimal("1"))));
-			ze.setTransaction(i);
+			BigDecimal amount = new BigDecimal("3.00");
+			BigDecimal vatPercent = new BigDecimal(19);
+			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date())
+					.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
+					.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")
+						.setContact(new Contact("contact testname", "123456", "contact.testemail@example.org").setFax("0911623562")))
+					.setNumber(number)
+					.addCharge(new Charge(ONE).setReasonCode("ABK").setReason("AReason").setTaxPercent(vatPercent)) //Zuschlag: 1 EUR
+					.addItem(new Item(new Product("Testprodukt", "", "C62", vatPercent), amount, ONE) // Positionswert: 1 x (3-0.1) = 2.9
+						.addAppliedAllowance(new Allowance(new BigDecimal("0.1"))))
+					.addItem(new Item(new Product("Testprodukt", "", "C62", vatPercent), amount, ONE) // Positionswert: 1 x (3-1.50) = 1.5
+						.addAppliedAllowance(new Allowance(new BigDecimal("1.5"))))
+					.addItem(new Item(new Product("Testprodukt", "", "C62", vatPercent), amount, new BigDecimal(2.0)) //Positionswert: (2 x 3)+1 = 7
+						.addCharge(new Charge(ONE).setReason("Luxus")))
+					.addItem(new Item(new Product("Testprodukt", "", "C62", vatPercent), amount, ONE) // Positionswert: (1 x (3-1)) + 1 = 3
+						.addAppliedAllowance(new Allowance(ONE))
+						.addCharge(new Charge(ONE).setReason("AnotherReason")))
 
+				//total: 2.9 + 1.5 + 7 + 3 (Positionen)  + 1 (Zuschlag)= 15.4
+			);
 
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
@@ -283,7 +283,8 @@ public class ZF2PushTest extends TestCase {
 		assertTrue(zi.getUTF8().contains("ABK"));
 
 		// Reading ZUGFeRD
-		assertEquals("19.52", zi.getAmount());
+		//15.4 * 1.19
+		assertEquals("18.33", zi.getAmount());
 		assertEquals(orgname, zi.getHolder());
 		assertEquals(number, zi.getForeignReference());
 		try {
@@ -625,12 +626,14 @@ public class ZF2PushTest extends TestCase {
 
 			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile(Profiles.getByName("en16931"));
 
+			BigDecimal taxPercent = new BigDecimal(19);
 			ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
 				.setNumber(number)
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal(500.0), qty).addAllowance(new Allowance(new BigDecimal(300)).setTaxPercent(new BigDecimal(19))))
-				.addAllowance(new Allowance(new BigDecimal(600)).setTaxPercent(new BigDecimal(19)))
+				.addItem(new Item(new Product("Testprodukt", "", "C62", taxPercent), new BigDecimal("500.0"), qty)
+					.addAppliedAllowance(new Allowance(new BigDecimal(300))))
+				.addAllowance(new Allowance(new BigDecimal(600)).setTaxPercent(taxPercent))
 			);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
@@ -669,14 +672,16 @@ public class ZF2PushTest extends TestCase {
 
 			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile(Profiles.getByName("extended"));
 
+			BigDecimal vatPercent = new BigDecimal(19);
 			ze.setTransaction(new Invoice().setCurrency("CHF").setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
 				.setNumber(number)
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), price, new BigDecimal(1.0)))
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), price, new BigDecimal(1.0)))
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), price, new BigDecimal(1.0)).addCharge(new Charge().setPercent(new BigDecimal(50)).setTaxPercent(new BigDecimal(19))))
-				.addAllowance(new Allowance().setPercent(new BigDecimal(50)).setTaxPercent(new BigDecimal(19)))
+				.addItem(new Item(new Product("Testprodukt", "", "C62", vatPercent), price, ONE))
+				.addItem(new Item(new Product("Testprodukt", "", "C62", vatPercent), price, ONE))
+				.addItem(new Item(new Product("Testprodukt", "", "C62", vatPercent), price, ONE)
+					.addCharge(new Charge().setPercent(new BigDecimal(50)).setReason("halt teuer!")))
+				.addAllowance(new Allowance().setPercent(new BigDecimal(50)).setTaxPercent(vatPercent).setReason("aber wir geben Rabatt!"))
 			);
 			String theXML = new String(ze.getProvider().getXML());
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));

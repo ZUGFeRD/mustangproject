@@ -20,21 +20,21 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Optional;
-
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.Invoice;
 import org.mustangproject.XMLTools;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Optional;
+
+import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
+
 public class DAPullProvider extends ZUGFeRD2PullProvider {
 
 	protected IExportableTransaction trans;
-	protected Profile profile = Profiles.getByName(EStandard.despatchadvice,"pilot", 1);
+	protected Profile profile = Profiles.getByName(EStandard.despatchadvice, "pilot", 1);
 
 
 	@Override
@@ -46,80 +46,80 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 			typecode = trans.getDocumentCode();
 		}*/
 
-		String testBooleanStr="true";
+		String testBooleanStr = "true";
 		String xml = "<SCRDMCCBDACIDAMessageStructure\n" +
-				"        xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:25\"\n" +
-				"        xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101\"\n" +
-				"        xmlns:px=\"urn:un:unece:uncefact:data:standard:SCRDMCCBDACIDAMessageStructure:1\">\n"
-				// + "
-				// xsi:schemaLocation=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100
-				// ../Schema/ZUGFeRD1p0.xsd\""
-				+ "<px:ExchangedDocumentContext>"
-				// + "
-				+" <ram:TestIndicator><udt:Indicator>"+testBooleanStr+"</udt:Indicator></ram:TestIndicator>\n"
-				//
-				+ "<ram:BusinessProcessSpecifiedDocumentContextParameter>"
-				+ "<ram:ID>" + getProfile().getID() + "</ram:ID>"
-				+ "</ram:BusinessProcessSpecifiedDocumentContextParameter>"
-				+ "</px:ExchangedDocumentContext>"
-				+ "<px:ExchangedDocument>"
-				+ "<ram:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:ID>"
-				// + " <ram:Name>RECHNUNG</ram:Name>"
-				// + "<ram:TypeCode>380</ram:TypeCode>"
-				+ "<ram:TypeCode>" + typecode + "</ram:TypeCode>"
-				+ "<ram:IssueDateTime>"
-				+ DATE.udtFormat(trans.getIssueDate()) + "</ram:IssueDateTime>" // date
-				+ buildNotes(trans)
+			"        xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:25\"\n" +
+			"        xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101\"\n" +
+			"        xmlns:px=\"urn:un:unece:uncefact:data:standard:SCRDMCCBDACIDAMessageStructure:1\">\n"
+			// + "
+			// xsi:schemaLocation=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100
+			// ../Schema/ZUGFeRD1p0.xsd\""
+			+ "<px:ExchangedDocumentContext>"
+			// + "
+			+ " <ram:TestIndicator><udt:Indicator>" + testBooleanStr + "</udt:Indicator></ram:TestIndicator>\n"
+			//
+			+ "<ram:BusinessProcessSpecifiedDocumentContextParameter>"
+			+ "<ram:ID>" + getProfile().getID() + "</ram:ID>"
+			+ "</ram:BusinessProcessSpecifiedDocumentContextParameter>"
+			+ "</px:ExchangedDocumentContext>"
+			+ "<px:ExchangedDocument>"
+			+ "<ram:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:ID>"
+			// + " <ram:Name>RECHNUNG</ram:Name>"
+			// + "<ram:TypeCode>380</ram:TypeCode>"
+			+ "<ram:TypeCode>" + typecode + "</ram:TypeCode>"
+			+ "<ram:IssueDateTime>"
+			+ DATE.udtFormat(trans.getIssueDate()) + "</ram:IssueDateTime>" // date
+			+ buildNotes(trans)
 
-				+ "</px:ExchangedDocument>"
-				+ "<px:SupplyChainTradeTransaction>";
+			+ "</px:ExchangedDocument>"
+			+ "<px:SupplyChainTradeTransaction>";
 		int lineID = 0;
 		for (final IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			lineID++;
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				//	exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
-      final LineCalculator lc = new LineCalculator(currentItem);
+			final LineCalculator lc = new LineCalculator(currentItem);
 			xml += "<ram:IncludedSupplyChainTradeLineItem>" +
-					"<ram:AssociatedDocumentLineDocument>"
-					+ "<ram:LineID>" + lineID + "</ram:LineID>"
-          + buildItemNotes(currentItem)
-					+ "</ram:AssociatedDocumentLineDocument>"
+				"<ram:AssociatedDocumentLineDocument>"
+				+ "<ram:LineID>" + lineID + "</ram:LineID>"
+				+ buildItemNotes(currentItem)
+				+ "</ram:AssociatedDocumentLineDocument>"
 
-					+ "<ram:SpecifiedTradeProduct>";
+				+ "<ram:SpecifiedTradeProduct>";
 			// + " <GlobalID schemeID=\"0160\">4012345001235</GlobalID>"
 			if (currentItem.getProduct().getSellerAssignedID() != null) {
 				xml += "<ram:SellerAssignedID>"
-						+ XMLTools.encodeXML(currentItem.getProduct().getSellerAssignedID()) + "</ram:SellerAssignedID>";
+					+ XMLTools.encodeXML(currentItem.getProduct().getSellerAssignedID()) + "</ram:SellerAssignedID>";
 			}
 			if (currentItem.getProduct().getBuyerAssignedID() != null) {
 				xml += "<ram:BuyerAssignedID>"
-						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>";
+					+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>";
 			}
 			String allowanceChargeStr = "";
-			if (currentItem.getItemAllowances() != null && currentItem.getItemAllowances().length > 0) {
+			if (currentItem.getItemAllowances() != null) {
 				for (final IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
-					allowanceChargeStr += getAllowanceChargeStr(allowance, currentItem);
+					allowanceChargeStr += getAppliedAllowanceStr(allowance, currentItem);
 				}
 			}
-			if (currentItem.getItemCharges() != null && currentItem.getItemCharges().length > 0) {
+			if (currentItem.getItemCharges() != null) {
 				for (final IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
-					allowanceChargeStr += getAllowanceChargeStr(charge, currentItem);
+					allowanceChargeStr += getAppliedAllowanceStr(charge, currentItem);
 
 				}
 			}
 
 
 			xml += "<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>"
-					+ "<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription())
-					+ "</ram:Description>"
-					+ "</ram:SpecifiedTradeProduct>"
+				+ "<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription())
+				+ "</ram:Description>"
+				+ "</ram:SpecifiedTradeProduct>"
 
-					+ "<ram:SpecifiedLineTradeDelivery>"
-					+ "<ram:DespatchedQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">"
-					+ quantityFormat(currentItem.getQuantity()) + "</ram:DespatchedQuantity>"
-					+ "</ram:SpecifiedLineTradeDelivery>"
-					+ "<ram:SpecifiedLineTradeSettlement>";
+				+ "<ram:SpecifiedLineTradeDelivery>"
+				+ "<ram:DespatchedQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">"
+				+ quantityFormat(currentItem.getQuantity()) + "</ram:DespatchedQuantity>"
+				+ "</ram:SpecifiedLineTradeDelivery>"
+				+ "<ram:SpecifiedLineTradeSettlement>";
 			if ((currentItem.getDetailedDeliveryPeriodFrom() != null) || (currentItem.getDetailedDeliveryPeriodTo() != null)) {
 				xml += "<ram:BillingSpecifiedPeriod>";
 				if (currentItem.getDetailedDeliveryPeriodFrom() != null) {
@@ -133,15 +133,15 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 			}
 
 			xml += "<ram:SpecifiedTradeSettlementLineMonetarySummation>"
-					+ "<ram:LineTotalAmount>" + currencyFormat(lc.getItemTotalNetAmount())
-					+ "</ram:LineTotalAmount>" // currencyID=\"EUR\"
-					+ "</ram:SpecifiedTradeSettlementLineMonetarySummation>";
+				+ "<ram:LineTotalAmount>" + currencyFormat(lc.getItemTotalNetAmount())
+				+ "</ram:LineTotalAmount>" // currencyID=\"EUR\"
+				+ "</ram:SpecifiedTradeSettlementLineMonetarySummation>";
 		/*	if (currentItem.getAdditionalReferencedDocumentID() != null) {
 				xml += "<ram:AdditionalReferencedDocument><ram:IssuerAssignedID>" + currentItem.getAdditionalReferencedDocumentID() + "</ram:IssuerAssignedID><ram:TypeCode>130</ram:TypeCode></ram:AdditionalReferencedDocument>";
 
 			}*/
 			xml += "</ram:SpecifiedLineTradeSettlement>"
-					+ "</ram:IncludedSupplyChainTradeLineItem>";
+				+ "</ram:IncludedSupplyChainTradeLineItem>";
 
 		}
 
@@ -151,9 +151,9 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 
 		}
 		xml += "<ram:SellerTradeParty>"
-				+ getTradePartyAsXML(trans.getSender(), true, false)
-				+ "</ram:SellerTradeParty>"
-				+ "<ram:BuyerTradeParty>";
+			+ getTradePartyAsXML(trans.getSender(), true, false)
+			+ "</ram:SellerTradeParty>"
+			+ "<ram:BuyerTradeParty>";
 		// + " <ID>GE2020211</ID>"
 		// + " <GlobalID schemeID=\"0088\">4000001987658</GlobalID>"
 
@@ -162,21 +162,21 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 
 		if (trans.getSellerOrderReferencedDocumentID() != null) {
 			xml += "<ram:SellerOrderReferencedDocument>"
-					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getSellerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
-					+ "</ram:SellerOrderReferencedDocument>";
+				+ "<ram:IssuerAssignedID>"
+				+ XMLTools.encodeXML(trans.getSellerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
+				+ "</ram:SellerOrderReferencedDocument>";
 		}
 		if (trans.getBuyerOrderReferencedDocumentID() != null) {
 			xml += "<ram:BuyerOrderReferencedDocument>"
-					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getBuyerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
-					+ "</ram:BuyerOrderReferencedDocument>";
+				+ "<ram:IssuerAssignedID>"
+				+ XMLTools.encodeXML(trans.getBuyerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
+				+ "</ram:BuyerOrderReferencedDocument>";
 		}
 		if (trans.getContractReferencedDocument() != null) {
 			xml += "<ram:ContractReferencedDocument>"
-					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getContractReferencedDocument()) + "</ram:IssuerAssignedID>"
-					+ "</ram:ContractReferencedDocument>";
+				+ "<ram:IssuerAssignedID>"
+				+ XMLTools.encodeXML(trans.getContractReferencedDocument()) + "</ram:IssuerAssignedID>"
+				+ "</ram:ContractReferencedDocument>";
 		}
 
 		// Additional Documents of XRechnung (Rechnungsbegruendende Unterlagen - BG-24 XRechnung)
@@ -184,37 +184,37 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 			for (final FileAttachment f : trans.getAdditionalReferencedDocuments()) {
 				final String documentContent = new String(Base64.getEncoder().encodeToString(f.getData()));
 				xml += "<ram:AdditionalReferencedDocument>"
-						+ "<ram:IssuerAssignedID>" + f.getFilename() + "</ram:IssuerAssignedID>"
-						+ "<ram:TypeCode>916</ram:TypeCode>"
-						+ "<ram:Name>" + f.getDescription() + "</ram:Name>"
-						+ "<ram:AttachmentBinaryObject mimeCode=\"" + f.getMimetype() + "\"\n"
-						+ "filename=\"" + f.getFilename() + "\">" + documentContent + "</ram:AttachmentBinaryObject>"
-						+ "</ram:AdditionalReferencedDocument>";
+					+ "<ram:IssuerAssignedID>" + f.getFilename() + "</ram:IssuerAssignedID>"
+					+ "<ram:TypeCode>916</ram:TypeCode>"
+					+ "<ram:Name>" + f.getDescription() + "</ram:Name>"
+					+ "<ram:AttachmentBinaryObject mimeCode=\"" + f.getMimetype() + "\"\n"
+					+ "filename=\"" + f.getFilename() + "\">" + documentContent + "</ram:AttachmentBinaryObject>"
+					+ "</ram:AdditionalReferencedDocument>";
 			}
 		}
 
 		if (trans.getSpecifiedProcuringProjectID() != null) {
 			xml += "<ram:SpecifiedProcuringProject>"
-					+ "<ram:ID>"
-					+ XMLTools.encodeXML(trans.getSpecifiedProcuringProjectID()) + "</ram:ID>";
+				+ "<ram:ID>"
+				+ XMLTools.encodeXML(trans.getSpecifiedProcuringProjectID()) + "</ram:ID>";
 			if (trans.getSpecifiedProcuringProjectName() != null) {
 				xml += "<ram:Name >" + XMLTools.encodeXML(trans.getSpecifiedProcuringProjectName()) + "</ram:Name>";
 			}
 			xml += "</ram:SpecifiedProcuringProject>";
 		}
 		xml += "</ram:ApplicableHeaderTradeAgreement>"
-				+ "<ram:ApplicableHeaderTradeDelivery>";
+			+ "<ram:ApplicableHeaderTradeDelivery>";
 		if (this.trans.getDeliveryAddress() != null) {
 			xml += "<ram:ShipToTradeParty>" +
-					getTradePartyAsXML(this.trans.getDeliveryAddress(), false, true) +
-					"</ram:ShipToTradeParty>";
+				getTradePartyAsXML(this.trans.getDeliveryAddress(), false, true) +
+				"</ram:ShipToTradeParty>";
 		}
 		xml += " <ram:ActualDespatchSupplyChainEvent>\n" +
-				"                <ram:OccurrenceDateTime>\n" +
-				"                    <udt:DateTimeString\n" +
-				"                            format=\"102\">"+ DATE.udtFormat(trans.getDeliveryDate() )+"</udt:DateTimeString>\n" +
-				"                </ram:OccurrenceDateTime>\n" +
-				"            </ram:ActualDespatchSupplyChainEvent>";
+			"                <ram:OccurrenceDateTime>\n" +
+			"                    <udt:DateTimeString\n" +
+			"                            format=\"102\">" + DATE.udtFormat(trans.getDeliveryDate()) + "</udt:DateTimeString>\n" +
+			"                </ram:OccurrenceDateTime>\n" +
+			"            </ram:ActualDespatchSupplyChainEvent>";
 
 /*
 		xml += "<ram:ActualDeliverySupplyChainEvent>"
@@ -235,7 +235,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 		 * "<ID>2013-51112</ID>\n" +
 		 * "</DeliveryNoteReferencedDocument>\n"
 		 */
-		xml+= "</ram:ApplicableHeaderTradeDelivery>\n";
+		xml += "</ram:ApplicableHeaderTradeDelivery>\n";
 		// + " <IncludedSupplyChainTradeLineItem>"
 		// + " <AssociatedDocumentLineDocument>"
 		// + " <IncludedNote>"
@@ -246,7 +246,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 		// + " </IncludedSupplyChainTradeLineItem>\n";
 
 		xml += "</px:SupplyChainTradeTransaction>"
-				+ "</SCRDMCCBDACIDAMessageStructure>";
+			+ "</SCRDMCCBDACIDAMessageStructure>";
 
 		final byte[] zugferdRaw;
 		zugferdRaw = xml.getBytes(StandardCharsets.UTF_8);
@@ -265,17 +265,17 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 		return profile;
 	}
 
-  @Override
-  protected String buildNotes(IExportableTransaction exportableTransaction) {
-    Invoice copyWithoutRebateInfo = new Invoice()
-        .setOwnOrganisationFullPlaintextInfo(exportableTransaction.getOwnOrganisationFullPlaintextInfo())
-        .addNotes(exportableTransaction.getNotesWithSubjectCode());
-    if(exportableTransaction.getNotes() != null) {
-      for (String note : exportableTransaction.getNotes()) {
-        copyWithoutRebateInfo.addNote(note);
-      }
-    }
-    Optional.ofNullable(exportableTransaction.getSubjectNote()).ifPresent(copyWithoutRebateInfo::addNote);
-    return super.buildNotes(copyWithoutRebateInfo);
-  }
+	@Override
+	protected String buildNotes(IExportableTransaction exportableTransaction) {
+		Invoice copyWithoutRebateInfo = new Invoice()
+			.setOwnOrganisationFullPlaintextInfo(exportableTransaction.getOwnOrganisationFullPlaintextInfo())
+			.addNotes(exportableTransaction.getNotesWithSubjectCode());
+		if (exportableTransaction.getNotes() != null) {
+			for (String note : exportableTransaction.getNotes()) {
+				copyWithoutRebateInfo.addNote(note);
+			}
+		}
+		Optional.ofNullable(exportableTransaction.getSubjectNote()).ifPresent(copyWithoutRebateInfo::addNote);
+		return super.buildNotes(copyWithoutRebateInfo);
+	}
 }

@@ -1,9 +1,5 @@
 package org.mustangproject.ZUGFeRD;
 
-import static java.math.BigDecimal.TEN;
-import static java.math.BigDecimal.valueOf;
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.mustangproject.*;
 import org.slf4j.Logger;
@@ -11,6 +7,10 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+
+import static java.math.BigDecimal.TEN;
+import static java.math.BigDecimal.valueOf;
+import static org.junit.Assert.assertEquals;
 
 /***
  * tests the linecalculator and transactioncalculator classes
@@ -38,11 +38,11 @@ public class CalculationTest {
 		//This test failed with previous implementation. By rounding the totalVATAmount to 2 decimal places the result became wrong
 		final IZUGFeRDExportableProduct product = new IZUGFeRDExportableProductImpl().setVatPercent(valueOf(16));
 		// 10 % discount on each item
-		final IZUGFeRDAllowanceCharge allowance = new IZUGFeRDAllowanceChargeImpl().setTotalAmount(valueOf(14.8730));
+		final IZUGFeRDAllowanceCharge allowance = new IZUGFeRDAllowanceChargeImpl().setTotalAmount(valueOf(14.8730)).setAllowance();
 
 		final IZUGFeRDExportableItem currentItem = new IZUGFeRDExportableItemImpl().setPrice(valueOf(148.73))
 			.setQuantity(valueOf(12))
-			.setItemAllowances(new IZUGFeRDAllowanceCharge[]{allowance})
+			.addAllowanceCharge(allowance)
 			.setProduct(product);
 
 		final LineCalculator calculator = new LineCalculator(currentItem);
@@ -56,20 +56,21 @@ public class CalculationTest {
 	public void testLineCalculatorInclusiveAllowanceAndCharge() {
 		final IZUGFeRDExportableProduct product = new IZUGFeRDExportableProductImpl().setVatPercent(valueOf(16));
 		// 10 % discount on each item
-		final IZUGFeRDAllowanceCharge allowance = new IZUGFeRDAllowanceChargeImpl().setTotalAmount(valueOf(14.873));
-		// 20 % charge
+		final IZUGFeRDAllowanceCharge allowance = new IZUGFeRDAllowanceChargeImpl().setTotalAmount(valueOf(14.873)).setAllowance();
+		// 29.746 EUR charge
 		final IZUGFeRDAllowanceCharge charge = new IZUGFeRDAllowanceChargeImpl().setTotalAmount(valueOf(29.746));
 		final IZUGFeRDExportableItem currentItem = new IZUGFeRDExportableItemImpl().setPrice(valueOf(148.73))
 			.setQuantity(valueOf(12))
-			.setItemAllowances(new IZUGFeRDAllowanceCharge[]{allowance})
+			.addAllowanceCharge(allowance)
 			.setItemCharges(new IZUGFeRDAllowanceCharge[]{charge})
 			.setProduct(product);
 
 		final LineCalculator calculator = new LineCalculator(currentItem);
 
-		assertEquals(valueOf(163.603).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
-		assertEquals(valueOf(1963.24).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
-		assertEquals(valueOf(314.1184).stripTrailingZeros(), calculator.getItemTotalVATAmount().stripTrailingZeros());
+		assertEquals(valueOf(133.857).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
+		//(133.857*12) + 29.746
+		assertEquals(valueOf(1636.03).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
+		assertEquals(valueOf(261.7648).stripTrailingZeros(), calculator.getItemTotalVATAmount().stripTrailingZeros());
 	}
 
 
@@ -78,9 +79,6 @@ public class CalculationTest {
 		SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
 
 		BigDecimal sales_tax_percent1 = new BigDecimal(16);
-		BigDecimal total_increase_percent = new BigDecimal(0.80);
-		BigDecimal total_discount_percent = new BigDecimal(2.00);
-
 
 		/* invoice (1st part) */
 
@@ -110,76 +108,59 @@ public class CalculationTest {
 
 		/* item */
 		Product product;
-		Item item;
+		IZUGFeRDExportableItemImpl item;
 
 		product = new Product("AAA", "", "H84", sales_tax_percent1).setSellerAssignedID("1AAA");
-		item = new Item(product, new BigDecimal("4.750"), new BigDecimal(5.00));
+		item = new IZUGFeRDExportableItemImpl().setProduct(product).setPrice(new BigDecimal("4.750"))
+			.setQuantity(new BigDecimal(5.00));
 
 		// set values for additional charge and discount used for next lines
-		BigDecimal item_increase = BigDecimal.ZERO;
 		BigDecimal item_discount = BigDecimal.valueOf(10.00);
 
 		/* lines */
-		if (item_increase.compareTo(BigDecimal.ZERO) > 0) {
-			item.addCharge(new Charge().setPercent(item_increase).setTaxPercent(sales_tax_percent1).setReasonCode("ZZZ").setReason("Zuschlag"));
-		}
+		//percentage only for total line allowance allowed
 		if (item_discount.compareTo(BigDecimal.ZERO) > 0) {
-			item.addAllowance(new Allowance().setPercent(item_discount).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatt"));
+			item.addAllowanceCharge(new Allowance().setPercent(item_discount).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatt"));
 		}
 		invoice.addItem(item);
-
-		// reset values for additional charge and discount used for next lines
-		item_increase = BigDecimal.ZERO;
-		item_discount = BigDecimal.ZERO;
+		//item price: 4.75 -> total line amount: (5 * 4.75) - 0.475 => 23.275
 
 		product = new Product("BBB", "", "H84", sales_tax_percent1).setSellerAssignedID("2BBB");
-		item = new Item(product, new BigDecimal("5.750"), new BigDecimal(4.00));
-		if (item_increase.compareTo(BigDecimal.ZERO) > 0) {
-			item.addCharge(new Charge().setPercent(item_increase).setTaxPercent(sales_tax_percent1).setReasonCode("ZZZ").setReason("Zuschlag"));
-		}
-		if (item_discount.compareTo(BigDecimal.ZERO) > 0) {
-			item.addAllowance(new Allowance().setPercent(item_discount).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatt"));
-		}
+		item = new IZUGFeRDExportableItemImpl().setProduct(product).setPrice(new BigDecimal("5.750"))
+			.setQuantity(new BigDecimal(4.00));
+
 		invoice.addItem(item);
+		//item price: 5.75 -> total line amount: (4 * 5.75)  => 23
 
 		product = new Product("CCC", "", "H84", sales_tax_percent1).setSellerAssignedID("3CCC");
-		item = new Item(product, new BigDecimal("6.750"), new BigDecimal(3.00));
-		if (item_increase.compareTo(BigDecimal.ZERO) > 0) {
-			item.addCharge(new Charge().setPercent(item_increase).setTaxPercent(sales_tax_percent1).setReasonCode("ZZZ").setReason("Zuschlag"));
-		}
-		if (item_discount.compareTo(BigDecimal.ZERO) > 0) {
-			item.addAllowance(new Allowance().setPercent(item_discount).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatt"));
-		}
+		item = new IZUGFeRDExportableItemImpl().setProduct(product).setPrice(new BigDecimal("6.750"))
+			.setQuantity(new BigDecimal(3.00));
+
 		invoice.addItem(item);
+		//item price: 6.75 -> total line amount: (3 * 6.75)  => 20.25
 
 		product = new Product("DDD", "", "H84", sales_tax_percent1).setSellerAssignedID("4DDD");
-		item = new Item(product, new BigDecimal("7.750"), new BigDecimal(2.00));
-		if (item_increase.compareTo(BigDecimal.ZERO) > 0) {
-			item.addCharge(new Charge().setPercent(item_increase).setTaxPercent(sales_tax_percent1).setReasonCode("ZZZ").setReason("Zuschlag"));
-		}
-		if (item_discount.compareTo(BigDecimal.ZERO) > 0) {
-			item.addAllowance(new Allowance().setPercent(item_discount).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatt"));
-		}
+		item = new IZUGFeRDExportableItemImpl().setProduct(product)
+			.setPrice(new BigDecimal("7.750"))
+			.setQuantity(new BigDecimal(2.00));
+
 		invoice.addItem(item);
+		//item price: 7.75 -> total line amount: (2 * 7.75)  => 15.5
 
 		product = new Product("EEE", "", "H84", sales_tax_percent1).setSellerAssignedID("5EEE");
-		item = new Item(product, new BigDecimal("8.750"), new BigDecimal(1.00));
-		if (item_increase.compareTo(BigDecimal.ZERO) > 0) {
-			item.addCharge(new Charge().setPercent(item_increase).setTaxPercent(sales_tax_percent1).setReasonCode("ZZZ").setReason("Zuschlag"));
-		}
-		if (item_discount.compareTo(BigDecimal.ZERO) > 0) {
-			item.addAllowance(new Allowance().setPercent(item_discount).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatt"));
+		item = new IZUGFeRDExportableItemImpl().setProduct(product)
+			.setPrice(new BigDecimal("8.750"))
+			.setQuantity(new BigDecimal(1.00));
 
-		}
 		invoice.addItem(item);
+		//item price: 8.75 -> total line amount: (1 * 8.75)  => 8.75
 
-		// reset values for additional charge and discount used on invoice level
-		item_increase = BigDecimal.valueOf(3.50);
-		item_discount = BigDecimal.valueOf(10.00);
 
+		BigDecimal total_increase_percent = new BigDecimal(0.80);
 		if (total_increase_percent.compareTo(BigDecimal.ZERO) > 0) {
 			invoice.addCharge(new Charge().setPercent(total_increase_percent).setTaxPercent(sales_tax_percent1).setReasonCode("ZZZ").setReason("Zuschläge"));
 		}
+		BigDecimal total_discount_percent = new BigDecimal(2.00);
 		if (total_discount_percent.compareTo(BigDecimal.ZERO) > 0) {
 			invoice.addAllowance(new Allowance().setPercent(total_discount_percent).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatte"));
 		}
@@ -189,7 +170,7 @@ public class CalculationTest {
 
 	/**
 	 * LineCalculator should not throw an exception when calculating a non-terminating decimal expansion
-	 * */
+	 */
 	@Test
 	public void testNonTerminatingDecimalExpansion() {
 		final Product product = new Product();

@@ -1,4 +1,3 @@
-
 /**
  * *********************************************************************
  * <p>
@@ -21,20 +20,23 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.assertj.core.api.Assertions;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import org.mustangproject.Invoice;
+
+import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ZF2Test extends MustangReaderTestCase {
@@ -309,5 +311,13 @@ public class ZF2Test extends MustangReaderTestCase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public void testDKV() throws XPathExpressionException, ParseException {
+		final ZUGFeRDImporter zi = new ZUGFeRDImporter("src/test/resources/AllowancesCharges.xml");
+		Invoice extractedInvoice = zi.extractInvoice();
+
+		TransactionCalculator calculator = new TransactionCalculator(extractedInvoice);
+		Assertions.assertThat(calculator.getDuePayable()).isEqualByComparingTo(new BigDecimal("2552.45"));
 	}
 }
