@@ -9,6 +9,7 @@
 - #710 Validation Error due to empty elements
 - #712 Correct bracket setting on condition for output of allowance reason.
 - #725 Unable to perform XML-oriented attacks
+- #685 Security Issue: XXE Vulnerability in ZUGFeRDInvoiceImporter (PR #725)
 - #761 Allow to set item allowance/charges from JSON
 
 2.16.2
