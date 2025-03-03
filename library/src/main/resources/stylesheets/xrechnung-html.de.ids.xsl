@@ -1193,7 +1193,7 @@ function downloadData (element_id) {
                   <div id="BT-50" title="BT-50" class="boxdaten wert"><xsl:value-of select="xr:BUYER_POSTAL_ADDRESS/xr:Buyer_address_line_1"/></div>
                 </div>
                 <div class="boxzeile">
-                  <div class="boxdaten legende">Postfach (BT-51):</div>
+                  <div class="boxdaten legende">Adresszusatz (BT-51):</div>
                   <div id="BT-51" title="BT-51" class="boxdaten wert"><xsl:value-of select="xr:BUYER_POSTAL_ADDRESS/xr:Buyer_address_line_2"/></div>
                 </div>
                 <div class="boxzeile">
@@ -1258,7 +1258,7 @@ function downloadData (element_id) {
                   <div id="BT-35" title="BT-35" class="boxdaten wert"><xsl:value-of select="xr:SELLER_POSTAL_ADDRESS/xr:Seller_address_line_1"/></div>
                 </div>
                 <div class="boxzeile">
-                  <div class="boxdaten legende">Postfach (BT-36):</div>
+                  <div class="boxdaten legende">Adresszusatz (BT-36):</div>
                   <div id="BT-36" title="BT-36" class="boxdaten wert"><xsl:value-of select="xr:SELLER_POSTAL_ADDRESS/xr:Seller_address_line_2"/></div>
                 </div>
                 <div class="boxzeile">
@@ -1998,7 +1998,7 @@ function downloadData (element_id) {
                   <div id="BT-64" title="BT-64" class="boxdaten wert"><xsl:value-of select="xr:SELLER_TAX_REPRESENTATIVE_POSTAL_ADDRESS/xr:Tax_representative_address_line_1"/></div>
                 </div>
                 <div class="boxzeile">
-                  <div class="boxdaten legende">Postfach (BT-65):</div>
+                  <div class="boxdaten legende">Adresszusatz (BT-65):</div>
                   <div id="BT-65" title="BT-65" class="boxdaten wert"><xsl:value-of select="xr:SELLER_TAX_REPRESENTATIVE_POSTAL_ADDRESS/xr:Tax_representative_address_line_2"/></div>
                 </div>
                 <div class="boxzeile">
@@ -2111,7 +2111,7 @@ function downloadData (element_id) {
                   <div id="BT-75" title="BT-75" class="boxdaten wert"><xsl:value-of select="xr:DELIVER_TO_ADDRESS/xr:Deliver_to_address_line_1"/></div>
                 </div>
                 <div class="boxzeile">
-                  <div class="boxdaten legende">Postfach (BT-76):</div>
+                  <div class="boxdaten legende">Adresszusatz (BT-76):</div>
                   <div id="BT-76" title="BT-76" class="boxdaten wert"><xsl:value-of select="xr:DELIVER_TO_ADDRESS/xr:Deliver_to_address_line_2"/></div>
                 </div>
                 <div class="boxzeile">
