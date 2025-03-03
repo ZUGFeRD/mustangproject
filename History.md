@@ -1,28 +1,31 @@
-#558
-#686
-#739
-#745
-#747
-#710
-#712
-#725
-#761
+2.16.3
+=======
+2025-03-03
+- #558 ZUGFeRDInvoiceImporter does not read BankDetails.accountName
+- #686 Item: add BillingSpecifiedPeriod
+- #739 also parse invoiceperiod from ubl
+- #745 be able to specify legalorganisation id without schema
+- #747 correct profile detection
+- #710 Validation Error due to empty elements
+- #712 Correct bracket setting on condition for output of allowance reason.
+- #725 Unable to perform XML-oriented attacks
+- #761 Allow to set item allowance/charges from JSON
 
 2.16.2
 =======
 2025-02-04
--#705 specifiedLogisticsCharge is not imported
--#707 invoiceimporter may fail if certain values are not set
--#708 embedded files cannot be determined
--#709 ZUGFeRDInvoiceImporter ignored "first" embedded file in list of pdf attachments
--#607 Enable flexible PaymentReference and a DocumentName.
--#649 Reuse toPDF method to work without any dependencies to the file system
--#650 Add net.sf.offo:fop-hyph
--#665 Fix #632: Return ubl_creditnote as Standard for CreditNotes
--#684 Optimize validation-report to pdf functionality
--#703 Fill TaxExemptionReason during InvoiceImport.
--#701 Ensure Base64 decoding can handle newlines when decoding a FileAttachment
--#691 Fix current check failures.
+- #705 specifiedLogisticsCharge is not imported
+- #707 invoiceimporter may fail if certain values are not set
+- #708 embedded files cannot be determined
+- #709 ZUGFeRDInvoiceImporter ignored "first" embedded file in list of pdf attachments
+- #607 Enable flexible PaymentReference and a DocumentName.
+- #649 Reuse toPDF method to work without any dependencies to the file system
+- #650 Add net.sf.offo:fop-hyph
+- #665 Fix #632: Return ubl_creditnote as Standard for CreditNotes
+- #684 Optimize validation-report to pdf functionality
+- #703 Fill TaxExemptionReason during InvoiceImport.
+- #701 Ensure Base64 decoding can handle newlines when decoding a FileAttachment
+- #691 Fix current check failures.
 
 2.16.1
 =======
