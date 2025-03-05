@@ -172,4 +172,8 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	default List<IncludedNote> getNotesWithSubjectCode() {
 		return null;
 	}
+
+	default String getAccountingReference() {
+		return null;
+	}
 }
