@@ -86,6 +86,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 			case "urn:factur-x.eu:1p0:minimum":
 				return "MINIMUM";
 			case "urn:ferd:CrossIndustryDocument:invoice:1p0:extended":
+			case "urn:cen.eu:en16931:2017#conformant#urn:zugferd.de:2p0:extended":
 			case "urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended":
 				return "EXTENDED";
 			default:

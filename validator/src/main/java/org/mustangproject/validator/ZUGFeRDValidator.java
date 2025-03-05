@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -142,6 +143,12 @@ public class ZUGFeRDValidator {
 					String xmlAsString = null;
 					try {
 						DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+						dbf.setNamespaceAware(true);
+						dbf.setExpandEntityReferences(false);
+						dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+						dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+						dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+						dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 						DocumentBuilder db = dbf.newDocumentBuilder();
 
 						content = XMLTools.removeBOM(content);

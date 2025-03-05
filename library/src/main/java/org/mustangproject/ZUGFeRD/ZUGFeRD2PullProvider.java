@@ -149,7 +149,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				if (profile == Profiles.getByName("Minimum")) {
 					xml += "<ram:ID>" + XMLTools.encodeXML(party.getLegalOrganisation().getSchemedID().getID()) + "</ram:ID>";
 				} else {
-					xml += "<ram:ID schemeID=\"" + XMLTools.encodeXML(party.getLegalOrganisation().getSchemedID().getScheme()) + "\">" + XMLTools.encodeXML(party.getLegalOrganisation().getSchemedID().getID()) + "</ram:ID>";
+					String schemeAttribute="";
+					if ((party.getLegalOrganisation().getSchemedID().getScheme()!=null)&&(party.getLegalOrganisation().getSchemedID().getScheme().length()>0)) {
+						schemeAttribute="schemeID=\"" + XMLTools.encodeXML(party.getLegalOrganisation().getSchemedID().getScheme())+"\"";
+
+					}
+					xml += "<ram:ID "+schemeAttribute+">" + XMLTools.encodeXML(party.getLegalOrganisation().getSchemedID().getID()) + "</ram:ID>";
 				}
 			}
 			if (party.getLegalOrganisation().getTradingBusinessName() != null) {
@@ -277,7 +282,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 
 		String reason = "";
-		if ((allowance.getReason() != null) && (profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung")) || profile == Profiles.getByName("EN16931")) {
+		if ((allowance.getReason() != null) && (profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung") || profile == Profiles.getByName("EN16931"))) {
 			reason = "<ram:Reason>" + XMLTools.encodeXML(allowance.getReason()) + "</ram:Reason>";
 		}
 		String reasonCode = "";

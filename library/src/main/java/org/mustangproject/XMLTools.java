@@ -130,6 +130,9 @@ public class XMLTools extends XMLWriter {
 	 */
 	public static Date tryDate(String toParse) {
 		SimpleDateFormat formatter = null;
+		if (toParse==null) {
+			return null;
+		}
 		if (toParse.contains("-")) {
 			// from ubl
 			 formatter = new SimpleDateFormat("yyyy-MM-dd");
