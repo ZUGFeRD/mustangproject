@@ -369,6 +369,29 @@ public class Item implements IZUGFeRDExportableItem {
 			return Allowances.toArray(new IZUGFeRDAllowanceCharge[0]);
 	}
 
+	/***
+	 * jackson convenience method
+	 */
+	public void setItemAllowances(ArrayList<Allowance> theAllowances) {
+		if (theAllowances!=null) {
+			Allowances.clear();
+			for (Allowance theAllowance : theAllowances) {
+				Allowances.add(theAllowance);
+			}
+		}
+	}
+	/***
+	 * jackson convenience method
+	 */
+	public void setItemCharges(ArrayList<Charge> theCharges) {
+		if (theCharges!=null) {
+			Charges.clear();
+			for (Charge theCharge : theCharges) {
+				Charges.add(theCharge);
+			}
+		}
+	}
+
 	@Override
 	public IZUGFeRDAllowanceCharge[] getItemCharges() {
 		if (Charges.isEmpty()) {
