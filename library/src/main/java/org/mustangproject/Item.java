@@ -40,7 +40,9 @@ public class Item implements IZUGFeRDExportableItem {
 	protected ArrayList<ReferencedDocument> referencedDocuments = null;
 	protected ArrayList<ReferencedDocument> additionalReference = null;
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>();
+	protected ArrayList<IZUGFeRDAllowanceCharge> totalAllowances = new ArrayList<>();
 	protected ArrayList<IZUGFeRDAllowanceCharge> Charges = new ArrayList<>();
+	protected ArrayList<IZUGFeRDAllowanceCharge> totalCharges = new ArrayList<>();
 	protected List<IncludedNote> includedNotes = null;
 	//protected HashMap<String, String> attributes = new HashMap<>();
 
@@ -172,39 +174,10 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("ApplicableTradeTax")
 				.flatMap(cnm -> cnm.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent"))
 				.ifPresent(product::setVATPercent);
+
 			icnm.getAsNodeMap("ApplicableTradeTax")
 				.flatMap(cnm -> cnm.getAsString("ExemptionReason"))
 				.ifPresent(product::setTaxExemptionReason);
-			icnm.getAsNodeMap("SpecifiedTradeAllowanceCharge").ifPresent(stac -> {
-				stac.getAsNodeMap("ChargeIndicator").ifPresent(ci -> {
-					String isChargeString=ci.getAsString("Indicator").get();
-					String percentString=stac.getAsStringOrNull("CalculationPercent");
-					String amountString=stac.getAsStringOrNull("ActualAmount");
-					String reason=stac.getAsStringOrNull("Reason");
-					Charge izac= new Charge();
-					if (isChargeString.equalsIgnoreCase("false")) {
-						izac = new Allowance();
-					} else {
-						izac = new Charge();
-					}
-					if (amountString!=null) {
-						izac.setTotalAmount(new BigDecimal(amountString));
-					}
-					if(percentString!=null) {
-					izac.setPercent(new BigDecimal(percentString));
-					}
-					if(reason!=null) {
-					izac.setReason(reason);
-					}
-
-					if (isChargeString.equalsIgnoreCase("false")) {
-						addAllowance(izac);
-					} else {
-						addCharge(izac);
-					}
-				});
-
-			});
 
 			if (recalcPrice && !BigDecimal.ZERO.equals(quantity)) {
 				icnm.getAsNodeMap("SpecifiedTradeSettlementLineMonetarySummation")
@@ -390,6 +363,24 @@ public class Item implements IZUGFeRDExportableItem {
 	}
 
 	@Override
+	public IZUGFeRDAllowanceCharge[] getItemTotalCharges() {
+		if (totalCharges.isEmpty()) {
+			return null;
+		} else {
+			return totalCharges.toArray(new IZUGFeRDAllowanceCharge[0]);
+		}
+	}
+
+	@Override
+	public IZUGFeRDAllowanceCharge[] getItemTotalAllowances() {
+		if (totalAllowances.isEmpty()) {
+			return null;
+		} else {
+			return totalAllowances.toArray(new IZUGFeRDAllowanceCharge[0]);
+		}
+	}
+
+	@Override
 	public IZUGFeRDAllowanceCharge[] getItemCharges() {
 		if (Charges.isEmpty()) {
 			return null;
@@ -431,6 +422,16 @@ public class Item implements IZUGFeRDExportableItem {
 	 */
 	public Item addAllowance(IZUGFeRDAllowanceCharge izac) {
 		Allowances.add(izac);
+		return this;
+	}
+
+	public Item addTotalAllowance(IZUGFeRDAllowanceCharge izac) {
+		totalAllowances.add(izac);
+		return this;
+	}
+
+	public Item addTotalCharge(IZUGFeRDAllowanceCharge izac) {
+		totalCharges.add(izac);
 		return this;
 	}
 
