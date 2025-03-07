@@ -45,6 +45,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.IncludedNote;
+import org.mustangproject.ReferencedDocument;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 import org.slf4j.Logger;
@@ -898,7 +899,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml += "</ram:InvoiceReferencedDocument>";
 		}
 		if (trans.getInvoiceReferencedDocuments() != null) {
-			for (var doc : trans.getInvoiceReferencedDocuments()) {
+			for (ReferencedDocument doc : trans.getInvoiceReferencedDocuments()) {
 				xml += "<ram:InvoiceReferencedDocument>"
 						+ "<ram:IssuerAssignedID>"
 						+ XMLTools.encodeXML(doc.getIssuerAssignedID()) + "</ram:IssuerAssignedID>";
