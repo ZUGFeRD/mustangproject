@@ -37,7 +37,8 @@ public class CalculationTest {
 		//This test failed with previous implementation. By rounding the totalVATAmount to 2 decimal places the result became wrong
 		final IZUGFeRDExportableProduct product = new IZUGFeRDExportableProductImpl().setVatPercent(valueOf(16));
 		// 10 % discount on each item
-		final IZUGFeRDAllowanceCharge allowance = new IZUGFeRDAllowanceChargeImpl().setTotalAmount(valueOf(14.8730));
+		IZUGFeRDAllowanceCharge allowance = new IZUGFeRDAllowanceChargeImpl();
+		allowance.setTotalAmount(valueOf(14.8730));
 
 		final IZUGFeRDExportableItem currentItem = new IZUGFeRDExportableItemImpl().setPrice(valueOf(148.73))
 			.setQuantity(valueOf(12))
@@ -54,9 +55,11 @@ public class CalculationTest {
 	public void testLineCalculatorInclusiveAllowanceAndCharge() {
 		final IZUGFeRDExportableProduct product = new IZUGFeRDExportableProductImpl().setVatPercent(valueOf(16));
 		// 10 % discount on each item
-		final IZUGFeRDAllowanceCharge allowance = new IZUGFeRDAllowanceChargeImpl().setTotalAmount(valueOf(14.873));
+		IZUGFeRDAllowanceCharge allowance = new IZUGFeRDAllowanceChargeImpl();
+		allowance.setTotalAmount(valueOf(14.873));
 		// 20 % charge
-		final IZUGFeRDAllowanceCharge charge = new IZUGFeRDAllowanceChargeImpl().setTotalAmount(valueOf(29.746));
+		IZUGFeRDAllowanceCharge charge = new IZUGFeRDAllowanceChargeImpl();
+		allowance.setTotalAmount(valueOf(29.746));
 		final IZUGFeRDExportableItem currentItem = new IZUGFeRDExportableItemImpl().setPrice(valueOf(148.73))
 			.setQuantity(valueOf(12))
 			.setItemAllowances(new IZUGFeRDAllowanceCharge[]{allowance})

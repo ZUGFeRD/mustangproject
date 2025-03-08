@@ -32,14 +32,15 @@ import java.math.RoundingMode;
  */
 public class VATAmount {
 
+	private BigDecimal basis;
+	private BigDecimal calculated;
+	private BigDecimal applicablePercent;
 
-	protected BigDecimal basis, calculated, applicablePercent;
+	private String categoryCode;
 
-	protected String categoryCode;
+	private String vatExemptionReasonText;
 
-	protected String vatExemptionReasonText;
-
-	protected String dueDateTypeCode;
+	private String dueDateTypeCode;
 
 
 	public VATAmount(BigDecimal basis, String categoryCode) {
