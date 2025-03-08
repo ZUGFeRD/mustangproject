@@ -57,9 +57,8 @@ public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
 		return this;
 	}
 
-	public IZUGFeRDAllowanceChargeImpl setTotalAmount(BigDecimal totalAmount) {
+	public void setTotalAmount(BigDecimal totalAmount) {
 		this.totalAmount = totalAmount;
-		return this;
 	}
 
 	public IZUGFeRDAllowanceChargeImpl setReason(String reason) {

@@ -52,6 +52,8 @@ import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DeSerializationTest extends ResourceCase {
 	public void testJackson() throws JsonProcessingException {
