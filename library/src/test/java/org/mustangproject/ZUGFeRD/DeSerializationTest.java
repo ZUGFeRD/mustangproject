@@ -42,6 +42,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DeSerializationTest extends ResourceCase {
 	public void testJackson() throws JsonProcessingException {

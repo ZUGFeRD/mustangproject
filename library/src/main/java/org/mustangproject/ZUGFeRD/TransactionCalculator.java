@@ -160,74 +160,126 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	 * no taxes, or e.g. 19:190 and 7:14 if 1000 Eur were applicable to 19% VAT
 	 * (=190 EUR VAT) and 200 EUR were applicable to 7% (=14 EUR VAT) 190 Eur
 	 *
+	 * order of precessing:
+	 *
+	 * 1. calculate the total net amount of all items with the same VAT
+	 * 2. use allowances and charges on every calculated value
+	 * 3. calculate the VAT for each value
+	 *
 	 * @return which taxes have been used with which amounts in this invoice
 	 */
 	protected HashMap<BigDecimal, VATAmount> getVATPercentAmountMap() {
-		HashMap<BigDecimal, VATAmount> hm = new HashMap<>();
+		HashMap<BigDecimal, VATAmount> netAmountPerVAT = new HashMap<>();
+		// 1. calculate the total net amount of all items with the same VAT
+		IZUGFeRDExportableItem[] items = trans.getZFItems();
 		final String vatDueDateTypeCode = trans.getVATDueDateTypeCode();
-
-		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
+		Stream.of(items).forEach(item -> {
 			BigDecimal percent = null;
-			if (currentItem.getProduct()!=null)
-			{
-				percent=currentItem.getProduct().getVATPercent();
+			if (Objects.nonNull(item.getProduct())) {
+				percent = item.getProduct().getVATPercent();
 			}
-			if (percent != null) {
-				LineCalculator lc = new LineCalculator(currentItem);
-				VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), lc.getItemTotalVATAmount(),
-					currentItem.getProduct().getTaxCategoryCode(), vatDueDateTypeCode);
-				String reasonText = currentItem.getProduct().getTaxExemptionReason();
-				if (reasonText != null) {
+			if (Objects.nonNull(percent)) {
+				LineCalculator lc = new LineCalculator(item);
+				VATAmount itemVATAmount = new VATAmount(lc.getItemTotalNetAmount(), item.getProduct().getTaxCategoryCode(), vatDueDateTypeCode);
+				String reasonText = item.getProduct().getTaxExemptionReason();
+				if (Objects.nonNull(reasonText)) {
 					itemVATAmount.setVatExemptionReasonText(reasonText);
 				}
-				VATAmount current = hm.get(percent.stripTrailingZeros());
-				if (current == null) {
-					hm.put(percent.stripTrailingZeros(), itemVATAmount);
+				VATAmount current = netAmountPerVAT.get(percent.stripTrailingZeros());
+				if (Objects.isNull(current)) {
+					netAmountPerVAT.put(percent.stripTrailingZeros(), itemVATAmount);
 				} else {
-					hm.put(percent.stripTrailingZeros(), current.add(itemVATAmount));
+					netAmountPerVAT.put(percent.stripTrailingZeros(), current.add(itemVATAmount));
 				}
 			}
-		}
+		});
 
 		IZUGFeRDAllowanceCharge[] charges = trans.getZFCharges();
-		if ((charges != null) && (charges.length > 0)) {
-			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
-				BigDecimal taxPercent = currentCharge.getTaxPercent();
-				if (taxPercent != null) {
-					VATAmount theAmount = hm.get(taxPercent.stripTrailingZeros());
-					if (theAmount == null) {
-						theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO,
-							currentCharge.getCategoryCode() != null ? currentCharge.getCategoryCode() : "S",
-							vatDueDateTypeCode);
-					}
-					theAmount.setBasis(theAmount.getBasis().add(currentCharge.getTotalAmount(this)));
-					BigDecimal factor = taxPercent.divide(new BigDecimal(100));
-					theAmount.setCalculated(theAmount.getBasis().multiply(factor));
-					hm.put(taxPercent.stripTrailingZeros(), theAmount);
-				}
-			}
+		if (Objects.nonNull(charges)) {
+			Stream.of(charges)
+						.forEach(charge -> {
+							BigDecimal taxPercent = charge.getTaxPercent();
+							// in case taxPercent is null, the charge will be used on every VAT,
+							// otherwise it will only be used for the VAT value
+							// this will keep old implementations working
+							if (Objects.isNull(taxPercent)) {
+								netAmountPerVAT.keySet()
+															 .forEach(vat -> {
+																 VATAmount  theAmount    = netAmountPerVAT.get(vat);
+																 BigDecimal chargeAmount = theAmount.getBasis()
+																																		.multiply(charge.getPercent())
+																																		.divide(new BigDecimal(100),
+																																						4,
+																																						RoundingMode.HALF_UP);
+																 theAmount.setBasis(theAmount.getBasis()
+																														 .add(chargeAmount));
+																 netAmountPerVAT.put(vat,
+																										 theAmount);
+															 });
+							} else {
+								VATAmount theAmount = netAmountPerVAT.get(taxPercent.stripTrailingZeros());
+								if (Objects.nonNull(theAmount)) {
+									BigDecimal chargeAmount = theAmount.getBasis()
+																										 .multiply(charge.getPercent())
+																										 .divide(new BigDecimal(100),
+																														 4,
+																														 RoundingMode.HALF_UP);
+									theAmount.setBasis(theAmount.getBasis()
+																							.add(chargeAmount));
+									netAmountPerVAT.put(taxPercent.stripTrailingZeros(),
+																			theAmount);
+								}
+							}
+						});
 		}
+
 		IZUGFeRDAllowanceCharge[] allowances = trans.getZFAllowances();
-		if ((allowances != null) && (allowances.length > 0)) {
-			for (IZUGFeRDAllowanceCharge currentAllowance : allowances) {
-				BigDecimal taxPercent = currentAllowance.getTaxPercent();
-				if (taxPercent != null) {
-					VATAmount theAmount = hm.get(taxPercent.stripTrailingZeros());
-					if (theAmount == null) {
-						theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO,
-							currentAllowance.getCategoryCode() != null ? currentAllowance.getCategoryCode() : "S",
-							vatDueDateTypeCode);
-					}
-					theAmount.setBasis(theAmount.getBasis().subtract(currentAllowance.getTotalAmount(this)));
-					BigDecimal factor = taxPercent.divide(new BigDecimal(100));
-					theAmount.setCalculated(theAmount.getBasis().multiply(factor));
-
-					hm.put(taxPercent.stripTrailingZeros(), theAmount);
-				}
+			if (Objects.nonNull(allowances)) {
+				Stream.of(allowances)
+							.forEach(alllowance -> {
+								BigDecimal taxPercent = alllowance.getTaxPercent();
+								// in case taxPercent is null, the charge will be used on every VAT,
+								// otherwise it will only be used for the VAT value
+								// this will keep old implementations working
+								if (Objects.isNull(taxPercent)) {
+									netAmountPerVAT.keySet()
+																 .forEach(vat -> {
+																	 VATAmount  theAmount    = netAmountPerVAT.get(vat);
+																	 BigDecimal chargeAmount = theAmount.getBasis()
+																																			.multiply(alllowance.getPercent())
+																																			.divide(new BigDecimal(100),
+																																							4,
+																																							RoundingMode.HALF_UP);
+																	 theAmount.setBasis(theAmount.getBasis()
+																															 .subtract(chargeAmount));
+																	 netAmountPerVAT.put(vat,
+																											 theAmount);
+																 });
+								} else {
+									VATAmount theAmount = netAmountPerVAT.get(taxPercent.stripTrailingZeros());
+									if (Objects.nonNull(theAmount)) {
+										BigDecimal chargeAmount = theAmount.getBasis()
+																											 .multiply(alllowance.getPercent())
+																											 .divide(new BigDecimal(100),
+																															 4,
+																															 RoundingMode.HALF_UP);
+										theAmount.setBasis(theAmount.getBasis()
+																								.subtract(chargeAmount));
+										netAmountPerVAT.put(taxPercent.stripTrailingZeros(),
+																				theAmount);
+									}
+								}
+							});
 			}
-		}
 
-		return hm;
+		netAmountPerVAT.keySet()
+									 .forEach(vat -> {
+										 VATAmount theAmount = netAmountPerVAT.get(vat);
+										 BigDecimal vatValue = theAmount.getBasis().multiply(vat).divide(new BigDecimal(100), 4, RoundingMode.HALF_UP);
+										 theAmount.setCalculated(theAmount.getBasis().add(vatValue).setScale(4, RoundingMode.HALF_UP));
+									 });
+
+		return netAmountPerVAT;
 	}
 
 	@Override

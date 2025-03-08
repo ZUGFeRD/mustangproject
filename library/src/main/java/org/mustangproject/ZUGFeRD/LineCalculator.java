@@ -2,6 +2,8 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.Objects;
 
 /***
  * the linecalculator does the math within an item line, and e.g. calculates quantity*price.
@@ -11,34 +13,33 @@ public class LineCalculator {
 	private final BigDecimal price;
 	private final BigDecimal priceGross;
 	private final BigDecimal itemTotalNetAmount;
-	private final BigDecimal itemTotalVATAmount;
 	private BigDecimal allowance = BigDecimal.ZERO;
 	private BigDecimal charge = BigDecimal.ZERO;
 	private BigDecimal allowanceItemTotal = BigDecimal.ZERO;
 
 	public LineCalculator(IZUGFeRDExportableItem currentItem) {
 
-		if (currentItem.getItemAllowances() != null && currentItem.getItemAllowances().length > 0) {
-			for (IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
-				addAllowance(allowance.getTotalAmount(currentItem));
-			}
+		if (Objects.nonNull(currentItem.getItemAllowances())) {
+			Arrays.stream(currentItem.getItemAllowances())
+						.map(allowance -> allowance.getTotalAmount(currentItem))
+						.forEach(this::addAllowance);
 		}
-		if (currentItem.getItemCharges() != null && currentItem.getItemCharges().length > 0) {
-			for (IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
-				addCharge(charge.getTotalAmount(currentItem));
-			}
+		if (Objects.nonNull(currentItem.getItemCharges())) {
+			Arrays.stream(currentItem.getItemCharges())
+						.map(charge -> charge.getTotalAmount(currentItem))
+						.forEach(this::addCharge);
 		}
-		if (currentItem.getItemTotalAllowances() != null && currentItem.getItemTotalAllowances().length > 0) {
-			for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getItemTotalAllowances()) {
-				addAllowanceItemTotal(itemTotalAllowance.getTotalAmount(currentItem));
-			}
+		if (Objects.nonNull(currentItem.getItemTotalAllowances() )) {
+			Arrays.stream(currentItem.getItemTotalAllowances())
+						.map(itemTotalAllowance -> itemTotalAllowance.getTotalAmount(currentItem))
+						.forEach(this::addAllowanceItemTotal);
 		}
 		
 		BigDecimal vatPercent = null;
-		if (currentItem.getProduct()!=null) {
+		if (Objects.nonNull(currentItem.getProduct())) {
 			vatPercent = currentItem.getProduct().getVATPercent();
 		}
-		if (vatPercent == null) {
+		if (Objects.isNull(vatPercent)) {
 			vatPercent = BigDecimal.ZERO;
 		}
 		BigDecimal multiplicator = vatPercent.divide(BigDecimal.valueOf(100));
@@ -46,7 +47,7 @@ public class LineCalculator {
 		price = priceGross.subtract(allowance).add(charge);
 
 		BigDecimal quantity=BigDecimal.ZERO;
-		if ((currentItem!=null)&&(currentItem.getQuantity()!=null)) {
+		if (Objects.nonNull(currentItem.getQuantity())) {
 			quantity=currentItem.getQuantity();
 		}
 
@@ -57,7 +58,6 @@ public class LineCalculator {
 			: currentItem.getBasisQuantity();
 		itemTotalNetAmount = quantity.multiply(getPrice()).divide(basisQuantity, 18, RoundingMode.HALF_UP)
 				.subtract(allowanceItemTotal).setScale(2, RoundingMode.HALF_UP);
-		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);
 	}
 
 	public BigDecimal getPrice() {
@@ -66,10 +66,6 @@ public class LineCalculator {
 
 	public BigDecimal getItemTotalNetAmount() {
 		return itemTotalNetAmount;
-	}
-
-	public BigDecimal getItemTotalVATAmount() {
-		return itemTotalVATAmount;
 	}
 
 	public BigDecimal getItemTotalGrossAmount() {

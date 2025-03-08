@@ -42,18 +42,18 @@ public class VATAmount {
 	protected String dueDateTypeCode;
 
 
-	public VATAmount(BigDecimal basis, BigDecimal calculated, String categoryCode) {
+	public VATAmount(BigDecimal basis, String categoryCode) {
 		super();
 		this.basis = basis;
-		this.calculated = calculated;
+		this.calculated = BigDecimal.ZERO;
 		this.categoryCode = categoryCode;
 		this.dueDateTypeCode = null;
 	}
 
-	public VATAmount(BigDecimal basis, BigDecimal calculated, String categoryCode, String dueDateTypeCode) {
+	public VATAmount(BigDecimal basis, String categoryCode, String dueDateTypeCode) {
 		super();
 		this.basis = basis;
-		this.calculated = calculated;
+		this.calculated = BigDecimal.ZERO;
 		this.categoryCode = categoryCode;
 		this.dueDateTypeCode = dueDateTypeCode;
 	}
@@ -135,11 +135,11 @@ public class VATAmount {
 	}
 
 	public VATAmount add(VATAmount v) {
-		return new VATAmount(basis.add(v.getBasis()), calculated.add(v.getCalculated()), this.categoryCode, this.dueDateTypeCode).setVatExemptionReasonText(v.getVatExemptionReasonText());
+		return new VATAmount(basis.add(v.getBasis()), this.categoryCode, this.dueDateTypeCode).setVatExemptionReasonText(v.getVatExemptionReasonText());
 	}
 
 	public VATAmount subtract(VATAmount v) {
-		return new VATAmount(basis.subtract(v.getBasis()), calculated.subtract(v.getCalculated()), this.categoryCode, this.dueDateTypeCode).setVatExemptionReasonText(v.getVatExemptionReasonText());
+		return new VATAmount(basis.subtract(v.getBasis()), this.categoryCode, this.dueDateTypeCode).setVatExemptionReasonText(v.getVatExemptionReasonText());
 	}
 
 }
