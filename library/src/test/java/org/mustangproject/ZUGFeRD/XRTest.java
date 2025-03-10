@@ -178,6 +178,36 @@ public class XRTest extends TestCase {
 		}
 
 	}
+	
+	public void testTaxExemptionReasonIssue() {
+		String orgname = "Test company";
+		String number = "123";
+		String amountStr = "1.00";
+		BigDecimal amount = new BigDecimal(amountStr);
+		byte[] b = {12, 13};
+
+		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
+			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").setEmail("sender@example.com").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890", "COBADEFXXX").setAccountName("kontoInhaber")))
+			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setEmail("recipient@sample.org"))
+			.setReferenceNumber("991-01484-64")//leitweg-id
+			// not using any VAT, this is also a test of zero-rated goods:
+			.setNumber(number)
+				.addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO).setTaxCategoryCode("E").setTaxExemptionReason("Kleinunternehmer"), amount, new BigDecimal(1.0)))
+				.addItem(new Item(new Product("Testprodukt2", "", "C62", BigDecimal.ZERO).setTaxCategoryCode("S"), amount, new BigDecimal(1.0)))
+			.setPayee( new TradeParty().setName("VR Factoring GmbH").setID("DE813838785").setLegalOrganisation(new LegalOrganisation("391200LDDFJDMIPPMZ54", "0199")));
+
+
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(i);
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+		assertThat(theXML).valueByXPath("count(//*[local-name()='ExemptionReason'])")
+			.asInt()
+			.isEqualTo(1);
+	}
+	
 
 	private org.mustangproject.Invoice createInvoice(TradeParty recipient) {
 		String orgname = "Test company";
