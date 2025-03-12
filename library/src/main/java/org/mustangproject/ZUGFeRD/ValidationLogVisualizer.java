@@ -10,6 +10,7 @@ import org.mustangproject.ClasspathResolverURIAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
@@ -118,6 +119,11 @@ public class ValidationLogVisualizer {
 
 			// Step 4: Setup JAXP using identity transformer
 			TransformerFactory factory = TransformerFactory.newInstance();
+
+			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 			Transformer transformer = factory.newTransformer(); // identity transformer
 
 			// Step 5: Setup input and output for XSLT transformation
