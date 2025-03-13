@@ -301,6 +301,7 @@ public class ZUGFeRDValidator {
 		XMLWriter writer = new XMLWriter(sw, format);
 		try {
 			writer.write(document);
+			writer.close();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}

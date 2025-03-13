@@ -90,9 +90,10 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 
 	protected byte[] inputstreamToByteArray(InputStream fileInputStream) throws IOException  {
 		byte[] bytes = new byte[fileInputStream.available()];
-		DataInputStream dataInputStream = new DataInputStream(fileInputStream);
-		dataInputStream.readFully(bytes);
-		return bytes;
+		try (DataInputStream dataInputStream = new DataInputStream(fileInputStream)) {
+			dataInputStream.readFully(bytes);
+			return bytes;
+		}
 	}
 
 	/***

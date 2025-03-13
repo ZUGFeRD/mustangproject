@@ -138,9 +138,9 @@ public class ZUGFeRDInvoiceImporter {
 					return;
 				}
 
-				final InputStream XMP = doc.getDocumentCatalog().getMetadata().exportXMPMetadata();
-
-				xmpString = new String(XMLTools.getBytesFromStream(XMP), StandardCharsets.UTF_8);
+				try (final InputStream XMP = doc.getDocumentCatalog().getMetadata().exportXMPMetadata()) {
+					xmpString = new String(XMLTools.getBytesFromStream(XMP), StandardCharsets.UTF_8);
+				}
 
 				final PDEmbeddedFilesNameTreeNode etn = names.getEmbeddedFiles();
 				if (etn == null) {
