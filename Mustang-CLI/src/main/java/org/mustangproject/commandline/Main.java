@@ -307,12 +307,13 @@ public class Main {
 	// Plain Java
 	// based on https://mkyong.com/java/how-to-convert-inputstream-to-string-in-java/
 	private static String convertInputStreamToString(InputStream is) {
-		int DEFAULT_BUFFER_SIZE = 8192;
-		ByteArrayOutputStream result = new ByteArrayOutputStream();
-		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-		int length;
-		try {
-			while ((length = is.read(buffer)) != -1) {
+		try (InputStream inputStream = is) {
+			int DEFAULT_BUFFER_SIZE = 8192;
+			ByteArrayOutputStream result = new ByteArrayOutputStream();
+			byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+			int length;
+
+			while ((length = inputStream.read(buffer)) != -1) {
 				result.write(buffer, 0, length);
 			}
 
@@ -320,11 +321,10 @@ public class Main {
 			return result.toString(StandardCharsets.UTF_8.name());
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
+			// Java 10
+			// return result.toString(StandardCharsets.UTF_8);
 		}
-		return null;
-		// Java 10
-		// return result.toString(StandardCharsets.UTF_8);
-
 	}
 
 	/***

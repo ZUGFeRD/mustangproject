@@ -142,8 +142,9 @@ public class ZUGFeRDVisualizer {
 
 	public String visualize(String xmlFilename, Language lang)
 		throws IOException, TransformerException, ParserConfigurationException {
-		FileInputStream fis = new FileInputStream(xmlFilename);
-		return visualize(fis, lang);
+		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
+			return visualize(fis, lang);
+		}
 	}
 
 	public String visualize(InputStream inputXml, Language lang)
@@ -233,12 +234,14 @@ public class ZUGFeRDVisualizer {
 
 	protected String toFOP(String xmlFilename)
 		throws IOException, TransformerException, ParserConfigurationException {
-
-		FileInputStream fis = new FileInputStream(xmlFilename);
-		EStandard theStandard = findOutStandardFromRootNode(fis);
-		fis = new FileInputStream(xmlFilename);//rewind :-(
-
-		return toFOP(fis, theStandard);
+		EStandard theStandard;
+		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
+			theStandard = findOutStandardFromRootNode(fis);
+		}
+		
+		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
+			return toFOP(fis, theStandard);
+		}
 	}
 
 	protected String toFOP(InputStream is, EStandard theStandard)
