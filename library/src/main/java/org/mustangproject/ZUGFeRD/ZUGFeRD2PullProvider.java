@@ -343,8 +343,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		boolean hasDueDate = trans.getDueDate() != null;
 		final SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-		String exemptionReason = "";
-
 		if (trans.getPaymentTermDescription() != null) {
 			paymentTermsDescription = XMLTools.encodeXML(trans.getPaymentTermDescription());
 		}
@@ -409,9 +407,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			String lineIDStr = Integer.toString(lineID);
 			if (currentItem.getId()!=null) {
 				lineIDStr=currentItem.getId();
-			}
-			if (currentItem.getProduct().getTaxExemptionReason() != null) {
-				exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
 			final LineCalculator lc = new LineCalculator(currentItem);
 			if ((getProfile() != Profiles.getByName("Minimum")) && (getProfile() != Profiles.getByName("BasicWL"))) {
@@ -533,9 +528,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "</ram:SpecifiedLineTradeDelivery>"
 					+ "<ram:SpecifiedLineTradeSettlement>"
 					+ "<ram:ApplicableTradeTax>"
-					+ "<ram:TypeCode>VAT</ram:TypeCode>"
-					+ exemptionReason
-					+ "<ram:CategoryCode>" + currentItem.getProduct().getTaxCategoryCode() + "</ram:CategoryCode>"
+					+ "<ram:TypeCode>VAT</ram:TypeCode>";
+				
+				if (currentItem.getProduct().getTaxExemptionReason() != null) {
+					xml += "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
+				}
+					
+				xml += "<ram:CategoryCode>" + currentItem.getProduct().getTaxCategoryCode() + "</ram:CategoryCode>"
 					+ "<ram:RateApplicablePercent>"
 					+ vatFormat(currentItem.getProduct().getVATPercent()) + "</ram:RateApplicablePercent>"
 					+ "</ram:ApplicableTradeTax>";
