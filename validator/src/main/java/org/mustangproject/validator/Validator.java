@@ -61,10 +61,6 @@ public abstract class Validator {
 		Source xmlData = new StreamSource(new ByteArrayInputStream(xmlRawData));
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		try {
-			schemaFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-			schemaFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-			schemaFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-			schemaFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 			Schema schema = schemaFactory.newSchema(schemaFile);
 			javax.xml.validation.Validator validator = schema.newValidator();
 			validator.validate(xmlData);
