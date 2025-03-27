@@ -194,15 +194,21 @@ public class XRTest extends TestCase {
 			.setRecipient(recipient)
 			.setReferenceNumber("991-01484-64")//leitweg-id
 			// not using any VAT, this is also a test of zero-rated goods:
-			.setNumber(number).addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "C62", java.math.BigDecimal.ZERO).setTaxCategoryCode(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE), amount, new java.math.BigDecimal(1.0)));
+			.setNumber(number).addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "C62", java.math.BigDecimal.ZERO).setTaxCategoryCode(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE).setTaxExemptionReason("Expemtion reason"), amount, new java.math.BigDecimal(1.0)));
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 		zf2p.setProfile(Profiles.getByName("XRechnung"));
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+		// Untaxed services don't have the field RateApplicablePercent, since it would be always 0. An error is thrown on validation, if 0 is set.
 		assertThat(theXML).valueByXPath("count(//*[local-name()='RateApplicablePercent'])")
 			.asInt()
 			.isEqualTo(0);
+
+		//Exemption reason needs to be set if TaxCategoryCode == "O", reason should be at the product and in the ApplicableTradeTax
+		assertThat(theXML).valueByXPath("count(//*[local-name()='ExemptionReason'])")
+			.asInt()
+			.isEqualTo(2);
 	}
 
 	private org.mustangproject.Invoice createInvoice(TradeParty recipient) {
