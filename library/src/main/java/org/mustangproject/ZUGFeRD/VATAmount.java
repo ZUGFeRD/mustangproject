@@ -135,7 +135,7 @@ public class VATAmount {
 	}
 
 	public VATAmount add(VATAmount v) {
-		return new VATAmount(basis.add(v.getBasis()), calculated.add(v.getCalculated()), this.categoryCode, this.dueDateTypeCode).setVatExemptionReasonText(v.getVatExemptionReasonText());
+		return new VATAmount(basis.add(v.getBasis()), calculated.add(v.getCalculated()), this.categoryCode, this.dueDateTypeCode).setVatExemptionReasonText(v.getVatExemptionReasonText() != null ? v.getVatExemptionReasonText(): this.vatExemptionReasonText);
 	}
 
 	public VATAmount subtract(VATAmount v) {
