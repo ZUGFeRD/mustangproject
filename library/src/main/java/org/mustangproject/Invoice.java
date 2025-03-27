@@ -158,7 +158,6 @@ public class Invoice implements IExportableTransaction {
 	 */
 	public Invoice setCorrection(String number) {
 		setInvoiceReferencedDocumentID(number);
-		addInvoiceReferencedDocument(new ReferencedDocument(number));
 		documentCode = DocumentCodeTypeConstants.CORRECTEDINVOICE;
 		return this;
 	}
