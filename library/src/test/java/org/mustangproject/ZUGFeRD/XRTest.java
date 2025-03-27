@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 import org.mustangproject.*;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
 
 
 import javax.xml.xpath.XPathExpressionException;
@@ -52,8 +53,8 @@ public class XRTest extends TestCase {
 		TradeParty recipient = new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE");
 		recipient.setEmail("quack@ducktown.org");
 		Invoice i = createInvoice(recipient);
-		String legalOrgID="aCustomSellerLegalOrgId";
-		String sellerID="aSellerTradePartyID";
+		String legalOrgID = "aCustomSellerLegalOrgId";
+		String sellerID = "aSellerTradePartyID";
 		i.getSender().setLegalOrganisation(new LegalOrganisation(legalOrgID));
 		i.getSender().setID(sellerID);
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
@@ -61,8 +62,8 @@ public class XRTest extends TestCase {
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
-		assertTrue(theXML.contains("<ram:ID>"+sellerID+"</ram:ID>"));// must be possible without scheme #
-		assertTrue(theXML.contains("<ram:ID>"+legalOrgID+"</ram:ID>"));// must be possible without scheme #
+		assertTrue(theXML.contains("<ram:ID>" + sellerID + "</ram:ID>"));// must be possible without scheme #
+		assertTrue(theXML.contains("<ram:ID>" + legalOrgID + "</ram:ID>"));// must be possible without scheme #
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
 			.asInt()
 			.isEqualTo(1); //2 errors are OK because there is a known bug
@@ -80,6 +81,7 @@ public class XRTest extends TestCase {
 		}
 
 	}
+
 
 	public void testXREdgeExport() {
 
@@ -100,7 +102,7 @@ public class XRTest extends TestCase {
 			.setReferenceNumber("991-01484-64")//leitweg-id
 			// not using any VAT, this is also a test of zero-rated goods:
 			.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO).setTaxExemptionReason("Kleinunternehmer"), amount, new BigDecimal(1.0)))
-			.setPayee( new TradeParty().setName("VR Factoring GmbH").setID("DE813838785").setLegalOrganisation(new LegalOrganisation("391200LDDFJDMIPPMZ54", "0199")))
+			.setPayee(new TradeParty().setName("VR Factoring GmbH").setID("DE813838785").setLegalOrganisation(new LegalOrganisation("391200LDDFJDMIPPMZ54", "0199")))
 			.embedFileInXML(fe1);
 
 
@@ -140,9 +142,9 @@ public class XRTest extends TestCase {
 			fail("ParseException not expected");
 		} catch (IOException e) {
 			fail("IOException not expected");
-        }
-		FileAttachment[] attachedFiles=readInvoice.getAdditionalReferencedDocuments();
-        assertNotNull(attachedFiles);
+		}
+		FileAttachment[] attachedFiles = readInvoice.getAdditionalReferencedDocuments();
+		assertNotNull(attachedFiles);
 		assertEquals(attachedFiles.length, 1);
 
 		assertTrue(Arrays.equals(attachedFiles[0].getData(), b));
@@ -177,6 +179,30 @@ public class XRTest extends TestCase {
 			e.printStackTrace();
 		}
 
+	}
+
+	public void testApplicablePercentInUntaxedService() {
+
+		// the writing part
+		TradeParty recipient = new TradeParty("Franz Müller", null, "55232", "Entenhausen", "DE");
+		String orgname = "Test company";
+		String number = "123";
+		String amountStr = "1.00";
+		BigDecimal amount = new BigDecimal(amountStr);
+		var i = new Invoice().setDueDate(new java.util.Date()).setIssueDate(new java.util.Date()).setDeliveryDate(new java.util.Date())
+			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("DE4711").addVATID("DE0815").setEmail("info@example.org").setContact(new org.mustangproject.Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new org.mustangproject.BankDetails("DE12500105170648489890", "COBADEFXXX")))
+			.setRecipient(recipient)
+			.setReferenceNumber("991-01484-64")//leitweg-id
+			// not using any VAT, this is also a test of zero-rated goods:
+			.setNumber(number).addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "C62", java.math.BigDecimal.ZERO).setTaxCategoryCode(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE), amount, new java.math.BigDecimal(1.0)));
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(i);
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+		assertThat(theXML).valueByXPath("count(//*[local-name()='RateApplicablePercent'])")
+			.asInt()
+			.isEqualTo(0);
 	}
 
 	private org.mustangproject.Invoice createInvoice(TradeParty recipient) {
