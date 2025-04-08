@@ -175,7 +175,7 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("ApplicableTradeTax")
 				.flatMap(cnm -> cnm.getAsString("ExemptionReason"))
 				.ifPresent(product::setTaxExemptionReason);
-			icnm.getAsNodeMap("SpecifiedTradeAllowanceCharge").ifPresent(stac -> {
+			icnm.getAllNodes("SpecifiedTradeAllowanceCharge").map(NodeMap::new).forEach(stac -> {
 				stac.getAsNodeMap("ChargeIndicator").ifPresent(ci -> {
 					String isChargeString=ci.getAsString("Indicator").get();
 					String percentString=stac.getAsStringOrNull("CalculationPercent");
