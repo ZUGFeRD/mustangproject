@@ -585,4 +585,16 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		assertEquals("0", zii.importedInvoice.getDuePayable().toPlainString());
 	}
+
+	@Test
+	public void test() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("ORDER-X_EX01_ORDER_FULL_DATA-COMFORTorder-x.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.doIgnoreCalculationErrors();
+		zii.setInputStream(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+		assertEquals(3, invoice.getZFItems().length);
+		assertEquals("BUYER_ACCOUNTING_REF", invoice.getZFItems()[0].getAccountingReference());
+	}
 }

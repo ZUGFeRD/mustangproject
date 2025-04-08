@@ -398,7 +398,7 @@
         <nummer>BT-64</nummer>
       </xsl:when>
       <xsl:when test="$identifier = 'xr:Tax_representative_address_line_2'">
-        <label>Postfach</label>
+        <label>Adresszusatz</label>
         <nummer>BT-65</nummer>
       </xsl:when>
       <xsl:when test="$identifier = 'xr:Tax_representative_address_line_3'">
@@ -486,7 +486,7 @@
         <nummer>BT-75</nummer>
       </xsl:when>
       <xsl:when test="$identifier = 'xr:Deliver_to_address_line_2'">
-        <label>Postfach</label>
+        <label>Adresszusatz</label>
         <nummer>BT-76</nummer>
       </xsl:when>
       <xsl:when test="$identifier = 'xr:Deliver_to_address_line_3'">

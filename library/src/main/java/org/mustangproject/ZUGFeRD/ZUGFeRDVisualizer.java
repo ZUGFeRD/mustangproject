@@ -102,12 +102,23 @@ public class ZUGFeRDVisualizer {
 		String cioSignature = "SCRDMCCBDACIOMessageStructure";
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		dbf.setNamespaceAware(true);
-		dbf.setExpandEntityReferences(false);
-		dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		//REDHAT
+		//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
+		dbf.setAttribute(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+		dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+
+		//OWASP
+		//https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
 		dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 		dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
 		dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		// Disable external DTDs as well
+		dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+		// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
+		dbf.setXIncludeAware(false);
+		dbf.setExpandEntityReferences(false);
+		dbf.setNamespaceAware(true);
 		try {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(new InputSource(fis));
@@ -131,8 +142,9 @@ public class ZUGFeRDVisualizer {
 
 	public String visualize(String xmlFilename, Language lang)
 		throws IOException, TransformerException, ParserConfigurationException {
-		FileInputStream fis = new FileInputStream(xmlFilename);
-		return visualize(fis, lang);
+		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
+			return visualize(fis, lang);
+		}
 	}
 
 	public String visualize(InputStream inputXml, Language lang)
@@ -222,12 +234,14 @@ public class ZUGFeRDVisualizer {
 
 	protected String toFOP(String xmlFilename)
 		throws IOException, TransformerException, ParserConfigurationException {
-
-		FileInputStream fis = new FileInputStream(xmlFilename);
-		EStandard theStandard = findOutStandardFromRootNode(fis);
-		fis = new FileInputStream(xmlFilename);//rewind :-(
-
-		return toFOP(fis, theStandard);
+		EStandard theStandard;
+		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
+			theStandard = findOutStandardFromRootNode(fis);
+		}
+		
+		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
+			return toFOP(fis, theStandard);
+		}
 	}
 
 	protected String toFOP(InputStream is, EStandard theStandard)

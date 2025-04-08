@@ -45,6 +45,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.IncludedNote;
+import org.mustangproject.ReferencedDocument;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 import org.slf4j.Logger;
@@ -139,7 +140,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml += "<ram:GlobalID schemeID=\"" + XMLTools.encodeXML(party.getGlobalIDScheme()) + "\">"
 				+ XMLTools.encodeXML(party.getGlobalID()) + "</ram:GlobalID>";
 		}
-		xml += "<ram:Name>" + XMLTools.encodeXML(party.getName()) + "</ram:Name>";
+		if (party.getName() != null && !party.getName().isEmpty()) {
+			xml += "<ram:Name>" + XMLTools.encodeXML(party.getName()) + "</ram:Name>";
+		}
 		if (party.getDescription() != null) {
 			xml += "<ram:Description>" + XMLTools.encodeXML(party.getDescription()) + "</ram:Description>";
 		}
@@ -342,8 +345,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		boolean hasDueDate = trans.getDueDate() != null;
 		final SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
-		String exemptionReason = "";
-
 		if (trans.getPaymentTermDescription() != null) {
 			paymentTermsDescription = XMLTools.encodeXML(trans.getPaymentTermDescription());
 		}
@@ -409,9 +410,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if (currentItem.getId()!=null) {
 				lineIDStr=currentItem.getId();
 			}
-			if (currentItem.getProduct().getTaxExemptionReason() != null) {
-				exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
-			}
 			final LineCalculator lc = new LineCalculator(currentItem);
 			if ((getProfile() != Profiles.getByName("Minimum")) && (getProfile() != Profiles.getByName("BasicWL"))) {
 				xml += "<ram:IncludedSupplyChainTradeLineItem>" +
@@ -454,7 +452,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 
 				xml += "<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>";
-				if (currentItem.getProduct().getDescription().length() > 0) {
+				if (currentItem.getProduct().getDescription() != null && currentItem.getProduct().getDescription().length() > 0) {
 					xml += "<ram:Description>" +
 						XMLTools.encodeXML(currentItem.getProduct().getDescription()) +
 						"</ram:Description>";
@@ -462,7 +460,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				if (currentItem.getProduct().getClassifications() != null && currentItem.getProduct().getClassifications().length > 0) {
 					for (IDesignatedProductClassification classification : currentItem.getProduct().getClassifications()) {
 						xml += "<ram:DesignatedProductClassification>"
-							+ "<ram:ClassCode listId=\"" + XMLTools.encodeXML(classification.getClassCode().getListID()) + "\"";
+							+ "<ram:ClassCode listID=\"" + XMLTools.encodeXML(classification.getClassCode().getListID()) + "\"";
 						if (classification.getClassCode().getListVersionID() != null) {
 							xml += " listVersionID=\"" + XMLTools.encodeXML(classification.getClassCode().getListVersionID()) + "\"";
 						}
@@ -532,9 +530,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "</ram:SpecifiedLineTradeDelivery>"
 					+ "<ram:SpecifiedLineTradeSettlement>"
 					+ "<ram:ApplicableTradeTax>"
-					+ "<ram:TypeCode>VAT</ram:TypeCode>"
-					+ exemptionReason
-					+ "<ram:CategoryCode>" + currentItem.getProduct().getTaxCategoryCode() + "</ram:CategoryCode>"
+					+ "<ram:TypeCode>VAT</ram:TypeCode>";
+				
+				if (currentItem.getProduct().getTaxExemptionReason() != null) {
+					xml += "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
+				}
+					
+				xml += "<ram:CategoryCode>" + currentItem.getProduct().getTaxCategoryCode() + "</ram:CategoryCode>"
 					+ "<ram:RateApplicablePercent>"
 					+ vatFormat(currentItem.getProduct().getVATPercent()) + "</ram:RateApplicablePercent>"
 					+ "</ram:ApplicableTradeTax>";
@@ -898,7 +900,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml += "</ram:InvoiceReferencedDocument>";
 		}
 		if (trans.getInvoiceReferencedDocuments() != null) {
-			for (var doc : trans.getInvoiceReferencedDocuments()) {
+			for (ReferencedDocument doc : trans.getInvoiceReferencedDocuments()) {
 				xml += "<ram:InvoiceReferencedDocument>"
 						+ "<ram:IssuerAssignedID>"
 						+ XMLTools.encodeXML(doc.getIssuerAssignedID()) + "</ram:IssuerAssignedID>";

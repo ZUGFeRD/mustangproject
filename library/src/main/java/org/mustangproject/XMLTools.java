@@ -220,7 +220,8 @@ public class XMLTools extends XMLWriter {
 	}
 
 	public static byte[] getBytesFromStream(InputStream fileinput) throws IOException {
-	  return IOUtils.toByteArray (fileinput);
+		// Stream closing responsibility is with the caller
+		return IOUtils.toByteArray(fileinput);
 	}
 
 
