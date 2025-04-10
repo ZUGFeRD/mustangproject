@@ -33,6 +33,13 @@ public interface IZUGFeRDAllowanceCharge {
 	BigDecimal getTotalAmount(IAbsoluteValueProvider trans);
 
 	/***
+	 * set the absolute amount
+	 *
+	 * @param totalAmount new total
+	 */
+	void setTotalAmount(BigDecimal totalAmount);
+
+	/***
 	 * returns a percentage, if relative abount, or null for absolute amounts
 	 * @return null or Percentage as Bigdecimal
 	 */

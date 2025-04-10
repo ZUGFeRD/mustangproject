@@ -7,6 +7,8 @@ import org.mustangproject.ZUGFeRD.IAbsoluteValueProvider;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Objects;
 
 /***
  * Absolute and relative charges for document and item level
@@ -59,11 +61,9 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	/***
 	 * sets the total amount to be changed to, e.g. if not specified via constructor
 	 * @param totalAmount 2 decimal money amount
-	 * @return fluid setter
 	 */
-	public Charge setTotalAmount(BigDecimal totalAmount) {
+	public void setTotalAmount(BigDecimal totalAmount) {
 		this.totalAmount = totalAmount;
-		return this;
 	}
 
 	/***
@@ -121,10 +121,10 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	
 	@Override
 	public BigDecimal getTotalAmount(IAbsoluteValueProvider currentItem) {
-		if (percent!=null) {
-			return currentItem.getValue().multiply(getPercent().divide(new BigDecimal(100)));
-		} else if(totalAmount != null) {
+		if (Objects.nonNull(totalAmount)) {
 			return totalAmount;
+	  } else if (Objects.nonNull(percent)) {
+			return currentItem.getValue().multiply(getPercent().divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
 		} else {
 			throw new RuntimeException("percent must be set");
 		}
