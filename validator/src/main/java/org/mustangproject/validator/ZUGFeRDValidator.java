@@ -152,7 +152,6 @@ public class ZUGFeRDValidator {
 						//OWASP
 						//https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
 						dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-						dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
 						dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 						// Disable external DTDs as well
 						dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
