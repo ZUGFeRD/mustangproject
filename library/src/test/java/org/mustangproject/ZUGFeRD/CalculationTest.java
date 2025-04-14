@@ -82,9 +82,8 @@ public class CalculationTest extends ResourceCase {
 	@Test
 	public void testLineCalculatorForeignCurrencyExample() {
 
-/*
+
 		File inputCII = getResourceAsFile("Extended_fremdwaehrung.xml");
-inputCII=new File("C:\\Users\\jstaerk\\workspace\\XMLExamples\\zfdiverses\\20250407\\fremdwaehrung.xml");
 		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter();
 		Invoice invoice=null;
 		zii.doIgnoreCalculationErrors();
@@ -104,9 +103,9 @@ inputCII=new File("C:\\Users\\jstaerk\\workspace\\XMLExamples\\zfdiverses\\20250
 
 		final TransactionCalculator calculator = new TransactionCalculator(invoice);
 
-		assertEquals(valueOf(521.91).stripTrailingZeros(), calculator.getGrandTotal().stripTrailingZeros());
+		assertEquals(valueOf(521.91).stripTrailingZeros(), calculator.getDuePayable().stripTrailingZeros());
 
- */
+
 	}
 
 
