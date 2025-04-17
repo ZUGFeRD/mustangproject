@@ -502,6 +502,24 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 
 	@Test
+	public void testImportPrepaidUBL() throws XPathExpressionException, ParseException {
+		InputStream inputStream = this.getClass()
+			.getResourceAsStream("/ubl/XRECHNUNG_teilrechnung.ubl.xml");
+		ZUGFeRDInvoiceImporter importer = new ZUGFeRDInvoiceImporter();
+		importer.doIgnoreCalculationErrors();
+		importer.setInputStream(inputStream);
+
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		importer.extractInto(invoice);
+
+		assertEquals(0, invoice.getGrandTotal().compareTo(new BigDecimal("529.87")));
+		assertEquals(0, invoice.getLineTotalAmount().compareTo(new BigDecimal("473")));
+		assertEquals(0, invoice.getTotalPrepaidAmount().compareTo(new BigDecimal("500")));
+		assertEquals(0, invoice.getDuePayable().compareTo(new BigDecimal("29.87")));
+	}
+
+
+	@Test
 	public void testImportIncludedNotes() throws XPathExpressionException, ParseException {
 		InputStream inputStream = this.getClass()
 			.getResourceAsStream("/EN16931_Einfach.pdf");
