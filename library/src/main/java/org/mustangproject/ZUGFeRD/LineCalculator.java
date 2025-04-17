@@ -51,7 +51,7 @@ public class LineCalculator {
 
 		price=currentItem.getPrice();
 		BigDecimal delta=charge.subtract(allowanceItemTotal).subtract(allowance);
-		delta=delta.divide(currentItem.getQuantity());
+		delta=delta.divide(currentItem.getQuantity(), 18, RoundingMode.HALF_UP);
 		priceGross=currentItem.getPrice().add(delta);
 		// Division/Zero occurred here.
 		// Used the setScale only because that's also done in getBasisQuantity
