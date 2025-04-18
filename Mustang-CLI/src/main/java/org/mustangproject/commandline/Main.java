@@ -347,8 +347,11 @@ public class Main {
 			Option attachmentOpt = new Option("attachments", "attachments", true, "File attachments");
 			attachmentOpt.setValueSeparator(',');
 			attachmentOpt.setArgs(Option.UNLIMITED_VALUES);
-
 			options.addOption(attachmentOpt);
+			Option excludeOpt = new Option("exclude", "exclude", true, "Files to exclude from recursive directory traversal");
+			excludeOpt.setValueSeparator(',');
+			excludeOpt.setArgs(Option.UNLIMITED_VALUES);
+			options.addOption(excludeOpt);
 			options.addOption(new Option("source", "source", true, "which source file to use"));
 			options.addOption(new Option("source-xml", "source-xml", true, "which source file to use"));
 			options.addOption(new Option("language", "language", true, "output language (en, de or fr)"));
@@ -389,6 +392,7 @@ public class Main {
 				String zugferdProfile = cmd.getOptionValue("profile");
 
 				String[] attachmentFilenames = cmd.hasOption("attachments") ? cmd.getOptionValues("attachments") : null;
+				String[] excludedFilenames = cmd.hasOption("exclude") ? cmd.getOptionValues("exclude") : null;
 
 
 				ArrayList<FileAttachment> attachments = new ArrayList<>();
@@ -433,9 +437,9 @@ public class Main {
 				} else if ((action != null) && (action.equals("validate"))) {
 					optionsRecognized = performValidate(sourceName, noNotices, cmd.getOptionValue("logAppend"), LogAsPDF);
 				} else if ((action != null) && (action.equals("validateExpectValid"))) {
-					optionsRecognized = performValidateExpect(true, directoryName);
+					optionsRecognized = performValidateExpect(true, directoryName, excludedFilenames);
 				} else if ((action != null) && (action.equals("validateExpectInvalid"))) {
-					optionsRecognized = performValidateExpect(false, directoryName);
+					optionsRecognized = performValidateExpect(false, directoryName, excludedFilenames);
 				}
 
 			} catch (UnrecognizedOptionException ex) {
@@ -487,8 +491,8 @@ public class Main {
 		return optionsRecognized;
 	}
 
-	private static boolean performValidateExpect(boolean valid, String dirName) {
-		ValidatorFileWalker zfWalk = new ValidatorFileWalker(valid);
+	private static boolean performValidateExpect(boolean valid, String dirName, String[] excludedFiles) {
+		ValidatorFileWalker zfWalk = new ValidatorFileWalker(valid, excludedFiles);
 		Path startingDir = Paths.get(dirName);
 		try {
 			Files.walkFileTree(startingDir, zfWalk);
