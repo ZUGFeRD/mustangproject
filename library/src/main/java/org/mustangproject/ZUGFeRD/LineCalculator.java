@@ -42,24 +42,21 @@ public class LineCalculator {
 			vatPercent = BigDecimal.ZERO;
 		}
 		BigDecimal multiplicator = vatPercent.divide(BigDecimal.valueOf(100));
-
+		priceGross = currentItem.getPrice(); // see https://github.com/ZUGFeRD/mustangproject/issues/159
+		price = priceGross.subtract(allowance).add(charge);
 
 		BigDecimal quantity=BigDecimal.ZERO;
 		if ((currentItem!=null)&&(currentItem.getQuantity()!=null)) {
 			quantity=currentItem.getQuantity();
 		}
 
-		price=currentItem.getPrice();
-		BigDecimal delta=charge.subtract(allowanceItemTotal).subtract(allowance);
-		delta=delta.divide(currentItem.getQuantity(), 18, RoundingMode.HALF_UP);
-		priceGross=currentItem.getPrice().add(delta);
 		// Division/Zero occurred here.
 		// Used the setScale only because that's also done in getBasisQuantity
 		BigDecimal basisQuantity = currentItem.getBasisQuantity().compareTo(BigDecimal.ZERO) == 0
 			? BigDecimal.ONE.setScale(4)
 			: currentItem.getBasisQuantity();
-		itemTotalNetAmount = quantity.multiply(currentItem.getPrice()).divide(basisQuantity, 18, RoundingMode.HALF_UP)
-			.subtract(allowanceItemTotal).subtract(allowance).add(charge).setScale(2, RoundingMode.HALF_UP);
+		itemTotalNetAmount = quantity.multiply(price).divide(basisQuantity, 18, RoundingMode.HALF_UP)
+				.subtract(allowanceItemTotal).setScale(2, RoundingMode.HALF_UP);
 		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);
 	}
 
