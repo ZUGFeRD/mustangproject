@@ -79,7 +79,7 @@ public class ValidatorFileWalker
 	@Override
 	public FileVisitResult postVisitDirectory(Path dir,
 											  IOException exc) {
-		LOGGER.info("\nDirectory: %s%n", dir);
+		LOGGER.info(String.format("\nDirectory: %s \n", dir));
 		return FileVisitResult.CONTINUE;
 	}
 

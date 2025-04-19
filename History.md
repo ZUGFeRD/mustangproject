@@ -1,19 +1,23 @@
-- #722
-- #774
-- #742/#753
-- #778
-- #759
-- #614, #770
-- #728
-- #776
-- #741
-- #782
-- #772
-- #775
-- #802
-- #809
-- #812
-- #818
+
+2.16.4
+=======
+2025-04-19
+- #722 extend ValidationLogVisualizer to not use only file system
+- #774 disable XML parsing entities
+- #742/#753 "Adresszusatz 1" (LineTwo) showing up as "Postfach" in HTML visualization
+- #778 Added XEE Protection features (that were missing according to Stackoverflow)
+- #759 Use the dedicated class instead of var type
+- #614, #770 Exemption reason text should not be reused
+- #728 Invoice setCorrection causes duplicate XML output
+- #776 Fix potential resource leaks in core file processing classes
+- #741 read position accountingReference
+- #782/771 prevent NullPointerException on Product Description
+- #772 TradeParty Name should be optional for ShipToTradeParty
+- #775 not deleted tmp files
+- #802 fix: capital letter for ID in listID
+- #809 invoice reader to support multiple charges per item
+- #812 fileattachment relation should have a default
+- #818 need exceptions from files validated with validateExpectValid
 
 
 2.16.3
