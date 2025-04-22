@@ -21,26 +21,36 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import junit.framework.TestCase;
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-import org.mustangproject.*;
-import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
-
-import javax.xml.xpath.XPathExpressionException;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
+
+import javax.xml.xpath.XPathExpressionException;
+
+import org.junit.FixMethodOrder;
+import org.junit.experimental.theories.FromDataPoints;
+import org.junit.runners.MethodSorters;
+import org.mustangproject.Allowance;
+import org.mustangproject.BankDetails;
+import org.mustangproject.CalculatedInvoice;
+import org.mustangproject.CashDiscount;
+import org.mustangproject.Charge;
+import org.mustangproject.Contact;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
+import org.mustangproject.SchemedID;
+import org.mustangproject.TradeParty;
+import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DeSerializationTest extends ResourceCase {
@@ -223,7 +233,7 @@ public class DeSerializationTest extends ResourceCase {
 			"\n" +
 			"  \"number\": \"471102\",\n" +
 			"  \"currency\": \"EUR\",\n" +
-			"  \"issueDate\": \"2018-03-04T00:00:00.000+01:00\",\n" +
+			"  \"issueDate\": \"2018-03-04T00:00:00.000\",\n" +
 			"  \"dueDate\": \"2018-03-04T00:00:00.000+01:00\",\n" +
 			"  \"deliveryDate\": \"2018-03-04T00:00:00.000+01:00\",\n" +
 			"  \"sender\": {\n" +
@@ -313,6 +323,83 @@ public class DeSerializationTest extends ResourceCase {
 			exText = e.getMessage();
 		}
 		assertNull(exText);
+
+
+	}
+	public void testNulledAttachments() {
+
+		String json="{\n" +
+			"  \"number\": \"471102\",\n" +
+			"  \"currency\": \"EUR\",\n" +
+			"  \"issueDate\": \"2018-03-04T00:00:00.000+01:00\",\n" +
+			"  \"dueDate\": \"2018-03-04T00:00:00.000+01:00\",\n" +
+			"  \"deliveryDate\": \"2018-03-04T00:00:00.000+01:00\",\n" +
+			"  \"sender\": {\n" +
+			"    \"name\": \"Lieferant GmbH\",\n" +
+			"    \"zip\": \"80333\",\n" +
+			"    \"street\": \"Lieferantenstraße 20\",\n" +
+			"    \"location\": \"München\",\n" +
+			"    \"country\": \"DE\",\n" +
+			"    \"taxID\": \"201/113/40209\",\n" +
+			"    \"vatID\": \"DE123456789\",\n" +
+			"    \"globalID\": \"4000001123452\",\n" +
+			"    \"globalIDScheme\": \"0088\"\n" +
+			"  },\n" +
+			"  \"recipient\": {\n" +
+			"    \"name\": \"Kunden AG Mitte\",\n" +
+			"    \"zip\": \"69876\",\n" +
+			"    \"street\": \"Kundenstraße 15\",\n" +
+			"    \"location\": \"Frankfurt\",\n" +
+			"    \"country\": \"DE\"\n" +
+			"  },\n" +
+			"\"additionalReferencedDocuments\":null,"+
+			"  \"zfitems\": [\n" +
+			"    {\n" +
+			"      \"price\": 9.9,\n" +
+			"      \"quantity\": 20,\n" +
+			"      \"product\": {\n" +
+			"        \"unit\": \"H87\",\n" +
+			"        \"name\": \"Trennblätter A4\",\n" +
+			"        \"description\": \"\",\n" +
+			"        \"vatpercent\": 19,\n" +
+			"        \"taxCategoryCode\": \"S\"\n" +
+			"      }\n" +
+			"    },\n" +
+			"    {\n" +
+			"      \"price\": 5.5,\n" +
+			"      \"quantity\": 50,\n" +
+			"      \"product\": {\n" +
+			"        \"unit\": \"H87\",\n" +
+			"        \"name\": \"Joghurt Banane\",\n" +
+			"        \"description\": \"\",\n" +
+			"        \"vatpercent\": 7,\n" +
+			"        \"taxCategoryCode\": \"S\"\n" +
+			"      }\n" +
+			"    }\n" +
+			"  ]\n" +
+			"}\n";
+		ObjectMapper mapper = new ObjectMapper();
+		boolean exceptions=false;
+		try {
+			Invoice newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
+		} catch (JsonProcessingException e) {
+			exceptions=true;
+		}
+		assertFalse(exceptions);
+	}
+
+	public void testItemAllowances() {
+
+		String json="{\"number\":\"123\",\"currency\":\"EUR\",\"issueDate\":1738935176399,\"dueDate\":1738935176399,\"sender\":{\"name\":\"Test company\",\"zip\":\"55232\",\"street\":\"teststr\",\"location\":\"teststadt\",\"country\":\"DE\",\"taxID\":\"4711\",\"vatID\":\"DE0815\",\"vatid\":\"DE0815\"},\"recipient\":{\"name\":\"Franz Müller\",\"zip\":\"55232\",\"street\":\"teststr.12\",\"location\":\"Entenhausen\",\"country\":\"DE\",\"contact\":{\"name\":\"contact testname\",\"phone\":\"123456\",\"email\":\"contact.testemail@example.org\",\"fax\":\"0911623562\"}},\"zfitems\":[{\"price\":3.00,\"quantity\":1,\"basisQuantity\":1,\"product\":{\"unit\":\"C62\",\"name\":\"Testprodukt\",\"taxCategoryCode\":\"S\",\"vatpercent\":19,\"reverseCharge\":false,\"intraCommunitySupply\":false},\"itemAllowances\":[{\"totalAmount\":0.1,\"categoryCode\":\"S\"}],\"value\":3.00},{\"price\":3.00,\"quantity\":1,\"basisQuantity\":1,\"product\":{\"unit\":\"C62\",\"name\":\"Testprodukt\",\"taxCategoryCode\":\"S\",\"vatpercent\":19,\"reverseCharge\":false,\"intraCommunitySupply\":false},\"itemAllowances\":[{\"percent\":50,\"taxPercent\":0,\"categoryCode\":\"S\"}],\"value\":3.00},{\"price\":3.00,\"quantity\":2,\"basisQuantity\":1,\"product\":{\"unit\":\"C62\",\"name\":\"Testprodukt\",\"taxCategoryCode\":\"S\",\"vatpercent\":19,\"reverseCharge\":false,\"intraCommunitySupply\":false},\"itemCharges\":[{\"totalAmount\":1,\"reason\":\"AnotherReason\",\"reasonCode\":\"ABK\",\"categoryCode\":\"S\"}],\"value\":3.00},{\"price\":3.00,\"quantity\":1,\"basisQuantity\":1,\"product\":{\"unit\":\"C62\",\"name\":\"Testprodukt\",\"taxCategoryCode\":\"S\",\"vatpercent\":19,\"reverseCharge\":false,\"intraCommunitySupply\":false},\"itemAllowances\":[{\"totalAmount\":1,\"categoryCode\":\"S\"}],\"itemCharges\":[{\"totalAmount\":1,\"categoryCode\":\"S\"}],\"value\":3.00}],\"ownStreet\":\"teststr\",\"ownCountry\":\"DE\",\"zfcharges\":[{\"totalAmount\":1,\"taxPercent\":19,\"reason\":\"AReason\",\"reasonCode\":\"ABK\",\"categoryCode\":\"S\"}],\"ownLocation\":\"teststadt\",\"ownTaxID\":\"4711\",\"ownZIP\":\"55232\",\"ownVATID\":\"DE0815\",\"valid\":true}";
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			Invoice newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
+			TransactionCalculator tc=new TransactionCalculator(newInvoiceFromJSON);
+			assertEquals(new BigDecimal("19.52"),tc.getGrandTotal());
+
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
 
 
 	}

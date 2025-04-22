@@ -32,6 +32,7 @@ import java.util.Map;
 
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
+import org.mustangproject.ReferencedDocument;
 import org.mustangproject.XMLTools;
 
 public class OXPullProvider extends ZUGFeRD2PullProvider {
@@ -460,7 +461,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 			xml += "</ram:InvoiceReferencedDocument>";
 		}
 		if (trans.getInvoiceReferencedDocuments() != null) {
-			for (var doc : trans.getInvoiceReferencedDocuments()) {
+			for (ReferencedDocument doc : trans.getInvoiceReferencedDocuments()) {
 				xml += "<ram:InvoiceReferencedDocument>"
 						+ "<ram:IssuerAssignedID>"
 						+ XMLTools.encodeXML(doc.getIssuerAssignedID()) + "</ram:IssuerAssignedID>";

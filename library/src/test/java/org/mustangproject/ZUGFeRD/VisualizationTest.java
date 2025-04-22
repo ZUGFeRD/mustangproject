@@ -20,6 +20,7 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import javax.xml.parsers.ParserConfigurationException;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.mustangproject.ZUGFeRD.ZUGFeRDVisualizer.Language;
@@ -76,8 +77,9 @@ public class VisualizationTest extends ResourceCase {
 			fail("TransformerException should not happen: " + e.getMessage());
 		} catch (IOException e) {
 			fail("IOException should not happen: " + e.getMessage());
+		} catch (ParserConfigurationException e) {
+			fail("ParserConfigurationException should not happen: " + e.getMessage());
 		}
-
 
 		assertNotNull(result);
         /* remove file endings so that tests can also pass after checking

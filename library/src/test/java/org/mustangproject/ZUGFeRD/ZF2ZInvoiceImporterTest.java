@@ -40,6 +40,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -232,6 +233,24 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+	public void testSpecifiedLogisticsChargeImport() {
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		File expectedResult = getResourceAsFile("cii/extended_warenrechnung.xml");
+
+
+		boolean hasExceptions = false;
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		try {
+			zii.setInputStream(new FileInputStream(expectedResult));
+			zii.extractInto(invoice);
+		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("518.99"), tc.getGrandTotal());
+
+	}
 	public void testItemAllowancesChargesImport() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushItemChargesAllowances.pdf");
@@ -245,7 +264,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		assertFalse(hasExceptions);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("18.33"), tc.getGrandTotal());
+		assertEquals(new BigDecimal("19.52"), tc.getGrandTotal());
 	}
 
 	public void testBasisQuantityImport() {
@@ -263,6 +282,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("337.60"), tc.getGrandTotal());
 	}
+
 
 	public void testAllowancesChargesImport() {
 
@@ -305,7 +325,6 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertFalse(hasExceptions);
 
 
-
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
 
@@ -314,11 +333,15 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		LineCalculator lc=new LineCalculator(invoice.getZFItems()[0]);
 		assertTrue(new BigDecimal("1").compareTo(lc.getItemTotalNetAmount()) == 0);
 
+		assertEquals("Z", invoice.getZFItems()[0].getProduct().getTaxCategoryCode());
+		assertEquals("Kleinunternehmer", invoice.getZFItems()[0].getProduct().getTaxExemptionReason());
+
 		assertTrue(invoice.getTradeSettlement().length == 1);
 		assertTrue(invoice.getTradeSettlement()[0] instanceof IZUGFeRDTradeSettlementPayment);
 		IZUGFeRDTradeSettlementPayment paym = (IZUGFeRDTradeSettlementPayment) invoice.getTradeSettlement()[0];
 		assertEquals("DE12500105170648489890", paym.getOwnIBAN());
 		assertEquals("COBADEFXXX", paym.getOwnBIC());
+		assertEquals("kontoInhaber",paym.getAccountName());
 
 
 		assertTrue(invoice.getPayee() != null);
@@ -333,6 +356,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		byte[] fileA = null;
 		byte[] fileB = null;
+		boolean facturXFound=false;
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushAttachments.pdf");
 		for (FileAttachment fa : zii.getFileAttachmentsPDF()) {
@@ -340,16 +364,18 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				fileA = fa.getData();
 			} else if (fa.getFilename().equals("two.pdf")) {
 				fileB = fa.getData();
+			} else if (fa.getFilename().equals("factur-x.xml")) {
+				facturXFound=true;
 			}
 		}
 		byte[] b = {12, 13}; // the sample data that was used to write the files
 
+		assertTrue(facturXFound);
 		assertTrue(Arrays.equals(fileA, b));
 		assertEquals(fileA.length, 2);
 		assertTrue(Arrays.equals(fileB, b));
 		assertEquals(fileB.length, 2);
 	}
-
 
 	public void testImportDebit() {
 		File CIIinputFile = getResourceAsFile("cii/minimalDebit.xml");
@@ -357,7 +383,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
 			Invoice i = zii.extractInvoice();
 
-			assertEquals("DE21860000000086001055", i.getSender().getBankDetails().get(0).getIBAN());
+			assertEquals("DE21860000000086001055", i.getRecipient().getBankDetails().get(0).getIBAN());
 			ObjectMapper mapper = new ObjectMapper();
 
 			String jsonArray = mapper.writeValueAsString(i);
@@ -406,6 +432,34 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			zii.extractInto(i);
 			assertEquals("TOSL108", i.getNumber());
 			assertEquals("729", i.getGrandTotal().toString());
+
+		} catch (IOException e) {
+			fail("IOException not expected");
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+
+
+	}
+
+	public void testImportUBLPeriods() { // Confirm some basics also work with UBL credit notes
+		File ublinputFile = getResourceAsFile("ubl/periods.ubl.xml");
+		try {
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+			zii.doIgnoreCalculationErrors();
+			zii.setInputStream(new FileInputStream(ublinputFile));
+
+
+			CalculatedInvoice i = new CalculatedInvoice();
+			zii.extractInto(i);
+			assertEquals("123", i.getNumber());
+			assertEquals("1.48", i.getGrandTotal().toString());
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+			assertEquals("2020-10-01", sdf.format(i.getDetailedDeliveryPeriodFrom()));
+			assertEquals("2020-10-05", sdf.format(i.getDetailedDeliveryPeriodTo()));
 
 		} catch (IOException e) {
 			fail("IOException not expected");
@@ -492,6 +546,17 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 	@Test
+	public void testItemsBillingSpecifiedPeriod() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("factur-x_invoicingPeriod.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
+
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		zii.extractInto(invoice);
+		assertEquals(3, invoice.getZFItems().length);
+		assertEquals(new Date(2022-1900, 8-1, 29), invoice.getZFItems()[0].getDetailedDeliveryPeriodFrom());
+		assertEquals(new Date(2022-1900, 8-1, 31), invoice.getZFItems()[0].getDetailedDeliveryPeriodTo());
+	}
+
 	public void testImportPositionIncludedNotes() throws FileNotFoundException, XPathExpressionException, ParseException {
 		File inputFile = getResourceAsFile("ZTESTZUGFERD_1_INVDSS_012015738820PDF-1.pdf");
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
@@ -519,5 +584,17 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(inputFile));
 
 		assertEquals("0", zii.importedInvoice.getDuePayable().toPlainString());
+	}
+
+	@Test
+	public void test() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("ORDER-X_EX01_ORDER_FULL_DATA-COMFORTorder-x.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.doIgnoreCalculationErrors();
+		zii.setInputStream(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+		assertEquals(3, invoice.getZFItems().length);
+		assertEquals("BUYER_ACCOUNTING_REF", invoice.getZFItems()[0].getAccountingReference());
 	}
 }

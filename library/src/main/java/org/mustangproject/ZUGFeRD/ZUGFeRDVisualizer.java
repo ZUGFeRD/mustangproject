@@ -21,6 +21,8 @@
 package org.mustangproject.ZUGFeRD;
 
 import com.helger.commons.io.stream.StreamHelper;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.*;
 import org.apache.fop.apps.io.ResourceResolverFactory;
@@ -45,6 +47,9 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ZUGFeRDVisualizer {
 
@@ -87,7 +92,8 @@ public class ZUGFeRDVisualizer {
 	 * @param fis inputstream (will be consumed)
 	 * @return (facturx = cii)
 	 */
-	private EStandard findOutStandardFromRootNode(InputStream fis) {
+	private EStandard findOutStandardFromRootNode(InputStream fis)
+		throws ParserConfigurationException {
 
 		String zf1Signature = "CrossIndustryDocument";
 		String zf2Signature = "CrossIndustryInvoice";
@@ -96,6 +102,22 @@ public class ZUGFeRDVisualizer {
 		String cioSignature = "SCRDMCCBDACIOMessageStructure";
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		//REDHAT
+		//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
+		dbf.setAttribute(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+		dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+
+		//OWASP
+		//https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
+		dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		// Disable external DTDs as well
+		dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+		// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
+		dbf.setXIncludeAware(false);
+		dbf.setExpandEntityReferences(false);
 		dbf.setNamespaceAware(true);
 		try {
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -118,12 +140,15 @@ public class ZUGFeRDVisualizer {
 		return null;
 	}
 
-	public String visualize(String xmlFilename, Language lang) throws IOException, TransformerException {
-		FileInputStream fis = new FileInputStream(xmlFilename);
-		return visualize(fis, lang);
+	public String visualize(String xmlFilename, Language lang)
+		throws IOException, TransformerException, ParserConfigurationException {
+		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
+			return visualize(fis, lang);
+		}
 	}
 
-	public String visualize(InputStream inputXml, Language lang) throws IOException, TransformerException {
+	public String visualize(InputStream inputXml, Language lang)
+		throws IOException, TransformerException, ParserConfigurationException {
 		initTemplates(lang);
 
 		String fileContent = new String(IOUtils.toByteArray(inputXml), StandardCharsets.UTF_8);
@@ -208,13 +233,15 @@ public class ZUGFeRDVisualizer {
 	}
 
 	protected String toFOP(String xmlFilename)
-		throws IOException, TransformerException {
-
-		FileInputStream fis = new FileInputStream(xmlFilename);
-		EStandard theStandard = findOutStandardFromRootNode(fis);
-		fis = new FileInputStream(xmlFilename);//rewind :-(
-
-		return toFOP(fis, theStandard);
+		throws IOException, TransformerException, ParserConfigurationException {
+		EStandard theStandard;
+		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
+			theStandard = findOutStandardFromRootNode(fis);
+		}
+		
+		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
+			return toFOP(fis, theStandard);
+		}
 	}
 
 	protected String toFOP(InputStream is, EStandard theStandard)
@@ -254,16 +281,61 @@ public class ZUGFeRDVisualizer {
 		// the writing part
 		File XMLinputFile = new File(xmlFilename);
 
-		String result = null;
+		String fopInput = null;
 
 			/* remove file endings so that tests can also pass after checking
 			   out from git with arbitrary options (which may include CSRF changes)
 			 */
 		try {
-			result = this.toFOP(XMLinputFile.getAbsolutePath());
-		} catch (TransformerException | IOException e) {
+			fopInput = this.toFOP(XMLinputFile.getAbsolutePath());
+		} catch (TransformerException | IOException | ParserConfigurationException e) {
 			LOGGER.error("Failed to apply FOP", e);
 		}
+		
+		toPDFfromFOP(fopInput, () -> {
+				try {
+					return new FileOutputStream(pdfFilename);
+				} catch (FileNotFoundException e) {
+					LOGGER.error("Failed to create PDF", e);
+				}
+			return null;
+		}, (OutputStream out) -> {});
+	}
+	
+	public byte[] toPDF(String xmlContent) {
+
+		String fopInput = null;
+
+			/* remove file endings so that tests can also pass after checking
+			   out from git with arbitrary options (which may include CSRF changes)
+			 */
+		try {
+			ByteArrayInputStream fis = new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8));
+			EStandard theStandard = findOutStandardFromRootNode(fis);
+			fis = new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8));//rewind :-(
+			
+			fopInput = toFOP(fis, theStandard);
+		} catch (TransformerException | IOException | ParserConfigurationException e) {
+			LOGGER.error("Failed to apply FOP", e);
+		}
+
+		AtomicReference<byte[]> byteHolder = new AtomicReference<>();
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		toPDFfromFOP(fopInput, () -> new BufferedOutputStream(os), (OutputStream out) -> {
+			
+			try {
+				out.flush();
+			} catch (IOException e) {
+				LOGGER.error("Failed to create PDF", e);
+			}
+			byteHolder.set(os.toByteArray());
+		});
+		
+		return byteHolder.get();
+	}
+	
+	private void toPDFfromFOP(String fopInput, Supplier<OutputStream> outputStreamDelegate, Consumer<OutputStream> consumerDelegate) {
+
 		DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
 
 		Configuration cfg = null;
@@ -291,24 +363,27 @@ public class ZUGFeRDVisualizer {
 // Step 2: Set up output stream.
 // Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
 
-		try (OutputStream out = new BufferedOutputStream(new FileOutputStream(pdfFilename))) {
+		try (OutputStream out = new BufferedOutputStream(outputStreamDelegate.get())) {
 
 			// Step 3: Construct fop with desired output format
 			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
 
 			// Step 4: Setup JAXP using identity transformer
 			TransformerFactory factory = TransformerFactory.newInstance();
+			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 			Transformer transformer = factory.newTransformer(); // identity transformer
 
 			// Step 5: Setup input and output for XSLT transformation
 			// Setup input stream
-			Source src = new StreamSource(new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8)));
+			Source src = new StreamSource(new ByteArrayInputStream(fopInput.getBytes(StandardCharsets.UTF_8)));
 
 			// Resulting SAX events (the generated FO) must be piped through to FOP
 			Result res = new SAXResult(fop.getDefaultHandler());
 
 			// Step 6: Start XSLT transformation and FOP processing
 			transformer.transform(src, res);
+			
+			consumerDelegate.accept(out);
 
 		} catch (FOPException | IOException | TransformerException e) {
 			LOGGER.error("Failed to create PDF", e);

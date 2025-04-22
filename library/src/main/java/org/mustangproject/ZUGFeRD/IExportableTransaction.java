@@ -313,6 +313,10 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	default String getPaymentReference() {
+		return null;
+	}
+
 	/**
 	 * Get payment terms for the EXTENDED profile (multiple terms are allowed)
 	 * @return

@@ -3,20 +3,27 @@ package org.mustangproject.ZUGFeRD;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.valueOf;
 import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.junit.Test;
 import org.mustangproject.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.xpath.XPathExpressionException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 /***
  * tests the linecalculator and transactioncalculator classes
  *
  */
-public class CalculationTest {
+public class CalculationTest extends ResourceCase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CalculationTest.class);
 
 	@Test
@@ -70,6 +77,36 @@ public class CalculationTest {
 		assertEquals(valueOf(163.603).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
 		assertEquals(valueOf(1963.24).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
 		assertEquals(valueOf(314.1184).stripTrailingZeros(), calculator.getItemTotalVATAmount().stripTrailingZeros());
+	}
+
+	@Test
+	public void testLineCalculatorForeignCurrencyExample() {
+
+/*
+		File inputCII = getResourceAsFile("Extended_fremdwaehrung.xml");
+inputCII=new File("C:\\Users\\jstaerk\\workspace\\XMLExamples\\zfdiverses\\20250407\\fremdwaehrung.xml");
+		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter();
+		Invoice invoice=null;
+		zii.doIgnoreCalculationErrors();
+		boolean hasExceptions=false;
+		try {
+			zii.setInputStream(new FileInputStream(inputCII));
+
+			invoice=zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException e) {
+// handle Exceptions
+			hasExceptions=true;
+		} catch (FileNotFoundException e) {
+			hasExceptions=true;
+		}
+		assertFalse(hasExceptions);
+		// Reading ZUGFeRD
+
+		final TransactionCalculator calculator = new TransactionCalculator(invoice);
+
+		assertEquals(valueOf(521.91).stripTrailingZeros(), calculator.getGrandTotal().stripTrailingZeros());
+
+ */
 	}
 
 

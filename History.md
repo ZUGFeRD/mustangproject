@@ -1,7 +1,63 @@
-- #678
-- #679
-- #681
-- #689
+- #819
+
+2.16.4
+=======
+2025-04-19
+- #722 extend ValidationLogVisualizer to not use only file system
+- #774 disable XML parsing entities
+- #742/#753 "Adresszusatz 1" (LineTwo) showing up as "Postfach" in HTML visualization
+- #778 Added XEE Protection features (that were missing according to Stackoverflow)
+- #759 Use the dedicated class instead of var type
+- #614, #770 Exemption reason text should not be reused
+- #728 Invoice setCorrection causes duplicate XML output
+- #776 Fix potential resource leaks in core file processing classes
+- #741 read position accountingReference
+- #782/771 prevent NullPointerException on Product Description
+- #772 TradeParty Name should be optional for ShipToTradeParty
+- #775 not deleted tmp files
+- #802 fix: capital letter for ID in listID
+- #809 invoice reader to support multiple charges per item
+- #812 fileattachment relation should have a default
+- #818 need exceptions from files validated with validateExpectValid
+
+
+2.16.3
+=======
+2025-03-03
+- #558 ZUGFeRDInvoiceImporter does not read BankDetails.accountName
+- #686 Item: add BillingSpecifiedPeriod
+- #739 also parse invoiceperiod from ubl
+- #745 be able to specify legalorganisation id without schema
+- #747 correct profile detection
+- #710 Validation Error due to empty elements
+- #712 Correct bracket setting on condition for output of allowance reason.
+- #725 Unable to perform XML-oriented attacks
+- #685 Security Issue: XXE Vulnerability in ZUGFeRDInvoiceImporter (PR #725)
+- #761 Allow to set item allowance/charges from JSON
+
+2.16.2
+=======
+2025-02-04
+- #705 specifiedLogisticsCharge is not imported
+- #707 invoiceimporter may fail if certain values are not set
+- #708 embedded files cannot be determined
+- #709 ZUGFeRDInvoiceImporter ignored "first" embedded file in list of pdf attachments
+- #607 Enable flexible PaymentReference and a DocumentName.
+- #649 Reuse toPDF method to work without any dependencies to the file system
+- #650 Add net.sf.offo:fop-hyph
+- #665 Fix #632: Return ubl_creditnote as Standard for CreditNotes
+- #684 Optimize validation-report to pdf functionality
+- #703 Fill TaxExemptionReason during InvoiceImport.
+- #701 Ensure Base64 decoding can handle newlines when decoding a FileAttachment
+- #691 Fix current check failures.
+
+2.16.1
+=======
+2025-01-21
+- #678 some ubl creditnote attributes are not parsed
+- #679 validation of a XR does not ignore whitespace
+- #681 IBAN assigned to invoice sender not recipient on direct debit
+- #689 incorrect element order when both charge reason and reasoncode are specified
 - be able to set detailedDeliveryPeriodFrom, detailedDeliveryPeriodTo MS188
 - updated verapdf from 1.26.1 to 1.26.2
 - cashDiscount JSON now corrently ignores values for cii and xr methods 

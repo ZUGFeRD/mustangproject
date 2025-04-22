@@ -69,6 +69,7 @@ public class Invoice implements IExportableTransaction {
 	protected String vatDueDateTypeCode = null;
 	protected String creditorReferenceID; // required when direct debit is used.
 	private BigDecimal roundingAmount=null;
+	private String paymentReference; // Remittance information / Verwendungszweck, BT-83
 
 	public Invoice() {
 		ZFItems = new ArrayList<>();
@@ -124,7 +125,11 @@ public class Invoice implements IExportableTransaction {
 	 * @return fluent setter
 	 */
 	public Invoice setAdditionalReferencedDocuments(FileAttachment[] fileArr) {
-		xmlEmbeddedFiles = new ArrayList<>(Arrays.asList(fileArr));
+		if (fileArr!=null) {
+			xmlEmbeddedFiles = new ArrayList<>(Arrays.asList(fileArr));
+		} else {
+			xmlEmbeddedFiles = new ArrayList<>();
+		}
 		return this;
 	}
 
@@ -153,7 +158,6 @@ public class Invoice implements IExportableTransaction {
 	 */
 	public Invoice setCorrection(String number) {
 		setInvoiceReferencedDocumentID(number);
-		addInvoiceReferencedDocument(new ReferencedDocument(number));
 		documentCode = DocumentCodeTypeConstants.CORRECTEDINVOICE;
 		return this;
 	}
@@ -678,6 +682,15 @@ public class Invoice implements IExportableTransaction {
 		return this;
 	}
 
+
+	public String getPaymentReference() {
+		return paymentReference;
+	}
+
+	public Invoice setPaymentReference(String paymentReference) {
+		this.paymentReference = paymentReference;
+		return this;
+	}
 
 	@Override
 	public TradeParty getDeliveryAddress() {
