@@ -29,7 +29,7 @@ public class LegalOrganisation implements IZUGFeRDLegalOrganisation {
 
 	public LegalOrganisation(SchemedID schemedID, String tradingBusinessName) {
 		this.schemedID = schemedID;
-		this.tradingBusinessName=tradingBusinessName;
+		this.tradingBusinessName = tradingBusinessName;
 	}
 
 	/***
@@ -54,8 +54,8 @@ public class LegalOrganisation implements IZUGFeRDLegalOrganisation {
 							this.setSchemedID(gid);
 						}
 					}
-					if (currentItemNode.getLocalName().equals("TradingBusinessName")) {
-					    setTradingBusinessName(currentItemNode.getFirstChild().getNodeValue());
+					if ((currentItemNode.getLocalName().equals("TradingBusinessName")) && (currentItemNode.getFirstChild() != null)) {
+						setTradingBusinessName(currentItemNode.getFirstChild().getNodeValue());
 					}
 				}
 			}
