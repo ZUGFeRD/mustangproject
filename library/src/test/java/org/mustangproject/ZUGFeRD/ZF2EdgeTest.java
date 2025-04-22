@@ -240,13 +240,11 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 			e.printStackTrace();
 
 		}
-		return
-				new PaymentTerms(
-						"14 Tage 2% Skonto, 30 Tage rein netto",
-						due,// fälligkeitsdatum
-						paymentDiscountTerms //PaymentDiscountTerms
-				);
-
+		return new PaymentTerms(
+				"14 Tage 2% Skonto, 30 Tage rein netto",
+				due,// fälligkeitsdatum
+				paymentDiscountTerms //PaymentDiscountTerms
+			);
 	}
 
 	@Override

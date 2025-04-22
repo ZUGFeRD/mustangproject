@@ -305,8 +305,7 @@ public interface IExportableTransaction {
 	}
 
 	/**
-	 * get payment terms. if set, getPaymentTermDescription() and getDueDate() are
-	 * ignored
+	 * get payment terms. if set, getPaymentTermDescription() and getDueDate() are ignored
 	 *
 	 * @return the IZUGFeRDPaymentTerms of the invoice
 	 */
@@ -316,6 +315,14 @@ public interface IExportableTransaction {
 
 	default String getPaymentReference() {
 		return null;
+	}
+
+	/**
+	 * Get payment terms for the EXTENDED profile (multiple terms are allowed)
+	 * @return
+	 */
+	default IZUGFeRDPaymentTerms[] getExtendedPaymentTerms() {
+		return new IZUGFeRDPaymentTerms[0];
 	}
 
 	/**
