@@ -46,7 +46,6 @@
         <github.global.server>github</github.global.server>
         <additionalparam>-Xdoclint:none</additionalparam>
         <!-- Skip error check for javadoc -->
-        <maven.compiler.compilerVersion>11</maven.compiler.compilerVersion>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.deploy.skip>true
@@ -71,7 +70,7 @@
             <artifactId>Saxon-HE</artifactId>
             <version>12.4</version>
         </dependency>
-		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -95,13 +94,13 @@
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>4.0.2</version>
         </dependency>
-		<!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
-		<dependency>
-			<groupId>org.glassfish.jaxb</groupId>
-			<artifactId>jaxb-runtime</artifactId>
-			<version>4.0.5</version>
-		</dependency>
-		<dependency>
+        <!-- https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime -->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>4.0.5</version>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.angus</groupId>
             <artifactId>angus-activation</artifactId>
             <version>2.0.2</version>
@@ -117,7 +116,7 @@
             <artifactId>pdfbox</artifactId>
             <version>3.0.2</version>
         </dependency>
-		<!-- DOM4j -->
+        <!-- DOM4j -->
         <dependency>
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>
@@ -129,14 +128,14 @@
                 </exclusion>
             </exclusions>
         </dependency>
-		<!-- CII to UBL conversion -->
-		<dependency>
-			<groupId>com.helger</groupId>
-			<artifactId>en16931-cii2ubl</artifactId>
-			<version>2.2.4</version>
-		</dependency>
+        <!-- CII to UBL conversion -->
+        <dependency>
+            <groupId>com.helger</groupId>
+            <artifactId>en16931-cii2ubl</artifactId>
+            <version>2.2.4</version>
+        </dependency>
 
-		<!-- test dependencies -->
+        <!-- test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -172,7 +171,28 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.6.3</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.3</version>
                 <configuration>
                     <runOrder>alphabetical</runOrder>
                 </configuration>
@@ -182,9 +202,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
                     <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
                         mvn clean compile assembly:single -->
                     <!-- or whatever version you use -->
@@ -275,8 +292,8 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.5.3</version>
                 <configuration>
-					<shadedArtifactAttached>true</shadedArtifactAttached>
-					<createDependencyReducedPom>false</createDependencyReducedPom>
+                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
                     <filters>
                         <filter>
                             <artifact>*:*</artifact>
