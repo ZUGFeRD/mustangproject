@@ -20,6 +20,7 @@ import java.util.Date;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.dom4j.DocumentException;
@@ -145,16 +146,16 @@ public class ZUGFeRDValidator {
 						DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 						//REDHAT
 						//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
-						dbf.setAttribute(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-						dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-						dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+						setAttribute(dbf, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+						setAttribute(dbf, XMLConstants.ACCESS_EXTERNAL_DTD, "");
+						setAttribute(dbf, XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
 						//OWASP
 						//https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
-						dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-						dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+						setFeature(dbf, "http://apache.org/xml/features/disallow-doctype-decl", true);
+						setFeature(dbf, "http://xml.org/sax/features/external-parameter-entities", false);
 						// Disable external DTDs as well
-						dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+						setFeature(dbf, "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 						// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
 						dbf.setXIncludeAware(false);
 						dbf.setExpandEntityReferences(false);
@@ -219,6 +220,44 @@ public class ZUGFeRDValidator {
 		}
 
 		return formatOutput(finalStringResult, isPDF);
+	}
+
+	private void setAttribute(final DocumentBuilderFactory dbf, final String key, final Object value) {
+		if (dbf != null && !isNullOrEmpty(key)) {
+			Class<?> dbfClass = dbf.getClass();
+			try {
+				dbf.setAttribute(key, value);
+			} catch (IllegalArgumentException e) {
+				LOGGER.warn(
+					String.format(
+						"Attribute '%s' is not supported by the implementation of DocumentBuilderFactory ('%s').",
+						key,
+						dbfClass.getName()
+					)
+				);
+			}
+		}
+	}
+
+	private boolean isNullOrEmpty(final String s) {
+		return s == null || s.isEmpty();
+	}
+
+	private void setFeature(final DocumentBuilderFactory dbf, final String key, final boolean value) {
+		if (dbf != null && !isNullOrEmpty(key)) {
+			Class<?> dbfClass = dbf.getClass();
+			try {
+				dbf.setFeature(key, value);
+			} catch (ParserConfigurationException e) {
+				LOGGER.warn(
+					String.format(
+						"Feature '%s' is not supported by the implementation of DocumentBuilderFactory ('%s').",
+						key,
+						dbfClass.getName()
+					)
+				);
+			}
+		}
 	}
 
 	/***
