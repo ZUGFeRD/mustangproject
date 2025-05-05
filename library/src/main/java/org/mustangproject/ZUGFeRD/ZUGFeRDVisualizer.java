@@ -104,7 +104,7 @@ public class ZUGFeRDVisualizer {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		//REDHAT
 		//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
-		setAttribute(dbf, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		setFeature(dbf, XMLConstants.FEATURE_SECURE_PROCESSING, true);
 		setAttribute(dbf, XMLConstants.ACCESS_EXTERNAL_DTD, "");
 		setAttribute(dbf, XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
