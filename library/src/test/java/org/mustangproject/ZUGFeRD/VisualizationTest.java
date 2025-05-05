@@ -66,8 +66,7 @@ public class VisualizationTest extends ResourceCase {
 			Files.write(Paths.get("./target/testout-" + resultFileName), result.getBytes(StandardCharsets.UTF_8));
 
 			File expectedResult = getResourceAsFile(resultFileName);
-			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8)
-				;
+			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8);
 
 		} catch (UnsupportedOperationException e) {
 			fail("UnsupportedOperationException should not happen: " + e.getMessage());
@@ -109,6 +108,8 @@ public class VisualizationTest extends ResourceCase {
 			fail("UnsupportedOperationException should not happen: " + e.getMessage());
 		} catch (IllegalArgumentException e) {
 			fail("IllegalArgumentException should not happen: " + e.getMessage());
+		} catch (TransformerException e) {
+			fail("TransformerException should not happen: " + e.getMessage());
 		}
 
 		try {
@@ -134,6 +135,8 @@ public class VisualizationTest extends ResourceCase {
 			fail("UnsupportedOperationException should not happen: " + e.getMessage());
 		} catch (IllegalArgumentException e) {
 			fail("IllegalArgumentException should not happen: " + e.getMessage());
+		} catch (TransformerException e) {
+			fail("TransformerException should not happen: " + e.getMessage());
 		}
 
 
@@ -160,6 +163,8 @@ public class VisualizationTest extends ResourceCase {
 			fail("UnsupportedOperationException should not happen: " + e.getMessage());
 		} catch (IllegalArgumentException e) {
 			fail("IllegalArgumentException should not happen: " + e.getMessage());
+		} catch (TransformerException e) {
+			fail("TransformerException should not happen: " + e.getMessage());
 		}
 
 
