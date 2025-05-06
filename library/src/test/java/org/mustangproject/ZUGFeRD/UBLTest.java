@@ -54,22 +54,30 @@ public class UBLTest extends ResourceCase {
 
 		// the writing part
 		final CIIToUBL c2u = new CIIToUBL();
-		final String sourceFilename = "factur-x.xml";
-		final File input = getResourceAsFile(sourceFilename);
-		final File expectedFile = getResourceAsFile("ubl-conv-ubl-output-factur-x.xml");
+		final File input = getResourceAsFile("factur-x.xml");
 		String expected = null;
 		String result = null;
 		try {
 			final File tempFile = File.createTempFile("ZUGFeRD-UBL-", "-test");
 			c2u.convert(input, tempFile);
-			expected = ResourceUtilities.readFile(StandardCharsets.UTF_8, expectedFile.getAbsolutePath());
 			result = ResourceUtilities.readFile(StandardCharsets.UTF_8, tempFile.getAbsolutePath());
+			// Nota bene:
+			//     The behavior of CIIToUBL is different depending on
+			//     whether the original xerces or the JDK internal xerces implementation is used.
+			final boolean isInternalXerces = !result.contains("<Invoice xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\"");
+			final File expectedFile = getResourceAsFile(
+				isInternalXerces ? "ubl-conv-ubl-output-factur-x.xml" : "ubl-conv-ubl-output-factur-x-xerces.xml"
+			);
+			if (expectedFile != null) {
+				expected = ResourceUtilities.readFile(StandardCharsets.UTF_8, expectedFile.getAbsolutePath());
+			}
 		} catch (final IOException e) {
 			fail("Exception should not happen: " + e.getMessage());
 		}
 
 
 		assertNotNull(result);
+		assertNotNull(expected);
 		Assertions.assertThat(result).isXmlEqualTo(expected);
 	}
 
