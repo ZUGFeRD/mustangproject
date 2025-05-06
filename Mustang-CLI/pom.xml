@@ -97,7 +97,7 @@
                              error message :-( -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>3.1.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -148,7 +148,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.14.0</version>
                 <configuration>
                     <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
                              mvn clean compile assembly:single -->
@@ -160,7 +160,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.3</version>
+                <version>3.6.0</version>
                 <configuration>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
@@ -231,7 +231,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-toolchains-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.2.0</version>
                         <executions>
                             <execution>
                                 <goals>

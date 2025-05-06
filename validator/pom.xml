@@ -120,7 +120,7 @@
                              error message :-( -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>3.1.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -157,7 +157,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.4.2</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>
@@ -173,7 +173,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.14.0</version>
                 <configuration>
                     <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
                              mvn clean compile assembly:single -->
@@ -186,7 +186,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
+                <version>3.6.0</version>
                 <configuration>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
                     <minimizeJar>false</minimizeJar>
@@ -237,7 +237,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <id>copy-zf-schematron-xml-dependencies</id>
@@ -296,7 +296,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-toolchains-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.2.0</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -327,7 +327,7 @@
                     <plugin>
                         <groupId>com.helger.maven</groupId>
                         <artifactId>ph-schematron-maven-plugin</artifactId>
-                        <version>8.0.0</version>
+                        <version>8.0.6</version>
                         <configuration>
                             <schematronDirectory>${basedir}/src/main/resources/schematron</schematronDirectory>
                             <xsltDirectory>${basedir}/src/main/resources/xslt</xsltDirectory>

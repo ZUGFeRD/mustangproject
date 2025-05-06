@@ -200,7 +200,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.14.0</version>
                 <configuration>
                     <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
                         mvn clean compile assembly:single -->
@@ -212,7 +212,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.4.2</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>
@@ -290,7 +290,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.3</version>
+                <version>3.6.0</version>
                 <configuration>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
@@ -317,7 +317,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>templating-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>filtering-java-templates</id>
@@ -345,7 +345,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-toolchains-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.2.0</version>
                         <executions>
                             <execution>
                                 <goals>
