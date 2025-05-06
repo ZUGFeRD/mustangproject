@@ -20,12 +20,14 @@ public class LineCalculator {
 
 		if (currentItem.getItemAllowances() != null && currentItem.getItemAllowances().length > 0) {
 			for (IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
-				addAllowance(allowance.getTotalAmount(currentItem));
+				BigDecimal singleAllowance=allowance.getTotalAmount(currentItem);
+				addAllowance(singleAllowance.multiply(currentItem.getQuantity()));
 			}
 		}
 		if (currentItem.getItemCharges() != null && currentItem.getItemCharges().length > 0) {
 			for (IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
-				addCharge(charge.getTotalAmount(currentItem));
+				BigDecimal singleCharge=charge.getTotalAmount(currentItem);
+				addCharge(singleCharge.multiply(currentItem.getQuantity()));
 			}
 		}
 		if (currentItem.getItemTotalAllowances() != null && currentItem.getItemTotalAllowances().length > 0) {
