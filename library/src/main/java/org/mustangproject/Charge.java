@@ -7,6 +7,7 @@ import org.mustangproject.ZUGFeRD.IAbsoluteValueProvider;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /***
  * Absolute and relative charges for document and item level
@@ -124,7 +125,7 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 		if(totalAmount != null) {
 			return totalAmount;
 		} else if (percent!=null) {
-			BigDecimal singlePrice=currentItem.getValue().divide(BigDecimal.ONE.add(getPercent().divide(new BigDecimal(100))));
+			BigDecimal singlePrice=currentItem.getValue().divide(BigDecimal.ONE.add(getPercent().divide(new BigDecimal(100))),  18, RoundingMode.HALF_UP);
 			BigDecimal singlePriceDiff=currentItem.getValue().subtract(singlePrice);
 			return singlePriceDiff;
 		} else {
