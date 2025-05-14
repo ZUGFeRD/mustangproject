@@ -267,7 +267,8 @@ public class PDFValidator extends Validator {
 		final byte[] pdfMachineSignature = "pdfMachine from Broadgun Software".getBytes(StandardCharsets.UTF_8);
 		final byte[] ghostscriptSignature = "%%Invocation:".getBytes(StandardCharsets.UTF_8);
 		final byte[] cibpdfbrewerSignature = "CIB pdf brewer".getBytes(StandardCharsets.UTF_8);
-		final byte[] lexofficeSignature = "lexoffice".getBytes(StandardCharsets.UTF_8);
+		final byte[] lexofficeSignature = "lexoffice".getBytes(StandardCharsets.UTF_8);		
+		final byte[] s2IndustriesSignature = "s2industries.ZUGFeRD.PDF".getBytes(StandardCharsets.UTF_8); // https://github.com/stephanstapel/ZUGFeRD-csharp
 
 		if (ByteArraySearcher.contains(fileContents, symtraxSignature)) {
 			Signature = "Symtrax";
@@ -287,6 +288,8 @@ public class PDFValidator extends Validator {
 			Signature = "CIB pdf brewer";
 		} else if (ByteArraySearcher.contains(fileContents, lexofficeSignature)) {
 			Signature = "Lexware office";
+		} else if (ByteArraySearcher.contains(fileContents, s2IndustriesSignature)) {
+			Signature = "ZUGFeRD.PDF-csharp";
 		}
 
 		context.setSignature(Signature);
