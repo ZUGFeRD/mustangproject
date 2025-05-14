@@ -20,14 +20,24 @@ public class LineCalculator {
 
 		if (currentItem.getItemAllowances() != null && currentItem.getItemAllowances().length > 0) {
 			for (IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
+				BigDecimal factor=BigDecimal.ONE;
 				BigDecimal singleAllowance=allowance.getTotalAmount(currentItem);
-				addAllowance(singleAllowance.multiply(currentItem.getQuantity()));
+				if ((allowance.getPercent()!=null)&&(allowance.getPercent().compareTo(BigDecimal.ZERO)!=0)) {
+					factor=allowance.getPercent().divide(new BigDecimal(100), 18, RoundingMode.HALF_UP);
+				}
+				addAllowance(singleAllowance.multiply(factor));
+
 			}
 		}
 		if (currentItem.getItemCharges() != null && currentItem.getItemCharges().length > 0) {
 			for (IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
+				BigDecimal factor=BigDecimal.ONE;
 				BigDecimal singleCharge=charge.getTotalAmount(currentItem);
-				addCharge(singleCharge.multiply(currentItem.getQuantity()));
+				if ((charge.getPercent()!=null)&&(charge.getPercent().compareTo(BigDecimal.ZERO)!=0)) {
+					factor=charge.getPercent().divide(new BigDecimal(100), 18, RoundingMode.HALF_UP).multiply(currentItem.getQuantity());
+				}
+				addCharge(singleCharge.multiply(factor));
+
 			}
 		}
 		if (currentItem.getItemTotalAllowances() != null && currentItem.getItemTotalAllowances().length > 0) {
@@ -52,9 +62,10 @@ public class LineCalculator {
 		}
 
 		price=currentItem.getPrice();
-		BigDecimal delta=charge.subtract(allowanceItemTotal).subtract(allowance);
-		delta=delta.divide(currentItem.getQuantity(), 18, RoundingMode.HALF_UP);
-		priceGross=currentItem.getPrice().add(delta);
+		priceGross=price;
+//		BigDecimal delta=charge.subtract(allowanceItemTotal).subtract(allowance);
+//		delta=delta.divide(currentItem.getQuantity(), 18, RoundingMode.HALF_UP);
+//		priceGross=currentItem.getPrice().add(delta);
 		// Division/Zero occurred here.
 		// Used the setScale only because that's also done in getBasisQuantity
 		BigDecimal basisQuantity = currentItem.getBasisQuantity().compareTo(BigDecimal.ZERO) == 0
