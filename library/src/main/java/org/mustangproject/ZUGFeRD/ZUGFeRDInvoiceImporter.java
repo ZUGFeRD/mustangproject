@@ -962,6 +962,7 @@ public class ZUGFeRDInvoiceImporter {
 				NodeList chargeNodeChilds = chargeNodes.item(i).getChildNodes();
 				boolean isCharge = true;
 				String chargeAmount = null;
+				String basisAmount = null;
 				String reason = null;
 				String reasonCode = null;
 				String taxPercent = null;
@@ -989,6 +990,8 @@ public class ZUGFeRDInvoiceImporter {
 
 						} else if (chargeChildName.equals("ActualAmount") || chargeChildName.equals("Amount")) {
 							chargeAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
+						} else if (chargeChildName.equals("BasisAmount"))  {
+							basisAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
 						} else if (chargeChildName.equals("Reason") || chargeChildName.equals("AllowanceChargeReason")) {
 							reason = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
 						} else if (chargeChildName.equals("ReasonCode") || chargeChildName.equals("AllowanceChargeReasonCode")) {
@@ -1016,6 +1019,9 @@ public class ZUGFeRDInvoiceImporter {
 					if (taxPercent != null) {
 						c.setTaxPercent(new BigDecimal(taxPercent));
 					}
+					if (basisAmount != null) {
+						c.setBasisAmount(new BigDecimal(basisAmount));
+					}
 					zpp.addCharge(c);
 				} else {
 					Allowance a = new Allowance(new BigDecimal(chargeAmount));
@@ -1027,6 +1033,9 @@ public class ZUGFeRDInvoiceImporter {
 					}
 					if (taxPercent != null) {
 						a.setTaxPercent(new BigDecimal(taxPercent));
+					}
+					if (basisAmount != null) {
+						a.setBasisAmount(new BigDecimal(basisAmount));
 					}
 					zpp.addAllowance(a);
 				}

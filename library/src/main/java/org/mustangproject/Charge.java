@@ -25,6 +25,10 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	 */
 	protected BigDecimal totalAmount;
 	/**
+	 * the value the percentage is applied upon
+	 */
+	protected BigDecimal basisAmount;
+	/**
 	 * the tax rate the charge belongs to
 	 */
 	protected BigDecimal taxPercent;
@@ -100,6 +104,22 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	 */
 	public Charge setReason(String reason) {
 		this.reason = reason;
+		return this;
+	}
+
+
+	@Override
+	public BigDecimal getBasisAmount() {
+		return basisAmount;
+	}
+
+	/***
+	 * sets a potential basis for the potential percentage
+	 * @param basis the basis amount
+	 * @return fluid setter
+	 */
+	public Charge setBasisAmount(BigDecimal basis) {
+		this.basisAmount = basis;
 		return this;
 	}
 
