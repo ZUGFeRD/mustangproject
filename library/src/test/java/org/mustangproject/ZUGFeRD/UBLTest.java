@@ -54,15 +54,16 @@ public class UBLTest extends ResourceCase {
 
 		// the writing part
 		final CIIToUBL c2u = new CIIToUBL();
-		final String sourceFilename = "factur-x.xml";
-		final File input = getResourceAsFile(sourceFilename);
+		final File input = getResourceAsFile("factur-x.xml");
 		final File expectedFile = getResourceAsFile("ubl-conv-ubl-output-factur-x.xml");
 		String expected = null;
 		String result = null;
 		try {
 			final File tempFile = File.createTempFile("ZUGFeRD-UBL-", "-test");
 			c2u.convert(input, tempFile);
-			expected = ResourceUtilities.readFile(StandardCharsets.UTF_8, expectedFile.getAbsolutePath());
+			if (expectedFile != null) {
+				expected = ResourceUtilities.readFile(StandardCharsets.UTF_8, expectedFile.getAbsolutePath());
+			}
 			result = ResourceUtilities.readFile(StandardCharsets.UTF_8, tempFile.getAbsolutePath());
 		} catch (final IOException e) {
 			fail("Exception should not happen: " + e.getMessage());
@@ -70,6 +71,7 @@ public class UBLTest extends ResourceCase {
 
 
 		assertNotNull(result);
+		assertNotNull(expected);
 		Assertions.assertThat(result).isXmlEqualTo(expected);
 	}
 

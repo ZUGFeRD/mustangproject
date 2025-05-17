@@ -20,10 +20,8 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mustangproject.*;
 
