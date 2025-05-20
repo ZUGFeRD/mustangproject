@@ -431,7 +431,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			CalculatedInvoice i = new CalculatedInvoice();
 			zii.extractInto(i);
 			assertEquals("TOSL108", i.getNumber());
-			assertEquals("729", i.getGrandTotal().toString());
+			assertEquals("1729", i.getGrandTotal().toString());
+			assertEquals("729", i.getDuePayable().toString());
+
 
 		} catch (IOException e) {
 			fail("IOException not expected");
