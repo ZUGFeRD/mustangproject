@@ -205,7 +205,7 @@ public class XMLValidator extends Validator {
 				boolean isEN16931 = false;
 				boolean isExtended = false;
 				boolean isXRechnung = false;
-				String currentZFVersionDir = "ZF_232";
+				String currentZFVersionDir = "ZF_233";
 				int mainSchematronSectionErrorTypeCode = 4;
 				String xsltFilename = null;
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:extended,
@@ -374,12 +374,14 @@ public class XMLValidator extends Validator {
 
 				}
 
-				if (context.getFormat().equals("CII")) {
+				if (context.getFormat().equals("CII") && (context.getGeneration().equals("2"))) {
 
-					if (context.getGeneration().equals("2")
-						&& (isBasic || isEN16931 || isXRechnung)) {
-						//additionally validate against CEN
+					if (isXRechnung) {
+						//additionally validate against CEN, the CEN rules are part of the ZF Schematron anyway
 						validateSchematron(zfXML, "/xslt/en16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
+					}
+					if (isXRechnung || isBasic || isEN16931) {
+						//potentially (basic or EN) or definitely validate against XR
 						if (!disableNotices || XrechnungSeverity != ESeverity.notice) {
 							validateXR(zfXML, XrechnungSeverity);
 						}

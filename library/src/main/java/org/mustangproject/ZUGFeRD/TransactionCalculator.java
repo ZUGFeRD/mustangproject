@@ -7,6 +7,7 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -63,6 +64,24 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	protected BigDecimal getChargesForPercent(BigDecimal percent) {
 		IZUGFeRDAllowanceCharge[] charges = trans.getZFCharges();
 		return sumAllowanceCharge(percent, charges);
+	}
+
+
+	/**
+	 * Returns information about every tax that is involved in the current transaction.
+	 *
+	 * @return transaction taxes.
+	 */
+	public Set<VATAmount> getTaxDetails() {
+		return getVATPercentAmountMap().entrySet().stream()
+			.map(entry ->
+				new VATAmount(
+					entry.getValue().getBasis(),
+					entry.getValue().getCalculated(),
+					entry.getValue().getCategoryCode()
+				).setCalculated(entry.getKey())
+			)
+			.collect(Collectors.toSet());
 	}
 
 	private BigDecimal sumAllowanceCharge(BigDecimal percent, IZUGFeRDAllowanceCharge[] charges) {

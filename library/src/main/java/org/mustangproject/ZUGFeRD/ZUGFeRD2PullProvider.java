@@ -969,56 +969,76 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	}
 
 	private String buildPaymentTermsXml() {
-		final IZUGFeRDPaymentTerms paymentTerms = trans.getPaymentTerms();
-		if (paymentTerms == null) {
+
+		ArrayList<IZUGFeRDPaymentTerms> paymentTerms = new ArrayList<IZUGFeRDPaymentTerms>(Arrays.asList(trans.getExtendedPaymentTerms()));
+
+		IZUGFeRDPaymentTerms izpt= trans.getPaymentTerms();
+		if (izpt!=null) {
+			paymentTerms.add(izpt);
+		}
+
+		String paymentTermsXml = "";
+		if (paymentTerms.size() == 0) {
 			return "";
 		}
-		String paymentTermsXml = "<ram:SpecifiedTradePaymentTerms>";
 
-		final IZUGFeRDPaymentDiscountTerms discountTerms = paymentTerms.getDiscountTerms();
-		final Date dueDate = paymentTerms.getDueDate();
-		if (dueDate != null && discountTerms != null && discountTerms.getBaseDate() != null) {
-			throw new IllegalStateException(
-				"if paymentTerms.dueDate is specified, paymentTerms.discountTerms.baseDate has not to be specified");
-		}
-		paymentTermsXml += "<ram:Description>" + paymentTerms.getDescription() + "</ram:Description>";
+		for (IZUGFeRDPaymentTerms pt : paymentTerms)
+		{
 
-		if (dueDate != null) {
-			paymentTermsXml += "<ram:DueDateDateTime>";
-			paymentTermsXml += DATE.udtFormat(dueDate);
-			paymentTermsXml += "</ram:DueDateDateTime>";
-		}
+			paymentTermsXml += "<ram:SpecifiedTradePaymentTerms>";
 
-		if (trans.getTradeSettlement() != null) {
-			for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
-				if ((payment != null) && (payment instanceof IZUGFeRDTradeSettlementDebit)) {
-					paymentTermsXml += payment.getPaymentXML();
+			final IZUGFeRDPaymentDiscountTerms discountTerms = pt.getDiscountTerms();
+			final Date dueDate = pt.getDueDate();
+			if (dueDate != null && discountTerms != null && discountTerms.getBaseDate() != null)
+			{
+				throw new IllegalStateException(
+					"if paymentTerms.dueDate is specified, paymentTerms.discountTerms.baseDate has not to be specified");
+			}
+			paymentTermsXml += "<ram:Description>" + pt.getDescription() + "</ram:Description>";
+
+			if (dueDate != null)
+			{
+				paymentTermsXml += "<ram:DueDateDateTime>";
+				paymentTermsXml += DATE.udtFormat(dueDate);
+				paymentTermsXml += "</ram:DueDateDateTime>";
+			}
+
+			if (trans.getTradeSettlement() != null)
+			{
+				for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement())
+				{
+					if ((payment != null) && (payment instanceof IZUGFeRDTradeSettlementDebit))
+					{
+						paymentTermsXml += payment.getPaymentXML();
+					}
 				}
 			}
-		}
 
-		if (discountTerms != null) {
-			paymentTermsXml += "<ram:ApplicableTradePaymentDiscountTerms>";
-			final String currency = trans.getCurrency();
-			final String basisAmount = currencyFormat(calc.getGrandTotal());
-			paymentTermsXml += "<ram:BasisAmount currencyID=\"" + currency + "\">" + basisAmount + "</ram:BasisAmount>";
-			paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toString()
-				+ "</ram:CalculationPercent>";
+			if (discountTerms != null)
+			{
+				paymentTermsXml += "<ram:ApplicableTradePaymentDiscountTerms>";
+				final String currency = trans.getCurrency();
+				final String basisAmount = currencyFormat(calc.getGrandTotal());
+				paymentTermsXml += "<ram:BasisAmount currencyID=\"" + currency + "\">" + basisAmount + "</ram:BasisAmount>";
+				paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toString()
+					+ "</ram:CalculationPercent>";
 
-			if (discountTerms.getBaseDate() != null) {
-				final Date baseDate = discountTerms.getBaseDate();
-				paymentTermsXml += "<ram:BasisDateTime>";
-				paymentTermsXml += DATE.udtFormat(baseDate);
-				paymentTermsXml += "</ram:BasisDateTime>";
+				if (discountTerms.getBaseDate() != null)
+				{
+					final Date baseDate = discountTerms.getBaseDate();
+					paymentTermsXml += "<ram:BasisDateTime>";
+					paymentTermsXml += DATE.udtFormat(baseDate);
+					paymentTermsXml += "</ram:BasisDateTime>";
 
-				paymentTermsXml += "<ram:BasisPeriodMeasure unitCode=\"" + discountTerms.getBasePeriodUnitCode() + "\">"
-					+ discountTerms.getBasePeriodMeasure() + "</ram:BasisPeriodMeasure>";
+					paymentTermsXml += "<ram:BasisPeriodMeasure unitCode=\"" + discountTerms.getBasePeriodUnitCode() + "\">"
+						+ discountTerms.getBasePeriodMeasure() + "</ram:BasisPeriodMeasure>";
+				}
+
+				paymentTermsXml += "</ram:ApplicableTradePaymentDiscountTerms>";
 			}
 
-			paymentTermsXml += "</ram:ApplicableTradePaymentDiscountTerms>";
+			paymentTermsXml += "</ram:SpecifiedTradePaymentTerms>";
 		}
-
-		paymentTermsXml += "</ram:SpecifiedTradePaymentTerms>";
 		return paymentTermsXml;
 	}
 

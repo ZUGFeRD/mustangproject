@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.mustangproject</groupId>
         <artifactId>core</artifactId>
-        <version>2.16.4-SNAPSHOT</version>
+        <version>2.17.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
@@ -11,7 +11,7 @@
     <name>Library to validate e-invoices (ZUGFeRD, Factur-X and Xrechnung)</name>
 
     <packaging>jar</packaging>
-    <version>2.16.4-SNAPSHOT</version>
+    <version>2.17.0-SNAPSHOT</version>
     <repositories>
         <repository>
             <!-- for jargs -->
@@ -38,7 +38,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>library</artifactId>
-            <version>2.16.4-SNAPSHOT</version>
+            <version>2.17.0-SNAPSHOT</version>
         </dependency>
 		<dependency>
 			<groupId>org.dom4j</groupId>
@@ -59,7 +59,7 @@
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
-			<version>3.0.2</version>
+			<version>3.0.5</version>
 		</dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
@@ -230,10 +230,10 @@
                         </goals>
 
                         <configuration>
-                            <outputDirectory>src/main/resources/xslt/ZF_232/</outputDirectory>
+                            <outputDirectory>src/main/resources/xslt/ZF_233/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/src/main/resources/schematron/ZF_232/</directory>
+                                    <directory>${basedir}/src/main/resources/schematron/ZF_233/</directory>
                                     <includes>
                                         <include>**/*.xml</include>
                                     </includes>

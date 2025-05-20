@@ -56,7 +56,6 @@ public class LineCalculator {
 		}
 		BigDecimal multiplicator = vatPercent.divide(BigDecimal.valueOf(100));
 
-
 		BigDecimal quantity=BigDecimal.ZERO;
 		if ((currentItem!=null)&&(currentItem.getQuantity()!=null)) {
 			quantity=currentItem.getQuantity();
@@ -72,8 +71,8 @@ public class LineCalculator {
 		BigDecimal basisQuantity = currentItem.getBasisQuantity().compareTo(BigDecimal.ZERO) == 0
 			? BigDecimal.ONE.setScale(4)
 			: currentItem.getBasisQuantity();
-		itemTotalNetAmount = quantity.multiply(currentItem.getPrice()).divide(basisQuantity, 18, RoundingMode.HALF_UP)
-			.subtract(allowanceItemTotal).subtract(allowance).add(charge).setScale(2, RoundingMode.HALF_UP);
+		itemTotalNetAmount = quantity.multiply(price).divide(basisQuantity, 18, RoundingMode.HALF_UP)
+				.subtract(allowanceItemTotal).setScale(2, RoundingMode.HALF_UP);
 		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);
 	}
 
