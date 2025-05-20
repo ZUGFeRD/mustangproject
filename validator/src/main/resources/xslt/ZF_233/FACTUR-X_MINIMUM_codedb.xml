@@ -298,6 +298,8 @@
     <enumeration value="0236"/>
     <enumeration value="0237"/>
     <enumeration value="0238"/>
+    <enumeration value="0239"/>
+    <enumeration value="0240"/>
   </cl>
   <cl id="5">
     <enumeration value="AD"/>
@@ -590,7 +592,6 @@
     <enumeration value="COP"/>
     <enumeration value="COU"/>
     <enumeration value="CRC"/>
-    <enumeration value="CUC"/>
     <enumeration value="CUP"/>
     <enumeration value="CVE"/>
     <enumeration value="CZK"/>
@@ -732,7 +733,6 @@
     <enumeration value="ZAR"/>
     <enumeration value="ZMW"/>
     <enumeration value="ZWG"/>
-    <enumeration value="ZWL"/>
   </cl>
   <cl id="7">
     <enumeration value="AED"/>
@@ -772,7 +772,6 @@
     <enumeration value="COP"/>
     <enumeration value="COU"/>
     <enumeration value="CRC"/>
-    <enumeration value="CUC"/>
     <enumeration value="CUP"/>
     <enumeration value="CVE"/>
     <enumeration value="CZK"/>
@@ -914,6 +913,5 @@
     <enumeration value="ZAR"/>
     <enumeration value="ZMW"/>
     <enumeration value="ZWG"/>
-    <enumeration value="ZWL"/>
   </cl>
 </codedb>

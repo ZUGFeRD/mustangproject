@@ -701,6 +701,8 @@
     <enumeration value="0236"/>
     <enumeration value="0237"/>
     <enumeration value="0238"/>
+    <enumeration value="0239"/>
+    <enumeration value="0240"/>
   </cl>
   <cl id="6">
     <enumeration value="0002"/>
@@ -936,6 +938,8 @@
     <enumeration value="0236"/>
     <enumeration value="0237"/>
     <enumeration value="0238"/>
+    <enumeration value="0239"/>
+    <enumeration value="0240"/>
   </cl>
   <cl id="7">
     <enumeration value="AD"/>
@@ -1205,6 +1209,8 @@
     <enumeration value="0142"/>
     <enumeration value="0147"/>
     <enumeration value="0151"/>
+    <enumeration value="0154"/>
+    <enumeration value="0158"/>
     <enumeration value="0170"/>
     <enumeration value="0177"/>
     <enumeration value="0183"/>
@@ -1239,7 +1245,7 @@
     <enumeration value="0225"/>
     <enumeration value="0230"/>
     <enumeration value="0235"/>
-    <enumeration value="9901"/>
+    <enumeration value="0240"/>
     <enumeration value="9910"/>
     <enumeration value="9913"/>
     <enumeration value="9914"/>
@@ -1331,7 +1337,6 @@
     <enumeration value="COP"/>
     <enumeration value="COU"/>
     <enumeration value="CRC"/>
-    <enumeration value="CUC"/>
     <enumeration value="CUP"/>
     <enumeration value="CVE"/>
     <enumeration value="CZK"/>
@@ -1473,7 +1478,6 @@
     <enumeration value="ZAR"/>
     <enumeration value="ZMW"/>
     <enumeration value="ZWG"/>
-    <enumeration value="ZWL"/>
   </cl>
   <cl id="12">
     <enumeration value="1"/>
@@ -1625,6 +1629,7 @@
     <enumeration value="VATEX-EU-151-1C"/>
     <enumeration value="VATEX-EU-151-1D"/>
     <enumeration value="VATEX-EU-151-1E"/>
+    <enumeration value="VATEX-EU-153"/>
     <enumeration value="VATEX-EU-159"/>
     <enumeration value="VATEX-EU-309"/>
     <enumeration value="VATEX-EU-79-C"/>
@@ -1636,6 +1641,30 @@
     <enumeration value="VATEX-EU-IC"/>
     <enumeration value="VATEX-EU-J"/>
     <enumeration value="VATEX-EU-O"/>
+    <enumeration value="VATEX-FR-298SEXDECIESA"/>
+    <enumeration value="VATEX-FR-AE"/>
+    <enumeration value="VATEX-FR-CGI261-1"/>
+    <enumeration value="VATEX-FR-CGI261-2"/>
+    <enumeration value="VATEX-FR-CGI261-3"/>
+    <enumeration value="VATEX-FR-CGI261-4"/>
+    <enumeration value="VATEX-FR-CGI261-5"/>
+    <enumeration value="VATEX-FR-CGI261-7"/>
+    <enumeration value="VATEX-FR-CGI261-8"/>
+    <enumeration value="VATEX-FR-CGI261A"/>
+    <enumeration value="VATEX-FR-CGI261B"/>
+    <enumeration value="VATEX-FR-CGI261C-1"/>
+    <enumeration value="VATEX-FR-CGI261C-2"/>
+    <enumeration value="VATEX-FR-CGI261C-3"/>
+    <enumeration value="VATEX-FR-CGI261D-1"/>
+    <enumeration value="VATEX-FR-CGI261D-1BIS"/>
+    <enumeration value="VATEX-FR-CGI261D-2"/>
+    <enumeration value="VATEX-FR-CGI261D-3"/>
+    <enumeration value="VATEX-FR-CGI261D-4"/>
+    <enumeration value="VATEX-FR-CGI261E-1"/>
+    <enumeration value="VATEX-FR-CGI261E-2"/>
+    <enumeration value="VATEX-FR-CGI275"/>
+    <enumeration value="VATEX-FR-CGI277A"/>
+    <enumeration value="VATEX-FR-CGI295"/>
     <enumeration value="VATEX-FR-CNWVAT"/>
     <enumeration value="VATEX-FR-FRANCHISE"/>
   </cl>
@@ -1883,7 +1912,6 @@
     <enumeration value="COP"/>
     <enumeration value="COU"/>
     <enumeration value="CRC"/>
-    <enumeration value="CUC"/>
     <enumeration value="CUP"/>
     <enumeration value="CVE"/>
     <enumeration value="CZK"/>
@@ -2025,7 +2053,6 @@
     <enumeration value="ZAR"/>
     <enumeration value="ZMW"/>
     <enumeration value="ZWG"/>
-    <enumeration value="ZWL"/>
   </cl>
   <cl id="20">
     <enumeration value="AED"/>
@@ -2065,7 +2092,6 @@
     <enumeration value="COP"/>
     <enumeration value="COU"/>
     <enumeration value="CRC"/>
-    <enumeration value="CUC"/>
     <enumeration value="CUP"/>
     <enumeration value="CVE"/>
     <enumeration value="CZK"/>
@@ -2207,7 +2233,6 @@
     <enumeration value="ZAR"/>
     <enumeration value="ZMW"/>
     <enumeration value="ZWG"/>
-    <enumeration value="ZWL"/>
   </cl>
   <cl id="21">
     <enumeration value="102"/>
