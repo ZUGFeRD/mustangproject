@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" queryBinding="xslt2" schemaVersion="iso">
-  <title>Schema for Factur-X; 1.07.2; EN16931-CONFORMANT-EXTENDED</title>
+  <title>Schema for Factur-X; 1.07.3; EN16931-CONFORMANT-EXTENDED</title>
   <ns prefix="rsm" uri="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"/>
   <ns prefix="qdt" uri="urn:un:unece:uncefact:data:standard:QualifiedDataType:100"/>
   <ns prefix="ram" uri="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100"/>
@@ -430,20 +430,20 @@
     <rule context="//ram:SpecifiedTradeSettlementPaymentMeans">
       <assert id="FX-SCH-A-000131" test="(ram:TypeCode)">
 	[BR-49]-A Payment instruction (BG-16) shall specify the Payment means type code (BT-81).</assert>
-      <assert id="FX-SCH-A-000132" test="(ram:PayeePartyCreditorFinancialAccount/ram:IBANID) or (ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID) or (not(ram:PayeePartyCreditorFinancialAccount/ram:IBANID) and not(ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID))">
-	[BR-CO-27]-Either the IBAN or a Proprietary ID (BT-84) shall be used.</assert>
     </rule>
   </pattern>
   <pattern>
     <rule context="//ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode='30' or ram:TypeCode='58']/ram:PayeePartyCreditorFinancialAccount">
+      <assert id="FX-SCH-A-000133" test="(ram:IBANID) or (ram:ProprietaryID)">
+	[BR-50]-A Payment account identifier (BT-84) shall be present if Credit transfer (BG-16) information is provided in the Invoice.</assert>
       <assert id="FX-SCH-A-000134" test="(ram:IBANID) or (ram:ProprietaryID)">
 	[BR-61]-If the Payment means type code (BT-81) means SEPA credit transfer, Local credit transfer or Non-SEPA international credit transfer, the Payment account identifier (BT-84) shall be present.</assert>
     </rule>
   </pattern>
   <pattern>
-    <rule context="//ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode='30' or ram:TypeCode='58']/ram:PayerPartyDebtorFinancialAccount">
-      <assert id="FX-SCH-A-000133" test="(ram:IBANID) or (ram:ProprietaryID)">
-	[BR-50]-A Payment account identifier (BT-84) shall be present if Credit transfer (BG-16) information is provided in the Invoice.</assert>
+    <rule context="//ram:SpecifiedTradeSettlementPaymentMeans[some $code in tokenize('30 58', '\s')  satisfies normalize-space(ram:TypeCode) = $code]">
+      <assert id="FX-SCH-A-000132" test="(ram:PayeePartyCreditorFinancialAccount/ram:IBANID or ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID) and not(ram:PayeePartyCreditorFinancialAccount/ram:IBANID and ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID)&#13;&#10;">
+	[BR-CO-27]-Either the IBAN or a Proprietary ID (BT-84) shall be used.</assert>
     </rule>
   </pattern>
   <pattern>
@@ -653,6 +653,26 @@
     </rule>
   </pattern>
   <pattern>
+    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote[ram:SubjectCode]">
+      <assert id="FX-SCH-A-000318" test="(ram:ContentCode) or (ram:Content)">
+	[BR-FXEXT-01]-If the Invoice Free Text subject Code (BT-21) is specified, either the coded message free text (BT-X-5) or the message free text (BT-22) must be specified, or both. If both BT-X-5 and BT-22 are specified, both must have the same meaning.</assert>
+    </rule>
+  </pattern>
+  <pattern>
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery">
+      <assert id="FX-SCH-A-000170" test="(ram:ShipToTradeParty/ram:PostalTradeAddress and ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID!='') or not (ram:ShipToTradeParty/ram:PostalTradeAddress)">
+	[BR-57]-Each Deliver to address (BG-15) shall contain a Deliver to country code (BT-80).</assert>
+    </rule>
+  </pattern>
+  <pattern>
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument">
+      <assert id="FX-SCH-A-000182" test="(ram:IssuerAssignedID!='')">
+	[BR-55]-Each Preceding Invoice reference (BG-3) shall contain a Preceding Invoice reference (BT-25).</assert>
+      <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
+	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
+    </rule>
+  </pattern>
+  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
@@ -663,310 +683,194 @@
       <assert id="FX-SCH-A-000315" test="count(ram:LanguageID)&lt;=1">
 	Element 'ram:LanguageID' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:EffectiveSpecifiedPeriod">
       <assert id="FX-SCH-A-000316" test="count(ram:CompleteDateTime)=1">
 	Element 'ram:CompleteDateTime' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:EffectiveSpecifiedPeriod/ram:CompleteDateTime/udt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:EffectiveSpecifiedPeriod/ram:CompleteDateTime/udt:DateTimeString[@format]">
       <let name="codeValue3" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue3)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:EffectiveSpecifiedPeriod/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:EffectiveSpecifiedPeriod/ram:EndDateTime">
       <report test="true()">
 	Element 'ram:EndDateTime' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:EffectiveSpecifiedPeriod/ram:StartDateTime">
       <report test="true()">
 	Element 'ram:StartDateTime' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote">
       <assert id="FX-SCH-A-000317" test="count(ram:Content)&lt;=1">
 	Element 'ram:Content' may occur at maximum 1 times.</assert>
       <assert id="FX-SCH-A-000161" test="count(ram:SubjectCode)&lt;=1">
 	Element 'ram:SubjectCode' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote/ram:ContentCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote/ram:ContentCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote/ram:ContentCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote/ram:SubjectCode">
       <let name="codeValue4" value="."/>
-      <assert id="FX-SCH-A-000162" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=4]/enumeration[@value=$codeValue4]">
+      <assert id="FX-SCH-A-000162" test="string-length($codeValue4)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=4]/enumeration[@value=$codeValue4]">
 	Value of 'ram:SubjectCode' is not allowed.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote/ram:SubjectCode[@listID]">
-      <report test="true()">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote/ram:SubjectCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote[ram:SubjectCode]">
-      <assert id="FX-SCH-A-000318" test="(ram:ContentCode) or (ram:Content)">
-	[BR-FXEXT-01]-If the Invoice Free Text subject Code (BT-21) is specified, either the coded message free text (BT-X-5) or the message free text (BT-22) must be specified, or both. If both BT-X-5 and BT-22 are specified, both must have the same meaning.</assert>
-    </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IssueDateTime/udt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IssueDateTime/udt:DateTimeString[@format]">
       <let name="codeValue3" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue3)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:LanguageID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:LanguageID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:TypeCode">
       <let name="codeValue2" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=2]/enumeration[@value=$codeValue2]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue2)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=2]/enumeration[@value=$codeValue2]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext">
       <assert id="FX-SCH-A-000024" test="count(ram:BusinessProcessSpecifiedDocumentContextParameter)&lt;=1">
 	Element 'ram:BusinessProcessSpecifiedDocumentContextParameter' may occur at maximum 1 times.</assert>
       <assert id="FX-SCH-A-000025" test="count(ram:GuidelineSpecifiedDocumentContextParameter)=1">
 	Element 'ram:GuidelineSpecifiedDocumentContextParameter' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:BusinessProcessSpecifiedDocumentContextParameter">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:BusinessProcessSpecifiedDocumentContextParameter/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:BusinessProcessSpecifiedDocumentContextParameter/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID">
       <let name="codeValue1" value="."/>
-      <assert id="FX-SCH-A-000026" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=1]/enumeration[@value=$codeValue1]">
+      <assert id="FX-SCH-A-000026" test="string-length($codeValue1)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=1]/enumeration[@value=$codeValue1]">
 	Value of 'ram:ID' is not allowed.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID[@schemeID]">
-      <report test="true()">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction">
       <assert id="FX-SCH-A-000265" test="count(ram:IncludedSupplyChainTradeLineItem)&gt;=1">
 	Element 'ram:IncludedSupplyChainTradeLineItem' must occur at least 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement">
       <assert id="FX-SCH-A-000027" test="count(ram:SellerTradeParty)=1">
 	Element 'ram:SellerTradeParty' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000028" test="count(ram:BuyerTradeParty)=1">
 	Element 'ram:BuyerTradeParty' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ not(ram:TypeCode=&quot;916&quot;) and  not(ram:TypeCode=&quot;50&quot;) and  not(ram:TypeCode=&quot;130&quot;)]">
       <report test="true()">
 	Element variant 'ram:AdditionalReferencedDocument[ not(ram:TypeCode="916") and  not(ram:TypeCode="50") and  not(ram:TypeCode="130")]' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;130&quot;]">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
 	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000020" test="count(ram:TypeCode)=1">
 	Element 'ram:TypeCode' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;130&quot;]/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;130&quot;]/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;130&quot;]/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;130&quot;]/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;130&quot;]/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;130&quot;]/ram:LineID">
       <report test="true()">
 	Element 'ram:LineID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;130&quot;]/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;130&quot;]/ram:ReferenceTypeCode">
       <let name="codeValue15" value="."/>
-      <assert id="FX-SCH-A-000282" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=15]/enumeration[@value=$codeValue15]">
+      <assert id="FX-SCH-A-000282" test="string-length($codeValue15)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=15]/enumeration[@value=$codeValue15]">
 	Value of 'ram:ReferenceTypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;130&quot;]/ram:TypeCode">
       <let name="codeValue33" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=33]/enumeration[@value=$codeValue33]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue33)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=33]/enumeration[@value=$codeValue33]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;130&quot;]/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;50&quot;]">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
 	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000020" test="count(ram:TypeCode)=1">
 	Element 'ram:TypeCode' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;50&quot;]/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;50&quot;]/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;50&quot;]/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;50&quot;]/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;50&quot;]/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;50&quot;]/ram:LineID">
       <report test="true()">
 	Element 'ram:LineID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;50&quot;]/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;50&quot;]/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;50&quot;]/ram:TypeCode">
       <let name="codeValue32" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=32]/enumeration[@value=$codeValue32]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue32)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=32]/enumeration[@value=$codeValue32]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;50&quot;]/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;916&quot;]">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
 	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
@@ -977,80 +881,52 @@
       <assert id="FX-SCH-A-000284" test="count(ram:AttachmentBinaryObject)&lt;=1">
 	Element 'ram:AttachmentBinaryObject' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;916&quot;]/ram:AttachmentBinaryObject">
       <assert id="FX-SCH-A-000285" test="@mimeCode">
 	Attribute '@mimeCode' is required in this context.</assert>
+      <let name="codeValue14" value="@mimeCode"/>
+      <assert id="FX-SCH-A-000287" test="string-length($codeValue14)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=14]/enumeration[@value=$codeValue14]">
+	Value of '@mimeCode' is not allowed.</assert>
       <assert id="FX-SCH-A-000286" test="@filename">
 	Attribute '@filename' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;916&quot;]/ram:AttachmentBinaryObject[@mimeCode]">
-      <let name="codeValue14" value="@mimeCode"/>
-      <assert id="FX-SCH-A-000287" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=14]/enumeration[@value=$codeValue14]">
-	Value of '@mimeCode' is not allowed.</assert>
-    </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;916&quot;]/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;916&quot;]/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;916&quot;]/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;916&quot;]/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;916&quot;]/ram:LineID">
       <report test="true()">
 	Element 'ram:LineID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;916&quot;]/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;916&quot;]/ram:TypeCode">
       <let name="codeValue31" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=31]/enumeration[@value=$codeValue31]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue31)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=31]/enumeration[@value=$codeValue31]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;916&quot;]/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:AdditionalReferencedDocument[ram:TypeCode=&quot;916&quot;]/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ApplicableTradeDeliveryTerms">
       <assert id="FX-SCH-A-000319" test="count(ram:DeliveryTypeCode)=1">
 	Element 'ram:DeliveryTypeCode' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ApplicableTradeDeliveryTerms/ram:DeliveryTypeCode">
       <let name="codeValue30" value="."/>
-      <assert id="FX-SCH-A-000320" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=30]/enumeration[@value=$codeValue30]">
+      <assert id="FX-SCH-A-000320" test="string-length($codeValue30)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=30]/enumeration[@value=$codeValue30]">
 	Value of 'ram:DeliveryTypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -1063,234 +939,150 @@
       <assert id="FX-SCH-A-000166" test="count(ram:SpecifiedTaxRegistration)&lt;=1">
 	Element 'ram:SpecifiedTaxRegistration' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerAgentTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
 	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:LineID">
       <report test="true()">
 	Element 'ram:LineID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -1303,173 +1095,111 @@
       <assert id="FX-SCH-A-000169" test="count(ram:SpecifiedTaxRegistration)=1">
 	Element 'ram:SpecifiedTaxRegistration' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTaxRepresentativeTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -1486,236 +1216,150 @@
       <assert id="FX-SCH-A-000166" test="count(ram:SpecifiedTaxRegistration)&lt;=1">
 	Element 'ram:SpecifiedTaxRegistration' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID]">
       <let name="codeValue28" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=28]/enumeration[@value=$codeValue28]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue28)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=28]/enumeration[@value=$codeValue28]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
 	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:LineID">
       <report test="true()">
 	Element 'ram:LineID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:ReferenceTypeCode">
       <let name="codeValue15" value="."/>
-      <assert id="FX-SCH-A-000282" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=15]/enumeration[@value=$codeValue15]">
+      <assert id="FX-SCH-A-000282" test="string-length($codeValue15)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=15]/enumeration[@value=$codeValue15]">
 	Value of 'ram:ReferenceTypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -1728,234 +1372,150 @@
       <assert id="FX-SCH-A-000166" test="count(ram:SpecifiedTaxRegistration)&lt;=1">
 	Element 'ram:SpecifiedTaxRegistration' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ProductEndUserTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:QuotationReferencedDocument">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
 	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:QuotationReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:QuotationReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:QuotationReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:QuotationReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:QuotationReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:QuotationReferencedDocument/ram:LineID">
       <report test="true()">
 	Element 'ram:LineID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:QuotationReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:QuotationReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:QuotationReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:QuotationReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -1968,234 +1528,150 @@
       <assert id="FX-SCH-A-000166" test="count(ram:SpecifiedTaxRegistration)&lt;=1">
 	Element 'ram:SpecifiedTaxRegistration' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SalesAgentTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerOrderReferencedDocument">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
 	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerOrderReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerOrderReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerOrderReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerOrderReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerOrderReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerOrderReferencedDocument/ram:LineID">
       <report test="true()">
 	Element 'ram:LineID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerOrderReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerOrderReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerOrderReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerOrderReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -2210,180 +1686,114 @@
       <assert id="FX-SCH-A-000169" test="count(ram:SpecifiedTaxRegistration)=1">
 	Element 'ram:SpecifiedTaxRegistration' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID]">
       <let name="codeValue29" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=29]/enumeration[@value=$codeValue29]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue29)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=29]/enumeration[@value=$codeValue29]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty">
       <assert id="FX-SCH-A-000030" test="count(ram:Name)=1">
 	Element 'ram:Name' must occur exactly 1 times.</assert>
@@ -2400,473 +1810,299 @@
       <assert id="FX-SCH-A-000034" test="count(ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;FC&quot;])&lt;=1">
 	Element variant 'ram:SpecifiedTaxRegistration[ram:ID/@schemeID="FC"]' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ not(ram:ID/@schemeID=&quot;VA&quot;) and  not(ram:ID/@schemeID=&quot;FC&quot;)]">
       <report test="true()">
 	Element variant 'ram:SpecifiedTaxRegistration[ not(ram:ID/@schemeID="VA") and  not(ram:ID/@schemeID="FC")]' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;FC&quot;]">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;FC&quot;]/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;VA&quot;]">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;VA&quot;]/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SpecifiedProcuringProject/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SpecifiedProcuringProject/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:UltimateCustomerOrderReferencedDocument">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
 	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:LineID">
       <report test="true()">
 	Element 'ram:LineID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery">
-      <assert id="FX-SCH-A-000170" test="(ram:ShipToTradeParty/ram:PostalTradeAddress and ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID!='') or not (ram:ShipToTradeParty/ram:PostalTradeAddress)">
-	[BR-57]-Each Deliver to address (BG-15) shall contain a Deliver to country code (BT-80).</assert>
-    </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent">
       <assert id="FX-SCH-A-000171" test="count(ram:OccurrenceDateTime)=1">
 	Element 'ram:OccurrenceDateTime' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent/ram:OccurrenceDateTime/udt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent/ram:OccurrenceDateTime/udt:DateTimeString[@format]">
       <let name="codeValue3" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue3)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
 	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:LineID">
       <report test="true()">
 	Element 'ram:LineID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
 	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:LineID">
       <report test="true()">
 	Element 'ram:LineID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ReceivingAdviceReferencedDocument">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
 	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:LineID">
       <report test="true()">
 	Element 'ram:LineID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:RelatedSupplyChainConsignment/ram:SpecifiedLogisticsTransportMovement">
       <assert id="FX-SCH-A-000322" test="count(ram:ModeCode)=1">
 	Element 'ram:ModeCode' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:RelatedSupplyChainConsignment/ram:SpecifiedLogisticsTransportMovement/ram:ModeCode">
       <let name="codeValue34" value="."/>
-      <assert id="FX-SCH-A-000346" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=34]/enumeration[@value=$codeValue34]">
+      <assert id="FX-SCH-A-000346" test="string-length($codeValue34)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=34]/enumeration[@value=$codeValue34]">
 	Value of 'ram:ModeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -2877,173 +2113,111 @@
       <assert id="FX-SCH-A-000166" test="count(ram:SpecifiedTaxRegistration)&lt;=1">
 	Element 'ram:SpecifiedTaxRegistration' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipFromTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -3054,173 +2228,111 @@
       <assert id="FX-SCH-A-000166" test="count(ram:SpecifiedTaxRegistration)&lt;=1">
 	Element 'ram:SpecifiedTaxRegistration' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -3231,173 +2343,111 @@
       <assert id="FX-SCH-A-000166" test="count(ram:SpecifiedTaxRegistration)&lt;=1">
 	Element 'ram:SpecifiedTaxRegistration' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:UltimateShipToTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement">
       <assert id="FX-SCH-A-000172" test="count(ram:PaymentReference)&lt;=1">
 	Element 'ram:PaymentReference' may occur at maximum 1 times.</assert>
@@ -3408,8 +2458,6 @@
       <assert id="FX-SCH-A-000039" test="count(ram:SpecifiedTradeSettlementHeaderMonetarySummation)=1">
 	Element 'ram:SpecifiedTradeSettlementHeaderMonetarySummation' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax">
       <assert id="FX-SCH-A-000176" test="count(ram:CalculatedAmount)=1">
 	Element 'ram:CalculatedAmount' must occur exactly 1 times.</assert>
@@ -3424,200 +2472,120 @@
       <assert id="FX-SCH-A-000178" test="count(ram:CategoryCode)=1">
 	Element 'ram:CategoryCode' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:AllowanceChargeBasisAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:AllowanceChargeBasisAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:BasisAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:BasisAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode">
       <let name="codeValue19" value="."/>
-      <assert id="FX-SCH-A-000179" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=19]/enumeration[@value=$codeValue19]">
+      <assert id="FX-SCH-A-000179" test="string-length($codeValue19)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=19]/enumeration[@value=$codeValue19]">
 	Value of 'ram:CategoryCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:DueDateTypeCode">
       <let name="codeValue38" value="."/>
-      <assert id="FX-SCH-A-000180" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=38]/enumeration[@value=$codeValue38]">
+      <assert id="FX-SCH-A-000180" test="string-length($codeValue38)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=38]/enumeration[@value=$codeValue38]">
 	Value of 'ram:DueDateTypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:ExemptionReasonCode">
       <let name="codeValue20" value="."/>
-      <assert id="FX-SCH-A-000181" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=20]/enumeration[@value=$codeValue20]">
+      <assert id="FX-SCH-A-000181" test="string-length($codeValue20)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=20]/enumeration[@value=$codeValue20]">
 	Value of 'ram:ExemptionReasonCode' is not allowed.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:ExemptionReasonCode[@listID]">
-      <report test="true()">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:ExemptionReasonCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:LineTotalBasisAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:LineTotalBasisAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:TaxPointDate/udt:DateString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:TaxPointDate/udt:DateString[@format]">
       <let name="codeValue37" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=37]/enumeration[@value=$codeValue37]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue37)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=37]/enumeration[@value=$codeValue37]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:TypeCode">
       <let name="codeValue24" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=24]/enumeration[@value=$codeValue24]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue24)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=24]/enumeration[@value=$codeValue24]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod">
       <assert id="FX-SCH-A-000187" test="count(ram:Description)&lt;=1">
 	Element 'ram:Description' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod/ram:CompleteDateTime">
       <report test="true()">
 	Element 'ram:CompleteDateTime' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod/ram:EndDateTime/udt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod/ram:EndDateTime/udt:DateTimeString[@format]">
       <let name="codeValue3" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue3)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod/ram:StartDateTime/udt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod/ram:StartDateTime/udt:DateTimeString[@format]">
       <let name="codeValue3" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue3)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:CreditorReferenceID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:CreditorReferenceID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode">
       <let name="codeValue35" value="."/>
-      <assert id="FX-SCH-A-000040" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=35]/enumeration[@value=$codeValue35]">
+      <assert id="FX-SCH-A-000040" test="string-length($codeValue35)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=35]/enumeration[@value=$codeValue35]">
 	Value of 'ram:InvoiceCurrencyCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument">
-      <assert id="FX-SCH-A-000182" test="(ram:IssuerAssignedID!='')">
-	[BR-55]-Each Preceding Invoice reference (BG-3) shall contain a Preceding Invoice reference (BT-25).</assert>
-      <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
-	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
-    </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:LineID">
       <report test="true()">
 	Element 'ram:LineID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:TypeCode">
       <let name="codeValue43" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=43]/enumeration[@value=$codeValue43]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue43)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=43]/enumeration[@value=$codeValue43]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -3630,173 +2598,111 @@
       <assert id="FX-SCH-A-000166" test="count(ram:SpecifiedTaxRegistration)&lt;=1">
 	Element 'ram:SpecifiedTaxRegistration' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -3809,173 +2715,111 @@
       <assert id="FX-SCH-A-000166" test="count(ram:SpecifiedTaxRegistration)&lt;=1">
 	Element 'ram:SpecifiedTaxRegistration' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoicerTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -3988,173 +2832,111 @@
       <assert id="FX-SCH-A-000166" test="count(ram:SpecifiedTaxRegistration)&lt;=1">
 	Element 'ram:SpecifiedTaxRegistration' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -4167,207 +2949,133 @@
       <assert id="FX-SCH-A-000166" test="count(ram:SpecifiedTaxRegistration)&lt;=1">
 	Element 'ram:SpecifiedTaxRegistration' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayerTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ReceivableSpecifiedTradeAccountingAccount/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ReceivableSpecifiedTradeAccountingAccount/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ReceivableSpecifiedTradeAccountingAccount/ram:TypeCode">
       <let name="codeValue44" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=44]/enumeration[@value=$codeValue44]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue44)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=44]/enumeration[@value=$codeValue44]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment">
       <assert id="FX-SCH-A-000325" test="count(ram:IncludedTradeTax)&gt;=1">
 	Element 'ram:IncludedTradeTax' must occur at least 1 times.</assert>
       <assert id="FX-SCH-A-000326" test="count(ram:InvoiceSpecifiedReferencedDocument)&lt;=1">
 	Element 'ram:InvoiceSpecifiedReferencedDocument' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:FormattedReceivedDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:FormattedReceivedDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:IncludedTradeTax">
       <assert id="FX-SCH-A-000176" test="count(ram:CalculatedAmount)=1">
 	Element 'ram:CalculatedAmount' must occur exactly 1 times.</assert>
@@ -4376,145 +3084,93 @@
       <assert id="FX-SCH-A-000178" test="count(ram:CategoryCode)=1">
 	Element 'ram:CategoryCode' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:IncludedTradeTax/ram:AllowanceChargeBasisAmount">
       <report test="true()">
 	Element 'ram:AllowanceChargeBasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:IncludedTradeTax/ram:BasisAmount">
       <report test="true()">
 	Element 'ram:BasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:IncludedTradeTax/ram:CalculatedAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:IncludedTradeTax/ram:CalculatedAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:IncludedTradeTax/ram:CategoryCode">
       <let name="codeValue19" value="."/>
-      <assert id="FX-SCH-A-000179" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=19]/enumeration[@value=$codeValue19]">
+      <assert id="FX-SCH-A-000179" test="string-length($codeValue19)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=19]/enumeration[@value=$codeValue19]">
 	Value of 'ram:CategoryCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:IncludedTradeTax/ram:DueDateTypeCode">
       <report test="true()">
 	Element 'ram:DueDateTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:IncludedTradeTax/ram:ExemptionReasonCode">
       <let name="codeValue20" value="."/>
-      <assert id="FX-SCH-A-000181" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=20]/enumeration[@value=$codeValue20]">
+      <assert id="FX-SCH-A-000181" test="string-length($codeValue20)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=20]/enumeration[@value=$codeValue20]">
 	Value of 'ram:ExemptionReasonCode' is not allowed.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:IncludedTradeTax/ram:ExemptionReasonCode[@listID]">
-      <report test="true()">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:IncludedTradeTax/ram:ExemptionReasonCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:IncludedTradeTax/ram:LineTotalBasisAmount">
       <report test="true()">
 	Element 'ram:LineTotalBasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:IncludedTradeTax/ram:TaxPointDate">
       <report test="true()">
 	Element 'ram:TaxPointDate' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:IncludedTradeTax/ram:TypeCode">
       <let name="codeValue24" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=24]/enumeration[@value=$codeValue24]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue24)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=24]/enumeration[@value=$codeValue24]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:InvoiceSpecifiedReferencedDocument">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
 	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:InvoiceSpecifiedReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:InvoiceSpecifiedReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:InvoiceSpecifiedReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:InvoiceSpecifiedReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:InvoiceSpecifiedReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:InvoiceSpecifiedReferencedDocument/ram:LineID">
       <report test="true()">
 	Element 'ram:LineID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:InvoiceSpecifiedReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:InvoiceSpecifiedReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:InvoiceSpecifiedReferencedDocument/ram:TypeCode">
       <let name="codeValue45" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=45]/enumeration[@value=$codeValue45]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue45)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=45]/enumeration[@value=$codeValue45]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:InvoiceSpecifiedReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:PaidAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedAdvancePayment/ram:PaidAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge">
       <assert id="FX-SCH-A-000294" test="count(ram:Description)=1">
 	Element 'ram:Description' must occur exactly 1 times.</assert>
@@ -4523,14 +3179,10 @@
       <assert id="FX-SCH-A-000328" test="count(ram:AppliedTradeTax)&gt;=1">
 	Element 'ram:AppliedTradeTax' must occur at least 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax">
       <assert id="FX-SCH-A-000020" test="count(ram:TypeCode)=1">
 	Element 'ram:TypeCode' must occur exactly 1 times.</assert>
@@ -4539,76 +3191,52 @@
       <assert id="FX-SCH-A-000329" test="count(ram:RateApplicablePercent)=1">
 	Element 'ram:RateApplicablePercent' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax/ram:AllowanceChargeBasisAmount">
       <report test="true()">
 	Element 'ram:AllowanceChargeBasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax/ram:BasisAmount">
       <report test="true()">
 	Element 'ram:BasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax/ram:CalculatedAmount">
       <report test="true()">
 	Element 'ram:CalculatedAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax/ram:CategoryCode">
       <let name="codeValue19" value="."/>
-      <assert id="FX-SCH-A-000179" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=19]/enumeration[@value=$codeValue19]">
+      <assert id="FX-SCH-A-000179" test="string-length($codeValue19)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=19]/enumeration[@value=$codeValue19]">
 	Value of 'ram:CategoryCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax/ram:DueDateTypeCode">
       <report test="true()">
 	Element 'ram:DueDateTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax/ram:ExemptionReason">
       <report test="true()">
 	Element 'ram:ExemptionReason' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax/ram:ExemptionReasonCode">
       <report test="true()">
 	Element 'ram:ExemptionReasonCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax/ram:LineTotalBasisAmount">
       <report test="true()">
 	Element 'ram:LineTotalBasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax/ram:TaxPointDate">
       <report test="true()">
 	Element 'ram:TaxPointDate' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedTradeTax/ram:TypeCode">
       <let name="codeValue24" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=24]/enumeration[@value=$codeValue24]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue24)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=24]/enumeration[@value=$codeValue24]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ not(ram:ChargeIndicator/udt:Indicator=&quot;false&quot;) and  not(ram:ChargeIndicator/udt:Indicator=&quot;true&quot;)]">
       <report test="true()">
 	Element variant 'ram:SpecifiedTradeAllowanceCharge[ not(ram:ChargeIndicator/udt:Indicator="false") and  not(ram:ChargeIndicator/udt:Indicator="true")]' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]">
       <assert id="FX-SCH-A-000183" test="count(ram:ChargeIndicator)=1">
 	Element 'ram:ChargeIndicator' must occur exactly 1 times.</assert>
@@ -4617,104 +3245,72 @@
       <assert id="FX-SCH-A-000185" test="count(ram:CategoryTradeTax)=1">
 	Element 'ram:CategoryTradeTax' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ActualAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ActualAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:BasisAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:BasisAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:BasisQuantity[@unitCode]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:BasisQuantity">
       <let name="codeValue11" value="@unitCode"/>
-      <assert id="FX-SCH-A-000275" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=11]/enumeration[@value=$codeValue11]">
+      <assert id="FX-SCH-A-000275" test="string-length($codeValue11)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
 	Value of '@unitCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax">
       <assert id="FX-SCH-A-000020" test="count(ram:TypeCode)=1">
 	Element 'ram:TypeCode' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000178" test="count(ram:CategoryCode)=1">
 	Element 'ram:CategoryCode' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:AllowanceChargeBasisAmount">
       <report test="true()">
 	Element 'ram:AllowanceChargeBasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:BasisAmount">
       <report test="true()">
 	Element 'ram:BasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:CalculatedAmount">
       <report test="true()">
 	Element 'ram:CalculatedAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:CategoryCode">
       <let name="codeValue19" value="."/>
-      <assert id="FX-SCH-A-000179" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=19]/enumeration[@value=$codeValue19]">
+      <assert id="FX-SCH-A-000179" test="string-length($codeValue19)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=19]/enumeration[@value=$codeValue19]">
 	Value of 'ram:CategoryCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:DueDateTypeCode">
       <report test="true()">
 	Element 'ram:DueDateTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:ExemptionReason">
       <report test="true()">
 	Element 'ram:ExemptionReason' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:ExemptionReasonCode">
       <report test="true()">
 	Element 'ram:ExemptionReasonCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:LineTotalBasisAmount">
       <report test="true()">
 	Element 'ram:LineTotalBasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:TaxPointDate">
       <report test="true()">
 	Element 'ram:TaxPointDate' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:TypeCode">
       <let name="codeValue24" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=24]/enumeration[@value=$codeValue24]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue24)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=24]/enumeration[@value=$codeValue24]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ReasonCode">
       <let name="codeValue39" value="."/>
-      <assert id="FX-SCH-A-000186" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=39]/enumeration[@value=$codeValue39]">
+      <assert id="FX-SCH-A-000186" test="string-length($codeValue39)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=39]/enumeration[@value=$codeValue39]">
 	Value of 'ram:ReasonCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]">
       <assert id="FX-SCH-A-000183" test="count(ram:ChargeIndicator)=1">
 	Element 'ram:ChargeIndicator' must occur exactly 1 times.</assert>
@@ -4723,104 +3319,72 @@
       <assert id="FX-SCH-A-000185" test="count(ram:CategoryTradeTax)=1">
 	Element 'ram:CategoryTradeTax' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ActualAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ActualAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:BasisAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:BasisAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:BasisQuantity[@unitCode]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:BasisQuantity">
       <let name="codeValue11" value="@unitCode"/>
-      <assert id="FX-SCH-A-000275" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=11]/enumeration[@value=$codeValue11]">
+      <assert id="FX-SCH-A-000275" test="string-length($codeValue11)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
 	Value of '@unitCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax">
       <assert id="FX-SCH-A-000020" test="count(ram:TypeCode)=1">
 	Element 'ram:TypeCode' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000178" test="count(ram:CategoryCode)=1">
 	Element 'ram:CategoryCode' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:AllowanceChargeBasisAmount">
       <report test="true()">
 	Element 'ram:AllowanceChargeBasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:BasisAmount">
       <report test="true()">
 	Element 'ram:BasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:CalculatedAmount">
       <report test="true()">
 	Element 'ram:CalculatedAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:CategoryCode">
       <let name="codeValue19" value="."/>
-      <assert id="FX-SCH-A-000179" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=19]/enumeration[@value=$codeValue19]">
+      <assert id="FX-SCH-A-000179" test="string-length($codeValue19)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=19]/enumeration[@value=$codeValue19]">
 	Value of 'ram:CategoryCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:DueDateTypeCode">
       <report test="true()">
 	Element 'ram:DueDateTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:ExemptionReason">
       <report test="true()">
 	Element 'ram:ExemptionReason' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:ExemptionReasonCode">
       <report test="true()">
 	Element 'ram:ExemptionReasonCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:LineTotalBasisAmount">
       <report test="true()">
 	Element 'ram:LineTotalBasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:TaxPointDate">
       <report test="true()">
 	Element 'ram:TaxPointDate' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:TypeCode">
       <let name="codeValue24" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=24]/enumeration[@value=$codeValue24]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue24)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=24]/enumeration[@value=$codeValue24]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ReasonCode">
       <let name="codeValue40" value="."/>
-      <assert id="FX-SCH-A-000186" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=40]/enumeration[@value=$codeValue40]">
+      <assert id="FX-SCH-A-000186" test="string-length($codeValue40)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=40]/enumeration[@value=$codeValue40]">
 	Value of 'ram:ReasonCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms">
       <assert id="FX-SCH-A-000187" test="count(ram:Description)&lt;=1">
 	Element 'ram:Description' may occur at maximum 1 times.</assert>
@@ -4831,89 +3395,55 @@
       <assert id="FX-SCH-A-000331" test="count(ram:PayeeTradeParty)&lt;=1">
 	Element 'ram:PayeeTradeParty' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:ApplicableTradePaymentDiscountTerms/ram:ActualDiscountAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:ApplicableTradePaymentDiscountTerms/ram:ActualDiscountAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:ApplicableTradePaymentDiscountTerms/ram:BasisAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:ApplicableTradePaymentDiscountTerms/ram:BasisAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:ApplicableTradePaymentDiscountTerms/ram:BasisDateTime/udt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:ApplicableTradePaymentDiscountTerms/ram:BasisDateTime/udt:DateTimeString[@format]">
       <let name="codeValue3" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue3)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:ApplicableTradePaymentPenaltyTerms/ram:ActualPenaltyAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:ApplicableTradePaymentPenaltyTerms/ram:ActualPenaltyAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:ApplicableTradePaymentPenaltyTerms/ram:BasisAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:ApplicableTradePaymentPenaltyTerms/ram:BasisAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:ApplicableTradePaymentPenaltyTerms/ram:BasisDateTime/udt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:ApplicableTradePaymentPenaltyTerms/ram:BasisDateTime/udt:DateTimeString[@format]">
       <let name="codeValue3" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue3)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:ApplicableTradePaymentPenaltyTerms/ram:BasisPeriodMeasure">
       <assert id="FX-SCH-A-000277" test="@unitCode">
 	Attribute '@unitCode' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DirectDebitMandateID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DirectDebitMandateID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DueDateDateTime/udt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DueDateDateTime/udt:DateTimeString[@format]">
       <let name="codeValue3" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue3)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PartialPaymentAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PartialPaymentAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -4926,173 +3456,111 @@
       <assert id="FX-SCH-A-000166" test="count(ram:SpecifiedTaxRegistration)&lt;=1">
 	Element 'ram:SpecifiedTaxRegistration' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:PayeeTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation">
       <assert id="FX-SCH-A-000189" test="count(ram:LineTotalAmount)=1">
 	Element 'ram:LineTotalAmount' must occur exactly 1 times.</assert>
@@ -5115,88 +3583,56 @@
       <assert id="FX-SCH-A-000044" test="count(ram:DuePayableAmount)=1">
 	Element 'ram:DuePayableAmount' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:AllowanceTotalAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:AllowanceTotalAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:ChargeTotalAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:ChargeTotalAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:DuePayableAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:DuePayableAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:LineTotalAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:LineTotalAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:RoundingAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:RoundingAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[ not(@currencyID=../../ram:InvoiceCurrencyCode) and  not(@currencyID=../../ram:TaxCurrencyCode)]">
       <report test="true()">
 	Element variant 'ram:TaxTotalAmount[ not(@currencyID=../../ram:InvoiceCurrencyCode) and  not(@currencyID=../../ram:TaxCurrencyCode)]' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=../../ram:InvoiceCurrencyCode and @currencyID]">
-      <let name="codeValue41" value="@currencyID"/>
-      <assert id="FX-SCH-A-000045" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=41]/enumeration[@value=$codeValue41]">
-	Value of '@currencyID' is not allowed.</assert>
-    </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=../../ram:InvoiceCurrencyCode]">
       <assert id="FX-SCH-A-000046" test="@currencyID">
 	Attribute '@currencyID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=../../ram:TaxCurrencyCode and @currencyID]">
-      <let name="codeValue42" value="@currencyID"/>
-      <assert id="FX-SCH-A-000045" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=42]/enumeration[@value=$codeValue42]">
+      <let name="codeValue41" value="@currencyID"/>
+      <assert id="FX-SCH-A-000045" test="string-length($codeValue41)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=41]/enumeration[@value=$codeValue41]">
 	Value of '@currencyID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=../../ram:TaxCurrencyCode]">
       <assert id="FX-SCH-A-000046" test="@currencyID">
 	Attribute '@currencyID' is required in this context.</assert>
+      <let name="codeValue42" value="@currencyID"/>
+      <assert id="FX-SCH-A-000045" test="string-length($codeValue42)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=42]/enumeration[@value=$codeValue42]">
+	Value of '@currencyID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TotalPrepaidAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TotalPrepaidAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans">
       <assert id="FX-SCH-A-000020" test="count(ram:TypeCode)=1">
 	Element 'ram:TypeCode' must occur exactly 1 times.</assert>
@@ -5205,97 +3641,65 @@
       <assert id="FX-SCH-A-000194" test="count(ram:PayeePartyCreditorFinancialAccount)&lt;=1">
 	Element 'ram:PayeePartyCreditorFinancialAccount' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:ApplicableTradeSettlementFinancialCard">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:ApplicableTradeSettlementFinancialCard/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:ApplicableTradeSettlementFinancialCard/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeePartyCreditorFinancialAccount/ram:IBANID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeePartyCreditorFinancialAccount/ram:IBANID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeeSpecifiedCreditorFinancialInstitution">
       <assert id="FX-SCH-A-000292" test="count(ram:BICID)=1">
 	Element 'ram:BICID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeeSpecifiedCreditorFinancialInstitution/ram:BICID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeeSpecifiedCreditorFinancialInstitution/ram:BICID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayerPartyDebtorFinancialAccount">
       <assert id="FX-SCH-A-000195" test="count(ram:IBANID)=1">
 	Element 'ram:IBANID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayerPartyDebtorFinancialAccount/ram:IBANID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayerPartyDebtorFinancialAccount/ram:IBANID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:TypeCode">
       <let name="codeValue36" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=36]/enumeration[@value=$codeValue36]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue36)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=36]/enumeration[@value=$codeValue36]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxApplicableTradeCurrencyExchange/ram:ConversionRateDateTime/udt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxApplicableTradeCurrencyExchange/ram:ConversionRateDateTime/udt:DateTimeString[@format]">
       <let name="codeValue3" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue3)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxApplicableTradeCurrencyExchange/ram:SourceCurrencyCode">
       <let name="codeValue35" value="."/>
-      <assert id="FX-SCH-A-000332" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=35]/enumeration[@value=$codeValue35]">
+      <assert id="FX-SCH-A-000332" test="string-length($codeValue35)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=35]/enumeration[@value=$codeValue35]">
 	Value of 'ram:SourceCurrencyCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxApplicableTradeCurrencyExchange/ram:TargetCurrencyCode">
       <let name="codeValue35" value="."/>
-      <assert id="FX-SCH-A-000333" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=35]/enumeration[@value=$codeValue35]">
+      <assert id="FX-SCH-A-000333" test="string-length($codeValue35)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=35]/enumeration[@value=$codeValue35]">
 	Value of 'ram:TargetCurrencyCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode">
       <let name="codeValue35" value="."/>
-      <assert id="FX-SCH-A-000196" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=35]/enumeration[@value=$codeValue35]">
+      <assert id="FX-SCH-A-000196" test="string-length($codeValue35)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=35]/enumeration[@value=$codeValue35]">
 	Value of 'ram:TaxCurrencyCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem">
       <assert id="FX-SCH-A-000266" test="count(ram:AssociatedDocumentLineDocument)=1">
 	Element 'ram:AssociatedDocumentLineDocument' must occur exactly 1 times.</assert>
@@ -5306,97 +3710,57 @@
       <assert id="FX-SCH-A-000269" test="count(ram:SpecifiedLineTradeDelivery)=1">
 	Element 'ram:SpecifiedLineTradeDelivery' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument">
       <assert id="FX-SCH-A-000270" test="count(ram:LineID)=1">
 	Element 'ram:LineID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:IncludedNote">
       <assert id="FX-SCH-A-000317" test="count(ram:Content)&lt;=1">
 	Element 'ram:Content' may occur at maximum 1 times.</assert>
       <assert id="FX-SCH-A-000161" test="count(ram:SubjectCode)&lt;=1">
 	Element 'ram:SubjectCode' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:IncludedNote/ram:ContentCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:IncludedNote/ram:ContentCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:IncludedNote/ram:ContentCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:IncludedNote/ram:SubjectCode">
       <let name="codeValue4" value="."/>
-      <assert id="FX-SCH-A-000162" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=4]/enumeration[@value=$codeValue4]">
+      <assert id="FX-SCH-A-000162" test="string-length($codeValue4)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=4]/enumeration[@value=$codeValue4]">
 	Value of 'ram:SubjectCode' is not allowed.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:IncludedNote/ram:SubjectCode[@listID]">
-      <report test="true()">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:IncludedNote/ram:SubjectCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:LineID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:LineID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:LineStatusCode">
       <let name="codeValue5" value="."/>
-      <assert id="FX-SCH-A-000334" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=5]/enumeration[@value=$codeValue5]">
+      <assert id="FX-SCH-A-000334" test="string-length($codeValue5)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
 	Value of 'ram:LineStatusCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:LineStatusReasonCode">
       <let name="codeValue6" value="."/>
-      <assert id="FX-SCH-A-000335" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=6]/enumeration[@value=$codeValue6]">
+      <assert id="FX-SCH-A-000335" test="string-length($codeValue6)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=6]/enumeration[@value=$codeValue6]">
 	Value of 'ram:LineStatusReasonCode' is not allowed.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:LineStatusReasonCode[@listID]">
-      <report test="true()">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:LineStatusReasonCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:ParentLineID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:AssociatedDocumentLineDocument/ram:ParentLineID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement">
       <assert id="FX-SCH-A-000272" test="count(ram:NetPriceProductTradePrice)=1">
 	Element 'ram:NetPriceProductTradePrice' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:AdditionalReferencedDocument">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
 	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
@@ -5407,326 +3771,216 @@
       <assert id="FX-SCH-A-000284" test="count(ram:AttachmentBinaryObject)&lt;=1">
 	Element 'ram:AttachmentBinaryObject' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:AdditionalReferencedDocument/ram:AttachmentBinaryObject">
       <assert id="FX-SCH-A-000285" test="@mimeCode">
 	Attribute '@mimeCode' is required in this context.</assert>
+      <let name="codeValue14" value="@mimeCode"/>
+      <assert id="FX-SCH-A-000287" test="string-length($codeValue14)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=14]/enumeration[@value=$codeValue14]">
+	Value of '@mimeCode' is not allowed.</assert>
       <assert id="FX-SCH-A-000286" test="@filename">
 	Attribute '@filename' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:AdditionalReferencedDocument/ram:AttachmentBinaryObject[@mimeCode]">
-      <let name="codeValue14" value="@mimeCode"/>
-      <assert id="FX-SCH-A-000287" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=14]/enumeration[@value=$codeValue14]">
-	Value of '@mimeCode' is not allowed.</assert>
-    </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:AdditionalReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:AdditionalReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:AdditionalReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:AdditionalReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:AdditionalReferencedDocument/ram:LineID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:AdditionalReferencedDocument/ram:LineID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:AdditionalReferencedDocument/ram:ReferenceTypeCode">
       <let name="codeValue15" value="."/>
-      <assert id="FX-SCH-A-000282" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=15]/enumeration[@value=$codeValue15]">
+      <assert id="FX-SCH-A-000282" test="string-length($codeValue15)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=15]/enumeration[@value=$codeValue15]">
 	Value of 'ram:ReferenceTypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:AdditionalReferencedDocument/ram:TypeCode">
       <let name="codeValue13" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=13]/enumeration[@value=$codeValue13]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue13)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=13]/enumeration[@value=$codeValue13]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:AdditionalReferencedDocument/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:AdditionalReferencedDocument/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:BuyerOrderReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:BuyerOrderReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:BuyerOrderReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:BuyerOrderReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:BuyerOrderReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:BuyerOrderReferencedDocument/ram:LineID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:BuyerOrderReferencedDocument/ram:LineID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:BuyerOrderReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:BuyerOrderReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:BuyerOrderReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:BuyerOrderReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:ContractReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:ContractReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:ContractReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:ContractReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:ContractReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:ContractReferencedDocument/ram:LineID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:ContractReferencedDocument/ram:LineID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:ContractReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:ContractReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:ContractReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:ContractReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice">
       <assert id="FX-SCH-A-000273" test="count(ram:ChargeAmount)=1">
 	Element 'ram:ChargeAmount' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ not(ram:ChargeIndicator/udt:Indicator=&quot;false&quot;) and  not(ram:ChargeIndicator/udt:Indicator=&quot;true&quot;)]">
       <report test="true()">
 	Element variant 'ram:AppliedTradeAllowanceCharge[ not(ram:ChargeIndicator/udt:Indicator="false") and  not(ram:ChargeIndicator/udt:Indicator="true")]' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]">
       <assert id="FX-SCH-A-000183" test="count(ram:ChargeIndicator)=1">
 	Element 'ram:ChargeIndicator' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000184" test="count(ram:ActualAmount)=1">
 	Element 'ram:ActualAmount' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ActualAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ActualAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:BasisAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:BasisAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:BasisQuantity">
       <report test="true()">
 	Element 'ram:BasisQuantity' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax">
       <report test="true()">
 	Element 'ram:CategoryTradeTax' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ReasonCode">
       <let name="codeValue16" value="."/>
-      <assert id="FX-SCH-A-000186" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=16]/enumeration[@value=$codeValue16]">
+      <assert id="FX-SCH-A-000186" test="string-length($codeValue16)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=16]/enumeration[@value=$codeValue16]">
 	Value of 'ram:ReasonCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:SequenceNumeric">
       <report test="true()">
 	Element 'ram:SequenceNumeric' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]">
       <assert id="FX-SCH-A-000183" test="count(ram:ChargeIndicator)=1">
 	Element 'ram:ChargeIndicator' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000184" test="count(ram:ActualAmount)=1">
 	Element 'ram:ActualAmount' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ActualAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ActualAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:BasisAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:BasisAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:BasisQuantity">
       <report test="true()">
 	Element 'ram:BasisQuantity' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax">
       <report test="true()">
 	Element 'ram:CategoryTradeTax' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ReasonCode">
       <let name="codeValue17" value="."/>
-      <assert id="FX-SCH-A-000186" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=17]/enumeration[@value=$codeValue17]">
+      <assert id="FX-SCH-A-000186" test="string-length($codeValue17)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=17]/enumeration[@value=$codeValue17]">
 	Value of 'ram:ReasonCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:AppliedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:SequenceNumeric">
       <report test="true()">
 	Element 'ram:SequenceNumeric' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:BasisQuantity[@unitCode]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:BasisQuantity">
       <let name="codeValue11" value="@unitCode"/>
-      <assert id="FX-SCH-A-000275" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=11]/enumeration[@value=$codeValue11]">
+      <assert id="FX-SCH-A-000275" test="string-length($codeValue11)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
 	Value of '@unitCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:ChargeAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:ChargeAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:GrossPriceProductTradePrice/ram:IncludedTradeTax">
       <report test="true()">
 	Element 'ram:IncludedTradeTax' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice">
       <assert id="FX-SCH-A-000273" test="count(ram:ChargeAmount)=1">
 	Element 'ram:ChargeAmount' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000336" test="count(ram:IncludedTradeTax)&lt;=1">
 	Element 'ram:IncludedTradeTax' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:AppliedTradeAllowanceCharge">
       <report test="true()">
 	Element 'ram:AppliedTradeAllowanceCharge' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:BasisQuantity[@unitCode]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:BasisQuantity">
       <let name="codeValue11" value="@unitCode"/>
-      <assert id="FX-SCH-A-000275" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=11]/enumeration[@value=$codeValue11]">
+      <assert id="FX-SCH-A-000275" test="string-length($codeValue11)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
 	Value of '@unitCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:ChargeAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:ChargeAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:IncludedTradeTax">
       <assert id="FX-SCH-A-000176" test="count(ram:CalculatedAmount)=1">
 	Element 'ram:CalculatedAmount' must occur exactly 1 times.</assert>
@@ -5737,471 +3991,295 @@
       <assert id="FX-SCH-A-000329" test="count(ram:RateApplicablePercent)=1">
 	Element 'ram:RateApplicablePercent' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:IncludedTradeTax/ram:AllowanceChargeBasisAmount">
       <report test="true()">
 	Element 'ram:AllowanceChargeBasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:IncludedTradeTax/ram:BasisAmount">
       <report test="true()">
 	Element 'ram:BasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:IncludedTradeTax/ram:CalculatedAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:IncludedTradeTax/ram:CalculatedAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:IncludedTradeTax/ram:CategoryCode">
       <let name="codeValue19" value="."/>
-      <assert id="FX-SCH-A-000179" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=19]/enumeration[@value=$codeValue19]">
+      <assert id="FX-SCH-A-000179" test="string-length($codeValue19)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=19]/enumeration[@value=$codeValue19]">
 	Value of 'ram:CategoryCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:IncludedTradeTax/ram:DueDateTypeCode">
       <report test="true()">
 	Element 'ram:DueDateTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:IncludedTradeTax/ram:ExemptionReasonCode">
       <let name="codeValue20" value="."/>
-      <assert id="FX-SCH-A-000181" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=20]/enumeration[@value=$codeValue20]">
+      <assert id="FX-SCH-A-000181" test="string-length($codeValue20)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=20]/enumeration[@value=$codeValue20]">
 	Value of 'ram:ExemptionReasonCode' is not allowed.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:IncludedTradeTax/ram:ExemptionReasonCode[@listID]">
-      <report test="true()">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:IncludedTradeTax/ram:ExemptionReasonCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:IncludedTradeTax/ram:LineTotalBasisAmount">
       <report test="true()">
 	Element 'ram:LineTotalBasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:IncludedTradeTax/ram:TaxPointDate">
       <report test="true()">
 	Element 'ram:TaxPointDate' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:NetPriceProductTradePrice/ram:IncludedTradeTax/ram:TypeCode">
       <let name="codeValue18" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=18]/enumeration[@value=$codeValue18]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue18)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=18]/enumeration[@value=$codeValue18]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:QuotationReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:QuotationReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:QuotationReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:QuotationReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:QuotationReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:QuotationReferencedDocument/ram:LineID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:QuotationReferencedDocument/ram:LineID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:QuotationReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:QuotationReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:QuotationReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:QuotationReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:SellerOrderReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:SellerOrderReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:SellerOrderReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:SellerOrderReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:SellerOrderReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:SellerOrderReferencedDocument/ram:LineID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:SellerOrderReferencedDocument/ram:LineID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:SellerOrderReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:SellerOrderReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:SellerOrderReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:SellerOrderReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:LineID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:LineID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeAgreement/ram:UltimateCustomerOrderReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery">
       <assert id="FX-SCH-A-000276" test="count(ram:BilledQuantity)=1">
 	Element 'ram:BilledQuantity' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ActualDeliverySupplyChainEvent">
       <assert id="FX-SCH-A-000171" test="count(ram:OccurrenceDateTime)=1">
 	Element 'ram:OccurrenceDateTime' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ActualDeliverySupplyChainEvent/ram:OccurrenceDateTime/udt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ActualDeliverySupplyChainEvent/ram:OccurrenceDateTime/udt:DateTimeString[@format]">
       <let name="codeValue3" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue3)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:BilledQuantity">
       <assert id="FX-SCH-A-000277" test="@unitCode">
 	Attribute '@unitCode' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:BilledQuantity[@unitCode]">
       <let name="codeValue11" value="@unitCode"/>
-      <assert id="FX-SCH-A-000275" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=11]/enumeration[@value=$codeValue11]">
+      <assert id="FX-SCH-A-000275" test="string-length($codeValue11)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
 	Value of '@unitCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ChargeFreeQuantity">
       <assert id="FX-SCH-A-000277" test="@unitCode">
 	Attribute '@unitCode' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ChargeFreeQuantity[@unitCode]">
       <let name="codeValue11" value="@unitCode"/>
-      <assert id="FX-SCH-A-000275" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=11]/enumeration[@value=$codeValue11]">
+      <assert id="FX-SCH-A-000275" test="string-length($codeValue11)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
 	Value of '@unitCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:LineID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:LineID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:LineID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:LineID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:PackageQuantity">
       <assert id="FX-SCH-A-000277" test="@unitCode">
 	Attribute '@unitCode' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:PackageQuantity[@unitCode]">
       <let name="codeValue11" value="@unitCode"/>
-      <assert id="FX-SCH-A-000275" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=11]/enumeration[@value=$codeValue11]">
+      <assert id="FX-SCH-A-000275" test="string-length($codeValue11)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
 	Value of '@unitCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:LineID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:LineID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:TypeCode">
       <report test="true()">
 	Element 'ram:TypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ReceivingAdviceReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -6212,158 +4290,100 @@
       <assert id="FX-SCH-A-000166" test="count(ram:SpecifiedTaxRegistration)&lt;=1">
 	Element 'ram:SpecifiedTaxRegistration' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <report test="true()">
 	Element 'ram:PostalTradeAddress' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:ShipToTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -6374,152 +4394,98 @@
       <assert id="FX-SCH-A-000166" test="count(ram:SpecifiedTaxRegistration)&lt;=1">
 	Element 'ram:SpecifiedTaxRegistration' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:FaxUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication">
       <assert id="FX-SCH-A-000289" test="count(ram:CompleteNumber)=1">
 	Element 'ram:CompleteNumber' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:GlobalID[@schemeID]">
       <let name="codeValue21" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue21)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:PostalTradeAddress">
       <assert id="FX-SCH-A-000035" test="count(ram:CountryID)=1">
 	Element 'ram:CountryID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000167" test="count(ram:CountrySubDivisionName)&lt;=1">
 	Element 'ram:CountrySubDivisionName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000036" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000036" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:PostalTradeAddress/ram:PostcodeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:SpecifiedLegalOrganization/ram:ID[@schemeID]">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue22" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=22]/enumeration[@value=$codeValue22]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue22)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=22]/enumeration[@value=$codeValue22]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:SpecifiedLegalOrganization/ram:PostalTradeAddress">
       <report test="true()">
 	Element 'ram:PostalTradeAddress' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:SpecifiedTaxRegistration">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:SpecifiedTaxRegistration/ram:ID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:URIUniversalCommunication">
       <assert id="FX-SCH-A-000168" test="count(ram:URIID)=1">
 	Element 'ram:URIID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:URIUniversalCommunication/ram:CompleteNumber">
       <report test="true()">
 	Element 'ram:CompleteNumber' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:URIUniversalCommunication/ram:URIID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:UltimateShipToTradeParty/ram:URIUniversalCommunication/ram:URIID[@schemeID]">
       <let name="codeValue23" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=23]/enumeration[@value=$codeValue23]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue23)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=23]/enumeration[@value=$codeValue23]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement">
       <assert id="FX-SCH-A-000173" test="count(ram:ApplicableTradeTax)&gt;=1">
 	Element 'ram:ApplicableTradeTax' must occur at least 1 times.</assert>
@@ -6530,66 +4496,46 @@
       <assert id="FX-SCH-A-000175" test="count(ram:ReceivableSpecifiedTradeAccountingAccount)&lt;=1">
 	Element 'ram:ReceivableSpecifiedTradeAccountingAccount' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:AdditionalReferencedDocument">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
 	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000020" test="count(ram:TypeCode)=1">
 	Element 'ram:TypeCode' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:AdditionalReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:AdditionalReferencedDocument/ram:FormattedIssueDateTime">
       <report test="true()">
 	Element 'ram:FormattedIssueDateTime' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:AdditionalReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:AdditionalReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:AdditionalReferencedDocument/ram:LineID">
       <report test="true()">
 	Element 'ram:LineID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:AdditionalReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:AdditionalReferencedDocument/ram:ReferenceTypeCode">
       <let name="codeValue15" value="."/>
-      <assert id="FX-SCH-A-000282" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=15]/enumeration[@value=$codeValue15]">
+      <assert id="FX-SCH-A-000282" test="string-length($codeValue15)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=15]/enumeration[@value=$codeValue15]">
 	Value of 'ram:ReferenceTypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:AdditionalReferencedDocument/ram:TypeCode">
       <let name="codeValue13" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=13]/enumeration[@value=$codeValue13]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue13)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=13]/enumeration[@value=$codeValue13]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:AdditionalReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax">
       <assert id="FX-SCH-A-000338" test="count(ram:CalculatedAmount)&lt;=1">
 	Element 'ram:CalculatedAmount' may occur at maximum 1 times.</assert>
@@ -6598,273 +4544,177 @@
       <assert id="FX-SCH-A-000178" test="count(ram:CategoryCode)=1">
 	Element 'ram:CategoryCode' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:AllowanceChargeBasisAmount">
       <report test="true()">
 	Element 'ram:AllowanceChargeBasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:BasisAmount">
       <report test="true()">
 	Element 'ram:BasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode">
       <let name="codeValue19" value="."/>
-      <assert id="FX-SCH-A-000179" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=19]/enumeration[@value=$codeValue19]">
+      <assert id="FX-SCH-A-000179" test="string-length($codeValue19)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=19]/enumeration[@value=$codeValue19]">
 	Value of 'ram:CategoryCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:DueDateTypeCode">
       <report test="true()">
 	Element 'ram:DueDateTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:ExemptionReasonCode">
       <let name="codeValue20" value="."/>
-      <assert id="FX-SCH-A-000181" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=20]/enumeration[@value=$codeValue20]">
+      <assert id="FX-SCH-A-000181" test="string-length($codeValue20)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=20]/enumeration[@value=$codeValue20]">
 	Value of 'ram:ExemptionReasonCode' is not allowed.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:ExemptionReasonCode[@listID]">
-      <report test="true()">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:ExemptionReasonCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:LineTotalBasisAmount">
       <report test="true()">
 	Element 'ram:LineTotalBasisAmount' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:TaxPointDate">
       <report test="true()">
 	Element 'ram:TaxPointDate' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:TypeCode">
       <let name="codeValue24" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=24]/enumeration[@value=$codeValue24]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue24)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=24]/enumeration[@value=$codeValue24]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:BillingSpecifiedPeriod/ram:CompleteDateTime">
       <report test="true()">
 	Element 'ram:CompleteDateTime' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:BillingSpecifiedPeriod/ram:Description">
       <report test="true()">
 	Element 'ram:Description' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:BillingSpecifiedPeriod/ram:EndDateTime/udt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:BillingSpecifiedPeriod/ram:EndDateTime/udt:DateTimeString[@format]">
       <let name="codeValue3" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue3)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:BillingSpecifiedPeriod/ram:StartDateTime/udt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:BillingSpecifiedPeriod/ram:StartDateTime/udt:DateTimeString[@format]">
       <let name="codeValue3" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue3)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:InvoiceReferencedDocument/ram:AttachmentBinaryObject">
       <report test="true()">
 	Element 'ram:AttachmentBinaryObject' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:InvoiceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert id="FX-SCH-A-000021" test="@format">
 	Attribute '@format' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:InvoiceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString[@format]">
       <let name="codeValue12" value="@format"/>
-      <assert id="FX-SCH-A-000022" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert id="FX-SCH-A-000022" test="string-length($codeValue12)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of '@format' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:InvoiceReferencedDocument/ram:IssuerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:InvoiceReferencedDocument/ram:IssuerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:InvoiceReferencedDocument/ram:LineID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:InvoiceReferencedDocument/ram:LineID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:InvoiceReferencedDocument/ram:Name">
       <report test="true()">
 	Element 'ram:Name' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:InvoiceReferencedDocument/ram:ReferenceTypeCode">
       <report test="true()">
 	Element 'ram:ReferenceTypeCode' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:InvoiceReferencedDocument/ram:TypeCode">
       <let name="codeValue27" value="."/>
-      <assert id="FX-SCH-A-000023" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=27]/enumeration[@value=$codeValue27]">
+      <assert id="FX-SCH-A-000023" test="string-length($codeValue27)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=27]/enumeration[@value=$codeValue27]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:InvoiceReferencedDocument/ram:URIID">
       <report test="true()">
 	Element 'ram:URIID' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ReceivableSpecifiedTradeAccountingAccount/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:ReceivableSpecifiedTradeAccountingAccount/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ not(ram:ChargeIndicator/udt:Indicator=&quot;false&quot;) and  not(ram:ChargeIndicator/udt:Indicator=&quot;true&quot;)]">
       <report test="true()">
 	Element variant 'ram:SpecifiedTradeAllowanceCharge[ not(ram:ChargeIndicator/udt:Indicator="false") and  not(ram:ChargeIndicator/udt:Indicator="true")]' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]">
       <assert id="FX-SCH-A-000183" test="count(ram:ChargeIndicator)=1">
 	Element 'ram:ChargeIndicator' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000184" test="count(ram:ActualAmount)=1">
 	Element 'ram:ActualAmount' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ActualAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ActualAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:BasisAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:BasisAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:BasisQuantity">
       <report test="true()">
 	Element 'ram:BasisQuantity' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax">
       <report test="true()">
 	Element 'ram:CategoryTradeTax' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ReasonCode">
       <let name="codeValue25" value="."/>
-      <assert id="FX-SCH-A-000186" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=25]/enumeration[@value=$codeValue25]">
+      <assert id="FX-SCH-A-000186" test="string-length($codeValue25)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=25]/enumeration[@value=$codeValue25]">
 	Value of 'ram:ReasonCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:SequenceNumeric">
       <report test="true()">
 	Element 'ram:SequenceNumeric' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]">
       <assert id="FX-SCH-A-000183" test="count(ram:ChargeIndicator)=1">
 	Element 'ram:ChargeIndicator' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000184" test="count(ram:ActualAmount)=1">
 	Element 'ram:ActualAmount' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ActualAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ActualAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:BasisAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:BasisAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:BasisQuantity">
       <report test="true()">
 	Element 'ram:BasisQuantity' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax">
       <report test="true()">
 	Element 'ram:CategoryTradeTax' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ReasonCode">
       <let name="codeValue26" value="."/>
-      <assert id="FX-SCH-A-000186" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=26]/enumeration[@value=$codeValue26]">
+      <assert id="FX-SCH-A-000186" test="string-length($codeValue26)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=26]/enumeration[@value=$codeValue26]">
 	Value of 'ram:ReasonCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:SequenceNumeric">
       <report test="true()">
 	Element 'ram:SequenceNumeric' is marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation">
       <assert id="FX-SCH-A-000189" test="count(ram:LineTotalAmount)=1">
 	Element 'ram:LineTotalAmount' must occur exactly 1 times.</assert>
@@ -6879,122 +4729,78 @@
       <assert id="FX-SCH-A-000341" test="count(ram:TotalAllowanceChargeAmount)&lt;=1">
 	Element 'ram:TotalAllowanceChargeAmount' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:AllowanceTotalAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:AllowanceTotalAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:ChargeTotalAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:ChargeTotalAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:GrandTotalAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:GrandTotalAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:LineTotalAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:TaxTotalAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:TaxTotalAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:TotalAllowanceChargeAmount[@currencyID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement/ram:SpecifiedTradeSettlementLineMonetarySummation/ram:TotalAllowanceChargeAmount">
+      <report test="@currencyID">
 	Attribute @currencyID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct">
       <assert id="FX-SCH-A-000030" test="count(ram:Name)=1">
 	Element 'ram:Name' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000187" test="count(ram:Description)&lt;=1">
 	Element 'ram:Description' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:ApplicableProductCharacteristic">
       <assert id="FX-SCH-A-000294" test="count(ram:Description)=1">
 	Element 'ram:Description' must occur exactly 1 times.</assert>
       <assert id="FX-SCH-A-000295" test="count(ram:Value)=1">
 	Element 'ram:Value' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:ApplicableProductCharacteristic/ram:TypeCode[@listID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:ApplicableProductCharacteristic/ram:TypeCode">
+      <report test="@listID">
 	Attribute @listID' marked as not used in the given context.</report>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:ApplicableProductCharacteristic/ram:TypeCode[@listVersionID]">
-      <report test="true()">
+      <report test="@listVersionID">
 	Attribute @listVersionID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:BatchID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:BatchID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:BuyerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:BuyerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:DesignatedProductClassification">
       <assert id="FX-SCH-A-000342" test="count(ram:ClassName)&lt;=1">
 	Element 'ram:ClassName' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:DesignatedProductClassification/ram:ClassCode">
       <assert id="FX-SCH-A-000296" test="@listID">
 	Attribute '@listID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:DesignatedProductClassification/ram:ClassCode[@listID]">
       <let name="codeValue8" value="@listID"/>
-      <assert id="FX-SCH-A-000297" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=8]/enumeration[@value=$codeValue8]">
+      <assert id="FX-SCH-A-000297" test="string-length($codeValue8)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=8]/enumeration[@value=$codeValue8]">
 	Value of '@listID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:GlobalID[@schemeID]">
       <let name="codeValue7" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=7]/enumeration[@value=$codeValue7]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue7)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IncludedReferencedProduct">
       <assert id="FX-SCH-A-000163" test="count(ram:ID)&lt;=1">
 	Element 'ram:ID' may occur at maximum 1 times.</assert>
@@ -7007,97 +4813,63 @@
       <assert id="FX-SCH-A-000344" test="count(ram:UnitQuantity)&lt;=1">
 	Element 'ram:UnitQuantity' may occur at maximum 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IncludedReferencedProduct/ram:BuyerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IncludedReferencedProduct/ram:BuyerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IncludedReferencedProduct/ram:GlobalID">
       <assert id="FX-SCH-A-000037" test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IncludedReferencedProduct/ram:GlobalID[@schemeID]">
       <let name="codeValue10" value="@schemeID"/>
-      <assert id="FX-SCH-A-000031" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=10]/enumeration[@value=$codeValue10]">
+      <assert id="FX-SCH-A-000031" test="string-length($codeValue10)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=10]/enumeration[@value=$codeValue10]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IncludedReferencedProduct/ram:ID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IncludedReferencedProduct/ram:ID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IncludedReferencedProduct/ram:IndustryAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IncludedReferencedProduct/ram:IndustryAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IncludedReferencedProduct/ram:SellerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IncludedReferencedProduct/ram:SellerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IncludedReferencedProduct/ram:UnitQuantity">
       <assert id="FX-SCH-A-000277" test="@unitCode">
 	Attribute '@unitCode' is required in this context.</assert>
-    </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IncludedReferencedProduct/ram:UnitQuantity[@unitCode]">
       <let name="codeValue11" value="@unitCode"/>
-      <assert id="FX-SCH-A-000275" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=11]/enumeration[@value=$codeValue11]">
+      <assert id="FX-SCH-A-000275" test="string-length($codeValue11)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
 	Value of '@unitCode' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IndividualTradeProductInstance/ram:BatchID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IndividualTradeProductInstance/ram:BatchID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IndividualTradeProductInstance/ram:SupplierAssignedSerialID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IndividualTradeProductInstance/ram:SupplierAssignedSerialID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IndustryAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:IndustryAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:ModelID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:ModelID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:OriginTradeCountry">
       <assert id="FX-SCH-A-000019" test="count(ram:ID)=1">
 	Element 'ram:ID' must occur exactly 1 times.</assert>
     </rule>
-  </pattern>
-  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:OriginTradeCountry/ram:ID">
       <let name="codeValue9" value="."/>
-      <assert id="FX-SCH-A-000026" test="document('FACTUR-X_EXTENDED_codedb.xml')//cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert id="FX-SCH-A-000026" test="string-length($codeValue9)=0 or document('FACTUR-X_EXTENDED_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of 'ram:ID' is not allowed.</assert>
     </rule>
-  </pattern>
-  <pattern>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:SellerAssignedID[@schemeID]">
-      <report test="true()">
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedTradeProduct/ram:SellerAssignedID">
+      <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
     </rule>
   </pattern>
