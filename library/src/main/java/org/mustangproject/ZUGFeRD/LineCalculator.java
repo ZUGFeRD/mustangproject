@@ -8,13 +8,13 @@ import java.math.RoundingMode;
  * @see TransactionCalculator
  */
 public class LineCalculator {
-	private final BigDecimal price;
-	private final BigDecimal priceGross;
-	private final BigDecimal itemTotalNetAmount;
-	private final BigDecimal itemTotalVATAmount;
-	private BigDecimal allowance = BigDecimal.ZERO;
-	private BigDecimal charge = BigDecimal.ZERO;
-	private BigDecimal allowanceItemTotal = BigDecimal.ZERO;
+	protected BigDecimal price;
+	protected BigDecimal priceGross;
+	protected BigDecimal itemTotalNetAmount;
+	protected BigDecimal itemTotalVATAmount;
+	protected BigDecimal allowance = BigDecimal.ZERO;
+	protected BigDecimal charge = BigDecimal.ZERO;
+	protected BigDecimal allowanceItemTotal = BigDecimal.ZERO;
 
 	public LineCalculator(IZUGFeRDExportableItem currentItem) {
 
@@ -63,6 +63,7 @@ public class LineCalculator {
 
 		price=currentItem.getPrice();
 		priceGross=price;
+		price=price.subtract(allowance).add(charge);
 //		BigDecimal delta=charge.subtract(allowanceItemTotal).subtract(allowance);
 //		delta=delta.divide(currentItem.getQuantity(), 18, RoundingMode.HALF_UP);
 //		priceGross=currentItem.getPrice().add(delta);
@@ -72,7 +73,7 @@ public class LineCalculator {
 			? BigDecimal.ONE.setScale(4)
 			: currentItem.getBasisQuantity();
 		itemTotalNetAmount = quantity.multiply(price).divide(basisQuantity, 18, RoundingMode.HALF_UP)
-				.subtract(allowanceItemTotal).subtract(allowance).add(charge).setScale(2, RoundingMode.HALF_UP);
+				.subtract(allowanceItemTotal).setScale(2, RoundingMode.HALF_UP);
 		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);
 	}
 
