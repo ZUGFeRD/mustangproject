@@ -81,10 +81,13 @@ public class CalculationTest extends ResourceCase {
 
 	@Test
 	public void testLineCalculatorForeignCurrencyExample() {
-
-/*
+/*** xml of official fx sample with allowances and charges
+ *  10x100 with 10% and 50€ item discount =850€
+ *  +8,75 charges on document level=858,75, +19%VAT=1021,91
+ *  prepaid 500->due payable=521,91
+ */
 		File inputCII = getResourceAsFile("Extended_fremdwaehrung.xml");
-inputCII=new File("C:\\Users\\jstaerk\\workspace\\XMLExamples\\zfdiverses\\20250407\\fremdwaehrung.xml");
+
 		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter();
 		Invoice invoice=null;
 		zii.doIgnoreCalculationErrors();
@@ -104,9 +107,9 @@ inputCII=new File("C:\\Users\\jstaerk\\workspace\\XMLExamples\\zfdiverses\\20250
 
 		final TransactionCalculator calculator = new TransactionCalculator(invoice);
 
-		assertEquals(valueOf(521.91).stripTrailingZeros(), calculator.getGrandTotal().stripTrailingZeros());
+		assertEquals(valueOf(521.91).stripTrailingZeros(), calculator.getDuePayable().stripTrailingZeros());
 
- */
+
 	}
 
 
@@ -225,6 +228,9 @@ inputCII=new File("C:\\Users\\jstaerk\\workspace\\XMLExamples\\zfdiverses\\20250
 	}
 
 	public void testSimpleItemPercentAllowance() {
+		/***
+		 * a product with net 1.10 and qty 5 and relative item allowance of 10% should return 5 as line and grand total
+		 */
 		SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
 
 		Invoice invoice = new Invoice();
@@ -264,6 +270,9 @@ inputCII=new File("C:\\Users\\jstaerk\\workspace\\XMLExamples\\zfdiverses\\20250
 	}
 
 	public void testSimpleItemTotalAllowance() {
+		/***
+		 * a product with net 1 and qty 5 and absolute _item_ allowance of 1 should return 4 as line total, and grand total
+		 */
 		SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
 
 		Invoice invoice = new Invoice();
