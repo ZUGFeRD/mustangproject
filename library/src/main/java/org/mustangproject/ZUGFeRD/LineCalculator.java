@@ -12,8 +12,10 @@ public class LineCalculator {
 	protected BigDecimal priceGross;
 	protected BigDecimal itemTotalNetAmount;
 	protected BigDecimal itemTotalVATAmount;
-	protected BigDecimal allowance = BigDecimal.ZERO;
-	protected BigDecimal charge = BigDecimal.ZERO;
+	protected BigDecimal lineAllowance = BigDecimal.ZERO;
+	protected BigDecimal lineCharge = BigDecimal.ZERO;
+	protected BigDecimal itemAllowance = BigDecimal.ZERO;
+	protected BigDecimal itemCharge = BigDecimal.ZERO;
 	protected BigDecimal allowanceItemTotal = BigDecimal.ZERO;
 
 	public LineCalculator(IZUGFeRDExportableItem currentItem) {
@@ -22,11 +24,12 @@ public class LineCalculator {
 			for (IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
 				BigDecimal factor=BigDecimal.ONE;
 				BigDecimal singleAllowance=allowance.getTotalAmount(currentItem);
+				addItemAllowance(singleAllowance);
 
 				if ((allowance.getPercent()!=null)&&(allowance.getPercent().compareTo(BigDecimal.ZERO)!=0)) {
 					factor=currentItem.getQuantity();
 				}
-				addAllowance(singleAllowance.multiply(factor));
+				addLineAllowance(singleAllowance.multiply(factor));
 
 			}
 		}
@@ -34,10 +37,11 @@ public class LineCalculator {
 			for (IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
 				BigDecimal factor=BigDecimal.ONE;
 				BigDecimal singleCharge=charge.getTotalAmount(currentItem);
+				addItemCharge(singleCharge);
 				if ((charge.getPercent()!=null)&&(charge.getPercent().compareTo(BigDecimal.ZERO)!=0)) {
 					factor=currentItem.getQuantity();
 				}
-				addCharge(singleCharge.multiply(factor));
+				addLineCharge(singleCharge.multiply(factor));
 
 			}
 		}
@@ -63,7 +67,7 @@ public class LineCalculator {
 
 		price=currentItem.getPrice();
 		priceGross=price;
-		price=price.subtract(allowance).add(charge);
+		price=price.subtract(itemAllowance).add(itemCharge);
 //		BigDecimal delta=charge.subtract(allowanceItemTotal).subtract(allowance);
 //		delta=delta.divide(currentItem.getQuantity(), 18, RoundingMode.HALF_UP);
 //		priceGross=currentItem.getPrice().add(delta);
@@ -97,12 +101,20 @@ public class LineCalculator {
 		return priceGross;
 	}
 
-	public void addAllowance(BigDecimal b) {
-		allowance = allowance.add(b);
+	public void addLineAllowance(BigDecimal b) {
+		lineAllowance = lineAllowance.add(b);
 	}
 
-	public void addCharge(BigDecimal b) {
-		charge = charge.add(b);
+	public void addLineCharge(BigDecimal b) {
+		lineCharge = lineCharge.add(b);
+	}
+
+	public void addItemAllowance(BigDecimal b) {
+		itemAllowance = itemAllowance.add(b);
+	}
+
+	public void addItemCharge(BigDecimal b) {
+		itemCharge = itemCharge.add(b);
 	}
 
 	public void addAllowanceItemTotal(BigDecimal b) {
