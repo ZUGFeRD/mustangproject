@@ -1,13 +1,16 @@
-- #819
-- #458
-- #788
-- #790
+2.16.5
+=======
+2025-05-22
+- #819 correct generateXSLTFromSchematron profile
+- #458 Its not possible to add multiple PaymentTerms when using the extended profile
+- #788 Invoice taxes aren't acessible
+- #790 Crash upon importing an invoice with empty name.
 - upgrade from PDFBOX 3.0.2 to 3.0.5 
-- #817
-- #811
-- #833
-- #835
-- #816
+- #817 dded ZUGFeRD.PDF-csharp to list of PDF creators
+- #811 Fix typo in xpath when extracting buyer trade party address
+- #833 support zugferd 2.3.3/fx 1.07.3
+- #835 UBL does not read item allowances/charges
+- #816 Wrong grand total amount for UBL invoices
 
 2.16.4
 =======
