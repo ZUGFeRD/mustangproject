@@ -20,10 +20,8 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mustangproject.*;
 
@@ -66,7 +64,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		assertFalse(hasExceptions);
 		// Reading ZUGFeRD
-		assertEquals("Bei Spiel GmbH", invoice.getOwnOrganisationName());
+		assertEquals("Bei Spiel GmbH", invoice.getSender().getName());
 		assertEquals(3, invoice.getZFItems().length);
 		assertEquals("400.0000", invoice.getZFItems()[1].getQuantity().toString());
 
@@ -124,7 +122,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		assertFalse(hasExceptions);
 		// Reading ZUGFeRD
-		assertEquals("Bei Spiel GmbH", invoice.getOwnOrganisationName());
+		assertEquals("Bei Spiel GmbH", invoice.getSender().getName());
 		assertEquals(3, invoice.getZFItems().length);
 		assertEquals(invoice.getZFItems()[0].getNotesWithSubjectCode().get(0).getContent(),"Something");
 		assertEquals(invoice.getZFItems()[0].getNotesWithSubjectCode().size(),1);
@@ -200,7 +198,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		assertFalse(hasExceptions);
 		// Reading ZUGFeRD
-		assertEquals("Bei Spiel GmbH", invoice.getOwnOrganisationName());
+		assertEquals("Bei Spiel GmbH", invoice.getSender().getName());
 		assertEquals(3, invoice.getZFItems().length);
 		assertEquals("400.0000", invoice.getZFItems()[1].getQuantity().toString());
 
@@ -616,5 +614,23 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		Invoice invoice = zii.extractInvoice();
 		assertEquals(3, invoice.getZFItems().length);
 		assertEquals("BUYER_ACCOUNTING_REF", invoice.getZFItems()[0].getAccountingReference());
+	}
+
+	@Test
+	public void testImportExport() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("cii/Factur-X_basic.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.setInputStream(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+		assertTrue(invoice.isValid());
+
+		assertNull(invoice.getDeliveryAddress());
+		assertNull(invoice.getPayee());
+
+		assertNull(invoice.getBuyerOrderReferencedDocumentID());
+		assertNull(invoice.getSellerOrderReferencedDocumentID());
+		assertNull(invoice.getDespatchAdviceReferencedDocumentID());
+		assertNull(invoice.getInvoiceReferencedDocumentID());
 	}
 }
