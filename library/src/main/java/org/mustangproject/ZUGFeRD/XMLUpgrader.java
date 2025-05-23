@@ -10,12 +10,14 @@ import java.nio.charset.StandardCharsets;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.mustangproject.util.TransformerBuilderSingleton;
 
 /***
  * Uses a XSLT transformation to upgrade
@@ -30,9 +32,8 @@ public class XMLUpgrader {
 	private TransformerFactory mFactory = null;
 	private Templates mXsltTemplate = null;
 
-	public XMLUpgrader() {
-		mFactory = new net.sf.saxon.TransformerFactoryImpl();
-		//fact = TransformerFactory.newInstance();
+	public XMLUpgrader() throws TransformerConfigurationException {
+		mFactory = TransformerBuilderSingleton.getInstance();
 		mFactory.setURIResolver(new ClasspathResourceURIResolver());
 	}
 
