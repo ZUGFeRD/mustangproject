@@ -431,31 +431,20 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml += "<ram:BuyerAssignedID>"
 						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>";
 				}
-				String allowanceChargeStr = "";
-				if (currentItem.getItemAllowances() != null && currentItem.getItemAllowances().length > 0) {
-					for (final IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
-						allowanceChargeStr += getAllowanceChargeStr(allowance, currentItem);
-					}
-				}
-				if (currentItem.getItemCharges() != null && currentItem.getItemCharges().length > 0) {
-					for (final IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
-						allowanceChargeStr += getAllowanceChargeStr(charge, currentItem);
-
-					}
-				}
-
-				String itemTotalAllowanceChargeStr = "";
-				if (currentItem.getItemTotalAllowances() != null && currentItem.getItemTotalAllowances().length > 0) {
-					for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getItemTotalAllowances()) {
-						itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalAllowance, currentItem);
-					}
-				}
 
 				xml += "<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>";
 				if (currentItem.getProduct().getDescription() != null && currentItem.getProduct().getDescription().length() > 0) {
 					xml += "<ram:Description>" +
 						XMLTools.encodeXML(currentItem.getProduct().getDescription()) +
 						"</ram:Description>";
+				}
+				if (currentItem.getProduct().getAttributes() != null) {
+					for (Entry<String, String> entry : currentItem.getProduct().getAttributes().entrySet()) {
+						xml += "<ram:ApplicableProductCharacteristic>" +
+							"<ram:Description>" + XMLTools.encodeXML(entry.getKey()) + "</ram:Description>" +
+							"<ram:Value>" + XMLTools.encodeXML(entry.getValue()) + "</ram:Value>" +
+							"</ram:ApplicableProductCharacteristic>";
+					}
 				}
 				if (currentItem.getProduct().getClassifications() != null && currentItem.getProduct().getClassifications().length > 0) {
 					for (IDesignatedProductClassification classification : currentItem.getProduct().getClassifications()) {
@@ -469,14 +458,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 							xml += "<ram:ClassName>" + XMLTools.encodeXML(classification.getClassName()) + "</ram:ClassName>";
 						}
 						xml += "</ram:DesignatedProductClassification>";
-					}
-				}
-				if (currentItem.getProduct().getAttributes() != null) {
-					for (Entry<String, String> entry : currentItem.getProduct().getAttributes().entrySet()) {
-						xml += "<ram:ApplicableProductCharacteristic>" +
-							"<ram:Description>" + XMLTools.encodeXML(entry.getKey()) + "</ram:Description>" +
-							"<ram:Value>" + XMLTools.encodeXML(entry.getValue()) + "</ram:Value>" +
-							"</ram:ApplicableProductCharacteristic>";
 					}
 				}
 				if (currentItem.getProduct().getCountryOfOrigin() != null) {
@@ -502,6 +483,18 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "</ram:BuyerOrderReferencedDocument>";
 				}
 
+				String allowanceChargeStr = "";
+				if (currentItem.getItemAllowances() != null && currentItem.getItemAllowances().length > 0) {
+					for (final IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
+						allowanceChargeStr += getAllowanceChargeStr(allowance, currentItem);
+					}
+				}
+				if (currentItem.getItemCharges() != null && currentItem.getItemCharges().length > 0) {
+					for (final IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
+						allowanceChargeStr += getAllowanceChargeStr(charge, currentItem);
+
+					}
+				}
 				if (!allowanceChargeStr.isEmpty()) {
 					xml += "<ram:GrossPriceProductTradePrice>"
 						+ "<ram:ChargeAmount>" + priceFormat(lc.getPriceGross())
@@ -551,6 +544,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml += "</ram:BillingSpecifiedPeriod>";
 				}
 
+				String itemTotalAllowanceChargeStr = "";
+				if (currentItem.getItemTotalAllowances() != null && currentItem.getItemTotalAllowances().length > 0) {
+					for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getItemTotalAllowances()) {
+						itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalAllowance, currentItem);
+					}
+				}
 				xml += itemTotalAllowanceChargeStr;
 
 				xml += "<ram:SpecifiedTradeSettlementLineMonetarySummation>"
