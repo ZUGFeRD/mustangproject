@@ -129,10 +129,10 @@ public class ValidationLogVisualizer {
 			// Step 4: Setup JAXP using identity transformer
 			TransformerFactory factory = TransformerFactory.newInstance();
 
-			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-			factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-			factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-			factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+			setFeature(factory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			setFeature(factory, "http://apache.org/xml/features/disallow-doctype-decl", true);
+			setFeature(factory, "http://xml.org/sax/features/external-general-entities", false);
+			setFeature(factory, "http://xml.org/sax/features/external-parameter-entities", false);
 			Transformer transformer = factory.newTransformer(); // identity transformer
 
 			// Step 5: Setup input and output for XSLT transformation
@@ -149,6 +149,27 @@ public class ValidationLogVisualizer {
 			LOGGER.error("Failed to create PDF", e);
 		}
 		return baos.toByteArray();
+	}
+
+	private void setFeature(final TransformerFactory tf, final String key, final boolean value) {
+		if (tf != null && !isNullOrEmpty(key)) {
+			Class<?> tfClass = tf.getClass();
+			try {
+				tf.setFeature(key, value);
+			} catch (TransformerConfigurationException e) {
+				LOGGER.warn(
+					String.format(
+						"Feature '%s' is not supported by the implementation of TransformerFactory ('%s').",
+						key,
+						tfClass.getName()
+					)
+				);
+			}
+		}
+	}
+
+	private boolean isNullOrEmpty(final String s) {
+		return s == null || s.isEmpty();
 	}
 
 	public byte[] toPDF(String xmlLogfileContent) {
