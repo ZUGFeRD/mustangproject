@@ -70,12 +70,12 @@
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
-            <version>2.10.0</version>
+            <version>2.10.2</version>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-assertj</artifactId>
-            <version>2.10.0</version>
+            <version>2.10.2</version>
         </dependency>
 
         <!-- /directory validation: -->
