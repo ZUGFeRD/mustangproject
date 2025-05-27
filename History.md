@@ -1,3 +1,9 @@
+#820/801/815
+#822
+#843
+add getCalculation on calculatedInvoice
+Transactioncalculator getTaxDetails to include correct percentage, calculated amounts
+
 2.16.5
 =======
 2025-05-22

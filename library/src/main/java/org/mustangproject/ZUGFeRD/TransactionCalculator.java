@@ -79,7 +79,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 					entry.getValue().getBasis(),
 					entry.getValue().getCalculated(),
 					entry.getValue().getCategoryCode()
-				).setCalculated(entry.getKey())
+				).setApplicablePercent(entry.getKey())
 			)
 			.collect(Collectors.toSet());
 	}
@@ -187,9 +187,8 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
 			BigDecimal percent = null;
-			if (currentItem.getProduct()!=null)
-			{
-				percent=currentItem.getProduct().getVATPercent();
+			if (currentItem.getProduct() != null) {
+				percent = currentItem.getProduct().getVATPercent();
 			}
 			if (percent != null) {
 				LineCalculator lc = new LineCalculator(currentItem);
