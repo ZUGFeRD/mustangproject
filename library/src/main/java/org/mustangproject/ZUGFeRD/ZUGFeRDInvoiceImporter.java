@@ -11,7 +11,7 @@ import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.mustangproject.*;
 import org.mustangproject.Exceptions.ArithmetricException;
 import org.mustangproject.Exceptions.StructureException;
-import org.mustangproject.util.DocumentBuilderSingleton;
+import org.mustangproject.util.DocumentBuilderFactoryCreator;
 import org.mustangproject.util.NodeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -258,7 +258,7 @@ public class ZUGFeRDInvoiceImporter {
 	}
 
 	private void setDocument() throws ParserConfigurationException, IOException, SAXException, ParseException {
-		final DocumentBuilder builder = DocumentBuilderSingleton.getInstance().newDocumentBuilder();
+		final DocumentBuilder builder = DocumentBuilderFactoryCreator.getInstance().newDocumentBuilder();
 		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
 		///    is.skip(guessBOMSize(is));
 		document = builder.parse(is);

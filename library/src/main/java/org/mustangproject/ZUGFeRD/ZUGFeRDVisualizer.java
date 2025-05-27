@@ -31,8 +31,8 @@ import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.mustangproject.ClasspathResolverURIAdapter;
 import org.mustangproject.EStandard;
-import org.mustangproject.util.DocumentBuilderSingleton;
-import org.mustangproject.util.TransformerBuilderSingleton;
+import org.mustangproject.util.DocumentBuilderFactoryCreator;
+import org.mustangproject.util.TransformerFactoryCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -84,7 +84,7 @@ public class ZUGFeRDVisualizer {
 	private Templates mXsltZF1HTMLTemplate = null;
 
 	public ZUGFeRDVisualizer() throws TransformerConfigurationException {
-		mFactory = TransformerBuilderSingleton.getInstance();
+		mFactory = TransformerFactoryCreator.getInstance();
 		mFactory.setURIResolver(new ClasspathResourceURIResolver());
 	}
 
@@ -103,7 +103,7 @@ public class ZUGFeRDVisualizer {
 		String cioSignature = "SCRDMCCBDACIOMessageStructure";
 
 		try {
-			DocumentBuilder db = DocumentBuilderSingleton.getInstance().newDocumentBuilder();
+			DocumentBuilder db = DocumentBuilderFactoryCreator.getInstance().newDocumentBuilder();
 			Document doc = db.parse(new InputSource(fis));
 			Element root = doc.getDocumentElement();
 			if (root.getLocalName().equals(zf1Signature)) {

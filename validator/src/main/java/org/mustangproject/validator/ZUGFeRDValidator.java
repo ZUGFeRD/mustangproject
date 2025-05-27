@@ -25,7 +25,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.util.ByteArraySearcher;
-import org.mustangproject.util.DocumentBuilderSingleton;
+import org.mustangproject.util.DocumentBuilderFactoryCreator;
 import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,7 +145,7 @@ public class ZUGFeRDValidator {
 						xmlAsString = new String(content, StandardCharsets.UTF_8);
 						InputSource is = new InputSource(new StringReader(xmlAsString));
 
-						DocumentBuilder db = DocumentBuilderSingleton.getInstance().newDocumentBuilder();
+						DocumentBuilder db = DocumentBuilderFactoryCreator.getInstance().newDocumentBuilder();
 						Document doc = db.parse(is);
 
 						Element root = doc.getDocumentElement();

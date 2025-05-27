@@ -22,7 +22,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.mustangproject.util.ByteArraySearcher;
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
-import org.mustangproject.util.DocumentBuilderSingleton;
+import org.mustangproject.util.DocumentBuilderFactoryCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.verapdf.features.FeatureExtractorConfig;
@@ -138,7 +138,7 @@ public class PDFValidator extends Validator {
 		 * <zf:Version>1.0</zf:Version>
 		 */
 		try {
-			final DocumentBuilder builder = DocumentBuilderSingleton.getInstance().newDocumentBuilder();
+			final DocumentBuilder builder = DocumentBuilderFactoryCreator.getInstance().newDocumentBuilder();
 			final InputSource is = new InputSource(new StringReader(xmp));
 			final Document docXMP = builder.parse(is);
 

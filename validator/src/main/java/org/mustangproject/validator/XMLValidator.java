@@ -19,7 +19,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.mustangproject.XMLTools;
-import org.mustangproject.util.DocumentBuilderSingleton;
+import org.mustangproject.util.DocumentBuilderFactoryCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -148,7 +148,7 @@ public class XMLValidator extends Validator {
 				 *
 				 */
 
-				final DocumentBuilder db = DocumentBuilderSingleton.getInstance().newDocumentBuilder();
+				final DocumentBuilder db = DocumentBuilderFactoryCreator.getInstance().newDocumentBuilder();
 				final InputSource is = new InputSource(new StringReader(zfXML));
 				final Document doc = db.parse(is);
 

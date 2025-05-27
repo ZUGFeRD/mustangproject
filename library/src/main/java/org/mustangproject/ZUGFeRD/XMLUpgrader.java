@@ -17,7 +17,7 @@ import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.mustangproject.util.TransformerBuilderSingleton;
+import org.mustangproject.util.TransformerFactoryCreator;
 
 /***
  * Uses a XSLT transformation to upgrade
@@ -33,7 +33,7 @@ public class XMLUpgrader {
 	private Templates mXsltTemplate = null;
 
 	public XMLUpgrader() throws TransformerConfigurationException {
-		mFactory = TransformerBuilderSingleton.getInstance();
+		mFactory = TransformerFactoryCreator.getInstance();
 		mFactory.setURIResolver(new ClasspathResourceURIResolver());
 	}
 

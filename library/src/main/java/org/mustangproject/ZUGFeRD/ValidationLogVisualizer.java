@@ -33,7 +33,7 @@ import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.mustangproject.ClasspathResolverURIAdapter;
-import org.mustangproject.util.TransformerBuilderSingleton;
+import org.mustangproject.util.TransformerFactoryCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,7 @@ public class ValidationLogVisualizer {
 
 
 	public ValidationLogVisualizer() throws TransformerConfigurationException {
-		mFactory = TransformerBuilderSingleton.getInstance();
+		mFactory = TransformerFactoryCreator.getInstance();
 		mFactory.setURIResolver(new ValidationLogVisualizer.ClasspathResourceURIResolver());
 	}
 
