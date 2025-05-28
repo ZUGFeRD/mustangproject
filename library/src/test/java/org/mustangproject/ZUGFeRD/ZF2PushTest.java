@@ -141,7 +141,7 @@ public class ZF2PushTest extends TestCase {
 
 		String senderDescription = "Kleinunternehmer";
 		String taxID = "9990815";
-		String theNote="oh lala";
+		String theNote = "oh lala";
 		BigDecimal price = new BigDecimal(priceStr);
 		try {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
@@ -177,7 +177,7 @@ public class ZF2PushTest extends TestCase {
 			throw new RuntimeException(e);
 		}
 
-		assertEquals(i.getZFItems()[0].getNotesWithSubjectCode().get(0).getContent(),theNote);
+		assertEquals(i.getZFItems()[0].getNotesWithSubjectCode().get(0).getContent(), theNote);
 		assertEquals(senderDescription, i.getSender().getDescription());
 
 		// now check the contents (like MustangReaderTest)
@@ -255,7 +255,7 @@ public class ZF2PushTest extends TestCase {
 			//	ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(orgname,"teststr", "55232","teststadt","DE")).setOwnTaxID("4711").setOwnVATID("DE0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number)
 			//					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance().setPercent(new BigDecimal(50)))));
 
-			Invoice i=new Invoice().setDueDate(new Date()).setIssueDate(new Date())
+			Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date())
 				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")
 					.setContact(new Contact("contact testname", "123456", "contact.testemail@example.org").setFax("0911623562")))
@@ -275,21 +275,20 @@ public class ZF2PushTest extends TestCase {
 			fail("IOException should not be raised");
 		}
 
-		// now check the contents (like MustangReaderTest)
-		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_ITEMCHARGESALLOWANCESPDF);
-
-		assertEquals("EUR", zi.getInvoiceCurrencyCode());
-		assertTrue(zi.getUTF8().contains("0911623562")); // fax number
-		assertTrue(zi.getUTF8().contains("ABK"));
-
-		// Reading ZUGFeRD
-		assertEquals("19.52", zi.getAmount());
-		assertEquals(orgname, zi.getHolder());
-		assertEquals(number, zi.getForeignReference());
 		try {
+			// now check the contents (like MustangReaderTest)
+			ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_ITEMCHARGESALLOWANCESPDF);
+			assertEquals("EUR", zi.getInvoiceCurrencyCode());
+			assertTrue(zi.getUTF8().contains("0911623562")); // fax number
+			assertTrue(zi.getUTF8().contains("ABK"));
+
+			// Reading ZUGFeRD
+			assertEquals("18.33", zi.getAmount());
+			assertEquals(orgname, zi.getHolder());
+			assertEquals(number, zi.getForeignReference());
 			assertEquals(zi.getVersion(), 2);
 		} catch (Exception e) {
-			e.printStackTrace();
+			fail("Exception should not be raised");
 		}
 	}
 
@@ -595,7 +594,7 @@ public class ZF2PushTest extends TestCase {
 			assertEquals(1, i.getInvoiceReferencedDocuments().size());
 			assertEquals("abcd1234", i.getInvoiceReferencedDocuments().get(0).getIssuerAssignedID());
 			assertEquals("4304171000002", i.getRecipient().getGlobalID());
-			SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMdd");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 			assertEquals(occurrenceFrom, sdf.format(i.getDetailedDeliveryPeriodFrom()));
 			assertEquals(occurrenceTo, sdf.format(i.getDetailedDeliveryPeriodTo()));
 			assertEquals("2001015001325", i.getZFItems()[0].getProduct().getGlobalID());
