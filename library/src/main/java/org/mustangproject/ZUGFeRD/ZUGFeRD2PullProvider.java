@@ -589,19 +589,19 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		xml += getTradePartyAsXML(trans.getRecipient(), false, false);
 		xml += "</ram:BuyerTradeParty>";
 
-		if (trans.getSellerOrderReferencedDocumentID() != null) {
+		if (trans.getSellerOrderReferencedDocumentID() != null && !trans.getSellerOrderReferencedDocumentID().trim().isEmpty()) {
 			xml += "<ram:SellerOrderReferencedDocument>"
 				+ "<ram:IssuerAssignedID>"
 				+ XMLTools.encodeXML(trans.getSellerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
 				+ "</ram:SellerOrderReferencedDocument>";
 		}
-		if (trans.getBuyerOrderReferencedDocumentID() != null) {
+		if (trans.getBuyerOrderReferencedDocumentID() != null && !trans.getBuyerOrderReferencedDocumentID().trim().isEmpty()) {
 			xml += "<ram:BuyerOrderReferencedDocument>"
 				+ "<ram:IssuerAssignedID>"
 				+ XMLTools.encodeXML(trans.getBuyerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
 				+ "</ram:BuyerOrderReferencedDocument>";
 		}
-		if (trans.getContractReferencedDocument() != null) {
+		if (trans.getContractReferencedDocument() != null && !trans.getContractReferencedDocument().trim().isEmpty()) {
 			xml += "<ram:ContractReferencedDocument>"
 				+ "<ram:IssuerAssignedID>"
 				+ XMLTools.encodeXML(trans.getContractReferencedDocument()) + "</ram:IssuerAssignedID>"
@@ -655,7 +655,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		 * "<ID>2013-51112</ID>" +
 		 * "</DeliveryNoteReferencedDocument>"
 		 */
-		if (trans.getDespatchAdviceReferencedDocumentID() != null) {
+		if (trans.getDespatchAdviceReferencedDocumentID() != null && !trans.getDespatchAdviceReferencedDocumentID().trim().isEmpty()) {
 			xml += "<ram:DespatchAdviceReferencedDocument>";
 			xml += "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getDespatchAdviceReferencedDocumentID()) + "</ram:IssuerAssignedID>";
 			xml += "</ram:DespatchAdviceReferencedDocument>";
@@ -888,7 +888,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 		xml += "<ram:DuePayableAmount>" + currencyFormat(calc.getDuePayable()) + "</ram:DuePayableAmount>"
 			+ "</ram:SpecifiedTradeSettlementHeaderMonetarySummation>";
-		if (trans.getInvoiceReferencedDocumentID() != null) {
+		if (trans.getInvoiceReferencedDocumentID() != null && !trans.getInvoiceReferencedDocumentID().trim().isEmpty()) {
 			xml += "<ram:InvoiceReferencedDocument>"
 				+ "<ram:IssuerAssignedID>"
 				+ XMLTools.encodeXML(trans.getInvoiceReferencedDocumentID()) + "</ram:IssuerAssignedID>";
