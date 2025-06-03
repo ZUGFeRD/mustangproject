@@ -139,6 +139,7 @@ public class UBLTest extends ResourceCase {
 		assertFalse(hasExceptions);
 
 		assertEquals(new BigDecimal("10000.0"), invoice.getTotalPrepaidAmount());
+		assertEquals("4621231", invoice.getSender().getContact().getFax());
 	}
 
 }

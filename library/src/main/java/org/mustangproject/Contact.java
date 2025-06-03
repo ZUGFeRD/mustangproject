@@ -130,6 +130,21 @@ public class Contact implements IZUGFeRDExportableContact {
 					} else if (currentItemNode.getLocalName().equals("Telephone")) { /* UBL */
 						setPhone(currentItemNode.getTextContent());
 					}
+
+					// CII: only for Extended profile
+					if (currentItemNode.getLocalName().equals("FaxUniversalCommunication")) { /* CII */
+						NodeList fax = currentItemNode.getChildNodes();
+						for (int faxChildIndex = 0; faxChildIndex < fax.getLength(); faxChildIndex++) {
+							if (fax.item(faxChildIndex).getLocalName() != null) {
+								if (fax.item(faxChildIndex).getLocalName().equals("CompleteNumber")) {
+									setFax(fax.item(faxChildIndex).getTextContent());
+								}
+							}
+						}
+					} else if (currentItemNode.getLocalName().equals("Telefax")) { /* UBL */
+						setFax(currentItemNode.getTextContent());
+					}
+
 					if (currentItemNode.getLocalName().equals("EmailURIUniversalCommunication")) { /* CII */
 						NodeList email = currentItemNode.getChildNodes();
 						for (int emailChildIndex = 0; emailChildIndex < email.getLength(); emailChildIndex++) {
