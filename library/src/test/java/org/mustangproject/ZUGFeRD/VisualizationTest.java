@@ -49,24 +49,6 @@ public class VisualizationTest extends ResourceCase {
 		this.runZUGFeRDVisualization("factur-x-extended.xml", "factur-x-vis-extended.de.html", Language.DE);
 	}
 
-	public void testCIIVisualizationExtended2() {
-
-
-		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
-		String result = null;
-		try {
-			result = zvi.visualize("C:\\Users\\jstaerk\\Desktop\\test.txt", Language.DE);
-			Files.write(Paths.get("c:\\Users\\jstaerk\\temp\\res.html"), result.getBytes(StandardCharsets.UTF_8));
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} catch (TransformerException e) {
-			throw new RuntimeException(e);
-		} catch (ParserConfigurationException e) {
-			throw new RuntimeException(e);
-		}
-
-	}
-
 	public void testUBLCreditNoteVisualizationBasic() {
 		this.runZUGFeRDVisualization("ubl-creditnote.xml", "factur-x-vis-ubl-creditnote.en.html", Language.EN);
 	}
@@ -100,15 +82,7 @@ public class VisualizationTest extends ResourceCase {
 		} catch (ParserConfigurationException e) {
 			fail("ParserConfigurationException should not happen: " + e.getMessage());
 		}
-
-		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy-HH_mm_ss");
-		try {
-			String datePart=formatter.format(new Date());
-			Files.write( Paths.get("c:\\Users\\jstaerk\\temp\\res"+datePart+".txt"), result.getBytes());
-			Files.write( Paths.get("c:\\Users\\jstaerk\\temp\\exp"+datePart+".txt"), expected.getBytes());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		
 		assertNotNull(result);
         /* remove file endings so that tests can also pass after checking
 		   out from git with arbitrary options (which may include CSRF changes)
