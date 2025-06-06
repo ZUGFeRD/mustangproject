@@ -295,6 +295,16 @@ public class Item implements IZUGFeRDExportableItem {
 		return this;
 	}
 
+	@Override public IZUGFeRDAllowanceCharge[] getAllowances() {
+		IZUGFeRDAllowanceCharge[] izac=new IZUGFeRDAllowanceCharge[Allowances.size()];
+		return Allowances.toArray(izac);
+	}
+
+	@Override public IZUGFeRDAllowanceCharge[] getCharges() {
+		IZUGFeRDAllowanceCharge[] izac=new IZUGFeRDAllowanceCharge[Charges.size()];
+		return Charges.toArray(izac);
+	}
+
 	/***
 	 * BT 132 (issue https://github.com/ZUGFeRD/mustangproject/issues/247)
 	 * @return the line ID of the order (BT132)
@@ -468,6 +478,7 @@ public class Item implements IZUGFeRDExportableItem {
 	 * @return fluent setter
 	 */
 	public Item addAllowance(IZUGFeRDAllowanceCharge izac) {
+
 		Allowances.add(izac);
 		return this;
 	}

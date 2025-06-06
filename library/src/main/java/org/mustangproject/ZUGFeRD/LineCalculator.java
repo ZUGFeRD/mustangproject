@@ -31,7 +31,7 @@ public class LineCalculator {
 				if ((allowance.getPercent()!=null)&&(allowance.getPercent().compareTo(BigDecimal.ZERO)!=0)) {
 					factor=currentItem.getQuantity();
 				}
-				addLineAllowance(singleAllowance.multiply(factor));
+				addAllowanceItemTotal(singleAllowance.multiply(factor));
 
 			}
 		}
@@ -43,7 +43,7 @@ public class LineCalculator {
 				if ((charge.getPercent()!=null)&&(charge.getPercent().compareTo(BigDecimal.ZERO)!=0)) {
 					factor=currentItem.getQuantity();
 				}
-				addLineCharge(singleCharge.multiply(factor));
+				subtractAllowanceItemTotal(singleCharge.multiply(factor));
 
 			}
 		}
@@ -69,7 +69,7 @@ public class LineCalculator {
 
 		price=currentItem.getPrice();
 		priceGross=price;
-		price=price.subtract(itemAllowance).add(itemCharge);
+//		price=price.subtract(itemAllowance).add(itemCharge);
 //		BigDecimal delta=charge.subtract(allowanceItemTotal).subtract(allowance);
 //		delta=delta.divide(currentItem.getQuantity(), 18, RoundingMode.HALF_UP);
 
@@ -91,8 +91,8 @@ public class LineCalculator {
 		BigDecimal basisQuantity = currentItem.getBasisQuantity().compareTo(BigDecimal.ZERO) == 0
 			? BigDecimal.ONE.setScale(4)
 			: currentItem.getBasisQuantity();
-		itemTotalNetAmount = quantity.multiply(priceGross).divide(basisQuantity, 18, RoundingMode.HALF_UP)
-			.add(lineCharge).subtract(lineAllowance).setScale(2, RoundingMode.HALF_UP);
+		itemTotalNetAmount = quantity.multiply(price).divide(basisQuantity, 18, RoundingMode.HALF_UP)
+			.add(lineCharge).subtract(lineAllowance).subtract(allowanceItemTotal).setScale(2, RoundingMode.HALF_UP);
 		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);
 	}
 
@@ -134,6 +134,9 @@ public class LineCalculator {
 
 	public void addAllowanceItemTotal(BigDecimal b) {
 		allowanceItemTotal = allowanceItemTotal.add(b);
+	}
+	public void subtractAllowanceItemTotal(BigDecimal b) {
+		allowanceItemTotal = allowanceItemTotal.subtract(b);
 	}
 
 }
