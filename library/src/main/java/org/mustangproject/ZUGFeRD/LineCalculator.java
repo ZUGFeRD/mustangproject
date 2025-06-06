@@ -2,6 +2,8 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.List;
 
 /***
  * the linecalculator does the math within an item line, and e.g. calculates quantity*price.
@@ -70,7 +72,20 @@ public class LineCalculator {
 		price=price.subtract(itemAllowance).add(itemCharge);
 //		BigDecimal delta=charge.subtract(allowanceItemTotal).subtract(allowance);
 //		delta=delta.divide(currentItem.getQuantity(), 18, RoundingMode.HALF_UP);
-//		priceGross=currentItem.getPrice().add(delta);
+
+		BigDecimal delta=BigDecimal.ZERO;
+		if (currentItem.getProduct().getAllowances()!=null) {
+			for (IZUGFeRDAllowanceCharge ccaf:currentItem.getProduct().getAllowances()) {
+				delta=delta.subtract(ccaf.getTotalAmount(currentItem));
+			}
+		}
+		if (currentItem.getProduct().getCharges()!=null) {
+			for (IZUGFeRDAllowanceCharge ccaf : currentItem.getProduct().getCharges()) {
+				delta = delta.subtract(ccaf.getTotalAmount(currentItem));
+			}
+		}
+
+		price=price.add(delta);
 		// Division/Zero occurred here.
 		// Used the setScale only because that's also done in getBasisQuantity
 		BigDecimal basisQuantity = currentItem.getBasisQuantity().compareTo(BigDecimal.ZERO) == 0
