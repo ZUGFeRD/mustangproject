@@ -72,8 +72,6 @@ public class Item implements IZUGFeRDExportableItem {
 			//we need: name description unitcode
 			//and we additionally have vat%
 
-			// Bharti's homework 20241126:Streams  https://www.youtube.com/watch?v=Lf01cBzmuXw
-			// and Lambdas https://www.youtube.com/watch?v=HCyx31NW8xg
 			setProduct(new Product(itemMap.getNode("Item").get()));
 			icnm.getAsString("Name").ifPresent(product::setName);
 			icnm.getAsString("Description").ifPresent(product::setDescription);
@@ -85,17 +83,6 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("BuyersItemIdentification").ifPresent(BuyersItemIdentification -> {
 				BuyersItemIdentification.getAsString("ID").ifPresent(product::setBuyerAssignedID);
 			});
-
-//				String name = icnm.getAsStringOrNull("Name");
-//				String val = icnm.getAsStringOrNull("Value");
-//				if (name != null && val != null) {
-//					if (attributes == null) {
-//						attributes = new HashMap<>();
-//					}
-//					product.attributes.put(name, val);
-//				}
-			//icnm.getNode("AdditionalItemProperty").flatMap(n ->n.getAttributes()).ifPresent(product::setAttributes);
-
 
 			icnm.getAsNodeMap("ClassifiedTaxCategory").flatMap(m -> m.getAsBigDecimal("Percent"))
 				.ifPresent(product::setVATPercent);

@@ -547,7 +547,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "</ram:ApplicableTradeTax>";
 				// item charges/allowances
 				if (!itemTotalAllowanceChargeStr.isEmpty()) {
-					xml +=      "<ram:SpecifiedTradeAllowanceCharge>"+ itemTotalAllowanceChargeStr +"</ram:SpecifiedTradeAllowanceCharge>";
+					xml +=  itemTotalAllowanceChargeStr ;
 				}
 
 				if ((currentItem.getDetailedDeliveryPeriodFrom() != null) || (currentItem.getDetailedDeliveryPeriodTo() != null)) {
