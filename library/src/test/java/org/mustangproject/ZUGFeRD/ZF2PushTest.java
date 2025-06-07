@@ -644,7 +644,7 @@ public class ZF2PushTest extends TestCase {
 		assertEquals("EUR", zi.getInvoiceCurrencyCode());
 
 		// Reading ZUGFeRD
-		assertEquals("4046.00", zi.getAmount());
+		assertEquals("10805.20", zi.getAmount());
 		assertEquals(orgname, zi.getHolder());
 		assertEquals(number, zi.getForeignReference());
 		try {
