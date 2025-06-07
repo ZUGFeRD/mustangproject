@@ -26,6 +26,7 @@ import org.junit.runners.MethodSorters;
 import org.mustangproject.ZUGFeRD.ZUGFeRDVisualizer.Language;
 import org.mustangproject.util.ByteArraySearcher;
 
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
@@ -112,6 +113,8 @@ public class VisualizationTest extends ResourceCase {
 			fail("UnsupportedOperationException should not happen: " + e.getMessage());
 		} catch (IllegalArgumentException e) {
 			fail("IllegalArgumentException should not happen: " + e.getMessage());
+		} catch (TransformerConfigurationException e) {
+			fail("TransformerConfigurationException should not happen: " + e.getMessage());
 		}
 
 		try {
@@ -137,6 +140,8 @@ public class VisualizationTest extends ResourceCase {
 			fail("UnsupportedOperationException should not happen: " + e.getMessage());
 		} catch (IllegalArgumentException e) {
 			fail("IllegalArgumentException should not happen: " + e.getMessage());
+		} catch (TransformerConfigurationException e) {
+			fail("TransformerConfigurationException should not happen: " + e.getMessage());
 		}
 
 
@@ -163,6 +168,8 @@ public class VisualizationTest extends ResourceCase {
 			fail("UnsupportedOperationException should not happen: " + e.getMessage());
 		} catch (IllegalArgumentException e) {
 			fail("IllegalArgumentException should not happen: " + e.getMessage());
+		} catch (TransformerConfigurationException e) {
+			fail("TransformerConfigurationException should not happen: " + e.getMessage());
 		}
 
 
