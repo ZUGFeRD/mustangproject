@@ -54,9 +54,9 @@ public class CalculationTest extends ResourceCase {
 
 		final LineCalculator calculator = new LineCalculator(currentItem);
 
-		assertEquals(valueOf(133.857).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
-		assertEquals(valueOf(1606.28).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
-		assertEquals(valueOf(257.0048).stripTrailingZeros(), calculator.getItemTotalVATAmount().stripTrailingZeros());
+		assertEquals(valueOf(148.73).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
+		assertEquals(valueOf(1769.89).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
+		assertEquals(valueOf(283.18).stripTrailingZeros(), calculator.getItemTotalVATAmount().stripTrailingZeros());
 	}
 
 	@Test
@@ -74,9 +74,9 @@ public class CalculationTest extends ResourceCase {
 
 		final LineCalculator calculator = new LineCalculator(currentItem);
 
-		assertEquals(valueOf(163.603).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
-		assertEquals(valueOf(1963.24).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
-		assertEquals(valueOf(314.1184).stripTrailingZeros(), calculator.getItemTotalVATAmount().stripTrailingZeros());
+		assertEquals(valueOf(148.73).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
+		assertEquals(valueOf(1799.63).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
+		assertEquals(valueOf(287.94).stripTrailingZeros(), calculator.getItemTotalVATAmount().stripTrailingZeros());
 	}
 
 	@Test
