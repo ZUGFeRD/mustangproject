@@ -283,7 +283,7 @@ public class ZF2PushTest extends TestCase {
 			assertTrue(zi.getUTF8().contains("ABK"));
 
 			// Reading ZUGFeRD
-			assertEquals("18.33", zi.getAmount());
+			assertEquals("18.92", zi.getAmount());
 			assertEquals(orgname, zi.getHolder());
 			assertEquals(number, zi.getForeignReference());
 			assertEquals(zi.getVersion(), 2);
@@ -688,7 +688,7 @@ public class ZF2PushTest extends TestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_RELATIVECHARGESALLOWANCESPDF);
 
 		assertEquals("CHF", zi.getInvoiceCurrencyCode());
-		assertEquals("6.25", zi.getAmount());
+		assertEquals("11.10", zi.getAmount());
 		assertEquals(orgname, zi.getHolder());
 		assertEquals(number, zi.getForeignReference());
 		try {

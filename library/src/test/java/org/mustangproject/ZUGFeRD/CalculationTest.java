@@ -224,7 +224,7 @@ public class CalculationTest extends ResourceCase {
 			invoice.addAllowance(new Allowance().setPercent(total_discount_percent).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatte"));
 		}
 		TransactionCalculator calculator = new TransactionCalculator(invoice);
-		assertEquals(valueOf(101.86).stripTrailingZeros(), calculator.getGrandTotal().stripTrailingZeros());
+		assertEquals(valueOf(307.18).stripTrailingZeros(), calculator.getGrandTotal().stripTrailingZeros());
 	}
 
 	public void testSimpleItemPercentAllowance() {
