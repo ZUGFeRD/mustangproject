@@ -545,10 +545,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "<ram:RateApplicablePercent>"
 					+ vatFormat(currentItem.getProduct().getVATPercent()) + "</ram:RateApplicablePercent>"
 					+ "</ram:ApplicableTradeTax>";
-				// item charges/allowances
-				if (!itemTotalAllowanceChargeStr.isEmpty()) {
-					xml +=  itemTotalAllowanceChargeStr ;
-				}
 
 				if ((currentItem.getDetailedDeliveryPeriodFrom() != null) || (currentItem.getDetailedDeliveryPeriodTo() != null)) {
 					xml += "<ram:BillingSpecifiedPeriod>";
@@ -561,6 +557,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml += "</ram:BillingSpecifiedPeriod>";
 				}
 
+				// item charges/allowances
+				if (!itemTotalAllowanceChargeStr.isEmpty()) {
+					xml +=  itemTotalAllowanceChargeStr ;
+				}
 
 				xml += "<ram:SpecifiedTradeSettlementLineMonetarySummation>"
 					+ "<ram:LineTotalAmount>" + currencyFormat(lc.getItemTotalNetAmount())

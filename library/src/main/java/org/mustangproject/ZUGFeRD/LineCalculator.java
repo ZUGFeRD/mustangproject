@@ -93,7 +93,7 @@ public class LineCalculator {
 			: currentItem.getBasisQuantity();
 		itemTotalNetAmount = quantity.multiply(price).divide(basisQuantity, 18, RoundingMode.HALF_UP)
 			.add(lineCharge).subtract(lineAllowance).subtract(allowanceItemTotal).setScale(2, RoundingMode.HALF_UP);
-		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator).setScale(2, RoundingMode.HALF_UP);
+		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);//.setScale(2, RoundingMode.HALF_UP);
 	}
 
 	public BigDecimal getPrice() {
