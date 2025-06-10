@@ -261,10 +261,10 @@ public class ZF2PushTest extends TestCase {
 					.setContact(new Contact("contact testname", "123456", "contact.testemail@example.org").setFax("0911623562")))
 				.setNumber(number)
 				.addCharge(new Charge(new BigDecimal(1)).setReasonCode("ABK").setReason("AReason").setTaxPercent(new BigDecimal(19)))
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance(new BigDecimal("0.1"))))
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance().setPercent(new BigDecimal(50))))
+				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance(new BigDecimal("0.1")).setReasonCode("95")))
+				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance().setPercent(new BigDecimal(50)).setReason("In love with salesperson")))
 				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(2.0)).addCharge(new Charge(new BigDecimal(1)).setReasonCode("ABK").setReason("AnotherReason")))
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addCharge(new Charge(new BigDecimal(1))).addAllowance(new Allowance(new BigDecimal("1"))));
+				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), amount, new BigDecimal(1.0)).addCharge(new Charge(new BigDecimal(1)).setReasonCode("ABK").setReason("Yet another reason")).addAllowance(new Allowance(new BigDecimal("1")).setReason("Something completely strange")));
 			ze.setTransaction(i);
 
 
