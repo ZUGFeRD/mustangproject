@@ -1,6 +1,7 @@
 package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.*;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -9,6 +10,7 @@ import org.w3c.dom.NodeList;
  * A organisation, i.e. usually a company
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class LegalOrganisation implements IZUGFeRDLegalOrganisation {
 
 	protected SchemedID schemedID = null;
@@ -18,12 +20,16 @@ public class LegalOrganisation implements IZUGFeRDLegalOrganisation {
 	}
 
 	public LegalOrganisation(String ID, String scheme) {
-		this.schemedID = new SchemedID(ID, scheme);
+		this.schemedID = new SchemedID(scheme, ID);
+	}
+
+	public LegalOrganisation(String ID) {
+		this.schemedID = new SchemedID(null, ID);
 	}
 
 	public LegalOrganisation(SchemedID schemedID, String tradingBusinessName) {
 		this.schemedID = schemedID;
-		this.tradingBusinessName=tradingBusinessName;
+		this.tradingBusinessName = tradingBusinessName;
 	}
 
 	/***
@@ -48,8 +54,8 @@ public class LegalOrganisation implements IZUGFeRDLegalOrganisation {
 							this.setSchemedID(gid);
 						}
 					}
-					if (currentItemNode.getLocalName().equals("TradingBusinessName")) {
-					    setTradingBusinessName(currentItemNode.getFirstChild().getNodeValue());
+					if ((currentItemNode.getLocalName().equals("TradingBusinessName")) && (currentItemNode.getFirstChild() != null)) {
+						setTradingBusinessName(currentItemNode.getFirstChild().getNodeValue());
 					}
 				}
 			}

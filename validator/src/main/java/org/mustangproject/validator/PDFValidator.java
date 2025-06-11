@@ -21,6 +21,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.mustangproject.util.ByteArraySearcher;
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class PDFValidator extends Validator {
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PDFValidator.class.getCanonicalName()); // log output
-	private static final PDFAFlavour[] PDF_A_3_FLAVOURS = {PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_A};
+	private static final PDFAFlavour[] PDF_A_3_FLAVOURS = {PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_B, PDFAFlavour.PDFA_3_U};
 
 	private String pdfFilename;
 
@@ -121,7 +122,9 @@ public class PDFValidator extends Validator {
 		}
 
 		// step 2 validate XMP
-		final ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
+		final ZUGFeRDImporter zi = new ZUGFeRDImporter();
+		zi.doIgnoreCalculationErrors();//of course the calculation will still be schematron checked
+		zi.setInputStream(inputStream);
 		final String xmp = zi.getXMP();
 
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -238,7 +241,8 @@ public class PDFValidator extends Validator {
 
 			boolean versionValid = false;
 			for (int i = 0; i < nodes.getLength(); i++) {
-				final String[] valueArray = {"1.0", "2p0", "1.2", "2.0", "2.1"}; //1.2, 2.0 and 2.1 are for xrechnung 1.2, 2p0 can be ZF 2.0, 2.1, 2.1.1
+				final String[] valueArray = {"1.0", "1p0", "2p0", "1.2", "2.0", "2.1", "2.2", "2.3", "3.0"}; //1.2, 2.0, 2.1, 2.2, 2.3 and 3.0 are for xrechnung 1.2, 2p0 can be ZF 2.0, 2.1, 2.1.1
+
 				if (stringArrayContains(valueArray, nodes.item(i).getTextContent())) {
 					versionValid = true;
 				} // e.g. 1.0
@@ -262,6 +266,9 @@ public class PDFValidator extends Validator {
 		final byte[] konikSignature = "Konik".getBytes(StandardCharsets.UTF_8);
 		final byte[] pdfMachineSignature = "pdfMachine from Broadgun Software".getBytes(StandardCharsets.UTF_8);
 		final byte[] ghostscriptSignature = "%%Invocation:".getBytes(StandardCharsets.UTF_8);
+		final byte[] cibpdfbrewerSignature = "CIB pdf brewer".getBytes(StandardCharsets.UTF_8);
+		final byte[] lexofficeSignature = "lexoffice".getBytes(StandardCharsets.UTF_8);		
+		final byte[] s2IndustriesSignature = "s2industries.ZUGFeRD.PDF".getBytes(StandardCharsets.UTF_8); // https://github.com/stephanstapel/ZUGFeRD-csharp
 
 		if (ByteArraySearcher.contains(fileContents, symtraxSignature)) {
 			Signature = "Symtrax";
@@ -277,6 +284,12 @@ public class PDFValidator extends Validator {
 			Signature = "pdfMachine";
 		} else if (ByteArraySearcher.contains(fileContents, ghostscriptSignature)) {
 			Signature = "Ghostscript";
+		} else if (ByteArraySearcher.contains(fileContents, cibpdfbrewerSignature)) {
+			Signature = "CIB pdf brewer";
+		} else if (ByteArraySearcher.contains(fileContents, lexofficeSignature)) {
+			Signature = "Lexware office";
+		} else if (ByteArraySearcher.contains(fileContents, s2IndustriesSignature)) {
+			Signature = "ZUGFeRD.PDF-csharp";
 		}
 
 		context.setSignature(Signature);
@@ -296,8 +309,10 @@ public class PDFValidator extends Validator {
 		if (!processorResult.getValidationResult().isCompliant()) {
 			context.setInvalid();
 		}
+
+		PDFAFlavour pdfaFlavourFromValidationResult = processorResult.getValidationResult().getPDFAFlavour();
 		if (Arrays.stream(PDF_A_3_FLAVOURS)
-			.anyMatch(pdfaFlavour -> processorResult.getValidationResult().getPDFAFlavour().equals(pdfaFlavour))) {
+			.noneMatch(pdfaFlavourFromValidationResult::equals)) {
 			context.addResultItem(
 				new ValidationResultItem(ESeverity.error, "Not a PDF/A-3").setSection(23).setPart(EPart.pdf));
 

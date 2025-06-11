@@ -83,15 +83,17 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	}
 
 	protected byte[] filenameToByteArray(String pdfFilename) throws IOException {
-		FileInputStream fileInputStream = new FileInputStream(pdfFilename);
-		return inputstreamToByteArray(fileInputStream);
+		try (FileInputStream fileInputStream = new FileInputStream(pdfFilename)) {
+			return inputstreamToByteArray(fileInputStream);
+		}
 	}
 
 	protected byte[] inputstreamToByteArray(InputStream fileInputStream) throws IOException  {
 		byte[] bytes = new byte[fileInputStream.available()];
-		DataInputStream dataInputStream = new DataInputStream(fileInputStream);
-		dataInputStream.readFully(bytes);
-		return bytes;
+		try (DataInputStream dataInputStream = new DataInputStream(fileInputStream)) {
+			dataInputStream.readFully(bytes);
+			return bytes;
+		}
 	}
 
 	/***

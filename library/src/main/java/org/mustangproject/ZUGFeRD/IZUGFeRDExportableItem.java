@@ -28,7 +28,9 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
+import org.mustangproject.IncludedNote;
 import org.mustangproject.Item;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -41,7 +43,11 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 * item level discounts
 	 * @return array of the discounts on a single item
 	 */
+	@Deprecated
 	default IZUGFeRDAllowanceCharge[] getItemAllowances() {
+		if (getProduct()!=null) {
+			return getProduct().getAllowances();
+		}
 		return null;
 	}
 
@@ -49,7 +55,25 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 * item level price additions
 	 * @return array of the additional charges on the item
 	 */
+	@Deprecated
 	default IZUGFeRDAllowanceCharge[] getItemCharges() {
+		if (getProduct()!=null) {
+			return getProduct().getCharges();
+		}
+		return null;
+	}
+
+	@Deprecated
+	default IZUGFeRDAllowanceCharge[] getAllowances() {
+		return null;
+	}
+
+	/**
+	 * item level price additions
+	 * @return array of the additional charges on the item
+	 */
+	@Deprecated
+	default IZUGFeRDAllowanceCharge[] getCharges() {
 		return null;
 	}
 
@@ -90,7 +114,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 
 	/**
 	 * how many items units per price
-	 * 
+	 *
 	 * @return item units per price
 	 */
 	default BigDecimal getBasisQuantity() {
@@ -150,14 +174,35 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	default Date getDetailedDeliveryPeriodTo() {
 		return null;
 	}
-	
+
 	/***
-	 * specify allowances amount for the line item total
+	 *  get all (allowances and charges) SpecifiedTradeAllowanceCharges
 	 *
-	 * @return the sum of allowances for this item
+	 * @return the real item lecel SpecifiedTradeAllowanceCharges
 	 */
 	default IZUGFeRDAllowanceCharge[] getItemTotalAllowances() {
 		return null;
 	}
 
+	/***
+	 *
+	 * @return the line ID
+	 */
+	default String getId()  {
+		return null;
+	}
+
+	/**
+	 * A grouping of business terms to indicate accounting-relevant free texts including a qualification of these.
+	 *
+	 * The information are written to the same xml nodes like {@link #getNotes()} but with explicit subjectCode.
+	 * @return list of the notes
+	 */
+	default List<IncludedNote> getNotesWithSubjectCode() {
+		return null;
+	}
+
+	default String getAccountingReference() {
+		return null;
+	}
 }

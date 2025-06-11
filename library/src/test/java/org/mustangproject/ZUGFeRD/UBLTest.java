@@ -123,35 +123,8 @@ public class UBLTest extends ResourceCase {
 
 	}
 
-
-/*	public void testInvoiceImportOtherUBL() {
-
-
-		File UBLinputFile = getResourceAsFile("ubl/EN16931_1_Teilrechnung.ubl.xml");
-//		File UBLinputFile = getResourceAsFile("ubl/EN16931_2_Teilrechnung.ubl.xml");
-/*			File UBLinputFile = getResourceAsFile("ubl/EN16931_AbweichenderZahlungsempf.ubl.xml");
-				File UBLinputFile = getResourceAsFile("ubl/EN16931_Betriebskostenabrechnung.ubl.xml");
-					File UBLinputFile = getResourceAsFile("ubl/EN16931_Einfach.ubl.xml");
-						File UBLinputFile = getResourceAsFile("ubl/EN16931_Einfach_DueDate.ubl.xml");
-							File UBLinputFile = getResourceAsFile("ubl/EN16931_Einfach_negativePaymentDue.ubl.xml");
-								File UBLinputFile = getResourceAsFile("ubl/EN16931_Elektron.ubl.xml");
-									File UBLinputFile = getResourceAsFile("ubl/EN16931_ElektronischeAdresse.ubl.xml");
-										File UBLinputFile = getResourceAsFile("ubl/EN16931_Gutschrift.ubl.xml");
-		File UBLinputFile = getResourceAsFile("ubl/EN16931_Haftpflichtversicherung_Versicherungssteuer.ubl.xml");
-		File UBLinputFile = getResourceAsFile("ubl/EN16931_Innergemeinschaftliche_Lieferungen.ubl.xml");
-		File UBLinputFile = getResourceAsFile("ubl/EN16931_Kraftfahrversicherung_Bruttopreise.ubl.xml");
-		File UBLinputFile = getResourceAsFile("ubl/EN16931_Miete.ubl.xml");
-		File UBLinputFile = getResourceAsFile("ubl/EN16931_OEPNV.ubl.xml");
-		File UBLinputFile = getResourceAsFile("ubl/EN16931_Physiotherapeut.ubl.xml");
-		File UBLinputFile = getResourceAsFile("ubl/EN16931_Rabatte.ubl.xml");
-		File UBLinputFile = getResourceAsFile("ubl/EN16931_Rechnungskorrektur.ubl.xml");
-		File UBLinputFile = getResourceAsFile("ubl/EN16931_RechnungsUebertragung.ubl.xml");
-		File UBLinputFile = getResourceAsFile("ubl/EN16931_Reisekostenabrechnung.ubl.xml");
-		File UBLinputFile = getResourceAsFile("ubl/EN16931_Sachversicherung_berechneter_Steuersatz.ubl.xml");
-		File UBLinputFile = getResourceAsFile("ubl/EN16931_SEPA_Prenotification.ubl.xml");
-
-
-
+	public void testEdgeInvoiceImportUBL2() {
+		File UBLinputFile = getResourceAsFile("ubl/04.01a-INVOICE_ubl.xml");
 		boolean hasExceptions = false;
 
 		ZUGFeRDInvoiceImporter zii = null;
@@ -160,15 +133,12 @@ public class UBLTest extends ResourceCase {
 			zii = new ZUGFeRDInvoiceImporter(new FileInputStream(UBLinputFile));
 			invoice = zii.extractInvoice();
 		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
+			e.printStackTrace();
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
-		// Reading ZUGFeRD
-		assertEquals(new BigDecimal("288.79"), invoice.getZFItems()[0].getPrice());
-		assertEquals("04011000-12345-03", invoice.getReferenceNumber());
-		assertEquals("seller@email.de", invoice.getSender().getContact().getEMail());
-		assertEquals("12345", invoice.getRecipient().getZIP());
-		assertEquals("DE75512108001245126199", invoice.getSender().getBankDetails().get(0).getIBAN());
 
-	}*/
+		assertEquals(new BigDecimal("10000.0"), invoice.getTotalPrepaidAmount());
+	}
+
 }

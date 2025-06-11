@@ -1,26 +1,38 @@
 package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IReferencedDocument;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
+import org.mustangproject.util.NodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /***
  * describes any invoice line
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Item implements IZUGFeRDExportableItem {
-	protected BigDecimal price, quantity, tax, grossPrice, lineTotalAmount;
+	protected BigDecimal price = BigDecimal.ZERO;
+	protected BigDecimal quantity;
+	protected BigDecimal tax;
+	protected BigDecimal grossPrice;
+	protected BigDecimal lineTotalAmount;
 	protected BigDecimal basisQuantity = BigDecimal.ONE;
-	protected Date detailedDeliveryPeriodFrom = null, detailedDeliveryPeriodTo = null;
+	protected Date detailedDeliveryPeriodFrom = null;
+	protected Date detailedDeliveryPeriodTo = null;
 	protected String id;
 	protected String buyerOrderReferencedDocumentLineID = null;
 	protected String buyerOrderReferencedDocumentID = null;
@@ -28,8 +40,11 @@ public class Item implements IZUGFeRDExportableItem {
 	protected ArrayList<String> notes = null;
 	protected ArrayList<ReferencedDocument> referencedDocuments = null;
 	protected ArrayList<ReferencedDocument> additionalReference = null;
-	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
-		Charges = new ArrayList<>();
+	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>();
+	protected ArrayList<IZUGFeRDAllowanceCharge> Charges = new ArrayList<>();
+	protected List<IncludedNote> includedNotes = null;
+	protected String accountingReference;
+	//protected HashMap<String, String> attributes = new HashMap<>();
 
 	/***
 	 * default constructor
@@ -43,7 +58,6 @@ public class Item implements IZUGFeRDExportableItem {
 		this.product = product;
 	}
 
-
 	/***
 	 * empty constructor
 	 * do not use, but might be used e.g. by jackson
@@ -52,100 +66,67 @@ public class Item implements IZUGFeRDExportableItem {
 	}
 
 	public Item(NodeList itemChilds, boolean recalcPrice) {
-		String price = "0";
-		String basisQuantity = "1";
-		String name = "";
-		String sellerAssignedID = null;
-		String description = "";
-		SchemedID gid = null;
-		String quantity = "0";
-		String vatPercent = null;
-		String lineTotal = "0";
-		String unitCode = "0";
-		String buyerOrderReferencedDocumentLineID = null;
-		String buyerOrderReferencedDocumentID = null;
+		NodeMap itemMap = new NodeMap(itemChilds);
 
-		ArrayList<ReferencedDocument> rdocs = null;
-		ArrayList<ReferencedDocument> addRefs = null;
+		itemMap.getAsNodeMap("Item").ifPresent(icnm -> {
+			// ubl
+			//we need: name description unitcode
+			//and we additionally have vat%
 
-		// nodes.item(i).getTextContent())) {
+			setProduct(new Product(itemMap.getNode("Item").get()));
+			icnm.getAsString("Name").ifPresent(product::setName);
+			icnm.getAsString("Description").ifPresent(product::setDescription);
 
-		for (int itemChildIndex = 0; itemChildIndex < itemChilds.getLength(); itemChildIndex++) {
-			String lineTrade = itemChilds.item(itemChildIndex).getLocalName();
-			if ((lineTrade != null) && (lineTrade.equals("Item"))) {
-				// ubl
-				//we need: name description unitcode
-				//and we additionally have vat%
-				NodeList UBLitemChilds = itemChilds.item(itemChildIndex).getChildNodes();
-				for (Node currentUBLItemChildNode : XMLTools.asList(UBLitemChilds)) {
+			icnm.getAsNodeMap("SellersItemIdentification").ifPresent(SellersItemIdentification -> {
+				SellersItemIdentification.getAsString("ID").ifPresent(product::setSellerAssignedID);
+			});
 
-					if ((currentUBLItemChildNode.getLocalName() != null) && (currentUBLItemChildNode.getLocalName().equals("Name"))) {
-						name = currentUBLItemChildNode.getTextContent();
-					}
-					if ((currentUBLItemChildNode.getLocalName() != null) && (currentUBLItemChildNode.getLocalName().equals("ClassifiedTaxCategory"))) {
-						for (Node currentUBLTaxChildNode : XMLTools.asList(currentUBLItemChildNode.getChildNodes())) {
-							if ((currentUBLTaxChildNode.getLocalName() != null) && (currentUBLTaxChildNode.getLocalName().equals("Percent"))) {
-								vatPercent = currentUBLTaxChildNode.getTextContent();
-							}
-						}
-					}
-				}
-			}
-			if ((lineTrade != null) && (lineTrade.equals("Price"))) {
-				// ubl
-				// PriceAmount with currencyID and  BaseQuantity with unitCode
-				NodeList UBLpriceChilds = itemChilds.item(itemChildIndex).getChildNodes();
-				for (Node currentUBLPriceChildNode : XMLTools.asList(UBLpriceChilds)) {
+			icnm.getAsNodeMap("BuyersItemIdentification").ifPresent(BuyersItemIdentification -> {
+				BuyersItemIdentification.getAsString("ID").ifPresent(product::setBuyerAssignedID);
+			});
 
-					if ((currentUBLPriceChildNode.getLocalName() != null) && (currentUBLPriceChildNode.getLocalName().equals("PriceAmount"))) {
-						price = currentUBLPriceChildNode.getTextContent();
-					}
-					if ((currentUBLPriceChildNode.getLocalName() != null) && (currentUBLPriceChildNode.getLocalName().equals("BaseQuantity"))) {
-						basisQuantity = currentUBLPriceChildNode.getTextContent();
-					}
-				}
+			icnm.getAsNodeMap("ClassifiedTaxCategory").flatMap(m -> m.getAsBigDecimal("Percent"))
+				.ifPresent(product::setVATPercent);
+		});
+		itemMap.getAsNodeMap("AssociatedDocumentLineDocument").ifPresent(icnm -> {
+			icnm.getAsString("LineID").ifPresent(this::setId);
+		});
 
-			}
-			if ((lineTrade != null) && (lineTrade.equals("InvoicedQuantity"))) {
-				// ubl
-				quantity = itemChilds.item(itemChildIndex).getTextContent();
-				unitCode = itemChilds.item(itemChildIndex).getAttributes()
-					.getNamedItem("unitCode").getNodeValue();
-			}
-			if ((lineTrade != null) && (lineTrade.equals("SpecifiedLineTradeAgreement")
-				|| lineTrade.equals("SpecifiedSupplyChainTradeAgreement"))) {
-				NodeList tradeLineChilds = itemChilds.item(itemChildIndex).getChildNodes();
-				for (int tradeLineChildIndex = 0; tradeLineChildIndex < tradeLineChilds
-					.getLength(); tradeLineChildIndex++) {
+		itemMap.getAsNodeMap("Price").ifPresent(icnm -> {
+			// ubl
+			// PriceAmount with currencyID and  BaseQuantity with unitCode
+			icnm.getAsBigDecimal("PriceAmount").ifPresent(this::setPrice);
+			icnm.getAsBigDecimal("BaseQuantity").ifPresent(this::setBasisQuantity);
+		});
 
-					if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && tradeLineChilds
-						.item(tradeLineChildIndex).getLocalName().equals("AdditionalReferencedDocument")) {
-						String IssuerAssignedID = "";
-						String TypeCode = "";
-						String ReferenceTypeCode = "";
+		itemMap.getNode("InvoicedQuantity").ifPresent(icn -> {
+			// ubl
+			setQuantity(new BigDecimal(icn.getTextContent().trim()));
+			product.setUnit(icn.getAttributes().getNamedItem("unitCode").getNodeValue());
+		});
 
-						NodeList refDocChilds = tradeLineChilds.item(tradeLineChildIndex).getChildNodes();
-						for (int refDocIndex = 0; refDocIndex < refDocChilds.getLength(); refDocIndex++) {
-							String localName = refDocChilds.item(refDocIndex).getLocalName();
-							if ((localName != null) && (localName.equals("IssuerAssignedID"))) {
-								IssuerAssignedID = refDocChilds.item(refDocIndex).getTextContent();
-							}
-							if ((localName != null) && (localName.equals("TypeCode"))) {
-								TypeCode = refDocChilds.item(refDocIndex).getTextContent();
-							}
-							if ((localName != null) && (localName.equals("ReferenceTypeCode"))) {
-								ReferenceTypeCode = refDocChilds.item(refDocIndex).getTextContent();
-							}
-						}
+		itemMap.getAllNodes("DocumentReference").map(ReferencedDocument::fromNode)
+			.forEach(this::addAdditionalReference);
 
-						ReferencedDocument rd = new ReferencedDocument(IssuerAssignedID, TypeCode,
-							ReferenceTypeCode);
-						if (rdocs == null) {
-							rdocs = new ArrayList<>();
-						}
-						rdocs.add(rd);
+		// ubl
 
-					}
+		itemMap.getAsNodeMap("OrderLineReference")
+			// ubl
+			.flatMap(bordNodes -> bordNodes.getAsString("LineID"))
+			.ifPresent(this::addReferencedLineID);
+
+		itemMap.getAsString("ID")
+			.ifPresent(this::setId);
+
+
+		itemMap.getAsString("Note")
+			.ifPresent(this::addNote);
+
+
+		itemMap.getAsNodeMap("SpecifiedLineTradeAgreement", "SpecifiedSupplyChainTradeAgreement").ifPresent(icnm -> {
+			icnm.getAsNodeMap("BuyerOrderReferencedDocument")
+				.flatMap(bordNodes -> bordNodes.getAsString("LineID"))
+				.ifPresent(this::addReferencedLineID);
 
 					if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("BuyerOrderReferencedDocument")) {
 						NodeList docChilds = tradeLineChilds.item(tradeLineChildIndex).getChildNodes();
@@ -159,165 +140,154 @@ public class Item implements IZUGFeRDExportableItem {
 						}
 					}
 
-					if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && tradeLineChilds
-						.item(tradeLineChildIndex).getLocalName().equals("NetPriceProductTradePrice")) {
-						NodeList netChilds = tradeLineChilds.item(tradeLineChildIndex).getChildNodes();
-						for (int netIndex = 0; netIndex < netChilds.getLength(); netIndex++) {
-							if ((netChilds.item(netIndex).getLocalName() != null)
-								&& (netChilds.item(netIndex).getLocalName().equals("ChargeAmount"))) {
-								price = netChilds.item(netIndex).getTextContent();// ChargeAmount
+			icnm.getAsNodeMap("NetPriceProductTradePrice").ifPresent(npptpNodes -> {
+				npptpNodes.getAsBigDecimal("ChargeAmount").ifPresent(this::setPrice);
+				npptpNodes.getAsBigDecimal("BasisQuantity").ifPresent(this::setBasisQuantity);
+			});
 
-							}
-							if ((netChilds.item(netIndex).getLocalName() != null)
-								&& ((netChilds.item(netIndex).getLocalName().equals("BasisQuantity")) || (netChilds.item(netIndex).getLocalName().equals("InvoicedQuantity")))) {
-								basisQuantity = netChilds.item(netIndex).getTextContent();// ChargeAmount
+			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).
+				forEach(this::addReferencedDocument);
+		});
 
-							}
-						}
+		itemMap.getNode("SpecifiedTradeProduct").map(Product::new).ifPresent(this::setProduct);//CII
+		itemMap.getNode("SpecifiedTradeProduct").map(Product::new).ifPresent(this::setProduct);//UBL
+
+		// RequestedQuantity is for Order-X, BilledQuantity for FX and ZF
+		itemMap.getAsNodeMap("SpecifiedLineTradeDelivery", "SpecifiedSupplyChainTradeDelivery")
+			.flatMap(icnm -> icnm.getNode("BilledQuantity", "RequestedQuantity", "DespatchedQuantity"))
+			.ifPresent(bq -> {
+				setQuantity(new BigDecimal(bq.getTextContent().trim()));
+				if (bq.hasAttributes()) {
+					Node unitAttr = bq.getAttributes().getNamedItem("unitCode");
+					if (unitAttr != null) {
+						product.setUnit(unitAttr.getNodeValue());
 					}
 				}
+			});
+
+		itemMap.getAsNodeMap("SpecifiedLineTradeSettlement", "SpecifiedSupplyChainTradeSettlement").ifPresent(icnm -> {
+			icnm.getAsNodeMap("ApplicableTradeTax")
+				.flatMap(cnm -> cnm.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent"))
+				.ifPresent(product::setVATPercent);
+			icnm.getAsNodeMap("ApplicableTradeTax")
+				.flatMap(cnm -> cnm.getAsString("ExemptionReason"))
+				.ifPresent(product::setTaxExemptionReason);
+
+			icnm.getAllNodes("SpecifiedTradeAllowanceCharge").map(NodeMap::new).forEach(stac -> {
+				stac.getAsNodeMap("ChargeIndicator").ifPresent(ci -> {
+					String isChargeString = ci.getAsString("Indicator").get();
+					String percentString = stac.getAsStringOrNull("CalculationPercent");
+					String amountString = stac.getAsStringOrNull("ActualAmount");
+					String basisAmountString = stac.getAsStringOrNull("BasisAmount");
+					String reason = stac.getAsStringOrNull("Reason");
+					Charge izac = new Charge();
+					if (isChargeString.equalsIgnoreCase("false")) {
+						izac = new Allowance();
+					} else {
+						izac = new Charge();
+					}
+					if (amountString != null) {
+						izac.setTotalAmount(new BigDecimal(amountString));
+						if (percentString!=null&&(percentString!="0")) {
+							izac.setTotalAmount(new BigDecimal(amountString).divide(getQuantity()));
+						}
+					}
+					if (basisAmountString != null) {
+						izac.setBasisAmount(new BigDecimal(basisAmountString));
+					}
+					if (percentString != null) {
+						izac.setPercent(new BigDecimal(percentString));
+					}
+					if (reason != null) {
+						izac.setReason(reason);
+					}
+
+					if (isChargeString.equalsIgnoreCase("false")) {
+						addAllowance(izac);
+					} else {
+						addCharge(izac);
+					}
+				});
+
+			});
+			if (recalcPrice && !BigDecimal.ZERO.equals(quantity)) {
+				icnm.getAsNodeMap("SpecifiedTradeSettlementLineMonetarySummation")
+					.flatMap(cnm -> cnm.getAsBigDecimal("LineTotalAmount"))
+					.ifPresent(lineTotal -> setPrice(lineTotal.divide(quantity, 4, RoundingMode.HALF_UP)));
 			}
-			if ((lineTrade != null) && (lineTrade.equals("SpecifiedLineTradeDelivery")
-				|| lineTrade.equals("SpecifiedSupplyChainTradeDelivery"))) {
-				NodeList tradeLineChilds = itemChilds.item(itemChildIndex).getChildNodes();
-				for (int tradeLineChildIndex = 0; tradeLineChildIndex < tradeLineChilds
-					.getLength(); tradeLineChildIndex++) {
-					String tradeName = tradeLineChilds.item(tradeLineChildIndex).getLocalName();
-					if ((tradeName != null)
-						&& (tradeName.equals("BilledQuantity") || tradeName.equals("RequestedQuantity")
-						|| tradeName.equals("DespatchedQuantity"))) {
-						// RequestedQuantity is for Order-X, BilledQuantity for FX and ZF
-						quantity = tradeLineChilds.item(tradeLineChildIndex).getTextContent();
-						unitCode = tradeLineChilds.item(tradeLineChildIndex).getAttributes()
-							.getNamedItem("unitCode").getNodeValue();
+
+			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).forEach(this::addAdditionalReference);
+
+			icnm.getAsString("ReceivableSpecifiedTradeAccountingAccount").ifPresent(s -> this.accountingReference = s == null ? null : s.trim());
+
+			icnm.getAsNodeMap("BillingSpecifiedPeriod").ifPresent(periodNode -> {
+				Date start = periodNode.getAsNodeMap("StartDateTime").flatMap(dateTimeNode -> dateTimeNode.getNode("DateTimeString")).map(dts -> XMLTools.tryDate(dts)).orElse(null);
+				Date end = periodNode.getAsNodeMap("EndDateTime").flatMap(dateTimeNode -> dateTimeNode.getNode("DateTimeString")).map(dts -> XMLTools.tryDate(dts)).orElse(null);
+				setDetailedDeliveryPeriod(start, end);
+			});
+		});
+
+		itemMap.getAllNodes("AllowanceCharge").map(NodeMap::new).forEach(stac -> { //UBL
+
+			String isChargeString = stac.getAsString("ChargeIndicator").get();
+			String percentString = stac.getAsStringOrNull("MultiplierFactorNumeric");
+			String amountString = stac.getAsStringOrNull("Amount");
+			String reason = stac.getAsStringOrNull("AllowanceChargeReason");
+			Charge izac = new Charge();
+			if (isChargeString.equalsIgnoreCase("false")) {
+				izac = new Allowance();
+			} else {
+				izac = new Charge();
+			}
+			if (amountString != null) {
+				izac.setTotalAmount(new BigDecimal(amountString));
+			}
+			if (percentString != null) {
+				izac.setPercent(new BigDecimal(percentString));
+			}
+			if (reason != null) {
+				izac.setReason(reason);
+			}
+
+			if (isChargeString.equalsIgnoreCase("false")) {
+				addAllowance(izac);
+			} else {
+				addCharge(izac);
+			}
+
+		});
+
+		itemMap.getAsNodeMap("AssociatedDocumentLineDocument").ifPresent(adld -> {
+			List<IncludedNote> includedNotes = new ArrayList<>();
+			adld.getAllNodes("IncludedNote").forEach(item -> {
+				String subjectCode = "";
+				String content = null;
+				NodeList includedNodeChilds = item.getChildNodes();
+				for (int issueDateChildIndex = 0; issueDateChildIndex < includedNodeChilds.getLength(); issueDateChildIndex++) {
+					if ((includedNodeChilds.item(issueDateChildIndex).getLocalName() != null)
+						&& (includedNodeChilds.item(issueDateChildIndex).getLocalName().equals("Content"))) {
+						content = XMLTools.trimOrNull(includedNodeChilds.item(issueDateChildIndex));
+					}
+					if ((includedNodeChilds.item(issueDateChildIndex).getLocalName() != null)
+						&& (includedNodeChilds.item(issueDateChildIndex).getLocalName().equals("SubjectCode"))) {
+						subjectCode = XMLTools.trimOrNull(includedNodeChilds.item(issueDateChildIndex));
 					}
 				}
-			}
-			if ((lineTrade != null) && (lineTrade.equals("SpecifiedTradeProduct"))) {
-				NodeList tradeProductChilds = itemChilds.item(itemChildIndex).getChildNodes();
-				for (int tradeProductChildIndex = 0; tradeProductChildIndex < tradeProductChilds
-					.getLength(); tradeProductChildIndex++) {
-					if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null)
-						&& (tradeProductChilds.item(tradeProductChildIndex).getLocalName()
-						.equals("Name"))) {
-						name = tradeProductChilds.item(tradeProductChildIndex).getTextContent();
-					}
-					if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null)
-						&& (tradeProductChilds.item(tradeProductChildIndex).getLocalName()
-						.equals("SellerAssignedID"))) {
-						sellerAssignedID = tradeProductChilds.item(tradeProductChildIndex).getTextContent();
-					}
-					if ((tradeProductChilds.item(tradeProductChildIndex).getLocalName() != null)
-						&& (tradeProductChilds.item(tradeProductChildIndex).getLocalName()
-						.equals("GlobalID"))) {
-						if (tradeProductChilds.item(tradeProductChildIndex).getAttributes()
-							.getNamedItem("schemeID") != null) {
-							gid = new SchemedID()
-								.setScheme(tradeProductChilds.item(tradeProductChildIndex).getAttributes()
-									.getNamedItem("schemeID").getNodeValue())
-								.setId(tradeProductChilds.item(tradeProductChildIndex).getTextContent());
-						}
-
+				boolean foundCode = false;
+				for (SubjectCode code : SubjectCode.values()) {
+					if (code.toString().equals(subjectCode)) {
+						includedNotes.add(new IncludedNote(content, code));
+						foundCode = true;
+						break;
 					}
 				}
-			}
-			if ((lineTrade != null) && (lineTrade.equals("SpecifiedLineTradeSettlement")
-				|| lineTrade.equals("SpecifiedSupplyChainTradeSettlement"))) {
-				NodeList tradeSettlementChilds = itemChilds.item(itemChildIndex).getChildNodes();
-				for (int tradeSettlementChildIndex = 0; tradeSettlementChildIndex < tradeSettlementChilds
-					.getLength(); tradeSettlementChildIndex++) {
-
-					String tradeSettlementName = tradeSettlementChilds.item(tradeSettlementChildIndex)
-						.getLocalName();
-					if (tradeSettlementName != null) {
-						if (tradeSettlementName.equals("ApplicableTradeTax")) {
-							NodeList taxChilds = tradeSettlementChilds.item(tradeSettlementChildIndex)
-								.getChildNodes();
-							for (int taxChildIndex = 0; taxChildIndex < taxChilds
-								.getLength(); taxChildIndex++) {
-								String taxChildName = taxChilds.item(taxChildIndex).getLocalName();
-								if ((taxChildName != null) && (taxChildName.equals("RateApplicablePercent")
-									|| taxChildName.equals("ApplicablePercent"))) {
-									vatPercent = taxChilds.item(taxChildIndex).getTextContent();
-								}
-							}
-						}
-
-						if (tradeSettlementName.equals("SpecifiedTradeSettlementLineMonetarySummation")) {
-							NodeList totalChilds = tradeSettlementChilds.item(tradeSettlementChildIndex)
-								.getChildNodes();
-							for (int totalChildIndex = 0; totalChildIndex < totalChilds
-								.getLength(); totalChildIndex++) {
-								if ((totalChilds.item(totalChildIndex).getLocalName() != null) && (totalChilds
-									.item(totalChildIndex).getLocalName().equals("LineTotalAmount"))) {
-									lineTotal = totalChilds.item(totalChildIndex).getTextContent();
-								}
-							}
-						}
-						
-						if (tradeSettlementName.equals("AdditionalReferencedDocument")) {
-							String IssuerAssignedID = "";
-							String TypeCode = "";
-							String ReferenceTypeCode = "";
-
-							NodeList refDocChilds = tradeSettlementChilds.item(tradeSettlementChildIndex).getChildNodes();
-							for (int refDocIndex = 0; refDocIndex < refDocChilds.getLength(); refDocIndex++) {
-								String localName = refDocChilds.item(refDocIndex).getLocalName();
-								if ((localName != null) && (localName.equals("IssuerAssignedID"))) {
-									IssuerAssignedID = refDocChilds.item(refDocIndex).getTextContent();
-								}
-								if ((localName != null) && (localName.equals("TypeCode"))) {
-									TypeCode = refDocChilds.item(refDocIndex).getTextContent();
-								}
-								if ((localName != null) && (localName.equals("ReferenceTypeCode"))) {
-									ReferenceTypeCode = refDocChilds.item(refDocIndex).getTextContent();
-								}
-							}
-
-							ReferencedDocument rd = new ReferencedDocument(IssuerAssignedID, TypeCode,
-								ReferenceTypeCode);
-							if (addRefs == null) {
-								addRefs = new ArrayList<>();
-							}
-							addRefs.add(rd);
-
-						}
-						
-					}
+				if (!foundCode) {
+					includedNotes.add(new IncludedNote(content, null));
 				}
-			}
-		}
-		BigDecimal prc = new BigDecimal(price.trim());
-		BigDecimal qty = new BigDecimal(quantity.trim());
-		if ((recalcPrice) && (!qty.equals(BigDecimal.ZERO))) {
-			prc = new BigDecimal(lineTotal.trim()).divide(qty, 4, RoundingMode.HALF_UP);
-		}
-		Product p = new Product(name, description, unitCode,
-			vatPercent == null ? null : new BigDecimal(vatPercent.trim()));
-		if (gid != null) {
-			p.addGlobalID(gid);
-		}
-		if (sellerAssignedID != null) {
-			p.setSellerAssignedID(sellerAssignedID);
-		}
-		setProduct(p);
-		setPrice(prc);
-		setQuantity(qty);
-		setBasisQuantity(new BigDecimal(basisQuantity));
-		if (rdocs != null) {
-			for (ReferencedDocument rdoc : rdocs) {
-				addReferencedDocument(rdoc);
-			}
-		}
-		if (addRefs != null) {
-			for (ReferencedDocument rdoc : addRefs) {
-				addAdditionalReference(rdoc);
-			}
-		}
-		addBuyerOrderReferencedDocumentLineID( buyerOrderReferencedDocumentLineID );
-		addBuyerOrderReferencedDocumentID( buyerOrderReferencedDocumentID );
+			});
+			addNotes(includedNotes);
+		});
 	}
-
 
 	public Item addBuyerOrderReferencedDocumentLineID(String s) {
 		buyerOrderReferencedDocumentLineID = s;
@@ -339,6 +309,20 @@ public class Item implements IZUGFeRDExportableItem {
 		return this;
 	}
 
+	@Override public IZUGFeRDAllowanceCharge[] getAllowances() {
+		IZUGFeRDAllowanceCharge[] izac=new IZUGFeRDAllowanceCharge[Allowances.size()];
+		return Allowances.toArray(izac);
+	}
+
+	@Override public IZUGFeRDAllowanceCharge[] getCharges() {
+		IZUGFeRDAllowanceCharge[] izac=new IZUGFeRDAllowanceCharge[Charges.size()];
+		return Charges.toArray(izac);
+	}
+
+	/***
+	 * BT 132 (issue https://github.com/ZUGFeRD/mustangproject/issues/247)
+	 * @return the line ID of the order (BT132)
+	 */
 	@Override
 	public String getBuyerOrderReferencedDocumentLineID() {
 		return buyerOrderReferencedDocumentLineID;
@@ -346,6 +330,11 @@ public class Item implements IZUGFeRDExportableItem {
 
 	public BigDecimal getLineTotalAmount() {
 		return lineTotalAmount;
+	}
+
+	public Item setNotesWithSubjectCode(List<IncludedNote> theList) {
+		includedNotes = theList;
+		return this;
 	}
 
 	/**
@@ -438,6 +427,30 @@ public class Item implements IZUGFeRDExportableItem {
 			return Allowances.toArray(new IZUGFeRDAllowanceCharge[0]);
 	}
 
+	/***
+	 * jackson convenience method
+	 */
+	public void setItemAllowances(ArrayList<Allowance> theAllowances) {
+		if (theAllowances != null) {
+			Allowances.clear();
+			for (Allowance theAllowance : theAllowances) {
+				Allowances.add(theAllowance);
+			}
+		}
+	}
+
+	/***
+	 * jackson convenience method
+	 */
+	public void setItemCharges(ArrayList<Charge> theCharges) {
+		if (theCharges != null) {
+			Charges.clear();
+			for (Charge theCharge : theCharges) {
+				Charges.add(theCharge);
+			}
+		}
+	}
+
 	@Override
 	public IZUGFeRDAllowanceCharge[] getItemCharges() {
 		if (Charges.isEmpty()) {
@@ -463,7 +476,7 @@ public class Item implements IZUGFeRDExportableItem {
 
 	/***
 	 * Adds a item level addition to the price (will be multiplied by quantity)
-	 * @see org.mustangproject.Charge
+	 * @see Charge
 	 * @param izac a relative or absolute charge
 	 * @return fluent setter
 	 */
@@ -474,11 +487,12 @@ public class Item implements IZUGFeRDExportableItem {
 
 	/***
 	 * Adds a item level reduction the price (will be multiplied by quantity)
-	 * @see org.mustangproject.Allowance
+	 * @see Allowance
 	 * @param izac a relative or absolute allowance
 	 * @return fluent setter
 	 */
 	public Item addAllowance(IZUGFeRDAllowanceCharge izac) {
+
 		Allowances.add(izac);
 		return this;
 	}
@@ -493,6 +507,26 @@ public class Item implements IZUGFeRDExportableItem {
 			notes = new ArrayList<>();
 		}
 		notes.add(text);
+
+		addNote(IncludedNote.unspecifiedNote(text));
+
+
+		return this;
+	}
+
+	/***
+	 * adds categorized item level freetext fields (includednote)
+	 * @param theNote IncludedNote to add
+	 * @return fluent setter
+	 */
+	public Item addNote(IncludedNote theNote) {
+
+		if (includedNotes == null) {
+			includedNotes = new ArrayList<>();
+		}
+		includedNotes.add(theNote);
+
+
 		return this;
 	}
 
@@ -519,7 +553,7 @@ public class Item implements IZUGFeRDExportableItem {
 
 
 	/***
-	 * adds item level references along with their typecodes and issuerassignedIDs (contract ID, cost centre, ...) 
+	 * adds item level references along with their typecodes and issuerassignedIDs (contract ID, cost centre, ...)
 	 * @param doc the ReferencedDocument to add
 	 * @return fluent setter
 	 */
@@ -538,8 +572,8 @@ public class Item implements IZUGFeRDExportableItem {
 		}
 		return additionalReference.toArray(new IReferencedDocument[0]);
 	}
-	
-	
+
+
 	/***
 	 * specify a item level delivery period
 	 * (apart from the document level delivery period, and the document level
@@ -560,6 +594,7 @@ public class Item implements IZUGFeRDExportableItem {
 	 * this will be included in a BillingSpecifiedPeriod element
 	 * @return the beginning of the delivery period
 	 */
+	@Override
 	public Date getDetailedDeliveryPeriodFrom() {
 		return detailedDeliveryPeriodFrom;
 	}
@@ -569,8 +604,29 @@ public class Item implements IZUGFeRDExportableItem {
 	 * this will be included in a BillingSpecifiedPeriod element
 	 * @return the end of the delivery period
 	 */
+	@Override
 	public Date getDetailedDeliveryPeriodTo() {
 		return detailedDeliveryPeriodTo;
 	}
 
+	public IZUGFeRDExportableItem addNotes(Collection<IncludedNote> notes) {
+		if (notes == null) {
+			return this;
+		}
+		if (includedNotes == null) {
+			includedNotes = new ArrayList<>();
+		}
+		includedNotes.addAll(notes);
+		return this;
+	}
+
+	@Override
+	public List<IncludedNote> getNotesWithSubjectCode() {
+		return includedNotes;
+	}
+
+	@Override
+	public String getAccountingReference() {
+		return accountingReference;
+	}
 }

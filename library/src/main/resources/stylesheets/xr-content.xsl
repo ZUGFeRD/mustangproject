@@ -789,7 +789,7 @@
             <xsl:apply-templates mode="list-entry" select="xr:DELIVERY_INFORMATION/xr:Deliver_to_location_identifier/@scheme_identifier">
               <xsl:with-param name="field-mapping-identifier" select="'xr:Deliver_to_location_identifier/@scheme_identifier'"/>
             </xsl:apply-templates>
-            <xsl:apply-templates mode="list-entry" select="xr:DELIVERY_INFORMATION/xr:Actual_delivery_date">
+             <xsl:apply-templates mode="list-entry" select="xr:DELIVERY_INFORMATION/xr:Actual_delivery_date">
               <xsl:with-param name="value" select="format-date(xr:DELIVERY_INFORMATION/xr:Actual_delivery_date, xrf:_('date-format'))"/>
             </xsl:apply-templates>
             <xsl:apply-templates mode="list-entry" select="xr:DELIVERY_INFORMATION/xr:Deliver_to_party_name"/>
@@ -807,10 +807,11 @@
   </xsl:template>
 
   <xsl:template name="zusaetzeVertrag">
-    <xsl:call-template name="box">
+    <xsl:call-template name="spanned-box">
       <xsl:with-param name="identifier" select="'zusaetzeVertrag'"/>
       <xsl:with-param name="content">
         <xsl:call-template name="list">
+          <xsl:with-param name="layout" select="'einspaltig'"/>
           <xsl:with-param name="content">            
             <xsl:apply-templates mode="list-entry" select="xr:Tender_or_lot_reference"/>
             <xsl:apply-templates mode="list-entry" select="xr:Receiving_advice_reference"/>

@@ -25,8 +25,8 @@ public interface IZUGFeRDTradeSettlementDebit extends IZUGFeRDTradeSettlement {
 	@Override
 	default String getSettlementXML() {
 		String xml = "<ram:SpecifiedTradeSettlementPaymentMeans>"
-				+ "<ram:TypeCode>59</ram:TypeCode>"
-				+ "<ram:Information>SEPA direct debit</ram:Information>"
+				+ "<ram:TypeCode>" + XMLTools.encodeXML(getPaymentMeansCode()) + "</ram:TypeCode>"
+				+ "<ram:Information>" + XMLTools.encodeXML(getPaymentMeansInformation()) + "</ram:Information>"
 				+ "<ram:PayerPartyDebtorFinancialAccount>"
 				+ "<ram:IBANID>" + XMLTools.encodeXML(getIBAN()) + "</ram:IBANID>"
 				+ "</ram:PayerPartyDebtorFinancialAccount>";
@@ -50,5 +50,15 @@ public interface IZUGFeRDTradeSettlementDebit extends IZUGFeRDTradeSettlement {
 	 * @return sepa direct debit mandate reference
 	 */
 	String getMandate();
+
+	/***
+	 * @return payment means code (BT-81 / UNTDID 4461)
+	 */
+	String getPaymentMeansCode();
+
+	/***
+	 * @return payment means description (BT-82) (optional)
+	 */
+	String getPaymentMeansInformation();
 
 }

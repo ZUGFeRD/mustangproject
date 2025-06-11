@@ -1,5 +1,8 @@
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IZUGFeRDCashDiscount;
 
 import java.math.BigDecimal;
@@ -7,6 +10,8 @@ import java.math.BigDecimal;
 /***
  * A class to represent discounts for early payments ("Skonto")
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class CashDiscount implements IZUGFeRDCashDiscount {
 
 	/***
@@ -32,8 +37,34 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	}
 
 	/***
+	 * bean contructor
+	 */
+	public CashDiscount() {
+
+	}
+
+	public BigDecimal getPercent() {
+		return percent;
+	}
+
+	public CashDiscount setPercent(BigDecimal percent) {
+		this.percent = percent;
+		return this;
+	}
+
+	public Integer getDays() {
+		return days;
+	}
+
+	public CashDiscount setDays(Integer days) {
+		this.days = days;
+		return this;
+	}
+
+	/***
 	 * @return this particular cash discount as cross industry invoice XML
 	 */
+	@JsonIgnore
 	public String getAsCII() {
 		return  "<ram:SpecifiedTradePaymentTerms>"+
 				"<ram:Description>Cash Discount</ram:Description>"+
@@ -49,6 +80,7 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	 * XRechnung CIUS defined it's own proprietary format for a freetext field
 	 * @return this particular cash discount in proprietary xrechnung format
 	 */
+	@JsonIgnore
 	public String getAsXRechnung() {
 		return "#SKONTO#TAGE="+days+"#PROZENT="+XMLTools.nDigitFormat(percent,2)+"#\n";
 	}

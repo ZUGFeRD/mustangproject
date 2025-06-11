@@ -1,5 +1,11 @@
 package org.mustangproject;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class SchemedID {
 	protected String scheme;
 	protected String id;
@@ -29,6 +35,11 @@ public class SchemedID {
 	public SchemedID(String scheme, String id) {
 		setScheme(scheme);
 		setId(id);
+	}
+
+	@Override
+	public String toString() {
+		return "SchemedID{scheme='" + scheme + "', id='" + id + "'}";
 	}
 
 }

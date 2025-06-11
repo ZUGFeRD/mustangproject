@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><ubl:Invoice xmlns:ubl="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2" xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2" xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2 http://docs.oasis-open.org/ubl/os-UBL-2.1/xsd/maindoc/UBL-Invoice-2.1.xsd">
+   <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0</cbc:CustomizationID>
+   <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
+   <cbc:ID>2015776085</cbc:ID>
+   <cbc:IssueDate>2024-11-01</cbc:IssueDate>
+   <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+   <cbc:Note>#AAI# Wenn bereits bezahlt, nur zu den Akten legen. Für Verzug und Verzugszinsen gelten die Bestimmungen der §§ 286 - 288 BGB. Der Schuldner einer Entgeltforderung kommt spätestens in Verzug, wenn er nicht innerhalb von 30 Tagen nach Fälligkeit und Zugang einer Rechnung oder gleichwertigen Zahlungsaufstellung leistet. Die Lieferung von Waren und Fahrzeugen erfolgt unter Eigentumsvorbehalt.</cbc:Note>
+   <cbc:Note>#PAI# Rechnungsbetrag zahlbar ohne Abzug sofort nach Erhalt der Rechnung.</cbc:Note>
+   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+   <cbc:BuyerReference>02-ZZ987654-99</cbc:BuyerReference>
+   <cac:InvoicePeriod>
+      <cbc:StartDate>2024-11-01</cbc:StartDate>
+      <cbc:EndDate>2024-11-30</cbc:EndDate>
+   </cac:InvoicePeriod>
+   <cac:OrderReference>
+      <cbc:ID>N/A</cbc:ID>
+   </cac:OrderReference>
+   <cac:ContractDocumentReference>
+      <cbc:ID>63435555</cbc:ID>
+   </cac:ContractDocumentReference>
+   <cac:AccountingSupplierParty>
+      <cac:Party>
+         <cbc:EndpointID schemeID="9930">DE238574172</cbc:EndpointID>
+         <cac:PartyName>
+            <cbc:Name>Alphabet Fuhrparkmanagement GmbH</cbc:Name>
+         </cac:PartyName>
+         <cac:PostalAddress>
+            <cbc:StreetName>Lilienthalallee 26</cbc:StreetName>
+            <cbc:CityName>München</cbc:CityName>
+            <cbc:PostalZone>80786</cbc:PostalZone>
+            <cac:Country>
+               <cbc:IdentificationCode>DE</cbc:IdentificationCode>
+            </cac:Country>
+         </cac:PostalAddress>
+         <cac:PartyTaxScheme>
+            <cbc:CompanyID>DE238574172</cbc:CompanyID>
+            <cac:TaxScheme>
+               <cbc:ID>VAT</cbc:ID>
+            </cac:TaxScheme>
+         </cac:PartyTaxScheme>
+         <cac:PartyLegalEntity>
+            <cbc:RegistrationName>Alphabet Fuhrparkmanagement GmbH</cbc:RegistrationName>
+            <cbc:CompanyID>HRB 181098</cbc:CompanyID>
+         </cac:PartyLegalEntity>
+         <cac:Contact>
+            <cbc:Name>Yildiz Tolga</cbc:Name>
+            <cbc:Telephone>+49899--</cbc:Telephone>
+            <cbc:ElectronicMail>Tolga.Yildiz@alphabet.de</cbc:ElectronicMail>
+         </cac:Contact>
+      </cac:Party>
+   </cac:AccountingSupplierParty>
+   <cac:AccountingCustomerParty>
+      <cac:Party>
+         <cbc:EndpointID schemeID="9930">N/A</cbc:EndpointID>
+         <cac:PartyIdentification>
+            <cbc:ID>00987654</cbc:ID>
+         </cac:PartyIdentification>
+         <cac:PartyName>
+            <cbc:Name>Muster GmbH</cbc:Name>
+         </cac:PartyName>
+         <cac:PostalAddress>
+            <cbc:StreetName>Musterweg 1</cbc:StreetName>
+            <cbc:CityName>Kiel</cbc:CityName>
+            <cbc:PostalZone>24105</cbc:PostalZone>
+            <cac:Country>
+               <cbc:IdentificationCode>DE</cbc:IdentificationCode>
+            </cac:Country>
+         </cac:PostalAddress>
+         <cac:PartyLegalEntity>
+            <cbc:RegistrationName>Muster GmbH</cbc:RegistrationName>
+         </cac:PartyLegalEntity>
+         <cac:Contact>
+            <cbc:Name>Mustermann Max</cbc:Name>
+         </cac:Contact>
+      </cac:Party>
+   </cac:AccountingCustomerParty>
+   <cac:Delivery>
+      <cbc:ActualDeliveryDate>2024-11-30</cbc:ActualDeliveryDate>
+      <cac:DeliveryLocation>
+         <cbc:ID>00987654</cbc:ID>
+         <cac:Address>
+            <cbc:StreetName>Musterweg 1</cbc:StreetName>
+            <cbc:CityName>Kiel</cbc:CityName>
+            <cbc:PostalZone>24105</cbc:PostalZone>
+            <cac:Country>
+               <cbc:IdentificationCode>DE</cbc:IdentificationCode>
+            </cac:Country>
+         </cac:Address>
+      </cac:DeliveryLocation>
+      <cac:DeliveryParty>
+         <cac:PartyName>
+            <cbc:Name>Muster GmbH</cbc:Name>
+         </cac:PartyName>
+      </cac:DeliveryParty>
+   </cac:Delivery>
+   <cac:PaymentMeans>
+      <cbc:PaymentMeansCode>30</cbc:PaymentMeansCode>
+      <cac:PayeeFinancialAccount>
+         <cbc:ID>DE34700700100156919301</cbc:ID>
+         <cbc:Name>Alphabet Fuhrparkmanagement GmbH</cbc:Name>
+         <cac:FinancialInstitutionBranch>
+            <cbc:ID>DEUTDEMMXXX</cbc:ID>
+         </cac:FinancialInstitutionBranch>
+      </cac:PayeeFinancialAccount>
+   </cac:PaymentMeans>
+   <cac:PaymentTerms>
+      <cbc:Note>Rechnungsbetrag zahlbar ohne Abzug sofort nach Erhalt der Rechnung.</cbc:Note>
+   </cac:PaymentTerms>
+   <cac:TaxTotal>
+      <cbc:TaxAmount currencyID="EUR">161.69</cbc:TaxAmount>
+      <cac:TaxSubtotal>
+         <cbc:TaxableAmount currencyID="EUR">851.00</cbc:TaxableAmount>
+         <cbc:TaxAmount currencyID="EUR">161.69</cbc:TaxAmount>
+         <cac:TaxCategory>
+            <cbc:ID>S</cbc:ID>
+            <cbc:Percent>19.00</cbc:Percent>
+            <cac:TaxScheme>
+               <cbc:ID>VAT</cbc:ID>
+            </cac:TaxScheme>
+         </cac:TaxCategory>
+      </cac:TaxSubtotal>
+   </cac:TaxTotal>
+   <cac:LegalMonetaryTotal>
+      <cbc:LineExtensionAmount currencyID="EUR">851.00</cbc:LineExtensionAmount>
+      <cbc:TaxExclusiveAmount currencyID="EUR">851.00</cbc:TaxExclusiveAmount>
+      <cbc:TaxInclusiveAmount currencyID="EUR">1012.69</cbc:TaxInclusiveAmount>
+      <cbc:PayableAmount currencyID="EUR">1012.69</cbc:PayableAmount>
+   </cac:LegalMonetaryTotal>
+   <cac:InvoiceLine>
+      <cbc:ID>1</cbc:ID>
+      <cbc:Note>#AAI# Finanzrate vom 01.11.2024 bis 30.11.2024 #ABZ/Kennzeichen#SH-9 18E #AKG/Fahrgestellnummer#WBY51EJ080CR55555 #BA/Kilometerstand#0 #AKV/LeasingNr#63435555</cbc:Note>
+      <cbc:InvoicedQuantity unitCode="C62">1.00</cbc:InvoicedQuantity>
+      <cbc:LineExtensionAmount currencyID="EUR">851.00</cbc:LineExtensionAmount>
+      <cac:InvoicePeriod>
+         <cbc:StartDate>2024-11-01</cbc:StartDate>
+         <cbc:EndDate>2024-11-30</cbc:EndDate>
+      </cac:InvoicePeriod>
+      <cac:Item>
+         <cbc:Description>FL-Rate</cbc:Description>
+         <cbc:Name>FL-Rate</cbc:Name>
+         <cac:SellersItemIdentification>
+            <cbc:ID>90101</cbc:ID>
+         </cac:SellersItemIdentification>
+         <cac:ClassifiedTaxCategory>
+            <cbc:ID>S</cbc:ID>
+            <cbc:Percent>19.00</cbc:Percent>
+            <cac:TaxScheme>
+               <cbc:ID>VAT</cbc:ID>
+            </cac:TaxScheme>
+         </cac:ClassifiedTaxCategory>
+      </cac:Item>
+      <cac:Price>
+         <cbc:PriceAmount currencyID="EUR">851.00</cbc:PriceAmount>
+         <cbc:BaseQuantity>1.00</cbc:BaseQuantity>
+      </cac:Price>
+   </cac:InvoiceLine>
+</ubl:Invoice>

@@ -13,14 +13,14 @@ import org.apache.pdfbox.preflight.parser.PreflightParser;
 
 import jakarta.activation.DataSource;
 
-// Copied from PDFBox preflight 2.0.x 
+// Copied from PDFBox preflight 2.0.x
 final class ByteArrayDataSource implements DataSource
 {
   private ByteArrayOutputStream data;
   private String type = null;
   private String name = null;
 
-  public ByteArrayDataSource (InputStream is) throws IOException
+  public ByteArrayDataSource (final InputStream is) throws IOException
   {
     data = new ByteArrayOutputStream ();
     IOUtils.copy (is, data);
@@ -36,7 +36,7 @@ final class ByteArrayDataSource implements DataSource
    * @param type
    *        the type to set
    */
-  public void setType (String type)
+  public void setType (final String type)
   {
     this.type = type;
   }
@@ -45,7 +45,7 @@ final class ByteArrayDataSource implements DataSource
    * @param name
    *        the name to set
    */
-  public void setName (String name)
+  public void setName (final String name)
   {
     this.name = name;
   }
@@ -70,12 +70,13 @@ final class ByteArrayDataSource implements DataSource
 // Try to create an API similar to the 2.x one
 final class PreflightParserHelper
 {
-  private static File createTmpFile (InputStream input) throws IOException
+  private static File createTmpFile (final InputStream input) throws IOException
   {
     FileOutputStream fos = null;
     try
     {
-      File tmpFile = File.createTempFile ("mustang-pdf", ".pdf");
+      final File tmpFile = File.createTempFile ("mustang-pdf", ".pdf");
+      tmpFile.deleteOnExit ();
       fos = new FileOutputStream (tmpFile);
       IOUtils.copy (input, fos);
       return tmpFile;
@@ -87,7 +88,7 @@ final class PreflightParserHelper
     }
   }
 
-  public static PreflightParser createPreflightParser (DataSource dataSource) throws IOException
+  public static PreflightParser createPreflightParser (final DataSource dataSource) throws IOException
   {
     return new PreflightParser (createTmpFile (dataSource.getInputStream ()));
   }

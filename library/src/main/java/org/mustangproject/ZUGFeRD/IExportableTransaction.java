@@ -30,11 +30,13 @@ package org.mustangproject.ZUGFeRD;
  * */
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Date; 
 import java.util.List;
 
 import org.mustangproject.FileAttachment;
 import org.mustangproject.IncludedNote;
+import org.mustangproject.ReferencedDocument;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 /***
@@ -303,13 +305,24 @@ public interface IExportableTransaction {
 	}
 
 	/**
-	 * get payment terms. if set, getPaymentTermDescription() and getDueDate() are
-	 * ignored
+	 * get payment terms. if set, getPaymentTermDescription() and getDueDate() are ignored
 	 *
 	 * @return the IZUGFeRDPaymentTerms of the invoice
 	 */
 	default IZUGFeRDPaymentTerms getPaymentTerms() {
 		return null;
+	}
+
+	default String getPaymentReference() {
+		return null;
+	}
+
+	/**
+	 * Get payment terms for the EXTENDED profile (multiple terms are allowed)
+	 * @return
+	 */
+	default IZUGFeRDPaymentTerms[] getExtendedPaymentTerms() {
+		return new IZUGFeRDPaymentTerms[0];
 	}
 
 	/**
@@ -322,10 +335,20 @@ public interface IExportableTransaction {
 	}
 
 	/**
-	 * get reference document number typically used for Invoice Corrections Will be
-	 * added as IncludedNote in comfort profile
+	 * get the rounding amount 
+   * (only to be usef for NL whose currency requires a rounding to 5ct)
 	 *
-	 * @return the ID of the document this document refers to
+	 * @return the Bigdecimal
+	 */
+	default BigDecimal getRoundingAmount() {
+		return null;
+	}
+
+	/**
+	 * get BuyerReference (BT-10) an identifier assigned by the buyer and used
+	 * for internal routing. Used for the Leitweg-ID.
+	 * 
+	 * @return the BuyerReference of this document
 	 */
 	default String getReferenceNumber() {
 		return null;
@@ -415,11 +438,21 @@ public interface IExportableTransaction {
 	 *
 	 * @return the ID of the document
 	 */
+	@Deprecated
 	default String getInvoiceReferencedDocumentID() {
 		return null;
 	}
 
+	@Deprecated
 	default Date getInvoiceReferencedIssueDate() {
+		return null;
+	}
+	
+	/**
+	 * Getter for BG-3
+	 * @return list of documents
+	 */
+	default ArrayList<ReferencedDocument> getInvoiceReferencedDocuments() {
 		return null;
 	}
 
@@ -450,8 +483,16 @@ public interface IExportableTransaction {
 	 *
 	 * @return the IZUGFeRDExportableTradeParty delivery address
 	 */
-
 	default IZUGFeRDExportableTradeParty getDeliveryAddress() {
+		return null;
+	}
+
+	/***
+	 * payee / payment receiver, if different from seller, ram:Payee (only supported for zf2)
+	 *
+	 * @return the IZUGFeRDExportableTradeParty payment receiver, if different from sellver
+	 */
+	default IZUGFeRDExportableTradeParty getPayee() {
 		return null;
 	}
 

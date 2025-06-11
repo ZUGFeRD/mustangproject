@@ -61,7 +61,7 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 			Invoice i = new Invoice()
 					.setIssueDate(new Date())
 					.setSender(
-							new TradeParty().setName(ownOrgName).setCountry("FR")
+							new TradeParty().setName(ownOrgName).setCountry("FR").setVATID("FR555444333222111")
 									.addBankDetails(new BankDetails(ownIBAN, ownBIC)))
 					.setRecipient(recipient)
 					.setNumber(ownNumber)
@@ -116,7 +116,7 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 					.setIssueDate(new Date())
 					.setDueDate(new Date())
 					.setSender(
-							new TradeParty().setName(ownOrgName).setCountry("FR")
+							new TradeParty().setName(ownOrgName).setCountry("FR").setVATID("FR555444333222111")
 									.addBankDetails(new BankDetails(ownIBAN)))
 					.setRecipient(recipient)
 					.setNumber(ownNumber).setTotalPrepaidAmount(new BigDecimal("1"))
@@ -137,7 +137,7 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF_FX_MINIMUM_INV);
 
 		// Reading ZUGFeRD
-		assertEquals("145.37",zi.getAmount());
+		assertEquals("146.37",zi.getAmount());
 //		assertEquals(zi.getBIC(), ownBIC);
 //		assertEquals(zi.getIBAN(), ownIBAN);
 		assertEquals(ownOrgName, zi.getHolder());

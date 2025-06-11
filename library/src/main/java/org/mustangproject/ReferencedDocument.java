@@ -1,23 +1,44 @@
 package org.mustangproject;
 
-import org.mustangproject.ZUGFeRD.IReferencedDocument;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.Date;
 
+import org.mustangproject.ZUGFeRD.IReferencedDocument;
+import org.mustangproject.util.NodeMap;
+import org.w3c.dom.Node;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ReferencedDocument implements IReferencedDocument {
 
 	String issuerAssignedID;
 	String typeCode;
 	String referenceTypeCode;
+	Date formattedIssueDateTime;
 
 	public ReferencedDocument(String issuerAssignedID, String typeCode, String referenceTypeCode) {
-		this.issuerAssignedID = issuerAssignedID;
+		this(issuerAssignedID);
 		this.typeCode = typeCode;
 		this.referenceTypeCode = referenceTypeCode;
 	}
 
+	public ReferencedDocument(String issuerAssignedID, String typeCode, String referenceTypeCode, Date formattedIssueDateTime) {
+		this(issuerAssignedID, typeCode, referenceTypeCode);
+		this.formattedIssueDateTime = formattedIssueDateTime;
+	}
+
 	public ReferencedDocument(String issuerAssignedID, String referenceTypeCode) {
+		this(issuerAssignedID, "916", referenceTypeCode); // additional invoice related document
+	}
+
+	public ReferencedDocument(String issuerAssingedID, Date formattedIssueDateTime) {
+		this(issuerAssingedID);
+		this.formattedIssueDateTime = formattedIssueDateTime;
+	}
+	
+	public ReferencedDocument(String issuerAssignedID) {
 		this.issuerAssignedID = issuerAssignedID;
-		this.typeCode = "916"; // additional invoice related document
-		this.referenceTypeCode = referenceTypeCode;
 	}
 
 	/***
@@ -44,6 +65,15 @@ public class ReferencedDocument implements IReferencedDocument {
 		this.referenceTypeCode = referenceTypeCode;
 	}
 
+	/**
+	 * issue date of this line
+	 *
+	 * @param formattedIssueDateTime as Date
+	 */
+	public void setFormattedIssueDateTime(Date formattedIssueDateTime) {
+		this.formattedIssueDateTime = formattedIssueDateTime;
+	}
+
 	@Override
 	public String getIssuerAssignedID() {
 		return issuerAssignedID;
@@ -57,5 +87,22 @@ public class ReferencedDocument implements IReferencedDocument {
 	@Override
 	public String getReferenceTypeCode() {
 		return referenceTypeCode;
+	}
+
+	@Override
+	public Date getFormattedIssueDateTime()
+	{
+		return formattedIssueDateTime;
+	}
+
+	public static ReferencedDocument fromNode(Node node) {
+		if (!node.hasChildNodes()) {
+			return null;
+		}
+		NodeMap nodes = new NodeMap(node);
+		return new ReferencedDocument(nodes.getAsStringOrNull("IssuerAssignedID", "ID"),
+			nodes.getAsStringOrNull("TypeCode", "DocumentTypeCode"),
+			nodes.getAsStringOrNull("ReferenceTypeCode"),
+			XMLTools.tryDate(nodes.getAsStringOrNull("FormattedIssueDateTime")));
 	}
 }

@@ -19,6 +19,7 @@
 package org.mustangproject.commandline;
 
 import org.apache.commons.cli.*;
+import org.apache.commons.io.FilenameUtils;
 import org.mustangproject.CII.CIIToUBL;
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
@@ -72,10 +73,10 @@ public class Main {
 			+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED\n"
 			+ "                [--attachments <filenames>]: list of file attachments (passing a single empty file name prevents prompting)\n"
 			+ "                [--no-additional-attachments]: prevent prompting for attachments\n"
-			+ "        --action ubl   convert UN/CEFACT 2016b CII XML to UBL XML\n"
+			+ "        --action ubl  convert UN/CEFACT 2016b CII XML to UBL XML\n"
 			+ "                [--source <filename>]: set input XML file\n"
 			+ "                [--out <filename>]: set output XML file\n"
-			+ "        --action upgrade   upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
+			+ "        --action upgrade  upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
 			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 			+ "                [--source <filename>]: set input XML ZUGFeRD 1 file\n"
 			+ "                [--out <filename>]: set output XML ZUGFeRD 2 file\n"
@@ -84,14 +85,19 @@ public class Main {
 			+ "                [--logAppend <text>]: text to be added to log line\n"
 			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 			+ "                [--source <filename>]: input PDF or XML file\n"
-			+ "        --action validateExpectInvalid  validate directory expecting negative results \n"
+			+ "                [--log-as-pdf]: save log output as pdf\n"
+			+ "        --action validateExpectInvalid  validate directory recursively expecting negative results \n"
 			+ "                [--no-notices]: refrain from reporting notices\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
+			+ "                Additional parameters (user will be prompted if not defined)\n"
 			+ "					-d, --directory to check recursively\n"
-			+ "        --action validateExpectValid  validate directory expecting positive results \n"
+			+ "                Additional parameters (optional)\n"
+			+ "					--exclude: comma-separated list of filenames to ignore\n"
+			+ "        --action validateExpectValid  validate directory recursively expecting positive results \n"
 			+ "                [--no-notices]: refrain from reporting notices\n"
-			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
+			+ "                Additional parameters (user will be prompted if not defined)\n"
 			+ "					-d, --directory to check recursively \n"
+			+ "                Additional parameters (user will be prompted if not defined)\n"
+			+ "					--exclude: comma-separated list of filenames to ignore\n"
 			+ "        --action visualize  convert XML to HTML \n"
 			+ "                [--language <lang>]: set output lang (en, fr or de)\n"
 			+ "                [--source <filename>]: set input XML file\n"
@@ -305,12 +311,13 @@ public class Main {
 	// Plain Java
 	// based on https://mkyong.com/java/how-to-convert-inputstream-to-string-in-java/
 	private static String convertInputStreamToString(InputStream is) {
-		int DEFAULT_BUFFER_SIZE = 8192;
-		ByteArrayOutputStream result = new ByteArrayOutputStream();
-		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
-		int length;
-		try {
-			while ((length = is.read(buffer)) != -1) {
+		try (InputStream inputStream = is) {
+			int DEFAULT_BUFFER_SIZE = 8192;
+			ByteArrayOutputStream result = new ByteArrayOutputStream();
+			byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+			int length;
+
+			while ((length = inputStream.read(buffer)) != -1) {
 				result.write(buffer, 0, length);
 			}
 
@@ -318,11 +325,10 @@ public class Main {
 			return result.toString(StandardCharsets.UTF_8.name());
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
+			// Java 10
+			// return result.toString(StandardCharsets.UTF_8);
 		}
-		return null;
-		// Java 10
-		// return result.toString(StandardCharsets.UTF_8);
-
 	}
 
 	/***
@@ -345,8 +351,11 @@ public class Main {
 			Option attachmentOpt = new Option("attachments", "attachments", true, "File attachments");
 			attachmentOpt.setValueSeparator(',');
 			attachmentOpt.setArgs(Option.UNLIMITED_VALUES);
-
 			options.addOption(attachmentOpt);
+			Option excludeOpt = new Option("exclude", "exclude", true, "Files to exclude from recursive directory traversal");
+			excludeOpt.setValueSeparator(',');
+			excludeOpt.setArgs(Option.UNLIMITED_VALUES);
+			options.addOption(excludeOpt);
 			options.addOption(new Option("source", "source", true, "which source file to use"));
 			options.addOption(new Option("source-xml", "source-xml", true, "which source file to use"));
 			options.addOption(new Option("language", "language", true, "output language (en, de or fr)"));
@@ -357,6 +366,7 @@ public class Main {
 			options.addOption(new Option("d", "directory", true, "which directory to operate on"));
 			options.addOption(new Option("i", "ignorefileextension", false, "ignore non-matching file extensions"));
 			options.addOption(new Option("l", "listfromstdin", false, "take list of files from commandline"));
+			options.addOption(new Option("log-as-pdf", "log-as-pdf", false, "saving log output to pdf file"));
 
 			boolean optionsRecognized = false;
 			String action = "";
@@ -380,11 +390,13 @@ public class Main {
 				String format = cmd.getOptionValue("format");
 				String lang = cmd.getOptionValue("language");
 				Boolean noNotices = cmd.hasOption("no-notices");
+				Boolean LogAsPDF = cmd.hasOption("log-as-pdf");
 
 				String zugferdVersion = cmd.getOptionValue("version");
 				String zugferdProfile = cmd.getOptionValue("profile");
 
 				String[] attachmentFilenames = cmd.hasOption("attachments") ? cmd.getOptionValues("attachments") : null;
+				String[] excludedFilenames = cmd.hasOption("exclude") ? cmd.getOptionValues("exclude") : null;
 
 
 				ArrayList<FileAttachment> attachments = new ArrayList<>();
@@ -427,11 +439,11 @@ public class Main {
 					performUBL(sourceName, outName);
 					optionsRecognized = true;
 				} else if ((action != null) && (action.equals("validate"))) {
-					optionsRecognized = performValidate(sourceName, noNotices, cmd.getOptionValue("logAppend"));
+					optionsRecognized = performValidate(sourceName, noNotices, cmd.getOptionValue("logAppend"), LogAsPDF);
 				} else if ((action != null) && (action.equals("validateExpectValid"))) {
-					optionsRecognized = performValidateExpect(true, directoryName);
+					optionsRecognized = performValidateExpect(true, directoryName, excludedFilenames);
 				} else if ((action != null) && (action.equals("validateExpectInvalid"))) {
-					optionsRecognized = performValidateExpect(false, directoryName);
+					optionsRecognized = performValidateExpect(false, directoryName, excludedFilenames);
 				}
 
 			} catch (UnrecognizedOptionException ex) {
@@ -454,7 +466,7 @@ public class Main {
 
 	}
 
-	private static boolean performValidate(String sourceName, boolean noNotices, String logAppend) {
+	private static boolean performValidate(String sourceName, boolean noNotices, String logAppend, boolean createLogAsPDF) {
 		boolean optionsRecognized;
 		if (sourceName == null) {
 			sourceName = getFilenameFromUser("Source PDF or XML", "invoice.pdf", "pdf|xml", true, false);
@@ -466,7 +478,16 @@ public class Main {
 		if (noNotices) {
 			zfv.disableNotices();
 		}
-		System.out.println(zfv.validate(sourceName));
+
+		String validationResultXML = zfv.validate(sourceName);
+		System.out.println(validationResultXML);
+
+		if( createLogAsPDF) {
+			ValidationLogVisualizer vlvi = new ValidationLogVisualizer();
+			String fileBasename = FilenameUtils.getBaseName(sourceName);
+
+			vlvi.toPDF(validationResultXML, fileBasename + "_result.pdf");
+		}
 		optionsRecognized = !zfv.hasOptionsError();
 		if (!zfv.wasCompletelyValid()) {
 			System.exit(-1);
@@ -474,8 +495,8 @@ public class Main {
 		return optionsRecognized;
 	}
 
-	private static boolean performValidateExpect(boolean valid, String dirName) {
-		ValidatorFileWalker zfWalk = new ValidatorFileWalker(valid);
+	private static boolean performValidateExpect(boolean valid, String dirName, String[] excludedFiles) {
+		ValidatorFileWalker zfWalk = new ValidatorFileWalker(valid, excludedFiles);
 		Path startingDir = Paths.get(dirName);
 		try {
 			Files.walkFileTree(startingDir, zfWalk);
@@ -732,11 +753,12 @@ public class Main {
 				ze.disableFacturX();
 			}
 
-			ze.setXML(Files.readAllBytes(Paths.get(xmlName)));
 
 			for (FileAttachment attachment : attachments) {
 				ze.attachFile(attachment.getFilename(), attachment.getData(), attachment.getMimetype(), attachment.getRelation());
 			}
+
+			ze.setXML(Files.readAllBytes(Paths.get(xmlName)));
 
 			ze.export(outName);
 			System.out.println("Written to " + outName);

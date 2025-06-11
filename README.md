@@ -32,16 +32,14 @@ If you set up a Maven project, you can reference the mustang artifact like this:
 
 ```xml
 <dependency>
-  <groupId>org.mustangproject</groupId>
-  <artifactId>library</artifactId>
- <version>2.12.0</version>
+    <groupId>org.mustangproject</groupId>
+    <artifactId>validator</artifactId>
+    <version>2.17.0</version>
+    <classifier>shaded</classifier>
 </dependency>
 ```
 
 Further docs on how to develop **with** mustang: 
-
- - [ZugferdDev.en.pdf](https://github.com/ZUGFeRD/mustangproject/blob/master/doc/ZugferdDev.en.pdf?raw=true): The English mustang user documentation.
- - [ZugferdDev.de.pdf](https://github.com/ZUGFeRD/mustangproject/blob/master/doc/ZugferdDev.de.pdf?raw=true): The German mustang user documentation.
  - [Usage examples](https://www.mustangproject.org/use/): Read and write electronic invoices.
  - [Mustang classes](https://www.mustangproject.org/invoice-class/): Using the mustang classes.
 

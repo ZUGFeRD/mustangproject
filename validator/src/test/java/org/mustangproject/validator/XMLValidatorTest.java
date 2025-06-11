@@ -204,6 +204,36 @@ public class XMLValidatorTest extends ResourceCase {
 
 	}
 
+	public void testXRCIIPeppolFailureValidation() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		// GIVEN XRechnung CII with Peppol rule violation
+		File file = getResourceAsFile("CII_XRechnung_with_Peppol_violation.xml");
+
+		boolean noExceptions = true;
+		try {
+			xv.setFilename(file.getAbsolutePath());
+
+			// WHEN validated
+			xv.validate();
+
+			Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
+
+			// THEN validation returns only warning message
+			boolean onlyWarnings = Boolean.parseBoolean(xpath.evaluate("not(//messages/*[not(self::warning)])", source));
+			assertTrue(onlyWarnings);
+
+			// THEN validation returns summary status valid
+			String status = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("valid", status);
+		} catch (IrrecoverableValidationError e) {
+			noExceptions = false;
+		}
+		assertTrue(noExceptions);
+	}
+
 	public void testXRValidation() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -226,6 +256,25 @@ public class XMLValidatorTest extends ResourceCase {
 			content = xpath.evaluate("/validation/summary/@status", source);
 			assertEquals("invalid", content);
 
+		} catch (final IrrecoverableValidationError e) {
+			// ignore, will be in XML output anyway
+		}
+
+	}
+
+	public void testXRSchemaValidation() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("invalidXRSchemav2.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("invalid", content);
 
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
@@ -279,6 +328,22 @@ public class XMLValidatorTest extends ResourceCase {
 			noExceptions = false;
 		}
 		assertTrue(noExceptions);
+		tempFile = getResourceAsFile("ubl-tc434-creditnote1.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("valid", content);
+
+
+		} catch (IrrecoverableValidationError e) {
+
+			noExceptions = false;
+		}
+		assertTrue(noExceptions);
+
 
 	}
 

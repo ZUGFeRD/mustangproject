@@ -1,6 +1,7 @@
 package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -11,6 +12,7 @@ import org.w3c.dom.NodeList;
  * @see TradeParty
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Contact implements IZUGFeRDExportableContact {
 
 	/**
@@ -112,7 +114,9 @@ public class Contact implements IZUGFeRDExportableContact {
 				if (currentItemNode.getLocalName() != null) {
 
 					if (currentItemNode.getLocalName().equals("PersonName")/*CII*/||currentItemNode.getLocalName().equals("Name")/*UBL*/) {
-						setName(currentItemNode.getFirstChild().getNodeValue());
+						if (currentItemNode.getFirstChild()!=null) {
+							setName(currentItemNode.getFirstChild().getNodeValue());
+						}
 					}
 					if (currentItemNode.getLocalName().equals("TelephoneUniversalCommunication")) { /*CII*/
 						NodeList tel = currentItemNode.getChildNodes();

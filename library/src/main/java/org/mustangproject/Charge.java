@@ -1,13 +1,19 @@
 package org.mustangproject;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IAbsoluteValueProvider;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /***
  * Absolute and relative charges for document and item level
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Charge implements IZUGFeRDAllowanceCharge {
 
 	/**
@@ -18,6 +24,10 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	 * the absolute value if not percentage
 	 */
 	protected BigDecimal totalAmount;
+	/**
+	 * the value the percentage is applied upon
+	 */
+	protected BigDecimal basisAmount;
 	/**
 	 * the tax rate the charge belongs to
 	 */
@@ -99,6 +109,22 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 
 
 	@Override
+	public BigDecimal getBasisAmount() {
+		return basisAmount;
+	}
+
+	/***
+	 * sets a potential basis for the potential percentage
+	 * @param basis the basis amount
+	 * @return fluid setter
+	 */
+	public Charge setBasisAmount(BigDecimal basis) {
+		this.basisAmount = basis;
+		return this;
+	}
+
+
+	@Override
 	public String getReasonCode() {
 		return reasonCode;
 	}
@@ -116,10 +142,13 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	
 	@Override
 	public BigDecimal getTotalAmount(IAbsoluteValueProvider currentItem) {
-		if (percent!=null) {
-			return currentItem.getValue().multiply(getPercent().divide(new BigDecimal(100)));
-		} else if(totalAmount != null) {
+		if(totalAmount != null) {
 			return totalAmount;
+		} else if (percent!=null) {
+			BigDecimal singlePrice=currentItem.getValue().divide(BigDecimal.ONE.add(getPercent().divide(new BigDecimal(100))),  18, RoundingMode.HALF_UP);
+//			BigDecimal singlePrice=currentItem.getValue().multiply(BigDecimal.ONE.subtract(getPercent().divide(new BigDecimal(100))));
+			BigDecimal singlePriceDiff=currentItem.getValue().add(singlePrice);
+			return singlePriceDiff;
 		} else {
 			throw new RuntimeException("percent must be set");
 		}
@@ -129,7 +158,10 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 		if (totalAmount!=null) {
 			return totalAmount;
 		} else {
-			throw new RuntimeException("totalAmount must be set");
+			if (percent==null) {
+				throw new RuntimeException("totalAmount must be set");
+			}
+			return null;
 		}
 	}
 
@@ -151,6 +183,7 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	 * @return true since it is supposed to be calculated negatively
 	 */
 	@Override
+	@JsonIgnore
 	public boolean isCharge() {
 		return true;
 	}

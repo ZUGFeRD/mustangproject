@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!--
+
+    Licensed under European Union Public Licence (EUPL) version 1.2.
+
+-->
+<CreditNote xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2"
+	xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+	xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+	<cbc:CustomizationID>urn:cen.eu:en16931:2017</cbc:CustomizationID>
+	<cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
+	<cbc:ID>018304 / 28865</cbc:ID>
+	<cbc:IssueDate>2019-09-23</cbc:IssueDate>
+	<cbc:CreditNoteTypeCode>381</cbc:CreditNoteTypeCode>
+	<cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+	<cbc:BuyerReference>018304 / 28865</cbc:BuyerReference>
+	<cac:InvoicePeriod>
+		<cbc:StartDate>2019-02-01</cbc:StartDate>
+		<cbc:EndDate>2019-02-28</cbc:EndDate>
+	</cac:InvoicePeriod>
+	<cac:AccountingSupplierParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="0201">0000000196</cbc:EndpointID>
+			<cac:PartyName>
+				<cbc:Name>My Supplier Company N.V.</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:StreetName>De Grote Meir 22</cbc:StreetName>
+				<cbc:CityName>ANTWERPEN</cbc:CityName>
+				<cbc:PostalZone>2000</cbc:PostalZone>
+				<cac:Country>
+					<cbc:IdentificationCode>BE</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+			<cac:PartyTaxScheme>
+				<cbc:CompanyID>BE0000000196</cbc:CompanyID>
+				<cac:TaxScheme>
+					<cbc:ID>VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:PartyTaxScheme>
+			<cac:PartyLegalEntity>
+				<cbc:RegistrationName>My Supplier Company</cbc:RegistrationName>
+				<cbc:CompanyID>0000000196</cbc:CompanyID>
+			</cac:PartyLegalEntity>
+			<cac:Contact>
+				<cbc:ElectronicMail>john.doole@mysuppliercompany.be</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:AccountingSupplierParty>
+	<cac:AccountingCustomerParty>
+		<cac:Party>
+			<cbc:EndpointID schemeID="0201">0000000295</cbc:EndpointID>
+			<cac:PartyName>
+				<cbc:Name>My Customer Company S.A.</cbc:Name>
+			</cac:PartyName>
+			<cac:PostalAddress>
+				<cbc:StreetName>Boulevard Sint Michel 53</cbc:StreetName>
+				<cbc:CityName>BRUXELLES</cbc:CityName>
+				<cbc:PostalZone>1000</cbc:PostalZone>
+				<cac:Country>
+					<cbc:IdentificationCode>BE</cbc:IdentificationCode>
+				</cac:Country>
+			</cac:PostalAddress>
+			<cac:PartyTaxScheme>
+				<cbc:CompanyID>BE0000000295</cbc:CompanyID>
+				<cac:TaxScheme>
+					<cbc:ID>VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:PartyTaxScheme>
+			<cac:PartyLegalEntity>
+				<cbc:RegistrationName>My Customer Company</cbc:RegistrationName>
+				<cbc:CompanyID>0000000295</cbc:CompanyID>
+			</cac:PartyLegalEntity>
+			<cac:Contact>
+				<cbc:ElectronicMail>pete.smith@mycustomercompany.be</cbc:ElectronicMail>
+			</cac:Contact>
+		</cac:Party>
+	</cac:AccountingCustomerParty>
+	<cac:PaymentMeans>
+		<cbc:PaymentMeansCode>1</cbc:PaymentMeansCode>
+		<cbc:PaymentID>010676609538</cbc:PaymentID>
+		<cac:PayeeFinancialAccount>
+			<cbc:ID>BE91000000143476</cbc:ID>
+			<cac:FinancialInstitutionBranch>
+				<cbc:ID>BPOTBEB1</cbc:ID>
+			</cac:FinancialInstitutionBranch>
+		</cac:PayeeFinancialAccount>
+	</cac:PaymentMeans>
+	<cac:TaxTotal>
+		<cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+		<cac:TaxSubtotal>
+			<cbc:TaxableAmount currencyID="EUR">100.11</cbc:TaxableAmount>
+			<cbc:TaxAmount currencyID="EUR">0.00</cbc:TaxAmount>
+			<cac:TaxCategory>
+				<cbc:ID>E</cbc:ID>
+				<cbc:Percent>0.00</cbc:Percent>
+				<cbc:TaxExemptionReason>Taxes are not applicable</cbc:TaxExemptionReason>
+				<cac:TaxScheme>
+					<cbc:ID>VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:TaxCategory>
+		</cac:TaxSubtotal>
+	</cac:TaxTotal>
+	<cac:LegalMonetaryTotal>
+		<cbc:LineExtensionAmount currencyID="EUR">100.11</cbc:LineExtensionAmount>
+		<cbc:TaxExclusiveAmount currencyID="EUR">100.11</cbc:TaxExclusiveAmount>
+		<cbc:TaxInclusiveAmount currencyID="EUR">100.11</cbc:TaxInclusiveAmount>
+		<cbc:PayableAmount currencyID="EUR">100.11</cbc:PayableAmount>
+	</cac:LegalMonetaryTotal>
+	<cac:CreditNoteLine>
+		<cbc:ID>1</cbc:ID>
+		<cbc:CreditedQuantity unitCode="C62">1.00</cbc:CreditedQuantity>
+		<cbc:LineExtensionAmount currencyID="EUR">100.11</cbc:LineExtensionAmount>
+		<cac:Item>
+			<cbc:Description>Exonération du versement du PP</cbc:Description>
+			<cbc:Name>Exonération du versement du PP</cbc:Name>
+			<cac:SellersItemIdentification>
+				<cbc:ID>V55</cbc:ID>
+			</cac:SellersItemIdentification>
+			<cac:ClassifiedTaxCategory>
+				<cbc:ID>E</cbc:ID>
+				<cbc:Percent>0.00</cbc:Percent>
+				<cac:TaxScheme>
+					<cbc:ID>VAT</cbc:ID>
+				</cac:TaxScheme>
+			</cac:ClassifiedTaxCategory>
+			<cac:AdditionalItemProperty>
+				<cbc:Name>2</cbc:Name>
+				<cbc:Value>Contributions - précompte professionnel</cbc:Value>
+			</cac:AdditionalItemProperty>
+		</cac:Item>
+		<cac:Price>
+			<cbc:PriceAmount currencyID="EUR">100.11</cbc:PriceAmount>
+		</cac:Price>
+	</cac:CreditNoteLine>
+</CreditNote>

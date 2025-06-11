@@ -4,15 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.AbstractList;
-import java.util.Collections;
-import java.util.List;
-import java.util.RandomAccess;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.commons.io.IOUtils;
 import org.dom4j.io.XMLWriter;
+import org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class XMLTools extends XMLWriter {
 	@Override
@@ -23,36 +21,11 @@ public class XMLTools extends XMLWriter {
 	@Override
 	public String escapeElementEntities(String s) {
 		return super.escapeElementEntities(s);
-
-	}
-
-	public static List<Node> asList(NodeList n) {
-		return n.getLength() == 0 ?
-			Collections.<Node>emptyList() : new NodeListWrapper(n);
-	}
-
-	static final class NodeListWrapper extends AbstractList<Node>
-		implements RandomAccess {
-		private final NodeList list;
-
-		NodeListWrapper(NodeList l) {
-			list = l;
-		}
-
-		@Override
-    public Node get(int index) {
-			return list.item(index);
-		}
-
-		@Override
-    public int size() {
-			return list.getLength();
-		}
 	}
 
 	public static String nDigitFormat(BigDecimal value, int scale) {
 		/*
-		 * I needed 123,45, locale independent.I tried
+		 * I needed 123.45, locale independent.I tried
 		 * NumberFormat.getCurrencyInstance().format( 12345.6789 ); but that is locale
 		 * specific.I also tried DecimalFormat df = new DecimalFormat( "0,00" );
 		 * df.setDecimalSeparatorAlwaysShown(true); df.setGroupingUsed(false);
@@ -70,7 +43,114 @@ public class XMLTools extends XMLWriter {
 
 	}
 
+	/**
+	 * returns the value of an node
+	 *
+	 * @param node the Node to get the value from
+	 * @return A String or empty String, if no value was found
+	 */
+	public static String getNodeValue(Node node) {
+		if (node != null && node.getFirstChild() != null) {
+			return node.getFirstChild().getNodeValue();
+		}
+		return "";
+	}
 
+
+	/**
+	 * tries to convert a String to BigDecimal.
+	 *
+	 * @param nodeValue The value as String
+	 * @return a BigDecimal with the value provides as String or a BigDecimal with value 0.00 if an error occurs
+	 */
+	public static BigDecimal tryBigDecimal(String nodeValue) {
+		try {
+			return new BigDecimal(nodeValue);
+		} catch (final Exception e) {
+			try {
+				return BigDecimal.valueOf(Float.valueOf(nodeValue));
+			} catch (final Exception ex) {
+				return new BigDecimal("0.00");
+			}
+		}
+	}
+
+
+	/**
+	 * tries to convert a Node to a BigDecimal.
+	 *
+	 * @param node The value as String
+	 * @return a BigDecimal with the value provides as String or a BigDecimal with value 0.00 if an error occurs
+	 */
+	public static BigDecimal tryBigDecimal(Node node) {
+		final String nodeValue = XMLTools.getNodeValue(node);
+		if (nodeValue.isEmpty()) {
+			return null;
+		}
+		return XMLTools.tryBigDecimal(nodeValue);
+	}
+	/***
+	 * formats a number so that at least minDecimals are displayed but at the maximum maxDecimals are there, i.e.
+	 * cuts potential 0s off the end until minDecimals
+	 * @param value the value to be formatted
+	 * @param maxDecimals number of maximal scale
+	 * @param minDecimals number of minimal scale
+	 * @return value as String with decimals in the specified range
+	 */
+	public static String nDigitFormatDecimalRange(BigDecimal value, int maxDecimals, int minDecimals) {
+		if ((maxDecimals<minDecimals)||(maxDecimals<0)||(minDecimals<0)) {
+			throw new IllegalArgumentException("Invalid scale range provided");
+		}
+		int curDecimals=maxDecimals;
+		while  ( (curDecimals>minDecimals) && (value.setScale(curDecimals, RoundingMode.HALF_UP).compareTo(value.setScale(curDecimals-1, RoundingMode.HALF_UP))==0)) {
+			 curDecimals--;
+		}
+		return value.setScale(curDecimals, RoundingMode.HALF_UP).toPlainString();
+
+	}
+
+
+	/***
+	 * returns a util.Date from a 102 String yyyymmdd in a node
+	 * @param node the node
+	 * @return a util.Date, or null, if not parseable
+	 */
+	public static Date tryDate(Node node) {
+		final String nodeValue = XMLTools.getNodeValue(node);
+		if (nodeValue.isEmpty()) {
+			return null;
+		}
+		return tryDate(nodeValue);
+	}
+
+	/***
+	 * returns a util.Date from a 102 String yyyymmdd
+	 * @param toParse the string
+	 * @return a util.Date, or null, if not parseable
+	 */
+	public static Date tryDate(String toParse) {
+		SimpleDateFormat formatter = null;
+		if (toParse==null) {
+			return null;
+		}
+		if (toParse.contains("-")) {
+			// from ubl
+			 formatter = new SimpleDateFormat("yyyy-MM-dd");
+		} else {
+			formatter = ZUGFeRDDateFormat.DATE.getFormatter();
+		}
+		try {
+			return formatter.parse(toParse);
+		} catch (final Exception e) {
+			return null;
+		}
+	}
+
+	/***
+	 * relplaces some entities like &lt; , &gt; and &amp; with their escaped pendant like &amp;lt;
+	 * @param s the string
+	 * @return the "safe" string
+	 */
 	public static String encodeXML(CharSequence s) {
 		if (s == null) {
 			return "";
@@ -140,7 +220,20 @@ public class XMLTools extends XMLWriter {
 	}
 
 	public static byte[] getBytesFromStream(InputStream fileinput) throws IOException {
-	  return IOUtils.toByteArray (fileinput);
+		// Stream closing responsibility is with the caller
+		return IOUtils.toByteArray(fileinput);
 	}
+
+
+	public static String trimOrNull(Node node) {
+		if (node != null) {
+			String textContent = node.getTextContent();
+			if (textContent != null) {
+				return textContent.trim();
+			}
+		}
+		return null;
+	}
+
 
 }
