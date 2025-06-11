@@ -128,17 +128,9 @@ public class Item implements IZUGFeRDExportableItem {
 				.flatMap(bordNodes -> bordNodes.getAsString("LineID"))
 				.ifPresent(this::addReferencedLineID);
 
-					if ((tradeLineChilds.item(tradeLineChildIndex).getLocalName() != null) && tradeLineChilds.item(tradeLineChildIndex).getLocalName().equals("BuyerOrderReferencedDocument")) {
-						NodeList docChilds = tradeLineChilds.item(tradeLineChildIndex).getChildNodes();
-						for (int docIndex = 0; docIndex < docChilds.getLength(); docIndex++) {
-							String localName = docChilds.item(docIndex).getLocalName();
-							if ((localName != null) && (localName.equals("LineID"))) {
-								buyerOrderReferencedDocumentLineID = docChilds.item(docIndex).getTextContent();
-							} else if ((localName != null) && (localName.equals("IssuerAssignedID"))) {
-								buyerOrderReferencedDocumentID = docChilds.item(docIndex).getTextContent();
-							}
-						}
-					}
+			icnm.getAsNodeMap("BuyerOrderReferencedDocument")
+				.flatMap(bordNodes -> bordNodes.getAsString("IssuerAssignedID"))
+				.ifPresent(this::addBuyerOrderReferencedDocumentID);
 
 			icnm.getAsNodeMap("NetPriceProductTradePrice").ifPresent(npptpNodes -> {
 				npptpNodes.getAsBigDecimal("ChargeAmount").ifPresent(this::setPrice);
