@@ -54,9 +54,9 @@ public class CalculationTest extends ResourceCase {
 
 		final LineCalculator calculator = new LineCalculator(currentItem);
 
-		assertEquals(valueOf(133.857).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
-		assertEquals(valueOf(1606.28).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
-		assertEquals(valueOf(257.0048).stripTrailingZeros(), calculator.getItemTotalVATAmount().stripTrailingZeros());
+		assertEquals(valueOf(148.73).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
+		assertEquals(valueOf(1769.89).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
+		assertEquals(valueOf(283.1824).stripTrailingZeros(), calculator.getItemTotalVATAmount().stripTrailingZeros());
 	}
 
 	@Test
@@ -74,17 +74,20 @@ public class CalculationTest extends ResourceCase {
 
 		final LineCalculator calculator = new LineCalculator(currentItem);
 
-		assertEquals(valueOf(163.603).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
-		assertEquals(valueOf(1963.24).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
-		assertEquals(valueOf(314.1184).stripTrailingZeros(), calculator.getItemTotalVATAmount().stripTrailingZeros());
+		assertEquals(valueOf(148.73).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
+		assertEquals(valueOf(1799.63).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
+		assertEquals(valueOf(287.9408).stripTrailingZeros(), calculator.getItemTotalVATAmount().stripTrailingZeros());
 	}
 
 	@Test
 	public void testLineCalculatorForeignCurrencyExample() {
-
-/*
+/*** xml of official fx sample with allowances and charges
+ *  10x100 with 10% and 50€ item discount =850€
+ *  +8,75 charges on document level=858,75, +19%VAT=1021,91
+ *  prepaid 500->due payable=521,91
+ */
 		File inputCII = getResourceAsFile("Extended_fremdwaehrung.xml");
-inputCII=new File("C:\\Users\\jstaerk\\workspace\\XMLExamples\\zfdiverses\\20250407\\fremdwaehrung.xml");
+
 		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter();
 		Invoice invoice=null;
 		zii.doIgnoreCalculationErrors();
@@ -104,9 +107,9 @@ inputCII=new File("C:\\Users\\jstaerk\\workspace\\XMLExamples\\zfdiverses\\20250
 
 		final TransactionCalculator calculator = new TransactionCalculator(invoice);
 
-		assertEquals(valueOf(521.91).stripTrailingZeros(), calculator.getGrandTotal().stripTrailingZeros());
+		assertEquals(valueOf(521.91).stripTrailingZeros(), calculator.getDuePayable().stripTrailingZeros());
 
- */
+
 	}
 
 
@@ -221,8 +224,93 @@ inputCII=new File("C:\\Users\\jstaerk\\workspace\\XMLExamples\\zfdiverses\\20250
 			invoice.addAllowance(new Allowance().setPercent(total_discount_percent).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatte"));
 		}
 		TransactionCalculator calculator = new TransactionCalculator(invoice);
-		assertEquals(valueOf(101.86).stripTrailingZeros(), calculator.getGrandTotal().stripTrailingZeros());
+		assertEquals(valueOf(307.18).stripTrailingZeros(), calculator.getGrandTotal().stripTrailingZeros());
 	}
+
+	public void testSimpleItemPercentAllowance() {
+		/***
+		 * a product with net 1.10 and qty 5 and relative item allowance of 10% should return 5 as line and grand total
+		 */
+		SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
+
+		Invoice invoice = new Invoice();
+		invoice.setDocumentName("Rechnung");
+		invoice.setNumber("777777");
+		try {
+			invoice.setIssueDate(sqlDate.parse("2020-12-31"));
+			invoice.setDetailedDeliveryPeriod(sqlDate.parse("2020-12-01 - 2020-12-31".split(" - ")[0]), sqlDate.parse("2020-12-01 - 2020-12-31".split(" - ")[1]));
+			invoice.setDeliveryDate(sqlDate.parse("2020-12-31"));
+			invoice.setDueDate(sqlDate.parse("2021-01-15"));
+		} catch (Exception e) {
+			LOGGER.error("Failed to set dates", e);
+
+		}
+		TradeParty sender = new TradeParty("Maier GmbH", "Musterweg 5", "11111", "Testung", "DE");
+		sender.addVATID("DE2222222222");
+		invoice.setSender(sender);
+
+		/* trade party (recipient) */
+		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " " + "", "Testweg 5", "11111", "Testung", "DE");
+		recipient.setID("111111");
+		recipient.addVATID("DE111111111");
+		invoice.setRecipient(recipient);
+
+		/* item */
+		Product product;
+		Item item;
+
+		product = new Product("AAA", "", "H84", BigDecimal.ZERO);
+		item = new Item(product, new BigDecimal("1.10"), new BigDecimal(5.00));
+
+		item.addAllowance(new Allowance().setPercent(new BigDecimal(10)).setTaxPercent(BigDecimal.ZERO));
+		invoice.addItem(item);
+
+		TransactionCalculator calculator = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal(5), calculator.getGrandTotal().stripTrailingZeros());
+	}
+
+	public void testSimpleItemTotalAllowance() {
+		/***
+		 * a product with net 1 and qty 5 and absolute _item_ allowance of 1 should return 4 as line total, and grand total
+		 */
+		SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
+
+		Invoice invoice = new Invoice();
+		invoice.setDocumentName("Rechnung");
+		invoice.setNumber("777777");
+		try {
+			invoice.setIssueDate(sqlDate.parse("2020-12-31"));
+			invoice.setDetailedDeliveryPeriod(sqlDate.parse("2020-12-01 - 2020-12-31".split(" - ")[0]), sqlDate.parse("2020-12-01 - 2020-12-31".split(" - ")[1]));
+			invoice.setDeliveryDate(sqlDate.parse("2020-12-31"));
+			invoice.setDueDate(sqlDate.parse("2021-01-15"));
+		} catch (Exception e) {
+			LOGGER.error("Failed to set dates", e);
+
+		}
+		TradeParty sender = new TradeParty("Maier GmbH", "Musterweg 5", "11111", "Testung", "DE");
+		sender.addVATID("DE2222222222");
+		invoice.setSender(sender);
+
+		/* trade party (recipient) */
+		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " " + "", "Testweg 5", "11111", "Testung", "DE");
+		recipient.setID("111111");
+		recipient.addVATID("DE111111111");
+		invoice.setRecipient(recipient);
+
+		/* item */
+		Product product;
+		Item item;
+
+		product = new Product("AAA", "", "H84", BigDecimal.ZERO);
+		item = new Item(product, new BigDecimal("1.00"), new BigDecimal(5.00));
+
+		item.addAllowance(new Allowance(new BigDecimal(1)).setTaxPercent(BigDecimal.ZERO));
+		invoice.addItem(item);
+
+		TransactionCalculator calculator = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal(4), calculator.getGrandTotal().stripTrailingZeros());
+	}
+
 
 	/**
 	 * LineCalculator should not throw an exception when calculating a non-terminating decimal expansion

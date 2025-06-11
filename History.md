@@ -5,6 +5,7 @@
 #786
 add getCalculation on calculatedInvoice
 Transactioncalculator getTaxDetails to include correct percentage, calculated amounts
+#764
 
 2.16.5
 =======

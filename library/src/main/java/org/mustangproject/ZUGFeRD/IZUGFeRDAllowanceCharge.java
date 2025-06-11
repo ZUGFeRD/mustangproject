@@ -39,6 +39,12 @@ public interface IZUGFeRDAllowanceCharge {
 	default BigDecimal getPercent() {return null;}
 
 	/***
+	 * returns a basis the precentage is calculated from
+	 * @return null or the basis
+	 */
+	default BigDecimal getBasisAmount() {return null;}
+
+	/***
 	 * get a description for the allowance/charge
 	 * @return the description
 	 */

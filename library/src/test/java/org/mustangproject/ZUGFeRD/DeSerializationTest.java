@@ -395,7 +395,7 @@ public class DeSerializationTest extends ResourceCase {
 		try {
 			Invoice newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
 			TransactionCalculator tc=new TransactionCalculator(newInvoiceFromJSON);
-			assertEquals(new BigDecimal("19.52"),tc.getGrandTotal());
+			assertEquals(new BigDecimal("18.92"),tc.getGrandTotal());
 
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);

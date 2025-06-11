@@ -321,11 +321,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 
 		String reason = "";
-		if ((allowance.getReason() != null) && (profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung"))) {
+		boolean isEN16931=(profile == Profiles.getByName("XRechnung")) || (profile == Profiles.getByName("EN16931"));
+		if ((allowance.getReason() != null) && (profile == Profiles.getByName("Extended") || isEN16931)) {
 			reason = "<ram:Reason>" + XMLTools.encodeXML(allowance.getReason()) + "</ram:Reason>";
 		}
 		String reasonCode = "";
-		if ((allowance.getReasonCode() != null) && (profile == Profiles.getByName("XRechnung"))) {
+		if ((allowance.getReasonCode() != null) && (profile == Profiles.getByName("Extended") || isEN16931)) {
 			// only in XRechnung profile
 			reasonCode = "<ram:ReasonCode>" + allowance.getReasonCode() + "</ram:ReasonCode>";
 		}
@@ -433,22 +434,27 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>";
 				}
 				String allowanceChargeStr = "";
-				if (currentItem.getItemAllowances() != null && currentItem.getItemAllowances().length > 0) {
-					for (final IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
+				if (currentItem.getProduct().getAllowances() != null && currentItem.getProduct().getAllowances().length > 0) {
+					for (final IZUGFeRDAllowanceCharge allowance : currentItem.getProduct().getAllowances()) {
 						allowanceChargeStr += getAllowanceChargeStr(allowance, currentItem);
 					}
 				}
-				if (currentItem.getItemCharges() != null && currentItem.getItemCharges().length > 0) {
-					for (final IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
+				if (currentItem.getProduct().getCharges() != null && currentItem.getProduct().getCharges().length > 0) {
+					for (final IZUGFeRDAllowanceCharge charge : currentItem.getProduct().getCharges()) {
 						allowanceChargeStr += getAllowanceChargeStr(charge, currentItem);
 
 					}
 				}
 
 				String itemTotalAllowanceChargeStr = "";
-				if (currentItem.getItemTotalAllowances() != null && currentItem.getItemTotalAllowances().length > 0) {
-					for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getItemTotalAllowances()) {
+				if (currentItem.getAllowances() != null && currentItem.getAllowances().length > 0) {
+					for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getAllowances()) {
 						itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalAllowance, currentItem);
+					}
+				}
+				if (currentItem.getCharges() != null && currentItem.getCharges().length > 0) {
+					for (final IZUGFeRDAllowanceCharge itemTotalCharges : currentItem.getCharges()) {
+						itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalCharges, currentItem);
 					}
 				}
 
@@ -553,7 +559,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml += "</ram:BillingSpecifiedPeriod>";
 				}
 
-				xml += itemTotalAllowanceChargeStr;
+				// item charges/allowances
+				if (!itemTotalAllowanceChargeStr.isEmpty()) {
+					xml +=  itemTotalAllowanceChargeStr ;
+				}
 
 				xml += "<ram:SpecifiedTradeSettlementLineMonetarySummation>"
 					+ "<ram:LineTotalAmount>" + currencyFormat(lc.getItemTotalNetAmount())
