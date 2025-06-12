@@ -74,14 +74,16 @@ public class LineCalculator {
 //		delta=delta.divide(currentItem.getQuantity(), 18, RoundingMode.HALF_UP);
 
 		BigDecimal delta=BigDecimal.ZERO;
-		if (currentItem.getProduct().getAllowances()!=null) {
-			for (IZUGFeRDAllowanceCharge ccaf:currentItem.getProduct().getAllowances()) {
-				delta=delta.subtract(ccaf.getTotalAmount(currentItem));
+		if(currentItem.getProduct()!=null){
+			if (currentItem.getProduct().getAllowances()!=null) {
+				for (IZUGFeRDAllowanceCharge ccaf:currentItem.getProduct().getAllowances()) {
+					delta=delta.subtract(ccaf.getTotalAmount(currentItem));
+				}
 			}
-		}
-		if (currentItem.getProduct().getCharges()!=null) {
-			for (IZUGFeRDAllowanceCharge ccaf : currentItem.getProduct().getCharges()) {
-				delta = delta.subtract(ccaf.getTotalAmount(currentItem));
+			if (currentItem.getProduct().getCharges()!=null) {
+				for (IZUGFeRDAllowanceCharge ccaf : currentItem.getProduct().getCharges()) {
+					delta = delta.subtract(ccaf.getTotalAmount(currentItem));
+				}
 			}
 		}
 
