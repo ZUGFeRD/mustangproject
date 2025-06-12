@@ -23,6 +23,14 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	 * the "name" of the bank account (holder)
 	 */
 	protected String accountName = null;
+	/**
+	 * payment means code
+	 */
+	protected String paymentMeansCode = "58";
+	/**
+	 * payment means information
+	 */
+	protected String paymentMeansInformation = "SEPA credit transfer";
 
 	/***
 	 * bean constructor
@@ -123,5 +131,31 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 		return accountName;
 	}
 
+	/**
+	 * set payment means code
+	 *
+	 * @param paymentMeansCode the payment means code
+	 * @return fluent setter
+	 */
+	public BankDetails setPaymentMeansCode(String paymentMeansCode) {
+		this.paymentMeansCode = paymentMeansCode;
+		return this;
+	}
 
+	@Override
+	public String getPaymentMeansCode() { return paymentMeansCode; }
+
+	/**
+	 * set payment means information
+	 *
+	 * @param paymentMeansInformation the payment mean information
+	 * @return fluent setter
+	 */
+	public BankDetails setPaymentMeansInformation(String paymentMeansInformation) {
+		this.paymentMeansInformation = paymentMeansInformation;
+		return this;
+	}
+
+	@Override
+	public String getPaymentMeansInformation() { return paymentMeansInformation; }
 }
