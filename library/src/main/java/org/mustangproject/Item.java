@@ -34,7 +34,8 @@ public class Item implements IZUGFeRDExportableItem {
 	protected Date detailedDeliveryPeriodFrom = null;
 	protected Date detailedDeliveryPeriodTo = null;
 	protected String id;
-	protected String referencedLineID = null;
+	protected String buyerOrderReferencedDocumentLineID = null;
+	protected String buyerOrderReferencedDocumentID = null;
 	protected Product product;
 	protected ArrayList<String> notes = null;
 	protected ArrayList<ReferencedDocument> referencedDocuments = null;
@@ -127,6 +128,9 @@ public class Item implements IZUGFeRDExportableItem {
 				.flatMap(bordNodes -> bordNodes.getAsString("LineID"))
 				.ifPresent(this::addReferencedLineID);
 
+			icnm.getAsNodeMap("BuyerOrderReferencedDocument")
+				.flatMap(bordNodes -> bordNodes.getAsString("IssuerAssignedID"))
+				.ifPresent(this::addBuyerOrderReferencedDocumentID);
 
 			icnm.getAsNodeMap("NetPriceProductTradePrice").ifPresent(npptpNodes -> {
 				npptpNodes.getAsBigDecimal("ChargeAmount").ifPresent(this::setPrice);
@@ -277,8 +281,23 @@ public class Item implements IZUGFeRDExportableItem {
 		});
 	}
 
+	public Item addBuyerOrderReferencedDocumentLineID(String s) {
+		buyerOrderReferencedDocumentLineID = s;
+		return this;
+	}
+
+	@Deprecated(since = "2.14.0")
 	public Item addReferencedLineID(String s) {
-		referencedLineID = s;
+		return addBuyerOrderReferencedDocumentLineID(s);
+	}
+
+	@Override
+	public String getBuyerOrderReferencedDocumentID() {
+		return buyerOrderReferencedDocumentID;
+	}
+
+	public Item addBuyerOrderReferencedDocumentID(String s) {
+		buyerOrderReferencedDocumentID = s;
 		return this;
 	}
 
@@ -298,7 +317,7 @@ public class Item implements IZUGFeRDExportableItem {
 	 */
 	@Override
 	public String getBuyerOrderReferencedDocumentLineID() {
-		return referencedLineID;
+		return buyerOrderReferencedDocumentLineID;
 	}
 
 	public BigDecimal getLineTotalAmount() {

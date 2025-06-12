@@ -78,6 +78,14 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	}
 
 	/***
+	 * buyer order reference document id
+	 * @return  the document id (defaults to {@code null})
+	 */
+	default String getBuyerOrderReferencedDocumentID() {
+		return null;
+	}
+
+	/***
 	 * BT 132 (issue https://github.com/ZUGFeRD/mustangproject/issues/247)
 	 * @return the line ID of the order (BT-132)
 	 */
@@ -106,7 +114,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 
 	/**
 	 * how many items units per price
-	 * 
+	 *
 	 * @return item units per price
 	 */
 	default BigDecimal getBasisQuantity() {
@@ -166,7 +174,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	default Date getDetailedDeliveryPeriodTo() {
 		return null;
 	}
-	
+
 	/***
 	 *  get all (allowances and charges) SpecifiedTradeAllowanceCharges
 	 *
