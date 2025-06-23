@@ -1,4 +1,4 @@
-2.17.5
+2.17.0
 =======
 2025-06-11
 - Breaking change: #764 Item allowances not to be multiplied by quantity
