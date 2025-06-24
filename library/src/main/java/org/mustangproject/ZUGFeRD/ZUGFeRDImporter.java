@@ -351,6 +351,16 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 
 
 	public String getHolder() {
+		if (importedInvoice!=null && importedInvoice.getTradeSettlement()!=null) {
+			for (IZUGFeRDTradeSettlement settlement : importedInvoice.getTradeSettlement()) {
+				if (settlement instanceof IZUGFeRDTradeSettlementPayment) {
+					String s = ((IZUGFeRDTradeSettlementPayment) settlement).getAccountName();
+					if ( s != null ) {
+						return s;
+					}
+				}
+			}
+		}
 		return extractString("//*[local-name() = 'SellerTradeParty']/*[local-name() = 'Name']");
 	}
 
