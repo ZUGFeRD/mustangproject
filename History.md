@@ -1,3 +1,5 @@
+- support parsing of BT-90 CreditorReferenceID
+
 2.17.0
 =======
 2025-06-11

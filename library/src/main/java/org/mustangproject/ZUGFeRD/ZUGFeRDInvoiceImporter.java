@@ -568,6 +568,15 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
+		String creditorReferenceID = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"CreditorReferenceID\"]").trim();//BT-90
+		if ((creditorReferenceID == null)||(creditorReferenceID.length()==0)) {
+			//maybe it's there in UBL?
+			creditorReferenceID = extractString("//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyIdentification\"]/*[local-name()=\"ID\"]").trim();
+		}
+		if ((creditorReferenceID != null)&&(creditorReferenceID.length()>0)) {
+			zpp.setCreditorReferenceID(creditorReferenceID);
+		}
+
 		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeDelivery\"]|//*[local-name()=\"Delivery\"]");
 		NodeList headerTradeDeliveryNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
