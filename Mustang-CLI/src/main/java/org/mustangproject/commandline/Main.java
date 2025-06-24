@@ -27,6 +27,7 @@ import org.mustangproject.ZUGFeRD.*;
 import org.mustangproject.validator.ZUGFeRDValidator;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -466,7 +467,7 @@ public class Main {
 
 	}
 
-	private static boolean performValidate(String sourceName, boolean noNotices, String logAppend, boolean createLogAsPDF) {
+	private static boolean performValidate(String sourceName, boolean noNotices, String logAppend, boolean createLogAsPDF) throws TransformerConfigurationException {
 		boolean optionsRecognized;
 		if (sourceName == null) {
 			sourceName = getFilenameFromUser("Source PDF or XML", "invoice.pdf", "pdf|xml", true, false);
@@ -850,9 +851,9 @@ public class Main {
 			LOGGER.error(e.getMessage(), e);
 		}
 
-		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
-		String xml = null;
 		try {
+			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+			String xml = null;
 			if (!intoPDF) {
 				ZUGFeRDVisualizer.Language langCode = ZUGFeRDVisualizer.Language.EN;
 				if (lang.equalsIgnoreCase("de")) {
