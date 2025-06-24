@@ -161,6 +161,9 @@ public class ZUGFeRDInvoiceImporter {
 					}
 					for (final PDNameTreeNode<PDComplexFileSpecification> node : kids) {
 						final Map<String, PDComplexFileSpecification> namesL = node.getNames();
+						if (namesL == null || namesL.isEmpty()) {
+							continue;
+						}
 						extractFiles(namesL);
 					}
 				}
