@@ -1,6 +1,6 @@
 - support parsing of BT-90 CreditorReferenceID
 - #870
-- #871 sec
+- #871
 - #868
 - #729
 - #863

@@ -12,6 +12,7 @@ import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.HashMap;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -127,7 +128,6 @@ public class PDFValidator extends Validator {
 		zi.setInputStream(inputStream);
 		final String xmp = zi.getXMP();
 
-		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		final Document docXMP;
 
 		if (xmp == null || xmp.length() == 0) {
@@ -142,6 +142,11 @@ public class PDFValidator extends Validator {
 		 * <zf:Version>1.0</zf:Version>
 		 */
 		try {
+			final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
+			factory.setXIncludeAware(false);
+
 			final DocumentBuilder builder = factory.newDocumentBuilder();
 			final InputSource is = new InputSource(new StringReader(xmp));
 			docXMP = builder.parse(is);
