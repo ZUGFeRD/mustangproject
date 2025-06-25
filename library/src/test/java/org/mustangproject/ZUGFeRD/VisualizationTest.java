@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class VisualizationTest extends ResourceCase {
@@ -80,7 +82,7 @@ public class VisualizationTest extends ResourceCase {
 		} catch (ParserConfigurationException e) {
 			fail("ParserConfigurationException should not happen: " + e.getMessage());
 		}
-
+		
 		assertNotNull(result);
         /* remove file endings so that tests can also pass after checking
 		   out from git with arbitrary options (which may include CSRF changes)
@@ -93,6 +95,7 @@ public class VisualizationTest extends ResourceCase {
 			.replace("\t", "")
 			.replace(" ", ""));
 	}
+
 
 	public void testPDFVisualizationCII() {
 

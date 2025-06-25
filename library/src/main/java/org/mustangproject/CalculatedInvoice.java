@@ -103,7 +103,6 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 	 * @return a updated transactioncalulator
 	 */
 	public TransactionCalculator getCalculation() {
-		calculate();
 		return tc;
 	}
 
