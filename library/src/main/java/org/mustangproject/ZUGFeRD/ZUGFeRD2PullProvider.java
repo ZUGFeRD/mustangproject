@@ -503,10 +503,17 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 							"</ram:AdditionalReferencedDocument>";
 					}
 				}
-				if (currentItem.getBuyerOrderReferencedDocumentLineID() != null) {
-					xml += "<ram:BuyerOrderReferencedDocument> "
-						+ "<ram:LineID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentLineID()) + "</ram:LineID>"
-						+ "</ram:BuyerOrderReferencedDocument>";
+				if ((currentItem.getBuyerOrderReferencedDocumentLineID() != null) || (currentItem.getBuyerOrderReferencedDocumentID() != null)) {
+					xml += "<ram:BuyerOrderReferencedDocument> ";
+					if (currentItem.getBuyerOrderReferencedDocumentID() != null) {
+						xml += "<ram:IssuerAssignedID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentID())
+							+ "</ram:IssuerAssignedID>";
+					}
+					if (currentItem.getBuyerOrderReferencedDocumentLineID() != null) {
+						xml += "<ram:LineID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentLineID())
+							+ "</ram:LineID>";
+					}
+					xml += "</ram:BuyerOrderReferencedDocument>";
 				}
 
 				if (!allowanceChargeStr.isEmpty()) {
