@@ -817,4 +817,51 @@ public class ZF2PushTest extends TestCase {
 		}
 	}
 
+	public void testEmptyDocumentReference() {
+		String orgname = "Test company";
+		String number = "123";
+		BigDecimal price = new BigDecimal(1.0);
+		BigDecimal qty = new BigDecimal(1.0);
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile( Profiles.getByName( "XRechnung" ) );
+
+		Invoice i = new Invoice().setIssueDate(new Date()).setDueDate(new Date()).setDetailedDeliveryPeriod(new Date(), new Date()).setDeliveryDate(new Date())
+			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815").addBankDetails(new BankDetails("DE88200800000970375700", "COBADEFFXXX")))
+			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE0815"))
+			.setNumber(number)
+			.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), price, qty));
+
+		// empty strings for document id's
+		i.setSellerOrderReferencedDocumentID("")
+			.setBuyerOrderReferencedDocumentID("")
+			.setContractReferencedDocument("")
+			.setDespatchAdviceReferencedDocumentID("")
+			.setInvoiceReferencedDocumentID("");
+
+		zf2p.generateXML(i);
+		String theXML = new String(zf2p.getXML());
+
+		assertFalse(theXML.contains("<ram:SellerOrderReferencedDocument"));
+		assertFalse(theXML.contains("<ram:BuyerOrderReferencedDocument"));
+		assertFalse(theXML.contains("<ram:ContractReferencedDocument"));
+		assertFalse(theXML.contains("<ram:DespatchAdviceReferencedDocument"));
+		assertFalse(theXML.contains("<ram:InvoiceReferencedDocument"));
+
+		// effective empty strings for document id's
+		i.setSellerOrderReferencedDocumentID(" ")
+			.setBuyerOrderReferencedDocumentID("  ")
+			.setContractReferencedDocument("   ")
+			.setDespatchAdviceReferencedDocumentID("    ")
+			.setInvoiceReferencedDocumentID("     ");
+
+		zf2p.generateXML(i);
+		theXML = new String(zf2p.getXML());
+
+		assertFalse(theXML.contains("<ram:SellerOrderReferencedDocument"));
+		assertFalse(theXML.contains("<ram:BuyerOrderReferencedDocument"));
+		assertFalse(theXML.contains("<ram:ContractReferencedDocument"));
+		assertFalse(theXML.contains("<ram:DespatchAdviceReferencedDocument"));
+		assertFalse(theXML.contains("<ram:InvoiceReferencedDocument"));
+	}
 }
