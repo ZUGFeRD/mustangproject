@@ -540,7 +540,7 @@ public class ZF2PushTest extends TestCase {
 					.setContractReferencedDocument(contractID)
 					.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addGlobalID(gln).setEmail("recipient@test.org").addVATID("DE4711")
 						.setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE").setFax("++49555123456")).setAdditionalAddress("Hinterhaus 3"))
-					.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(16)).addGlobalID(gtin).setSellerAssignedID("4711"), price, new BigDecimal(1.0)).setId("a123").addReferencedLineID("xxx").addNote("item level 1/1").addAllowance(new Allowance(new BigDecimal(0.02)).setReason("item discount").setTaxPercent(new BigDecimal(16))).setDetailedDeliveryPeriod(sdf.parse("2020-01-13"), sdf.parse("2020-01-15")))
+					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(16)).addGlobalID(gtin).setSellerAssignedID("4711"), price, new BigDecimal(1.0)).setId("a123").addBuyerOrderReferencedDocumentID("orderId").addBuyerOrderReferencedDocumentLineID("xxx").addReferencedLineID("xxx").addNote("item level 1/1").addAllowance(new Allowance(new BigDecimal(0.02)).setReason("item discount").setTaxPercent(new BigDecimal(16))).setDetailedDeliveryPeriod(sdf.parse("2020-01-13"), sdf.parse("2020-01-15")))
 					.addCharge(new Charge(new BigDecimal(0.5)).setReason("quick delivery charge").setTaxPercent(new BigDecimal(16)))
 					.addAllowance(new Allowance(new BigDecimal(0.2)).setReason("discount").setTaxPercent(new BigDecimal(16)))
 					.addCashDiscount(new CashDiscount(new BigDecimal(2), 14))
@@ -570,6 +570,7 @@ public class ZF2PushTest extends TestCase {
 		assertTrue(zi.getUTF8().contains("0088"));
 		assertTrue(zi.getUTF8().contains(orgID));
 		assertTrue(zi.getUTF8().contains("ram:BuyerOrderReferencedDocument"));
+		assertThat(zi.getUTF8()).valueByXPath("//*[local-name()='SpecifiedLineTradeAgreement']/*[local-name()='BuyerOrderReferencedDocument']/*[local-name()='IssuerAssignedID']").asString().isEqualTo("orderId");
 		assertTrue(zi.getUTF8().contains(occurrenceFrom));
 		assertTrue(zi.getUTF8().contains(occurrenceTo));
 		assertTrue(zi.getUTF8().contains(contractID));
@@ -601,6 +602,8 @@ public class ZF2PushTest extends TestCase {
 			assertEquals(orgID, i.getSender().getID());
 			assertEquals("Verwendungszweck", i.getPaymentReference());
 			assertEquals("Rechnung", i.getDocumentName());
+
+			assertEquals("++49555123456",i.getRecipient().getContact().getFax());
 
 		} catch (XPathExpressionException e) {
 			fail("XPathExpressionException should not be raised");
@@ -815,4 +818,51 @@ public class ZF2PushTest extends TestCase {
 		}
 	}
 
+	public void testEmptyDocumentReference() {
+		String orgname = "Test company";
+		String number = "123";
+		BigDecimal price = new BigDecimal(1.0);
+		BigDecimal qty = new BigDecimal(1.0);
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile( Profiles.getByName( "XRechnung" ) );
+
+		Invoice i = new Invoice().setIssueDate(new Date()).setDueDate(new Date()).setDetailedDeliveryPeriod(new Date(), new Date()).setDeliveryDate(new Date())
+			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815").addBankDetails(new BankDetails("DE88200800000970375700", "COBADEFFXXX")))
+			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE0815"))
+			.setNumber(number)
+			.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), price, qty));
+
+		// empty strings for document id's
+		i.setSellerOrderReferencedDocumentID("")
+			.setBuyerOrderReferencedDocumentID("")
+			.setContractReferencedDocument("")
+			.setDespatchAdviceReferencedDocumentID("")
+			.setInvoiceReferencedDocumentID("");
+
+		zf2p.generateXML(i);
+		String theXML = new String(zf2p.getXML());
+
+		assertFalse(theXML.contains("<ram:SellerOrderReferencedDocument"));
+		assertFalse(theXML.contains("<ram:BuyerOrderReferencedDocument"));
+		assertFalse(theXML.contains("<ram:ContractReferencedDocument"));
+		assertFalse(theXML.contains("<ram:DespatchAdviceReferencedDocument"));
+		assertFalse(theXML.contains("<ram:InvoiceReferencedDocument"));
+
+		// effective empty strings for document id's
+		i.setSellerOrderReferencedDocumentID(" ")
+			.setBuyerOrderReferencedDocumentID("  ")
+			.setContractReferencedDocument("   ")
+			.setDespatchAdviceReferencedDocumentID("    ")
+			.setInvoiceReferencedDocumentID("     ");
+
+		zf2p.generateXML(i);
+		theXML = new String(zf2p.getXML());
+
+		assertFalse(theXML.contains("<ram:SellerOrderReferencedDocument"));
+		assertFalse(theXML.contains("<ram:BuyerOrderReferencedDocument"));
+		assertFalse(theXML.contains("<ram:ContractReferencedDocument"));
+		assertFalse(theXML.contains("<ram:DespatchAdviceReferencedDocument"));
+		assertFalse(theXML.contains("<ram:InvoiceReferencedDocument"));
+	}
 }

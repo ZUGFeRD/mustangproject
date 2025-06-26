@@ -23,13 +23,22 @@ package org.mustangproject.ZUGFeRD;
 
 import junit.framework.TestCase;
 import org.mustangproject.*;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.junit.FixMethodOrder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runners.MethodSorters;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
 import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
-
-
 import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -152,6 +161,77 @@ public class XRTest extends TestCase {
 
 	}
 
+	public void testIssue830ApplicableHeaderTradeSettlementTax() throws XPathExpressionException, SAXException, IOException, ParserConfigurationException
+	{
+		final Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
+			.setSender(new TradeParty("Test", "teststr", "55232", "teststadt", "DE").setEmail("sender@example.com").addTaxID("DE4711").addVATID("DE0815")
+				.setContact(new Contact("Hans Test", "+49123456789", "test@example.org"))
+				.addBankDetails(new BankDetails("DE12500105170648489890", "COBADEFXXX").setAccountName("kontoInhaber")))
+			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setEmail("recipient@sample.org"))
+			.setReferenceNumber("991-01484-64")
+			.setNumber("123")
+			.addItem(
+				new Item(new Product("Testprodukt1", "", "C62", BigDecimal.ZERO).setTaxCategoryCode("E").setTaxExemptionReason("Product is exempt"), BigDecimal.TEN,
+					BigDecimal.ONE))
+			.addItem(new Item(new Product("Testprodukt2", "", "C62", BigDecimal.ZERO).setTaxCategoryCode("AE").setTaxExemptionReason("Reversecharge process"),
+				BigDecimal.ONE, BigDecimal.ONE))
+			.addItem(new Item(new Product("Testprodukt3", "", "C62", BigDecimal.valueOf(19)).setTaxCategoryCode("S"), BigDecimal.valueOf(9), BigDecimal.ONE)
+				.addCharge(new Charge(BigDecimal.ONE).setReasonCode("64").setTaxPercent(BigDecimal.valueOf(19))))
+			.addItem(new Item(
+				new Product("Testprodukt4", "", "C62", BigDecimal.ZERO).setTaxCategoryCode("AE").setTaxExemptionReason("Reversecharge process"),
+				BigDecimal.TEN, BigDecimal.ONE)
+					.addAllowance(new Allowance().setReasonCode("64").setTotalAmount(BigDecimal.valueOf(4)).setTaxPercent(BigDecimal.ZERO)))
+			.setPayee(
+				new TradeParty().setName("VR Factoring GmbH").setID("DE813838785").setLegalOrganisation(new LegalOrganisation("391200LDDFJDMIPPMZ54", "0199")))
+			.addAllowance(new Allowance().setReasonCode("64").setTotalAmount(BigDecimal.valueOf(5)).setTaxPercent(BigDecimal.valueOf(19)));
+
+		final ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(i);
+		final String xmlGen = new String(zf2p.getXML());
+		System.out.println(xmlGen);
+		final Document doc = DocumentBuilderFactory.newInstance()
+			.newDocumentBuilder()
+			.parse(new ByteArrayInputStream(zf2p.getXML()));
+
+		final XPath xpath = XPathFactory.newInstance().newXPath();
+		final NodeList tradeTaxes = (NodeList) xpath
+			.compile("//*[local-name()='ApplicableHeaderTradeSettlement']/*[local-name()='ApplicableTradeTax']")
+			.evaluate(doc, XPathConstants.NODESET);
+
+		Assertions.assertEquals(3, tradeTaxes.getLength());
+		final Node taxNode0 = tradeTaxes.item(0);
+		final String categoryCode0 = xpath
+			.compile("*[local-name()='CategoryCode']/text()")
+			.evaluate(taxNode0);
+		Assertions.assertEquals("E", categoryCode0);
+		final String basisAmount0 = xpath
+			.compile("*[local-name()='BasisAmount']/text()")
+			.evaluate(taxNode0);
+		Assertions.assertTrue(BigDecimal.TEN.compareTo(new BigDecimal(basisAmount0)) == 0);
+
+		final Node taxNode1 = tradeTaxes.item(1);
+		final String categoryCode1 = xpath
+			.compile("*[local-name()='CategoryCode']/text()")
+			.evaluate(taxNode1);
+		Assertions.assertEquals("AE", categoryCode1);
+		final String basisAmount1 = xpath
+			.compile("*[local-name()='BasisAmount']/text()")
+			.evaluate(taxNode1);
+		Assertions.assertTrue(BigDecimal.valueOf(7).compareTo(new BigDecimal(basisAmount1)) == 0);
+
+		final Node taxNode2 = tradeTaxes.item(2);
+		final String categoryCode2 = xpath
+			.compile("*[local-name()='CategoryCode']/text()")
+			.evaluate(taxNode2);
+		Assertions.assertEquals("S", categoryCode2);
+		final String basisAmount2 = xpath
+			.compile("*[local-name()='BasisAmount']/text()")
+			.evaluate(taxNode2);
+		Assertions.assertTrue(BigDecimal.valueOf(5).compareTo(new BigDecimal(basisAmount2)) == 0);
+	}
+	
 	public void testXRExportWithoutStreet() {
 
 		// the writing part
