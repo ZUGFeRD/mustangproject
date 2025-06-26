@@ -189,8 +189,7 @@ public class XRTest extends TestCase {
 
 		zf2p.setProfile(Profiles.getByName("XRechnung"));
 		zf2p.generateXML(i);
-		final String xmlGen = new String(zf2p.getXML());
-		System.out.println(xmlGen);
+
 		final Document doc = DocumentBuilderFactory.newInstance()
 			.newDocumentBuilder()
 			.parse(new ByteArrayInputStream(zf2p.getXML()));
