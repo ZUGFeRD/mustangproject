@@ -722,9 +722,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			hasDueDate = false;
 		}
 
-		final Map<BigDecimal, VATAmount> VATPercentAmountMap = calc.getVATPercentAmountMap();
-		for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-			final VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
+		final List<VATAmount> vatAmounts = calc.getVATAmountList();
+		for (final VATAmount amount : vatAmounts)
+		{
 			if (amount != null) {
 				final String amountCategoryCode = amount.getCategoryCode();
 				final String amountDueDateTypeCode = amount.getDueDateTypeCode();
@@ -746,7 +746,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ (amountDueDateTypeCode != null ? "<ram:DueDateTypeCode>" + amountDueDateTypeCode + "</ram:DueDateTypeCode>" : "");
 					if (!amountCategoryCode.equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
 						xml += "<ram:RateApplicablePercent>"
-							+ vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>";
+							+ vatFormat(amount.getApplicablePercent()) + "</ram:RateApplicablePercent>";
 					}
 					xml += "</ram:ApplicableTradeTax>";
 				}
@@ -786,19 +786,23 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml += "</ram:CategoryTradeTax>" +
 						"</ram:SpecifiedTradeAllowanceCharge>";
 				}
-			} else {
-				for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-					if (calc.getChargesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO) != 0) {
+			}
+			else
+			{
+				for (final VATAmount amount : vatAmounts)
+				{
+					if (calc.getChargesForPercent(amount.getApplicablePercent()).compareTo(BigDecimal.ZERO) != 0)
+					{
 						xml += "<ram:SpecifiedTradeAllowanceCharge>" +
 							"<ram:ChargeIndicator>" +
 							"<udt:Indicator>true</udt:Indicator>" +
 							"</ram:ChargeIndicator>" +
-							"<ram:ActualAmount>" + currencyFormat(calc.getChargesForPercent(currentTaxPercent)) + "</ram:ActualAmount>" +
-							"<ram:Reason>" + XMLTools.encodeXML(calc.getChargeReasonForPercent(currentTaxPercent)) + "</ram:Reason>" +
+							"<ram:ActualAmount>" + currencyFormat(calc.getChargesForPercent(amount.getApplicablePercent())) + "</ram:ActualAmount>" +
+							"<ram:Reason>" + XMLTools.encodeXML(calc.getChargeReasonForPercent(amount.getApplicablePercent())) + "</ram:Reason>" +
 							"<ram:CategoryTradeTax>" +
 							"<ram:TypeCode>VAT</ram:TypeCode>" +
-							"<ram:CategoryCode>" + VATPercentAmountMap.get(currentTaxPercent).getCategoryCode() + "</ram:CategoryCode>" +
-							"<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>" +
+							"<ram:CategoryCode>" + amount.getCategoryCode() + "</ram:CategoryCode>" +
+							"<ram:RateApplicablePercent>" + vatFormat(amount.getApplicablePercent()) + "</ram:RateApplicablePercent>" +
 							"</ram:CategoryTradeTax>" +
 							"</ram:SpecifiedTradeAllowanceCharge>";
 					}
@@ -829,19 +833,23 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml += "</ram:CategoryTradeTax>" +
 						"</ram:SpecifiedTradeAllowanceCharge>";
 				}
-			} else {
-				for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-					if (calc.getAllowancesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO) != 0) {
+			}
+			else
+			{
+				for (final VATAmount amount : vatAmounts)
+				{
+					if (calc.getAllowancesForPercent(amount.getApplicablePercent()).compareTo(BigDecimal.ZERO) != 0)
+					{
 						xml += "<ram:SpecifiedTradeAllowanceCharge>" +
 							"<ram:ChargeIndicator>" +
 							"<udt:Indicator>false</udt:Indicator>" +
 							"</ram:ChargeIndicator>" +
-							"<ram:ActualAmount>" + currencyFormat(calc.getAllowancesForPercent(currentTaxPercent)) + "</ram:ActualAmount>" +
-							"<ram:Reason>" + XMLTools.encodeXML(calc.getAllowanceReasonForPercent(currentTaxPercent)) + "</ram:Reason>" +
+							"<ram:ActualAmount>" + currencyFormat(calc.getAllowancesForPercent(amount.getApplicablePercent())) + "</ram:ActualAmount>" +
+							"<ram:Reason>" + XMLTools.encodeXML(calc.getAllowanceReasonForPercent(amount.getApplicablePercent())) + "</ram:Reason>" +
 							"<ram:CategoryTradeTax>" +
 							"<ram:TypeCode>VAT</ram:TypeCode>" +
-							"<ram:CategoryCode>" + VATPercentAmountMap.get(currentTaxPercent).getCategoryCode() + "</ram:CategoryCode>" +
-							"<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>" +
+							"<ram:CategoryCode>" + amount.getCategoryCode() + "</ram:CategoryCode>" +
+							"<ram:RateApplicablePercent>" + vatFormat(amount.getApplicablePercent()) + "</ram:RateApplicablePercent>" +
 							"</ram:CategoryTradeTax>" +
 							"</ram:SpecifiedTradeAllowanceCharge>";
 					}
