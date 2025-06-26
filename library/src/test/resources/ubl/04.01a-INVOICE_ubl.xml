@@ -40,6 +40,7 @@
       <cac:Contact>
         <cbc:Name>M. Meier Handwerk GbR</cbc:Name>
         <cbc:Telephone>010/12345</cbc:Telephone>
+        <cbc:Telefax>4621231</cbc:Telefax>
         <cbc:ElectronicMail>info@m-meier.de</cbc:ElectronicMail>
       </cac:Contact>
     </cac:Party>

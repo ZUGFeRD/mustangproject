@@ -602,6 +602,8 @@ public class ZF2PushTest extends TestCase {
 			assertEquals("Verwendungszweck", i.getPaymentReference());
 			assertEquals("Rechnung", i.getDocumentName());
 
+			assertEquals("++49555123456",i.getRecipient().getContact().getFax());
+
 		} catch (XPathExpressionException e) {
 			fail("XPathExpressionException should not be raised");
 		} catch (ParseException e) {
