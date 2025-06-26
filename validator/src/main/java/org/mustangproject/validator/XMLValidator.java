@@ -8,6 +8,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.util.Calendar;
 
 import javax.xml.XMLConstants;
@@ -20,7 +21,12 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.mustangproject.CalculatedInvoice;
+import org.mustangproject.Exceptions.ArithmetricException;
 import org.mustangproject.XMLTools;
+import org.mustangproject.ZUGFeRD.TransactionCalculator;
+import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
+import org.mustangproject.ZUGFeRD.ZUGFeRDInvoiceImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -387,6 +393,7 @@ public class XMLValidator extends Validator {
 						}
 					}
 				}
+				checkArithmetrics(context);
 
 
 			} catch (final IrrecoverableValidationError er) {
@@ -407,6 +414,34 @@ public class XMLValidator extends Validator {
 		context.addCustomXML("<info><version>" + ((context.getGeneration() != null) ? context.getGeneration() : "invalid")
 			+ "</version><profile>" + ((context.getProfile() != null) ? context.getProfile() : "invalid") +
 			"</profile><validator version=\"" + XMLValidator.class.getPackage().getImplementationVersion() + "\"></validator><rules><fired>" + firedRules + "</fired><failed>" + failedRules + "</failed></rules>" + "<duration unit=\"ms\">" + (endTime - startXMLTime) + "</duration></info>");
+
+	}
+
+	private void checkArithmetrics(ValidationContext context) {
+		ZUGFeRDInvoiceImporter zi=new ZUGFeRDInvoiceImporter();
+		try {
+			zi.setRawXML(zfXML.getBytes());
+			CalculatedInvoice ci=new CalculatedInvoice();
+			zi.extractInto(ci);
+			TransactionCalculator tc=new TransactionCalculator(ci);
+			if (tc.getGrandTotal().compareTo(ci.getGrandTotal())!=0) {
+
+			}
+
+		} catch ( ArithmetricException e) {
+			try {
+				context.addResultItem(new ValidationResultItem(ESeverity.warning, "Can not arithmetrically reproduce the invoice.").setSection(10));
+
+			} catch (IrrecoverableValidationError ie) {
+				LOGGER.error(ie.getMessage(), ie);
+			}
+		} catch ( IOException e) {
+			LOGGER.error(e.getMessage(), e);
+		} catch (XPathExpressionException e) {
+			LOGGER.error(e.getMessage(), e);
+		} catch (ParseException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
 
 	}
 
