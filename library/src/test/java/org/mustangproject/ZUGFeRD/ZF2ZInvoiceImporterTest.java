@@ -20,10 +20,8 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.commons.codec.binary.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.mustangproject.*;
 
@@ -36,12 +34,14 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -66,7 +66,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		assertFalse(hasExceptions);
 		// Reading ZUGFeRD
-		assertEquals("Bei Spiel GmbH", invoice.getOwnOrganisationName());
+		assertEquals("Bei Spiel GmbH", invoice.getSender().getName());
 		assertEquals(3, invoice.getZFItems().length);
 		assertEquals("400.0000", invoice.getZFItems()[1].getQuantity().toString());
 
@@ -124,7 +124,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		assertFalse(hasExceptions);
 		// Reading ZUGFeRD
-		assertEquals("Bei Spiel GmbH", invoice.getOwnOrganisationName());
+		assertEquals("Bei Spiel GmbH", invoice.getSender().getName());
 		assertEquals(3, invoice.getZFItems().length);
 		assertEquals(invoice.getZFItems()[0].getNotesWithSubjectCode().get(0).getContent(),"Something");
 		assertEquals(invoice.getZFItems()[0].getNotesWithSubjectCode().size(),1);
@@ -200,7 +200,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		assertFalse(hasExceptions);
 		// Reading ZUGFeRD
-		assertEquals("Bei Spiel GmbH", invoice.getOwnOrganisationName());
+		assertEquals("Bei Spiel GmbH", invoice.getSender().getName());
 		assertEquals(3, invoice.getZFItems().length);
 		assertEquals("400.0000", invoice.getZFItems()[1].getQuantity().toString());
 
@@ -264,9 +264,27 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		assertFalse(hasExceptions);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("19.52"), tc.getGrandTotal());
+		assertEquals(new BigDecimal("18.92"), tc.getGrandTotal());
 	}
 
+	public void testIBANImport() {
+		File CIIinputFile = getResourceAsFile("cii/lastschrift_iban_bug.xml");
+		try {
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
+
+
+			CalculatedInvoice invoice = new CalculatedInvoice();
+			zii.extractInto(invoice);
+			assertEquals("DE11111111111111111111", invoice.getCreditorReferenceID());
+			assertEquals("DE22222222222222222222", invoice.getSender().getBankDetails().stream().map(BankDetails::getIBAN).collect(Collectors.joining(",")));
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	public void testBasisQuantityImport() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2newEdge.pdf");
@@ -616,5 +634,23 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		Invoice invoice = zii.extractInvoice();
 		assertEquals(3, invoice.getZFItems().length);
 		assertEquals("BUYER_ACCOUNTING_REF", invoice.getZFItems()[0].getAccountingReference());
+	}
+
+	@Test
+	public void testImportExport() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("cii/Factur-X_basic.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.setInputStream(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+		assertTrue(invoice.isValid());
+
+		assertNull(invoice.getDeliveryAddress());
+		assertNull(invoice.getPayee());
+
+		assertNull(invoice.getBuyerOrderReferencedDocumentID());
+		assertNull(invoice.getSellerOrderReferencedDocumentID());
+		assertNull(invoice.getDespatchAdviceReferencedDocumentID());
+		assertNull(invoice.getInvoiceReferencedDocumentID());
 	}
 }

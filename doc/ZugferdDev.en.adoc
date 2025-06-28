@@ -1,0 +1,182 @@
+== Mustang project user documentation
+
+Jochen Stärk
+
+For Mustangproject 2.17.0, 2025-05-28
+
+http://www.mustangproject.org/[http://www.mustangproject.org]
+
+== About Mustangproject
+
+Mustangproject is a Java-Library for invoice („Factur-X/ZUGFeRD“-)metadata in
+PDF-invoices as well as XRechnung (CII, or on the reading side also UBL).
+
+It can read, write and validate those files uses PDF/A files as
+input, underlies the Apache Public License and can
+be used for free in commercial and noncommercial projects as long as
+the license conditions are met.
+
+On link:https://zugferd.org/[zugferd.org] we list other libraries also for other
+languages
+
+== Download/Project setup
+
+=== Source code
+
+Home of the Mustangproject source code is
+https://github.com/ZUGFeRD/mustangproject/
+
+=== With Maven
+
+E.g. using link:https://www.jetbrains.com/idea/download/?section=windows[IntelliJ].
+
+Add the following dependency to your project
+
+
+----
+<dependencies>
+    <dependency>
+        <groupId>org.mustangproject</groupId>
+        <artifactId>validator</artifactId>
+        <classifier>shaded</classifier>
+        <version>2.17.0</version>
+    </dependency>
+</dependencies>
+----
+
+Open the Maven Window and click Sync all Maven projects.
+
+== Reading Factur-X/ZUGFeRD data
+
+[arabic]
+. Download a factur-x sample with metadata like
+https://www.mustangproject.org/files/MustangGnuaccountingBeispielRE-20201121_508.pdf[https://www.mustangproject.org/files/MustangGnuaccountingBeispielRE-20201121_508.pdf]
+. Create a new Maven project. Add the jar in the pom.xml as described above. In
+----
+public class Main {
+public static void main(String[] args) {
+System.out.println("Hello, World!");
+}
+}
+----
+
+use
+
+----
+        ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter("MustangGnuaccountingBeispielRE-20201121_508.pdf");
+        CalculatedInvoice ci=new CalculatedInvoice();
+        try {
+            zii.extractInto(ci);
+            System.out.println("Pay: "+ci.getDuePayable());
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+----
+
+To find out how much you have to pay.
+
+=== Complete sample source code for reading ZUGFeRD data
+
+
+----
+package de.usegroup;
+
+import org.mustangproject.CalculatedInvoice;
+import org.mustangproject.ZUGFeRD.ZUGFeRDInvoiceImporter;
+
+import javax.xml.xpath.XPathExpressionException;
+import java.text.ParseException;
+
+public class Main {
+    public static void main(String[] args) {
+        ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter("MustangGnuaccountingBeispielRE-20201121_508.pdf");
+        CalculatedInvoice ci=new CalculatedInvoice();
+        try {
+            zii.extractInto(ci);
+            System.out.println("Pay: "+ci.getDuePayable());
+        } catch (XPathExpressionException e) {
+            throw new RuntimeException(e);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+----
+
+NOTE: You can additionally validate the file with two additional lines
+----
+        ZUGFeRDValidator zv=new ZUGFeRDValidator();
+        System.out.println(zv.validate("MustangGnuaccountingBeispielRE-20201121_508.pdf"));
+----
+
+
+== Writing a ZUGFeRD-PDF file
+
+A sample for writing Factur-X/ZUGFeRD PDFs requires a PDF/A file to attach the XML to,
+saved
+e.g. as link:https://www.mustangproject.org/files/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf[blanko.pdf]
+
+The core is creating an exporter, an invoice and send the invoice through the exporter:
+----
+            IZUGFeRDExporter ze = new ZUGFeRDExporterFromPDFA().load(sourcePDF).setProducer("My Application").
+                    setCreator(System.getProperty("user.name"));
+
+            Invoice i=new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
+                    .setSender(new TradeParty("ACME co", "teststr", "55232", "teststadt", "DE")
+                            .addBankDetails(new BankDetails("777666555", "DE4321"))).setOwnTaxID("4711").setOwnVATID("DE19990815")
+                    .setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")
+                            .setContact(new Contact("nameRep", "phoneRep", "emailRep@test.com"))).setNumber("X12")
+                    .addItem(new Item(new Product("Testproduct", "", "H87", new BigDecimal(19)),
+                            new BigDecimal(2.5), new BigDecimal(1.0)));
+            ze.setTransaction(i);
+            ze.export("factur-x.pdf");
+----
+Additionally, you should confirm that Mustangs calculated total matches that of your PDF/A file, for which you can use
+the TransactionCalculator (which is also used internally in the exporter):
+
+----
+            TransactionCalculator tc=new TransactionCalculator(i);
+            System.out.println("Confirm "+tc.getDuePayable()+ " is also the final amount in your PDF");
+----
+
+NOTE: We're using BigDecimals to avoid rounding errors.
+
+So the complete write example looks like this:
+----
+package de.usegroup;
+
+import org.mustangproject.*;
+import org.mustangproject.ZUGFeRD.IZUGFeRDExporter;
+import org.mustangproject.ZUGFeRD.TransactionCalculator;
+import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromPDFA;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
+
+public class Main {
+    public static void main(String[] args) {
+
+        String sourcePDF="MustangGnuaccountingBeispielRE-20201121_508.pdf";
+        try {
+            IZUGFeRDExporter ze = new ZUGFeRDExporterFromPDFA().load(sourcePDF).setProducer("My Application").
+                    setCreator(System.getProperty("user.name"));
+
+            Invoice i=new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
+                    .setSender(new TradeParty("ACME co", "teststr", "55232", "teststadt", "DE")
+                            .addBankDetails(new BankDetails("777666555", "DE4321"))).setOwnTaxID("4711").setOwnVATID("DE19990815")
+                    .setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")
+                            .setContact(new Contact("nameRep", "phoneRep", "emailRep@test.com"))).setNumber("X12")
+                    .addItem(new Item(new Product("Testproduct", "", "H87", new BigDecimal(19)),
+                            new BigDecimal(2.5), new BigDecimal(1.0)));
+            ze.setTransaction(i);
+            ze.export("factur-x.pdf");
+            TransactionCalculator tc=new TransactionCalculator(i);
+            System.out.println("Confirm "+tc.getDuePayable()+ " is also the final amount in your PDF");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+----

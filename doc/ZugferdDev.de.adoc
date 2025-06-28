@@ -1,0 +1,446 @@
+== [#anchor]####Mustang Project Nutzerdokumentation
+
+Jochen Stärk
+
+zu Mustangproject 1.5.1, 13.01.2018
+
+http://www.mustangproject.org/[http://www.mustangproject.org]
+
+== [#anchor-1]####Über Mustangproject
+
+Mustangproject ist eine Java-Bibliothek zur Unterstützung von
+erweiterten („ZUGFeRD“-)Metadaten in PDF-Rechnungsdateien. Sie verwendet
+als Eingabe PDF/A-Dateien, benötigt die Apache PDFBox-Bibliothek und
+unterliegt wie diese der APL-Lizenz. Sie ist daher, entsprechend den
+Richtlinien der Apache Public License, unter Einbettung einer
+entsprechenden „Notice“-Datei kostenlos einsetzbar in kommerziellen und
+nichtkommerziellen Projekten.
+
+== [#anchor-2]####Übersicht von ZUGFeRD-Lösungen
+
+[cols=",,,,,,,,,,,",]
+|===
+| |Plattform |Lizenz |ZF Versionen |Funktionsumfang |Geeignet für |Preis
+| | | | |
+
+|Lesen |XML erzeugen |PDF Schreiben |PDF/A-Umwandlung |Kommerz. Software
+|Freeware |Open Source | | | | |
+
+|intarsys |Java |proprietär |1 |Ja |Ja |Ja |Ja |Ja |Ja |Nein |a.A.
+
+|Konik |Java |AGPL |1 |Ja |Ja |Ja |Nein |Nein |Nein |Ja |0 €
+
+|Mustang |Java |APL |1 |Ja |Ja |Ja |Nein |Ja |Ja |Ja |0 €
+
+|https://github.com/akretion/factur-x |Python |BSD |1,2 |Nein |Nein |Ja
+|Nein |Ja |Ja |Ja |0€
+
+|https://github.com/stephanstapel/ZUGFeRD-csharp |C# |APL |1 |Ja |Ja
+|Nein |Nein |Ja |Ja |Ja |0 €
+|===
+
+== [#anchor-3]####Download/Projekteinrichtung
+
+=== [#anchor-4]####Source code
+
+Heimat der Mustangprojekt-Quelltexte ist
+https://github.com/ZUGFeRD/mustangproject/
+
+=== [#anchor-5]####Projekteinrichtung ohne Maven
+
+Mit installiertem OpenOffice.org oder LibreOffice und Eclipse for Java.
+
+[arabic]
+. Starten Sie Eclipse, Neues Java-Eclipse-Projekt erstellen,
+beispielsweise „MustangSample“.
+.  Wechseln Sie in der Shell in den erstellten Ordner.
+. Download von
+[arabic]
+.. Mustang
+[arabic]
+... Downloaden Sie
+http://mustangproject.org/deploy/mustang-1.5.1.jarfootnote:[Falls Sie
+ohnehin PDFBox verwenden (pdfbox, fontbox, preflight, xmpbox sowie deren
+Abhängigkeiten apache-commons-io und apache-commons-logging) können Sie
+auch die wesentlich kleinere
+http://mustangproject.org/deploy/original-mustang-1.5.1.jar verwenden]
+... Downloaden Sie http://mustangproject.org/deploy/NOTICE
+.. Laden Sie
+[arabic]
+... Direkt eine PDF-A/1-Musterrechnung noch ohne
+ZUGFeRD-Mhttp://www.mustangproject.org/files/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf[http://www.mustangproject.org/files/MustangGnuaccountingBeispielRE-2017]etadaten
+von
+http://www.mustangproject.org/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf[1118]http://www.mustangproject.org/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf[_50]http://www.mustangproject.org/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf[6]http://www.mustangproject.org/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf[blanko.pdf]
+herunter.
+... oder erzeugen sich alternativ
+[arabic]
+.... ein eigenes Beispiel-PDF durch Download der Quelldatei im
+OpenOffice.org-Format
+http://www.mustangproject.org/files/MustangGnuaccountingBeispielRE-20171118_506.odt[http://www.mustangproject.org/files/MustangGnuaccountingBeispielRE-]http://www.mustangproject.org/files/MustangGnuaccountingBeispielRE-20171118_506.odt[20171118_506.odt]
+und
+[arabic]
+..... Öffnen Sie die Datei in OpenOffice.org
+..... Datei|Exportieren als PDF: Wichtig ist hier, dass Sie die Checkbox
+PDF/A-1a setzen
+..... Speichern Sie die PDF-Datei beispielsweise als
+„http://www.mustangproject.org/files/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf[MustangGnuaccountingBeispiel]http://www.mustangproject.org/files/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf[RE-20171118_506blanko.pdf]“
+im MustangSample-Ordner
+. Wechseln Sie zurück zu Eclipse. Fügen Sie durch Rechtsklick auf das
+Projekt („Eigenschaften“) die heruntergeladene JAR-Dateien
+Projekteigenschaften als „externe Jars“ zum „Java Build Path“ Reiter
+„Bibliotheken“ hinzu.
+
+=== [#anchor-6]####Mit Maven
+
+Mit folgendem Repository
+
+<repositories>
+
+<repository>
+
+<id>mustang-mvn-repo</id>
+
+<url>https://raw.github.com/ZUGFeRD/mustangproject/mvn-repo/</url>
+
+</repository>
+
+</repositories>
+
+und folgender Dependency
+
+<dependency>
+
+<groupId>org.mustangproject.ZUGFeRD</groupId>
+
+<artifactId>mustang</artifactId>
+
+<version>1.5.1</version>
+
+</dependency>
+
+Bei der Gelegenheit kann man auch gleich Apache Commons Logging und JAXB
+importieren:
+
+<dependency>
+
+<groupId>commons-logging</groupId>
+
+<artifactId>commons-logging</artifactId>
+
+<version>1.1.1</version>
+
+</dependency>
+
+<dependency>
+
+<groupId>com.sun.xml.bind</groupId>
+
+<artifactId>jaxb-impl</artifactId>
+
+<version>2.2.5</version>
+
+</dependency>
+
+== [#anchor-7]####Lesen von ZUGFeRD-Daten
+
+[arabic]
+. Laden Sie sich eine PDF-Datei mit ZUGFeRD-Daten herunter,
+beispielsweise
+http://www.mustangproject.org/files/MustangGnuaccountingBeispielRE-20171118_506.pdf
+. Erstellen Sie eine neue Java-Klasse unterhalb von src, beispielsweise
+MustangReader. inklusive „Public static void main()“
+. Geben Sie innerhalb von Main „ZUGFeRDImporter zi=**new**
+ZUGFeRDImporter();“ ein und lassen Sie den Import durch STRG+SHIFT+O
+ergänzen
+. verwenden Sie zi.extract(PDF-Dateiname) und ggf. canParse() um
+festzustellen ob es sich um ZUGFeRD-Daten handelt.
+. Nach zi.parse() haben Sie Zugriff auf die getter wie getAmount()
+. Welche Daten enthalten sind, können Sie der XML-Datei entnehmen die im
+ZUGFeRD-Beispiel-PDF eingebettet ist
+
+=== [#anchor-8]####Komplettes Lesebeispiel 
+
+[arabic, start=7]
+. 
+
+*package* sample;
+
+*import* org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
+
+*public* *class* Read \{
+
+*public* *static* *void* main(String[] args) \{
+
+ZUGFeRDImporter zi=**new** ZUGFeRDImporter();
+
+zi.extract("./MustangGnuaccountingBeispielRE-20171118_506.pdf");
+
+System._out_.println("Lese ZUGFeRD");
+
+*if* (zi.canParse()) \{
+
+zi.parse();
+
+System._out_.println("Fälliger Betrag:"+zi.getAmount());
+
+System._out_.println("BIC:"+zi.getBIC());
+
+System._out_.println("IBAN:"+zi.getIBAN());
+
+System._out_.println("Kontoinhaber:"+zi.getHolder());
+
+System._out_.println("Rechnungsnr:"+zi.getForeignReference());
+
+}
+
+}
+
+}
+
+== [#anchor-9]####Schreiben einer ZUGFeRD-PDF-Datei
+
+Ein Beispielprogramm zum Schreiben ist deshalb umfangreicher, weil
+erstens mehr Daten in einer differenzierteren Struktur geschrieben
+werden als derzeit beim Lesen benötigt und zweitens dem Exporter die
+Daten per Interface zur Verfügung gestellt werden müssen.
+
+[arabic]
+. Erstellen Sie eine neue Klasse unterhalb von src, beispielsweise
+MustangWriter inklusive des obligatorischen „Public static void main()“
+.
+. Ändern Sie __*public* *class* MustangWriter __in__ *public* *class*
+MustangWriter *implements* IZUGFeRDExportableTransaction__
+. Fügen Sie innerhalb der Klasse MustangWriter folgende Klassen hinzu
+[arabic]
+.. *class* _Contact_ *implements* IZUGFeRDExportableContact \{}
+.. *class* _Item_ *implements* IZUGFeRDExportableItem \{
+[arabic]
+... _*private* BigDecimal price, quantity;_
+
+*private* Product product;
+
+[arabic, start=4]
+. {blank}
+[arabic]
+.. }
+.. *class* Product *implements* IZUGFeRDExportableProduct \{
+[arabic]
+... *private* String description, name, unit;
+
+*private* BigDecimal VATPercent;
+
+}
+
+[arabic, start=5]
+. Generieren Sie die Imports durch Drücken von STRG+SHIFT+O
+. Markieren Sie den Klassennamen MustangWriter und drücken Sie
+ALT+SHIFT+S, wählen Sie Override/Implement Methods und drücken Return.
+. Klicken Sie auf Contact und Wiederholen Sie den letzten Schritt.
+. Klicken Sie auf Item, markieren Sie die Variablen und wählen Sie
+zuerst „_Generate Getters and Setters_“ nach drücken von ALT+SHIFT+S.
+Wählen Sie alle Member aus und drücken Sie Return.
+. Klicken Sie erneut auf Item, drücken von ALT+SHIFT+S und wählen
+„Generate Constructor using Fields“. Wählen Sie erneut alle Member aus
+und drücken Sie Return.
+. Auf Item muss der Quick Fix „add unimplemented methods“ ausgeführt
+werden, die zwei generierten Funktionen (getItemAllowances und
+getItemCharges) dürfen null zurück geben.
+. Wenden Sie die beiden letzten Schritte auch auf Product an: Klicken
+Sie auf Product, markieren Sie die Variablen und wählen Sie „Generate
+Getters and Setters“ nach drücken von ALT+SHIFT+S. Wählen Sie alle
+Member aus und drücken Sie Return.
+. Item benötigt neben den getter/setter auch noch andere Methode, wählen
+Sie Item aus, drücken Sie ALT+SHIFT+S, wählen Sie Override/Implement
+Methods
+. Klicken Sie erneut auf Product, drücken von ALT+SHIFT+S und wählen
+„Generate Constructor using Fields“. Wählen Sie erneut alle Member aus
+und drücken Sie Return.
+. Folgende Methoden von Contact sollten Folgendes zurückgeben:
+[arabic]
+.. getCountry(): "DE"
+.. getLocation(): "Spielkreis"
+.. getName(): "Theodor Est"
+.. getStreet(): "Bahnstr. 42"
+.. getVATID(): "DE999999999"
+.. getZIP(): "88802";
+. Folgende Methoden der Hauptklasse -MustangWriter- sollten folgendes
+zurückgeben:
+[arabic]
+.. getDeliveryDate(): *new*
+GregorianCalendar(2017,Calendar._NOVEMBER_,17).getTime()
+.. Zweimaliges CTRL+SHIFT+O importiert die dazu nötige GregorianCalendar
+und Calendar Klasse
+.. getDueDate(): *new*
+GregorianCalendar(2017,Calendar._DECEMBER_,9).getTime()
+.. getIssueDate(): *new*
+GregorianCalendar(2017,Calendar._NOVEMBER_,18).getTime()
+.. __getNumber(): "RE-2017__1118__/50__6__"__
+.. _getOwnBIC(): "COBADEFFXXX"_
+.. getOwnBankName(): "Commerzbank"
+.. getOwnCountry() "DE"
+.. getOwnIBAN(): "DE88 2008 0000 0970 3757 00"
+.. getOwnLocation() "Stadthausen"
+.. _getOwnOrganisationName(): "Bei Spiel GmbH"_
+.. getOwnStreet() "Ecke 12"
+.. getOwnTaxID(): "22/815/0815/4"
+.. getOwnVATID(): "DE136695976"
+.. getOwnZIP(): "12345"
+.. getOwnOrganisationFullPlaintextInfo(): "Bei Spiel GmbH\n"+
++
+"Ecke 12\n"+
++
+"12345 Stadthausen\n"+
++
+"Geschäftsführer: Max Mustermann"
+.. _getRecipient(): *new* Contact()_
++
+.. getZFItems() der Hauptklasse kann jetzt Produkte anlegen und diese
+als Array von Posten (Items) zurückliefern:
++
+Item[] allItems=**new** Item[3];
+
+Product designProduct=**new** Product("", "Künstlerische Gestaltung
+(Stunde): Einer Beispielrechnung", "HUR", *new* BigDecimal("7.000000"));
+
+Product balloonProduct=**new** Product("", "Luftballon: Bunt, ca.
+500ml", "C62", *new* BigDecimal("19.000000"));
+
+Product airProduct=**new** Product("", "Heiße Luft pro Liter", "LTR",
+*new* BigDecimal("19.000000"));
+
+allItems[0]=**new** Item(*new* BigDecimal("160"), *new* BigDecimal("1"),
+designProduct);
+
+allItems[1]=**new** Item(*new* BigDecimal("0.79"), *new*
+BigDecimal("400"), balloonProduct);
+
+allItems[2]=**new** Item(*new* BigDecimal("0.10"), *new*
+BigDecimal("200"), airProduct);
+
+*return* allItems;
+
+[arabic]
+. 
+
+[arabic]
+. {blank}
+[arabic]
+.. Legen Sie eine neue Funktion, beispielsweise „apply“ an (private
+reicht).
+.. In der Main-Methode der Hauptklasse instantiiert man jetzt die Klasse
+und rufen Sie dort apply() auf.
+.. In der apply-Methode kann man jetzt
+[arabic]
+... eine ZUGFeRDExporterFactory instantiieren,
+... darauf Producer und Creator setzen (bspw. ZUGFeRDExporter ze=new
+ZUGFeRDExporterFromA1Factory().setProducer(_"string"_).setCreator(_"string"_))
+und über load die PDF-A/1-Datei angeben und über den Rückgabewert den
+ZUGFeRDExporter holen. Die ZUGFeRD-Version kann man in der
+setProducer.setCreator-Kette mit setZUGFeRDVersion(2) angeben.
+... Auf dem Exporter ruft man diePDFattachZugferdFile-Methode (mit this
+als IZUGFeRDExportableTransaction) auf und
+... benutzt schlussendlich die export-Funktion. Die apply-Methode sieht
+dann – mit entsprechenden try/catch-Blöcken- beispielsweise so aus:
+
+* try* \{
+
+System._out_.println("Lese Blanko-PDF");
+
+ZUGFeRDExporter ze = *new*
+ZUGFeRDExporterFromA1Factory().setProducer("My
+Application").setCreator(System._getProperty_("user.name")).load("./MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
+
+System._out_.println("Generiere ZUGFeRD-Daten");
+
+ze.PDFattachZugferdFile(*this*);
+
+System._out_.println("Schreibe ZUGFeRD-PDF");
+
+ze.export("./MustangGnuaccountingBeispielRE-20171118_506new.pdf");
+
+System._out_.println("Fertig.");
+
+} *catch* (IOException e) \{
+
+e.printStackTrace();
+
+}
+
+[arabic, start=2]
+. {blank}
+[arabic]
+.. Ein CTRL+SHIFT+O hilft wieder beim Hinzufügen der nötigen Imports
+.. „My Application“ und __System.getProperty("user.name") __werden in
+den Metadaten als „Producer“ (in etwa: erstellende Anwendung)
+beziehungsweise „Creator“ (in etwa: Autor) gespeichert. Bitte passen Sie
+die Werte entsprechend Ihrer Anwendung an.
+.. Starten Sie, es sollte eine valide ZUFeRD-Rechnung in
+_./MustangGnuaccountingBeispielRE-20171118_506new.pdf_
++
+erstellt werden.
+.. Passen Sie ggf. die NOTICE-Datei an und fügen Sie Ihrer Anwendung
+hinzu.
+.. Stellen Sie sicher, dass die XML-Daten in der dem PDF eingebetteten
+ZUGFeRD-invoice.xml immer den menschenlesbaren Daten im PDF entsprechen.
+
+Die erzeugte Datei beinhaltet ZUGFeRD-invoice.xml statt factur-x.xml im
+offiziellen Beispiel so lange die ZUGFeRD-Version in der Factory nicht
+auf 2 gesetzt wurde.
+
+[arabic]
+. 
+
+=== [#anchor-10]####Komplettes Schreibbeispiel
+
+Siehe MustangWriter.java in diesem Verzeichnis.
+
+=== [#anchor-11]####Schreiben eigener XML-Daten
+
+Sollten Sie eine eigene Implementierung verwenden um ZUGFeRD-XML-Daten
+zu erzeugen können Sie diese mit setZUGFeRDXMLData schreiben:
+
+ZUGFeRDExporter ze;
+
+*try* \{
+
+System.*_out_*.println("Konvertiere zu PDF/A-3u");
+
+ze = new
+
+ZUGFeRDExporterFromA1Factory().setProducer("My
+
+Application").setCreator(System._getProperty_("user.name")).load("./MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
+
+System.*_out_*.println("Hänge ZUGFeRD-Datei an");
+
+String ownZUGFeRDXML =
+"<rsm:CrossIndustryDocument></rsm:CrossIndustryDocument>";
+
+ze.setZUGFeRDXMLData(ownZUGFeRDXML.getBytes());
+
+System.*_out_*.println("Schreibe ZUGFeRD-PDF");
+
+ze.export("./Target.pdf");
+
+System.*_out_*.println("Fertig.");
+
+} *catch* (IOException e) \{
+
+e.printStackTrace();
+
+}
+
+Mustangproject prüft, die Eingabedatei auf einigermaßen korrektes PDF/A
+ist und dass die XML-Daten mindestens <rsm:CrossIndustry enthalten was
+auf ZF1- (CrossIndustryDocument) und ZF2-Daten (CrossIndustryInvoice)
+zutrifft.
+
+=== [#anchor-12]####Zusatzfunktionen
+
+* ZUGFeRDExporter.setTest() setzt ein Attribut im ZUGFeRD-XML, das
+benutzt wird um eine Testrechnung auszuzeichnen.
+* ZUGFeRDExporter.ignoreA1Errors() überspringt die Überprüfung der
+Eingangsdatei auf PDF/A-1-Fehler
+* Ein erster Versuch bestehendes ZUGFeRD1-XML in 2 zu konvertieren kann
+mit String facturx=new
+ZUGFeRDMigrator().migrateFromV1ToV2(zugferdInvoice); begonnen werden.

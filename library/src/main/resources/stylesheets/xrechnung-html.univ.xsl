@@ -1797,7 +1797,7 @@ function downloadData (element_id) {
                     <div class="boxtabelle boxinhalt noPaddingTop borderSpacing">
                         <div class="boxzeile">
                             <div class="boxdaten legende "><xsl:value-of select="$i18n.bt147"/>:</div>
-                            <div id="BT-147" title="BT-147" class="boxdaten wert"><xsl:value-of select="format-number(xr:PRICE_DETAILS/xr:Item_price_discount,'###.##0,00','decimal')"/></div>
+                            <div id="BT-147" title="BT-147" class="boxdaten wert"><xsl:value-of select="format-number(sum(xr:PRICE_DETAILS/xr:Item_price_discount),'###.##0,00','decimal')"/></div>
                         </div>
                         <div class="boxzeile">
                             <div class="boxdaten legende "><xsl:value-of select="$i18n.bt148"/>:</div>

@@ -46,6 +46,9 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -77,7 +80,7 @@ public class ZUGFeRDVisualizer {
 	private Templates mXsltXRTemplate = null;
 	private Templates mXsltUBLTemplate = null;
 	private Templates mXsltCIOTemplate = null;
-	private Templates mXsltHTMLTemplate = null;
+	private EnumMap<Language, Templates> mXsltHTMLTemplates = null;
 	private Templates mXsltPDFTemplate = null;
 	private Templates mXsltZF1HTMLTemplate = null;
 
@@ -179,7 +182,7 @@ public class ZUGFeRDVisualizer {
 		Optional<InputStream> in = copyStream(htmlOutput);
 		ByteArrayOutputStream htmlOutStream = new ByteArrayOutputStream();
 		if (in.isPresent()) {
-			applyXSLTToHTML(in.get(), htmlOutStream);
+			applyXSLTToHTML(in.get(), htmlOutStream, lang);
 		}
 
 		return htmlOutStream.toString(StandardCharsets.UTF_8);
@@ -222,9 +225,12 @@ public class ZUGFeRDVisualizer {
 				new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/cii-xr.xsl")));
 		}
 
-		if (mXsltHTMLTemplate == null) {
-			mXsltHTMLTemplate = mFactory.newTemplates(new StreamSource(
-				CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/xrechnung-html." + lang.name().toLowerCase() + ".xsl")));
+		if (mXsltHTMLTemplates == null) {
+			mXsltHTMLTemplates = new EnumMap<>(Language.class);
+		}
+		if (mXsltHTMLTemplates.get(lang) == null) {
+			Templates mXsltHTMLTemplate = mFactory.newTemplates(new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/xrechnung-html." + lang.name().toLowerCase() + ".xsl")));
+			mXsltHTMLTemplates.put(lang, mXsltHTMLTemplate);
 		}
 		if (mXsltZF1HTMLTemplate == null) {
 			mXsltZF1HTMLTemplate = mFactory.newTemplates(new StreamSource(
@@ -442,9 +448,9 @@ public class ZUGFeRDVisualizer {
 		transformer.transform(new StreamSource(xmlFile), new StreamResult(htmlOutStream));
 	}
 
-	protected void applyXSLTToHTML(final InputStream xmlFile, final OutputStream htmlOutStream)
+	protected void applyXSLTToHTML(final InputStream xmlFile, final OutputStream htmlOutStream, Language lang)
 		throws TransformerException, IOException {
-		Transformer transformer = mXsltHTMLTemplate.newTransformer();
+		Transformer transformer = mXsltHTMLTemplates.get(lang).newTransformer();
 
 		transformer.transform(new StreamSource(xmlFile), new StreamResult(htmlOutStream));
 		xmlFile.close();

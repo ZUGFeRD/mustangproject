@@ -1,3 +1,31 @@
+- support parsing of BT-90 CreditorReferenceID
+- #870
+- #871
+- #868
+- #729
+- #863
+- #731
+- #865
+- #849
+- #856
+- #850/#843
+- #855
+- #874
+- #876/830
+
+2.17.0
+=======
+2025-06-11
+- Breaking change: #764 Item allowances not to be multiplied by quantity
+(there are now product level quantities for that)
+- #820/801/815 Fix invoiceImporter: empty NodeList, empty Strings
+- #822 Wrapping Message Text in Validation Result PDF
+- #843 Re-Initialize the HTML-template on language change
+- #854 allow multiple item charges/allowances when visualizing to html
+- #786 Fix Invoices with Category Code "O" #786
+- add getCalculation on calculatedInvoice
+- Transactioncalculator getTaxDetails to include correct percentage, calculated amounts
+
 2.16.5
 =======
 2025-05-22

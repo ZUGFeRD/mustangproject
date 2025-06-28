@@ -32,6 +32,8 @@ public class Product implements IZUGFeRDExportableProduct {
 	protected boolean isIntraCommunitySupply = false;
 	protected SchemedID globalId = null;
 	protected String countryOfOrigin = null;
+	protected ArrayList<Charge> charges=new ArrayList<>();
+	protected ArrayList<Allowance> allowances=new ArrayList<>();
 	protected HashMap<String, String> attributes = new HashMap<>();
 
 	protected List<IDesignatedProductClassification> classifications = new ArrayList<>();
@@ -393,4 +395,42 @@ public class Product implements IZUGFeRDExportableProduct {
 		this.classifications.add(classification);
 		return this;
 	}
+
+	public Product addCharge(Charge e) {
+		charges.add(e);
+		return this;
+	}
+
+	public Product addAllowance(Allowance a) {
+		allowances.add(a);
+		return this;
+	}
+
+	/***
+	 * returns the AppliedTradeAllowanceCharges of this product which are actually Charges
+	 * @return array of or null, if none
+	 */
+	@Override
+	public Charge[] getCharges() {
+		if (charges.size()==0) {
+			return null;
+		}
+		Charge[] chargeArr = new Charge[charges.size()];
+		return charges.toArray(chargeArr);
+	}
+
+	@Override
+	/***
+	 * returns the AppliedTradeAllowanceCharges of this product which are actually Allowances
+	 * @return array of or null, if none
+	 */
+	public Allowance[] getAllowances() {
+		if (allowances.size()==0) {
+			return null;
+		}
+		Allowance[] allowanceArr = new Allowance[allowances.size()];
+		return allowances.toArray(allowanceArr);
+	}
+
+
 }
