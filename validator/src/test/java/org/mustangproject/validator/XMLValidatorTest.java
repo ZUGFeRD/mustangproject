@@ -284,12 +284,12 @@ public class XMLValidatorTest extends ResourceCase {
 
 	}
 
-	public void testArithmetrics() {
+	public void testArithmetics() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
 		final XPathEngine xpath = new JAXPXPathEngine();
 
-		File tempFile = getResourceAsFile("invalidArithmetrics.xml");
+		File tempFile = getResourceAsFile("invalidArithmetics.xml");
 		try {
 			xv.setFilename(tempFile.getAbsolutePath());
 			xv.validate();

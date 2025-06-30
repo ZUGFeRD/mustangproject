@@ -12,6 +12,8 @@
 - #855
 - #874
 - #876/830
+- #878
+- corrected typo ArithmetricException to ArithmeticException 
 
 2.17.0
 =======

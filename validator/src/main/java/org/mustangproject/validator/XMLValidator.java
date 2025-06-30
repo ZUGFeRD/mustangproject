@@ -24,8 +24,6 @@ import javax.xml.xpath.XPathFactory;
 import org.mustangproject.CalculatedInvoice;
 import org.mustangproject.Exceptions.ArithmetricException;
 import org.mustangproject.XMLTools;
-import org.mustangproject.ZUGFeRD.TransactionCalculator;
-import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
 import org.mustangproject.ZUGFeRD.ZUGFeRDInvoiceImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -393,7 +391,7 @@ public class XMLValidator extends Validator {
 						}
 					}
 				}
-				checkArithmetrics(context);
+				checkArithmetics(context);
 
 
 			} catch (final IrrecoverableValidationError er) {
@@ -417,14 +415,14 @@ public class XMLValidator extends Validator {
 
 	}
 
-	private void checkArithmetrics(ValidationContext context) {
+	private void checkArithmetics(ValidationContext context) {
 		ZUGFeRDInvoiceImporter zi=new ZUGFeRDInvoiceImporter();
 		try {
 			zi.fromXML(zfXML);
 			CalculatedInvoice ci=new CalculatedInvoice();
 			zi.extractInto(ci);
 
-		} catch ( ArithmetricException e) {
+		} catch ( ArithmeticException e) {
 			try {
 				context.addResultItem(new ValidationResultItem(ESeverity.warning, "Arithmetical issue:"+e.getMessage()).setSection(10));
 

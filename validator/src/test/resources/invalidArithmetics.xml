@@ -22,11 +22,11 @@
 			<ram:SpecifiedLineTradeAgreement>
 				<ram:GrossPriceProductTradePrice>
 					<ram:ChargeAmount>160.0000</ram:ChargeAmount>
-					<ram:BasisQuantity unitCode="HUR">2.0000</ram:BasisQuantity>
+					<ram:BasisQuantity unitCode="HUR">1.0000</ram:BasisQuantity>
 				</ram:GrossPriceProductTradePrice>
 				<ram:NetPriceProductTradePrice>
 					<ram:ChargeAmount>160.0000</ram:ChargeAmount>
-					<ram:BasisQuantity unitCode="HUR">2.0000</ram:BasisQuantity>
+					<ram:BasisQuantity unitCode="HUR">1.0000</ram:BasisQuantity>
 				</ram:NetPriceProductTradePrice>
 			</ram:SpecifiedLineTradeAgreement>
 			<ram:SpecifiedLineTradeDelivery>
@@ -179,7 +179,7 @@
 				<ram:TaxBasisTotalAmount>496.00</ram:TaxBasisTotalAmount>
 				<ram:TaxTotalAmount currencyID="EUR">75.04</ram:TaxTotalAmount>
 				<ram:GrandTotalAmount>571.04</ram:GrandTotalAmount>
-				<ram:DuePayableAmount>571.05</ram:DuePayableAmount>
+				<ram:DuePayableAmount>571.04</ram:DuePayableAmount>
 			</ram:SpecifiedTradeSettlementHeaderMonetarySummation>
 		</ram:ApplicableHeaderTradeSettlement>
 	</rsm:SupplyChainTradeTransaction>

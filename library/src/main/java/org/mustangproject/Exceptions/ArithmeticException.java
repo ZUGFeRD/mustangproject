@@ -4,13 +4,14 @@ import java.text.ParseException;
 
 /***
  * will be thrown if an invoice cant be reproduced numerically
+ * ArithmetricException for backwards compatibility, was a spelling error
  */
 public class ArithmeticException extends ArithmetricException {
 	public ArithmeticException() {
-		this("");
+		super();
 	}
 
 	public ArithmeticException(String details) {
-//		super("Could not reproduce the invoice. " + details, 0);
+		super(details);
 	}
 }
