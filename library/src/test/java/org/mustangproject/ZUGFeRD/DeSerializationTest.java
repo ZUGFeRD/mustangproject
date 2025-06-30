@@ -79,7 +79,7 @@ public class DeSerializationTest extends ResourceCase {
 		try {
 			zii.fromXML(new String(Files.readAllBytes(inputCII.toPath()), StandardCharsets.UTF_8));
 
-		} catch (IOException e) {
+		} catch (IOException | ParseException e) {
 			hasExceptions = true;
 		}
 

@@ -14,6 +14,7 @@ package org.mustangproject.ZUGFeRD;
  * @author jstaerk
  */
 import java.io.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -452,7 +453,11 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @throws IOException if raw can not be set
 	 */
 	public void setMeta(String meta) throws IOException {
-		setRawXML(meta.getBytes());
+		try {
+			setRawXML(meta.getBytes());
+		} catch (ParseException e) {
+			LOGGER.error("Failed to parse", e);
+		}
 	}
 
 

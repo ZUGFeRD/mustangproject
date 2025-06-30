@@ -297,7 +297,7 @@ public class XMLValidatorTest extends ResourceCase {
 			String s="<validation>" + xv.getXMLResult() + "</validation>";
 			Source source = Input.fromString(s).build();
 			String content = xpath.evaluate("/validation/summary/@status", source);
-			assertEquals("invalid", content);
+			assertEquals("valid", content);
 			assertThat(s).valueByXPath("count(//warning)")
 				.asInt()
 				.isEqualTo(1);

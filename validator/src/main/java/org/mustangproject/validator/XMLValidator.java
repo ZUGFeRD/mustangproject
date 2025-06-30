@@ -420,23 +420,17 @@ public class XMLValidator extends Validator {
 	private void checkArithmetrics(ValidationContext context) {
 		ZUGFeRDInvoiceImporter zi=new ZUGFeRDInvoiceImporter();
 		try {
-			zi.setRawXML(zfXML.getBytes());
+			zi.fromXML(zfXML);
 			CalculatedInvoice ci=new CalculatedInvoice();
 			zi.extractInto(ci);
-			TransactionCalculator tc=new TransactionCalculator(ci);
-			if (tc.getGrandTotal().compareTo(ci.getGrandTotal())!=0) {
-
-			}
 
 		} catch ( ArithmetricException e) {
 			try {
-				context.addResultItem(new ValidationResultItem(ESeverity.warning, "Can not arithmetrically reproduce the invoice.").setSection(10));
+				context.addResultItem(new ValidationResultItem(ESeverity.warning, "Arithmetical issue:"+e.getMessage()).setSection(10));
 
 			} catch (IrrecoverableValidationError ie) {
 				LOGGER.error(ie.getMessage(), ie);
 			}
-		} catch ( IOException e) {
-			LOGGER.error(e.getMessage(), e);
 		} catch (XPathExpressionException e) {
 			LOGGER.error(e.getMessage(), e);
 		} catch (ParseException e) {

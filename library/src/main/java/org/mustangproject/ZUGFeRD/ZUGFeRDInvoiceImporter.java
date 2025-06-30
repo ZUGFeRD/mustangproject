@@ -174,7 +174,12 @@ public class ZUGFeRDInvoiceImporter {
 		} else {
 			// no PDF probably XML
 			containsMeta = true;
-			setRawXML(XMLTools.getBytesFromStream(pdfStream));
+			try {
+				setRawXML(XMLTools.getBytesFromStream(pdfStream));
+			} catch(ParseException e) {
+				LOGGER.error("Failed to parse PDF", e);
+			}
+
 
 		}
 	}
@@ -219,8 +224,11 @@ public class ZUGFeRDInvoiceImporter {
 				// ByteArrayOutputStream();
 				// FileOutputStream fos = new FileOutputStream(file);
 
-				setRawXML(embeddedFile.toByteArray());
-
+				try {
+					setRawXML(embeddedFile.toByteArray());
+				} catch (ParseException e) {
+					LOGGER.error("Failed to parse XML", e);
+				}
 				// fos.write(embeddedFile.getByteArray());
 				// fos.close();
 			}
@@ -237,7 +245,7 @@ public class ZUGFeRDInvoiceImporter {
 	 * @param doParse automatically parse input for zugferdImporter (not ZUGFeRDInvoiceImporter)
 	 * @throws IOException if parsing xml throws it (unlikely its string based)
 	 */
-	public void setRawXML(byte[] rawXML, boolean doParse) throws IOException {
+	public void setRawXML(byte[] rawXML, boolean doParse) throws IOException, ParseException {
 		this.containsMeta = true;
 		this.rawXML = rawXML;
 		this.version = null;
@@ -245,7 +253,7 @@ public class ZUGFeRDInvoiceImporter {
 
 		try {
 			setDocument();
-		} catch (ParserConfigurationException | SAXException | ParseException e) {
+		} catch (ParserConfigurationException | SAXException e) {
 			LOGGER.error("Failed to parse XML", e);
 			throw new ZUGFeRDExportException(e);
 		}
@@ -257,7 +265,7 @@ public class ZUGFeRDInvoiceImporter {
 	 * @param rawXML the cii(?) as a string
 	 * @throws IOException  if parsing xml throws it (unlikely its string based)
 	 */
-	public void setRawXML(byte[] rawXML) throws IOException {
+	public void setRawXML(byte[] rawXML) throws IOException, ParseException {
 		setRawXML(rawXML, true);
 	}
 
@@ -1205,7 +1213,7 @@ public class ZUGFeRDInvoiceImporter {
 	 * sets the XML for the importer to parse
 	 * @param XML the UBL or CII
 	 */
-	public void fromXML(String XML) {
+	public void fromXML(String XML) throws ParseException{
 		try {
 			containsMeta = true;
 			setRawXML(XML.getBytes(StandardCharsets.UTF_8));
