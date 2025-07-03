@@ -1,13 +1,10 @@
 package org.mustangproject;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.*;
 import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 import org.mustangproject.util.NodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -105,7 +102,10 @@ public class Product implements IZUGFeRDExportableProduct {
 				classifications.add(new DesignatedProductClassification(classCode, className)));
 		});
 
-		nodeMap.getAsString("OriginTradeCounty").ifPresent(this::setCountryOfOrigin);
+		nodeMap.getAsNodeMap("OriginTradeCountry")
+			   .flatMap(nodes -> nodes.getNode("ID"))
+			   .map(Node::getTextContent)
+			   .ifPresent(this::setCountryOfOrigin);
 	}
 
 	/***
