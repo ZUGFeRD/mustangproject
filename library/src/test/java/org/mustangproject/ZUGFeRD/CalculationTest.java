@@ -80,6 +80,56 @@ public class CalculationTest extends ResourceCase {
 	}
 
 	@Test
+	public void testAllowanceAndChargeEx4() {
+		/** numbers from en16931 example 4 */
+		SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
+
+		Invoice invoice = new Invoice();
+		invoice.setDocumentName("Rechnung");
+		invoice.setNumber("777777");
+		try {
+			invoice.setIssueDate(sqlDate.parse("2020-12-31"));
+		} catch (Exception e) {
+			LOGGER.error("Failed to set dates", e);
+
+		}
+
+		/* trade party (sender) */
+		TradeParty sender = new TradeParty("Maier GmbH", "Musterweg 5", "11111", "Testung", "DE");
+		sender.addVATID("DE2222222222");
+		invoice.setSender(sender);
+
+		/* trade party (recipient) */
+		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " " + "", "Testweg 5", "11111", "Testung", "DE");
+		invoice.setRecipient(recipient);
+
+		/* item */
+		Product product;
+		Item item;
+
+		product = new Product("Pens", "", "H84", new BigDecimal(25));
+		product.addAllowance(new Allowance(new BigDecimal(1)));
+		item = new Item(product, new BigDecimal("9.50"), new BigDecimal(25));
+		item.addCharge(new Charge(new BigDecimal(10)).setReasonCode("ZZZ").setReason("Zuschlag"));
+		LineCalculator lc = new LineCalculator(item);
+		assertEquals(new BigDecimal("222.50"), lc.getItemTotalNetAmount());
+		invoice.addItem(item);
+		product = new Product("Paper", "", "H84", new BigDecimal(25));
+		item = new Item(product, new BigDecimal("4.50"), new BigDecimal(15));
+		item.addAllowance(new Allowance().setPercent(new BigDecimal(5)).setReasonCode("ZZZ").setReason("Zuschlag"));
+		lc = new LineCalculator(item);
+		assertEquals(new BigDecimal("64.12"), lc.getItemTotalNetAmount());
+		invoice.addItem(item);
+		invoice.addAllowance(new Allowance().setPercent(new BigDecimal(10)).setTaxPercent(new BigDecimal(25)).setReasonCode("ZZZ").setReason("Mengenrabatt"));
+		invoice.addCharge(new Charge(new BigDecimal(15)).setReasonCode("ZZZ").setReason("Frachtkosten"));
+
+		TransactionCalculator calculator = new TransactionCalculator(invoice);
+		assertEquals(valueOf(286.62).stripTrailingZeros(), calculator.getTotal());// interestingly, EN16931-1 has 286.63 here?
+		assertEquals(valueOf(272.96).stripTrailingZeros(), calculator.getTaxBasis()); // and 272.97 here
+		assertEquals(valueOf(337.45).stripTrailingZeros(), calculator.getDuePayable()); // and 337.46 here???
+	}
+
+	@Test
 	public void testLineCalculatorForeignCurrencyExample() {
 /*** xml of official fx sample with allowances and charges
  *  10x100 with 10% and 50€ item discount =850€
@@ -88,19 +138,19 @@ public class CalculationTest extends ResourceCase {
  */
 		File inputCII = getResourceAsFile("Extended_fremdwaehrung.xml");
 
-		ZUGFeRDInvoiceImporter zii=new ZUGFeRDInvoiceImporter();
-		Invoice invoice=null;
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		Invoice invoice = null;
 		zii.doIgnoreCalculationErrors();
-		boolean hasExceptions=false;
+		boolean hasExceptions = false;
 		try {
 			zii.setInputStream(new FileInputStream(inputCII));
 
-			invoice=zii.extractInvoice();
+			invoice = zii.extractInvoice();
 		} catch (XPathExpressionException | ParseException e) {
 // handle Exceptions
-			hasExceptions=true;
+			hasExceptions = true;
 		} catch (FileNotFoundException e) {
-			hasExceptions=true;
+			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
 		// Reading ZUGFeRD
@@ -266,7 +316,7 @@ public class CalculationTest extends ResourceCase {
 		invoice.addItem(item);
 
 		TransactionCalculator calculator = new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal(5), calculator.getGrandTotal().stripTrailingZeros());
+		assertEquals(new BigDecimal("4.95"), calculator.getGrandTotal().stripTrailingZeros());
 	}
 
 	public void testSimpleItemTotalAllowance() {
@@ -314,7 +364,7 @@ public class CalculationTest extends ResourceCase {
 
 	/**
 	 * LineCalculator should not throw an exception when calculating a non-terminating decimal expansion
-	 * */
+	 */
 	@Test
 	public void testNonTerminatingDecimalExpansion() {
 		final Product product = new Product();
