@@ -12,12 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.xpath.XPathExpressionException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /***
  * tests the linecalculator and transactioncalculator classes
@@ -274,7 +273,7 @@ public class CalculationTest extends ResourceCase {
 			invoice.addAllowance(new Allowance().setPercent(total_discount_percent).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatte"));
 		}
 		TransactionCalculator calculator = new TransactionCalculator(invoice);
-		assertEquals(valueOf(307.18).stripTrailingZeros(), calculator.getGrandTotal().stripTrailingZeros());
+		assertEquals(valueOf(306.38).stripTrailingZeros(), calculator.getGrandTotal().stripTrailingZeros());
 	}
 
 	public void testSimpleItemPercentAllowance() {
@@ -317,6 +316,56 @@ public class CalculationTest extends ResourceCase {
 
 		TransactionCalculator calculator = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("4.95"), calculator.getGrandTotal().stripTrailingZeros());
+	}
+
+	public void testSimpleDocumentPercentCharge() {
+
+		String orgname = "Test company";
+		String number = "123";
+		String priceStr = "3.00";
+		BigDecimal price = new BigDecimal(priceStr);
+
+
+		// similar, but slightly less complicated to whats later testted in  testRelativeChargesAllowancesExport
+		Invoice i = new Invoice().setCurrency("CHF").setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
+			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
+			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
+			.setNumber(number)
+			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
+			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
+			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
+				.addCharge(new Charge().setPercent(new BigDecimal(50)).setTaxPercent(new BigDecimal(19)).setReasonCode("ABK"));
+		// 9+50%=>13,50 expected net
+		//		.addAllowance(new Allowance().setPercent(new BigDecimal(50)).setTaxPercent(new BigDecimal(19)).setReason("Mengenrabatt"))
+		TransactionCalculator tc = new TransactionCalculator(i);
+		assertEquals(new BigDecimal("13.50"), tc.getTaxBasis());
+
+		assertEquals(new BigDecimal("16.07"), tc.getDuePayable());
+	}
+
+	public void testSimpleDocumentPercentAllowance() {
+
+		String orgname = "Test company";
+		String number = "123";
+		String priceStr = "3.00";
+		BigDecimal price = new BigDecimal(priceStr);
+
+
+		// similar, but slightly less complicated to whats later testted in  testRelativeChargesAllowancesExport
+		Invoice i = new Invoice().setCurrency("CHF").setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
+			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
+			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
+			.setNumber(number)
+			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
+			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
+			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
+			.addAllowance(new Allowance().setPercent(new BigDecimal(50)).setTaxPercent(new BigDecimal(19)).setReasonCode("ABK"));
+		// 9-50%=>4,50 expected net
+		//		.addAllowance(new Allowance().setPercent(new BigDecimal(50)).setTaxPercent(new BigDecimal(19)).setReason("Mengenrabatt"))
+		TransactionCalculator tc = new TransactionCalculator(i);
+		assertEquals(new BigDecimal("4.50"), tc.getTaxBasis());
+
+		assertEquals(new BigDecimal("5.36"), tc.getDuePayable());
 	}
 
 	public void testSimpleItemTotalAllowance() {

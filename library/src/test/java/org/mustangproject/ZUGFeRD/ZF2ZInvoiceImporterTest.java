@@ -265,7 +265,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		assertFalse(hasExceptions);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("18.92"), tc.getGrandTotal());
+		assertEquals(new BigDecimal("18.33"), tc.getGrandTotal());
 	}
 
 	public void testIBANImport() {
