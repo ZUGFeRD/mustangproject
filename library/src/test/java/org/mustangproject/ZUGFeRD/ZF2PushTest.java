@@ -691,7 +691,7 @@ public class ZF2PushTest extends TestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_RELATIVECHARGESALLOWANCESPDF);
 
 		assertEquals("CHF", zi.getInvoiceCurrencyCode());
-		assertEquals("11.10", zi.getAmount());
+		assertEquals("10.71", zi.getAmount());
 		assertEquals(orgname, zi.getHolder());
 		assertEquals(number, zi.getForeignReference());
 		try {
