@@ -1,21 +1,21 @@
 - support parsing of BT-90 CreditorReferenceID
-- #870
-- #871
-- #868
-- #729
-- #863
-- #731
-- #865
-- #849
-- #856
-- #850/#843
-- #855
-- #874
-- #876/830
-- #878
+- #871 schema validation does not ignore external entities
+- #868 Fix wrong version in History.md
+- #729 Updates about SpecifiedTradeSettlementHeaderMonetarySummation and SpecifiedTradeSettlementPaymentMeans
+- #863 LineCalculator throws NPE if product is null (since 2.17.0)
+- #731 Got a broken translation key when visualizing XML into PDF (xr:Business_process_type)
+- #865 Add sevdesk signature to PDF creators
+- #849 Ignore calculation errors when extracting xml from pdf
+- #856 Read contact´s fax number.
+- #850/#843 Correction for "Re-Initialize the HTML-template on language change
+- #855 Suppress empty nodes in output XML
+- #874 Skip PDNameTreeNodes if the names are null or empty
+- #830 Invalid XML generated: Item vat-category-code summed up with other 0 percent category codes
+- #878 report arithmetic issues in validation report 
 - corrected typo ArithmetricException to ArithmeticException
-- 726
-- #885
+- #726 Financial account information (IBAN) is lost when converting a cii invoice to ubl
+- #885 JSON duplicates on item allowances/charges
+- #887 incorrect percentual item allowances
 
 2.17.0
 =======
