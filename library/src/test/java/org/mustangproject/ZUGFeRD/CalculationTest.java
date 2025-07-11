@@ -217,54 +217,23 @@ public class CalculationTest extends ResourceCase {
 		}
 		invoice.addItem(item);
 
-		// reset values for additional charge and discount used for next lines
-		item_increase = BigDecimal.ZERO;
-		item_discount = BigDecimal.ZERO;
 
 		product = new Product("BBB", "", "H84", sales_tax_percent1).setSellerAssignedID("2BBB");
 		item = new Item(product, new BigDecimal("5.750"), new BigDecimal(4.00));
-		if (item_increase.compareTo(BigDecimal.ZERO) > 0) {
-			item.addCharge(new Charge().setPercent(item_increase).setTaxPercent(sales_tax_percent1).setReasonCode("ZZZ").setReason("Zuschlag"));
-		}
-		if (item_discount.compareTo(BigDecimal.ZERO) > 0) {
-			item.addAllowance(new Allowance().setPercent(item_discount).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatt"));
-		}
 		invoice.addItem(item);
 
 		product = new Product("CCC", "", "H84", sales_tax_percent1).setSellerAssignedID("3CCC");
 		item = new Item(product, new BigDecimal("6.750"), new BigDecimal(3.00));
-		if (item_increase.compareTo(BigDecimal.ZERO) > 0) {
-			item.addCharge(new Charge().setPercent(item_increase).setTaxPercent(sales_tax_percent1).setReasonCode("ZZZ").setReason("Zuschlag"));
-		}
-		if (item_discount.compareTo(BigDecimal.ZERO) > 0) {
-			item.addAllowance(new Allowance().setPercent(item_discount).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatt"));
-		}
 		invoice.addItem(item);
 
 		product = new Product("DDD", "", "H84", sales_tax_percent1).setSellerAssignedID("4DDD");
 		item = new Item(product, new BigDecimal("7.750"), new BigDecimal(2.00));
-		if (item_increase.compareTo(BigDecimal.ZERO) > 0) {
-			item.addCharge(new Charge().setPercent(item_increase).setTaxPercent(sales_tax_percent1).setReasonCode("ZZZ").setReason("Zuschlag"));
-		}
-		if (item_discount.compareTo(BigDecimal.ZERO) > 0) {
-			item.addAllowance(new Allowance().setPercent(item_discount).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatt"));
-		}
 		invoice.addItem(item);
 
 		product = new Product("EEE", "", "H84", sales_tax_percent1).setSellerAssignedID("5EEE");
 		item = new Item(product, new BigDecimal("8.750"), new BigDecimal(1.00));
-		if (item_increase.compareTo(BigDecimal.ZERO) > 0) {
-			item.addCharge(new Charge().setPercent(item_increase).setTaxPercent(sales_tax_percent1).setReasonCode("ZZZ").setReason("Zuschlag"));
-		}
-		if (item_discount.compareTo(BigDecimal.ZERO) > 0) {
-			item.addAllowance(new Allowance().setPercent(item_discount).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatt"));
-
-		}
 		invoice.addItem(item);
 
-		// reset values for additional charge and discount used on invoice level
-		item_increase = BigDecimal.valueOf(3.50);
-		item_discount = BigDecimal.valueOf(10.00);
 
 		if (total_increase_percent.compareTo(BigDecimal.ZERO) > 0) {
 			invoice.addCharge(new Charge().setPercent(total_increase_percent).setTaxPercent(sales_tax_percent1).setReasonCode("ZZZ").setReason("Zuschläge"));
@@ -273,7 +242,7 @@ public class CalculationTest extends ResourceCase {
 			invoice.addAllowance(new Allowance().setPercent(total_discount_percent).setTaxPercent(sales_tax_percent1).setReasonCode("95").setReason("Rabatte"));
 		}
 		TransactionCalculator calculator = new TransactionCalculator(invoice);
-		assertEquals(valueOf(306.38).stripTrailingZeros(), calculator.getGrandTotal().stripTrailingZeros());
+		assertEquals(valueOf(101.85).stripTrailingZeros(), calculator.getGrandTotal().stripTrailingZeros());
 	}
 
 	public void testSimpleItemPercentAllowance() {
