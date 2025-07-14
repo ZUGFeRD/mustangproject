@@ -1,3 +1,7 @@
+2.18.0
+=======
+2025-07-14
+
 - support parsing of BT-90 CreditorReferenceID
 - #871 schema validation does not ignore external entities
 - #868 Fix wrong version in History.md
