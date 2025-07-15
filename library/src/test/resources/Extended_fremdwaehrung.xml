@@ -131,6 +131,10 @@ costs, losses or damages could normally have been foreseen.-->
 				<ram:SellerAssignedID>CO-123/V2A</ram:SellerAssignedID>
 				<ram:BuyerAssignedID>Toolbox 0815</ram:BuyerAssignedID>
 				<ram:Name>Stahlcoil</ram:Name>
+                <ram:ApplicableProductCharacteristic>
+                    <ram:Description>LeoID</ram:Description>
+                    <ram:Value>704310.0105636504</ram:Value>
+                </ram:ApplicableProductCharacteristic>
 				<ram:OriginTradeCountry>
 					<ram:ID>DE</ram:ID>
 				</ram:OriginTradeCountry>
