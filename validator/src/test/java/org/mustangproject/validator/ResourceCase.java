@@ -17,8 +17,7 @@ public class ResourceCase extends TestCase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCase.class.getCanonicalName()); // log output is
 	
 	public static File getResourceAsFile(String resourcePath) {
-		try {
-			InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
+		try(InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath)) {
 			if (in == null) {
 				return null;
 			}
@@ -42,8 +41,7 @@ public class ResourceCase extends TestCase {
 	}
 
 	public static byte[] getResourceAsByteArray(String resourcePath) {
-		try {
-			InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath);
+		try(InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(resourcePath)) {
 			if (in == null) {
 				return null;
 			}
