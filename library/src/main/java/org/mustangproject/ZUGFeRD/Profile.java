@@ -41,9 +41,9 @@ public class Profile {
 	 * @return the XMP name string of the profile
 	 */
 	public String getXMPName() {
-		if (name.equals("BASICWL")) {
+		if ("BASICWL".equals(name)) {
 			return "BASIC WL";
-		} else if (name.equals("EN16931")) {
+		} else if ("EN16931".equals(name)) {
 			return "EN 16931";
 		} else {
 			return name;

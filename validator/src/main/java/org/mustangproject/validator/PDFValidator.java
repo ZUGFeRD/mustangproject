@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -41,6 +42,7 @@ import org.verapdf.processor.TaskType;
 import org.verapdf.processor.plugins.PluginsCollectionConfig;
 import org.verapdf.processor.reports.ItemDetails;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -194,9 +196,9 @@ public class PDFValidator extends Validator {
 
 				boolean documentTypeValid = false;
 				for (int i = 0; i < nodes.getLength(); i++) {
-					if (nodes.item(i).getTextContent().equals("INVOICE") || nodes.item(i).getTextContent().equals("ORDER")
-						|| nodes.item(i).getTextContent().equals("ORDER_RESPONSE") || nodes.item(i).getTextContent()
-						.equals("ORDER_CHANGE")) {
+					Node item = nodes.item(i);
+					String textContent = item.getTextContent();
+					if (textContent != null && Set.of("INVOICE", "ORDER", "ORDER_RESPONSE", "ORDER_CHANGE").contains(textContent)) {
 						documentTypeValid = true;
 					}
 				}

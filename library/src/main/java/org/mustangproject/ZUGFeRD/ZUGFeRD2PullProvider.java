@@ -33,9 +33,9 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.dom4j.Document;
@@ -721,9 +721,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 			}
 		}
-		if (DocumentCodeTypeConstants.CORRECTEDINVOICE.equals(trans.getDocumentCode())
-			|| DocumentCodeTypeConstants.CREDITNOTE.equals(trans.getDocumentCode())
-		) {
+		if (trans.getDocumentCode() != null
+			&& Set.of(DocumentCodeTypeConstants.CORRECTEDINVOICE, DocumentCodeTypeConstants.CREDITNOTE).contains(trans.getDocumentCode())) {
 			hasDueDate = false;
 		}
 
