@@ -114,8 +114,8 @@ public class ZF2PushTest extends TestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 		assertTrue(zi.getUTF8().contains("DE88200800000970375700")); //the iban
 		assertTrue(zi.getUTF8().contains("Max Mustermann")); //account holder
-		assertTrue(zi.getUTF8().contains("DueDateDateTime")); //account holder
-		assertTrue(zi.getUTF8().contains("20201212")); //account holder
+		assertTrue(zi.getUTF8().contains("DueDateDateTime"));
+		assertTrue(zi.getUTF8().contains("20201212"));
 
 		assertTrue(zi.getUTF8().contains("<rsm:CrossIndustryInvoice"));
 
@@ -124,7 +124,7 @@ public class ZF2PushTest extends TestCase {
 
 		// Reading ZUGFeRD
 		assertEquals("571.04", zi.getAmount());
-		assertEquals(orgname, zi.getHolder());
+		assertEquals("Max Mustermann", zi.getHolder());
 		assertEquals(number, zi.getForeignReference());
 		try {
 			assertEquals(zi.getVersion(), 2);
