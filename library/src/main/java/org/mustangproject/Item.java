@@ -78,20 +78,21 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsString("Name").ifPresent(product::setName);
 			icnm.getAsString("Description").ifPresent(product::setDescription);
 
-			icnm.getAsNodeMap("SellersItemIdentification").ifPresent(SellersItemIdentification -> {
-				SellersItemIdentification.getAsString("ID").ifPresent(product::setSellerAssignedID);
-			});
+			icnm.getAsNodeMap("SellersItemIdentification")
+				.flatMap(SellersItemIdentification -> SellersItemIdentification.getAsString("ID"))
+				.ifPresent(product::setSellerAssignedID);
 
-			icnm.getAsNodeMap("BuyersItemIdentification").ifPresent(BuyersItemIdentification -> {
-				BuyersItemIdentification.getAsString("ID").ifPresent(product::setBuyerAssignedID);
-			});
+			icnm.getAsNodeMap("BuyersItemIdentification")
+				.flatMap(BuyersItemIdentification -> BuyersItemIdentification.getAsString("ID"))
+				.ifPresent(product::setBuyerAssignedID);
 
-			icnm.getAsNodeMap("ClassifiedTaxCategory").flatMap(m -> m.getAsBigDecimal("Percent"))
+			icnm.getAsNodeMap("ClassifiedTaxCategory")
+				.flatMap(m -> m.getAsBigDecimal("Percent"))
 				.ifPresent(product::setVATPercent);
 		});
-		itemMap.getAsNodeMap("AssociatedDocumentLineDocument").ifPresent(icnm -> {
-			icnm.getAsString("LineID").ifPresent(this::setId);
-		});
+		itemMap.getAsNodeMap("AssociatedDocumentLineDocument")
+			.flatMap(icnm -> icnm.getAsString("LineID"))
+			.ifPresent(this::setId);
 
 		itemMap.getAsNodeMap("Price").ifPresent(icnm -> {
 			// ubl
@@ -181,7 +182,7 @@ public class Item implements IZUGFeRDExportableItem {
 					}
 					if (amountString != null) {
 						izac.setTotalAmount(new BigDecimal(amountString));
-						if (percentString!=null&&(percentString!="0")) {
+						if (percentString!=null&&(!percentString.equals("0"))) {
 							izac.setTotalAmount(new BigDecimal(amountString).divide(getQuantity()));
 						}
 					}
@@ -211,11 +212,11 @@ public class Item implements IZUGFeRDExportableItem {
 
 			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).forEach(this::addAdditionalReference);
 
-			icnm.getAsString("ReceivableSpecifiedTradeAccountingAccount").ifPresent(s -> this.accountingReference = s == null ? null : s.trim());
+			icnm.getAsString("ReceivableSpecifiedTradeAccountingAccount").ifPresent(s -> this.accountingReference = s.trim());
 
 			icnm.getAsNodeMap("BillingSpecifiedPeriod").ifPresent(periodNode -> {
-				Date start = periodNode.getAsNodeMap("StartDateTime").flatMap(dateTimeNode -> dateTimeNode.getNode("DateTimeString")).map(dts -> XMLTools.tryDate(dts)).orElse(null);
-				Date end = periodNode.getAsNodeMap("EndDateTime").flatMap(dateTimeNode -> dateTimeNode.getNode("DateTimeString")).map(dts -> XMLTools.tryDate(dts)).orElse(null);
+				Date start = periodNode.getAsNodeMap("StartDateTime").flatMap(dateTimeNode -> dateTimeNode.getNode("DateTimeString")).map(XMLTools::tryDate).orElse(null);
+				Date end = periodNode.getAsNodeMap("EndDateTime").flatMap(dateTimeNode -> dateTimeNode.getNode("DateTimeString")).map(XMLTools::tryDate).orElse(null);
 				setDetailedDeliveryPeriod(start, end);
 			});
 		});
@@ -428,9 +429,7 @@ public class Item implements IZUGFeRDExportableItem {
 	public void setItemAllowances(ArrayList<Allowance> theAllowances) {
 		if (theAllowances != null) {
 			Allowances.clear();
-			for (Allowance theAllowance : theAllowances) {
-				Allowances.add(theAllowance);
-			}
+			Allowances.addAll(theAllowances);
 		}
 	}
 
@@ -440,9 +439,7 @@ public class Item implements IZUGFeRDExportableItem {
 	public void setItemCharges(ArrayList<Charge> theCharges) {
 		if (theCharges != null) {
 			Charges.clear();
-			for (Charge theCharge : theCharges) {
-				Charges.add(theCharge);
-			}
+			Charges.addAll(theCharges);
 		}
 	}
 

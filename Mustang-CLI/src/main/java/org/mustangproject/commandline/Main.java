@@ -371,17 +371,17 @@ public class Main {
 			boolean optionsRecognized = false;
 			String action = "";
 
-			Boolean disableFileLogging = false;
+			boolean disableFileLogging = false;
 			try {
 				cmd = parser.parse(options, args);
 
 				// Retrieve all options
 				action = cmd.getOptionValue("action");
 				String directoryName = cmd.getOptionValue("directory");
-				Boolean filesFromStdIn = cmd.hasOption("listfromstdin");//((Number)cmdLine.getParsedOptionValue("integer-option")).intValue();
-				Boolean ignoreFileExt = cmd.hasOption("ignorefileextension");
-				Boolean noAttachments = cmd.hasOption("no-additional-attachments");
-				Boolean helpRequested = cmd.hasOption("help") || ((action != null) && (action.equals("help")));
+				boolean filesFromStdIn = cmd.hasOption("listfromstdin");//((Number)cmdLine.getParsedOptionValue("integer-option")).intValue();
+				boolean ignoreFileExt = cmd.hasOption("ignorefileextension");
+				boolean noAttachments = cmd.hasOption("no-additional-attachments");
+				boolean helpRequested = cmd.hasOption("help") || ((action != null) && (action.equals("help")));
 				disableFileLogging = cmd.hasOption("disable-file-logging");
 
 				String sourceName = cmd.getOptionValue("source");
@@ -389,8 +389,8 @@ public class Main {
 				String outName = cmd.getOptionValue("out");
 				String format = cmd.getOptionValue("format");
 				String lang = cmd.getOptionValue("language");
-				Boolean noNotices = cmd.hasOption("no-notices");
-				Boolean LogAsPDF = cmd.hasOption("log-as-pdf");
+				boolean noNotices = cmd.hasOption("no-notices");
+				boolean LogAsPDF = cmd.hasOption("log-as-pdf");
 
 				String zugferdVersion = cmd.getOptionValue("version");
 				String zugferdProfile = cmd.getOptionValue("profile");

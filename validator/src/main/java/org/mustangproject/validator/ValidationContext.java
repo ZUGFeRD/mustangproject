@@ -32,13 +32,13 @@ public class ValidationContext {
 		}
 		if (logger != null) {
 			if ((vr.getSeverity() == ESeverity.fatal) || (vr.getSeverity() == ESeverity.exception)) {
-				logger.error("Fatal Error " + vr.getSection() + ": " + vr.getMessage());
+				logger.error("Fatal Error {}: {}", vr.getSection(), vr.getMessage());
 			} else if ((vr.getSeverity() == ESeverity.error)) {
-				logger.error("Error " + vr.getSection() + ": " + vr.getMessage());
+				logger.error("Error {}: {}", vr.getSection(), vr.getMessage());
 			} else if (vr.getSeverity() == ESeverity.warning) {
-				logger.warn("Warning " + vr.getSection() + ": " + vr.getMessage());
+				logger.warn("Warning {}: {}", vr.getSection(), vr.getMessage());
 			} else if (vr.getSeverity() == ESeverity.notice) {
-				logger.info("Notice " + vr.getSection() + ": " + vr.getMessage());
+				logger.info("Notice {}: {}", vr.getSection(), vr.getMessage());
 			}
 		}
 
@@ -106,20 +106,17 @@ public class ValidationContext {
 	}
 
 	public String getXMLResult() {
-		String res = getCustomXML();
-		if (results.size() > 0) {
-			res += "<messages>";
+		StringBuilder res = new StringBuilder(getCustomXML());
+		if (results != null && !results.isEmpty()) {
+			res.append("<messages>");
+			for (final ValidationResultItem validationResultItem : results) {
+				// xml and pdf are handled in their respective sections
+				res.append(validationResultItem.getXMLOnce()).append("\n");
+			}
+			res.append("</messages>");
 		}
-
-		for (final ValidationResultItem validationResultItem : results) {
-			// xml and pdf are handled in their respective sections
-			res += validationResultItem.getXMLOnce() + "\n";	
-		}
-		if (results.size() > 0) {
-			res += "</messages>";
-		}
-		res += "<summary status=\"" + (isValid ? "valid" : "invalid") + "\"/>";
-		return res;
+		res.append("<summary status=\"").append(isValid ? "valid" : "invalid").append("\"/>");
+		return res.toString();
 	}
 
 	/***

@@ -591,11 +591,7 @@ public class Invoice implements IExportableTransaction {
 	 * @return fluent setter
 	 */
 	public Invoice setZFAllowances(Allowance[] iza) {
-		Allowances=new ArrayList<>();
-
-		for (IZUGFeRDAllowanceCharge cz:iza) {
-			Allowances.add(cz);
-		}
+		Allowances=new ArrayList<>(Arrays.asList(iza));
 		return this;
 	}
 
@@ -616,9 +612,7 @@ public class Invoice implements IExportableTransaction {
 	 */
 	public Invoice setZFCharges(Charge[] iza) {
 		Charges=new ArrayList<>();
-		for (IZUGFeRDAllowanceCharge cz:iza) {
-			Charges.add(cz);
-		}
+		Charges.addAll(Arrays.asList(iza));
 		return this;
 	}
 

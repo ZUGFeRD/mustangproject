@@ -57,7 +57,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
       paymentTermsDescription = XMLTools.encodeXML(trans.getPaymentTermDescription());
 		}
 
-		if ((paymentTermsDescription == null) && (trans.getDocumentCode() != CORRECTEDINVOICE)/* && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)*/) {
+		if (paymentTermsDescription == null && !CORRECTEDINVOICE.equals(trans.getDocumentCode())/* && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)*/) {
 			paymentTermsDescription = "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
 
 		}
@@ -125,12 +125,12 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>";
 			}
 			String allowanceChargeStr = "";
-			if (currentItem.getItemAllowances() != null && currentItem.getItemAllowances().length > 0) {
+			if (currentItem.getItemAllowances() != null) {
 				for (final IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
 					allowanceChargeStr += getAllowanceChargeStr(allowance, currentItem);
 				}
 			}
-			if (currentItem.getItemCharges() != null && currentItem.getItemCharges().length > 0) {
+			if (currentItem.getItemCharges() != null) {
 				for (final IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
 					allowanceChargeStr += getAllowanceChargeStr(charge, currentItem);
 
@@ -313,8 +313,9 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 			for (final IZUGFeRDTradeSettlementPayment payment : trans.getTradeSettlementPayment()) {
 				if (payment != null) {
 					hasDueDate = true;
-				//	xml += payment.getSettlementXML();
-				}
+                    break;
+                    //	xml += payment.getSettlementXML();
+                }
 			}
 		}
 		if (trans.getTradeSettlement() != null) {

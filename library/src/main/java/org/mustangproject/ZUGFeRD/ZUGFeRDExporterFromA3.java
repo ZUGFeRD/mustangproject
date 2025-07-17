@@ -564,10 +564,9 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 		// iterate over all pdf pages
 
-		for (Object object : doc.getPages()) {
-			if (object instanceof PDPage) {
+		for (PDPage page : doc.getPages()) {
+			if (page != null) {
 
-				PDPage page = (PDPage) object;
 				PDResources res = page.getResources();
 
 				// Check for fonts in PDXObjects:
