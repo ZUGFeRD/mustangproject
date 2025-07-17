@@ -22,7 +22,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.mustangproject.CalculatedInvoice;
-import org.mustangproject.Exceptions.ArithmetricException;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.ZUGFeRDInvoiceImporter;
 import org.slf4j.Logger;
@@ -310,7 +309,7 @@ public class XMLValidator extends Validator {
 						if (!xrVersion.equals("12") && !xrVersion.equals("20") && !xrVersion.equals("21") && !xrVersion.equals("22") && !xrVersion.equals("23") && !xrVersion.equals("30")) {
 							throw new Exception("Unsupported XR version");
 						}
-						LOGGER.debug("is XRechnung v" + xrVersion);
+						LOGGER.debug("is XRechnung v{}", xrVersion);
 						xsltFilename = "/xslt/XR_" + xrVersion + "/XRechnung-UBL-validation.xslt";
 						XrechnungSeverity = ESeverity.error;
 						mainSchematronSectionErrorTypeCode = 27;
@@ -534,7 +533,7 @@ public class XMLValidator extends Validator {
 							}
 						}
 
-						LOGGER.info("FailedAssert ", thisFailText);
+						LOGGER.info("FailedAssert {}", thisFailText);
 
 						context.addResultItem(new ValidationResultItem(severity, thisFailText + thisFailIDStr + " from " + xsltFilename + ")")
 							.setLocation(thisFailLocation).setCriterion(thisFailTest).setSection(section).setID(thisFailID)

@@ -746,7 +746,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		if (bankDetails.isEmpty() && debitDetails.isEmpty()) {
 			return null;
 		}
-		List<IZUGFeRDTradeSettlement> tradeSettlements = Stream.concat(bankDetails.stream(), debitDetails.stream()).map(IZUGFeRDTradeSettlement.class::cast).collect(Collectors.toList());
+		List<IZUGFeRDTradeSettlement> tradeSettlements = Stream.concat(bankDetails.stream(), debitDetails.stream()).collect(Collectors.toList());
 
 		IZUGFeRDTradeSettlement[] result = new IZUGFeRDTradeSettlement[tradeSettlements.size()];
 		for (int i = 0; i < tradeSettlements.size(); i++) {
