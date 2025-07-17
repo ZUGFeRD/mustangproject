@@ -361,8 +361,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				paymentTermsDescription += discount.getAsXRechnung();
 			}
 		} else if (paymentTermsDescription == null
-			&& !trans.getDocumentCode().equals(DocumentCodeTypeConstants.CORRECTEDINVOICE)
-			&& !trans.getDocumentCode().equals(DocumentCodeTypeConstants.CREDITNOTE)
+			&& !DocumentCodeTypeConstants.CORRECTEDINVOICE.equals(trans.getDocumentCode())
+			&& !DocumentCodeTypeConstants.CREDITNOTE.equals(trans.getDocumentCode())
 		) {
 			if (trans.getDueDate() != null) {
 				paymentTermsDescription = "Please remit until " + germanDateFormat.format(trans.getDueDate());
@@ -721,8 +721,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 			}
 		}
-		if (trans.getDocumentCode().equals(DocumentCodeTypeConstants.CORRECTEDINVOICE)
-			|| trans.getDocumentCode().equals(DocumentCodeTypeConstants.CREDITNOTE)
+		if (DocumentCodeTypeConstants.CORRECTEDINVOICE.equals(trans.getDocumentCode())
+			|| DocumentCodeTypeConstants.CREDITNOTE.equals(trans.getDocumentCode())
 		) {
 			hasDueDate = false;
 		}

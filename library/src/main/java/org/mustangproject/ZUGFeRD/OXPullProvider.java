@@ -57,7 +57,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
       paymentTermsDescription = XMLTools.encodeXML(trans.getPaymentTermDescription());
 		}
 
-		if (paymentTermsDescription == null && !trans.getDocumentCode().equals(CORRECTEDINVOICE)/* && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)*/) {
+		if (paymentTermsDescription == null && !CORRECTEDINVOICE.equals(trans.getDocumentCode())/* && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)*/) {
 			paymentTermsDescription = "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
 
 		}
