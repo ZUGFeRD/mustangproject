@@ -1,3 +1,7 @@
+2.18.1
+=======
+- #893 Tradeparty globalID is not read from JSON
+
 2.18.0
 =======
 2025-07-14
