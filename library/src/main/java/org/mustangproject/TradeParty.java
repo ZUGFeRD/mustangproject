@@ -541,6 +541,32 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		return this;
 	}
 
+	/***
+	 * for jackson, primarily, use addGlobalID(SchemedID) instead
+	 * @param ID the id part without scheme
+	 * @return fluent setter
+	 */
+	public TradeParty setGlobalID(String ID) {
+		if (globalId==null) {
+			globalId=new SchemedID();
+		}
+		globalId.setId(ID);
+		return this;
+	}
+
+	/***
+	 * for jackson, primarily, use addGlobalID(SchemedID) instead
+	 * @param scheme the scheme part without id
+	 * @return fluent setter
+	 */
+	public TradeParty setGlobalIDScheme(String scheme) {
+		if (globalId==null) {
+			globalId=new SchemedID();
+		}
+		globalId.setScheme(scheme);
+		return this;
+	}
+
 	public TradeParty addGlobalID(SchemedID schemedID) {
 		globalId = schemedID;
 		return this;
