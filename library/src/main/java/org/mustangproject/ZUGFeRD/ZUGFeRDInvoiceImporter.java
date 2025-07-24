@@ -1172,7 +1172,7 @@ public class ZUGFeRDInvoiceImporter {
 			bomlessData = rawXML;
 		}
 
-		return new String(bomlessData);
+		return new String(bomlessData, StandardCharsets.UTF_8);
 	}
 
 	/***
