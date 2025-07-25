@@ -212,7 +212,16 @@ public class ZUGFeRDInvoiceImporter {
 			 */
 
 			final PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
-			if ((filename.equals("ZUGFeRD-invoice.xml") || (filename.equals("zugferd-invoice.xml")) || filename.equals("factur-x.xml")) || filename.equals("xrechnung.xml") || filename.equals("order-x.xml") || filename.equals("cida.xml")) {
+			Set<String> validFilenames = Set.of(
+				"ZUGFeRD-invoice.xml",
+				"zugferd-invoice.xml",
+				"factur-x.xml",
+				"xrechnung.xml",
+				"order-x.xml",
+				"cida.xml"
+			);
+
+			if (validFilenames.contains(filename)) {
 				containsMeta = true;
 
 				// String embeddedFilename = filePath + filename;
@@ -359,39 +368,31 @@ public class ZUGFeRDInvoiceImporter {
 							delivery.addGlobalID(sID);
 						}
 					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("StreetName").ifPresent(t -> delivery.setStreet(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("CityName").ifPresent(t -> delivery.setLocation(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("PostalZone").ifPresent(t -> delivery.setZIP(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsNodeMap("Country").ifPresent(t -> t.getAsString("IdentificationCode").ifPresent(u -> delivery.setCountry(u)));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsNodeMap("AddressLine").ifPresent(t -> t.getAsString("Line").ifPresent(u -> delivery.setAdditionalAddressExtension(u)));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
-					});
-					deliveryLocationNodeMap.getAsNodeMap("Address").ifPresent(s -> {
-						s.getAsString("AdditionalStreetName").ifPresent(t -> delivery.setAdditionalAddress(t));
-					});
+					Optional<NodeMap> addressNodeMapp = deliveryLocationNodeMap.getAsNodeMap("Address");
+					addressNodeMapp.flatMap(s -> s.getAsString("StreetName"))
+						.ifPresent(delivery::setStreet);
+					addressNodeMapp.flatMap(s -> s.getAsString("AdditionalStreetName"))
+						.ifPresent(delivery::setAdditionalAddress);
+					addressNodeMapp.flatMap(s -> s.getAsString("CityName"))
+						.ifPresent(delivery::setLocation);
+					addressNodeMapp.flatMap(s -> s.getAsString("PostalZone"))
+						.ifPresent(delivery::setZIP);
+					addressNodeMapp.flatMap(s -> s.getAsNodeMap("Country")).flatMap(t -> t.getAsString("IdentificationCode"))
+						.ifPresent(delivery::setCountry);
+					addressNodeMapp.flatMap(s -> s.getAsNodeMap("AddressLine")).flatMap(t -> t.getAsString("Line"))
+						.ifPresent(delivery::setAdditionalAddressExtension);
+					addressNodeMapp.flatMap(s -> s.getAsString("AdditionalStreetName"))
+						.ifPresent(delivery::setAdditionalAddress);
+					addressNodeMapp.flatMap(s -> s.getAsString("AdditionalStreetName"))
+						.ifPresent(delivery::setAdditionalAddress);
 				});
 
 
-			new NodeMap(deliveryNode).getAsNodeMap("DeliveryParty").ifPresent(partyMap -> {
-				partyMap.getAsNodeMap("PartyName").ifPresent(s -> {
-					s.getAsString("Name").ifPresent(t -> delivery.setName(t));
-				});
-			});
-			String street, name, additionalStreet, city, postal, countrySubentity, line, country = null;
+			new NodeMap(deliveryNode).getAsNodeMap("DeliveryParty")
+				.flatMap(partyMap -> partyMap.getAsNodeMap("PartyName"))
+				.flatMap(s -> s.getAsString("Name"))
+				.ifPresent(delivery::setName);
+
 			zpp.setDeliveryAddress(delivery);
 
 		}
@@ -430,7 +431,7 @@ public class ZUGFeRDInvoiceImporter {
 
 		xpr = xpath.compile("//*[local-name()=\"ExchangedDocument\"]|//*[local-name()=\"HeaderExchangedDocument\"]");
 		NodeList ExchangedDocumentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-		
+
 		xpr = xpath.compile("//*[local-name()=\"GrandTotalAmount\"]|//*[local-name()=\"TaxInclusiveAmount\"]");
 		BigDecimal expectedGrandTotal = null;
 		NodeList totalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
@@ -578,11 +579,11 @@ public class ZUGFeRDInvoiceImporter {
 		}
 
 		String creditorReferenceID = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"CreditorReferenceID\"]").trim();//BT-90
-		if ((creditorReferenceID == null)||(creditorReferenceID.length()==0)) {
+		if (creditorReferenceID == null || creditorReferenceID.isEmpty()) {
 			//maybe it's there in UBL?
 			creditorReferenceID = extractString("//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyIdentification\"]/*[local-name()=\"ID\"]").trim();
 		}
-		if ((creditorReferenceID != null)&&(creditorReferenceID.length()>0)) {
+		if (creditorReferenceID != null && !creditorReferenceID.isEmpty()) {
 			zpp.setCreditorReferenceID(creditorReferenceID);
 		}
 

@@ -360,7 +360,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 				paymentTermsDescription += discount.getAsXRechnung();
 			}
-		} else if ((paymentTermsDescription == null) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CORRECTEDINVOICE) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)) {
+		} else if (paymentTermsDescription == null
+			&& !DocumentCodeTypeConstants.CORRECTEDINVOICE.equals(trans.getDocumentCode())
+			&& !DocumentCodeTypeConstants.CREDITNOTE.equals(trans.getDocumentCode())
+		) {
 			if (trans.getDueDate() != null) {
 				paymentTermsDescription = "Please remit until " + germanDateFormat.format(trans.getDueDate());
 			}
@@ -434,12 +437,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>";
 				}
 				String allowanceChargeStr = "";
-				if (currentItem.getProduct().getAllowances() != null && currentItem.getProduct().getAllowances().length > 0) {
+				if (currentItem.getProduct().getAllowances() != null) {
 					for (final IZUGFeRDAllowanceCharge allowance : currentItem.getProduct().getAllowances()) {
 						allowanceChargeStr += getAllowanceChargeStr(allowance, currentItem);
 					}
 				}
-				if (currentItem.getProduct().getCharges() != null && currentItem.getProduct().getCharges().length > 0) {
+				if (currentItem.getProduct().getCharges() != null) {
 					for (final IZUGFeRDAllowanceCharge charge : currentItem.getProduct().getCharges()) {
 						allowanceChargeStr += getAllowanceChargeStr(charge, currentItem);
 
@@ -447,24 +450,24 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 
 				String itemTotalAllowanceChargeStr = "";
-				if (currentItem.getAllowances() != null && currentItem.getAllowances().length > 0) {
+				if (currentItem.getAllowances() != null) {
 					for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getAllowances()) {
 						itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalAllowance, currentItem);
 					}
 				}
-				if (currentItem.getCharges() != null && currentItem.getCharges().length > 0) {
+				if (currentItem.getCharges() != null) {
 					for (final IZUGFeRDAllowanceCharge itemTotalCharges : currentItem.getCharges()) {
 						itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalCharges, currentItem);
 					}
 				}
 
 				xml += "<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>";
-				if (currentItem.getProduct().getDescription() != null && currentItem.getProduct().getDescription().length() > 0) {
+				if (currentItem.getProduct().getDescription() != null) {
 					xml += "<ram:Description>" +
 						XMLTools.encodeXML(currentItem.getProduct().getDescription()) +
 						"</ram:Description>";
 				}
-				if (currentItem.getProduct().getClassifications() != null && currentItem.getProduct().getClassifications().length > 0) {
+				if (currentItem.getProduct().getClassifications() != null) {
 					for (IDesignatedProductClassification classification : currentItem.getProduct().getClassifications()) {
 						xml += "<ram:DesignatedProductClassification>"
 							+ "<ram:ClassCode listID=\"" + XMLTools.encodeXML(classification.getClassCode().getListID()) + "\"";
@@ -718,7 +721,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 			}
 		}
-		if ((trans.getDocumentCode() == DocumentCodeTypeConstants.CORRECTEDINVOICE) || (trans.getDocumentCode() == DocumentCodeTypeConstants.CREDITNOTE)) {
+		if (DocumentCodeTypeConstants.CORRECTEDINVOICE.equals(trans.getDocumentCode())
+			|| DocumentCodeTypeConstants.CREDITNOTE.equals(trans.getDocumentCode())
+		) {
 			hasDueDate = false;
 		}
 
@@ -882,7 +887,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		} else {
 			xml += buildPaymentTermsXml();
 		}
-		if ((profile == Profiles.getByName("Extended")) && (trans.getCashDiscounts() != null) && (trans.getCashDiscounts().length > 0)) {
+		if (profile == Profiles.getByName("Extended") && trans.getCashDiscounts() != null) {
 			for (IZUGFeRDCashDiscount discount : trans.getCashDiscounts()
 			) {
 				xml += discount.getAsCII();
