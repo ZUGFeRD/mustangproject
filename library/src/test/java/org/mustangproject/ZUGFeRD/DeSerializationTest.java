@@ -462,8 +462,8 @@ public class DeSerializationTest extends ResourceCase {
 		assertEquals(globalID, fromJSON.getSender().getGlobalID());
 		assertEquals(globalIDScheme, fromJSON.getSender().getGlobalIDScheme());
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-		assertEquals("2022-01-29", sdf.format(fromJSON.getZFItems()[0].getDetailedDeliveryPeriodFrom()));
-		assertEquals("2022-01-31", sdf.format(fromJSON.getZFItems()[0].getDetailedDeliveryPeriodTo()));
+		assertEquals("2022-01-28", sdf.format(fromJSON.getZFItems()[0].getDetailedDeliveryPeriodFrom()));
+		assertEquals("2022-01-30", sdf.format(fromJSON.getZFItems()[0].getDetailedDeliveryPeriodTo()));
 		assertEquals("sender@test.org", fromJSON.getSender().getEmail());
 	}
 

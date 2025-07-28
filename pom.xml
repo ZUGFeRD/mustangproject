@@ -81,17 +81,16 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.3</version>
                 <configuration>
                     <runOrder>alphabetical</runOrder>
+                    <argLine>-Duser.timezone=UTC</argLine>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
+                <version>3.3.1</version>
                 <executions>
                     <execution>
                         <id>attach-javadoc</id>
