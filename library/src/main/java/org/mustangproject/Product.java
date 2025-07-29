@@ -406,6 +406,16 @@ public class Product implements IZUGFeRDExportableProduct {
 		return this;
 	}
 
+
+	/***
+	 * Jackson courtesy function, please use addCharge if you have the choice
+	 * @return array of or null, if none
+	 */
+	public Product setCharges(ArrayList<Charge> charges) {
+		this.charges=charges;
+		return this;
+	}
+
 	/***
 	 * returns the AppliedTradeAllowanceCharges of this product which are actually Charges
 	 * @return array of or null, if none
@@ -432,5 +442,13 @@ public class Product implements IZUGFeRDExportableProduct {
 		return allowances.toArray(allowanceArr);
 	}
 
+	/***
+	 * Jackson courtesy function, please use addAllowance if you have the choice
+	 * @return array of or null, if none
+	 */
+	public Product setAllowances(ArrayList<Allowance> allowances) {
+		this.allowances=allowances;
+		return this;
+	}
 
 }

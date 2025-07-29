@@ -120,10 +120,14 @@ public class Item implements IZUGFeRDExportableItem {
 		itemMap.getAsString("ID")
 			.ifPresent(this::setId);
 
-
 		itemMap.getAsString("Note")
 			.ifPresent(this::addNote);
 
+		if (itemMap.getNode("SpecifiedTradeProduct").isPresent()) {
+			product = new Product(itemMap.getNode("SpecifiedTradeProduct").get());
+		} else {
+			product = new Product();
+		}
 
 		itemMap.getAsNodeMap("SpecifiedLineTradeAgreement", "SpecifiedSupplyChainTradeAgreement").ifPresent(icnm -> {
 			icnm.getAsNodeMap("BuyerOrderReferencedDocument")
@@ -138,13 +142,38 @@ public class Item implements IZUGFeRDExportableItem {
 				npptpNodes.getAsBigDecimal("ChargeAmount").ifPresent(this::setPrice);
 				npptpNodes.getAsBigDecimal("BasisQuantity").ifPresent(this::setBasisQuantity);
 			});
+			icnm.getAsNodeMap("GrossPriceProductTradePrice").ifPresent(gpptpNodes -> {
+				gpptpNodes.getAsNodeMap("AppliedTradeAllowanceCharge").ifPresent(gpptpAtacNodes -> {
+
+						/** mustang attributes differences between net and gross price to the product */
+						String chargeIndicator = gpptpAtacNodes.getAsStringOrNull("ChargeIndicator");
+						if ((chargeIndicator != null)&&(gpptpAtacNodes.getAsBigDecimal("ActualAmount").isPresent())) {
+							BigDecimal actual = gpptpAtacNodes.getAsBigDecimal("ActualAmount").get();
+							if (chargeIndicator.equals("true")) {
+								product.addCharge(new Charge(actual));
+								setPrice(getPrice().subtract(actual)); // the gross price affects the net price, which is read,
+								// so if we do not ignore charges|allowances we have to re-compensate the net price
+							} else {
+								product.addAllowance(new Allowance(actual));
+								setPrice(getPrice().add(actual));
+							}
+
+						}
+					});
+				});
+
+
+				/*
+				String chargeIndicator = gpptpNodes.getAsNodeMap("AppliedTradeAllowanceCharge").flatMap(acChargeIndicatorNodes -> acChargeIndicatorNodes.getAsString("ChargeIndicator")).get();
+				if (chargeIndicator != null) {
+					BigDecimal actual = gpptpNodes.getAsNodeMap("AppliedTradeAllowanceCharge").flatMap(acChargeIndicatorNodes -> acChargeIndicatorNodes.getAsBigDecimal("ActualAmount")).get();
+					if (actual != null) {
+					}
+				}*/
 
 			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).
 				forEach(this::addReferencedDocument);
 		});
-
-		itemMap.getNode("SpecifiedTradeProduct").map(Product::new).ifPresent(this::setProduct);//CII
-		itemMap.getNode("SpecifiedTradeProduct").map(Product::new).ifPresent(this::setProduct);//UBL
 
 		// RequestedQuantity is for Order-X, BilledQuantity for FX and ZF
 		itemMap.getAsNodeMap("SpecifiedLineTradeDelivery", "SpecifiedSupplyChainTradeDelivery")
@@ -182,7 +211,7 @@ public class Item implements IZUGFeRDExportableItem {
 					}
 					if (amountString != null) {
 						izac.setTotalAmount(new BigDecimal(amountString));
-						if (percentString!=null&&(!percentString.equals("0"))) {
+						if (percentString != null && (!percentString.equals("0"))) {
 							izac.setTotalAmount(new BigDecimal(amountString).divide(getQuantity()));
 						}
 					}
@@ -304,14 +333,16 @@ public class Item implements IZUGFeRDExportableItem {
 	}
 
 	@JsonIgnore
-	@Override public IZUGFeRDAllowanceCharge[] getAllowances() { // in JSON is already returned as itemAllowances (and only read from there)
-		IZUGFeRDAllowanceCharge[] izac=new IZUGFeRDAllowanceCharge[Allowances.size()];
+	@Override
+	public IZUGFeRDAllowanceCharge[] getAllowances() { // in JSON is already returned as itemAllowances (and only read from there)
+		IZUGFeRDAllowanceCharge[] izac = new IZUGFeRDAllowanceCharge[Allowances.size()];
 		return Allowances.toArray(izac);
 	}
 
 	@JsonIgnore
-	@Override public IZUGFeRDAllowanceCharge[] getCharges() { // in JSON is already returned as itemAllowances (and only read from there)
-		IZUGFeRDAllowanceCharge[] izac=new IZUGFeRDAllowanceCharge[Charges.size()];
+	@Override
+	public IZUGFeRDAllowanceCharge[] getCharges() { // in JSON is already returned as itemAllowances (and only read from there)
+		IZUGFeRDAllowanceCharge[] izac = new IZUGFeRDAllowanceCharge[Charges.size()];
 		return Charges.toArray(izac);
 	}
 

@@ -446,9 +446,8 @@ public class DeSerializationTest extends ResourceCase {
 		}
 		assertEquals(newInvoiceFromJSON.getBuyerOrderReferencedDocumentID(), "28934");
 		assertFalse(hasExceptions);
-
-
 	}
+
 	public void testFromJSON() throws JsonProcessingException {
 		String globalID = "4000001123452";
 		String globalIDScheme = "0088";
@@ -465,6 +464,16 @@ public class DeSerializationTest extends ResourceCase {
 		assertEquals("2022-01-29", sdf.format(fromJSON.getZFItems()[0].getDetailedDeliveryPeriodFrom()));
 		assertEquals("2022-01-31", sdf.format(fromJSON.getZFItems()[0].getDetailedDeliveryPeriodTo()));
 		assertEquals("sender@test.org", fromJSON.getSender().getEmail());
+	}
+
+	public void testGrossFromJSON() throws JsonProcessingException {
+
+		String json="{  \"documentCode\": \"380\",  \"number\": \"123\",  \"currency\": \"EUR\",  \"paymentTermDescription\": \"Please remit until 28.07.2025\",  \"issueDate\": 1753653600000,  \"dueDate\": 1753653600000,  \"sender\": {    \"name\": \"Test company\",    \"zip\": \"55232\",    \"street\": \"teststr\",    \"location\": \"teststadt\",    \"country\": \"DE\",    \"taxID\": \"4711\",    \"vatID\": \"DE0815\",    \"vatid\": \"DE0815\"  },  \"recipient\": {    \"name\": \"Franz Müller\",    \"zip\": \"55232\",    \"street\": \"teststr.12\",    \"location\": \"Entenhausen\",    \"country\": \"DE\",    \"contact\": {      \"name\": \"contact testname\",      \"phone\": \"123456\",      \"email\": \"contact.testemail@example.org\",      \"fax\": \"0911623562\"    }  },  \"totalPrepaidAmount\": 0.00,  \"lineTotalAmount\": 29.00,  \"duePayable\": 34.51,  \"grandTotal\": 34.51,  \"taxBasis\": 29.00,  \"valid\": true,  \"zfitems\": [    {      \"price\": 3.0000,      \"quantity\": 10.0000,      \"basisQuantity\": 1.0000,      \"id\": \"1\",      \"product\": {        \"unit\": \"H87\",        \"name\": \"Testprodukt\",        \"taxCategoryCode\": \"S\",        \"allowances\": [          {            \"totalAmount\": 0.1000,            \"categoryCode\": \"S\"          }        ],        \"vatpercent\": 19.00,        \"intraCommunitySupply\": false,        \"reverseCharge\": false      },      \"value\": 3.0000    }  ],  \"ownVATID\": \"DE0815\",  \"ownTaxID\": \"4711\",  \"ownLocation\": \"teststadt\",  \"ownZIP\": \"55232\",  \"ownCountry\": \"DE\",  \"ownStreet\": \"teststr\"}";
+
+		ObjectMapper mapper = new ObjectMapper();
+		CalculatedInvoice fromJSON = mapper.readValue(json, CalculatedInvoice.class);
+		fromJSON.calculate();
+		assertEquals(new BigDecimal("34.51"),fromJSON.getDuePayable());
 	}
 
 	public void testDueDateRoundtrip() throws JsonProcessingException {
