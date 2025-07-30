@@ -22,7 +22,7 @@ public class LineCalculator {
 
 	public LineCalculator(IZUGFeRDExportableItem currentItem) {
 
-		if (currentItem.getItemAllowances() != null && currentItem.getItemAllowances().length > 0) {
+		if (currentItem.getItemAllowances() != null) {
 			for (IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
 				BigDecimal factor=BigDecimal.ONE;
 				BigDecimal singleAllowance=allowance.getTotalAmount(currentItem);
@@ -35,7 +35,7 @@ public class LineCalculator {
 
 			}
 		}
-		if (currentItem.getItemCharges() != null && currentItem.getItemCharges().length > 0) {
+		if (currentItem.getItemCharges() != null) {
 			for (IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
 				BigDecimal factor=BigDecimal.ONE;
 				BigDecimal singleCharge=charge.getTotalAmount(currentItem);
@@ -47,7 +47,7 @@ public class LineCalculator {
 
 			}
 		}
-		if (currentItem.getItemTotalAllowances() != null && currentItem.getItemTotalAllowances().length > 0) {
+		if (currentItem.getItemTotalAllowances() != null) {
 			for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getItemTotalAllowances()) {
 				addAllowanceItemTotal(itemTotalAllowance.getTotalAmount(currentItem));
 			}
@@ -94,7 +94,7 @@ public class LineCalculator {
 			? BigDecimal.ONE.setScale(4)
 			: currentItem.getBasisQuantity();
 		itemTotalNetAmount = quantity.multiply(price).divide(basisQuantity, 18, RoundingMode.HALF_UP)
-			.add(lineCharge).subtract(lineAllowance).subtract(allowanceItemTotal).setScale(2, RoundingMode.HALF_UP);
+			.add(lineCharge).subtract(lineAllowance).subtract(allowanceItemTotal.setScale(2, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP);
 		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);//.setScale(2, RoundingMode.HALF_UP);
 	}
 

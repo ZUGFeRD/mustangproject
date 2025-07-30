@@ -89,7 +89,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 
 	private BigDecimal sumAllowanceCharge(BigDecimal percent, IZUGFeRDAllowanceCharge[] charges) {
 		BigDecimal res = BigDecimal.ZERO;
-		if ((charges != null) && (charges.length > 0)) {
+		if (charges != null) {
 			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
 				if ((percent == null) || (currentCharge.getTaxPercent().compareTo(percent) == 0)) {
 					res = res.add(currentCharge.getTotalAmount(this));
@@ -172,6 +172,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	 * @return item sum +- charges/allowances
 	 */
 	public BigDecimal getTaxBasis() {
+		BigDecimal debug_1=getTotal();
 		return getTotal().add(getChargesForPercent(null).setScale(2, RoundingMode.HALF_UP))
 			.subtract(getAllowancesForPercent(null).setScale(2, RoundingMode.HALF_UP))
 			.setScale(2, RoundingMode.HALF_UP);
@@ -211,7 +212,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		}
 
 		IZUGFeRDAllowanceCharge[] charges = trans.getZFCharges();
-		if ((charges != null) && (charges.length > 0)) {
+		if (charges != null) {
 			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
 				BigDecimal taxPercent = currentCharge.getTaxPercent();
 				if (taxPercent != null) {
@@ -229,7 +230,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			}
 		}
 		IZUGFeRDAllowanceCharge[] allowances = trans.getZFAllowances();
-		if ((allowances != null) && (allowances.length > 0)) {
+		if (allowances != null) {
 			for (IZUGFeRDAllowanceCharge currentAllowance : allowances) {
 				BigDecimal taxPercent = currentAllowance.getTaxPercent();
 				if (taxPercent != null) {
@@ -285,8 +286,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		}
 
 		final IZUGFeRDAllowanceCharge[] charges = this.trans.getZFCharges();
-		if (charges != null && charges.length > 0)
-		{
+		if (charges != null) {
 			for (final IZUGFeRDAllowanceCharge currentCharge : charges)
 			{
 				final BigDecimal taxPercent = currentCharge.getTaxPercent();
@@ -309,8 +309,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			}
 		}
 		final IZUGFeRDAllowanceCharge[] allowances = this.trans.getZFAllowances();
-		if (allowances != null && allowances.length > 0)
-		{
+		if (allowances != null) {
 			for (final IZUGFeRDAllowanceCharge currentAllowance : allowances)
 			{
 				final BigDecimal taxPercent = currentAllowance.getTaxPercent();

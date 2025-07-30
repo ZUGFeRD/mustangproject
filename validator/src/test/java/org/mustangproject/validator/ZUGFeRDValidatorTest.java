@@ -219,7 +219,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 			.isEqualTo(2);
 		assertThat(res).valueByXPath("count(//warning)")
 			.asInt()
-			.isEqualTo(2);
+			.isEqualTo(3);
 
 		assertThat(res).valueByXPath("count(//notice)")
 			.asInt()

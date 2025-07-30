@@ -541,6 +541,32 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		return this;
 	}
 
+	/***
+	 * for jackson, primarily, use addGlobalID(SchemedID) instead
+	 * @param ID the id part without scheme
+	 * @return fluent setter
+	 */
+	public TradeParty setGlobalID(String ID) {
+		if (globalId==null) {
+			globalId=new SchemedID();
+		}
+		globalId.setId(ID);
+		return this;
+	}
+
+	/***
+	 * for jackson, primarily, use addGlobalID(SchemedID) instead
+	 * @param scheme the scheme part without id
+	 * @return fluent setter
+	 */
+	public TradeParty setGlobalIDScheme(String scheme) {
+		if (globalId==null) {
+			globalId=new SchemedID();
+		}
+		globalId.setScheme(scheme);
+		return this;
+	}
+
 	public TradeParty addGlobalID(SchemedID schemedID) {
 		globalId = schemedID;
 		return this;
@@ -746,7 +772,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		if (bankDetails.isEmpty() && debitDetails.isEmpty()) {
 			return null;
 		}
-		List<IZUGFeRDTradeSettlement> tradeSettlements = Stream.concat(bankDetails.stream(), debitDetails.stream()).map(IZUGFeRDTradeSettlement.class::cast).collect(Collectors.toList());
+		List<IZUGFeRDTradeSettlement> tradeSettlements = Stream.concat(bankDetails.stream(), debitDetails.stream()).collect(Collectors.toList());
 
 		IZUGFeRDTradeSettlement[] result = new IZUGFeRDTradeSettlement[tradeSettlements.size()];
 		for (int i = 0; i < tradeSettlements.size(); i++) {

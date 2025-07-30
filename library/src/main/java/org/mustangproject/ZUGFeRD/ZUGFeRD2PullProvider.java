@@ -359,7 +359,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 				paymentTermsDescription += discount.getAsXRechnung();
 			}
-		} else if ((paymentTermsDescription == null) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CORRECTEDINVOICE) && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)) {
+		} else if (paymentTermsDescription == null
+			&& !DocumentCodeTypeConstants.CORRECTEDINVOICE.equals(trans.getDocumentCode())
+			&& !DocumentCodeTypeConstants.CREDITNOTE.equals(trans.getDocumentCode())
+		) {
 			if (trans.getDueDate() != null) {
 				paymentTermsDescription = "Please remit until " + germanDateFormat.format(trans.getDueDate());
 			}
@@ -434,11 +437,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 
 				xml += "<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>";
-				if (currentItem.getProduct().getDescription() != null && currentItem.getProduct().getDescription().length() > 0) {
+				if (currentItem.getProduct().getDescription() != null) {
 					xml += "<ram:Description>" +
 						XMLTools.encodeXML(currentItem.getProduct().getDescription()) +
 						"</ram:Description>";
 				}
+
 				if (currentItem.getProduct().getAttributes() != null) {
 					for (Entry<String, String> entry : currentItem.getProduct().getAttributes().entrySet()) {
 						xml += "<ram:ApplicableProductCharacteristic>" +
@@ -447,7 +451,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 							"</ram:ApplicableProductCharacteristic>";
 					}
 				}
-				if (currentItem.getProduct().getClassifications() != null && currentItem.getProduct().getClassifications().length > 0) {
+				if (currentItem.getProduct().getClassifications() != null) {
 					for (IDesignatedProductClassification classification : currentItem.getProduct().getClassifications()) {
 						xml += "<ram:DesignatedProductClassification>"
 							+ "<ram:ClassCode listID=\"" + XMLTools.encodeXML(classification.getClassCode().getListID()) + "\"";
@@ -702,7 +706,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 			}
 		}
-		if ((trans.getDocumentCode() == DocumentCodeTypeConstants.CORRECTEDINVOICE) || (trans.getDocumentCode() == DocumentCodeTypeConstants.CREDITNOTE)) {
+		if (DocumentCodeTypeConstants.CORRECTEDINVOICE.equals(trans.getDocumentCode())
+			|| DocumentCodeTypeConstants.CREDITNOTE.equals(trans.getDocumentCode())
+		) {
 			hasDueDate = false;
 		}
 
@@ -857,7 +863,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		} else {
 			xml += buildPaymentTermsXml();
 		}
-		if ((profile == Profiles.getByName("Extended")) && (trans.getCashDiscounts() != null) && (trans.getCashDiscounts().length > 0)) {
+		if (profile == Profiles.getByName("Extended") && trans.getCashDiscounts() != null) {
 			for (IZUGFeRDCashDiscount discount : trans.getCashDiscounts()
 			) {
 				xml += discount.getAsCII();

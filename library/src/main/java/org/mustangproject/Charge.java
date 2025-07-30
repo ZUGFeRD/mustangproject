@@ -145,10 +145,9 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 		if(totalAmount != null) {
 			return totalAmount;
 		} else if (percent!=null) {
-			BigDecimal singlePrice=currentItem.getValue().divide(BigDecimal.ONE.add(getPercent().divide(new BigDecimal(100))),  18, RoundingMode.HALF_UP);
-//			BigDecimal singlePrice=currentItem.getValue().multiply(BigDecimal.ONE.subtract(getPercent().divide(new BigDecimal(100))));
-			BigDecimal singlePriceDiff=currentItem.getValue().add(singlePrice);
-			return singlePriceDiff;
+			BigDecimal factor=getPercent().divide(new BigDecimal(100),  18, RoundingMode.HALF_UP);
+			BigDecimal singlePrice=currentItem.getValue().multiply(factor);
+			return singlePrice;
 		} else {
 			throw new RuntimeException("percent must be set");
 		}

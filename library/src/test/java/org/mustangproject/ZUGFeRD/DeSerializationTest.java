@@ -21,6 +21,13 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import org.mustangproject.*;
+import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -29,28 +36,11 @@ import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.junit.FixMethodOrder;
-import org.junit.experimental.theories.FromDataPoints;
-import org.junit.runners.MethodSorters;
-import org.mustangproject.Allowance;
-import org.mustangproject.BankDetails;
-import org.mustangproject.CalculatedInvoice;
-import org.mustangproject.CashDiscount;
-import org.mustangproject.Charge;
-import org.mustangproject.Contact;
-import org.mustangproject.Invoice;
-import org.mustangproject.Item;
-import org.mustangproject.Product;
-import org.mustangproject.SchemedID;
-import org.mustangproject.TradeParty;
-import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DeSerializationTest extends ResourceCase {
@@ -71,6 +61,29 @@ public class DeSerializationTest extends ResourceCase {
 
 	}
 
+	public void testProduct() throws IOException, XPathExpressionException, ParseException {
+		File inputCII = getResourceAsFile("Extended_fremdwaehrung.xml");
+		var zii = new ZUGFeRDInvoiceImporter();
+		zii.doIgnoreCalculationErrors();
+		zii.fromXML(Files.readString(inputCII.toPath()));
+		var product = zii.extractInvoice()
+			.getZFItems()[0]
+			.getProduct();
+
+		assertThat(product.getCountryOfOrigin()).as("Product Country of origin")
+			.isEqualTo("DE");
+		assertThat(product.getSellerAssignedID()).as("Product Seller assigned ID")
+			.isEqualTo("CO-123/V2A");
+		assertThat(product.getBuyerAssignedID()).as("Product Buyer assigned ID")
+			.isEqualTo("Toolbox 0815");
+		assertThat(product.getName()).as("Name")
+			.isEqualTo("Stahlcoil");
+
+		assertThat(product.getAttributes()).as("Product attributes")
+			.containsKey("LeoID")
+			.containsValue("704310.0105636504");
+	}
+
 	public void testInvoiceLine() throws JsonProcessingException {
 		File inputCII = getResourceAsFile("factur-x.xml");
 		boolean hasExceptions = false;
@@ -79,7 +92,7 @@ public class DeSerializationTest extends ResourceCase {
 		try {
 			zii.fromXML(new String(Files.readAllBytes(inputCII.toPath()), StandardCharsets.UTF_8));
 
-		} catch (IOException e) {
+		} catch (IOException | ParseException e) {
 			hasExceptions = true;
 		}
 
@@ -395,7 +408,7 @@ public class DeSerializationTest extends ResourceCase {
 		try {
 			Invoice newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
 			TransactionCalculator tc=new TransactionCalculator(newInvoiceFromJSON);
-			assertEquals(new BigDecimal("18.92"),tc.getGrandTotal());
+			assertEquals(new BigDecimal("18.33"),tc.getGrandTotal());
 
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
@@ -414,10 +427,12 @@ public class DeSerializationTest extends ResourceCase {
 		String number = "123";
 		String priceStr = "1.00";
 		String taxID = "9990815";
+
 		BigDecimal price = new BigDecimal(priceStr);
 		Invoice newInvoiceFromJSON = null;
 		boolean hasExceptions = false;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String json = "";
 		try {
 			SchemedID gtin = new SchemedID("0160", "2001015001325");
 			SchemedID gln = new SchemedID("0088", "4304171000002");
@@ -435,7 +450,7 @@ public class DeSerializationTest extends ResourceCase {
 				.addCashDiscount(new CashDiscount(new BigDecimal(2), 14))
 				.setDeliveryDate(sdf.parse("2020-11-02")).setNumber(number).setVATDueDateTypeCode(EventTimeCodeTypeConstants.PAYMENT_DATE);
 			ObjectMapper mapper = new ObjectMapper();
-			String json = mapper.writeValueAsString(i);
+			json = mapper.writeValueAsString(i);
 			newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
 		} catch (ParseException e) {
 			hasExceptions = true;
@@ -444,8 +459,34 @@ public class DeSerializationTest extends ResourceCase {
 		}
 		assertEquals(newInvoiceFromJSON.getBuyerOrderReferencedDocumentID(), "28934");
 		assertFalse(hasExceptions);
+	}
 
+	public void testFromJSON() throws JsonProcessingException {
+		String globalID = "4000001123452";
+		String globalIDScheme = "0088";
+		String itemDeliveryFrom="2022-01-28T23:00:00.000+00:00";
+		String itemDeliveryTo="2022-01-30T23:00:00.000+00:00";
 
+		String json="{\"number\":\"123\",\"buyerOrderReferencedDocumentID\":\"28934\",\"currency\":\"CHF\",\"issueDate\":1752744199178,\"dueDate\":1752744199178,\"deliveryDate\":1604271600000,\"sender\":{\"name\":\"Test company\",\"zip\":\"55232\",\"street\":\"teststr\",\"location\":\"teststadt\",\"country\":\"DE\",\"taxID\":\"9990815\",\"vatID\":\"DE0815\",\"id\":\"0009845\",\"globalID\":\""+globalID+"\",\"globalIDScheme\":\""+globalIDScheme+"\",\"email\":\"sender@test.org\",\"vatid\":\"DE0815\"},\"recipient\":{\"name\":\"Franz Müller\",\"zip\":\"55232\",\"street\":\"teststr.12\",\"location\":\"Entenhausen\",\"country\":\"DE\",\"vatID\":\"DE4711\",\"additionalAddress\":\"Hinterhaus 3\",\"contact\":{\"name\":\"Franz Müller\",\"phone\":\"01779999999\",\"email\":\"franz@mueller.de\",\"zip\":\"55232\",\"street\":\"teststr. 12\",\"location\":\"Entenhausen\",\"country\":\"DE\",\"fax\":\"++49555123456\"},\"globalID\":\"4304171000002\",\"globalIDScheme\":\"0088\",\"email\":\"recipient@test.org\",\"vatid\":\"DE4711\"},\"deliveryAddress\":{\"name\":\"just the other side of the street\",\"zip\":\"55232\",\"street\":\"teststr.12a\",\"location\":\"Entenhausen\",\"country\":\"DE\",\"vatID\":\"DE47110\",\"vatid\":\"DE47110\"},\"cashDiscounts\":[{\"percent\":2,\"days\":14}],\"notes\":[\"document level 1/2\",\"document level 2/2\"],\"sellerOrderReferencedDocumentID\":\"9384\",\"contractReferencedDocument\":\"376zreurzu0983\",\"valid\":true,\"vatdueDateTypeCode\":\"72\",\"zfitems\":[{\"price\":1.00,\"quantity\":1,\"basisQuantity\":1,\"detailedDeliveryPeriodFrom\":\""+itemDeliveryFrom+"\",\"detailedDeliveryPeriodTo\":\""+itemDeliveryTo+"\",\"id\":\"a123\",\"buyerOrderReferencedDocumentLineID\":\"xxx\",\"product\":{\"unit\":\"H87\",\"name\":\"Testprodukt\",\"sellerAssignedID\":\"4711\",\"taxCategoryCode\":\"S\",\"globalID\":\"2001015001325\",\"globalIDScheme\":\"0160\",\"intraCommunitySupply\":false,\"reverseCharge\":false,\"vatpercent\":16},\"notes\":[\"item level 1/1\"],\"notesWithSubjectCode\":[{\"content\":\"item level 1/1\"}],\"itemAllowances\":[{\"totalAmount\":0.0200000000000000004163336342344337026588618755340576171875,\"taxPercent\":16,\"reason\":\"item discount\",\"categoryCode\":\"S\"}],\"value\":1.00}],\"ownVATID\":\"DE0815\",\"detailedDeliveryPeriodFrom\":1601503200000,\"detailedDeliveryPeriodTo\":1601848800000,\"ownTaxID\":\"9990815\",\"ownZIP\":\"55232\",\"ownLocation\":\"teststadt\",\"zfallowances\":[{\"totalAmount\":0.200000000000000011102230246251565404236316680908203125,\"taxPercent\":16,\"reason\":\"discount\",\"categoryCode\":\"S\"}],\"ownStreet\":\"teststr\",\"zfcharges\":[{\"totalAmount\":0.5,\"taxPercent\":16,\"reason\":\"quick delivery charge\",\"categoryCode\":\"S\"}],\"ownCountry\":\"DE\"}";
+
+		ObjectMapper mapper = new ObjectMapper();
+		Invoice fromJSON = mapper.readValue(json, Invoice.class);
+		assertEquals(globalID, fromJSON.getSender().getGlobalID());
+		assertEquals(globalIDScheme, fromJSON.getSender().getGlobalIDScheme());
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+		assertEquals("2022-01-28", sdf.format(fromJSON.getZFItems()[0].getDetailedDeliveryPeriodFrom()));
+		assertEquals("2022-01-30", sdf.format(fromJSON.getZFItems()[0].getDetailedDeliveryPeriodTo()));
+		assertEquals("sender@test.org", fromJSON.getSender().getEmail());
+	}
+
+	public void testGrossFromJSON() throws JsonProcessingException {
+
+		String json="{  \"documentCode\": \"380\",  \"number\": \"123\",  \"currency\": \"EUR\",  \"paymentTermDescription\": \"Please remit until 28.07.2025\",  \"issueDate\": 1753653600000,  \"dueDate\": 1753653600000,  \"sender\": {    \"name\": \"Test company\",    \"zip\": \"55232\",    \"street\": \"teststr\",    \"location\": \"teststadt\",    \"country\": \"DE\",    \"taxID\": \"4711\",    \"vatID\": \"DE0815\",    \"vatid\": \"DE0815\"  },  \"recipient\": {    \"name\": \"Franz Müller\",    \"zip\": \"55232\",    \"street\": \"teststr.12\",    \"location\": \"Entenhausen\",    \"country\": \"DE\",    \"contact\": {      \"name\": \"contact testname\",      \"phone\": \"123456\",      \"email\": \"contact.testemail@example.org\",      \"fax\": \"0911623562\"    }  },  \"totalPrepaidAmount\": 0.00,  \"lineTotalAmount\": 29.00,  \"duePayable\": 34.51,  \"grandTotal\": 34.51,  \"taxBasis\": 29.00,  \"valid\": true,  \"zfitems\": [    {      \"price\": 3.0000,      \"quantity\": 10.0000,      \"basisQuantity\": 1.0000,      \"id\": \"1\",      \"product\": {        \"unit\": \"H87\",        \"name\": \"Testprodukt\",        \"taxCategoryCode\": \"S\",        \"allowances\": [          {            \"totalAmount\": 0.1000,            \"categoryCode\": \"S\"          }        ],        \"vatpercent\": 19.00,        \"intraCommunitySupply\": false,        \"reverseCharge\": false      },      \"value\": 3.0000    }  ],  \"ownVATID\": \"DE0815\",  \"ownTaxID\": \"4711\",  \"ownLocation\": \"teststadt\",  \"ownZIP\": \"55232\",  \"ownCountry\": \"DE\",  \"ownStreet\": \"teststr\"}";
+
+		ObjectMapper mapper = new ObjectMapper();
+		CalculatedInvoice fromJSON = mapper.readValue(json, CalculatedInvoice.class);
+		fromJSON.calculate();
+		assertEquals(new BigDecimal("34.51"),fromJSON.getDuePayable());
 	}
 
 	public void testDueDateRoundtrip() throws JsonProcessingException {

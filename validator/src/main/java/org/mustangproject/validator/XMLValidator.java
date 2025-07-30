@@ -8,6 +8,7 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.util.Calendar;
 
 import javax.xml.XMLConstants;
@@ -20,7 +21,9 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.mustangproject.CalculatedInvoice;
 import org.mustangproject.XMLTools;
+import org.mustangproject.ZUGFeRD.ZUGFeRDInvoiceImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -222,13 +225,7 @@ public class XMLValidator extends Validator {
 					isExtended = context.getProfile().contains("extended");
 					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B.xsd", 99, EPart.ox);
 					xsltFilename = "/xslt/OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B_COMFORT.xslt";
-
-				} else if (root.getLocalName().equalsIgnoreCase("SCRDMCCBDACIOMessageStructure")) {
-					context.setGeneration("1");
-					isOrderX = true;
-					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B.xsd", 99, EPart.ox);
-					xsltFilename = "/xslt/OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B_COMFORT.xslt";
-
+					
 				} else if (root.getLocalName().equalsIgnoreCase("CrossIndustryInvoice")) { // ZUGFeRD 2.0 or Factur-X
 					context.setGeneration("2");
 
@@ -306,7 +303,7 @@ public class XMLValidator extends Validator {
 						if (!xrVersion.equals("12") && !xrVersion.equals("20") && !xrVersion.equals("21") && !xrVersion.equals("22") && !xrVersion.equals("23") && !xrVersion.equals("30")) {
 							throw new Exception("Unsupported XR version");
 						}
-						LOGGER.debug("is XRechnung v" + xrVersion);
+						LOGGER.debug("is XRechnung v{}", xrVersion);
 						xsltFilename = "/xslt/XR_" + xrVersion + "/XRechnung-UBL-validation.xslt";
 						XrechnungSeverity = ESeverity.error;
 						mainSchematronSectionErrorTypeCode = 27;
@@ -387,6 +384,7 @@ public class XMLValidator extends Validator {
 						}
 					}
 				}
+				checkArithmetics(context);
 
 
 			} catch (final IrrecoverableValidationError er) {
@@ -407,6 +405,28 @@ public class XMLValidator extends Validator {
 		context.addCustomXML("<info><version>" + ((context.getGeneration() != null) ? context.getGeneration() : "invalid")
 			+ "</version><profile>" + ((context.getProfile() != null) ? context.getProfile() : "invalid") +
 			"</profile><validator version=\"" + XMLValidator.class.getPackage().getImplementationVersion() + "\"></validator><rules><fired>" + firedRules + "</fired><failed>" + failedRules + "</failed></rules>" + "<duration unit=\"ms\">" + (endTime - startXMLTime) + "</duration></info>");
+
+	}
+
+	private void checkArithmetics(ValidationContext context) {
+		ZUGFeRDInvoiceImporter zi=new ZUGFeRDInvoiceImporter();
+		try {
+			zi.fromXML(zfXML);
+			CalculatedInvoice ci=new CalculatedInvoice();
+			zi.extractInto(ci);
+
+		} catch ( ArithmeticException e) {
+			try {
+				context.addResultItem(new ValidationResultItem(ESeverity.warning, "Arithmetical issue:"+e.getMessage()).setSection(10));
+
+			} catch (IrrecoverableValidationError ie) {
+				LOGGER.error(ie.getMessage(), ie);
+			}
+		} catch (XPathExpressionException e) {
+			LOGGER.error(e.getMessage(), e);
+		} catch (ParseException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
 
 	}
 
@@ -507,7 +527,7 @@ public class XMLValidator extends Validator {
 							}
 						}
 
-						LOGGER.info("FailedAssert ", thisFailText);
+						LOGGER.info("FailedAssert {}", thisFailText);
 
 						context.addResultItem(new ValidationResultItem(severity, thisFailText + thisFailIDStr + " from " + xsltFilename + ")")
 							.setLocation(thisFailLocation).setCriterion(thisFailTest).setSection(section).setID(thisFailID)
