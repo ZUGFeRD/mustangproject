@@ -123,10 +123,12 @@ public class Item implements IZUGFeRDExportableItem {
 		itemMap.getAsString("Note")
 			.ifPresent(this::addNote);
 
-		if (itemMap.getNode("SpecifiedTradeProduct").isPresent()) {
-			product = new Product(itemMap.getNode("SpecifiedTradeProduct").get());
-		} else {
-			product = new Product();
+		if (product==null) { // CII
+			if (itemMap.getNode("SpecifiedTradeProduct").isPresent()) {
+				product = new Product(itemMap.getNode("SpecifiedTradeProduct").get());
+			} else {
+				product = new Product();
+			}
 		}
 
 		itemMap.getAsNodeMap("SpecifiedLineTradeAgreement", "SpecifiedSupplyChainTradeAgreement").ifPresent(icnm -> {
@@ -161,16 +163,6 @@ public class Item implements IZUGFeRDExportableItem {
 						}
 					});
 				});
-
-
-				/*
-				String chargeIndicator = gpptpNodes.getAsNodeMap("AppliedTradeAllowanceCharge").flatMap(acChargeIndicatorNodes -> acChargeIndicatorNodes.getAsString("ChargeIndicator")).get();
-				if (chargeIndicator != null) {
-					BigDecimal actual = gpptpNodes.getAsNodeMap("AppliedTradeAllowanceCharge").flatMap(acChargeIndicatorNodes -> acChargeIndicatorNodes.getAsBigDecimal("ActualAmount")).get();
-					if (actual != null) {
-					}
-				}*/
-
 			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).
 				forEach(this::addReferencedDocument);
 		});
@@ -250,7 +242,7 @@ public class Item implements IZUGFeRDExportableItem {
 			});
 		});
 
-		itemMap.getAllNodes("AllowanceCharge").map(NodeMap::new).forEach(stac -> { //UBL
+		itemMap.getAllNodes("AllowanceCharge").map(NodeMap::new).forEach(stac -> { //CII
 
 			String isChargeString = stac.getAsString("ChargeIndicator").get();
 			String percentString = stac.getAsStringOrNull("MultiplierFactorNumeric");
