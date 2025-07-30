@@ -21,6 +21,13 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import org.mustangproject.*;
+import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -29,28 +36,11 @@ import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.junit.FixMethodOrder;
-import org.junit.experimental.theories.FromDataPoints;
-import org.junit.runners.MethodSorters;
-import org.mustangproject.Allowance;
-import org.mustangproject.BankDetails;
-import org.mustangproject.CalculatedInvoice;
-import org.mustangproject.CashDiscount;
-import org.mustangproject.Charge;
-import org.mustangproject.Contact;
-import org.mustangproject.Invoice;
-import org.mustangproject.Item;
-import org.mustangproject.Product;
-import org.mustangproject.SchemedID;
-import org.mustangproject.TradeParty;
-import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DeSerializationTest extends ResourceCase {
@@ -69,6 +59,29 @@ public class DeSerializationTest extends ResourceCase {
 		assertEquals("info@company.com", fromJSON.getSender().getEmail());
 		assertEquals("info@company.com", fromJSON.getSender().getUriUniversalCommunicationID());
 
+	}
+
+	public void testProduct() throws IOException, XPathExpressionException, ParseException {
+		File inputCII = getResourceAsFile("Extended_fremdwaehrung.xml");
+		var zii = new ZUGFeRDInvoiceImporter();
+		zii.doIgnoreCalculationErrors();
+		zii.fromXML(Files.readString(inputCII.toPath()));
+		var product = zii.extractInvoice()
+			.getZFItems()[0]
+			.getProduct();
+
+		assertThat(product.getCountryOfOrigin()).as("Product Country of origin")
+			.isEqualTo("DE");
+		assertThat(product.getSellerAssignedID()).as("Product Seller assigned ID")
+			.isEqualTo("CO-123/V2A");
+		assertThat(product.getBuyerAssignedID()).as("Product Buyer assigned ID")
+			.isEqualTo("Toolbox 0815");
+		assertThat(product.getName()).as("Name")
+			.isEqualTo("Stahlcoil");
+
+		assertThat(product.getAttributes()).as("Product attributes")
+			.containsKey("LeoID")
+			.containsValue("704310.0105636504");
 	}
 
 	public void testInvoiceLine() throws JsonProcessingException {
