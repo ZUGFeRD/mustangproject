@@ -22,18 +22,6 @@
         <url>https://github.com/ZUGFeRD/mustangproject</url>
         <tag>core-2.3.2</tag>
     </scm>
-    <repositories>
-        <repository><!-- for jargs -->
-            <id>sonatype-oss-public</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
     <distributionManagement>
         <repository>
             <id>internal.repo</id>
