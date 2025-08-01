@@ -1,6 +1,10 @@
 2.18.1
 =======
 - #893 Tradeparty globalID is not read from JSON
+- #902 Tests to use definted TZ (UTC)
+- #905 Parse product level charges/discounts in UBL
+- 869
+- 861
 
 2.18.0
 =======
