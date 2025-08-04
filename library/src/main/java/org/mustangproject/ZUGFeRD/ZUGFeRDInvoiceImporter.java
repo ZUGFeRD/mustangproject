@@ -71,6 +71,7 @@ public class ZUGFeRDInvoiceImporter {
 	protected CalculatedInvoice importedInvoice = null;
 	protected boolean recalcPrice = false;
 	protected boolean ignoreCalculationErrors = false;
+	protected boolean containsAXMLFileAttachment = false;
 
 	public ZUGFeRDInvoiceImporter() {
 		//constructor for extending classes
@@ -197,16 +198,31 @@ public class ZUGFeRDInvoiceImporter {
 		ignoreCalculationErrors = true;
 	}
 
+
+	/***
+	 * if the file attachment is not in the list of allowed file names we can't import the XML,
+	 * but the validator needs to know if maybe some other .xml-File is embedded because it would
+	 * raise an additional notice that the filename is probably wrong
+	 *
+	 * @return
+	 */
+	public boolean hasXMLFileAttachment() {
+		return containsAXMLFileAttachment;
+	}
 	/***
 	 * sets th pdf attachments, and if a file is recognized (e.g. a factur-x.xml) triggers processing
 	 * @param names the Hashmap of String, PDComplexFileSpecification
 	 * @throws IOException
 	 */
 	private void extractFiles(Map<String, PDComplexFileSpecification> names) throws IOException {
+		containsAXMLFileAttachment=false;
 		for (final String alias : names.keySet()) {
 
 			final PDComplexFileSpecification fileSpec = names.get(alias);
 			final String filename = fileSpec.getFilename();
+			if (filename.toUpperCase().endsWith(".XML")) {
+				containsAXMLFileAttachment=true;
+			}
 			/**
 			 * filenames for invoice data (ZUGFeRD v1 and v2, Factur-X)
 			 */
