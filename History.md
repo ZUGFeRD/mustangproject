@@ -3,8 +3,9 @@
 - #893 Tradeparty globalID is not read from JSON
 - #902 Tests to use definted TZ (UTC)
 - #905 Parse product level charges/discounts in UBL
-- 869
-- 861
+- #869 Import Account Holder returns SellerTradeParty.name instead of AccountHolder
+- #861 Multiple problems with Product.CountryOfOrigin
+- #908 Validation: Make clear when embedded file name is wrong
 
 2.18.0
 =======
