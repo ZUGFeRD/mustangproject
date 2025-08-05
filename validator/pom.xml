@@ -25,7 +25,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>library</artifactId>
-            <version>2.18.1-SNAPSHOT</version>
+            <version>2.18.0.2-SNAPSHOT</version>
         </dependency>
 		<dependency>
 			<groupId>org.dom4j</groupId>
