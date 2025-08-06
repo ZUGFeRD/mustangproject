@@ -177,6 +177,9 @@ public class LibraryTest extends ResourceCase {
 		assertThat(res).valueByXPath("count(//error)")
 				.asInt()
 				.isEqualTo(0);
+		assertThat(res).valueByXPath("count(//warning)")
+				.asInt()
+				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
 				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
