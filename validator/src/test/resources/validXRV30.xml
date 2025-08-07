@@ -89,6 +89,14 @@
                     <ram:CategoryCode>S</ram:CategoryCode>
                     <ram:RateApplicablePercent>7</ram:RateApplicablePercent>
                 </ram:ApplicableTradeTax>
+                <ram:BillingSpecifiedPeriod>
+                    <ram:StartDateTime>
+                        <udt:DateTimeString format="102">20160101</udt:DateTimeString>
+                    </ram:StartDateTime>
+                    <ram:EndDateTime>
+                        <udt:DateTimeString format="102">20161231</udt:DateTimeString>
+                    </ram:EndDateTime>
+                </ram:BillingSpecifiedPeriod>
                 <ram:SpecifiedTradeSettlementLineMonetarySummation>
                     <ram:LineTotalAmount>26.07</ram:LineTotalAmount>
                 </ram:SpecifiedTradeSettlementLineMonetarySummation>

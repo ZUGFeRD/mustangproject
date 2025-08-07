@@ -462,10 +462,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 
 				xml += "<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>";
-				if (currentItem.getProduct().getDescription() != null) {
-					xml += "<ram:Description>" +
-						XMLTools.encodeXML(currentItem.getProduct().getDescription()) +
-						"</ram:Description>";
+				if (currentItem.getProduct().getDescription() != null && !currentItem.getProduct().getDescription().isEmpty()) {
+					xml += "<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription()) + "</ram:Description>";
 				}
 				if (currentItem.getProduct().getClassifications() != null) {
 					for (IDesignatedProductClassification classification : currentItem.getProduct().getClassifications()) {
