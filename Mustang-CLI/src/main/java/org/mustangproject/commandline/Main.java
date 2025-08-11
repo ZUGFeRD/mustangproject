@@ -218,7 +218,7 @@ public class Main {
 				} catch (IOException e) {
 					LOGGER.error(e.getMessage(), e);
 				}
-				if (!selectedAnswer.equals("Y") && !selectedAnswer.equals("y")) {
+				if (!"Y".equalsIgnoreCase(selectedAnswer)) {
 					System.err.println("Aborted by user");
 					System.exit(-1);
 				}
@@ -653,9 +653,9 @@ public class Main {
 
 			if (zfProfile == null) {
 				try {
-					if ((format.equals("zf") && (zfIntVersion == 1)) || (format.equals("ox"))) {
+					if ((("zf".equals(format)) && (zfIntVersion == 1)) || ("ox".equals(format))) {
 						zfProfile = getStringFromUser("Profile (b)asic, (c)omfort or ex(t)ended", "t", "B|b|C|c|T|t");
-					} else if ((format.equals("da"))) {
+					} else if (("da".equals(format))) {
 						zfProfile = getStringFromUser("Profile (p)ilot", "p", "P|p");
 					} else {
 						zfProfile = getStringFromUser(
@@ -676,20 +676,20 @@ public class Main {
 			ensureFileExists(xmlName);
 			ensureFileNotExists(outName);
 
-			if ((format.equals("fx")) && (zfIntVersion > 1)) {
+			if ((("fx".equals(format))) && (zfIntVersion > 1)) {
 				throw new Exception("Factur-X is only available in version 1 (roughly corresponding to ZF2)");
 			}
 
 			EStandard standard = EStandard.facturx;
-			if (format.equals("zf")) {
+			if ("zf".equals(format)) {
 				standard = EStandard.zugferd;
 			}
-			if (format.equals("da")) {
+			if ("da".equals(format)) {
 				standard = EStandard.despatchadvice;
 
 				zfConformanceLevelProfile = Profiles.getByName(standard, "PILOT", 1);
-			} else if (((format.equals("zf")) && (zfIntVersion == 1)) || (format.equals("ox"))) {
-				if (format.equals("ox")) {
+			} else if (((("zf".equals(format))) && (zfIntVersion == 1)) || ("ox".equals(format))) {
+				if ("ox".equals(format)) {
 					standard = EStandard.orderx;
 				}
 				if (zfProfile.equals("b")) {

@@ -225,7 +225,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * @return the filename of the file to be embedded
 	 */
 	public String getFilenameForVersion(int ver, Profile profile) {
-		if (profile.getName().equals("XRECHNUNG")) {
+		if ("XRECHNUNG".equals(profile.getName())) {
 			return "xrechnung.xml";
 		}
 		if (isFacturX) {
