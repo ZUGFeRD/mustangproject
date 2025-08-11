@@ -5,6 +5,8 @@
 - #905 Parse product level charges/discounts into JSON
 - #869 Import Account Holder returns SellerTradeParty.name instead of AccountHolder
 - #861 Multiple problems with Product.CountryOfOrigin
+- #899
+- #901
 - #908 Validation: Make clear when embedded file name is wrong
 - #909
 - #913 downgrade PDF/A errors to warnings 
