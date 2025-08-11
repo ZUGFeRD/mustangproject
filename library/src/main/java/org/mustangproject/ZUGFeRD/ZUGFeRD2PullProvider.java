@@ -219,7 +219,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		xml += "<ram:CountryID>" + XMLTools.encodeXML(party.getCountry())
 			+ "</ram:CountryID>"
 			+ "</ram:PostalTradeAddress>";
-		if (party.getUriUniversalCommunicationID() != null && party.getUriUniversalCommunicationIDScheme() != null) {
+		if (party.getUriUniversalCommunicationID() != null && party.getUriUniversalCommunicationIDScheme() != null && (!isShipToTradeParty)) {
 			xml += "<ram:URIUniversalCommunication>" +
 				"<ram:URIID schemeID=\"" + party.getUriUniversalCommunicationIDScheme() + "\">" +
 				XMLTools.encodeXML(party.getUriUniversalCommunicationID())
