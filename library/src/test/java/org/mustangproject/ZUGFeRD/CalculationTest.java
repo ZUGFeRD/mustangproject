@@ -106,14 +106,14 @@ public class CalculationTest extends ResourceCase {
 		Product product;
 		Item item;
 
-		product = new Product("Pens", "", "H84", new BigDecimal(25));
+		product = new Product("Pens", "", "H87", new BigDecimal(25));
 		product.addAllowance(new Allowance(new BigDecimal(1)));
 		item = new Item(product, new BigDecimal("9.50"), new BigDecimal(25));
 		item.addCharge(new Charge(new BigDecimal(10)).setReasonCode("ZZZ").setReason("Zuschlag"));
 		LineCalculator lc = new LineCalculator(item);
 		assertEquals(new BigDecimal("222.50"), lc.getItemTotalNetAmount());
 		invoice.addItem(item);
-		product = new Product("Paper", "", "H84", new BigDecimal(25));
+		product = new Product("Paper", "", "H87", new BigDecimal(25));
 		item = new Item(product, new BigDecimal("4.50"), new BigDecimal(15));
 		item.addAllowance(new Allowance().setPercent(new BigDecimal(5)).setReasonCode("ZZZ").setReason("Zuschlag"));
 		lc = new LineCalculator(item);
@@ -201,7 +201,7 @@ public class CalculationTest extends ResourceCase {
 		Product product;
 		Item item;
 
-		product = new Product("AAA", "", "H84", sales_tax_percent1).setSellerAssignedID("1AAA");
+		product = new Product("AAA", "", "H87", sales_tax_percent1).setSellerAssignedID("1AAA");
 		item = new Item(product, new BigDecimal("4.750"), new BigDecimal(5.00));
 
 		// set values for additional charge and discount used for next lines
@@ -218,19 +218,19 @@ public class CalculationTest extends ResourceCase {
 		invoice.addItem(item);
 
 
-		product = new Product("BBB", "", "H84", sales_tax_percent1).setSellerAssignedID("2BBB");
+		product = new Product("BBB", "", "H87", sales_tax_percent1).setSellerAssignedID("2BBB");
 		item = new Item(product, new BigDecimal("5.750"), new BigDecimal(4.00));
 		invoice.addItem(item);
 
-		product = new Product("CCC", "", "H84", sales_tax_percent1).setSellerAssignedID("3CCC");
+		product = new Product("CCC", "", "H87", sales_tax_percent1).setSellerAssignedID("3CCC");
 		item = new Item(product, new BigDecimal("6.750"), new BigDecimal(3.00));
 		invoice.addItem(item);
 
-		product = new Product("DDD", "", "H84", sales_tax_percent1).setSellerAssignedID("4DDD");
+		product = new Product("DDD", "", "H87", sales_tax_percent1).setSellerAssignedID("4DDD");
 		item = new Item(product, new BigDecimal("7.750"), new BigDecimal(2.00));
 		invoice.addItem(item);
 
-		product = new Product("EEE", "", "H84", sales_tax_percent1).setSellerAssignedID("5EEE");
+		product = new Product("EEE", "", "H87", sales_tax_percent1).setSellerAssignedID("5EEE");
 		item = new Item(product, new BigDecimal("8.750"), new BigDecimal(1.00));
 		invoice.addItem(item);
 
@@ -277,7 +277,7 @@ public class CalculationTest extends ResourceCase {
 		Product product;
 		Item item;
 
-		product = new Product("AAA", "", "H84", BigDecimal.ZERO);
+		product = new Product("AAA", "", "H87", BigDecimal.ZERO);
 		item = new Item(product, new BigDecimal("1.10"), new BigDecimal(5.00));
 
 		item.addAllowance(new Allowance().setPercent(new BigDecimal(10)).setTaxPercent(BigDecimal.ZERO));
@@ -369,7 +369,7 @@ public class CalculationTest extends ResourceCase {
 		Product product;
 		Item item;
 
-		product = new Product("AAA", "", "H84", BigDecimal.ZERO);
+		product = new Product("AAA", "", "H87", BigDecimal.ZERO);
 		item = new Item(product, new BigDecimal("1.00"), new BigDecimal(5.00));
 
 		item.addAllowance(new Allowance(new BigDecimal(1)).setTaxPercent(BigDecimal.ZERO));

@@ -1,6 +1,5 @@
 package org.mustangproject.ZUGFeRD;
 
-import javax.xml.XMLConstants;
 import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -9,8 +8,21 @@ import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
-import org.mustangproject.*;
+import org.mustangproject.Allowance;
+import org.mustangproject.BankDetails;
+import org.mustangproject.CalculatedInvoice;
+import org.mustangproject.Charge;
+import org.mustangproject.DirectDebit;
+import org.mustangproject.EStandard;
 import org.mustangproject.Exceptions.StructureException;
+import org.mustangproject.FileAttachment;
+import org.mustangproject.IncludedNote;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.ReferencedDocument;
+import org.mustangproject.SchemedID;
+import org.mustangproject.TradeParty;
+import org.mustangproject.XMLTools;
 import org.mustangproject.util.NodeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +31,19 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.*;
-import java.io.*;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -31,7 +51,16 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -71,6 +100,7 @@ public class ZUGFeRDInvoiceImporter {
 	protected CalculatedInvoice importedInvoice = null;
 	protected boolean recalcPrice = false;
 	protected boolean ignoreCalculationErrors = false;
+	protected boolean containsAXMLFileAttachment = false;
 
 	public ZUGFeRDInvoiceImporter() {
 		//constructor for extending classes
@@ -126,8 +156,7 @@ public class ZUGFeRDInvoiceImporter {
 		if (Arrays.equals(pad, pdfSignature)) { // we have a pdf
 
 
-			try {
-				PDDocument doc = Loader.loadPDF(IOUtils.toByteArray(pdfStream));
+			try (PDDocument doc = Loader.loadPDF(IOUtils.toByteArray(pdfStream))) {
 				// PDDocumentInformation info = doc.getDocumentInformation();
 				final PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
 				//start
@@ -175,7 +204,7 @@ public class ZUGFeRDInvoiceImporter {
 			containsMeta = true;
 			try {
 				setRawXML(XMLTools.getBytesFromStream(pdfStream));
-			} catch(ParseException e) {
+			} catch (ParseException e) {
 				LOGGER.error("Failed to parse PDF", e);
 			}
 
@@ -198,16 +227,32 @@ public class ZUGFeRDInvoiceImporter {
 		ignoreCalculationErrors = true;
 	}
 
+
+	/***
+	 * if the file attachment is not in the list of allowed file names we can't import the XML,
+	 * but the validator needs to know if maybe some other .xml-File is embedded because it would
+	 * raise an additional notice that the filename is probably wrong
+	 *
+	 * @return
+	 */
+	public boolean hasXMLFileAttachment() {
+		return containsAXMLFileAttachment;
+	}
+
 	/***
 	 * sets th pdf attachments, and if a file is recognized (e.g. a factur-x.xml) triggers processing
 	 * @param names the Hashmap of String, PDComplexFileSpecification
 	 * @throws IOException
 	 */
 	private void extractFiles(Map<String, PDComplexFileSpecification> names) throws IOException {
+		containsAXMLFileAttachment = false;
 		for (final String alias : names.keySet()) {
 
 			final PDComplexFileSpecification fileSpec = names.get(alias);
 			final String filename = fileSpec.getFilename();
+			if (filename.toUpperCase().endsWith(".XML")) {
+				containsAXMLFileAttachment = true;
+			}
 			/**
 			 * filenames for invoice data (ZUGFeRD v1 and v2, Factur-X)
 			 */
@@ -508,7 +553,8 @@ public class ZUGFeRDInvoiceImporter {
 					for (int issueDateChildIndex = 0; issueDateChildIndex < issueDateTimeChilds.getLength(); issueDateChildIndex++) {
 						if ((issueDateTimeChilds.item(issueDateChildIndex).getLocalName() != null)
 							&& (issueDateTimeChilds.item(issueDateChildIndex).getLocalName().equals("DateTimeString"))) {
-							issueDate = new SimpleDateFormat("yyyyMMdd").parse(XMLTools.trimOrNull(issueDateTimeChilds.item(issueDateChildIndex)));
+							String issueDateString = XMLTools.trimOrNull(issueDateTimeChilds.item(issueDateChildIndex));
+							issueDate = parseDate(issueDateString, "yyyyMMdd");
 						}
 					}
 				}
@@ -567,15 +613,15 @@ public class ZUGFeRDInvoiceImporter {
 			typeCode = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"InvoiceTypeCode\"]").trim();
 			String issueDateStr = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"IssueDate\"]").trim();
 			if (!issueDateStr.isEmpty()) {
-				issueDate = new SimpleDateFormat("yyyy-MM-dd").parse(issueDateStr);
+				issueDate = parseDate(issueDateStr, "yyyy-MM-dd");
 			}
 			String dueDt = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"DueDate\"]").trim();
 			if (!dueDt.isEmpty()) {
-				dueDate = new SimpleDateFormat("yyyy-MM-dd").parse(dueDt);
+				dueDate = parseDate(dueDt, "yyyy-MM-dd");
 			}
 			String deliveryDt = extractString("//*[local-name()=\"Delivery\"]/*[local-name()=\"ActualDeliveryDate\"]").trim();
 			if (!deliveryDt.isEmpty()) {
-				deliveryDate = new SimpleDateFormat("yyyy-MM-dd").parse(deliveryDt);
+				deliveryDate =  parseDate(deliveryDt, "yyyy-MM-dd");
 			}
 		}
 
@@ -605,7 +651,8 @@ public class ZUGFeRDInvoiceImporter {
 								for (int occurenceChildIndex = 0; occurenceChildIndex < occurenceChilds.getLength(); occurenceChildIndex++) {
 									if ((occurenceChilds.item(occurenceChildIndex).getLocalName() != null)
 										&& (occurenceChilds.item(occurenceChildIndex).getLocalName().equals("DateTimeString"))) {
-										deliveryDate = new SimpleDateFormat("yyyyMMdd").parse(XMLTools.trimOrNull(occurenceChilds.item(occurenceChildIndex)));
+										String deliveryDateString = XMLTools.trimOrNull(occurenceChilds.item(occurenceChildIndex));
+										deliveryDate = parseDate(deliveryDateString, "yyyyMMdd");
 									}
 								}
 							}
@@ -699,7 +746,8 @@ public class ZUGFeRDInvoiceImporter {
 							NodeList dueDateChilds = paymentTermChilds.item(paymentTermChildIndex).getChildNodes();
 							for (int dueDateChildIndex = 0; dueDateChildIndex < dueDateChilds.getLength(); dueDateChildIndex++) {
 								if ((dueDateChilds.item(dueDateChildIndex).getLocalName() != null) && (dueDateChilds.item(dueDateChildIndex).getLocalName().equals("DateTimeString"))) {
-									dueDate = new SimpleDateFormat("yyyyMMdd").parse(XMLTools.trimOrNull(dueDateChilds.item(dueDateChildIndex)));
+									String dueDateString = XMLTools.trimOrNull(dueDateChilds.item(dueDateChildIndex));
+									dueDate = parseDate(dueDateString, "yyyyMMdd");
 								}
 							}
 						}
@@ -752,7 +800,7 @@ public class ZUGFeRDInvoiceImporter {
 						if (BIC != null) {
 							bd.setBIC(BIC);
 						}
-						if (accountName!=null) {
+						if (accountName != null) {
 							bd.setAccountName(accountName);
 						}
 						bankDetails.add(bd);
@@ -788,7 +836,7 @@ public class ZUGFeRDInvoiceImporter {
 		NodeList periodNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
 		for (int periodChildIndex = 0; periodChildIndex < periodNodes.getLength(); periodChildIndex++) {
-			String localName=periodNodes.item(periodChildIndex).getLocalName();
+			String localName = periodNodes.item(periodChildIndex).getLocalName();
 			if ((localName != null) && (periodNodes.item(periodChildIndex).getLocalName().equals("StartDate"))) {
 				deliveryPeriodStart = XMLTools.trimOrNull(periodNodes.item(periodChildIndex));
 			}
@@ -839,7 +887,7 @@ public class ZUGFeRDInvoiceImporter {
 			}
 			if (IBAN != null) {
 				BankDetails bd = new BankDetails(IBAN);
-				if (accountName!=null) {
+				if (accountName != null) {
 					bd.setAccountName(accountName);
 				}
 				bankDetails.add(bd);
@@ -989,7 +1037,7 @@ public class ZUGFeRDInvoiceImporter {
 
 						} else if (chargeChildName.equals("ActualAmount") || chargeChildName.equals("Amount")) {
 							chargeAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
-						} else if (chargeChildName.equals("BasisAmount"))  {
+						} else if (chargeChildName.equals("BasisAmount")) {
 							basisAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
 						} else if (chargeChildName.equals("Reason") || chargeChildName.equals("AllowanceChargeReason")) {
 							reason = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
@@ -1104,6 +1152,18 @@ public class ZUGFeRDInvoiceImporter {
 
 	}
 
+	private Date parseDate(String issueDateString, String datePattern) throws ParseException {
+		Date parsedDate = null;
+		if (issueDateString != null) {
+			try {
+				parsedDate = new SimpleDateFormat(datePattern).parse(issueDateString);
+			} catch (ParseException e) {
+				LOGGER.warn("Failed to parse date {} with pattern {}", issueDateString, datePattern, e);
+			}
+		}
+		return parsedDate;
+	}
+
 	protected Document getDocument() {
 		return document;
 	}
@@ -1186,7 +1246,7 @@ public class ZUGFeRDInvoiceImporter {
 	 */
 	@Deprecated
 	public List<FileAttachment> getFileAttachmentsXML() {
-		if (importedInvoice.getAdditionalReferencedDocuments()!=null) {
+		if (importedInvoice.getAdditionalReferencedDocuments() != null) {
 			return new ArrayList<>(Arrays.asList(importedInvoice.getAdditionalReferencedDocuments()));
 		} else {
 			return new ArrayList<>();
@@ -1213,7 +1273,7 @@ public class ZUGFeRDInvoiceImporter {
 	 * sets the XML for the importer to parse
 	 * @param XML the UBL or CII
 	 */
-	public void fromXML(String XML) throws ParseException{
+	public void fromXML(String XML) throws ParseException {
 		try {
 			containsMeta = true;
 			setRawXML(XML.getBytes(StandardCharsets.UTF_8));

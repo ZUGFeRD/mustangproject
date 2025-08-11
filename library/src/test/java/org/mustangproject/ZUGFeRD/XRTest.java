@@ -106,6 +106,7 @@ public class XRTest extends TestCase {
 		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").setEmail("sender@example.com").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890", "COBADEFXXX").setAccountName("kontoInhaber")))
 			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setEmail("recipient@sample.org"))
+			.setDeliveryAddress(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setEmail("recipient@sample.org"))
 			.addCashDiscount(new CashDiscount(new BigDecimal(2), 7))
 			.addCashDiscount(new CashDiscount(new BigDecimal(3), 14))
 			.setReferenceNumber("991-01484-64")//leitweg-id

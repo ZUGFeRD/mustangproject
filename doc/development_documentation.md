@@ -57,11 +57,25 @@ to validate the XML part of the invoices.
 
 ![Architecture of the validator](ZUV-Architektur.svg "Graph of the architecture of the validator component")
 
-## New build
+## Aspects
+Apart from the fact that apart from 
+* the code
+* we need tests and apart from implementing it in 
 
-Target platform is java 1.17
+* the interface
+* usually we need functionality in or via the invoice class. 
+
+Reading should work for both
+* CII and
+* UBL
+
+And when writing, 
+* it should be readable as well, usually in the invoiceimporter, 
+* and it should be readable and writeable via Jackson (i.e. JSON)
 
 ## Build
+
+Target platform is java 1.17
 
 The package can be build with
 ```
@@ -184,7 +198,7 @@ maybe not yet even existing new release version:
 
 ```
 cd validator/target
-mvn install:install-file -Dfile=validator-2.17.0-SNAPSHOT-shaded.jar -Dclassifier=shaded -DgroupId="org.mustangproject" -DartifactId=validator -Dversion="2.17.0" -Dpackaging=jar -DgeneratePom=true
+mvn install:install-file -Dfile="validator-2.17.0-SNAPSHOT-shaded.jar" -Dclassifier=shaded -DgroupId="org.mustangproject" -DartifactId=validator -Dversion="2.17.0" -Dpackaging=jar -DgeneratePom=true
 ```
 In gradle you can use something like
 ```

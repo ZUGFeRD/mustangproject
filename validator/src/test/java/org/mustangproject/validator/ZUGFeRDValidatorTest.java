@@ -31,7 +31,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 			.isEqualTo("valid");
 
 		assertThat(res).valueByXPath("/validation/summary/@status")
-			.isEqualTo("invalid");
+			.isEqualTo("valid");
 
 
 		tempFile = getResourceAsFile("validAvoir_FR_type380_BASICWL.pdf");
@@ -103,7 +103,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 			.isEqualTo("valid");
 
 		assertThat(res).valueByXPath("/validation/summary/@status")
-			.isEqualTo("invalid");
+			.isEqualTo("valid");
 
 
 		fileBytes = getResourceAsByteArray("validAvoir_FR_type380_BASICWL.pdf");
@@ -216,10 +216,10 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("count(//error)")
 			.asInt()
-			.isEqualTo(2);
+			.isEqualTo(5);
 		assertThat(res).valueByXPath("count(//warning)")
 			.asInt()
-			.isEqualTo(3);
+			.isEqualTo(1);
 
 		assertThat(res).valueByXPath("count(//notice)")
 			.asInt()
@@ -250,7 +250,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("count(//notice)")
 			.asInt()
-			.isEqualTo(12); // 12 notices RE XRechnung 3.0
+			.isEqualTo(9); // 9 notices RE XRechnung 3.0
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
 			.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices

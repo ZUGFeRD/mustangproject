@@ -204,10 +204,6 @@ public class ZUGFeRDValidator {
 					context.clearCustomXML();
 				}
 
-				if ((isPDF) && (!pdfValidity)) {
-					context.setInvalid();
-				}
-
 			}
 		} catch (IrrecoverableValidationError | IOException irx) {
 			LOGGER.info(irx.getMessage());
@@ -337,7 +333,7 @@ public class ZUGFeRDValidator {
 			+ " Signature:" + Signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
 			+ " Version:" + context.getGeneration() + " Took:" + duration + "ms Errors:[" + context.getCSVResult()
 			+ "] ErrorIDs: [" + context.getCSVIDResult()  + "]" + toBeAppended);
-		wasCompletelyValid = ((pdfValidity) && (xmlValidity));
+		wasCompletelyValid = xmlValidity;
 		return sw.toString();
 	}
 

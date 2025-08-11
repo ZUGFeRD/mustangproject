@@ -1,3 +1,18 @@
+2.19.0
+=======
+- #893 Tradeparty globalID is not read from JSON
+- #902 Tests to use definted TZ (UTC)
+- #905 Parse product level charges/discounts into JSON
+- #869 Import Account Holder returns SellerTradeParty.name instead of AccountHolder
+- #861 Multiple problems with Product.CountryOfOrigin
+- #908 Validation: Make clear when embedded file name is wrong
+- #909
+- #913 downgrade PDF/A errors to warnings 
+- #821
+- #911
+- #912
+
+
 2.18.0
 =======
 2025-07-14

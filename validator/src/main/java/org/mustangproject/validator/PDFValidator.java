@@ -228,6 +228,13 @@ public class PDFValidator extends Validator {
 				}
 				if (!documentFilenameValid) {
 
+					if (zi.hasXMLFileAttachment()) {
+						context.addResultItem(new ValidationResultItem(
+							ESeverity.notice,
+							"Potentially incorrectly named XML file attachments detected"
+						).setSection(17).setPart(EPart.pdf));
+					}
+
 					context.addResultItem(new ValidationResultItem(
 						ESeverity.error,
 						"XMP Metadata: DocumentFileName contains invalid value"

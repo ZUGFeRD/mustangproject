@@ -130,9 +130,6 @@ public class ValidationLogVisualizer {
 			TransformerFactory factory = TransformerFactory.newInstance();
 
 			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-			factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-			factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-			factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 			Transformer transformer = factory.newTransformer(); // identity transformer
 
 			// Step 5: Setup input and output for XSLT transformation
