@@ -1,18 +1,24 @@
 2.19.0
 =======
+2025-08-12
+
+changes
+- #913 downgrade PDF/A errors to warnings
+
+corrections
 - #893 Tradeparty globalID is not read from JSON
 - #902 Tests to use definted TZ (UTC)
 - #905 Parse product level charges/discounts into JSON
 - #869 Import Account Holder returns SellerTradeParty.name instead of AccountHolder
 - #861 Multiple problems with Product.CountryOfOrigin
-- #899
-- #901
+- #882 Change order of ApplicableProductCharacteristic and DesignatedProduct…
+- #899 fix encoding error in ZUGFeRDInvoiceImporter.java
+- #901 Enhance code quality - part 2
 - #908 Validation: Make clear when embedded file name is wrong
-- #909
-- #913 downgrade PDF/A errors to warnings 
-- #821
-- #911
-- #912
+- #909 ShipToTradeParty should not contain URIUniversalCommunication
+- #821 ERROR org.mustangproject.ZUGFeRD.ValidationLogVisualizer - Failed to create PDF
+- #911 Update validation to XRechnung 3.0.2.
+- #912 github action tz issue
 
 
 2.18.0
