@@ -5,12 +5,15 @@ import static java.math.BigDecimal.valueOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 import org.junit.Test;
 import org.mustangproject.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xmlunit.builder.Input;
 
+import javax.xml.transform.Source;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
 import java.math.BigDecimal;
@@ -282,6 +285,18 @@ public class CalculationTest extends ResourceCase {
 
 		item.addAllowance(new Allowance().setPercent(new BigDecimal(10)).setTaxPercent(BigDecimal.ZERO));
 		invoice.addItem(item);
+
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(invoice);
+
+
+		String theXML = new String(zf2p.getXML());
+		assertThat(theXML).valueByXPath("//*[local-name()='ActualAmount']")
+			.asString()
+			.isEqualTo("0.55");// test for issue #917
+
 
 		TransactionCalculator calculator = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("4.95"), calculator.getGrandTotal().stripTrailingZeros());
