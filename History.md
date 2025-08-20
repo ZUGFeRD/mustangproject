@@ -1,5 +1,5 @@
 - added JSONIgnore for Products intra community supply, reverse charge and invoice's isValid (which rather means isComplete, by the way)
-- 917?
+- #917
 
 2.19.0
 =======

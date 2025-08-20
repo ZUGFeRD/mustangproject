@@ -24,26 +24,17 @@ public class LineCalculator {
 
 		if (currentItem.getItemAllowances() != null) {
 			for (IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
-				BigDecimal factor=BigDecimal.ONE;
 				BigDecimal singleAllowance=allowance.getTotalAmount(currentItem);
 				addItemAllowance(singleAllowance);
-
-				if ((allowance.getPercent()!=null)&&(allowance.getPercent().compareTo(BigDecimal.ZERO)!=0)) {
-					factor=currentItem.getQuantity();
-				}
-				addAllowanceItemTotal(singleAllowance.multiply(factor));
+				addAllowanceItemTotal(singleAllowance);
 
 			}
 		}
 		if (currentItem.getItemCharges() != null) {
 			for (IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
-				BigDecimal factor=BigDecimal.ONE;
 				BigDecimal singleCharge=charge.getTotalAmount(currentItem);
 				addItemCharge(singleCharge);
-				if ((charge.getPercent()!=null)&&(charge.getPercent().compareTo(BigDecimal.ZERO)!=0)) {
-					factor=currentItem.getQuantity();
-				}
-				subtractAllowanceItemTotal(singleCharge.multiply(factor));
+				subtractAllowanceItemTotal(singleCharge);
 
 			}
 		}

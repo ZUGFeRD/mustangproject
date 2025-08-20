@@ -302,6 +302,60 @@ public class CalculationTest extends ResourceCase {
 		assertEquals(new BigDecimal("4.95"), calculator.getGrandTotal().stripTrailingZeros());
 	}
 
+	public void testSimpleItemPercentCharge() {
+		/***
+		 * a product with net 1.10 and qty 5 and relative item allowance of 10% should return 5 as line and grand total
+		 */
+		SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
+
+		Invoice invoice = new Invoice();
+		invoice.setDocumentName("Rechnung");
+		invoice.setNumber("777777");
+		try {
+			invoice.setIssueDate(sqlDate.parse("2020-12-31"));
+			invoice.setDetailedDeliveryPeriod(sqlDate.parse("2020-12-01 - 2020-12-31".split(" - ")[0]), sqlDate.parse("2020-12-01 - 2020-12-31".split(" - ")[1]));
+			invoice.setDeliveryDate(sqlDate.parse("2020-12-31"));
+			invoice.setDueDate(sqlDate.parse("2021-01-15"));
+		} catch (Exception e) {
+			LOGGER.error("Failed to set dates", e);
+
+		}
+		TradeParty sender = new TradeParty("Maier GmbH", "Musterweg 5", "11111", "Testung", "DE");
+		sender.addVATID("DE2222222222");
+		invoice.setSender(sender);
+
+		/* trade party (recipient) */
+		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " " + "", "Testweg 5", "11111", "Testung", "DE");
+		recipient.setID("111111");
+		recipient.addVATID("DE111111111");
+		invoice.setRecipient(recipient);
+
+		/* item */
+		Product product;
+		Item item;
+
+		product = new Product("AAA", "", "H87", BigDecimal.ZERO);
+		item = new Item(product, new BigDecimal("1.10"), new BigDecimal(5.00));
+
+		item.addCharge(new Charge().setPercent(new BigDecimal(10)).setTaxPercent(BigDecimal.ZERO));
+		invoice.addItem(item);
+
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(invoice);
+
+
+		String theXML = new String(zf2p.getXML());
+		assertThat(theXML).valueByXPath("//*[local-name()='ActualAmount']")
+			.asString()
+			.isEqualTo("0.55");// test for issue #917
+
+
+		TransactionCalculator calculator = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("6.05"), calculator.getGrandTotal().stripTrailingZeros());
+	}
+
 	public void testSimpleDocumentPercentCharge() {
 
 		String orgname = "Test company";
