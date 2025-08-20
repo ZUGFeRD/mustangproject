@@ -394,24 +394,29 @@ public class Invoice implements IExportableTransaction {
 		return this;
 	}
 
+
+	@JsonIgnore
 	@Override
 	public String getOwnStreet() {
 		return sender.getStreet();
 	}
 
 
+	@JsonIgnore
 	@Override
 	public String getOwnZIP() {
 		return sender.getZIP();
 	}
 
 
+	@JsonIgnore
 	@Override
 	public String getOwnLocation() {
 		return sender.getLocation();
 	}
 
 
+	@JsonIgnore
 	@Override
 	public String getOwnCountry() {
 		return sender.getCountry();

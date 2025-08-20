@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Date; 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.IncludedNote;
 import org.mustangproject.ReferencedDocument;
@@ -181,6 +182,7 @@ public interface IExportableTransaction {
 	 *
 	 * @return Tax ID (not VAT ID) of the sender
 	 */
+	@JsonIgnore
 	default String getOwnTaxID() {
 		if (getSender() != null) {
 			return getSender().getTaxID();
@@ -194,6 +196,7 @@ public interface IExportableTransaction {
 	 *
 	 * @return VAT ID (Umsatzsteueridentifikationsnummer) of the sender
 	 */
+	@JsonIgnore
 	default String getOwnVATID() {
 		if (getSender() != null) {
 			return getSender().getVATID();
