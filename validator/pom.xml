@@ -6,12 +6,10 @@
         <version>2.19.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.mustangproject</groupId>
     <artifactId>validator</artifactId>
     <name>Library to validate e-invoices (ZUGFeRD, Factur-X and Xrechnung)</name>
 
     <packaging>jar</packaging>
-    <version>2.19.1-SNAPSHOT</version>
     <repositories>
         <repository>
             <!-- for jargs -->
@@ -27,88 +25,71 @@
     </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.deploy.skip>false
-        </maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
-        <maven.compiler.compilerVersion>11</maven.compiler.compilerVersion>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-
+        <maven.deploy.skip>false</maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
+        <maven.compiler.release>11</maven.compiler.release>
     </properties>
     <dependencies>
+        <!-- compile dependencies -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>library</artifactId>
-            <version>2.19.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
-		<dependency>
-			<groupId>org.dom4j</groupId>
-			<artifactId>dom4j</artifactId>
-			<version>2.1.4</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.16.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.pdfbox</groupId>
-			<artifactId>pdfbox</artifactId>
-			<version>3.0.5</version>
-		</dependency>
+        <dependency>
+            <groupId>org.dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+            <version>${version.org.dom4j}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${version.commons-io}</version>
+        </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>4.0.2</version>
+            <version>${version.jakarta.xml.bind}</version>
         </dependency>
-
-        <!-- Verapdf plugin <dependency> <groupId>org.verapdf</groupId> <artifactId>core</artifactId>
-              <version>1.6.2</version> </dependency> -->
-        <!-- embedded verapdf -->
         <dependency>
             <groupId>org.verapdf</groupId>
             <artifactId>validation-model-jakarta</artifactId>
-            <version>1.26.2</version>
+            <version>${version.org.verapdf}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.helger/ph-schematron -->
         <dependency>
             <groupId>com.helger.schematron</groupId>
             <artifactId>ph-schematron-xslt</artifactId>
-            <version>8.0.0</version>
+            <version>${version.com.helger.schematron}</version>
         </dependency>
+
+        <!-- test dependencies -->
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
-            <version>2.10.0</version>
+            <version>${version.org.xmlunit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-assertj</artifactId>
-            <version>2.10.0</version>
+            <version>${version.org.xmlunit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.10.2</version>
+            <version>${version.org.junit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-            <version>5.10.2</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>2.0.9</version>
+            <version>${version.org.junit}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -121,7 +102,7 @@
                              error message :-( -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>${version.org.apache.maven.plugins.maven-release-plugin}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -129,7 +110,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.3</version>
+                <version>${version.org.apache.maven.plugins.maven-surefire-plugin}</version>
                 <configuration>
                     <runOrder>alphabetical</runOrder>
                     <argLine>-Duser.timezone=UTC</argLine>
@@ -139,7 +120,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>${version.org.apache.maven.plugins.maven-jar-plugin}</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>
@@ -155,11 +136,8 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>${version.org.apache.maven.plugins.maven-compiler-plugin}</version>
                 <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
                     <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
                              mvn clean compile assembly:single -->
                     <!-- or whatever version you use -->
@@ -171,7 +149,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
+                <version>${version.org.apache.maven.plugins.maven-shade-plugin}</version>
                 <configuration>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
                     <minimizeJar>false</minimizeJar>
@@ -181,16 +159,18 @@
                             <excludes>
                                 <exclude>LICENSE</exclude>
                                 <exclude>NOTICE</exclude>
+                                <exclude>META-INF/DEPENDENCIES</exclude>
+                                <exclude>META-INF/LICENSE</exclude>
+                                <exclude>META-INF/LICENSE.md</exclude>
+                                <exclude>META-INF/LICENSE.txt</exclude>
+                                <exclude>META-INF/NOTICE</exclude>
+                                <exclude>META-INF/NOTICE.md</exclude>
+                                <exclude>META-INF/NOTICE.txt</exclude>
+                                <exclude>META-INF/MANIFEST.MF</exclude>
                                 <exclude>META-INF/*.SF</exclude>
                                 <exclude>META-INF/*.DSA</exclude>
                                 <exclude>META-INF/*.RSA</exclude>
                             </excludes>
-                        </filter>
-                        <filter>
-                            <artifact>log4j:log4j</artifact>
-                            <includes>
-                                <include>**</include>
-                            </includes>
                         </filter>
                         <filter>
                             <artifact>commons-logging:commons-logging</artifact>
@@ -199,7 +179,7 @@
                             </includes>
                         </filter>
                         <filter>
-                            <artifact>com.sun.xml.bind:jaxb-impl</artifact>
+                            <artifact>jakarta.xml.bind:jakarta.xml.bind-api</artifact>
                             <includes>
                                 <include>**</include>
                             </includes>
@@ -220,9 +200,11 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>${version.org.apache.maven.plugins.maven-resources-plugin}</version>
                 <executions>
                     <execution>
                         <id>copy-zf-schematron-xml-dependencies</id>
@@ -266,9 +248,7 @@
         </developer>
     </developers>
     <profiles>
-        <profile> <!-- enforce building binaries with Java 1.8 for Maven Central, otherwise using them e.g. as jar will
-        throw a version exception, triggered automatically on mvn release:release (hopefully) and requires an according
-        ~/.m2/toolchains.xml file, @see doc/development_documentation.md -->
+        <profile>
             <id>release-sign-artifacts</id>
             <activation>
                 <property>
@@ -281,7 +261,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-toolchains-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>${version.org.apache.maven.plugins.maven-toolchains-plugin}</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -312,7 +292,7 @@
                     <plugin>
                         <groupId>com.helger.maven</groupId>
                         <artifactId>ph-schematron-maven-plugin</artifactId>
-                        <version>8.0.0</version>
+                        <version>${version.com.helger.maven}</version>
                         <configuration>
                             <schematronDirectory>${basedir}/src/main/resources/schematron</schematronDirectory>
                             <xsltDirectory>${basedir}/src/main/resources/xslt</xsltDirectory>

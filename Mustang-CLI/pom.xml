@@ -6,87 +6,71 @@
         <version>2.19.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.mustangproject</groupId>
     <artifactId>Mustang-CLI</artifactId>
-    <name>e-invoices commandline tool, allowing to create(embed), split and validate Factur-X/ZUGFeRD files. Validation
-        should also work for XRechnung/CII.
+    <name>e-invoices commandline tool, allowing to create(embed), split and validate Factur-X/ZUGFeRD files.
+        Validation should also work for XRechnung/CII.
     </name>
     <packaging>jar</packaging>
-    <version>2.19.1-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.compilerVersion>11</maven.compiler.compilerVersion>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.release>11</maven.compiler.release>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>org.mustangproject</groupId>
-            <artifactId>validator</artifactId>
-            <version>2.19.1-SNAPSHOT</version>
-            <!-- prototypes of new mustangproject versions can be installed by referring to them and installed to the local repo from a jar file with
+        <!-- compile dependencies -->
+        <!-- prototypes of new mustangproject versions can be installed by referring to them and installed to the local repo from a jar file with
            mvn install:install-file -Dfile=mustang-1.5.4-SNAPSHOT.jar -DgroupId=org.mustangproject.ZUGFeRD -DartifactId=mustang -Dversion=1.5.4 -Dpackaging=jar -DgeneratePom=true
-           -->
+          -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>library</artifactId>
+            <version>${project.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>validator</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency><!-- apache commons cli to parse command line -->
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
-            <version>1.8.0</version>
+            <version>${version.commons-cli}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.xmlunit</groupId>
+            <artifactId>xmlunit-assertj</artifactId>
+            <version>${version.org.xmlunit}</version>
         </dependency>
 
-
+        <!-- runtime dependencies -->
         <!-- logging -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.5.16</version>
+            <version>${version.ch.qos.logback}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <!-- This library is needed so that logback stderr output is sent to, well, stderr, otherwise it lands in stdout -->
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
-            <version>3.1.7</version>
+            <version>${version.org.codehaus.janino}</version>
+            <scope>runtime</scope>
         </dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<version>2.0.12</version>
-		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${version.org.slf4j}</version>
+            <scope>runtime</scope>
+        </dependency>
         <!-- end of logging -->
 
+        <!-- test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.10.2</version>
+            <version>${version.org.junit}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <version>5.10.2</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- for directory validation: -->
-        <dependency>
-            <groupId>org.xmlunit</groupId>
-            <artifactId>xmlunit-core</artifactId>
-            <version>2.10.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.xmlunit</groupId>
-            <artifactId>xmlunit-assertj</artifactId>
-            <version>2.10.0</version>
-        </dependency>
-
-        <!-- /directory validation: -->
-
-        <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>4.0.2</version>
-        </dependency>
-
 
     </dependencies>
     <build>
@@ -98,7 +82,7 @@
                              error message :-( -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>${version.org.apache.maven.plugins.maven-release-plugin}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -106,7 +90,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.3</version>
+                <version>${version.org.apache.maven.plugins.maven-surefire-plugin}</version>
                 <configuration>
                     <runOrder>alphabetical</runOrder>
                     <argLine>-Duser.timezone=UTC</argLine>
@@ -116,31 +100,21 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.4.2</version>
+                <version>${version.org.apache.maven.plugins.maven-jar-plugin}</version>
                 <configuration>
                     <archive>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
-
                     </archive>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>${version.org.apache.maven.plugins.maven-compiler-plugin}</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>org.mustangproject.commandline.main</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
                     <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
                              mvn clean compile assembly:single -->
                     <!-- or whatever version you use -->
@@ -151,7 +125,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.3</version>
+                <version>${version.org.apache.maven.plugins.maven-shade-plugin}</version>
                 <configuration>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
@@ -165,16 +139,19 @@
                             <excludes>
                                 <exclude>LICENSE</exclude>
                                 <exclude>NOTICE</exclude>
+                                <exclude>META-INF/DEPENDENCIES</exclude>
+                                <exclude>META-INF/LICENSE</exclude>
+                                <exclude>META-INF/LICENSE.md</exclude>
+                                <exclude>META-INF/LICENSE.txt</exclude>
+                                <exclude>META-INF/NOTICE</exclude>
+                                <exclude>META-INF/NOTICE.md</exclude>
+                                <exclude>META-INF/NOTICE.txt</exclude>
+                                <exclude>META-INF/MANIFEST.MF</exclude>
                                 <exclude>META-INF/*.SF</exclude>
                                 <exclude>META-INF/*.DSA</exclude>
                                 <exclude>META-INF/*.RSA</exclude>
+                                <exclude>META-INF/sun-jaxb.episode</exclude>
                             </excludes>
-                        </filter>
-                        <filter>
-                            <artifact>log4j:log4j</artifact>
-                            <includes>
-                                <include>**</include>
-                            </includes>
                         </filter>
                         <filter>
                             <artifact>commons-logging:commons-logging</artifact>
@@ -183,7 +160,7 @@
                             </includes>
                         </filter>
                         <filter>
-                            <artifact>com.sun.xml.bind:jaxb-impl</artifact>
+                            <artifact>jakarta.xml.bind:jakarta.xml.bind-api</artifact>
                             <includes>
                                 <include>**</include>
                             </includes>
@@ -207,9 +184,7 @@
         </plugins>
     </build>
     <profiles>
-        <profile> <!-- enforce building binaries with Java 1.8 for Maven Central, otherwise using them e.g. as jar will
-           throw a version exception, triggered automatically on mvn release:release (hopefully) and requires an according
-           ~/.m2/toolchains.xml file, @see doc/development_documentation.md -->
+        <profile>
             <id>release-sign-artifacts</id>
             <activation>
                 <property>
@@ -222,7 +197,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-toolchains-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>${version.org.apache.maven.plugins.maven-toolchains-plugin}</version>
                         <executions>
                             <execution>
                                 <goals>
