@@ -536,12 +536,15 @@ public class XMLValidator extends Validator {
 						}
 
 						ESeverity severity;
+						Node failNode = currentFailNode.getAttributes().getNamedItem("flag");
+						String failVal = failNode == null ? null : failNode.getNodeValue();
 						if (defaultSeverity == ESeverity.notice) {
 							severity = defaultSeverity;
-						} else if (currentFailNode.getAttributes().getNamedItem("flag") != null
-							&& "warning".equals(currentFailNode.getAttributes().getNamedItem("flag").getNodeValue())) {
+						} else if ("warning".equals(failVal)) {
 							// the XR issues warnings with flag=warning
 							severity = ESeverity.warning;
+						} else if ("information".equals(failVal)) {
+							severity = ESeverity.notice;
 						} else {
 							severity = ESeverity.error;
 						}
