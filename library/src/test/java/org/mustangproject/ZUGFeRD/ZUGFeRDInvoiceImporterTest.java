@@ -19,7 +19,7 @@ class ZUGFeRDInvoiceImporterTest {
 
 		var valid = Stream.of(
 							  "ZUGFeRD-invoice.xml",
-							  "ZUGFeRD-001.xml",
+							  "ZUGFeRD_001.xml",
 							  "zugferd-invoice.xml",
 							  "factur-x.xml",
 							  "xrechnung.xml",

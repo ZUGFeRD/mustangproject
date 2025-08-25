@@ -269,6 +269,7 @@ public class ZUGFeRDInvoiceImporter {
 	static boolean isValidZugferdFilename(String filename) {
 		return new WildcardFileFilter(List.of(
 			"zugferd-*.xml",
+			"zugferd_*.xml",
 			"factur-x.xml",
 			"xrechnung.xml",
 			"order-x.xml",
