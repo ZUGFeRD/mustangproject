@@ -40,5 +40,9 @@ public enum SubjectCode {
   /**
    * Vehicle licence number
    */
-  ABZ
+  ABZ,
+	/**
+	* Payment information
+	*/
+	PMT
 }
