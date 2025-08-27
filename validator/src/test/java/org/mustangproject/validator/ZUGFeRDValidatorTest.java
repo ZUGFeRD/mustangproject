@@ -202,7 +202,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("count(//notice)")
 			.asInt()
-			.isEqualTo(0);
+			.isEqualTo(1);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
 			.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
@@ -216,14 +216,14 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("count(//error)")
 			.asInt()
-			.isEqualTo(5);
+			.isEqualTo(4);
 		assertThat(res).valueByXPath("count(//warning)")
 			.asInt()
 			.isEqualTo(1);
 
 		assertThat(res).valueByXPath("count(//notice)")
 			.asInt()
-			.isEqualTo(0); // 12 notices RE XRechnung 3.0
+			.isEqualTo(1); // 12 notices RE XRechnung 3.0
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
 			.isEqualTo("invalid");// expect to be valid
