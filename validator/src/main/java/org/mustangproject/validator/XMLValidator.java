@@ -374,6 +374,14 @@ public class XMLValidator extends Validator {
 							addUnsupportedProfileResultItem();
 						}
 					}
+				} else {
+					// no CII -> has to be UBL
+					if (context.hasPDF()) {
+						final ValidationResultItem vri = new ValidationResultItem(ESeverity.error, "Factur-X/ZUGFeRD and Order-X are always strictly CII only, no UBL allowed.").setSection(17)
+							.setPart(EPart.fx);
+						context.addResultItem(vri);
+
+					}
 				}
 
 				if (xsltFilename != null) {
