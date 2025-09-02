@@ -9,7 +9,7 @@ public class FileAttachment {
 
 	protected String filename;
 	protected String mimetype;
-	protected String relation = "Unspecified";
+	protected String relation;
 	protected String description;
 	protected byte[] data;
 
@@ -19,6 +19,14 @@ public class FileAttachment {
 	 */
 	public FileAttachment() {
 
+	}
+
+	public FileAttachment(String filename, String mimetype, String relation, byte[] data, String description) {
+		this.filename = filename;
+		this.mimetype = mimetype;
+		this.relation = relation;
+		this.data = data;
+		this.description = description;
 	}
 
 	public FileAttachment(String filename, String mimetype, String relation, byte[] data) {
@@ -32,6 +40,7 @@ public class FileAttachment {
 	public FileAttachment(String filename, String mimetype, byte[] data) {
 		this.filename = filename;
 		this.mimetype = mimetype;
+		this.relation = "Unspecified";
 		this.data = data;
 		this.description = "Additional file attachment";
 	}
