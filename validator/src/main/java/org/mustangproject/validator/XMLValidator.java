@@ -254,24 +254,24 @@ public class XMLValidator extends Validator {
 					if (isMiniumum) {
 						LOGGER.debug("is Minimum");
 						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/MINIMUM/FACTUR-X_MINIMUM.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_MINIMUM.xslt";
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_MINIMUM.EN.xslt";
 					} else if (isBasicWithoutLines) {
 						LOGGER.debug("is Basic/WL");
 						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/BASIC-WL/FACTUR-X_BASIC-WL.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_BASIC-WL.xslt";
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_BASIC-WL.EN.xslt";
 					} else if (isBasic) {
 						LOGGER.debug("is Basic");
 						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/BASIC/FACTUR-X_BASIC.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_BASIC.xslt";
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_BASIC.EN.xslt";
 					} else if (isEN16931) {
 						LOGGER.debug("is EN16931");
 						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_EN16931.xslt";
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_EN16931.EN.xslt";
 					} else if (isXRechnung) {
 						LOGGER.debug("is XRechnung");
 						/*
 						the validation against the XRechnung Schematron will happen below but a
-						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.xslt=schematron also has to pass
+						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.EN.xslt=schematron also has to pass
 						* */
 						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
 
@@ -279,7 +279,7 @@ public class XMLValidator extends Validator {
 					} else if (isExtended) {
 						LOGGER.debug("is EXTENDED");
 						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_EXTENDED.xslt";
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_EXTENDED.EN.xslt";
 					}
 
 					// takes around 10 Seconds. //
@@ -303,7 +303,7 @@ public class XMLValidator extends Validator {
 						validateSchematron(zfXML, xsltFilename, 24, ESeverity.error);
 						/*
 						the validation against the XRechnung Schematron will happen below but a
-						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.xslt=schematron also has to pass
+						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.EN.xslt=schematron also has to pass
 						* */
 						//validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
 						String xrVersion = contextProfile.substring(contextProfile.length() - 3).replace(".", "");
