@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.xml.XMLConstants;
@@ -248,25 +249,30 @@ public class XMLValidator extends Validator {
 					isExtended = contextProfile.contains("extended");
 					isXRechnung = contextProfile.contains("xrechnung");
 
+					String lang="en";
+					if (Locale.getDefault().getLanguage().equals("fr")) {
+						lang="fr";
+					}
+
 					if ((isExtended) || (isXRechnung)) {
 						isEN16931 = false;// the uri for extended is urn:cen.eu:en16931:2017#conformant#urn:zugferd.de:2p0:extended and thus contains en16931...
 					}
 					if (isMiniumum) {
 						LOGGER.debug("is Minimum");
 						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/MINIMUM/FACTUR-X_MINIMUM.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_MINIMUM.EN.xslt";
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_MINIMUM."+lang+".xslt";
 					} else if (isBasicWithoutLines) {
 						LOGGER.debug("is Basic/WL");
 						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/BASIC-WL/FACTUR-X_BASIC-WL.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_BASIC-WL.EN.xslt";
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_BASIC-WL."+lang+".xslt";
 					} else if (isBasic) {
 						LOGGER.debug("is Basic");
 						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/BASIC/FACTUR-X_BASIC.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_BASIC.EN.xslt";
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_BASIC."+lang+".xslt";
 					} else if (isEN16931) {
 						LOGGER.debug("is EN16931");
 						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_EN16931.EN.xslt";
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_EN16931."+lang+".xslt";
 					} else if (isXRechnung) {
 						LOGGER.debug("is XRechnung");
 						/*
@@ -279,7 +285,7 @@ public class XMLValidator extends Validator {
 					} else if (isExtended) {
 						LOGGER.debug("is EXTENDED");
 						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_EXTENDED.EN.xslt";
+						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_EXTENDED."+lang+".xslt";
 					}
 
 					// takes around 10 Seconds. //
