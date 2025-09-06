@@ -102,7 +102,7 @@ public class XRTest extends TestCase {
 		BigDecimal amount = new BigDecimal(amountStr);
 		byte[] b = {12, 13};
 
-		FileAttachment fe1 = new FileAttachment("one.pdf", "application/pdf", "Alternative", b);
+		FileAttachment fe1 = new FileAttachment("one.pdf", "application/pdf", "Alternative", b,"Beschreibung");
 		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").setEmail("sender@example.com").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890", "COBADEFXXX").setAccountName("kontoInhaber")))
 			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setEmail("recipient@sample.org"))
@@ -121,6 +121,7 @@ public class XRTest extends TestCase {
 		zf2p.setProfile(Profiles.getByName("XRechnung"));
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+		System.out.println(theXML);
 		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 		assertTrue(theXML.contains("#SKONTO#"));
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
@@ -158,7 +159,7 @@ public class XRTest extends TestCase {
 		assertEquals(attachedFiles.length, 1);
 
 		assertTrue(Arrays.equals(attachedFiles[0].getData(), b));
-
+		assertEquals("Beschreibung",attachedFiles[0].getDescription());
 
 	}
 

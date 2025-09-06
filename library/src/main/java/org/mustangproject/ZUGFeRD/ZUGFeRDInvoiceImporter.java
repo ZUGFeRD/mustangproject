@@ -994,6 +994,12 @@ public class ZUGFeRDInvoiceImporter {
 			NodeList attachmentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			for (int i = 0; i < attachmentNodes.getLength(); i++) {
 				FileAttachment fa = new FileAttachment(attachmentNodes.item(i).getAttributes().getNamedItem("filename").getNodeValue(), attachmentNodes.item(i).getAttributes().getNamedItem("mimeCode").getNodeValue(), "Data", Base64.getMimeDecoder().decode(XMLTools.trimOrNull(attachmentNodes.item(i))));
+				NodeList nl = attachmentNodes.item(i).getParentNode().getChildNodes();
+				for (int j = 0; j < nl.getLength(); j++) {
+					if (nl.item(j).getLocalName() != null && nl.item(j).getLocalName().equals("Name")) {
+						fa.setDescription(nl.item(j).getTextContent());
+					}
+				}
 				zpp.embedFileInXML(fa);
 				// filename = "Aufmass.png" mimeCode = "image/png"
 				//EmbeddedDocumentBinaryObject cbc:EmbeddedDocumentBinaryObject mimeCode="image/png" filename="Aufmass.png"
