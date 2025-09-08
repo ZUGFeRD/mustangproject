@@ -194,7 +194,12 @@
                  </xsl:when>
                  <xsl:otherwise>
                    <xsl:choose>
-                     <xsl:when test="$field-mapping-identifier = 'xr:Payment_due_date'"><xsl:value-of select="format-date(xs:date(.), xrf:_('date-format'))"/></xsl:when>
+                     <xsl:when test="$field-mapping-identifier = 'xr:Payment_due_date'">
+                      <xsl:for-each select="tokenize(., ';')">
+                        <xsl:value-of select="format-date(xs:date(.), xrf:_('date-format'))"/>
+                        <xsl:if test="position() != last()">; </xsl:if>
+                      </xsl:for-each>
+                     </xsl:when>
                      <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
                    </xsl:choose>
                  </xsl:otherwise>
