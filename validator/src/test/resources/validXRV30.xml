@@ -104,10 +104,10 @@
         </ram:IncludedSupplyChainTradeLineItem>
         <ram:IncludedSupplyChainTradeLineItem>
             <ram:AssociatedDocumentLineDocument>
-                <ram:LineID>Zeitlose Diensleistung</ram:LineID>
+                <ram:LineID>Zeitlose Dienstleistung</ram:LineID>
             </ram:AssociatedDocumentLineDocument>
             <ram:SpecifiedTradeProduct>
-                <ram:Name>Zeitlose Diensleistung</ram:Name>
+                <ram:Name>Zeitlose Dienstleistung</ram:Name>
             </ram:SpecifiedTradeProduct>
             <ram:SpecifiedLineTradeAgreement>
                 <ram:NetPriceProductTradePrice>
