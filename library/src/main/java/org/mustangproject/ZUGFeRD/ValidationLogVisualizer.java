@@ -8,23 +8,34 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
-import org.apache.fop.apps.*;
+import java.nio.charset.StandardCharsets;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.mustangproject.ClasspathResolverURIAdapter;
+import org.mustangproject.util.TransformerFactoryCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.xml.XMLConstants;
-import javax.xml.transform.*;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
-import java.nio.charset.StandardCharsets;
 
 public class ValidationLogVisualizer {
 	public enum Language {
@@ -41,9 +52,8 @@ public class ValidationLogVisualizer {
 	private Templates mXsltPDFTemplate = null;
 
 
-	public ValidationLogVisualizer() {
-		mFactory = new net.sf.saxon.TransformerFactoryImpl();
-		// fact = TransformerFactory.newInstance();
+	public ValidationLogVisualizer() throws TransformerConfigurationException {
+		mFactory = TransformerFactoryCreator.getInstance();
 		mFactory.setURIResolver(new ValidationLogVisualizer.ClasspathResourceURIResolver());
 	}
 
@@ -127,10 +137,7 @@ public class ValidationLogVisualizer {
 			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
 
 			// Step 4: Setup JAXP using identity transformer
-			TransformerFactory factory = TransformerFactory.newInstance();
-
-			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-			Transformer transformer = factory.newTransformer(); // identity transformer
+			Transformer transformer = mFactory.newTransformer(); // identity transformer
 
 			// Step 5: Setup input and output for XSLT transformation
 			// Setup input stream

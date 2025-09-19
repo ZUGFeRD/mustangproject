@@ -12,9 +12,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Set;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -25,6 +23,7 @@ import javax.xml.xpath.XPathFactory;
 import org.mustangproject.CalculatedInvoice;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.ZUGFeRDInvoiceImporter;
+import org.mustangproject.util.DocumentBuilderFactoryCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -153,26 +152,7 @@ public class XMLValidator extends Validator {
 				 *
 				 */
 
-				final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-				//REDHAT
-				//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
-				dbf.setAttribute(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-				dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-				dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-
-				//OWASP
-				//https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
-				dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-				dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-				dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-				// Disable external DTDs as well
-				dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-				// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-				dbf.setXIncludeAware(false);
-				dbf.setExpandEntityReferences(false);
-				dbf.setNamespaceAware(true);
-
-				final DocumentBuilder db = dbf.newDocumentBuilder();
+				final DocumentBuilder db = DocumentBuilderFactoryCreator.getInstance().newDocumentBuilder();
 				final InputSource is = new InputSource(new StringReader(zfXML));
 				final Document doc = db.parse(is);
 

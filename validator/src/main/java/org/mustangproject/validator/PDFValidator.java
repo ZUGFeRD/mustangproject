@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -22,8 +21,9 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.mustangproject.util.ByteArraySearcher;
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
+import org.mustangproject.util.ByteArraySearcher;
+import org.mustangproject.util.DocumentBuilderFactoryCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.verapdf.features.FeatureExtractorConfig;
@@ -42,6 +42,7 @@ import org.verapdf.processor.TaskType;
 import org.verapdf.processor.plugins.PluginsCollectionConfig;
 import org.verapdf.processor.reports.ItemDetails;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -129,8 +130,6 @@ public class PDFValidator extends Validator {
 		zi.setInputStream(inputStream);
 		final String xmp = zi.getXMP();
 
-		final Document docXMP;
-
 		if (xmp == null || xmp.isEmpty()) {
 			context.addResultItem(new ValidationResultItem(ESeverity.error, "Invalid XMP Metadata not found")
 				.setSection(17).setPart(EPart.pdf));
@@ -143,14 +142,17 @@ public class PDFValidator extends Validator {
 			 * <zf:Version>1.0</zf:Version>
 			 */
 			try {
+				/*
 				final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 				// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
 				factory.setXIncludeAware(false);
 
 				final DocumentBuilder builder = factory.newDocumentBuilder();
+				*/
+				final DocumentBuilder builder = DocumentBuilderFactoryCreator.getInstance().newDocumentBuilder();
 				final InputSource is = new InputSource(new StringReader(xmp));
-				docXMP = builder.parse(is);
+				Document docXMP = builder.parse(is);
 
 				final XPathFactory xpathFactory = XPathFactory.newInstance();
 
@@ -162,7 +164,7 @@ public class PDFValidator extends Validator {
 
 				// get the first element
 				XPathExpression xpr = xpath.compile(
-					"//*[local-name()=\"ConformanceLevel\"]|//*[local-name()=\"Description\"]/@ConformanceLevel");
+					"//*[local-name()=\"ConformanceLevel\"]|//*[local-name()=\"Description\"]/@*[local-name()=\"ConformanceLevel\"]");
 				NodeList nodes = (NodeList) xpr.evaluate(docXMP, XPathConstants.NODESET);
 
 				if (nodes.getLength() == 0) {
@@ -173,7 +175,6 @@ public class PDFValidator extends Validator {
 
 				boolean conformanceLevelValid = false;
 				for (int i = 0; i < nodes.getLength(); i++) {
-
 					final String[] valueArray = {"BASIC WL", "BASIC", "MINIMUM", "EN 16931", "COMFORT", "CIUS", "EXTENDED", "XRECHNUNG"};
 					if (stringArrayContains(valueArray, nodes.item(i).getTextContent())) {
 						conformanceLevelValid = true;
@@ -186,7 +187,7 @@ public class PDFValidator extends Validator {
 					).setSection(12).setPart(EPart.pdf));
 
 				}
-				xpr = xpath.compile("//*[local-name()=\"DocumentType\"]|//*[local-name()=\"Description\"]/@DocumentType");
+				xpr = xpath.compile("//*[local-name()=\"DocumentType\"]|//*[local-name()=\"Description\"]/@*[local-name()=\"DocumentType\"]");
 				nodes = (NodeList) xpr.evaluate(docXMP, XPathConstants.NODESET);
 
 				if (nodes.getLength() == 0) {
@@ -206,10 +207,9 @@ public class PDFValidator extends Validator {
 					context.addResultItem(
 						new ValidationResultItem(ESeverity.error, "XMP Metadata: DocumentType invalid")
 							.setSection(14).setPart(EPart.pdf));
-
 				}
 				xpr = xpath.compile(
-					"//*[local-name()=\"DocumentFileName\"]|//*[local-name()=\"Description\"]/@DocumentFileName");
+					"//*[local-name()=\"DocumentFileName\"]|//*[local-name()=\"Description\"]/@*[local-name()=\"DocumentFileName\"]");
 				nodes = (NodeList) xpr.evaluate(docXMP, XPathConstants.NODESET);
 
 				if (nodes.getLength() == 0) {
@@ -240,7 +240,7 @@ public class PDFValidator extends Validator {
 						"XMP Metadata: DocumentFileName contains invalid value"
 					).setSection(19).setPart(EPart.pdf));
 				}
-				xpr = xpath.compile("//*[local-name()=\"Version\"]|//*[local-name()=\"Description\"]/@Version");
+				xpr = xpath.compile("//*[local-name()=\"Version\"]|//*[local-name()=\"Description\"]/@*[local-name()=\"Version\"]");
 				nodes = (NodeList) xpr.evaluate(docXMP, XPathConstants.NODESET);
 
 				// get all child nodes

@@ -20,11 +20,46 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import com.helger.commons.io.stream.StreamHelper;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.EnumMap;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
 import org.apache.commons.io.IOUtils;
-import org.apache.fop.apps.*;
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationException;
@@ -32,27 +67,15 @@ import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.mustangproject.ClasspathResolverURIAdapter;
 import org.mustangproject.EStandard;
+import org.mustangproject.util.DocumentBuilderFactoryCreator;
+import org.mustangproject.util.TransformerFactoryCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.*;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import com.helger.commons.io.stream.StreamHelper;
 
 public class ZUGFeRDVisualizer {
 
@@ -84,9 +107,8 @@ public class ZUGFeRDVisualizer {
 	private Templates mXsltPDFTemplate = null;
 	private Templates mXsltZF1HTMLTemplate = null;
 
-	public ZUGFeRDVisualizer() {
-		mFactory = new net.sf.saxon.TransformerFactoryImpl();
-		// fact = TransformerFactory.newInstance();
+	public ZUGFeRDVisualizer() throws TransformerConfigurationException {
+		mFactory = TransformerFactoryCreator.getInstance();
 		mFactory.setURIResolver(new ClasspathResourceURIResolver());
 	}
 
@@ -104,26 +126,8 @@ public class ZUGFeRDVisualizer {
 		String ublCreditNoteSignature = "CreditNote";
 		String cioSignature = "SCRDMCCBDACIOMessageStructure";
 
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		//REDHAT
-		//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
-		dbf.setAttribute(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-		dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-		dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-
-		//OWASP
-		//https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
-		dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-		dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-		dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-		// Disable external DTDs as well
-		dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-		// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-		dbf.setXIncludeAware(false);
-		dbf.setExpandEntityReferences(false);
-		dbf.setNamespaceAware(true);
 		try {
-			DocumentBuilder db = dbf.newDocumentBuilder();
+			DocumentBuilder db = DocumentBuilderFactoryCreator.getInstance().newDocumentBuilder();
 			Document doc = db.parse(new InputSource(fis));
 			Element root = doc.getDocumentElement();
 			if (root.getLocalName().equals(zf1Signature)) {
@@ -375,9 +379,7 @@ public class ZUGFeRDVisualizer {
 			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
 
 			// Step 4: Setup JAXP using identity transformer
-			TransformerFactory factory = TransformerFactory.newInstance();
-			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-			Transformer transformer = factory.newTransformer(); // identity transformer
+			Transformer transformer = mFactory.newTransformer(); // identity transformer
 
 			// Step 5: Setup input and output for XSLT transformation
 			// Setup input stream
