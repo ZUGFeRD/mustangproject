@@ -22,8 +22,8 @@ import javax.xml.xpath.XPathFactory;
 
 import org.mustangproject.CalculatedInvoice;
 import org.mustangproject.XMLTools;
-import org.mustangproject.util.DocumentBuilderFactoryCreator;
 import org.mustangproject.ZUGFeRD.ZUGFeRDInvoiceImporter;
+import org.mustangproject.util.DocumentBuilderFactoryCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
