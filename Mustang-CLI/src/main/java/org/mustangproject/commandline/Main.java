@@ -219,7 +219,7 @@ public class Main {
 				} catch (IOException e) {
 					LOGGER.error(e.getMessage(), e);
 				}
-				if (!selectedAnswer.equals("Y") && !selectedAnswer.equals("y")) {
+				if (!"Y".equalsIgnoreCase(selectedAnswer)) {
 					System.err.println("Aborted by user");
 					System.exit(-1);
 				}
@@ -372,17 +372,17 @@ public class Main {
 			boolean optionsRecognized = false;
 			String action = "";
 
-			Boolean disableFileLogging = false;
+			boolean disableFileLogging = false;
 			try {
 				cmd = parser.parse(options, args);
 
 				// Retrieve all options
 				action = cmd.getOptionValue("action");
 				String directoryName = cmd.getOptionValue("directory");
-				Boolean filesFromStdIn = cmd.hasOption("listfromstdin");//((Number)cmdLine.getParsedOptionValue("integer-option")).intValue();
-				Boolean ignoreFileExt = cmd.hasOption("ignorefileextension");
-				Boolean noAttachments = cmd.hasOption("no-additional-attachments");
-				Boolean helpRequested = cmd.hasOption("help") || ((action != null) && (action.equals("help")));
+				boolean filesFromStdIn = cmd.hasOption("listfromstdin");//((Number)cmdLine.getParsedOptionValue("integer-option")).intValue();
+				boolean ignoreFileExt = cmd.hasOption("ignorefileextension");
+				boolean noAttachments = cmd.hasOption("no-additional-attachments");
+				boolean helpRequested = cmd.hasOption("help") || ((action != null) && (action.equals("help")));
 				disableFileLogging = cmd.hasOption("disable-file-logging");
 
 				String sourceName = cmd.getOptionValue("source");
@@ -390,8 +390,8 @@ public class Main {
 				String outName = cmd.getOptionValue("out");
 				String format = cmd.getOptionValue("format");
 				String lang = cmd.getOptionValue("language");
-				Boolean noNotices = cmd.hasOption("no-notices");
-				Boolean LogAsPDF = cmd.hasOption("log-as-pdf");
+				boolean noNotices = cmd.hasOption("no-notices");
+				boolean LogAsPDF = cmd.hasOption("log-as-pdf");
 
 				String zugferdVersion = cmd.getOptionValue("version");
 				String zugferdProfile = cmd.getOptionValue("profile");
@@ -566,7 +566,9 @@ public class Main {
 		ensureFileNotExists(xmlName);
 
 		// All params are good! continue...
-		ZUGFeRDImporter zi = new ZUGFeRDImporter(pdfName);
+		ZUGFeRDImporter zi = new ZUGFeRDImporter();
+		zi.doIgnoreCalculationErrors();
+		zi.setPDFFilename(pdfName);
 		byte[] XMLContent = zi.getRawXML();
 		if (XMLContent == null) {
 			System.err.println("No ZUGFeRD XML found in PDF file");
@@ -652,9 +654,9 @@ public class Main {
 
 			if (zfProfile == null) {
 				try {
-					if ((format.equals("zf") && (zfIntVersion == 1)) || (format.equals("ox"))) {
+					if ((("zf".equals(format)) && (zfIntVersion == 1)) || ("ox".equals(format))) {
 						zfProfile = getStringFromUser("Profile (b)asic, (c)omfort or ex(t)ended", "t", "B|b|C|c|T|t");
-					} else if ((format.equals("da"))) {
+					} else if (("da".equals(format))) {
 						zfProfile = getStringFromUser("Profile (p)ilot", "p", "P|p");
 					} else {
 						zfProfile = getStringFromUser(
@@ -675,20 +677,20 @@ public class Main {
 			ensureFileExists(xmlName);
 			ensureFileNotExists(outName);
 
-			if ((format.equals("fx")) && (zfIntVersion > 1)) {
+			if ((("fx".equals(format))) && (zfIntVersion > 1)) {
 				throw new Exception("Factur-X is only available in version 1 (roughly corresponding to ZF2)");
 			}
 
 			EStandard standard = EStandard.facturx;
-			if (format.equals("zf")) {
+			if ("zf".equals(format)) {
 				standard = EStandard.zugferd;
 			}
-			if (format.equals("da")) {
+			if ("da".equals(format)) {
 				standard = EStandard.despatchadvice;
 
 				zfConformanceLevelProfile = Profiles.getByName(standard, "PILOT", 1);
-			} else if (((format.equals("zf")) && (zfIntVersion == 1)) || (format.equals("ox"))) {
-				if (format.equals("ox")) {
+			} else if (((("zf".equals(format))) && (zfIntVersion == 1)) || ("ox".equals(format))) {
+				if ("ox".equals(format)) {
 					standard = EStandard.orderx;
 				}
 				if (zfProfile.equals("b")) {

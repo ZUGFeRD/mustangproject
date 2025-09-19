@@ -43,7 +43,11 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 * item level discounts
 	 * @return array of the discounts on a single item
 	 */
+	@Deprecated
 	default IZUGFeRDAllowanceCharge[] getItemAllowances() {
+		if (getProduct()!=null) {
+			return getProduct().getAllowances();
+		}
 		return null;
 	}
 
@@ -51,10 +55,35 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 * item level price additions
 	 * @return array of the additional charges on the item
 	 */
+	@Deprecated
 	default IZUGFeRDAllowanceCharge[] getItemCharges() {
+		if (getProduct()!=null) {
+			return getProduct().getCharges();
+		}
 		return null;
 	}
 
+	@Deprecated
+	default IZUGFeRDAllowanceCharge[] getAllowances() {
+		return null;
+	}
+
+	/**
+	 * item level price additions
+	 * @return array of the additional charges on the item
+	 */
+	@Deprecated
+	default IZUGFeRDAllowanceCharge[] getCharges() {
+		return null;
+	}
+
+	/***
+	 * buyer order reference document id
+	 * @return  the document id (defaults to {@code null})
+	 */
+	default String getBuyerOrderReferencedDocumentID() {
+		return null;
+	}
 
 	/***
 	 * BT 132 (issue https://github.com/ZUGFeRD/mustangproject/issues/247)
@@ -85,7 +114,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 
 	/**
 	 * how many items units per price
-	 * 
+	 *
 	 * @return item units per price
 	 */
 	default BigDecimal getBasisQuantity() {
@@ -145,11 +174,11 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	default Date getDetailedDeliveryPeriodTo() {
 		return null;
 	}
-	
+
 	/***
-	 * specify allowances amount for the line item total
+	 *  get all (allowances and charges) SpecifiedTradeAllowanceCharges
 	 *
-	 * @return the sum of allowances for this item
+	 * @return the real item lecel SpecifiedTradeAllowanceCharges
 	 */
 	default IZUGFeRDAllowanceCharge[] getItemTotalAllowances() {
 		return null;

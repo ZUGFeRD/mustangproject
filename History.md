@@ -1,3 +1,69 @@
+- added JSONIgnore for Products intra community supply, reverse charge and invoice's isValid (which rather means isComplete, by the way)
+- #917
+- #915
+- #921
+- #926
+- upgrade apache fop 2.10 to 2.11
+
+2.19.0
+=======
+2025-08-12
+
+changes
+- #913 downgrade PDF/A errors to warnings
+
+corrections
+- #893 Tradeparty globalID is not read from JSON
+- #902 Tests to use definted TZ (UTC)
+- #905 Parse product level charges/discounts into JSON
+- #869 Import Account Holder returns SellerTradeParty.name instead of AccountHolder
+- #861 Multiple problems with Product.CountryOfOrigin
+- #882 Change order of ApplicableProductCharacteristic and DesignatedProduct…
+- #899 fix encoding error in ZUGFeRDInvoiceImporter.java
+- #901 Enhance code quality - part 2
+- #908 Validation: Make clear when embedded file name is wrong
+- #909 ShipToTradeParty should not contain URIUniversalCommunication
+- #821 ERROR org.mustangproject.ZUGFeRD.ValidationLogVisualizer - Failed to create PDF
+- #911 Update validation to XRechnung 3.0.2.
+- #912 github action tz issue
+
+
+2.18.0
+=======
+2025-07-14
+
+- support parsing of BT-90 CreditorReferenceID
+- #871 schema validation does not ignore external entities
+- #868 Fix wrong version in History.md
+- #729 Updates about SpecifiedTradeSettlementHeaderMonetarySummation and SpecifiedTradeSettlementPaymentMeans
+- #863 LineCalculator throws NPE if product is null (since 2.17.0)
+- #731 Got a broken translation key when visualizing XML into PDF (xr:Business_process_type)
+- #865 Add sevdesk signature to PDF creators
+- #849 Ignore calculation errors when extracting xml from pdf
+- #856 Read contact´s fax number.
+- #850/#843 Correction for "Re-Initialize the HTML-template on language change
+- #855 Suppress empty nodes in output XML
+- #874 Skip PDNameTreeNodes if the names are null or empty
+- #830 Invalid XML generated: Item vat-category-code summed up with other 0 percent category codes
+- #878 report arithmetic issues in validation report 
+- corrected typo ArithmetricException to ArithmeticException
+- #726 Financial account information (IBAN) is lost when converting a cii invoice to ubl
+- #885 JSON duplicates on item allowances/charges
+- #887 incorrect percentual item allowances
+
+2.17.0
+=======
+2025-06-11
+- Breaking change: #764 Item allowances not to be multiplied by quantity
+(there are now product level quantities for that)
+- #820/801/815 Fix invoiceImporter: empty NodeList, empty Strings
+- #822 Wrapping Message Text in Validation Result PDF
+- #843 Re-Initialize the HTML-template on language change
+- #854 allow multiple item charges/allowances when visualizing to html
+- #786 Fix Invoices with Category Code "O" #786
+- add getCalculation on calculatedInvoice
+- Transactioncalculator getTaxDetails to include correct percentage, calculated amounts
+
 2.16.5
 =======
 2025-05-22

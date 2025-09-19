@@ -2,7 +2,7 @@ package org.mustangproject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -163,7 +163,9 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 												NodeList taxSchemechilds = partyTaxScheme.item(partyTaxSchemeIndex).getChildNodes();
 												for (int taxSchemechildsIndex = 0; taxSchemechildsIndex < taxSchemechilds.getLength(); taxSchemechildsIndex++) {
 													if (taxSchemechilds.item(taxSchemechildsIndex).getLocalName() != null) {
-														if (taxSchemechilds.item(taxSchemechildsIndex).getTextContent().equals("FC") || (taxSchemechilds.item(taxSchemechildsIndex).getTextContent().equals("NOVAT"))) {
+														Set<String> taxSchemeTypes = Set.of("FC", "NOVAT");
+														String textContent = taxSchemechilds.item(taxSchemechildsIndex).getTextContent();
+														if (textContent != null && taxSchemeTypes.contains(textContent)) {
 															setTaxID(CompanyId);
 														} else {
 															setVATID(CompanyId);
@@ -541,6 +543,32 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		return this;
 	}
 
+	/***
+	 * for jackson, primarily, use addGlobalID(SchemedID) instead
+	 * @param ID the id part without scheme
+	 * @return fluent setter
+	 */
+	public TradeParty setGlobalID(String ID) {
+		if (globalId==null) {
+			globalId=new SchemedID();
+		}
+		globalId.setId(ID);
+		return this;
+	}
+
+	/***
+	 * for jackson, primarily, use addGlobalID(SchemedID) instead
+	 * @param scheme the scheme part without id
+	 * @return fluent setter
+	 */
+	public TradeParty setGlobalIDScheme(String scheme) {
+		if (globalId==null) {
+			globalId=new SchemedID();
+		}
+		globalId.setScheme(scheme);
+		return this;
+	}
+
 	public TradeParty addGlobalID(SchemedID schemedID) {
 		globalId = schemedID;
 		return this;
@@ -746,7 +774,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		if (bankDetails.isEmpty() && debitDetails.isEmpty()) {
 			return null;
 		}
-		List<IZUGFeRDTradeSettlement> tradeSettlements = Stream.concat(bankDetails.stream(), debitDetails.stream()).map(IZUGFeRDTradeSettlement.class::cast).collect(Collectors.toList());
+		List<IZUGFeRDTradeSettlement> tradeSettlements = Stream.concat(bankDetails.stream(), debitDetails.stream()).collect(Collectors.toList());
 
 		IZUGFeRDTradeSettlement[] result = new IZUGFeRDTradeSettlement[tradeSettlements.size()];
 		for (int i = 0; i < tradeSettlements.size(); i++) {

@@ -61,8 +61,10 @@ public abstract class Validator {
 		Source xmlData = new StreamSource(new ByteArrayInputStream(xmlRawData));
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		try {
+			schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
 			Schema schema = schemaFactory.newSchema(schemaFile);
 			javax.xml.validation.Validator validator = schema.newValidator();
+			validator.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 			validator.validate(xmlData);
 		} catch (SAXException e) {
 			context.addResultItem(new ValidationResultItem(ESeverity.error, "schema validation fails:" + e)

@@ -46,6 +46,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -79,7 +80,7 @@ public class ZUGFeRDVisualizer {
 	private Templates mXsltXRTemplate = null;
 	private Templates mXsltUBLTemplate = null;
 	private Templates mXsltCIOTemplate = null;
-	private Map<Language, Templates> mXsltHTMLTemplates = null;
+	private EnumMap<Language, Templates> mXsltHTMLTemplates = null;
 	private Templates mXsltPDFTemplate = null;
 	private Templates mXsltZF1HTMLTemplate = null;
 
@@ -206,11 +207,11 @@ public class ZUGFeRDVisualizer {
 		}
 
 		if (mXsltHTMLTemplates == null) {
-			mXsltHTMLTemplates = new HashMap<>();
-			if (mXsltHTMLTemplates.get(lang) == null) {
-				Templates mXsltHTMLTemplate = mFactory.newTemplates(new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/xrechnung-html." + lang.name().toLowerCase() + ".xsl")));
-				mXsltHTMLTemplates.put(lang, mXsltHTMLTemplate);
-			}
+			mXsltHTMLTemplates = new EnumMap<>(Language.class);
+		}
+		if (mXsltHTMLTemplates.get(lang) == null) {
+			Templates mXsltHTMLTemplate = mFactory.newTemplates(new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/xrechnung-html." + lang.name().toLowerCase() + ".xsl")));
+			mXsltHTMLTemplates.put(lang, mXsltHTMLTemplate);
 		}
 		if (mXsltZF1HTMLTemplate == null) {
 			mXsltZF1HTMLTemplate = mFactory.newTemplates(new StreamSource(

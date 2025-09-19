@@ -34,7 +34,7 @@ If you set up a Maven project, you can reference the mustang artifact like this:
 <dependency>
     <groupId>org.mustangproject</groupId>
     <artifactId>validator</artifactId>
-    <version>2.15.0</version>
+    <version>2.17.0</version>
     <classifier>shaded</classifier>
 </dependency>
 ```

@@ -166,6 +166,25 @@ public interface IZUGFeRDExportableProduct {
 	    return null;
 	}
 
+
+	/**
+	 * product level discounts (AppliedTradeAllowanceCharge, will change net price)
+	 * @return array of the discounts on a single product
+	 */
+	default IZUGFeRDAllowanceCharge[] getAllowances() {
+		return null;
+	}
+
+	/**
+	 * product level charges (AppliedTradeAllowanceCharge, will change net price)
+	 * @return array of the additional charges on the product
+	 */
+	default IZUGFeRDAllowanceCharge[] getCharges() {
+		return null;
+	}
+
+
+
 	/**
 	 * Detailed information about the product
 	 *

@@ -99,11 +99,11 @@
             <xsl:attribute name="xr:id" select="'BG-2'"/>
             <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
             <xsl:if test="./cbc:ProfileID">
-               <xr:Business_process_type_identifier>
+               <xr:Business_process_type>
                   <xsl:attribute name="xr:id" select="'BT-23'"/>
                   <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
                   <xsl:value-of select="./cbc:ProfileID"/>
-               </xr:Business_process_type_identifier>
+               </xr:Business_process_type>
             </xsl:if>
             <xr:Specification_identifier>
                <xsl:attribute name="xr:id" select="'BT-24'"/>

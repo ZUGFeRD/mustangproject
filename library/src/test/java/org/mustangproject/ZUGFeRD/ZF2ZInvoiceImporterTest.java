@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
 import org.mustangproject.*;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.io.File;
@@ -34,12 +35,15 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -262,9 +266,27 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		assertFalse(hasExceptions);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
-		assertEquals(new BigDecimal("19.52"), tc.getGrandTotal());
+		assertEquals(new BigDecimal("18.33"), tc.getGrandTotal());
 	}
 
+	public void testIBANImport() {
+		File CIIinputFile = getResourceAsFile("cii/lastschrift_iban_bug.xml");
+		try {
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new FileInputStream(CIIinputFile));
+
+
+			CalculatedInvoice invoice = new CalculatedInvoice();
+			zii.extractInto(invoice);
+			assertEquals("DE11111111111111111111", invoice.getCreditorReferenceID());
+			assertEquals("DE22222222222222222222", invoice.getSender().getBankDetails().stream().map(BankDetails::getIBAN).collect(Collectors.joining(",")));
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	public void testBasisQuantityImport() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2newEdge.pdf");
@@ -385,8 +407,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			ObjectMapper mapper = new ObjectMapper();
 
 			String jsonArray = mapper.writeValueAsString(i);
-
-			//		assertEquals("",jsonArray);
+			JSONAssert.assertEquals("{\"documentCode\":\"380\",\"number\":\"471102\",\"currency\":\"EUR\",\"paymentTermDescription\":\"Der Betrag in Höhe von EUR 529,87 wird am 20.03.2018 von Ihrem Konto per SEPA-Lastschrift eingezogen.\\n          \",\"issueDate\":1520121600000,\"deliveryDate\":1520121600000,\"sender\":{\"name\":\"Lieferant GmbH\",\"zip\":\"80333\",\"street\":\"Lieferantenstraße 20\",\"location\":\"München\",\"country\":\"DE\",\"taxID\":\"201/113/40209\",\"vatID\":\"DE123456789\",\"debitDetails\":[{\"mandate\":\"REF A-123\",\"paymentMeansCode\":\"59\",\"paymentMeansInformation\":\"SEPA direct debit\",\"iban\":\"DE21860000000086001055\"}],\"vatid\":\"DE123456789\"},\"recipient\":{\"name\":\"Kunden AG Mitte\",\"zip\":\"69876\",\"street\":\"Kundenstraße 15\",\"location\":\"Frankfurt\",\"country\":\"DE\",\"bankDetails\":[{\"paymentMeansCode\":\"58\",\"paymentMeansInformation\":\"SEPA credit transfer\",\"iban\":\"DE21860000000086001055\"}]},\"totalPrepaidAmount\":0.00,\"creditorReferenceID\":\"DE98ZZZ09999999999\",\"zfitems\":[{\"price\":9.9000,\"quantity\":20.0000,\"basisQuantity\":1.0000,\"id\":\"1\",\"product\":{\"unit\":\"H87\",\"name\":\"Trennblätter A4\",\"taxCategoryCode\":\"S\",\"vatpercent\":19.00},\"value\":9.9000},{\"price\":5.5000,\"quantity\":50.0000,\"basisQuantity\":1.0000,\"id\":\"2\",\"product\":{\"unit\":\"H87\",\"name\":\"Joghurt Banane\",\"taxCategoryCode\":\"S\",\"vatpercent\":7.00},\"value\":5.5000}],\"tradeSettlement\":[{\"mandate\":\"REF A-123\",\"paymentMeansCode\":\"59\",\"paymentMeansInformation\":\"SEPA direct debit\",\"iban\":\"DE21860000000086001055\"}]}",jsonArray,false);
 
 		} catch (IOException e) {
 			fail("IOException not expected");
@@ -395,8 +416,37 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	public static Date atStartOfDay(Date date) {
+		ZoneId tz=ZoneId.ofOffset("UTC", ZoneOffset.ofHours(0));
+		LocalDateTime localDateTime = LocalDateTime.ofInstant(date.toInstant(), tz);
+		LocalDateTime startOfDay = localDateTime.with(LocalTime.MIN);
+		return Date.from(startOfDay.atZone(tz).toInstant());
+	}
+	public void testImportAllowances() {
+		try {
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushItemChargesAllowances.pdf");
+			Invoice i = zii.extractInvoice();
+			ObjectMapper mapper = new ObjectMapper();
 
+			String jsonArray = mapper.writeValueAsString(i);
+			SimpleDateFormat iso=new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat german=new SimpleDateFormat("dd.MM.yyyy");
+			Date now=new Date();
+			Date morning=atStartOfDay(now);
 
+			String expectedDueDate= String.valueOf(morning.toInstant().getEpochSecond() *1000);
+			String expectedIssueDate= String.valueOf(morning.toInstant().getEpochSecond() *1000);
+			String expectedPaymentTermDesciption="Please remit until "+german.format(now);
+
+			JSONAssert.assertEquals("{  \"documentCode\": \"380\",  \"number\": \"123\",  \"currency\": \"EUR\",  \"paymentTermDescription\": \""+expectedPaymentTermDesciption+"\",  \"issueDate\": "+expectedIssueDate+",  \"dueDate\": "+expectedDueDate+",  \"sender\": {    \"name\": \"Test company\",    \"zip\": \"55232\",    \"street\": \"teststr\",    \"location\": \"teststadt\",    \"country\": \"DE\",    \"taxID\": \"4711\",    \"vatID\": \"DE0815\",    \"vatid\": \"DE0815\"  },  \"recipient\": {    \"name\": \"Franz Müller\",    \"zip\": \"55232\",    \"street\": \"teststr.12\",    \"location\": \"Entenhausen\",    \"country\": \"DE\",    \"contact\": {      \"name\": \"contact testname\",      \"phone\": \"123456\",      \"email\": \"contact.testemail@example.org\",      \"fax\": \"0911623562\"    }  },  \"totalPrepaidAmount\": 0.00,  \"zfitems\": [    {      \"price\": 3.0000,      \"quantity\": 1.0000,      \"basisQuantity\": 1.0000,      \"id\": \"1\",      \"product\": {        \"unit\": \"H87\",        \"name\": \"Testprodukt\",        \"taxCategoryCode\": \"S\",        \"vatpercent\": 19.00,    },      \"itemAllowances\": [        {          \"totalAmount\": 0.10,          \"taxPercent\": 0,          \"categoryCode\": \"S\"        }      ],      \"value\": 3.0000    },    {      \"price\": 3.0000,      \"quantity\": 1.0000,      \"basisQuantity\": 1.0000,      \"id\": \"2\",      \"product\": {        \"unit\": \"H87\",        \"name\": \"Testprodukt\",        \"taxCategoryCode\": \"S\",        \"vatpercent\": 19.00,},      \"itemAllowances\": [        {          \"percent\": 50.00,          \"totalAmount\": 1.5,          \"basisAmount\": 3.00,          \"taxPercent\": 0,          \"reason\": \"In love with salesperson\",          \"categoryCode\": \"S\"        }      ],      \"value\": 3.0000    },    {      \"price\": 3.0000,      \"quantity\": 2.0000,      \"basisQuantity\": 1.0000,      \"id\": \"3\",      \"product\": {        \"unit\": \"H87\",        \"name\": \"Testprodukt\",        \"taxCategoryCode\": \"S\",        \"vatpercent\": 19.00},      \"itemCharges\": [        {          \"totalAmount\": 1.00,          \"taxPercent\": 0,          \"reason\": \"AnotherReason\",          \"categoryCode\": \"S\"        }      ],      \"value\": 3.0000    },    {      \"price\": 3.0000,      \"quantity\": 1.0000,      \"basisQuantity\": 1.0000,      \"id\": \"4\",      \"product\": {        \"unit\": \"H87\",        \"name\": \"Testprodukt\",        \"taxCategoryCode\": \"S\",        \"vatpercent\": 19.00 },  \"itemCharges\": [        {          \"totalAmount\": 1.00,          \"taxPercent\": 0,          \"reason\": \"Yet another reason\",          \"categoryCode\": \"S\"        }      ],      \"itemAllowances\": [        {          \"totalAmount\": 1.00,          \"taxPercent\": 0,          \"reason\": \"Something completely strange\",          \"categoryCode\": \"S\"        }      ],      \"value\": 3.0000    }  ],  \"zfcharges\": [    {      \"totalAmount\": 1.00,      \"taxPercent\": 19.00,      \"reason\": \"AReason\",      \"reasonCode\": \"ABK\",      \"categoryCode\": \"S\"    }  ]}",jsonArray,true);
+		} catch (IOException e) {
+			fail("IOException not expected");
+		} catch (XPathExpressionException e) {
+			throw new RuntimeException(e);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void testImportMinimum() {

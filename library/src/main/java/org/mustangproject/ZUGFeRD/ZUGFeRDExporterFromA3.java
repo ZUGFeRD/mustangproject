@@ -225,7 +225,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * @return the filename of the file to be embedded
 	 */
 	public String getFilenameForVersion(int ver, Profile profile) {
-		if (profile.getName().equals("XRECHNUNG")) {
+		if ("XRECHNUNG".equals(profile.getName())) {
 			return "xrechnung.xml";
 		}
 		if (isFacturX) {
@@ -564,10 +564,9 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 		// iterate over all pdf pages
 
-		for (Object object : doc.getPages()) {
-			if (object instanceof PDPage) {
+		for (PDPage page : doc.getPages()) {
+			if (page != null) {
 
-				PDPage page = (PDPage) object;
 				PDResources res = page.getResources();
 
 				// Check for fonts in PDXObjects:

@@ -8,6 +8,8 @@ import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
 
+import static org.xmlunit.assertj.XmlAssert.assertThat;
+
 public class XMLValidatorTest extends ResourceCase {
 
 	public void testZF2XMLValidation() {
@@ -275,6 +277,30 @@ public class XMLValidatorTest extends ResourceCase {
 			Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
 			String content = xpath.evaluate("/validation/summary/@status", source);
 			assertEquals("invalid", content);
+
+		} catch (final IrrecoverableValidationError e) {
+			// ignore, will be in XML output anyway
+		}
+
+	}
+
+	public void testArithmetics() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("invalidArithmetics.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s="<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("valid", content);
+			assertThat(s).valueByXPath("count(//warning)")
+				.asInt()
+				.isEqualTo(1);
 
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway

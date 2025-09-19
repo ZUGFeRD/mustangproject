@@ -1,13 +1,10 @@
 package org.mustangproject;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.*;
 import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 import org.mustangproject.util.NodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -32,6 +29,8 @@ public class Product implements IZUGFeRDExportableProduct {
 	protected boolean isIntraCommunitySupply = false;
 	protected SchemedID globalId = null;
 	protected String countryOfOrigin = null;
+	protected ArrayList<Charge> charges=new ArrayList<>();
+	protected ArrayList<Allowance> allowances=new ArrayList<>();
 	protected HashMap<String, String> attributes = new HashMap<>();
 
 	protected List<IDesignatedProductClassification> classifications = new ArrayList<>();
@@ -105,7 +104,10 @@ public class Product implements IZUGFeRDExportableProduct {
 				classifications.add(new DesignatedProductClassification(classCode, className)));
 		});
 
-		nodeMap.getAsString("OriginTradeCounty").ifPresent(this::setCountryOfOrigin);
+		nodeMap.getAsNodeMap("OriginTradeCountry")
+			   .flatMap(nodes -> nodes.getNode("ID"))
+			   .map(Node::getTextContent)
+			   .ifPresent(this::setCountryOfOrigin);
 	}
 
 	/***
@@ -212,11 +214,14 @@ public class Product implements IZUGFeRDExportableProduct {
 		return this;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isReverseCharge() {
 		return isReverseCharge;
 	}
 
+
+	@JsonIgnore
 	@Override
 	public boolean isIntraCommunitySupply() {
 		return isIntraCommunitySupply;
@@ -393,4 +398,60 @@ public class Product implements IZUGFeRDExportableProduct {
 		this.classifications.add(classification);
 		return this;
 	}
+
+	public Product addCharge(Charge e) {
+		charges.add(e);
+		return this;
+	}
+
+	public Product addAllowance(Allowance a) {
+		allowances.add(a);
+		return this;
+	}
+
+
+	/***
+	 * Jackson courtesy function, please use addCharge if you have the choice
+	 * @return array of or null, if none
+	 */
+	public Product setCharges(ArrayList<Charge> charges) {
+		this.charges=charges;
+		return this;
+	}
+
+	/***
+	 * returns the AppliedTradeAllowanceCharges of this product which are actually Charges
+	 * @return array of or null, if none
+	 */
+	@Override
+	public Charge[] getCharges() {
+		if (charges.size()==0) {
+			return null;
+		}
+		Charge[] chargeArr = new Charge[charges.size()];
+		return charges.toArray(chargeArr);
+	}
+
+	@Override
+	/***
+	 * returns the AppliedTradeAllowanceCharges of this product which are actually Allowances
+	 * @return array of or null, if none
+	 */
+	public Allowance[] getAllowances() {
+		if (allowances.size()==0) {
+			return null;
+		}
+		Allowance[] allowanceArr = new Allowance[allowances.size()];
+		return allowances.toArray(allowanceArr);
+	}
+
+	/***
+	 * Jackson courtesy function, please use addAllowance if you have the choice
+	 * @return array of or null, if none
+	 */
+	public Product setAllowances(ArrayList<Allowance> allowances) {
+		this.allowances=allowances;
+		return this;
+	}
+
 }

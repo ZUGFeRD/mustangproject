@@ -97,12 +97,12 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>";
 			}
 			String allowanceChargeStr = "";
-			if (currentItem.getItemAllowances() != null && currentItem.getItemAllowances().length > 0) {
+			if (currentItem.getItemAllowances() != null) {
 				for (final IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
 					allowanceChargeStr += getAllowanceChargeStr(allowance, currentItem);
 				}
 			}
-			if (currentItem.getItemCharges() != null && currentItem.getItemCharges().length > 0) {
+			if (currentItem.getItemCharges() != null) {
 				for (final IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
 					allowanceChargeStr += getAllowanceChargeStr(charge, currentItem);
 

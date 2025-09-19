@@ -57,6 +57,16 @@ public class VATAmount {
 		this.categoryCode = categoryCode;
 		this.dueDateTypeCode = dueDateTypeCode;
 	}
+	
+	public VATAmount(BigDecimal basis, BigDecimal calculated, String categoryCode, String dueDateTypeCode, BigDecimal applicablePercent)
+	{
+		super();
+		this.basis = basis;
+		this.calculated = calculated;
+		this.categoryCode = categoryCode;
+		this.dueDateTypeCode = dueDateTypeCode;
+		this.applicablePercent = applicablePercent;
+	}
 
 	public BigDecimal getApplicablePercent() {
 		return applicablePercent;
@@ -135,7 +145,7 @@ public class VATAmount {
 	}
 
 	public VATAmount add(VATAmount v) {
-		return new VATAmount(basis.add(v.getBasis()), calculated.add(v.getCalculated()), this.categoryCode, this.dueDateTypeCode).setVatExemptionReasonText(v.getVatExemptionReasonText());
+		return new VATAmount(basis.add(v.getBasis()), calculated.add(v.getCalculated()), this.categoryCode, this.dueDateTypeCode).setVatExemptionReasonText(v.getVatExemptionReasonText() != null ? v.getVatExemptionReasonText(): this.vatExemptionReasonText);
 	}
 
 	public VATAmount subtract(VATAmount v) {
