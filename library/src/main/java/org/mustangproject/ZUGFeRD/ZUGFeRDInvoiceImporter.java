@@ -1146,7 +1146,7 @@ public class ZUGFeRDInvoiceImporter {
 					try {
 						moreDetails = " with tax basis " + tc.getTaxBasis() + " and with positions " + tc.getTotal() + " = "
 							+ Stream.of(tc.trans.getZFItems())
-							.map(item -> new LineCalculator(item).getItemTotalNetAmount().toPlainString())
+							.map(item -> item.getCalculation().getItemTotalNetAmount().toPlainString())
 							.collect(Collectors.joining(" + "));
 					} catch (Exception ignored) {
 					}

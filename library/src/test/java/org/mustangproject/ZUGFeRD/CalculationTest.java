@@ -35,7 +35,7 @@ public class CalculationTest extends ResourceCase {
 			.setQuantity(TEN)
 			.setProduct(product);
 
-		final LineCalculator calculator = new LineCalculator(currentItem);
+		final LineCalculator calculator = currentItem.getCalculation();
 
 		assertEquals(valueOf(100).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
 		assertEquals(valueOf(1000).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
@@ -54,7 +54,7 @@ public class CalculationTest extends ResourceCase {
 			.setItemAllowances(new IZUGFeRDAllowanceCharge[]{allowance})
 			.setProduct(product);
 
-		final LineCalculator calculator = new LineCalculator(currentItem);
+		final LineCalculator calculator = currentItem.getCalculation();
 
 		assertEquals(valueOf(148.73).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
 		assertEquals(valueOf(1769.89).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
@@ -74,7 +74,7 @@ public class CalculationTest extends ResourceCase {
 			.setItemCharges(new IZUGFeRDAllowanceCharge[]{charge})
 			.setProduct(product);
 
-		final LineCalculator calculator = new LineCalculator(currentItem);
+		final LineCalculator calculator = currentItem.getCalculation();
 
 		assertEquals(valueOf(148.73).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
 		assertEquals(valueOf(1799.63).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
@@ -113,13 +113,13 @@ public class CalculationTest extends ResourceCase {
 		product.addAllowance(new Allowance(new BigDecimal(1)));
 		item = new Item(product, new BigDecimal("9.50"), new BigDecimal(25));
 		item.addCharge(new Charge(new BigDecimal(10)).setReasonCode("ZZZ").setReason("Zuschlag"));
-		LineCalculator lc = new LineCalculator(item);
+		LineCalculator lc = item.getCalculation();
 		assertEquals(new BigDecimal("222.50"), lc.getItemTotalNetAmount());
 		invoice.addItem(item);
 		product = new Product("Paper", "", "H87", new BigDecimal(25));
 		item = new Item(product, new BigDecimal("4.50"), new BigDecimal(15));
 		item.addAllowance(new Allowance().setPercent(new BigDecimal(5)).setReasonCode("ZZZ").setReason("Zuschlag"));
-		lc = new LineCalculator(item);
+		lc = item.getCalculation();
 		assertEquals(new BigDecimal("64.12"), lc.getItemTotalNetAmount());
 		invoice.addItem(item);
 		invoice.addAllowance(new Allowance().setPercent(new BigDecimal(10)).setTaxPercent(new BigDecimal(25)).setReasonCode("ZZZ").setReason("Mengenrabatt"));
@@ -459,7 +459,7 @@ public class CalculationTest extends ResourceCase {
 			.setQuantity(BigDecimal.valueOf(31))
 			.setBasisQuantity(BigDecimal.valueOf(366))
 			.setProduct(product);
-		final LineCalculator calculator = new LineCalculator(currentItem);
+		final LineCalculator calculator = currentItem.getCalculation();
 		assertEquals(BigDecimal.valueOf(32.74), calculator.getItemTotalNetAmount());
 	}
 
