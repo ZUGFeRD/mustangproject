@@ -443,9 +443,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"  \"documentCode\" : \"380\",\n" +
 				"  \"number\" : \"123\",\n" +
 				"  \"currency\" : \"EUR\",\n" +
-				"  \"paymentTermDescription\" : \"Please remit until 30.09.2025\",\n" +
-				"  \"issueDate\" : 1759190400000,\n" +
-				"  \"dueDate\" : 1759190400000,\n" +
+				"  \"paymentTermDescription\" : "+expectedPaymentTermDesciption+",\n" +
+				"  \"issueDate\" : "+expectedIssueDate+",\n" +
+				"  \"dueDate\" : "+expectedDueDate+",\n" +
 				"  \"sender\" : {\n" +
 				"    \"name\" : \"Test company\",\n" +
 				"    \"zip\" : \"55232\",\n" +
