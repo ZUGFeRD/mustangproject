@@ -121,7 +121,6 @@ public class XRTest extends TestCase {
 		zf2p.setProfile(Profiles.getByName("XRechnung"));
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
-		System.out.println(theXML);
 		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 		assertTrue(theXML.contains("#SKONTO#"));
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
