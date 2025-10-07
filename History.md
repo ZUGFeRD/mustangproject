@@ -8,6 +8,9 @@
 - #932
 - #933,  #413, #557, #765
 - make Line Calculation, e.g. total line net amount, accessible via JSON using getCalculation
+- #940
+- #939
+- #692
 
 2.19.0
 =======

@@ -35,7 +35,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -235,9 +234,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
-	public void testSpecifiedLogisticsChargeImport() {
+	public void testSpecifiedLogisticsChargeCashDiscountImport() {
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
-		File expectedResult = getResourceAsFile("cii/extended_warenrechnung.xml");
+		File expectedResult = getResourceAsFile("cii/extended_warenrechnung_based_doublecashdiscount.xml");
 
 
 		boolean hasExceptions = false;
@@ -249,8 +248,10 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
+		assertEquals(invoice.getCashDiscounts().length,2);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("518.99"), tc.getGrandTotal());
+
 
 	}
 	public void testItemAllowancesChargesImport() {
@@ -347,7 +348,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
-
+		assertEquals(invoice.getCashDiscounts().length,2);
 		assertEquals(version,2);
 		assertTrue(new BigDecimal("1").compareTo(invoice.getZFItems()[0].getQuantity()) == 0);
 		LineCalculator lc=invoice.getZFItems()[0].getCalculation();
