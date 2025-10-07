@@ -23,6 +23,7 @@ package org.mustangproject;
 import java.math.BigDecimal;
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.*;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
@@ -393,24 +394,29 @@ public class Invoice implements IExportableTransaction {
 		return this;
 	}
 
+
+	@JsonIgnore
 	@Override
 	public String getOwnStreet() {
 		return sender.getStreet();
 	}
 
 
+	@JsonIgnore
 	@Override
 	public String getOwnZIP() {
 		return sender.getZIP();
 	}
 
 
+	@JsonIgnore
 	@Override
 	public String getOwnLocation() {
 		return sender.getLocation();
 	}
 
 
+	@JsonIgnore
 	@Override
 	public String getOwnCountry() {
 		return sender.getCountry();
@@ -754,6 +760,7 @@ public class Invoice implements IExportableTransaction {
 	 * checks if all required items are set in order to be able to export it
 	 * @return true if all required items are set
 	 */
+	@JsonIgnore
 	public boolean isValid() {
 		return (dueDate != null) && (sender != null) && (sender.getTaxID() != null) && (sender.getVATID() != null) && (recipient != null);
 		//contact

@@ -14,12 +14,21 @@ public class ValidationContext {
 	private String profile = null;
 	private String signature = null;
 	private boolean isValid = true;
+	private boolean hasPDF = false;
 	protected Logger logger;
 	private String filename;
 
 	public ValidationContext(Logger log) {
 		logger = log;
 		results = new Vector<>();
+	}
+
+	public void setHasPDF() {
+		hasPDF=true;
+	}
+
+	public boolean hasPDF() {
+		return hasPDF;
 	}
 
 	public void addResultItem(ValidationResultItem vr) throws IrrecoverableValidationError {

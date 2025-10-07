@@ -121,6 +121,7 @@ public class ZUGFeRDValidator {
 					// Avoid reading again from file
 					pdfv.setFilenameAndContents(contextFilename, content);
 
+					context.setHasPDF();
 					optionsRecognized = true;
 					finalStringResult.append("<pdf>");
 					try {

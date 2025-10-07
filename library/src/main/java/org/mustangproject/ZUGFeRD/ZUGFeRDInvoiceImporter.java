@@ -8,21 +8,8 @@ import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.PDNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
 import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
-import org.mustangproject.Allowance;
-import org.mustangproject.BankDetails;
-import org.mustangproject.CalculatedInvoice;
-import org.mustangproject.Charge;
-import org.mustangproject.DirectDebit;
-import org.mustangproject.EStandard;
+import org.mustangproject.*;
 import org.mustangproject.Exceptions.StructureException;
-import org.mustangproject.FileAttachment;
-import org.mustangproject.IncludedNote;
-import org.mustangproject.Invoice;
-import org.mustangproject.Item;
-import org.mustangproject.ReferencedDocument;
-import org.mustangproject.SchemedID;
-import org.mustangproject.TradeParty;
-import org.mustangproject.XMLTools;
 import org.mustangproject.util.NodeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +48,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -606,10 +595,12 @@ public class ZUGFeRDInvoiceImporter {
 		}
 		zpp.addNotes(includedNotes);
 		String rootNode = extractString("local-name(/*)");
+		String potentialCashDiscountTerms=null;
 		if (rootNode != null && Set.of("Invoice", "CreditNote").contains(rootNode)) {
 			// UBL...
 			// //*[local-name()="Invoice" or local-name()="CreditNote"]
 			number = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"ID\"]").trim();
+			potentialCashDiscountTerms = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"PaymentTerms\"]/*[local-name()=\"Note\"]").trim();
 			typeCode = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"InvoiceTypeCode\"]").trim();
 			String issueDateStr = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"IssueDate\"]").trim();
 			if (!issueDateStr.isEmpty()) {
@@ -623,6 +614,10 @@ public class ZUGFeRDInvoiceImporter {
 			if (!deliveryDt.isEmpty()) {
 				deliveryDate =  parseDate(deliveryDt, "yyyy-MM-dd");
 			}
+		} else {
+			//CII
+			potentialCashDiscountTerms = extractString("//*[local-name()=\"SpecifiedTradePaymentTerms\"]/*[local-name()=\"Description\"]").trim();
+
 		}
 
 		String creditorReferenceID = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"CreditorReferenceID\"]").trim();//BT-90
@@ -994,6 +989,12 @@ public class ZUGFeRDInvoiceImporter {
 			NodeList attachmentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			for (int i = 0; i < attachmentNodes.getLength(); i++) {
 				FileAttachment fa = new FileAttachment(attachmentNodes.item(i).getAttributes().getNamedItem("filename").getNodeValue(), attachmentNodes.item(i).getAttributes().getNamedItem("mimeCode").getNodeValue(), "Data", Base64.getMimeDecoder().decode(XMLTools.trimOrNull(attachmentNodes.item(i))));
+				NodeList nl = attachmentNodes.item(i).getParentNode().getChildNodes();
+				for (int j = 0; j < nl.getLength(); j++) {
+					if (nl.item(j).getLocalName() != null && nl.item(j).getLocalName().equals("Name")) {
+						fa.setDescription(nl.item(j).getTextContent());
+					}
+				}
 				zpp.embedFileInXML(fa);
 				// filename = "Aufmass.png" mimeCode = "image/png"
 				//EmbeddedDocumentBinaryObject cbc:EmbeddedDocumentBinaryObject mimeCode="image/png" filename="Aufmass.png"
@@ -1121,6 +1122,63 @@ public class ZUGFeRDInvoiceImporter {
 				}
 			}
 
+			xpr = xpath.compile("//*[local-name()=\"SpecifiedTradePaymentTerms\"]/*[local-name()=\"ApplicableTradePaymentDiscountTerms\"]");// cash discounts, UBL unknown
+			NodeList cashdiscountNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+			for (int i = 0; i < cashdiscountNodes.getLength(); i++) {
+				NodeList cashDiscountNodeChilds = cashdiscountNodes.item(i).getChildNodes();
+				String chargeAmount = null;
+				String taxPercent = null;
+				CashDiscount cd=new CashDiscount();
+				for (int cashDiscountChildIndex = 0; cashDiscountChildIndex < cashDiscountNodeChilds.getLength(); cashDiscountChildIndex++) {
+					Node currentNode=cashDiscountNodeChilds.item(cashDiscountChildIndex);
+					String chargeChildName = currentNode.getLocalName();
+					if (chargeChildName != null) {
+						if (chargeChildName.equals("BasisPeriodMeasure")) {
+							if (currentNode.getAttributes().getNamedItem("unitCode").getNodeValue().equals("DAY")) {
+								cd.setDays(Integer.valueOf(XMLTools.trimOrNull(currentNode)));
+							}
+						} else if (chargeChildName.equals("CalculationPercent")) {
+							cd.setPercent(new BigDecimal(XMLTools.trimOrNull(currentNode)));
+						}
+					}
+					//appliedAmount
+					//AppliedTradeTax
+				}
+				if ((cd.getPercent() != null)&&(cd.getDays() != null)) {
+					zpp.addCashDiscount(cd);
+				}
+			}
+			if ((potentialCashDiscountTerms!=null&&potentialCashDiscountTerms.length()>3)) {
+				for (String currentLine:potentialCashDiscountTerms.split("\\n")) {
+					if (currentLine.startsWith("#SKONTO#")) {
+						CashDiscount cd=new CashDiscount();
+						Pattern pattern = Pattern.compile("#TAGE=(.*?)#", Pattern.CASE_INSENSITIVE);
+						Matcher matcher = pattern.matcher(currentLine);
+						boolean daysFound = matcher.find();
+						String days=matcher.group(1);
+						pattern = Pattern.compile("#PROZENT=(.*?)#", Pattern.CASE_INSENSITIVE);
+						matcher = pattern.matcher(currentLine);
+						boolean percentFound = matcher.find();
+						String percent=matcher.group(1);
+
+						if (daysFound&&percentFound) {
+							cd.setDays(Integer.valueOf(days));
+							cd.setPercent(new BigDecimal(percent));
+							zpp.addCashDiscount(cd);
+						} //else : could not parse skonto
+
+
+
+
+/*
+						String percent=;
+
+						cd.setDays()
+							cd.setPercent()*/
+
+					}
+				}
+			}
 
 			TransactionCalculator tc = new TransactionCalculator(zpp);
 			String calculatedPayableTotal = tc.getDuePayable().toPlainString();
@@ -1140,7 +1198,7 @@ public class ZUGFeRDInvoiceImporter {
 					try {
 						moreDetails = " with tax basis " + tc.getTaxBasis() + " and with positions " + tc.getTotal() + " = "
 							+ Stream.of(tc.trans.getZFItems())
-							.map(item -> new LineCalculator(item).getItemTotalNetAmount().toPlainString())
+							.map(item -> item.getCalculation().getItemTotalNetAmount().toPlainString())
 							.collect(Collectors.joining(" + "));
 					} catch (Exception ignored) {
 					}

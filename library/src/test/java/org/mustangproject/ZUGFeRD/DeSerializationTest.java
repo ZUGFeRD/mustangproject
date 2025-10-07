@@ -479,6 +479,20 @@ public class DeSerializationTest extends ResourceCase {
 		assertEquals("sender@test.org", fromJSON.getSender().getEmail());
 	}
 
+	public void testItemAbsoluteChargeFromJSON() throws JsonProcessingException {
+		String globalID = "4000001123452";
+		String globalIDScheme = "0088";
+
+		String json="{\"number\":\"471102\",\"currency\":\"EUR\",\"issueDate\":\"2018-03-04T00:00:00.000+01:00\",\"dueDate\":\"2018-03-04T00:00:00.000+01:00\",\"deliveryDate\":\"2018-03-04T00:00:00.000+01:00\",\"sender\":{\"name\":\"Lieferant GmbH\",\"zip\":\"80333\",\"street\":\"Lieferantenstraße 20\",\"location\":\"München\",\"country\":\"DE\",\"taxID\":\"201/113/40209\",\"vatID\":\"DE123456789\",\"globalID\":\"4000001123452\",\"globalIDScheme\":\"0088\"},\"recipient\":{\"name\":\"Kunden AG Mitte\",\"zip\":\"69876\",\"street\":\"Kundenstraße 15\",\"location\":\"Frankfurt\",\"country\":\"DE\"},\"zfitems\":[{\"price\":9.9,\"quantity\":20,\"product\":{\"unit\":\"H87\",\"name\":\"Trennblätter A4\",\"description\":\"\",\"vatpercent\":19,\"taxCategoryCode\":\"S\"},\"itemCharges\":[{\"totalAmount\":1,\"taxPercent\":19,\"reason\":\"Invoice line charge reason\",\"categoryCode\":\"S\"}]},{\"price\":5.5,\"quantity\":50,\"product\":{\"unit\":\"H87\",\"name\":\"Joghurt Banane\",\"description\":\"\",\"vatpercent\":7,\"taxCategoryCode\":\"S\"}}]}";
+
+		ObjectMapper mapper = new ObjectMapper();
+		Invoice fromJSON = mapper.readValue(json, Invoice.class);
+		assertEquals(globalID, fromJSON.getSender().getGlobalID());
+		assertEquals(globalIDScheme, fromJSON.getSender().getGlobalIDScheme());
+		TransactionCalculator tc=new TransactionCalculator(fromJSON);
+		assertEquals(new BigDecimal("531.06"), tc.getDuePayable());
+	}
+
 	public void testGrossFromJSON() throws JsonProcessingException {
 
 		String json="{  \"documentCode\": \"380\",  \"number\": \"123\",  \"currency\": \"EUR\",  \"paymentTermDescription\": \"Please remit until 28.07.2025\",  \"issueDate\": 1753653600000,  \"dueDate\": 1753653600000,  \"sender\": {    \"name\": \"Test company\",    \"zip\": \"55232\",    \"street\": \"teststr\",    \"location\": \"teststadt\",    \"country\": \"DE\",    \"taxID\": \"4711\",    \"vatID\": \"DE0815\",    \"vatid\": \"DE0815\"  },  \"recipient\": {    \"name\": \"Franz Müller\",    \"zip\": \"55232\",    \"street\": \"teststr.12\",    \"location\": \"Entenhausen\",    \"country\": \"DE\",    \"contact\": {      \"name\": \"contact testname\",      \"phone\": \"123456\",      \"email\": \"contact.testemail@example.org\",      \"fax\": \"0911623562\"    }  },  \"totalPrepaidAmount\": 0.00,  \"lineTotalAmount\": 29.00,  \"duePayable\": 34.51,  \"grandTotal\": 34.51,  \"taxBasis\": 29.00,  \"valid\": true,  \"zfitems\": [    {      \"price\": 3.0000,      \"quantity\": 10.0000,      \"basisQuantity\": 1.0000,      \"id\": \"1\",      \"product\": {        \"unit\": \"H87\",        \"name\": \"Testprodukt\",        \"taxCategoryCode\": \"S\",        \"allowances\": [          {            \"totalAmount\": 0.1000,            \"categoryCode\": \"S\"          }        ],        \"vatpercent\": 19.00,        \"intraCommunitySupply\": false,        \"reverseCharge\": false      },      \"value\": 3.0000    }  ],  \"ownVATID\": \"DE0815\",  \"ownTaxID\": \"4711\",  \"ownLocation\": \"teststadt\",  \"ownZIP\": \"55232\",  \"ownCountry\": \"DE\",  \"ownStreet\": \"teststr\"}";

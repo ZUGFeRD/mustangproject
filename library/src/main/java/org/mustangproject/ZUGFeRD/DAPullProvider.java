@@ -79,7 +79,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 				//	exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
-      final LineCalculator lc = new LineCalculator(currentItem);
+            final LineCalculator lc = currentItem.getCalculation();
 			xml += "<ram:IncludedSupplyChainTradeLineItem>" +
 					"<ram:AssociatedDocumentLineDocument>"
 					+ "<ram:LineID>" + lineID + "</ram:LineID>"

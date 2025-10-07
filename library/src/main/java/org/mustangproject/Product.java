@@ -214,11 +214,14 @@ public class Product implements IZUGFeRDExportableProduct {
 		return this;
 	}
 
+	@JsonIgnore
 	@Override
 	public boolean isReverseCharge() {
 		return isReverseCharge;
 	}
 
+
+	@JsonIgnore
 	@Override
 	public boolean isIntraCommunitySupply() {
 		return isIntraCommunitySupply;

@@ -35,7 +35,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -235,9 +234,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
-	public void testSpecifiedLogisticsChargeImport() {
+	public void testSpecifiedLogisticsChargeCashDiscountImport() {
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
-		File expectedResult = getResourceAsFile("cii/extended_warenrechnung.xml");
+		File expectedResult = getResourceAsFile("cii/extended_warenrechnung_based_doublecashdiscount.xml");
 
 
 		boolean hasExceptions = false;
@@ -249,8 +248,10 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
+		assertEquals(invoice.getCashDiscounts().length,2);
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("518.99"), tc.getGrandTotal());
+
 
 	}
 	public void testItemAllowancesChargesImport() {
@@ -347,10 +348,10 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
-
+		assertEquals(invoice.getCashDiscounts().length,2);
 		assertEquals(version,2);
 		assertTrue(new BigDecimal("1").compareTo(invoice.getZFItems()[0].getQuantity()) == 0);
-		LineCalculator lc=new LineCalculator(invoice.getZFItems()[0]);
+		LineCalculator lc=invoice.getZFItems()[0].getCalculation();
 		assertTrue(new BigDecimal("1").compareTo(lc.getItemTotalNetAmount()) == 0);
 
 		assertEquals("Z", invoice.getZFItems()[0].getProduct().getTaxCategoryCode());
@@ -407,7 +408,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			ObjectMapper mapper = new ObjectMapper();
 
 			String jsonArray = mapper.writeValueAsString(i);
-			JSONAssert.assertEquals("{\"documentCode\":\"380\",\"number\":\"471102\",\"currency\":\"EUR\",\"paymentTermDescription\":\"Der Betrag in Höhe von EUR 529,87 wird am 20.03.2018 von Ihrem Konto per SEPA-Lastschrift eingezogen.\\n          \",\"issueDate\":1520121600000,\"deliveryDate\":1520121600000,\"sender\":{\"name\":\"Lieferant GmbH\",\"zip\":\"80333\",\"street\":\"Lieferantenstraße 20\",\"location\":\"München\",\"country\":\"DE\",\"taxID\":\"201/113/40209\",\"vatID\":\"DE123456789\",\"debitDetails\":[{\"mandate\":\"REF A-123\",\"paymentMeansCode\":\"59\",\"paymentMeansInformation\":\"SEPA direct debit\",\"iban\":\"DE21860000000086001055\"}],\"vatid\":\"DE123456789\"},\"recipient\":{\"name\":\"Kunden AG Mitte\",\"zip\":\"69876\",\"street\":\"Kundenstraße 15\",\"location\":\"Frankfurt\",\"country\":\"DE\",\"bankDetails\":[{\"paymentMeansCode\":\"58\",\"paymentMeansInformation\":\"SEPA credit transfer\",\"iban\":\"DE21860000000086001055\"}]},\"totalPrepaidAmount\":0.00,\"creditorReferenceID\":\"DE98ZZZ09999999999\",\"valid\":false,\"zfitems\":[{\"price\":9.9000,\"quantity\":20.0000,\"basisQuantity\":1.0000,\"id\":\"1\",\"product\":{\"unit\":\"H87\",\"name\":\"Trennblätter A4\",\"taxCategoryCode\":\"S\",\"vatpercent\":19.00,\"reverseCharge\":false,\"intraCommunitySupply\":false},\"value\":9.9000},{\"price\":5.5000,\"quantity\":50.0000,\"basisQuantity\":1.0000,\"id\":\"2\",\"product\":{\"unit\":\"H87\",\"name\":\"Joghurt Banane\",\"taxCategoryCode\":\"S\",\"vatpercent\":7.00,\"reverseCharge\":false,\"intraCommunitySupply\":false},\"value\":5.5000}],\"tradeSettlement\":[{\"mandate\":\"REF A-123\",\"paymentMeansCode\":\"59\",\"paymentMeansInformation\":\"SEPA direct debit\",\"iban\":\"DE21860000000086001055\"}],\"ownTaxID\":\"201/113/40209\",\"ownZIP\":\"80333\",\"ownCountry\":\"DE\",\"ownVATID\":\"DE123456789\",\"ownLocation\":\"München\",\"ownStreet\":\"Lieferantenstraße 20\"}",jsonArray,false);
+			JSONAssert.assertEquals("{\"documentCode\":\"380\",\"number\":\"471102\",\"currency\":\"EUR\",\"paymentTermDescription\":\"Der Betrag in Höhe von EUR 529,87 wird am 20.03.2018 von Ihrem Konto per SEPA-Lastschrift eingezogen.\\n          \",\"issueDate\":1520121600000,\"deliveryDate\":1520121600000,\"sender\":{\"name\":\"Lieferant GmbH\",\"zip\":\"80333\",\"street\":\"Lieferantenstraße 20\",\"location\":\"München\",\"country\":\"DE\",\"taxID\":\"201/113/40209\",\"vatID\":\"DE123456789\",\"debitDetails\":[{\"mandate\":\"REF A-123\",\"paymentMeansCode\":\"59\",\"paymentMeansInformation\":\"SEPA direct debit\",\"iban\":\"DE21860000000086001055\"}],\"vatid\":\"DE123456789\"},\"recipient\":{\"name\":\"Kunden AG Mitte\",\"zip\":\"69876\",\"street\":\"Kundenstraße 15\",\"location\":\"Frankfurt\",\"country\":\"DE\",\"bankDetails\":[{\"paymentMeansCode\":\"58\",\"paymentMeansInformation\":\"SEPA credit transfer\",\"iban\":\"DE21860000000086001055\"}]},\"totalPrepaidAmount\":0.00,\"creditorReferenceID\":\"DE98ZZZ09999999999\",\"zfitems\":[{\"price\":9.9000,\"quantity\":20.0000,\"basisQuantity\":1.0000,\"id\":\"1\",\"product\":{\"unit\":\"H87\",\"name\":\"Trennblätter A4\",\"taxCategoryCode\":\"S\",\"vatpercent\":19.00},\"value\":9.9000},{\"price\":5.5000,\"quantity\":50.0000,\"basisQuantity\":1.0000,\"id\":\"2\",\"product\":{\"unit\":\"H87\",\"name\":\"Joghurt Banane\",\"taxCategoryCode\":\"S\",\"vatpercent\":7.00},\"value\":5.5000}],\"tradeSettlement\":[{\"mandate\":\"REF A-123\",\"paymentMeansCode\":\"59\",\"paymentMeansInformation\":\"SEPA direct debit\",\"iban\":\"DE21860000000086001055\"}]}",jsonArray,false);
 
 		} catch (IOException e) {
 			fail("IOException not expected");
@@ -439,7 +440,153 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			String expectedIssueDate= String.valueOf(morning.toInstant().getEpochSecond() *1000);
 			String expectedPaymentTermDesciption="Please remit until "+german.format(now);
 
-			JSONAssert.assertEquals("{  \"documentCode\": \"380\",  \"number\": \"123\",  \"currency\": \"EUR\",  \"paymentTermDescription\": \""+expectedPaymentTermDesciption+"\",  \"issueDate\": "+expectedIssueDate+",  \"dueDate\": "+expectedDueDate+",  \"sender\": {    \"name\": \"Test company\",    \"zip\": \"55232\",    \"street\": \"teststr\",    \"location\": \"teststadt\",    \"country\": \"DE\",    \"taxID\": \"4711\",    \"vatID\": \"DE0815\",    \"vatid\": \"DE0815\"  },  \"recipient\": {    \"name\": \"Franz Müller\",    \"zip\": \"55232\",    \"street\": \"teststr.12\",    \"location\": \"Entenhausen\",    \"country\": \"DE\",    \"contact\": {      \"name\": \"contact testname\",      \"phone\": \"123456\",      \"email\": \"contact.testemail@example.org\",      \"fax\": \"0911623562\"    }  },  \"totalPrepaidAmount\": 0.00,  \"valid\": true,  \"zfitems\": [    {      \"price\": 3.0000,      \"quantity\": 1.0000,      \"basisQuantity\": 1.0000,      \"id\": \"1\",      \"product\": {        \"unit\": \"H87\",        \"name\": \"Testprodukt\",        \"taxCategoryCode\": \"S\",        \"vatpercent\": 19.00,        \"reverseCharge\": false,        \"intraCommunitySupply\": false      },      \"itemAllowances\": [        {          \"totalAmount\": 0.10,          \"taxPercent\": 0,          \"categoryCode\": \"S\"        }      ],      \"value\": 3.0000    },    {      \"price\": 3.0000,      \"quantity\": 1.0000,      \"basisQuantity\": 1.0000,      \"id\": \"2\",      \"product\": {        \"unit\": \"H87\",        \"name\": \"Testprodukt\",        \"taxCategoryCode\": \"S\",        \"vatpercent\": 19.00,        \"reverseCharge\": false,        \"intraCommunitySupply\": false      },      \"itemAllowances\": [        {          \"percent\": 50.00,          \"totalAmount\": 1.5,          \"basisAmount\": 3.00,          \"taxPercent\": 0,          \"reason\": \"In love with salesperson\",          \"categoryCode\": \"S\"        }      ],      \"value\": 3.0000    },    {      \"price\": 3.0000,      \"quantity\": 2.0000,      \"basisQuantity\": 1.0000,      \"id\": \"3\",      \"product\": {        \"unit\": \"H87\",        \"name\": \"Testprodukt\",        \"taxCategoryCode\": \"S\",        \"vatpercent\": 19.00,        \"reverseCharge\": false,        \"intraCommunitySupply\": false      },      \"itemCharges\": [        {          \"totalAmount\": 1.00,          \"taxPercent\": 0,          \"reason\": \"AnotherReason\",          \"categoryCode\": \"S\"        }      ],      \"value\": 3.0000    },    {      \"price\": 3.0000,      \"quantity\": 1.0000,      \"basisQuantity\": 1.0000,      \"id\": \"4\",      \"product\": {        \"unit\": \"H87\",        \"name\": \"Testprodukt\",        \"taxCategoryCode\": \"S\",        \"vatpercent\": 19.00,        \"reverseCharge\": false,        \"intraCommunitySupply\": false      },      \"itemCharges\": [        {          \"totalAmount\": 1.00,          \"taxPercent\": 0,          \"reason\": \"Yet another reason\",          \"categoryCode\": \"S\"        }      ],      \"itemAllowances\": [        {          \"totalAmount\": 1.00,          \"taxPercent\": 0,          \"reason\": \"Something completely strange\",          \"categoryCode\": \"S\"        }      ],      \"value\": 3.0000    }  ],  \"ownCountry\": \"DE\",  \"zfcharges\": [    {      \"totalAmount\": 1.00,      \"taxPercent\": 19.00,      \"reason\": \"AReason\",      \"reasonCode\": \"ABK\",      \"categoryCode\": \"S\"    }  ],  \"ownVATID\": \"DE0815\",  \"ownStreet\": \"teststr\",  \"ownTaxID\": \"4711\",  \"ownLocation\": \"teststadt\",  \"ownZIP\": \"55232\"}",jsonArray,true);
+			JSONAssert.assertEquals("{\n" +
+				"  \"documentCode\" : \"380\",\n" +
+				"  \"number\" : \"123\",\n" +
+				"  \"currency\" : \"EUR\",\n" +
+				"  \"paymentTermDescription\" : "+expectedPaymentTermDesciption+",\n" +
+				"  \"issueDate\" : "+expectedIssueDate+",\n" +
+				"  \"dueDate\" : "+expectedDueDate+",\n" +
+				"  \"sender\" : {\n" +
+				"    \"name\" : \"Test company\",\n" +
+				"    \"zip\" : \"55232\",\n" +
+				"    \"street\" : \"teststr\",\n" +
+				"    \"location\" : \"teststadt\",\n" +
+				"    \"country\" : \"DE\",\n" +
+				"    \"taxID\" : \"4711\",\n" +
+				"    \"vatID\" : \"DE0815\",\n" +
+				"    \"vatid\" : \"DE0815\"\n" +
+				"  },\n" +
+				"  \"recipient\" : {\n" +
+				"    \"name\" : \"Franz Müller\",\n" +
+				"    \"zip\" : \"55232\",\n" +
+				"    \"street\" : \"teststr.12\",\n" +
+				"    \"location\" : \"Entenhausen\",\n" +
+				"    \"country\" : \"DE\",\n" +
+				"    \"contact\" : {\n" +
+				"      \"name\" : \"contact testname\",\n" +
+				"      \"phone\" : \"123456\",\n" +
+				"      \"email\" : \"contact.testemail@example.org\",\n" +
+				"      \"fax\" : \"0911623562\"\n" +
+				"    }\n" +
+				"  },\n" +
+				"  \"totalPrepaidAmount\" : 0.0,\n" +
+				"  \"zfitems\" : [ {\n" +
+				"    \"price\" : 3.0,\n" +
+				"    \"quantity\" : 1.0,\n" +
+				"    \"basisQuantity\" : 1.0,\n" +
+				"    \"id\" : \"1\",\n" +
+				"    \"product\" : {\n" +
+				"      \"unit\" : \"H87\",\n" +
+				"      \"name\" : \"Testprodukt\",\n" +
+				"      \"taxCategoryCode\" : \"S\",\n" +
+				"      \"vatpercent\" : 19.0\n" +
+				"    },\n" +
+				"    \"itemAllowances\" : [ {\n" +
+				"      \"totalAmount\" : 0.1,\n" +
+				"      \"taxPercent\" : 0,\n" +
+				"      \"categoryCode\" : \"S\"\n" +
+				"    } ],\n" +
+				"    \"value\" : 3.0,\n" +
+				"    \"calculation\" : {\n" +
+				"      \"price\" : 3.0,\n" +
+				"      \"priceGross\" : 3.0,\n" +
+				"      \"itemTotalNetAmount\" : 2.9,\n" +
+				"      \"itemTotalVATAmount\" : 0.551,\n" +
+				"      \"itemTotalGrossAmount\" : 2.9\n" +
+				"    }\n" +
+				"  }, {\n" +
+				"    \"price\" : 3.0,\n" +
+				"    \"quantity\" : 1.0,\n" +
+				"    \"basisQuantity\" : 1.0,\n" +
+				"    \"id\" : \"2\",\n" +
+				"    \"product\" : {\n" +
+				"      \"unit\" : \"H87\",\n" +
+				"      \"name\" : \"Testprodukt\",\n" +
+				"      \"taxCategoryCode\" : \"S\",\n" +
+				"      \"vatpercent\" : 19.0\n" +
+				"    },\n" +
+				"    \"itemAllowances\" : [ {\n" +
+				"      \"percent\" : 50.0,\n" +
+				"      \"totalAmount\" : 1.5,\n" +
+				"      \"basisAmount\" : 3.0,\n" +
+				"      \"taxPercent\" : 0,\n" +
+				"      \"reason\" : \"In love with salesperson\",\n" +
+				"      \"categoryCode\" : \"S\"\n" +
+				"    } ],\n" +
+				"    \"value\" : 3.0,\n" +
+				"    \"calculation\" : {\n" +
+				"      \"price\" : 3.0,\n" +
+				"      \"priceGross\" : 3.0,\n" +
+				"      \"itemTotalNetAmount\" : 1.5,\n" +
+				"      \"itemTotalVATAmount\" : 0.285,\n" +
+				"      \"itemTotalGrossAmount\" : 1.5\n" +
+				"    }\n" +
+				"  }, {\n" +
+				"    \"price\" : 3.0,\n" +
+				"    \"quantity\" : 2.0,\n" +
+				"    \"basisQuantity\" : 1.0,\n" +
+				"    \"id\" : \"3\",\n" +
+				"    \"product\" : {\n" +
+				"      \"unit\" : \"H87\",\n" +
+				"      \"name\" : \"Testprodukt\",\n" +
+				"      \"taxCategoryCode\" : \"S\",\n" +
+				"      \"vatpercent\" : 19.0\n" +
+				"    },\n" +
+				"    \"itemCharges\" : [ {\n" +
+				"      \"totalAmount\" : 1.0,\n" +
+				"      \"taxPercent\" : 0,\n" +
+				"      \"reason\" : \"AnotherReason\",\n" +
+				"      \"categoryCode\" : \"S\"\n" +
+				"    } ],\n" +
+				"    \"value\" : 3.0,\n" +
+				"    \"calculation\" : {\n" +
+				"      \"price\" : 3.0,\n" +
+				"      \"priceGross\" : 3.0,\n" +
+				"      \"itemTotalNetAmount\" : 7.0,\n" +
+				"      \"itemTotalVATAmount\" : 1.33,\n" +
+				"      \"itemTotalGrossAmount\" : 7.0\n" +
+				"    }\n" +
+				"  }, {\n" +
+				"    \"price\" : 3.0,\n" +
+				"    \"quantity\" : 1.0,\n" +
+				"    \"basisQuantity\" : 1.0,\n" +
+				"    \"id\" : \"4\",\n" +
+				"    \"product\" : {\n" +
+				"      \"unit\" : \"H87\",\n" +
+				"      \"name\" : \"Testprodukt\",\n" +
+				"      \"taxCategoryCode\" : \"S\",\n" +
+				"      \"vatpercent\" : 19.0\n" +
+				"    },\n" +
+				"    \"itemAllowances\" : [ {\n" +
+				"      \"totalAmount\" : 1.0,\n" +
+				"      \"taxPercent\" : 0,\n" +
+				"      \"reason\" : \"Something completely strange\",\n" +
+				"      \"categoryCode\" : \"S\"\n" +
+				"    } ],\n" +
+				"    \"itemCharges\" : [ {\n" +
+				"      \"totalAmount\" : 1.0,\n" +
+				"      \"taxPercent\" : 0,\n" +
+				"      \"reason\" : \"Yet another reason\",\n" +
+				"      \"categoryCode\" : \"S\"\n" +
+				"    } ],\n" +
+				"    \"value\" : 3.0,\n" +
+				"    \"calculation\" : {\n" +
+				"      \"price\" : 3.0,\n" +
+				"      \"priceGross\" : 3.0,\n" +
+				"      \"itemTotalNetAmount\" : 3.0,\n" +
+				"      \"itemTotalVATAmount\" : 0.57,\n" +
+				"      \"itemTotalGrossAmount\" : 3.0\n" +
+				"    }\n" +
+				"  } ],\n" +
+				"  \"zfcharges\" : [ {\n" +
+				"    \"totalAmount\" : 1.0,\n" +
+				"    \"taxPercent\" : 19.0,\n" +
+				"    \"reason\" : \"AReason\",\n" +
+				"    \"reasonCode\" : \"ABK\",\n" +
+				"    \"categoryCode\" : \"S\"\n" +
+				"  } ]\n" +
+				"}",jsonArray,true);
 		} catch (IOException e) {
 			fail("IOException not expected");
 		} catch (XPathExpressionException e) {

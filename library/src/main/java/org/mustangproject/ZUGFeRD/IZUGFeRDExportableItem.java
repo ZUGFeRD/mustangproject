@@ -205,4 +205,6 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	default String getAccountingReference() {
 		return null;
 	}
+
+    default LineCalculator getCalculation() {return new LineCalculator(this); };
 }

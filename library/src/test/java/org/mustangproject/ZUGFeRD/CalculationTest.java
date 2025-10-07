@@ -5,12 +5,15 @@ import static java.math.BigDecimal.valueOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 import org.junit.Test;
 import org.mustangproject.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xmlunit.builder.Input;
 
+import javax.xml.transform.Source;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
 import java.math.BigDecimal;
@@ -32,7 +35,7 @@ public class CalculationTest extends ResourceCase {
 			.setQuantity(TEN)
 			.setProduct(product);
 
-		final LineCalculator calculator = new LineCalculator(currentItem);
+		final LineCalculator calculator = currentItem.getCalculation();
 
 		assertEquals(valueOf(100).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
 		assertEquals(valueOf(1000).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
@@ -51,7 +54,7 @@ public class CalculationTest extends ResourceCase {
 			.setItemAllowances(new IZUGFeRDAllowanceCharge[]{allowance})
 			.setProduct(product);
 
-		final LineCalculator calculator = new LineCalculator(currentItem);
+		final LineCalculator calculator = currentItem.getCalculation();
 
 		assertEquals(valueOf(148.73).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
 		assertEquals(valueOf(1769.89).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
@@ -71,7 +74,7 @@ public class CalculationTest extends ResourceCase {
 			.setItemCharges(new IZUGFeRDAllowanceCharge[]{charge})
 			.setProduct(product);
 
-		final LineCalculator calculator = new LineCalculator(currentItem);
+		final LineCalculator calculator = currentItem.getCalculation();
 
 		assertEquals(valueOf(148.73).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
 		assertEquals(valueOf(1799.63).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
@@ -110,13 +113,13 @@ public class CalculationTest extends ResourceCase {
 		product.addAllowance(new Allowance(new BigDecimal(1)));
 		item = new Item(product, new BigDecimal("9.50"), new BigDecimal(25));
 		item.addCharge(new Charge(new BigDecimal(10)).setReasonCode("ZZZ").setReason("Zuschlag"));
-		LineCalculator lc = new LineCalculator(item);
+		LineCalculator lc = item.getCalculation();
 		assertEquals(new BigDecimal("222.50"), lc.getItemTotalNetAmount());
 		invoice.addItem(item);
 		product = new Product("Paper", "", "H87", new BigDecimal(25));
 		item = new Item(product, new BigDecimal("4.50"), new BigDecimal(15));
 		item.addAllowance(new Allowance().setPercent(new BigDecimal(5)).setReasonCode("ZZZ").setReason("Zuschlag"));
-		lc = new LineCalculator(item);
+		lc = item.getCalculation();
 		assertEquals(new BigDecimal("64.12"), lc.getItemTotalNetAmount());
 		invoice.addItem(item);
 		invoice.addAllowance(new Allowance().setPercent(new BigDecimal(10)).setTaxPercent(new BigDecimal(25)).setReasonCode("ZZZ").setReason("Mengenrabatt"));
@@ -161,6 +164,40 @@ public class CalculationTest extends ResourceCase {
 
 	}
 
+
+/*	@Test
+	public void testRounding() {
+/*** xml of official fx sample with allowances and charges
+ *  10x100 with 10% and 50€ item discount =850€
+ *  +8,75 charges on document level=858,75, +19%VAT=1021,91
+ *  prepaid 500->due payable=521,91
+ *
+		File inputCII = getResourceAsFile("EN16931_1_Teilrechnung_corrected.xml");
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		Invoice invoice = null;
+		zii.doIgnoreCalculationErrors();
+		boolean hasExceptions = false;
+		try {
+			zii.setInputStream(new FileInputStream(inputCII));
+
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException e) {
+// handle Exceptions
+			hasExceptions = true;
+		} catch (FileNotFoundException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		// Reading ZUGFeRD
+
+		final TransactionCalculator calculator = new TransactionCalculator(invoice);
+
+		assertEquals(valueOf(147.59).stripTrailingZeros(), calculator.getDuePayable().stripTrailingZeros());
+
+
+	}
+*/
 
 	@Test
 	public void testTotalCalculatorGrandTotalRounding() {
@@ -283,8 +320,74 @@ public class CalculationTest extends ResourceCase {
 		item.addAllowance(new Allowance().setPercent(new BigDecimal(10)).setTaxPercent(BigDecimal.ZERO));
 		invoice.addItem(item);
 
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(invoice);
+
+
+		String theXML = new String(zf2p.getXML());
+		assertThat(theXML).valueByXPath("//*[local-name()='ActualAmount']")
+			.asString()
+			.isEqualTo("0.55");// test for issue #917
+
+
 		TransactionCalculator calculator = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("4.95"), calculator.getGrandTotal().stripTrailingZeros());
+	}
+
+	public void testSimpleItemPercentCharge() {
+		/***
+		 * a product with net 1.10 and qty 5 and relative item allowance of 10% should return 5 as line and grand total
+		 */
+		SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
+
+		Invoice invoice = new Invoice();
+		invoice.setDocumentName("Rechnung");
+		invoice.setNumber("777777");
+		try {
+			invoice.setIssueDate(sqlDate.parse("2020-12-31"));
+			invoice.setDetailedDeliveryPeriod(sqlDate.parse("2020-12-01 - 2020-12-31".split(" - ")[0]), sqlDate.parse("2020-12-01 - 2020-12-31".split(" - ")[1]));
+			invoice.setDeliveryDate(sqlDate.parse("2020-12-31"));
+			invoice.setDueDate(sqlDate.parse("2021-01-15"));
+		} catch (Exception e) {
+			LOGGER.error("Failed to set dates", e);
+
+		}
+		TradeParty sender = new TradeParty("Maier GmbH", "Musterweg 5", "11111", "Testung", "DE");
+		sender.addVATID("DE2222222222");
+		invoice.setSender(sender);
+
+		/* trade party (recipient) */
+		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " " + "", "Testweg 5", "11111", "Testung", "DE");
+		recipient.setID("111111");
+		recipient.addVATID("DE111111111");
+		invoice.setRecipient(recipient);
+
+		/* item */
+		Product product;
+		Item item;
+
+		product = new Product("AAA", "", "H87", BigDecimal.ZERO);
+		item = new Item(product, new BigDecimal("1.10"), new BigDecimal(5.00));
+
+		item.addCharge(new Charge().setPercent(new BigDecimal(10)).setTaxPercent(BigDecimal.ZERO));
+		invoice.addItem(item);
+
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(invoice);
+
+
+		String theXML = new String(zf2p.getXML());
+		assertThat(theXML).valueByXPath("//*[local-name()='ActualAmount']")
+			.asString()
+			.isEqualTo("0.55");// test for issue #917
+
+
+		TransactionCalculator calculator = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("6.05"), calculator.getGrandTotal().stripTrailingZeros());
 	}
 
 	public void testSimpleDocumentPercentCharge() {
@@ -390,7 +493,7 @@ public class CalculationTest extends ResourceCase {
 			.setQuantity(BigDecimal.valueOf(31))
 			.setBasisQuantity(BigDecimal.valueOf(366))
 			.setProduct(product);
-		final LineCalculator calculator = new LineCalculator(currentItem);
+		final LineCalculator calculator = currentItem.getCalculation();
 		assertEquals(BigDecimal.valueOf(32.74), calculator.getItemTotalNetAmount());
 	}
 

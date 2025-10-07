@@ -344,7 +344,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 			}
 
 
-			final LineCalculator lc = new LineCalculator(currentItem);
+			final LineCalculator lc = currentItem.getCalculation();
 			xml += "<ram:IncludedSupplyChainTradeLineItem>" +
 					"<ram:AssociatedDocumentLineDocument>"
 					+ "<ram:LineID>" + lineID + "</ram:LineID>"

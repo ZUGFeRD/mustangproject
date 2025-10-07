@@ -1,3 +1,17 @@
+- added JSONIgnore for Products intra community supply, reverse charge and invoice's isValid (which rather means isComplete, by the way)
+- #917
+- #915
+- #921
+- #926
+- upgrade apache fop 2.10 to 2.11
+- #931
+- #932
+- #933,  #413, #557, #765
+- make Line Calculation, e.g. total line net amount, accessible via JSON using getCalculation
+- #940
+- #939
+- #692
+
 2.19.0
 =======
 2025-08-12

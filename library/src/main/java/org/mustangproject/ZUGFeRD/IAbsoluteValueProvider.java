@@ -24,4 +24,7 @@ public interface IAbsoluteValueProvider {
 
 	public BigDecimal getValue();
 
+	default BigDecimal getQuantity() {
+		return BigDecimal.ONE;
+	}
 }

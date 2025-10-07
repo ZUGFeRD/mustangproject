@@ -415,7 +415,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if (currentItem.getId() != null) {
 				lineIDStr = currentItem.getId();
 			}
-			final LineCalculator lc = new LineCalculator(currentItem);
+			final LineCalculator lc = currentItem.getCalculation();
 			if ((getProfile() != Profiles.getByName("Minimum")) && (getProfile() != Profiles.getByName("BasicWL"))) {
 				xml += "<ram:IncludedSupplyChainTradeLineItem>" +
 					"<ram:AssociatedDocumentLineDocument>"
