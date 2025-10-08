@@ -165,40 +165,6 @@ public class CalculationTest extends ResourceCase {
 	}
 
 
-/*	@Test
-	public void testRounding() {
-/*** xml of official fx sample with allowances and charges
- *  10x100 with 10% and 50€ item discount =850€
- *  +8,75 charges on document level=858,75, +19%VAT=1021,91
- *  prepaid 500->due payable=521,91
- *
-		File inputCII = getResourceAsFile("EN16931_1_Teilrechnung_corrected.xml");
-
-		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
-		Invoice invoice = null;
-		zii.doIgnoreCalculationErrors();
-		boolean hasExceptions = false;
-		try {
-			zii.setInputStream(new FileInputStream(inputCII));
-
-			invoice = zii.extractInvoice();
-		} catch (XPathExpressionException | ParseException e) {
-// handle Exceptions
-			hasExceptions = true;
-		} catch (FileNotFoundException e) {
-			hasExceptions = true;
-		}
-		assertFalse(hasExceptions);
-		// Reading ZUGFeRD
-
-		final TransactionCalculator calculator = new TransactionCalculator(invoice);
-
-		assertEquals(valueOf(147.59).stripTrailingZeros(), calculator.getDuePayable().stripTrailingZeros());
-
-
-	}
-*/
-
 	@Test
 	public void testTotalCalculatorGrandTotalRounding() {
 		SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
