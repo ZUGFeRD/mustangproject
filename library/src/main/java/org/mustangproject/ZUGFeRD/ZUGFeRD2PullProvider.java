@@ -95,7 +95,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		final StringWriter sw = new StringWriter();
 		Document document = null;
 		try {
-			document = DocumentHelper.parseText(new String(zugferdData));
+			document = DocumentHelper.parseText(new String(zugferdData, StandardCharsets.UTF_8));
 		} catch (final DocumentException e1) {
 			LOGGER.error("Failed to parse ZUGFeRD data", e1);
 		}
@@ -620,7 +620,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		// Additional Documents of XRechnung (Rechnungsbegruendende Unterlagen - BG-24 XRechnung)
 		if (trans.getAdditionalReferencedDocuments() != null) {
 			for (final FileAttachment f : trans.getAdditionalReferencedDocuments()) {
-				final String documentContent = new String(Base64.getEncoder().encodeToString(f.getData()));
+				final String documentContent = Base64.getEncoder().encodeToString(f.getData());
 				xml += "<ram:AdditionalReferencedDocument>"
 					+ "<ram:IssuerAssignedID>" + f.getFilename() + "</ram:IssuerAssignedID>"
 					+ "<ram:TypeCode>916</ram:TypeCode>"

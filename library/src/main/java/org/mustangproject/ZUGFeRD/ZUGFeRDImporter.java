@@ -14,6 +14,7 @@ package org.mustangproject.ZUGFeRD;
  * @author jstaerk
  */
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -479,7 +480,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 			return null;
 		}
 
-		return new String(rawXML);
+		return new String(rawXML, StandardCharsets.UTF_8);
 	}
 
 

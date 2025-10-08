@@ -166,7 +166,7 @@ can be used to get XML
 ```
 ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 zf2p.generateXML(i);
-String theXML = new String(zf2p.getXML());
+String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 ```
 or can also be used with setTransaction to generate invoice PDFs straight away.
 ### Embedding ZF1 to ZF2 migration

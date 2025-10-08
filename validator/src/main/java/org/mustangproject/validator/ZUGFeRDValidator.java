@@ -301,7 +301,7 @@ public class ZUGFeRDValidator {
 		StringWriter sw = new StringWriter();
 		org.dom4j.Document document = null;
 		try {
-			document = DocumentHelper.parseText(new String(finalStringResult));
+			document = DocumentHelper.parseText(finalStringResult.toString());
 		} catch (DocumentException e1) {
 			LOGGER.error(e1.getMessage());
 		}
