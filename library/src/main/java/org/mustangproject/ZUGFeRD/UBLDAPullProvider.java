@@ -117,7 +117,7 @@ public class UBLDAPullProvider implements IXMLProvider {
 		final StringWriter sw = new StringWriter();
 		Document document = null;
 		try {
-			document = DocumentHelper.parseText(new String(ublData));
+			document = DocumentHelper.parseText(new String(ublData, StandardCharsets.UTF_8));
 		} catch (final DocumentException e1) {
 			LOGGER.error ("Failed to parse UBL", e1);
 		}

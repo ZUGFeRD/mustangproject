@@ -1223,7 +1223,7 @@ public class ZUGFeRDInvoiceImporter {
 			return null;
 		}
 		if (rawXML.length < 3) {
-			return new String(rawXML);
+			return new String(rawXML, StandardCharsets.UTF_8);
 		}
 
 

@@ -24,6 +24,7 @@ package org.mustangproject.ZUGFeRD;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -175,7 +176,7 @@ public class ZF2Test extends MustangReaderTestCase {
 				 .load(SOURCE_PDF)) {
 
 			ze.setTransaction(this);
-			final String theXML = new String(ze.getProvider().getXML());
+			final String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(TARGET_PDF);
 		} catch (final IOException e) {

@@ -300,7 +300,7 @@ public class DeSerializationTest extends ResourceCase {
 			ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 			zf2p.setProfile(Profiles.getByName("XRechnung"));
 			zf2p.generateXML(newInvoiceFromJSON);
-			String theXML = new String(zf2p.getXML());
+			String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<udt:DateTimeString format=\"102\">20180304</udt:DateTimeString>"));
 			assertTrue(theXML.contains(base64));
 
@@ -539,7 +539,7 @@ public class DeSerializationTest extends ResourceCase {
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 		zf2p.setProfile(Profiles.getByName("XRechnung"));
 		zf2p.generateXML(fromJSON);
-		String theXML = new String(zf2p.getXML());
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertTrue(theXML.contains("<udt:DateTimeString format=\"102\">20241026</udt:DateTimeString>"));
 
 	}
@@ -920,7 +920,7 @@ public class DeSerializationTest extends ResourceCase {
 			ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 			zf2p.setProfile(Profiles.getByName("XRechnung"));
 			zf2p.generateXML(fromJSON);
-			theXML = new String(zf2p.getXML());
+			theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		} catch (Exception e) {
 			exceptions = true;
 		}

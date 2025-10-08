@@ -257,7 +257,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 		// Additional Documents of XRechnung (Rechnungsbegruendende Unterlagen - BG-24 XRechnung)
 		if (trans.getAdditionalReferencedDocuments() != null) {
 			for (final FileAttachment f : trans.getAdditionalReferencedDocuments()) {
-				final String documentContent = new String(Base64.getEncoder().encodeToString(f.getData()));
+				final String documentContent = Base64.getEncoder().encodeToString(f.getData());
 				xml += "<ram:AdditionalReferencedDocument>"
 						+ "<ram:IssuerAssignedID>" + f.getFilename() + "</ram:IssuerAssignedID>"
 						+ "<ram:TypeCode>916</ram:TypeCode>"

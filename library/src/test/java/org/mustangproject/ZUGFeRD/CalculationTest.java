@@ -17,6 +17,7 @@ import javax.xml.transform.Source;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -292,7 +293,7 @@ public class CalculationTest extends ResourceCase {
 		zf2p.generateXML(invoice);
 
 
-		String theXML = new String(zf2p.getXML());
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertThat(theXML).valueByXPath("//*[local-name()='ActualAmount']")
 			.asString()
 			.isEqualTo("0.55");// test for issue #917
@@ -346,7 +347,7 @@ public class CalculationTest extends ResourceCase {
 		zf2p.generateXML(invoice);
 
 
-		String theXML = new String(zf2p.getXML());
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertThat(theXML).valueByXPath("//*[local-name()='ActualAmount']")
 			.asString()
 			.isEqualTo("0.55");// test for issue #917
