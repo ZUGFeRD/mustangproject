@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.mustangproject</groupId>
         <artifactId>core</artifactId>
-        <version>2.19.1</version>
+        <version>2.19.2-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -18,7 +18,7 @@
         <connection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</connection>
         <developerConnection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</developerConnection>
         <url>https://github.com/ZUGFeRD/mustangproject</url>
-        <tag>core-2.19.1</tag>
+        <tag>core-2.3.2</tag>
     </scm>
     <repositories>
         <repository><!-- for jargs -->
