@@ -1,16 +1,21 @@
+2.19.1
+=======
+2025-10-09
+
 - added JSONIgnore for Products intra community supply, reverse charge and invoice's isValid (which rather means isComplete, by the way)
-- #917
-- #915
-- #921
-- #926
+- #917/#940 percentual allowance/charges actualamount not multiplied with qty/Some quantities and allowances may cause Non-terminating decimal expansion
+- #915 Update SubjectCode.java to add subject code 'PMT'
+- #921 Treat schematron rule flag "information" as notice.
+- #926 reject FX with UBL
 - upgrade apache fop 2.10 to 2.11
-- #931
-- #932
-- #933,  #413, #557, #765
+- #931 Enable setting and reading Additional Document Description.
+- #932 Fix typo
+- #933,  #413, #557, #765 Format list of dates for PDFs individually/Bug: "FORG0001: Invalid date (Day must be two digits)" bei der Transformation von ZUGFeRD nach PDF/Visualize XML into PDF throws error if XML contains multiple SpecifiedTradePaymentTerms blocks/Exception when generating PDF 
 - make Line Calculation, e.g. total line net amount, accessible via JSON using getCalculation
-- #940
-- #939
-- #692
+- #939 Remove System.out.println from XRTest.java
+- #692 parse cash discounts
+- #943/#944 ZUGFeRD2PullProvider getXML() does not set fixed Encoding / Use UTF-8 when creating new Strings from byte[].
+- #914 Optimize pom.xml´s.
 
 2.19.0
 =======
