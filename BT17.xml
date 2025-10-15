@@ -136,6 +136,10 @@
                     <ram:ID schemeID="VA">DE999999999</ram:ID>
                 </ram:SpecifiedTaxRegistration>
             </ram:BuyerTradeParty>
+            <ram:AdditionalReferencedDocument>
+                <ram:IssuerAssignedID>Testing1</ram:IssuerAssignedID>
+                <ram:TypeCode>50</ram:TypeCode>
+            </ram:AdditionalReferencedDocument>
         </ram:ApplicableHeaderTradeAgreement>
         <ram:ApplicableHeaderTradeDelivery>
             <ram:ShipToTradeParty>
