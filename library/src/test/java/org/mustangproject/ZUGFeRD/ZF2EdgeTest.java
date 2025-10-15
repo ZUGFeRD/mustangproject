@@ -145,6 +145,25 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	}
 
 	@Override
+	public IDatedReference getTenderReference() {
+		return new IDatedReference() {
+			@Override
+			public String getID() {
+				return "983-jk-787 (obsolete)";
+			}
+			@Override
+			public Date getDate() {
+				SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
+				try {
+					return sdf.parse("2025-10-12");
+				} catch (ParseException e) {
+					// wont happen, I promise :-)
+				}
+			}
+		};
+	}
+
+	@Override
 	public String getOwnLocation() {
 		return "Stadthausen";
 	}
