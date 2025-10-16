@@ -671,6 +671,7 @@ public class ZUGFeRDInvoiceImporter {
 		NodeList headerTradeAgreementNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		String buyerOrderIssuerAssignedID = null;
 		String sellerOrderIssuerAssignedID = null;
+		String additionalReferencedDocument = null;
 		for (int i = 0; i < headerTradeAgreementNodes.getLength(); i++) {
 			// XMLTools.trimOrNull(nodes.item(i)))) {
 			Node headerTradeAgreementNode = headerTradeAgreementNodes.item(i);
@@ -693,6 +694,16 @@ public class ZUGFeRDInvoiceImporter {
 							if ((sellerOrderChilds.item(sellerOrderChildIndex).getLocalName() != null)
 								&& (sellerOrderChilds.item(sellerOrderChildIndex).getLocalName().equals("IssuerAssignedID"))) {
 								sellerOrderIssuerAssignedID = XMLTools.trimOrNull(sellerOrderChilds.item(sellerOrderChildIndex));
+							}
+						}
+					}
+					//Reading BT-17
+					if(headerTradeAgreementChilds.item(agreementChildIndex).getLocalName().equals("AdditionalReferencedDocument")) {
+						NodeList additionalChilds = headerTradeAgreementChilds.item(agreementChildIndex).getChildNodes();
+						for (int additionalChildIndex = 0; additionalChildIndex < additionalChilds.getLength(); additionalChildIndex++){
+							if((additionalChilds.item(additionalChildIndex).getLocalName() != null)
+							&& (additionalChilds.item(additionalChildIndex).getLocalName().equals("IssuerAssignedID"))) {
+								additionalReferencedDocument = XMLTools.trimOrNull(additionalChilds.item(additionalChildIndex));
 							}
 						}
 					}
@@ -936,6 +947,9 @@ public class ZUGFeRDInvoiceImporter {
 				zpp.setDespatchAdviceReferencedDocumentID(s);
 			}
 		}
+//		if (additionalReferencedDocument != null){
+//			zpp.setAdditionalReferencedDocuments(additionalReferencedDocument);
+//		}
 		String invoiceReferencedDocumentID = extractString("//*[local-name()=\"InvoiceReferencedDocument\"]/*[local-name()=\"IssuerAssignedID\"]|//*[local-name()=\"BillingReference\"]/*[local-name()=\"InvoiceDocumentReference\"]/*[local-name()=\"ID\"]");
 		if (!invoiceReferencedDocumentID.isEmpty()) {
 			zpp.setInvoiceReferencedDocumentID(invoiceReferencedDocumentID);
