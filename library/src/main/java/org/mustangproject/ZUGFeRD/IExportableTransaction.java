@@ -219,7 +219,7 @@ public interface IExportableTransaction {
 	 *
 	 * @return mandatory ID, optional Date
 	 */
-	default IDatedReference getTenderReference() {
+	default IDatedReference getTenderReferencedDocument() {
 		return null;
 	}
 

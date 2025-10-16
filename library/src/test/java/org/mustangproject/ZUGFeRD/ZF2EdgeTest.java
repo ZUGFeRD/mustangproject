@@ -145,7 +145,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	}
 
 	@Override
-	public IDatedReference getTenderReference() {
+	public IDatedReference getTenderReferencedDocument() {
 		return new IDatedReference() {
 			@Override
 			public String getID() {
@@ -159,6 +159,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 				} catch (ParseException e) {
 					// wont happen, I promise :-)
 				}
+				return null; // wont happen either
 			}
 		};
 	}
