@@ -149,7 +149,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		return new IDatedReference() {
 			@Override
 			public String getID() {
-				return "983-jk-787 (obsolete)";
+				return "983-jk-787";
 			}
 			@Override
 			public Date getDate() {
