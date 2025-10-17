@@ -947,9 +947,9 @@ public class ZUGFeRDInvoiceImporter {
 				zpp.setDespatchAdviceReferencedDocumentID(s);
 			}
 		}
-//		if (additionalReferencedDocument != null){
-//			zpp.setAdditionalReferencedDocuments(additionalReferencedDocument);
-//		}
+		if (additionalReferencedDocument != null){
+			zpp.setTenderReferencedDocument(additionalReferencedDocument);
+		}
 		String invoiceReferencedDocumentID = extractString("//*[local-name()=\"InvoiceReferencedDocument\"]/*[local-name()=\"IssuerAssignedID\"]|//*[local-name()=\"BillingReference\"]/*[local-name()=\"InvoiceDocumentReference\"]/*[local-name()=\"ID\"]");
 		if (!invoiceReferencedDocumentID.isEmpty()) {
 			zpp.setInvoiceReferencedDocumentID(invoiceReferencedDocumentID);
