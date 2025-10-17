@@ -634,8 +634,14 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if(trans.getTenderReferencedDocument() != null){
 			xml += "<ram:AdditionalReferencedDocument>"
 				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getTenderReferencedDocument().getID()) + "</ram:IssuerAssignedID>"
-				+ "<ram:TypeCode>" + 50 + "</ram:TypeCode>"
-				+ "</ram:AdditionalReferencedDocument>";
+				+ "<ram:TypeCode>" + 50 + "</ram:TypeCode>";
+			if (trans.getTenderReferencedDocument().getDate()!=null) {
+				final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
+				xml += "<ram:FormattedIssueDateTime><qdt:DateTimeString format=\"102\">"+XMLTools.encodeXML(dateFormat102.format(trans.getTenderReferencedDocument().getDate()))+"</qdt:DateTimeString></ram:FormattedIssueDateTime>";
+			}
+
+
+			xml += "</ram:AdditionalReferencedDocument>";
 		}
 		if (trans.getSpecifiedProcuringProjectID() != null) {
 			xml += "<ram:SpecifiedProcuringProject>"

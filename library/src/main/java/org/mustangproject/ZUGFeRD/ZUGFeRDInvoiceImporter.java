@@ -606,6 +606,11 @@ public class ZUGFeRDInvoiceImporter {
 			if (!issueDateStr.isEmpty()) {
 				issueDate = parseDate(issueDateStr, "yyyy-MM-dd");
 			}
+
+			String tenderReference = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"OriginatorDocumentReference\"]/*[local-name()=\"ID\"]").trim();
+			String tenderReferenceDate = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"OriginatorDocumentReference\"]/*[local-name()=\"ID\"]").trim();
+			//if (tenderReference!=null) zpp... @todo bt-17 create a ubl with a date and set up an according xpath and if only tenderReference!=null only set that but if  tenderReference!=null&&date!=null set both in zpp
+
 			String dueDt = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"DueDate\"]").trim();
 			if (!dueDt.isEmpty()) {
 				dueDate = parseDate(dueDt, "yyyy-MM-dd");
@@ -672,6 +677,7 @@ public class ZUGFeRDInvoiceImporter {
 		String buyerOrderIssuerAssignedID = null;
 		String sellerOrderIssuerAssignedID = null;
 		String additionalReferencedDocument = null;
+		Date additionalReferencedDocumentDate = null;
 		for (int i = 0; i < headerTradeAgreementNodes.getLength(); i++) {
 			// XMLTools.trimOrNull(nodes.item(i)))) {
 			Node headerTradeAgreementNode = headerTradeAgreementNodes.item(i);
@@ -702,8 +708,19 @@ public class ZUGFeRDInvoiceImporter {
 						NodeList additionalChilds = headerTradeAgreementChilds.item(agreementChildIndex).getChildNodes();
 						for (int additionalChildIndex = 0; additionalChildIndex < additionalChilds.getLength(); additionalChildIndex++){
 							if((additionalChilds.item(additionalChildIndex).getLocalName() != null)
-							&& (additionalChilds.item(additionalChildIndex).getLocalName().equals("IssuerAssignedID"))) {
+								&& (additionalChilds.item(additionalChildIndex).getLocalName().equals("IssuerAssignedID"))) {
 								additionalReferencedDocument = XMLTools.trimOrNull(additionalChilds.item(additionalChildIndex));
+							}
+							if((additionalChilds.item(additionalChildIndex).getLocalName() != null)
+								&& (additionalChilds.item(additionalChildIndex).getLocalName().equals("FormattedIssueDateTime"))) {
+								NodeList FormattedIssueDateTimeChilds = headerTradeAgreementChilds.item(agreementChildIndex).getChildNodes();
+								for (int dateChildIndex = 0; dateChildIndex < FormattedIssueDateTimeChilds.getLength(); dateChildIndex++){
+									if((FormattedIssueDateTimeChilds.item(dateChildIndex).getLocalName() != null)
+										&& (FormattedIssueDateTimeChilds.item(dateChildIndex).getLocalName().equals("DateTimeString"))) {
+										additionalReferencedDocumentDate = XMLTools.tryDate(FormattedIssueDateTimeChilds.item(dateChildIndex));
+									}
+
+								}
 							}
 						}
 					}
@@ -948,7 +965,11 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 		if (additionalReferencedDocument != null){
-			zpp.setTenderReferencedDocument(additionalReferencedDocument);
+			if (additionalReferencedDocumentDate!=null) {
+				zpp.setTenderReferencedDocument(new DatedReference(additionalReferencedDocument, additionalReferencedDocumentDate));
+			} else {
+				zpp.setTenderReferencedDocument(additionalReferencedDocument);
+			}
 		}
 		String invoiceReferencedDocumentID = extractString("//*[local-name()=\"InvoiceReferencedDocument\"]/*[local-name()=\"IssuerAssignedID\"]|//*[local-name()=\"BillingReference\"]/*[local-name()=\"InvoiceDocumentReference\"]/*[local-name()=\"ID\"]");
 		if (!invoiceReferencedDocumentID.isEmpty()) {

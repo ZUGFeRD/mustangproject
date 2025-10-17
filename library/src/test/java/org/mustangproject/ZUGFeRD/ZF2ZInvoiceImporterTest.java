@@ -191,6 +191,38 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 
+	public void testBT17InvoiceImport() {
+		boolean hasExceptions = false;
+		Invoice invoice = null;
+/*
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushEdge.pdf");
+
+		try {
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
+		// Reading ZUGFeRD
+		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getID());
+		assertNotNull(invoice.getTenderReferencedDocument().getDate());
+		assertEquals("2025", sdf.format(invoice.getTenderReferencedDocument().getDate()));
+*/
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		try {
+			zii.setInputStream(new FileInputStream(getResourceAsFile("bt17/response_1760553749128.xml")));
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		// Reading ZUGFeRD
+		assertEquals("Testing1", invoice.getTenderReferencedDocument().getID());
+
+	}
+
+
 	public void testZF1Import() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-MustangGnuaccountingBeispielRE-20171118_506zf1.pdf");
