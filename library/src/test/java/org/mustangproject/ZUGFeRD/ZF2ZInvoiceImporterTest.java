@@ -20,6 +20,7 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
@@ -178,7 +179,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
-		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
+		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
 		// Reading ZUGFeRD
 		assertEquals("4711", invoice.getZFItems()[0].getProduct().getSellerAssignedID());
 		assertEquals("9384", invoice.getSellerOrderReferencedDocumentID());
@@ -187,6 +188,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("sender@test.org", invoice.getSender().getEmail());
 		assertEquals("recipient@test.org", invoice.getRecipient().getEmail());
 		assertEquals("28934", invoice.getBuyerOrderReferencedDocumentID());
+
+
+
 
 	}
 

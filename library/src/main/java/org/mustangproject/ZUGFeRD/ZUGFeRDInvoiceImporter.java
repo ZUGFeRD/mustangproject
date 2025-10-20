@@ -721,7 +721,8 @@ public class ZUGFeRDInvoiceImporter {
 							}
 							if((additionalChilds.item(additionalChildIndex).getLocalName() != null)
 								&& (additionalChilds.item(additionalChildIndex).getLocalName().equals("FormattedIssueDateTime"))) {
-								NodeList FormattedIssueDateTimeChilds = headerTradeAgreementChilds.item(agreementChildIndex).getChildNodes();
+
+								NodeList FormattedIssueDateTimeChilds = additionalChilds.item(additionalChildIndex).getChildNodes();
 								for (int dateChildIndex = 0; dateChildIndex < FormattedIssueDateTimeChilds.getLength(); dateChildIndex++){
 									if((FormattedIssueDateTimeChilds.item(dateChildIndex).getLocalName() != null)
 										&& (FormattedIssueDateTimeChilds.item(dateChildIndex).getLocalName().equals("DateTimeString"))) {
