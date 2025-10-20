@@ -610,8 +610,8 @@ public class ZUGFeRDInvoiceImporter {
 			String tenderReference = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"OriginatorDocumentReference\"]/*[local-name()=\"ID\"]").trim();
 			String tenderReferenceDate = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"OriginatorDocumentReference\"]/*[local-name()=\"ID\"]").trim();
 			//if (tenderReference!=null) zpp... @todo bt-17 create a ubl with a date and set up an according xpath and if only tenderReference!=null only set that but if  tenderReference!=null&&date!=null set both in zpp
-			if(tenderReference != null){
-				if(tenderReferenceDate != null){
+			if((tenderReference != null)&&(!tenderReference.isEmpty())){
+				if((tenderReferenceDate != null)&&(!tenderReferenceDate.isEmpty())){
 					zpp.setTenderReferencedDocument(new DatedReference(tenderReference, parseDate(tenderReferenceDate, "yyyy-MM-dd")));
 				} else {
 					zpp.setTenderReferencedDocument(tenderReference);
