@@ -686,7 +686,6 @@ public class ZUGFeRDInvoiceImporter {
 		String sellerOrderIssuerAssignedID = null;
 		String additionalReferencedDocument = null;
 		Date additionalReferencedDocumentDate = null;
-		int typeC = 0;
 
 		for (int i = 0; i < headerTradeAgreementNodes.getLength(); i++) {
 			// XMLTools.trimOrNull(nodes.item(i)))) {
@@ -713,6 +712,9 @@ public class ZUGFeRDInvoiceImporter {
 							}
 						}
 					}
+					int typeC = 0;
+					additionalReferencedDocument=null;
+					additionalReferencedDocumentDate=null;
 					//Reading BT-17
 					if (headerTradeAgreementChilds.item(agreementChildIndex).getLocalName().equals("AdditionalReferencedDocument")) {
 						NodeList additionalChilds = headerTradeAgreementChilds.item(agreementChildIndex).getChildNodes();
@@ -722,7 +724,7 @@ public class ZUGFeRDInvoiceImporter {
 								&& additionalChilds.item(additionalChildIndex).getLocalName().equals("TypeCode")) {
 								typeC = Integer.parseInt(XMLTools.trimOrNull(additionalChilds.item(additionalChildIndex)));
 							}
-							if (typeC == 50) {
+
 								if ((additionalChilds.item(additionalChildIndex).getLocalName() != null)
 									&& (additionalChilds.item(additionalChildIndex).getLocalName().equals("IssuerAssignedID"))) {
 									additionalReferencedDocument = XMLTools.trimOrNull(additionalChilds.item(additionalChildIndex));
@@ -739,7 +741,17 @@ public class ZUGFeRDInvoiceImporter {
 
 									}
 								}
+
+						}
+						if (typeC == 50) {
+							if (additionalReferencedDocument != null){
+								if (additionalReferencedDocumentDate!=null) {
+									zpp.setTenderReferencedDocument(new DatedReference(additionalReferencedDocument, additionalReferencedDocumentDate));
+								} else {
+									zpp.setTenderReferencedDocument(additionalReferencedDocument);
+								}
 							}
+
 						}
 					}
 				}
@@ -984,13 +996,6 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
-		if (additionalReferencedDocument != null){
-			if (additionalReferencedDocumentDate!=null) {
-				zpp.setTenderReferencedDocument(new DatedReference(additionalReferencedDocument, additionalReferencedDocumentDate));
-			} else {
-				zpp.setTenderReferencedDocument(additionalReferencedDocument);
-			}
-		}
 		String invoiceReferencedDocumentID = extractString("//*[local-name()=\"InvoiceReferencedDocument\"]/*[local-name()=\"IssuerAssignedID\"]|//*[local-name()=\"BillingReference\"]/*[local-name()=\"InvoiceDocumentReference\"]/*[local-name()=\"ID\"]");
 		if (!invoiceReferencedDocumentID.isEmpty()) {
 			zpp.setInvoiceReferencedDocumentID(invoiceReferencedDocumentID);
