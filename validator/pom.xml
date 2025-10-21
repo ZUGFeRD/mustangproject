@@ -33,12 +33,10 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>library</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>
-            <version>${version.org.dom4j}</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -49,48 +47,36 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>${version.commons-io}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>${version.jakarta.xml.bind}</version>
         </dependency>
         <dependency>
             <groupId>org.verapdf</groupId>
             <artifactId>validation-model-jakarta</artifactId>
-            <version>${version.org.verapdf}</version>
         </dependency>
         <dependency>
             <groupId>com.helger.schematron</groupId>
             <artifactId>ph-schematron-xslt</artifactId>
-            <version>${version.com.helger.schematron}</version>
         </dependency>
 
         <!-- test dependencies -->
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
-            <version>${version.org.xmlunit}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-assertj</artifactId>
-            <version>${version.org.xmlunit}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${version.org.junit}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-            <version>${version.org.junit}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -110,7 +96,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${version.org.apache.maven.plugins.maven-surefire-plugin}</version>
                 <configuration>
                     <runOrder>alphabetical</runOrder>
                     <argLine>-Duser.timezone=UTC</argLine>
@@ -120,7 +105,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>${version.org.apache.maven.plugins.maven-jar-plugin}</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>
@@ -136,7 +120,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${version.org.apache.maven.plugins.maven-compiler-plugin}</version>
                 <configuration>
                     <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
                              mvn clean compile assembly:single -->
@@ -146,65 +129,63 @@
                 </configuration>
             </plugin>
             <!-- /ZUV -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>${version.org.apache.maven.plugins.maven-shade-plugin}</version>
-                <configuration>
-                    <shadedArtifactAttached>true</shadedArtifactAttached>
-                    <minimizeJar>false</minimizeJar>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>LICENSE</exclude>
-                                <exclude>NOTICE</exclude>
-                                <exclude>META-INF/DEPENDENCIES</exclude>
-                                <exclude>META-INF/LICENSE</exclude>
-                                <exclude>META-INF/LICENSE.md</exclude>
-                                <exclude>META-INF/LICENSE.txt</exclude>
-                                <exclude>META-INF/NOTICE</exclude>
-                                <exclude>META-INF/NOTICE.md</exclude>
-                                <exclude>META-INF/NOTICE.txt</exclude>
-                                <exclude>META-INF/MANIFEST.MF</exclude>
-                                <exclude>META-INF/*.SF</exclude>
-                                <exclude>META-INF/*.DSA</exclude>
-                                <exclude>META-INF/*.RSA</exclude>
-                            </excludes>
-                        </filter>
-                        <filter>
-                            <artifact>commons-logging:commons-logging</artifact>
-                            <includes>
-                                <include>**</include>
-                            </includes>
-                        </filter>
-                        <filter>
-                            <artifact>jakarta.xml.bind:jakarta.xml.bind-api</artifact>
-                            <includes>
-                                <include>**</include>
-                            </includes>
-                        </filter>
-                    </filters>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <artifactSet>
-                                <excludes />
-                            </artifactSet>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-shade-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <shadedArtifactAttached>true</shadedArtifactAttached>-->
+<!--                    <minimizeJar>false</minimizeJar>-->
+<!--                    <filters>-->
+<!--                        <filter>-->
+<!--                            <artifact>*:*</artifact>-->
+<!--                            <excludes>-->
+<!--                                <exclude>LICENSE</exclude>-->
+<!--                                <exclude>NOTICE</exclude>-->
+<!--                                <exclude>META-INF/DEPENDENCIES</exclude>-->
+<!--                                <exclude>META-INF/LICENSE</exclude>-->
+<!--                                <exclude>META-INF/LICENSE.md</exclude>-->
+<!--                                <exclude>META-INF/LICENSE.txt</exclude>-->
+<!--                                <exclude>META-INF/NOTICE</exclude>-->
+<!--                                <exclude>META-INF/NOTICE.md</exclude>-->
+<!--                                <exclude>META-INF/NOTICE.txt</exclude>-->
+<!--                                <exclude>META-INF/MANIFEST.MF</exclude>-->
+<!--                                <exclude>META-INF/*.SF</exclude>-->
+<!--                                <exclude>META-INF/*.DSA</exclude>-->
+<!--                                <exclude>META-INF/*.RSA</exclude>-->
+<!--                            </excludes>-->
+<!--                        </filter>-->
+<!--                        <filter>-->
+<!--                            <artifact>commons-logging:commons-logging</artifact>-->
+<!--                            <includes>-->
+<!--                                <include>**</include>-->
+<!--                            </includes>-->
+<!--                        </filter>-->
+<!--                        <filter>-->
+<!--                            <artifact>jakarta.xml.bind:jakarta.xml.bind-api</artifact>-->
+<!--                            <includes>-->
+<!--                                <include>**</include>-->
+<!--                            </includes>-->
+<!--                        </filter>-->
+<!--                    </filters>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>shade</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <artifactSet>-->
+<!--                                <excludes />-->
+<!--                            </artifactSet>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>${version.org.apache.maven.plugins.maven-resources-plugin}</version>
                 <executions>
                     <execution>
                         <id>copy-zf-schematron-xml-dependencies</id>

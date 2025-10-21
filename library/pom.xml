@@ -52,22 +52,18 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${version.org.slf4j}</version>
         </dependency>
         <dependency>
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
-            <version>${version.net.sf.saxon}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${version.com.fasterxml.jackson.core}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>fop-core</artifactId>
-            <version>${version.org.apache.xmlgraphics}</version>
             <exclusions>
               <exclusion>
                 <groupId>xml-apis</groupId>
@@ -76,24 +72,28 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+        </dependency>
+        <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>${version.jakarta.xml.bind}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>preflight</artifactId>
-            <version>${version.org.apache.pdfbox}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>${version.org.apache.pdfbox}</version>
         </dependency>
         <dependency>
             <groupId>org.dom4j</groupId>
             <artifactId>dom4j</artifactId>
-            <version>${version.org.dom4j}</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -105,44 +105,37 @@
         <dependency>
             <groupId>com.helger</groupId>
             <artifactId>en16931-cii2ubl</artifactId>
-            <version>${version.com.helger.en16931-cii2ubl}</version>
         </dependency>
 
         <!-- test dependencies -->
         <dependency>
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
-            <version>${version.org.skyscreamer}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>${version.org.junit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-            <version>${version.org.junit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
-            <version>${version.org.xmlunit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-assertj</artifactId>
-            <version>${version.org.xmlunit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <version>${version.org.glassfish.jaxb}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -151,7 +144,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${version.org.apache.maven.plugins.maven-surefire-plugin}</version>
                 <configuration>
                     <runOrder>alphabetical</runOrder>
                     <argLine>-Duser.timezone=UTC</argLine>
@@ -160,7 +152,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${version.org.apache.maven.plugins.maven-compiler-plugin}</version>
                 <configuration>
                     <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
                         mvn clean compile assembly:single -->
@@ -172,7 +163,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>${version.org.apache.maven.plugins.maven-jar-plugin}</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>
@@ -247,56 +237,55 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.5.3</version>
-                <configuration>
-                    <shadedArtifactAttached>true</shadedArtifactAttached>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>LICENSE</exclude>
-                                <exclude>NOTICE</exclude>
-                                <exclude>META-INF/DEPENDENCIES</exclude>
-                                <exclude>META-INF/LICENSE</exclude>
-                                <exclude>META-INF/LICENSE.md</exclude>
-                                <exclude>META-INF/LICENSE.txt</exclude>
-                                <exclude>META-INF/NOTICE</exclude>
-                                <exclude>META-INF/NOTICE.md</exclude>
-                                <exclude>META-INF/NOTICE.txt</exclude>
-                                <exclude>META-INF/MANIFEST.MF</exclude>
-                                <exclude>META-INF/*.SF</exclude>
-                                <exclude>META-INF/*.DSA</exclude>
-                                <exclude>META-INF/*.RSA</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>templating-maven-plugin</artifactId>
-                <version>${version.org.codehaus.mojo}</version>
-                <executions>
-                    <execution>
-                        <id>filtering-java-templates</id>
-                        <goals>
-                            <goal>filter-sources</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-shade-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <shadedArtifactAttached>true</shadedArtifactAttached>-->
+<!--                    <createDependencyReducedPom>false</createDependencyReducedPom>-->
+<!--                    <filters>-->
+<!--                        <filter>-->
+<!--                            <artifact>*:*</artifact>-->
+<!--                            <excludes>-->
+<!--                                <exclude>LICENSE</exclude>-->
+<!--                                <exclude>NOTICE</exclude>-->
+<!--                                <exclude>META-INF/DEPENDENCIES</exclude>-->
+<!--                                <exclude>META-INF/LICENSE</exclude>-->
+<!--                                <exclude>META-INF/LICENSE.md</exclude>-->
+<!--                                <exclude>META-INF/LICENSE.txt</exclude>-->
+<!--                                <exclude>META-INF/NOTICE</exclude>-->
+<!--                                <exclude>META-INF/NOTICE.md</exclude>-->
+<!--                                <exclude>META-INF/NOTICE.txt</exclude>-->
+<!--                                <exclude>META-INF/MANIFEST.MF</exclude>-->
+<!--                                <exclude>META-INF/*.SF</exclude>-->
+<!--                                <exclude>META-INF/*.DSA</exclude>-->
+<!--                                <exclude>META-INF/*.RSA</exclude>-->
+<!--                            </excludes>-->
+<!--                        </filter>-->
+<!--                    </filters>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>shade</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--            <plugin>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                <artifactId>templating-maven-plugin</artifactId>-->
+<!--                <version>${version.org.codehaus.mojo}</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>filtering-java-templates</id>-->
+<!--                        <goals>-->
+<!--                            <goal>filter-sources</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 

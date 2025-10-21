@@ -816,7 +816,9 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	}
 
 	protected void writeDocumentInformation() {
-		String fullProducer = producer + " (via mustangproject.org " + Version.VERSION + ")";
+		String fullProducer = producer + " (via mustangproject.org "
+//													+ Version.VERSION
+													+ ")";
 		PDDocumentInformation info = doc.getDocumentInformation();
 		if (overwrite || info.getCreationDate() == null)
 			info.setCreationDate(Calendar.getInstance());
