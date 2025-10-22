@@ -109,10 +109,7 @@ public class Main {
 	}
 
 	private static void printHelp() {
-		System.out.println("Mustangproject.org " +
-//											  + org.mustangproject.ZUGFeRD.Version.VERSION +
-											 " \r\n"
-			+ "A Apache Public License tool for e-invoices with\r\n"
+		System.out.println("Mustangproject.org " + org.mustangproject.ZUGFeRD.Version.VERSION + " \r\n"			+ "A Apache Public License tool for e-invoices with\r\n"
 			+ "ZUGFeRD Metadata (http://www.zugferd.org)\r\n" + "\r\n" + getUsage() + "\r\n");
 	}
 

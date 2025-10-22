@@ -643,9 +643,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 	@Override
   protected void writeDocumentInformation() {
-		String fullProducer = producer + " (via mustangproject.org "
-//													+ Version.VERSION
-													+ ")";
+		String fullProducer = producer + " (via mustangproject.org " + Version.VERSION + ")";
 		PDDocumentInformation info = doc.getDocumentInformation();
 		if (overwrite || info.getCreationDate() == null)
 			info.setCreationDate(Calendar.getInstance());
