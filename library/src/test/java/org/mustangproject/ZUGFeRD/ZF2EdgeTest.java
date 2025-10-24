@@ -39,6 +39,7 @@ import junit.framework.TestSuite;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ZF2EdgeTest extends MustangReaderTestCase {
 	final String TARGET_PDF = "./target/testout-ZF2newEdge.pdf";
+	final String TARGET_A4_PDF = "./target/testout-ZF2PDFA4.pdf";
 
 	protected class EdgeProduct implements IZUGFeRDExportableProduct {
 		private String description, name, unit;
@@ -358,17 +359,40 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try (InputStream SOURCE_PDF = this.getClass()
-				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
+			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
 
 			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA3().setProducer("My Application")
-					 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).disableFacturX()
-					 .load(SOURCE_PDF)) {
+				 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).disableFacturX()
+				 .load(SOURCE_PDF)) {
 			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(bos);
 		} catch (IOException e) {
 			fail("IOException should not be raised in testEdgeExport");
+		}
+
+	}
+	/**
+	 * testing to add ZF to PDF/2 based PDF/A-4
+	 */
+	public void testPDFA4Export() {
+
+		// the writing part
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try (InputStream SOURCE_PDF = this.getClass()
+			.getResourceAsStream("/PDFA4_blanko.pdf");
+
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA3().setProducer("My Application")
+				 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2)
+				 .load(SOURCE_PDF)) {
+			ze.setTransaction(this);
+			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
+			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+			ze.export(TARGET_A4_PDF);
+		} catch (IOException e) {
+			fail("IOException should not be raised in testPDFA4Export");
 		}
 
 	}
