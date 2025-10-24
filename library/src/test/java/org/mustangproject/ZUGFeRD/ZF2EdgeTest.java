@@ -382,7 +382,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		try (InputStream SOURCE_PDF = this.getClass()
-			.getResourceAsStream("/PDFA4_blanko.pdf");
+			.getResourceAsStream("/blanko_PDFA4.pdf");
 
 			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA3().setProducer("My Application")
 				 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2)
