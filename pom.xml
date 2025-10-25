@@ -71,7 +71,7 @@
         <version.commons-io>2.20.0</version.commons-io><!-- from 2.16.1 -->
         <version.jakarta.xml.bind>4.0.2</version.jakarta.xml.bind>
         <version.net.sf.saxon>12.8</version.net.sf.saxon><!-- from 12.4 -->
-        <version.org.apache.pdfbox>3.0.5</version.org.apache.pdfbox>
+        <version.org.apache.pdfbox>3.0.6</version.org.apache.pdfbox>
         <version.org.apache.xmlgraphics>2.11</version.org.apache.xmlgraphics><!-- from 2.10 -->
         <version.org.codehaus.janino>3.1.12</version.org.codehaus.janino><!-- from 3.1.7 -->
         <version.org.dom4j>2.1.5</version.org.dom4j><!-- from 2.1.4 -->
