@@ -384,9 +384,9 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		try (InputStream SOURCE_PDF = this.getClass()
 			.getResourceAsStream("/blanko_PDFA4.pdf");
 
-			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA3().setProducer("My Application")
-				 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2)
-				 .load(SOURCE_PDF)) {
+			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromPDFA().load(SOURCE_PDF).setProducer("My Application")
+				 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2))
+				  {
 			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
