@@ -35,7 +35,7 @@ public class Item implements IZUGFeRDExportableItem {
 	protected String id;
 	protected String buyerOrderReferencedDocumentLineID = null;
 	protected String buyerOrderReferencedDocumentID = null;
-	protected IReferencedDocument tenderReferencedDocument=null;
+	protected ReferencedDocument tenderReferencedDocument=null;
 	protected Product product;
 	protected ArrayList<String> notes = null;
 	protected ArrayList<ReferencedDocument> referencedDocuments = null;
@@ -621,11 +621,11 @@ public class Item implements IZUGFeRDExportableItem {
 	}
 
 	@Override
-	public IReferencedDocument getTenderReferencedDocument() {
+	public ReferencedDocument getTenderReferencedDocument() {
 		return tenderReferencedDocument;
 	}
 
-	public Item setTenderReferencedDocument(IReferencedDocument idr) {
+	public Item setTenderReferencedDocument(ReferencedDocument idr) {
 		tenderReferencedDocument=idr;
 		return this;
 	}

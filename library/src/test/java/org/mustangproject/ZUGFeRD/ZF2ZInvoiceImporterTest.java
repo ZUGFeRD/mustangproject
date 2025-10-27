@@ -184,6 +184,15 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("4711", invoice.getZFItems()[0].getProduct().getSellerAssignedID());
 		assertEquals("9384", invoice.getSellerOrderReferencedDocumentID());
 		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
+
+		IReferencedDocument rd=invoice.getZFItems()[0].getTenderReferencedDocument();
+		assertEquals("90-kl-98798-C1", rd.getIssuerAssignedID());
+		assertEquals("AAG", rd.getReferenceTypeCode());
+		assertEquals("2025-10-13", sdf.format(rd.getFormattedIssueDateTime()));
+
+
+
+		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
 		assertEquals("2025-10-12", sdf.format(invoice.getTenderReferencedDocument().getFormattedIssueDateTime()));
 		assertEquals("sender@test.org", invoice.getSender().getEmail());
 		assertEquals("recipient@test.org", invoice.getRecipient().getEmail());
