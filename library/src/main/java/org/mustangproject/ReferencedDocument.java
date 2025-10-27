@@ -17,6 +17,10 @@ public class ReferencedDocument implements IReferencedDocument {
 	String referenceTypeCode;
 	Date formattedIssueDateTime;
 
+	public ReferencedDocument() {
+		//bean
+	}
+
 	public ReferencedDocument(String issuerAssignedID, String typeCode, String referenceTypeCode) {
 		this(issuerAssignedID);
 		this.typeCode = typeCode;

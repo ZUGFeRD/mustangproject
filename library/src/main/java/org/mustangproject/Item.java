@@ -625,8 +625,14 @@ public class Item implements IZUGFeRDExportableItem {
 		return tenderReferencedDocument;
 	}
 
-	public Item getTenderReferencedDocument(IReferencedDocument idr) {
+	public Item setTenderReferencedDocument(IReferencedDocument idr) {
 		tenderReferencedDocument=idr;
+		return this;
+	}
+
+	public Item setTenderReferencedDocument(String id) {
+		ReferencedDocument rd=new ReferencedDocument(id);
+		setTenderReferencedDocument(rd);
 		return this;
 	}
 
