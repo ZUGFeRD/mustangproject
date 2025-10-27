@@ -145,14 +145,25 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	}
 
 	@Override
-	public IDatedReference getTenderReferencedDocument() {
-		return new IDatedReference() {
+	public IReferencedDocument getTenderReferencedDocument() {
+		return new IReferencedDocument() {
 			@Override
-			public String getID() {
+			public String getIssuerAssignedID() {
 				return "983-jk-787";
 			}
+
 			@Override
-			public Date getDate() {
+			public String getTypeCode() {
+				return "50";
+			}
+
+			@Override
+			public String getReferenceTypeCode() {
+				return "";
+			}
+
+			@Override
+			public Date getFormattedIssueDateTime() {
 				SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
 				try {
 					return sdf.parse("2025-10-12");
@@ -161,6 +172,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 				}
 				return null; // wont happen either
 			}
+
 		};
 	}
 

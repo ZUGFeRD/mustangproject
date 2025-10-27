@@ -612,7 +612,7 @@ public class ZUGFeRDInvoiceImporter {
 			//if (tenderReference!=null) zpp... @todo bt-17 create a ubl with a date and set up an according xpath and if only tenderReference!=null only set that but if  tenderReference!=null&&date!=null set both in zpp
 			if((tenderReference != null)&&(!tenderReference.isEmpty())){
 				if((tenderReferenceDate != null)&&(!tenderReferenceDate.isEmpty())){
-					zpp.setTenderReferencedDocument(new DatedReference(tenderReference, parseDate(tenderReferenceDate, "yyyy-MM-dd")));
+					zpp.setTenderReferencedDocument(new ReferencedDocument(tenderReference, parseDate(tenderReferenceDate, "yyyy-MM-dd")));
 				} else {
 					zpp.setTenderReferencedDocument(tenderReference);
 				}
@@ -746,7 +746,7 @@ public class ZUGFeRDInvoiceImporter {
 						if (typeC == 50) {
 							if (additionalReferencedDocument != null){
 								if (additionalReferencedDocumentDate!=null) {
-									zpp.setTenderReferencedDocument(new DatedReference(additionalReferencedDocument, additionalReferencedDocumentDate));
+									zpp.setTenderReferencedDocument(new ReferencedDocument(additionalReferencedDocument, additionalReferencedDocumentDate));
 								} else {
 									zpp.setTenderReferencedDocument(additionalReferencedDocument);
 								}

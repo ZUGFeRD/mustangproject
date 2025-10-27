@@ -54,7 +54,7 @@ public class Invoice implements IExportableTransaction {
 	protected BigDecimal totalPrepaidAmount = null;
 	protected Date detailedDeliveryDateStart = null;
 	protected Date detailedDeliveryPeriodEnd = null;
-	protected IDatedReference tenderReference = null;
+	protected IReferencedDocument tenderReference = null;
 
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
 		Charges = new ArrayList<>(), LogisticsServiceCharges = new ArrayList<>();
@@ -151,7 +151,7 @@ public class Invoice implements IExportableTransaction {
 	/***
 	 * BT-17
 	 */
-	public IDatedReference getTenderReferencedDocument() {
+	public IReferencedDocument getTenderReferencedDocument() {
 		return tenderReference;
 	}
 
@@ -161,13 +161,13 @@ public class Invoice implements IExportableTransaction {
 	 * @param dr
 	 * @return
 	 */
-	public Invoice setTenderReferencedDocument(DatedReference dr) {
+	public Invoice setTenderReferencedDocument(ReferencedDocument dr) {
 		tenderReference=dr;
 		return this;
 	}
 	
 	public Invoice setTenderReferencedDocument(String ID) {
-		DatedReference dr=new DatedReference(ID);
+		ReferencedDocument dr=new ReferencedDocument(ID);
 		setTenderReferencedDocument(dr);
 		return this;
 	}
