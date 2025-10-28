@@ -207,7 +207,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	public void testBT17InvoiceImport() {
 		boolean hasExceptions = false;
 		Invoice invoice = null;
-/*
+
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushEdge.pdf");
 
 		try {
@@ -218,13 +218,11 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertFalse(hasExceptions);
 		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
 		// Reading ZUGFeRD
-		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getID());
-		assertNotNull(invoice.getTenderReferencedDocument().getDate());
-		assertEquals("2025", sdf.format(invoice.getTenderReferencedDocument().getDate()));
-*/
-		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
+		assertNotNull(invoice.getTenderReferencedDocument().getFormattedIssueDateTime());
+		assertEquals("2025", sdf.format(invoice.getTenderReferencedDocument().getFormattedIssueDateTime()));
 		try {
-			zii.setInputStream(new FileInputStream(getResourceAsFile("bt17/response_1760553749128.xml")));
+			zii.setInputStream(new FileInputStream(getResourceAsFile("cii/bt17-response_1760553749128.cii")));
 			invoice = zii.extractInvoice();
 		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
 			hasExceptions = true;
@@ -235,6 +233,25 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+	public void testBT128InvoiceImport() {
+		boolean hasExceptions = false;
+		Invoice invoice = null;
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		try {
+		zii.setInputStream(new FileInputStream(getResourceAsFile("ubl/BT-128.ubl.xml")));
+
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | FileNotFoundException  e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
+		// Reading ZUGFeRD
+		assertEquals("90-kl-98798-C1", invoice.getZFItems()[0].getTenderReferencedDocument().getIssuerAssignedID());
+		assertEquals("AAG", invoice.getZFItems()[0].getTenderReferencedDocument().getReferenceTypeCode());
+
+	}
 
 	public void testZF1Import() {
 

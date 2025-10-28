@@ -88,6 +88,9 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("ClassifiedTaxCategory")
 				.flatMap(m -> m.getAsBigDecimal("Percent"))
 				.ifPresent(product::setVATPercent);
+
+
+
 		});
 		itemMap.getAsNodeMap("AssociatedDocumentLineDocument")
 			.flatMap(icnm -> icnm.getAsString("LineID"))
@@ -129,6 +132,15 @@ public class Item implements IZUGFeRDExportableItem {
 				product = new Product();
 			}
 		}
+		itemMap.getAsNodeMap("DocumentReference").ifPresent(drnm -> {
+			// BT-128
+			ReferencedDocument rd=getTenderReferencedDocument();
+			if (rd==null) {
+				rd=new ReferencedDocument();
+			}
+			drnm.getAsString("ID").ifPresent(rd::setIssuerAssignedID);
+			drnm.getAsString("DocumentTypeCode").ifPresent(rd::setTypeCode);
+		});
 
 		itemMap.getAsNodeMap("SpecifiedLineTradeAgreement", "SpecifiedSupplyChainTradeAgreement").ifPresent(icnm -> {
 			icnm.getAsNodeMap("BuyerOrderReferencedDocument")
