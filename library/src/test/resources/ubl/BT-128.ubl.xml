@@ -281,7 +281,7 @@
         <cbc:LineID>12345</cbc:LineID>
       </cac:OrderLineReference>
       <cac:DocumentReference>
-        <cbc:ID schemeID="AAG">Line object identifier</cbc:ID>
+        <cbc:ID schemeID="AAG">90-kl-98798-C1</cbc:ID>
         <cbc:DocumentTypeCode>130</cbc:DocumentTypeCode>
       </cac:DocumentReference>
       <cac:AllowanceCharge>

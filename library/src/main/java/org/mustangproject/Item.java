@@ -138,8 +138,21 @@ public class Item implements IZUGFeRDExportableItem {
 			if (rd==null) {
 				rd=new ReferencedDocument();
 			}
-			drnm.getAsString("ID").ifPresent(rd::setIssuerAssignedID);
+			Node idNode=drnm.getNode("ID").get();
+			if (idNode!=null) {
+				rd.setIssuerAssignedID(idNode.getTextContent());
+				Node schemeIDAttr;
+
+				schemeIDAttr=idNode.getAttributes().getNamedItem("schemeID");
+				if (schemeIDAttr!=null) {
+					rd.setReferenceTypeCode(schemeIDAttr.getNodeValue());
+				}
+			}
+
 			drnm.getAsString("DocumentTypeCode").ifPresent(rd::setTypeCode);
+			if (rd!=null) {
+				setTenderReferencedDocument(rd);
+			}
 		});
 
 		itemMap.getAsNodeMap("SpecifiedLineTradeAgreement", "SpecifiedSupplyChainTradeAgreement").ifPresent(icnm -> {
