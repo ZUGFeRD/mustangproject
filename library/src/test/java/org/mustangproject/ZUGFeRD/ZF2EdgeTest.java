@@ -1,22 +1,24 @@
 
-/** **********************************************************************
- *
+/**
+ * *********************************************************************
+ * <p>
  * Copyright 2019 Jochen Staerk
- *
+ * <p>
  * Use is subject to license terms.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0.
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *
+ * <p>
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- *********************************************************************** */
+ * <p>
+ * **********************************************************************
+ */
 package org.mustangproject.ZUGFeRD;
 
 import java.io.ByteArrayOutputStream;
@@ -204,12 +206,12 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	public IZUGFeRDExportableItem[] getZFItems() {
 		Item[] allItems = new Item[3];
 		EdgeProduct designProduct = new EdgeProduct("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung",
-				"HUR");
+			"HUR");
 		EdgeProduct balloonProduct = new EdgeProduct("", "Bestellerweiterung für E&F Umbau", "C62");// test for issue
 		// 103
 		EdgeProduct airProduct = new EdgeProduct("", "Heiße Luft pro Liter", "LTR");
 
-		Item design=new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
+		Item design = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
 		design.setAddReference("1825");
 		design.setBasisQuantity(new BigDecimal(100));
 		allItems[0] = design;
@@ -228,13 +230,13 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	@Override
 	public IZUGFeRDPaymentTerms getPaymentTerms() {
 		PaymentDiscountTerms paymentDiscountTerms =
-				new PaymentDiscountTerms(
-						new BigDecimal(2), // skonto prozent
-						null, // kein basedate
-						14, // anzahl tage
-						"DAYS");
+			new PaymentDiscountTerms(
+				new BigDecimal(2), // skonto prozent
+				null, // kein basedate
+				14, // anzahl tage
+				"DAYS");
 
-		Date due  = null;
+		Date due = null;
 		try {
 			due = new SimpleDateFormat("yyyyMMdd").parse("20220228");
 		} catch (ParseException e) {
@@ -242,10 +244,10 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 
 		}
 		return new PaymentTerms(
-				"14 Tage 2% Skonto, 30 Tage rein netto",
-				due,// fälligkeitsdatum
-				paymentDiscountTerms //PaymentDiscountTerms
-			);
+			"14 Tage 2% Skonto, 30 Tage rein netto",
+			due,// fälligkeitsdatum
+			paymentDiscountTerms //PaymentDiscountTerms
+		);
 	}
 
 	@Override
@@ -302,7 +304,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 
 		// the writing part
 
-		try  {
+		try {
 			InputStream SOURCE_PDF = this.getClass()
 				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
@@ -322,7 +324,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
-		String resultXML=zi.getUTF8();
+		String resultXML = zi.getUTF8();
 		assertTrue(resultXML.contains("<ram:TypeCode>54</ram:TypeCode>"));
 		assertTrue(resultXML.contains("<ram:Information>Credit Card</ram:Information>"));
 		assertTrue(resultXML.contains("<ram:ShipToTradeParty>"));
@@ -373,6 +375,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		}
 
 	}
+
 	/**
 	 * testing to add ZF to PDF/2 based PDF/A-4
 	 */
@@ -385,8 +388,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 			.getResourceAsStream("/blanko_PDFA4.pdf");
 
 			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromPDFA().load(SOURCE_PDF).setProducer("My Application")
-				 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2))
-				  {
+				 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2)) {
 			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
@@ -431,6 +433,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 			return periodCode;
 		}
 	}
+
 	private class PaymentTerms implements IZUGFeRDPaymentTerms {
 
 		protected String description;

@@ -57,7 +57,13 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		return this;
 	}
 	protected void determineAndSetExporter(int PDFAVersion) {
-		if (PDFAVersion == 3) {
+		if (PDFAVersion == 4) {
+			theExporter = new ZUGFeRDExporterFromA4();
+			if (ignorePDFAErrors) {
+				((ZUGFeRDExporterFromA4)theExporter).ignorePDFAErrors();
+			}
+
+		} else if (PDFAVersion == 3) {
 			theExporter = new ZUGFeRDExporterFromA3();
 			if (ignorePDFAErrors) {
 				((ZUGFeRDExporterFromA3)theExporter).ignorePDFAErrors();

@@ -19,7 +19,7 @@
 package org.mustangproject.ZUGFeRD;
 
 public enum PDFAConformanceLevel {
-	ACCESSIBLE("A"), BASIC("B"), UNICODE("U");
+	ACCESSIBLE("A"), BASIC("B"), UNICODE("U"), FOUR("e");
 
 	private final String letter;
 
