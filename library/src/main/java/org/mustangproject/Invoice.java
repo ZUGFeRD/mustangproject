@@ -135,8 +135,8 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	@Override
-	public IZUGFeRDCashDiscount[] getCashDiscounts() {
-		return cashDiscounts.toArray(new IZUGFeRDCashDiscount[0]);
+	public CashDiscount[] getCashDiscounts() {
+		return cashDiscounts.toArray(new CashDiscount[0]);
 	}
 
 	@Override

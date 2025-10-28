@@ -1,5 +1,7 @@
 - upgrade to pdfbox 3.0.6
 - #950
+- #959
+- change return type of getCashDiscounts to CashDiscount object, not interface
 
 2.19.1
 =======
