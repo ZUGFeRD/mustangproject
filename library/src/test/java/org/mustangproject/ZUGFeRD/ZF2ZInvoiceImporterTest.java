@@ -20,6 +20,7 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
@@ -178,15 +179,78 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
+		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
 		// Reading ZUGFeRD
 		assertEquals("4711", invoice.getZFItems()[0].getProduct().getSellerAssignedID());
 		assertEquals("9384", invoice.getSellerOrderReferencedDocumentID());
+		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
+
+		IReferencedDocument[] rd=invoice.getZFItems()[0].getAdditionalReferences();
+		assertEquals("90-kl-98798-C1", rd[0].getIssuerAssignedID());
+		assertEquals("AAG", rd[0].getReferenceTypeCode());
+
+
+
+		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
+		assertEquals("2025-10-12", sdf.format(invoice.getTenderReferencedDocument().getFormattedIssueDateTime()));
 		assertEquals("sender@test.org", invoice.getSender().getEmail());
 		assertEquals("recipient@test.org", invoice.getRecipient().getEmail());
 		assertEquals("28934", invoice.getBuyerOrderReferencedDocumentID());
 
+
+
+
 	}
 
+
+	public void testBT17InvoiceImport() {
+		boolean hasExceptions = false;
+		Invoice invoice = null;
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushEdge.pdf");
+
+		try {
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
+		// Reading ZUGFeRD
+		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
+		assertNotNull(invoice.getTenderReferencedDocument().getFormattedIssueDateTime());
+		assertEquals("2025-10-12", sdf.format(invoice.getTenderReferencedDocument().getFormattedIssueDateTime()));
+		try {
+			zii.setInputStream(new FileInputStream(getResourceAsFile("cii/bt17-response_1760553749128.cii.xml")));
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		// Reading ZUGFeRD
+		assertEquals("Testing1", invoice.getTenderReferencedDocument().getIssuerAssignedID());
+
+	}
+
+	public void testBT128InvoiceImport() {
+		boolean hasExceptions = false;
+		Invoice invoice = null;
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		try {
+		zii.setInputStream(new FileInputStream(getResourceAsFile("ubl/BT-128.ubl.xml")));
+
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | FileNotFoundException  e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
+		// Reading ZUGFeRD
+		assertEquals("90-kl-98798-C1", invoice.getZFItems()[0].getAdditionalReferences()[0].getIssuerAssignedID());
+		assertEquals("AAG", invoice.getZFItems()[0].getAdditionalReferences()[0].getReferenceTypeCode());
+
+	}
 
 	public void testZF1Import() {
 

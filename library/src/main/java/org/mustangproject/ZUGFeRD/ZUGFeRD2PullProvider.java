@@ -631,6 +631,18 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			}
 		}
 
+		if(trans.getTenderReferencedDocument() != null){
+			xml += "<ram:AdditionalReferencedDocument>"
+				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getTenderReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
+				+ "<ram:TypeCode>" + 50 + "</ram:TypeCode>";
+			if (trans.getTenderReferencedDocument().getFormattedIssueDateTime()!=null) {
+				final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
+				xml += "<ram:FormattedIssueDateTime><qdt:DateTimeString format=\"102\">"+XMLTools.encodeXML(dateFormat102.format(trans.getTenderReferencedDocument().getFormattedIssueDateTime()))+"</qdt:DateTimeString></ram:FormattedIssueDateTime>";
+			}
+
+
+			xml += "</ram:AdditionalReferencedDocument>";
+		}
 		if (trans.getSpecifiedProcuringProjectID() != null) {
 			xml += "<ram:SpecifiedProcuringProject>"
 				+ "<ram:ID>" + XMLTools.encodeXML(trans.getSpecifiedProcuringProjectID()) + "</ram:ID>";

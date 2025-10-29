@@ -215,6 +215,15 @@ public interface IExportableTransaction {
 	}
 
 	/**
+	 * BT-17 tender or lot reference
+	 *
+	 * @return mandatory ID, optional Date
+	 */
+	default IReferencedDocument getTenderReferencedDocument() {
+		return null;
+	}
+
+	/**
 	 * own name
 	 *
 	 * @return the sender's organisation name

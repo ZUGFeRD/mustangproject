@@ -157,11 +157,11 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 
 
 
-	/***
-	 * specifies the item level delivery period (there is also one on document level),
-	 * this will be included in a BillingSpecifiedPeriod element
-	 * @return the beginning of the delivery period
-	 */
+		/***
+		 * specifies the item level delivery period (there is also one on document level),
+		 * this will be included in a BillingSpecifiedPeriod element
+		 * @return the beginning of the delivery period
+		 */
 	default Date getDetailedDeliveryPeriodFrom() {
 		return null;
 	}

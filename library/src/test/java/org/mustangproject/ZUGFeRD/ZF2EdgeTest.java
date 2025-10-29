@@ -145,6 +145,38 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	}
 
 	@Override
+	public IReferencedDocument getTenderReferencedDocument() {
+		return new IReferencedDocument() {
+			@Override
+			public String getIssuerAssignedID() {
+				return "983-jk-787";
+			}
+
+			@Override
+			public String getTypeCode() {
+				return "50";
+			}
+
+			@Override
+			public String getReferenceTypeCode() {
+				return "";
+			}
+
+			@Override
+			public Date getFormattedIssueDateTime() {
+				SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
+				try {
+					return sdf.parse("2025-10-12");
+				} catch (ParseException e) {
+					// wont happen, I promise :-)
+				}
+				return null; // wont happen either
+			}
+
+		};
+	}
+
+	@Override
 	public String getOwnLocation() {
 		return "Stadthausen";
 	}
