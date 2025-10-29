@@ -215,13 +215,13 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
-		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
+		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
 		// Reading ZUGFeRD
 		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
 		assertNotNull(invoice.getTenderReferencedDocument().getFormattedIssueDateTime());
-		assertEquals("2025", sdf.format(invoice.getTenderReferencedDocument().getFormattedIssueDateTime()));
+		assertEquals("2025-10-12", sdf.format(invoice.getTenderReferencedDocument().getFormattedIssueDateTime()));
 		try {
-			zii.setInputStream(new FileInputStream(getResourceAsFile("cii/bt17-response_1760553749128.cii")));
+			zii.setInputStream(new FileInputStream(getResourceAsFile("cii/bt17-response_1760553749128.cii.xml")));
 			invoice = zii.extractInvoice();
 		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
 			hasExceptions = true;
