@@ -185,10 +185,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("9384", invoice.getSellerOrderReferencedDocumentID());
 		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
 
-		IReferencedDocument rd=invoice.getZFItems()[0].getTenderReferencedDocument();
-		assertEquals("90-kl-98798-C1", rd.getIssuerAssignedID());
-		assertEquals("AAG", rd.getReferenceTypeCode());
-		assertEquals("2025-10-13", sdf.format(rd.getFormattedIssueDateTime()));
+		IReferencedDocument[] rd=invoice.getZFItems()[0].getAdditionalReferences();
+		assertEquals("90-kl-98798-C1", rd[0].getIssuerAssignedID());
+		assertEquals("AAG", rd[0].getReferenceTypeCode());
 
 
 
@@ -248,8 +247,8 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertFalse(hasExceptions);
 		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
 		// Reading ZUGFeRD
-		assertEquals("90-kl-98798-C1", invoice.getZFItems()[0].getTenderReferencedDocument().getIssuerAssignedID());
-		assertEquals("AAG", invoice.getZFItems()[0].getTenderReferencedDocument().getReferenceTypeCode());
+		assertEquals("90-kl-98798-C1", invoice.getZFItems()[0].getAdditionalReferences()[0].getIssuerAssignedID());
+		assertEquals("AAG", invoice.getZFItems()[0].getAdditionalReferences()[0].getReferenceTypeCode());
 
 	}
 

@@ -35,7 +35,6 @@ public class Item implements IZUGFeRDExportableItem {
 	protected String id;
 	protected String buyerOrderReferencedDocumentLineID = null;
 	protected String buyerOrderReferencedDocumentID = null;
-	protected ReferencedDocument tenderReferencedDocument=null;
 	protected Product product;
 	protected ArrayList<String> notes = null;
 	protected ArrayList<ReferencedDocument> referencedDocuments = null;
@@ -132,28 +131,7 @@ public class Item implements IZUGFeRDExportableItem {
 				product = new Product();
 			}
 		}
-		itemMap.getAsNodeMap("DocumentReference").ifPresent(drnm -> {
-			// BT-128
-			ReferencedDocument rd=getTenderReferencedDocument();
-			if (rd==null) {
-				rd=new ReferencedDocument();
-			}
-			Node idNode=drnm.getNode("ID").get();
-			if (idNode!=null) {
-				rd.setIssuerAssignedID(idNode.getTextContent());
-				Node schemeIDAttr;
 
-				schemeIDAttr=idNode.getAttributes().getNamedItem("schemeID");
-				if (schemeIDAttr!=null) {
-					rd.setReferenceTypeCode(schemeIDAttr.getNodeValue());
-				}
-			}
-
-			drnm.getAsString("DocumentTypeCode").ifPresent(rd::setTypeCode);
-			if (rd!=null) {
-				setTenderReferencedDocument(rd);
-			}
-		});
 
 		itemMap.getAsNodeMap("SpecifiedLineTradeAgreement", "SpecifiedSupplyChainTradeAgreement").ifPresent(icnm -> {
 			icnm.getAsNodeMap("BuyerOrderReferencedDocument")
@@ -645,21 +623,6 @@ public class Item implements IZUGFeRDExportableItem {
 		return detailedDeliveryPeriodTo;
 	}
 
-	@Override
-	public ReferencedDocument getTenderReferencedDocument() {
-		return tenderReferencedDocument;
-	}
-
-	public Item setTenderReferencedDocument(ReferencedDocument idr) {
-		tenderReferencedDocument=idr;
-		return this;
-	}
-
-	public Item setTenderReferencedDocument(String id) {
-		ReferencedDocument rd=new ReferencedDocument(id);
-		setTenderReferencedDocument(rd);
-		return this;
-	}
 
 	public IZUGFeRDExportableItem addNotes(Collection<IncludedNote> notes) {
 		if (notes == null) {

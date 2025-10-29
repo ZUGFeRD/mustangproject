@@ -156,14 +156,6 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	}
 
 
-	/***
-	 * tender reference on line level BT-128
-	 * @return BT-17 on line level
-	 */
-	default IReferencedDocument getTenderReferencedDocument() {
-		return null;
-	}
-
 
 		/***
 		 * specifies the item level delivery period (there is also one on document level),

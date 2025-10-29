@@ -2,6 +2,7 @@ package org.mustangproject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.util.Date;
 
 import org.mustangproject.ZUGFeRD.IReferencedDocument;
@@ -40,7 +41,7 @@ public class ReferencedDocument implements IReferencedDocument {
 		this(issuerAssingedID);
 		this.formattedIssueDateTime = formattedIssueDateTime;
 	}
-	
+
 	public ReferencedDocument(String issuerAssignedID) {
 		this.issuerAssignedID = issuerAssignedID;
 	}
@@ -55,6 +56,7 @@ public class ReferencedDocument implements IReferencedDocument {
 
 	/**
 	 * which type is the document? e.g. "916" for additional invoice related
+	 *
 	 * @param typeCode as String, e.g. 916
 	 */
 	public void setTypeCode(String typeCode) {
@@ -63,6 +65,7 @@ public class ReferencedDocument implements IReferencedDocument {
 
 	/**
 	 * type of the reference of this line, a UNTDID 1153 code
+	 *
 	 * @param referenceTypeCode three uppercase character reference type code as string
 	 */
 	public void setReferenceTypeCode(String referenceTypeCode) {
@@ -94,8 +97,7 @@ public class ReferencedDocument implements IReferencedDocument {
 	}
 
 	@Override
-	public Date getFormattedIssueDateTime()
-	{
+	public Date getFormattedIssueDateTime() {
 		return formattedIssueDateTime;
 	}
 
@@ -104,9 +106,20 @@ public class ReferencedDocument implements IReferencedDocument {
 			return null;
 		}
 		NodeMap nodes = new NodeMap(node);
-		return new ReferencedDocument(nodes.getAsStringOrNull("IssuerAssignedID", "ID"),
+		ReferencedDocument rd = new ReferencedDocument(nodes.getAsStringOrNull("IssuerAssignedID", "ID"),
 			nodes.getAsStringOrNull("TypeCode", "DocumentTypeCode"),
 			nodes.getAsStringOrNull("ReferenceTypeCode"),
 			XMLTools.tryDate(nodes.getAsStringOrNull("FormattedIssueDateTime")));
+		if (nodes.getAsStringOrNull("ID") != null) {
+			//sure sign for UBL: here ReferenceTypeCode is no element but a "schemeID" attribute to ID
+			Node idNode = nodes.getNode("ID").get();
+			if (idNode != null) {
+				Node schemeIDAttr = idNode.getAttributes().getNamedItem("schemeID");
+				if (schemeIDAttr != null) {
+					rd.setReferenceTypeCode(schemeIDAttr.getNodeValue());
+				}
+			}
+		}
+		return rd;
 	}
 }
