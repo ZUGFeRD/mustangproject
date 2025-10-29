@@ -2,6 +2,7 @@
 - #950
 - #959
 - change return type of getCashDiscounts to CashDiscount object, not interface
+- #923
 
 2.19.1
 =======
