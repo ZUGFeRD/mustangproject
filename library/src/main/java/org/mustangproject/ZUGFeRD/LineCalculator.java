@@ -73,7 +73,7 @@ public class LineCalculator {
 			}
 			if (currentItem.getProduct().getCharges()!=null) {
 				for (IZUGFeRDAllowanceCharge ccaf : currentItem.getProduct().getCharges()) {
-					delta = delta.subtract(ccaf.getTotalAmount(currentItem));
+					delta = delta.add(ccaf.getTotalAmount(currentItem));
 				}
 			}
 		}
