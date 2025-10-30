@@ -162,6 +162,7 @@ public class Invoice implements IExportableTransaction {
 	 * @return
 	 */
 	public Invoice setTenderReferencedDocument(ReferencedDocument dr) {
+		dr.setTypeCode("50");//50 is fixed for tender documents
 		tenderReference=dr;
 		return this;
 	}
