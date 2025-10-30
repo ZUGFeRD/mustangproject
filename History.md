@@ -1,8 +1,13 @@
+2.20.0
+=======
+2025-10-30
+
 - upgrade to pdfbox 3.0.6
-- #950
-- #959
+- #950 issues with nonshaded version: 2.19.1: ClassNotFoudException while running the PDFValidator
+- #959 Added FactoorSharp to the list of valid pdf sources
 - change return type of getCashDiscounts to CashDiscount object, not interface
-- #923
+- #923 Support for BT-17 (tender or lot reference)
+- #960 incorrect calculation for product charges
 
 2.19.1
 =======
