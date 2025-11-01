@@ -696,6 +696,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		if ((meta != null) && (meta.getLength() > 0)) {
 			try {
 				DomXmpParser xmpParser = new DomXmpParser();
+				xmpParser.setStrictParsing(false);
 				return xmpParser.parse(meta.toByteArray());
 			} catch (XmpParsingException e) {
 				throw new IOException(e);

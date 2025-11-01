@@ -3,10 +3,7 @@ package org.mustangproject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.mustangproject.ZUGFeRD.IReferencedDocument;
-import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
-import org.mustangproject.ZUGFeRD.LineCalculator;
+import org.mustangproject.ZUGFeRD.*;
 import org.mustangproject.util.NodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -90,6 +87,9 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("ClassifiedTaxCategory")
 				.flatMap(m -> m.getAsBigDecimal("Percent"))
 				.ifPresent(product::setVATPercent);
+
+
+
 		});
 		itemMap.getAsNodeMap("AssociatedDocumentLineDocument")
 			.flatMap(icnm -> icnm.getAsString("LineID"))
@@ -131,6 +131,7 @@ public class Item implements IZUGFeRDExportableItem {
 				product = new Product();
 			}
 		}
+
 
 		itemMap.getAsNodeMap("SpecifiedLineTradeAgreement", "SpecifiedSupplyChainTradeAgreement").ifPresent(icnm -> {
 			icnm.getAsNodeMap("BuyerOrderReferencedDocument")
@@ -621,6 +622,7 @@ public class Item implements IZUGFeRDExportableItem {
 	public Date getDetailedDeliveryPeriodTo() {
 		return detailedDeliveryPeriodTo;
 	}
+
 
 	public IZUGFeRDExportableItem addNotes(Collection<IncludedNote> notes) {
 		if (notes == null) {

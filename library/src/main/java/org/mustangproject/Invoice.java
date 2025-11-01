@@ -54,6 +54,7 @@ public class Invoice implements IExportableTransaction {
 	protected BigDecimal totalPrepaidAmount = null;
 	protected Date detailedDeliveryDateStart = null;
 	protected Date detailedDeliveryPeriodEnd = null;
+	protected IReferencedDocument tenderReference = null;
 
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
 		Charges = new ArrayList<>(), LogisticsServiceCharges = new ArrayList<>();
@@ -135,14 +136,43 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	@Override
-	public IZUGFeRDCashDiscount[] getCashDiscounts() {
-		return cashDiscounts.toArray(new IZUGFeRDCashDiscount[0]);
+	public CashDiscount[] getCashDiscounts() {
+		return cashDiscounts.toArray(new CashDiscount[0]);
 	}
 
 	@Override
 	public String getNumber() {
 		return number;
 	}
+
+
+
+	@Override
+	/***
+	 * BT-17
+	 */
+	public IReferencedDocument getTenderReferencedDocument() {
+		return tenderReference;
+	}
+
+
+	/***
+	 * BT-17
+	 * @param dr
+	 * @return
+	 */
+	public Invoice setTenderReferencedDocument(ReferencedDocument dr) {
+		dr.setTypeCode("50");//50 is fixed for tender documents
+		tenderReference=dr;
+		return this;
+	}
+	
+	public Invoice setTenderReferencedDocument(String ID) {
+		ReferencedDocument dr=new ReferencedDocument(ID);
+		setTenderReferencedDocument(dr);
+		return this;
+	}
+
 
 	public Invoice setNumber(String number) {
 		this.number = number;
