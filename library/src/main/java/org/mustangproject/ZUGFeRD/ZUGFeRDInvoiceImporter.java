@@ -315,7 +315,7 @@ public class ZUGFeRDInvoiceImporter {
 		final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		//REDHAT
 		//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
-		dbf.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", true);
+		dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 		dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
 		dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
@@ -435,6 +435,12 @@ public class ZUGFeRDInvoiceImporter {
 
 		xpr = xpath.compile("//*[local-name()=\"BuyerTradeParty\"]|//*[local-name()=\"AccountingCustomerParty\"]/*");
 		NodeList BuyerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+
+		xpr = xpath.compile("//*[local-name()=\"InvoicerTradeParty\"]");
+		NodeList invoicerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+
+		xpr = xpath.compile("//*[local-name()=\"InvoiceeTradeParty\"]");
+		NodeList invoiceeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
 		xpr = xpath.compile("//*[local-name()=\"PayeeTradeParty\"]");
 		NodeList payeeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
@@ -965,6 +971,14 @@ public class ZUGFeRDInvoiceImporter {
 			bankDetails.forEach(bankDetail -> zpp.getSender().addBankDetails(bankDetail));
 		}
 
+
+		if (invoicerNodes.getLength() > 0) {
+			zpp.setInvoicer(new TradeParty(invoicerNodes));
+		}
+
+		if (invoiceeNodes.getLength() > 0) {
+			zpp.setInvoicee(new TradeParty(invoiceeNodes));
+		}
 
 		if (payeeNodes.getLength() > 0) {
 			zpp.setPayee(new TradeParty(payeeNodes));

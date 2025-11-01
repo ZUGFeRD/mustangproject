@@ -41,7 +41,7 @@ public class Invoice implements IExportableTransaction {
 
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
-	protected TradeParty sender = null, recipient = null, deliveryAddress = null, payee = null;
+	protected TradeParty sender = null, recipient = null, deliveryAddress = null, payee = null, invoicer = null, invoicee = null;
 	protected ArrayList<CashDiscount> cashDiscounts = null;
 	@JsonDeserialize(contentAs = Item.class)
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
@@ -749,6 +749,36 @@ public class Invoice implements IExportableTransaction {
 	 */
 	public Invoice setPayee(TradeParty payee) {
 		this.payee = payee;
+		return this;
+	}
+
+	@Override
+	public TradeParty getInvoicer() {
+		return this.invoicer;
+	}
+
+	/***
+	 * if the invoicer is not the seller, it can be specified here
+	 * @param invoicer the invoice issuing organisation
+	 * @return fluent setter
+	 */
+	public Invoice setInvoicer(TradeParty invoicer) {
+		this.invoicer = invoicer;
+		return this;
+	}
+
+	@Override
+	public TradeParty getInvoicee() {
+		return this.invoicee;
+	}
+
+	/***
+	 * if the invoicee is not the buyer, it can be specified here
+	 * @param invoicee the invoice receiving organisation
+	 * @return fluent setter
+	 */
+	public Invoice setInvoicee(TradeParty invoicee) {
+		this.invoicee = invoicee;
 		return this;
 	}
 

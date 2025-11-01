@@ -38,6 +38,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.IncludedNote;
 import org.mustangproject.ReferencedDocument;
+import org.mustangproject.TradeParty;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 /***
@@ -502,9 +503,27 @@ public interface IExportableTransaction {
 	/***
 	 * payee / payment receiver, if different from seller, ram:Payee (only supported for zf2)
 	 *
-	 * @return the IZUGFeRDExportableTradeParty payment receiver, if different from sellver
+	 * @return the IZUGFeRDExportableTradeParty payment receiver, if different from seller
 	 */
 	default IZUGFeRDExportableTradeParty getPayee() {
+		return null;
+	}
+
+	/***
+	 * invoicer / invoice sender, if different from seller, ram:InvoicerTradeParty
+	 *
+	 * @return the IZUGFeRDExportableTradeParty invoice sender, if different from seller
+	 */
+	default IZUGFeRDExportableTradeParty getInvoicer() {
+		return null;
+	}
+
+	/***
+	 * invoicee / invoice receiver, if different from buyer, ram:InvoiceeTradeParty
+	 *
+	 * @return the IZUGFeRDExportableTradeParty invoice receiver, if different from buyer
+	 */
+	default IZUGFeRDExportableTradeParty getInvoicee() {
 		return null;
 	}
 
