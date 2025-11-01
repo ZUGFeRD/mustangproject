@@ -158,6 +158,10 @@ public interface IZUGFeRDExportableProduct {
 		return null;
 	}
 
+	default String getTaxExemptionReasonCode() {
+		return null;
+	}
+
 	default String getCountryOfOrigin() {
 	    return null;
 	}
