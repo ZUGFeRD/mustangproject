@@ -689,6 +689,17 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml += "<ram:PaymentReference>" + XMLTools.encodeXML(trans.getPaymentReference()) + "</ram:PaymentReference>";
 		}
 		xml += "<ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>";
+
+		if (this.trans.getInvoicer() != null && getProfile() == Profiles.getByName("Extended")) {
+			xml += "<ram:InvoicerTradeParty>" +
+				getTradePartyAsXML(this.trans.getInvoicer(), false, false) +
+				"</ram:InvoicerTradeParty>";
+		}
+		if (this.trans.getInvoicee() != null && getProfile() == Profiles.getByName("Extended")) {
+			xml += "<ram:InvoiceeTradeParty>" +
+				getTradePartyAsXML(this.trans.getInvoicee(), false, false) +
+				"</ram:InvoiceeTradeParty>";
+		}
 		if (this.trans.getPayee() != null) {
 			xml += "<ram:PayeeTradeParty>" +
 				getTradePartyPayeeAsXML(this.trans.getPayee()) +
