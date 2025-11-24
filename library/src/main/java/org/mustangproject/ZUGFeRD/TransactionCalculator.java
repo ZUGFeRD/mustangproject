@@ -160,7 +160,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	 * @return item sum
 	 */
 	protected BigDecimal getTotal() {
-		BigDecimal dec = Stream.of(trans.getZFItems()).map(LineCalculator::new)
+		BigDecimal dec = Stream.of(trans.getZFItems()).map(IZUGFeRDExportableItem::getCalculation)
 			.map(LineCalculator::getItemTotalNetAmount).reduce(ZERO, BigDecimal::add);
 		return dec;
 	}
