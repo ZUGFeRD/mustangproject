@@ -215,7 +215,7 @@
                         </goals>
 
                         <configuration>
-                            <outputDirectory>src/main/resources/xslt/ZF_233/</outputDirectory>
+                            <outputDirectory>src/main/resources/xslt/ZF_240/</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${basedir}/src/main/resources/schematron/ZF_233/</directory>
