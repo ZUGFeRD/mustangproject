@@ -218,7 +218,7 @@
                             <outputDirectory>src/main/resources/xslt/ZF_240/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/src/main/resources/schematron/ZF_233/</directory>
+                                    <directory>${basedir}/src/main/resources/schematron/ZF_240/</directory>
                                     <includes>
                                         <include>**/*.xml</include>
                                     </includes>
