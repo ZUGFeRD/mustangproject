@@ -147,7 +147,7 @@ corrections
 - #707 invoiceimporter may fail if certain values are not set
 - #708 embedded files cannot be determined
 - #709 ZUGFeRDInvoiceImporter ignored "first" embedded file in list of pdf attachments
-- #607 Enable flexible PaymentReference and a DocumentName.
+- #607 Enable flexible PaymentReference and a DocumentName. **Important note:** The library’s behavior for generating ZUGFeRD 2 documents is not fully backward compatible. Except for the “Minimum” profile, BT‑83 was automatically populated with the document number in earlier versions. From this release onward, applications must explicitly set BT‑83.
 - #649 Reuse toPDF method to work without any dependencies to the file system
 - #650 Add net.sf.offo:fop-hyph
 - #665 Fix #632: Return ubl_creditnote as Standard for CreditNotes
