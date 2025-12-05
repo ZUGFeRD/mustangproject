@@ -79,14 +79,14 @@ Target platform is java 1.17
 
 The package can be build with
 ```
-mvnw clean package
+mvn clean package
 ```
 
 In case you also want to generate  XSLT files from new schematron files for the validator please run the profile "generateXSLTFromSchematron"
 (which takes around 20min on my machine)
 
 ```
-mvnw clean package -P generateXSLTFromSchematron
+mvn clean package -P generateXSLTFromSchematron
 ```
 
 ## Test

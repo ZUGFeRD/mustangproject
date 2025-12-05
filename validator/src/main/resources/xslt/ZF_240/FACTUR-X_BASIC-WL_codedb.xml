@@ -46,6 +46,13 @@
     <enumeration value="456"/>
     <enumeration value="457"/>
     <enumeration value="458"/>
+    <enumeration value="471"/>
+    <enumeration value="472"/>
+    <enumeration value="473"/>
+    <enumeration value="500"/>
+    <enumeration value="501"/>
+    <enumeration value="502"/>
+    <enumeration value="503"/>
     <enumeration value="527"/>
     <enumeration value="532"/>
     <enumeration value="553"/>
@@ -703,6 +710,10 @@
     <enumeration value="0238"/>
     <enumeration value="0239"/>
     <enumeration value="0240"/>
+    <enumeration value="0241"/>
+    <enumeration value="0242"/>
+    <enumeration value="0243"/>
+    <enumeration value="0244"/>
   </cl>
   <cl id="6">
     <enumeration value="0002"/>
@@ -940,6 +951,10 @@
     <enumeration value="0238"/>
     <enumeration value="0239"/>
     <enumeration value="0240"/>
+    <enumeration value="0241"/>
+    <enumeration value="0242"/>
+    <enumeration value="0243"/>
+    <enumeration value="0244"/>
   </cl>
   <cl id="7">
     <enumeration value="AD"/>
@@ -1246,6 +1261,7 @@
     <enumeration value="0230"/>
     <enumeration value="0235"/>
     <enumeration value="0240"/>
+    <enumeration value="0244"/>
     <enumeration value="9910"/>
     <enumeration value="9913"/>
     <enumeration value="9914"/>
@@ -1333,6 +1349,7 @@
     <enumeration value="CHW"/>
     <enumeration value="CLF"/>
     <enumeration value="CLP"/>
+    <enumeration value="CNH"/>
     <enumeration value="CNY"/>
     <enumeration value="COP"/>
     <enumeration value="COU"/>
@@ -1598,6 +1615,7 @@
     <enumeration value="VATEX-EU-132-1O"/>
     <enumeration value="VATEX-EU-132-1P"/>
     <enumeration value="VATEX-EU-132-1Q"/>
+    <enumeration value="VATEX-EU-135-1"/>
     <enumeration value="VATEX-EU-143"/>
     <enumeration value="VATEX-EU-143-1A"/>
     <enumeration value="VATEX-EU-143-1B"/>
@@ -1908,6 +1926,7 @@
     <enumeration value="CHW"/>
     <enumeration value="CLF"/>
     <enumeration value="CLP"/>
+    <enumeration value="CNH"/>
     <enumeration value="CNY"/>
     <enumeration value="COP"/>
     <enumeration value="COU"/>
@@ -2088,6 +2107,7 @@
     <enumeration value="CHW"/>
     <enumeration value="CLF"/>
     <enumeration value="CLP"/>
+    <enumeration value="CNH"/>
     <enumeration value="CNY"/>
     <enumeration value="COP"/>
     <enumeration value="COU"/>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><schema xmlns="http://purl.oclc.org/dsdl/schematron" queryBinding="xslt2" schemaVersion="iso">
-  <title>Schema for Factur-X; 1.07.3; Accounting, BASIC without Lines</title>
+  <title>Schema for Factur-X; 1.08; Accounting, BASIC without Lines</title>
   <ns prefix="rsm" uri="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"/>
   <ns prefix="qdt" uri="urn:un:unece:uncefact:data:standard:QualifiedDataType:100"/>
   <ns prefix="ram" uri="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100"/>
@@ -116,8 +116,8 @@
   </pattern>
   <pattern>
     <rule context="//ram:SpecifiedTradeAllowanceCharge">
-      <assert id="FX-SCH-A-000080" test="(ram:ChargeIndicator)">
-	[BR-66]-Each Specified Trade Allowance Charge (BG-20)(BG-21) shall contain a Charge Indicator.</assert>
+      <assert id="FX-SCH-A-000348" test="(ram:ChargeIndicator)">
+	[CII-SR-463]-Each Specified Trade Allowance Charge (BG-20)(BG-21) shall contain a Charge Indicator.</assert>
     </rule>
   </pattern>
   <pattern>
@@ -318,6 +318,8 @@
     <rule context="//ram:SpecifiedTradeSettlementPaymentMeans">
       <assert id="FX-SCH-A-000131" test="(ram:TypeCode)">
 	[BR-49]-A Payment instruction (BG-16) shall specify the Payment means type code (BT-81).</assert>
+      <assert id="FX-SCH-A-000349" test="(ram:PayeeSpecifiedCreditorFinancialInstitution or ram:PayerSpecifiedDebtorFinancialInstitution) or (not(ram:PayeeSpecifiedCreditorFinancialInstitution) and not(ram:PayerSpecifiedDebtorFinancialInstitution))">
+	[CII-SR-464]-Only one BT-86 element is allowed on an invoice.</assert>
     </rule>
   </pattern>
   <pattern>
@@ -439,6 +441,18 @@
     </rule>
   </pattern>
   <pattern>
+    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement">
+      <assert id="FX-SCH-A-000350" test="not(ram:SellerTradeParty/ram:DefinedTradeContact/ram:PersonName and ram:SellerTradeParty/ram:DefinedTradeContact/ram:DepartmentName)">
+	[CII-SR-465]-Only one BT-41 element is allowed on an invoice.</assert>
+      <assert id="FX-SCH-A-000351" test="not(ram:BuyerTradeParty/ram:DefinedTradeContact/ram:PersonName and ram:BuyerTradeParty/ram:DefinedTradeContact/ram:DepartmentName)">
+	[CII-SR-466]-Only one BT-56 element is allowed on an invoice.</assert>
+      <assert id="FX-SCH-A-000027" test="count(ram:SellerTradeParty)=1">
+	Element 'ram:SellerTradeParty' must occur exactly 1 times.</assert>
+      <assert id="FX-SCH-A-000028" test="count(ram:BuyerTradeParty)=1">
+	Element 'ram:BuyerTradeParty' must occur exactly 1 times.</assert>
+    </rule>
+  </pattern>
+  <pattern>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery">
       <assert id="FX-SCH-A-000170" test="(ram:ShipToTradeParty/ram:PostalTradeAddress and ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID!='') or not (ram:ShipToTradeParty/ram:PostalTradeAddress)">
 	[BR-57]-Each Deliver to address (BG-15) shall contain a Deliver to country code (BT-80).</assert>
@@ -510,12 +524,6 @@
 	Value of 'ram:ID' is not allowed.</assert>
       <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
-    </rule>
-    <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement">
-      <assert id="FX-SCH-A-000027" test="count(ram:SellerTradeParty)=1">
-	Element 'ram:SellerTradeParty' must occur exactly 1 times.</assert>
-      <assert id="FX-SCH-A-000028" test="count(ram:BuyerTradeParty)=1">
-	Element 'ram:BuyerTradeParty' must occur exactly 1 times.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument">
       <assert id="FX-SCH-A-000029" test="count(ram:IssuerAssignedID)=1">
@@ -1101,15 +1109,11 @@
 	Element variant 'ram:TaxTotalAmount[ not(@currencyID=../../ram:InvoiceCurrencyCode) and  not(@currencyID=../../ram:TaxCurrencyCode)]' is marked as not used in the given context.</report>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=../../ram:InvoiceCurrencyCode]">
-      <assert id="FX-SCH-A-000046" test="@currencyID">
-	Attribute '@currencyID' is required in this context.</assert>
       <let name="codeValue19" value="@currencyID"/>
       <assert id="FX-SCH-A-000045" test="string-length($codeValue19)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=19]/enumeration[@value=$codeValue19]">
 	Value of '@currencyID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=../../ram:TaxCurrencyCode]">
-      <assert id="FX-SCH-A-000046" test="@currencyID">
-	Attribute '@currencyID' is required in this context.</assert>
       <let name="codeValue20" value="@currencyID"/>
       <assert id="FX-SCH-A-000045" test="string-length($codeValue20)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=20]/enumeration[@value=$codeValue20]">
 	Value of '@currencyID' is not allowed.</assert>

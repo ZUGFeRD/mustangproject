@@ -6,7 +6,7 @@
   <xs:complexType name="AmountType">
     <xs:simpleContent>
       <xs:extension base="xs:decimal">
-        <xs:attribute name="currencyID" type="xs:token" use="optional"/>
+        <xs:attribute name="currencyID" type="xs:token"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
