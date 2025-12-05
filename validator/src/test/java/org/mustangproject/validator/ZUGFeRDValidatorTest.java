@@ -247,7 +247,9 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 		assertThat(res).valueByXPath("count(//error)")
 			.asInt()
 			.isEqualTo(0);
-
+		assertThat(res).valueByXPath("count(//warning)")
+			.asInt()
+			.isEqualTo(3); // 3 warnings of empty elements
 		assertThat(res).valueByXPath("count(//notice)")
 			.asInt()
 			.isEqualTo(9); // 9 notices RE XRechnung 3.0
