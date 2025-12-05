@@ -511,6 +511,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"  \"paymentTermDescription\" : "+expectedPaymentTermDesciption+",\n" +
 				"  \"issueDate\" : "+expectedIssueDate+",\n" +
 				"  \"dueDate\" : "+expectedDueDate+",\n" +
+				"  \"deliveryDate\" : "+expectedIssueDate+",\n" +
 				"  \"sender\" : {\n" +
 				"    \"name\" : \"Test company\",\n" +
 				"    \"zip\" : \"55232\",\n" +
