@@ -155,12 +155,15 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 
 	/***
 	 * returns the total net value of all items, without document level
-	 * charges/allowances
+	 * charges/allowances. For sub invoice lines only DETAIL lines are summed,
+	 * GROUP and INFORMATION lines are ignored.
 	 *
 	 * @return item sum
 	 */
 	protected BigDecimal getTotal() {
-		BigDecimal dec = Stream.of(trans.getZFItems()).map(LineCalculator::new)
+		BigDecimal dec = Stream.of(trans.getZFItems())
+			.filter(IZUGFeRDExportableItem::isCalculationRelevant)
+			.map(LineCalculator::new)
 			.map(LineCalculator::getItemTotalNetAmount).reduce(ZERO, BigDecimal::add);
 		return dec;
 	}
@@ -190,6 +193,10 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		final String vatDueDateTypeCode = trans.getVATDueDateTypeCode();
 
 		for (IZUGFeRDExportableItem currentItem : trans.getZFItems()) {
+			// skip GROUP and INFORMATION lines for sub invoice lines
+			if (!currentItem.isCalculationRelevant()) {
+				continue;
+			}
 			BigDecimal percent = null;
 			if (currentItem.getProduct() != null) {
 				percent = currentItem.getProduct().getVATPercent();
@@ -258,6 +265,10 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		final String vatDueDateTypeCode = this.trans.getVATDueDateTypeCode();
 		for (final IZUGFeRDExportableItem currentItem : this.trans.getZFItems())
 		{
+			// skip GROUP and INFORMATION lines for sub invoice lines
+			if (!currentItem.isCalculationRelevant()) {
+				continue;
+			}
 			BigDecimal percent = null;
 			if (currentItem.getProduct() != null)
 			{
