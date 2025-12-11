@@ -23,5 +23,6 @@ public class DocumentCodeTypeConstants {
 	public static final String CREDITNOTE = "381";
 	public static final String DEBITNOTE = "84";
 	public static final String CORRECTEDINVOICE = "384";
+	public static final String SELFBILLING = "389";
 	public static final String PARTIAL_BILLING = "326";
 }
