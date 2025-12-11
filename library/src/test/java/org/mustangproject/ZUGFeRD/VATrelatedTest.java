@@ -132,7 +132,7 @@ public class VATrelatedTest extends ResourceCase  {
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(TARGET_PDF_Z);
 		} catch (IOException e) {
-			fail("IOException should not be raised");
+			fail("IOException "+e.getMessage()+" should not be raised");
 		}
 
 		try {
