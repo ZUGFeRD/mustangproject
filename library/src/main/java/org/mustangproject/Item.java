@@ -43,6 +43,8 @@ public class Item implements IZUGFeRDExportableItem {
 	protected ArrayList<IZUGFeRDAllowanceCharge> Charges = new ArrayList<>();
 	protected List<IncludedNote> includedNotes = null;
 	protected String accountingReference;
+	protected String parentLineID = null;
+	protected String lineStatusReasonCode = null;
 	//protected HashMap<String, String> attributes = new HashMap<>();
 
 	/***
@@ -91,9 +93,11 @@ public class Item implements IZUGFeRDExportableItem {
 
 
 		});
-		itemMap.getAsNodeMap("AssociatedDocumentLineDocument")
-			.flatMap(icnm -> icnm.getAsString("LineID"))
-			.ifPresent(this::setId);
+		itemMap.getAsNodeMap("AssociatedDocumentLineDocument").ifPresent(adld -> {
+			adld.getAsString("LineID").ifPresent(this::setId);
+			adld.getAsString("ParentLineID").ifPresent(this::setParentLineID);
+			adld.getAsString("LineStatusReasonCode").ifPresent(this::setLineStatusReasonCode);
+		});
 
 		itemMap.getAsNodeMap("Price").ifPresent(icnm -> {
 			// ubl
@@ -189,6 +193,9 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("ApplicableTradeTax")
 				.flatMap(cnm -> cnm.getAsString("ExemptionReason"))
 				.ifPresent(product::setTaxExemptionReason);
+			icnm.getAsNodeMap("ApplicableTradeTax")
+				.flatMap(cnm -> cnm.getAsString("ExemptionReasonCode"))
+				.ifPresent(product::setTaxExemptionReasonCode);
 
 			icnm.getAllNodes("SpecifiedTradeAllowanceCharge").map(NodeMap::new).forEach(stac -> {
 				stac.getAsNodeMap("ChargeIndicator").ifPresent(ci -> {
@@ -643,5 +650,35 @@ public class Item implements IZUGFeRDExportableItem {
 	@Override
 	public String getAccountingReference() {
 		return accountingReference;
+	}
+
+	@Override
+	public String getParentLineID() {
+		return parentLineID;
+	}
+
+	/***
+	 * for sub invoice lines: set the parent line ID
+	 * @param parentLineID the line ID of the parent line
+	 * @return fluent setter
+	 */
+	public Item setParentLineID(String parentLineID) {
+		this.parentLineID = parentLineID;
+		return this;
+	}
+
+	@Override
+	public String getLineStatusReasonCode() {
+		return lineStatusReasonCode;
+	}
+
+	/***
+	 * for sub invoice lines: set the status reason code (DETAIL, GROUP, INFORMATION)
+	 * @param lineStatusReasonCode the status reason code
+	 * @return fluent setter
+	 */
+	public Item setLineStatusReasonCode(String lineStatusReasonCode) {
+		this.lineStatusReasonCode = lineStatusReasonCode;
+		return this;
 	}
 }

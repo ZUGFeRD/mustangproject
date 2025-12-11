@@ -537,6 +537,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				if (currentItem.getProduct().getTaxExemptionReason() != null) {
 					xml += "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 				}
+				if (currentItem.getProduct().getTaxExemptionReasonCode() != null) {
+					xml += "<ram:ExemptionReasonCode>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReasonCode()) + "</ram:ExemptionReasonCode>";
+				}
 				xml += "<ram:CategoryCode>" + currentItem.getProduct().getTaxCategoryCode() + "</ram:CategoryCode>";
 				BigDecimal vatValue=BigDecimal.ZERO;
 				if (currentItem.getProduct().getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.ZEROTAXPRODUCTS)) {
@@ -1008,11 +1011,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	private String buildPaymentTermsXml() {
 
 		ArrayList<IZUGFeRDPaymentTerms> paymentTerms = new ArrayList<IZUGFeRDPaymentTerms>(Arrays.asList(trans.getExtendedPaymentTerms()));
-
-		IZUGFeRDPaymentTerms izpt= trans.getPaymentTerms();
-		if (izpt!=null) {
-			paymentTerms.add(izpt);
-		}
 
 		String paymentTermsXml = "";
 		if (paymentTerms.size() == 0) {
