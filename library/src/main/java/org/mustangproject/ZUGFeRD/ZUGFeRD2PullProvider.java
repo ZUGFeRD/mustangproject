@@ -538,7 +538,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml += "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 				}
 				xml += "<ram:CategoryCode>" + currentItem.getProduct().getTaxCategoryCode() + "</ram:CategoryCode>";
-				if (!currentItem.getProduct().getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
+				if ((!currentItem.getProduct().getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) && (!currentItem.getProduct().getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.ZEROTAXPRODUCTS))) {
 					xml += "<ram:RateApplicablePercent>" + vatFormat(currentItem.getProduct().getVATPercent()) + "</ram:RateApplicablePercent>";
 				}
 				xml += "</ram:ApplicableTradeTax>";

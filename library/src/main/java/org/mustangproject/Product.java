@@ -233,6 +233,9 @@ public class Product implements IZUGFeRDExportableProduct {
 	 */
 	public Product setReverseCharge() {
 		isReverseCharge = true;
+		if ((getTaxExemptionReason()==null)||(getTaxExemptionReason().isEmpty())) {
+			setTaxExemptionReason("Reverse charge");
+		}
 		setVATPercent(BigDecimal.ZERO);
 		return this;
 	}
