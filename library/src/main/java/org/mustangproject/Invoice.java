@@ -194,6 +194,12 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	public Invoice setCreditNote() {
+		documentCode = DocumentCodeTypeConstants.CREDITNOTE; // this value should somewhen be changed to Selfbilling
+		return this;
+	}
+
+	public Invoice setCreditNote(String number) {
+		setInvoiceReferencedDocumentID(number);
 		documentCode = DocumentCodeTypeConstants.CREDITNOTE;
 		return this;
 	}
