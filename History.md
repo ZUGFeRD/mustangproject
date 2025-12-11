@@ -1,15 +1,17 @@
-- #952
-- #954
-- #947
-- #969
-- #984
-- #983
-- #979, #985
-- #978
-- #977
-- 859/963
-- 961/962
-- #969
+2.21.0
+=======
+2025-12-
+
+- #969 Support Factur-X 1.08 / ZUGFeRD 2.4
+- #978 Subtotal validation in ZF 2.4 Extended
+- #952 Add optional Invoicer and Invoicee for Extended profile
+- #954 Parsing XML documents fails with ZUGFeRD visualizer due to secure processing not being functional
+- #947 replace fixed version number with new variable from root pom.xml
+- #984 set default vat exemtion reason text on reverse charge
+- #983 Be able to easily reference an invoice in a credit memo
+- #979, #985 allow vat percent=null sometimes
+- #977 Update History.md
+- 961/962 Adding a tax ExemptionReasonCode to Product/TradeTax for the XML generation
 
 2.20.0
 =======
