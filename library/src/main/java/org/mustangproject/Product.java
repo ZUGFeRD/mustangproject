@@ -23,6 +23,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	protected String unit, name, sellerAssignedID, buyerAssignedID;
 	protected String description = "";
 	protected String taxExemptionReason = null;
+	protected String taxExemptionReasonCode = null;
 	protected String taxCategoryCode = null;
 	protected BigDecimal VATPercent;
 	protected boolean isReverseCharge = false;
@@ -157,7 +158,22 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @return fluent setter
 	 */
 	public Product setTaxExemptionReason(String taxExemptionReasonText) {
-		taxExemptionReason = taxExemptionReasonText;
+		this.taxExemptionReason = taxExemptionReasonText;
+		return this;
+	}
+
+	@Override
+	public String getTaxExemptionReasonCode() {
+		return taxExemptionReasonCode;
+	}
+
+	/***
+	 *
+	 * @param taxExemptionReasonCode, https://docs.peppol.eu/poacc/billing/3.0/codelist/vatex/
+	 * @return fluent setter
+	 */
+	public Product setTaxExemptionReasonCode(String taxExemptionReasonCode) {
+		this.taxExemptionReasonCode = taxExemptionReasonCode;
 		return this;
 	}
 

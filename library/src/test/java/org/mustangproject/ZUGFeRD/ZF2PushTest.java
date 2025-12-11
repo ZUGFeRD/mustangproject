@@ -160,7 +160,7 @@ public class ZF2PushTest extends TestCase {
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE4711")
 					.setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE")))
 				.setNumber(number)
-				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(0)).setTaxExemptionReason("Kleinunternehmer gemäß §19 UStG").setTaxCategoryCode("E"), price, new BigDecimal(1.0)).addNote(theNote))
+				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(0)).setTaxExemptionReason("Kleinunternehmer gemäß §19 UStG").setTaxCategoryCode("E").setTaxExemptionReasonCode( "VATEX-EU-I" ), price, new BigDecimal(1.0)).addNote(theNote))
 			);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
@@ -179,6 +179,7 @@ public class ZF2PushTest extends TestCase {
 		}
 
 		assertEquals(i.getZFItems()[0].getNotesWithSubjectCode().get(0).getContent(), theNote);
+		assertNotNull(i.getZFItems()[0].getProduct().getTaxExemptionReasonCode());
 		assertEquals(senderDescription, i.getSender().getDescription());
 
 		// now check the contents (like MustangReaderTest)
