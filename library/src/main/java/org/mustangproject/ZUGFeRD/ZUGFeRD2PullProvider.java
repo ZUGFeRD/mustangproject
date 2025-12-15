@@ -1010,11 +1010,23 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 	private String buildPaymentTermsXml() {
 
-		ArrayList<IZUGFeRDPaymentTerms> paymentTerms = new ArrayList<IZUGFeRDPaymentTerms>(Arrays.asList(trans.getExtendedPaymentTerms()));
+		ArrayList<IZUGFeRDPaymentTerms> paymentTerms = new ArrayList<>();
+		{
+			// add payment terms
+			{
+				IZUGFeRDPaymentTerms izpt = trans.getPaymentTerms();
+				if (izpt != null) {
+					paymentTerms.add(izpt);
+				}
+			}
 
-		IZUGFeRDPaymentTerms izpt= trans.getPaymentTerms();
-		if (izpt!=null) {
-			paymentTerms.add(izpt);
+			// add extended payment terms (except the first one which is already added above)
+			{
+				IZUGFeRDPaymentTerms[] extendedPaymentTerms = trans.getExtendedPaymentTerms();
+				for (int i = 1; i < extendedPaymentTerms.length; i++) {
+					paymentTerms.add(extendedPaymentTerms[i]);
+				}
+			}
 		}
 
 		String paymentTermsXml = "";
