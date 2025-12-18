@@ -1,6 +1,6 @@
 2.21.0
 =======
-2025-12-
+2025-12-18
 
 - #969 Support Factur-X 1.08 / ZUGFeRD 2.4
 - #978 Subtotal validation in ZF 2.4 Extended
@@ -12,6 +12,7 @@
 - #979, #985 allow vat percent=null sometimes
 - #977 Update History.md
 - 961/962 Adding a tax ExemptionReasonCode to Product/TradeTax for the XML generation
+- have a start of a primitive and incomplete list of human readable unit codes
 
 2.20.0
 =======
