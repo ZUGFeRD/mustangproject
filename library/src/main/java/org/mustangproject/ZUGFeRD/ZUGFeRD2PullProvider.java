@@ -676,12 +676,18 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "<ram:OccurrenceDateTime>" + DATE.udtFormat(trans.getDeliveryDate()) + "</ram:OccurrenceDateTime>"
 				+ "</ram:ActualDeliverySupplyChainEvent>";
 		}
-		/*
-		 * + "<DeliveryNoteReferencedDocument>" +
-		 * "<IssueDateTime format=\"102\">20130603</IssueDateTime>" +
-		 * "<ID>2013-51112</ID>" +
-		 * "</DeliveryNoteReferencedDocument>"
-		 */
+
+		if (trans.getDeliveryNoteReferencedDocumentID() != null && !trans.getDeliveryNoteReferencedDocumentID().trim().isEmpty()) {
+			xml += "<ram:DeliveryNoteReferencedDocument>";
+			xml += "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getDeliveryNoteReferencedDocumentID()) + "</ram:IssuerAssignedID>";
+			if (trans.getDeliveryNoteReferencedDocumentDate() != null) {
+				final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
+				xml += "<ram:FormattedIssueDateTime><qdt:DateTimeString format=\"102\">"+XMLTools.encodeXML(dateFormat102.format(trans.getDeliveryNoteReferencedDocumentDate()))+"</qdt:DateTimeString></ram:FormattedIssueDateTime>";
+			}
+			xml += "</ram:DeliveryNoteReferencedDocument>";
+
+		}
+
 		if (trans.getDespatchAdviceReferencedDocumentID() != null && !trans.getDespatchAdviceReferencedDocumentID().trim().isEmpty()) {
 			xml += "<ram:DespatchAdviceReferencedDocument>";
 			xml += "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getDespatchAdviceReferencedDocumentID()) + "</ram:IssuerAssignedID>";

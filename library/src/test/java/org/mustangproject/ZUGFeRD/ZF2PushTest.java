@@ -851,6 +851,8 @@ public class ZF2PushTest extends TestCase {
 				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815").addBankDetails(new BankDetails("DE88200800000970375700", "COBADEFFXXX")))
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE0815"))
 				.setNumber(number).setDespatchAdviceReferencedDocumentID(despatchAdviceReferencedDocumentID)
+				.setDeliveryNoteReferencedDocumentID("0815")
+				.setDeliveryNoteReferencedDocumentDate(new SimpleDateFormat("dd.MM.yyyy").parse("01.04.2016"))
 				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, qty))
 				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, qty))
 				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, qty)).setCreditNote();
@@ -860,6 +862,8 @@ public class ZF2PushTest extends TestCase {
 			ze.export(TARGET_CREDITNOTEPDF);
 		} catch (IOException e) {
 			fail("IOException should not be raised");
+		} catch (ParseException e) {
+			fail("ParseException should not be raised");
 		}
 
 		// now check the contents (like MustangReaderTest)
@@ -882,6 +886,8 @@ public class ZF2PushTest extends TestCase {
 			Invoice i = zii.extractInvoice();
 
 			assertEquals(despatchAdviceReferencedDocumentID, i.getDespatchAdviceReferencedDocumentID());
+			assertEquals("0815", i.getDeliveryNoteReferencedDocumentID());
+			assertEquals(new SimpleDateFormat("dd.MM.yyyy").parse("01.04.2016"), i.getDeliveryNoteReferencedDocumentDate());
 
 		} catch (XPathExpressionException e) {
 			fail("XPathExpressionException should not be raised");
@@ -912,6 +918,7 @@ public class ZF2PushTest extends TestCase {
 			.setBuyerOrderReferencedDocumentID("")
 			.setContractReferencedDocument("")
 			.setDespatchAdviceReferencedDocumentID("")
+			.setDeliveryNoteReferencedDocumentID("")
 			.setInvoiceReferencedDocumentID("");
 
 		zf2p.generateXML(i);
@@ -928,6 +935,7 @@ public class ZF2PushTest extends TestCase {
 			.setBuyerOrderReferencedDocumentID("  ")
 			.setContractReferencedDocument("   ")
 			.setDespatchAdviceReferencedDocumentID("    ")
+			.setDeliveryNoteReferencedDocumentID("    ")
 			.setInvoiceReferencedDocumentID("     ");
 
 		zf2p.generateXML(i);
