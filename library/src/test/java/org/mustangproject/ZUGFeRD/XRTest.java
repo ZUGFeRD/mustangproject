@@ -299,7 +299,7 @@ public class XRTest extends TestCase {
 		String number = "123";
 		String amountStr = "1.00";
 		BigDecimal amount = new BigDecimal(amountStr);
-		var i = new Invoice().setDueDate(new java.util.Date()).setIssueDate(new java.util.Date()).setDeliveryDate(new java.util.Date())
+		Invoice i = new Invoice().setDueDate(new java.util.Date()).setIssueDate(new java.util.Date()).setDeliveryDate(new java.util.Date())
 			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("DE4711").addVATID("DE0815").setEmail("info@example.org").setContact(new org.mustangproject.Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new org.mustangproject.BankDetails("DE12500105170648489890", "COBADEFXXX")))
 			.setRecipient(recipient)
 			.setReferenceNumber("991-01484-64")//leitweg-id
@@ -311,9 +311,13 @@ public class XRTest extends TestCase {
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		// Untaxed services don't have the field RateApplicablePercent, since it would be always 0. An error is thrown on validation, if 0 is set.
-		assertThat(theXML).valueByXPath("count(//*[local-name()='RateApplicablePercent'])")
+		assertThat(theXML).valueByXPath("count(//*[local-name()='SpecifiedLineTradeSettlement']/*[local-name()='ApplicableTradeTax']/*[local-name()='RateApplicablePercent'])")
 			.asInt()
 			.isEqualTo(0);
+
+		assertThat(theXML).valueByXPath("count(//*[local-name()='ApplicableHeaderTradeSettlement']/*[local-name()='ApplicableTradeTax']/*[local-name()='RateApplicablePercent'])")
+			.asInt()
+			.isEqualTo(1);
 
 		//Exemption reason needs to be set if TaxCategoryCode == "O", reason should be at the product and in the ApplicableTradeTax
 		assertThat(theXML).valueByXPath("count(//*[local-name()='ExemptionReason'])")

@@ -739,7 +739,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			}
 		}
 		if (trans.getDocumentCode() != null
-			&& Set.of(DocumentCodeTypeConstants.CORRECTEDINVOICE, DocumentCodeTypeConstants.CREDITNOTE).contains(trans.getDocumentCode())) {
+			&& Arrays.asList(DocumentCodeTypeConstants.CORRECTEDINVOICE, DocumentCodeTypeConstants.CREDITNOTE).contains(trans.getDocumentCode())) {
 			hasDueDate = false;
 		}
 
@@ -763,10 +763,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>" // currencyID=\"EUR\"
 						+ "<ram:CategoryCode>" + amountCategoryCode + "</ram:CategoryCode>"
 						+ (amountDueDateTypeCode != null ? "<ram:DueDateTypeCode>" + amountDueDateTypeCode + "</ram:DueDateTypeCode>" : "");
-					if (!amountCategoryCode.equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
-						xml += "<ram:RateApplicablePercent>"
-							+ vatFormat(amount.getApplicablePercent()) + "</ram:RateApplicablePercent>";
-					}
+					xml += "<ram:RateApplicablePercent>"
+						+ vatFormat(amount.getApplicablePercent()) + "</ram:RateApplicablePercent>";
 					xml += "</ram:ApplicableTradeTax>";
 				}
 			}
