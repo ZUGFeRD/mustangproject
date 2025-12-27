@@ -150,7 +150,14 @@ public class PDFValidator extends Validator {
 
 				final DocumentBuilder builder = factory.newDocumentBuilder();
 				final InputSource is = new InputSource(new StringReader(xmp));
-				docXMP = builder.parse(is);
+				try {
+					docXMP = builder.parse(is);					
+				} catch (Exception e) {
+					context.addResultItem(
+						new ValidationResultItem(ESeverity.error, "XMP Metadata: Could not parse XMP metadata")
+							.setSection(10).setPart(EPart.pdf));
+					throw e;
+				}
 
 				final XPathFactory xpathFactory = XPathFactory.newInstance();
 
