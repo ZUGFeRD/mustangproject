@@ -45,6 +45,7 @@ public class Item implements IZUGFeRDExportableItem {
 	protected String accountingReference;
 	protected String parentLineID = null;
 	protected String lineStatusReasonCode = null;
+ 	protected TradeParty lineSeller;
 	//protected HashMap<String, String> attributes = new HashMap<>();
 
 	/***
@@ -681,4 +682,19 @@ public class Item implements IZUGFeRDExportableItem {
 		this.lineStatusReasonCode = lineStatusReasonCode;
 		return this;
 	}
+
+	/***
+	 * For line seller 
+	 * @param seller The line seller
+	 * @return fluent setter
+	 */
+    public Item setLineSeller(TradeParty seller) {
+        this.lineSeller = seller;
+        return this;
+    }
+    @Override
+    public TradeParty getLineSeller() {
+        return this.lineSeller;
+    }
+
 }

@@ -525,8 +525,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "</ram:ChargeAmount>" // currencyID=\"EUR\"
 					+ "<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
 					+ "\">" + quantityFormat(currentItem.getBasisQuantity()) + "</ram:BasisQuantity>"
-					+ "</ram:NetPriceProductTradePrice>"
-					+ "</ram:SpecifiedLineTradeAgreement>"
+					+ "</ram:NetPriceProductTradePrice>";
+				  
+                if(currentItem.getLineSeller()!=null) {
+                    xml += "<ram:ItemSellerTradeParty>" + getTradePartyAsXML(currentItem.getLineSeller(), true, false) + "</ram:ItemSellerTradeParty>";
+    
+                }	            
+				xml += "</ram:SpecifiedLineTradeAgreement>"
 					+ "<ram:SpecifiedLineTradeDelivery>"
 					+ "<ram:BilledQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">"
 					+ quantityFormat(currentItem.getQuantity()) + "</ram:BilledQuantity>"
