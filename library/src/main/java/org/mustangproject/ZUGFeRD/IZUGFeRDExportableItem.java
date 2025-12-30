@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.mustangproject.IncludedNote;
 import org.mustangproject.Item;
+import org.mustangproject.TradeParty;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -237,4 +238,13 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	}
 
     default LineCalculator getCalculation() {return new LineCalculator(this); };
+	/***
+	 * For line seller 
+	 * @return the seller
+	 */
+
+	default  TradeParty getLineSeller() { 
+		return null;
+	}
+
 }
