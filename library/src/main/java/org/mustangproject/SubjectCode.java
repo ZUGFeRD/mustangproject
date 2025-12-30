@@ -44,5 +44,16 @@ public enum SubjectCode {
 	/**
 	* Payment information
 	*/
-	PMT
+	PMT,
+	/**
+	 * Payment detail/remittance information
+	 */
+	
+	PMD, 
+	/**
+	 * Payment term
+	 */
+	AAB 
+
+
 }
