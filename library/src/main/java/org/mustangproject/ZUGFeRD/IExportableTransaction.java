@@ -562,6 +562,26 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	/**
+	 * get delivery note document ID
+	 * ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/IssuerAssignedID
+	 *
+	 * @return the ID of the delivery note document
+	 */
+	default String getDeliveryNoteReferencedDocumentID() {
+		return null;
+	}
+
+	/**
+	 * get delivery note document date
+	 * ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/FormattedIssueDateTime
+	 *
+	 * @return the date of the delivery note document
+	 */
+	default Date getDeliveryNoteReferencedDocumentDate() {
+		return null;
+	}
+
 	/***
 	 * additional text description
 	 *

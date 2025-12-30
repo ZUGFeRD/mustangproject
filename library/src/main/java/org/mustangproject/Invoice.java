@@ -68,6 +68,8 @@ public class Invoice implements IExportableTransaction {
 	protected String specifiedProcuringProjectID = null;
 	protected String specifiedProcuringProjectName = null;
 	protected String despatchAdviceReferencedDocumentID = null;
+	protected String deliveryNoteReferencedDocumentID = null;
+	protected Date deliveryNoteReferencedDocumentDate = null;
 	protected String vatDueDateTypeCode = null;
 	protected String creditorReferenceID; // required when direct debit is used.
 	private BigDecimal roundingAmount=null;
@@ -1070,6 +1072,28 @@ public class Invoice implements IExportableTransaction {
 
 	public Invoice setDespatchAdviceReferencedDocumentID(String despatchAdviceReferencedDocumentID) {
 		this.despatchAdviceReferencedDocumentID = despatchAdviceReferencedDocumentID;
+		return this;
+	}
+
+	@Override
+	public String getDeliveryNoteReferencedDocumentID() {
+		return deliveryNoteReferencedDocumentID;
+	}
+
+
+	public Invoice setDeliveryNoteReferencedDocumentID(String deliveryNoteReferencedDocumentID) {
+		this.deliveryNoteReferencedDocumentID = deliveryNoteReferencedDocumentID;
+		return this;
+	}
+
+	@Override
+	public Date getDeliveryNoteReferencedDocumentDate() {
+		return deliveryNoteReferencedDocumentDate;
+	}
+
+
+	public Invoice setDeliveryNoteReferencedDocumentDate(Date deliveryNoteReferencedDocumentDate) {
+		this.deliveryNoteReferencedDocumentDate = deliveryNoteReferencedDocumentDate;
 		return this;
 	}
 

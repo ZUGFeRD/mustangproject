@@ -304,6 +304,16 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		return "123";
 	}
 
+	@Override
+	public String getDeliveryNoteReferencedDocumentID() {
+		return "0815";
+	}
+
+	@Override
+	public Date getDeliveryNoteReferencedDocumentDate() {
+		return new GregorianCalendar(2016, Calendar.APRIL, 1).getTime();
+	}
+
 	/**
 	 * Create the test case
 	 *

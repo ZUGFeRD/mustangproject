@@ -528,6 +528,8 @@ public class ZUGFeRDInvoiceImporter {
 		Date dueDate = null;
 		Date deliveryDate = null;
 		String despatchAdviceReferencedDocument = null;
+		String deliveryNoteReferencedDocumentID = null;
+		Date deliveryNoteReferencedDocumentDate = null;
 
 		for (int i = 0; i < ExchangedDocumentNodes.getLength(); i++) {
 			Node exchangedDocumentNode = ExchangedDocumentNodes.item(i);
@@ -678,6 +680,28 @@ public class ZUGFeRDInvoiceImporter {
 							if (despatchAdviceChilds.item(despatchAdviceChildIndex).getLocalName() != null
 								&& despatchAdviceChilds.item(despatchAdviceChildIndex).getLocalName().equals("IssuerAssignedID")) {
 								despatchAdviceReferencedDocument = XMLTools.trimOrNull(despatchAdviceChilds.item(despatchAdviceChildIndex));
+							}
+						}
+					}
+
+					if (headerTradeDeliveryChilds.item(deliveryChildIndex).getLocalName().equals("DeliveryNoteReferencedDocument")) {
+						NodeList deliveryNoteReferencedDocumentChilds = headerTradeDeliveryChilds.item(deliveryChildIndex).getChildNodes();
+						for (int deliveryNoteReferencedDocumentIndex = 0; deliveryNoteReferencedDocumentIndex < deliveryNoteReferencedDocumentChilds.getLength(); deliveryNoteReferencedDocumentIndex++) {
+							if (deliveryNoteReferencedDocumentChilds.item(deliveryNoteReferencedDocumentIndex).getLocalName() != null
+								&& deliveryNoteReferencedDocumentChilds.item(deliveryNoteReferencedDocumentIndex).getLocalName().equals("IssuerAssignedID")) {
+								deliveryNoteReferencedDocumentID = XMLTools.trimOrNull(deliveryNoteReferencedDocumentChilds.item(deliveryNoteReferencedDocumentIndex));
+							}
+
+							if ((deliveryNoteReferencedDocumentChilds.item(deliveryNoteReferencedDocumentIndex).getLocalName() != null)
+								&& (deliveryNoteReferencedDocumentChilds.item(deliveryNoteReferencedDocumentIndex).getLocalName().equals("FormattedIssueDateTime"))) {
+
+								NodeList FormattedIssueDateTimeChilds = deliveryNoteReferencedDocumentChilds.item(deliveryNoteReferencedDocumentIndex).getChildNodes();
+								for (int dateChildIndex = 0; dateChildIndex < FormattedIssueDateTimeChilds.getLength(); dateChildIndex++) {
+									if ((FormattedIssueDateTimeChilds.item(dateChildIndex).getLocalName() != null)
+										&& (FormattedIssueDateTimeChilds.item(dateChildIndex).getLocalName().equals("DateTimeString"))) {
+										deliveryNoteReferencedDocumentDate = XMLTools.tryDate(FormattedIssueDateTimeChilds.item(dateChildIndex));
+									}
+								}
 							}
 						}
 					}
@@ -1007,6 +1031,14 @@ public class ZUGFeRDInvoiceImporter {
 			if (!s.isEmpty()) {
 				zpp.setDespatchAdviceReferencedDocumentID(s);
 			}
+		}
+
+		if (deliveryNoteReferencedDocumentID != null) {
+			zpp.setDeliveryNoteReferencedDocumentID(deliveryNoteReferencedDocumentID);
+		}
+
+		if (deliveryNoteReferencedDocumentDate != null) {
+			zpp.setDeliveryNoteReferencedDocumentDate(deliveryNoteReferencedDocumentDate);
 		}
 
 		String invoiceReferencedDocumentID = extractString("//*[local-name()=\"InvoiceReferencedDocument\"]/*[local-name()=\"IssuerAssignedID\"]|//*[local-name()=\"BillingReference\"]/*[local-name()=\"InvoiceDocumentReference\"]/*[local-name()=\"ID\"]");
