@@ -64,7 +64,7 @@ public class IncludedNote {
 		return new IncludedNote(content, SubjectCode.AAK);
 	}
 	
-	public static IncludedNote paymetTermNote(String content) {
+	public static IncludedNote paymentTermNote(String content) {
 		return new IncludedNote(content, SubjectCode.AAB);
 	}
 	
