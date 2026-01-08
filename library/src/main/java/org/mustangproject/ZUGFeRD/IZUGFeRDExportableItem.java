@@ -44,7 +44,6 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 * item level discounts
 	 * @return array of the discounts on a single item
 	 */
-	@Deprecated
 	default IZUGFeRDAllowanceCharge[] getItemAllowances() {
 		if (getProduct()!=null) {
 			return getProduct().getAllowances();
@@ -56,7 +55,6 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 * item level price additions
 	 * @return array of the additional charges on the item
 	 */
-	@Deprecated
 	default IZUGFeRDAllowanceCharge[] getItemCharges() {
 		if (getProduct()!=null) {
 			return getProduct().getCharges();
@@ -103,6 +101,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	BigDecimal getPrice();
 
 	@Override
+	@Deprecated
 	default BigDecimal getValue() {
 		return getPrice();
 	}
@@ -181,6 +180,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 *
 	 * @return the real item lecel SpecifiedTradeAllowanceCharges
 	 */
+	@Deprecated
 	default IZUGFeRDAllowanceCharge[] getItemTotalAllowances() {
 		return null;
 	}

@@ -1,3 +1,12 @@
+- 990
+- 859
+- 992
+- 994
+- 999
+- 997
+- 1000
+- deprecate itemTotalAllowances instead of itemAllowances oder itemCharges
+- 
 2.21.0
 =======
 2025-12-18
