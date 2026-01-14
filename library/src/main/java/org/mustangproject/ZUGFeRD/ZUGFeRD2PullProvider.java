@@ -534,8 +534,20 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				xml += "</ram:SpecifiedLineTradeAgreement>"
 					+ "<ram:SpecifiedLineTradeDelivery>"
 					+ "<ram:BilledQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">"
-					+ quantityFormat(currentItem.getQuantity()) + "</ram:BilledQuantity>"
-					+ "</ram:SpecifiedLineTradeDelivery>"
+					+ quantityFormat(currentItem.getQuantity()) + "</ram:BilledQuantity>";
+
+					if (currentItem.getDeliveryNoteReferencedDocumentID() != null && !currentItem.getDeliveryNoteReferencedDocumentID().trim().isEmpty()) {
+						xml += "<ram:DeliveryNoteReferencedDocument>";
+						xml += "<ram:IssuerAssignedID>" + XMLTools.encodeXML(currentItem.getDeliveryNoteReferencedDocumentID()) + "</ram:IssuerAssignedID>";
+						if (currentItem.getDeliveryNoteReferencedDocumentDate() != null) {
+							final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
+							xml += "<ram:FormattedIssueDateTime><qdt:DateTimeString format=\"102\">"+XMLTools.encodeXML(dateFormat102.format(currentItem.getDeliveryNoteReferencedDocumentDate()))+"</qdt:DateTimeString></ram:FormattedIssueDateTime>";
+						}
+						xml += "</ram:DeliveryNoteReferencedDocument>";
+
+					}
+
+					xml += "</ram:SpecifiedLineTradeDelivery>"
 					+ "<ram:SpecifiedLineTradeSettlement>"
 					+ "<ram:ApplicableTradeTax>"
 					+ "<ram:TypeCode>VAT</ram:TypeCode>";

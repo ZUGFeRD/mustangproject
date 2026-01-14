@@ -46,6 +46,8 @@ public class Item implements IZUGFeRDExportableItem {
 	protected String parentLineID = null;
 	protected String lineStatusReasonCode = null;
  	protected TradeParty lineSeller;
+	protected String deliveryNoteReferencedDocumentID = null;
+	protected Date deliveryNoteReferencedDocumentDate = null;
 	//protected HashMap<String, String> attributes = new HashMap<>();
 
 	/***
@@ -186,6 +188,19 @@ public class Item implements IZUGFeRDExportableItem {
 					}
 				}
 			});
+
+		itemMap.getAsNodeMap("SpecifiedLineTradeDelivery").ifPresent(icnm -> {
+			icnm.getAsNodeMap("DeliveryNoteReferencedDocument").ifPresent(dn -> {
+				dn.getAsString("IssuerAssignedID")
+					.ifPresent(this::setDeliveryNoteReferencedDocumentID);
+
+				dn.getAsNodeMap("FormattedIssueDateTime")
+					.flatMap(fdt -> fdt.getNode("DateTimeString"))
+					.map(XMLTools::getNodeValue)
+					.map(XMLTools::tryDate)
+					.ifPresent(this::setDeliveryNoteReferencedDocumentDate);
+			});
+		});
 
 		itemMap.getAsNodeMap("SpecifiedLineTradeSettlement", "SpecifiedSupplyChainTradeSettlement").ifPresent(icnm -> {
 			icnm.getAsNodeMap("ApplicableTradeTax")
@@ -696,5 +711,27 @@ public class Item implements IZUGFeRDExportableItem {
     public TradeParty getLineSeller() {
         return this.lineSeller;
     }
+
+	@Override
+	public String getDeliveryNoteReferencedDocumentID() {
+		return deliveryNoteReferencedDocumentID;
+	}
+
+
+	public Item setDeliveryNoteReferencedDocumentID(String deliveryNoteReferencedDocumentID) {
+		this.deliveryNoteReferencedDocumentID = deliveryNoteReferencedDocumentID;
+		return this;
+	}
+
+	@Override
+	public Date getDeliveryNoteReferencedDocumentDate() {
+		return deliveryNoteReferencedDocumentDate;
+	}
+
+
+	public Item setDeliveryNoteReferencedDocumentDate(Date deliveryNoteReferencedDocumentDate) {
+		this.deliveryNoteReferencedDocumentDate = deliveryNoteReferencedDocumentDate;
+		return this;
+	}
 
 }
