@@ -5,6 +5,7 @@ package org.mustangproject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.TransactionCalculator;
+import org.mustangproject.ZUGFeRD.VATAmount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,7 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 	protected BigDecimal duePayable=null;
 	protected BigDecimal grandTotal=null;
 	protected BigDecimal taxBasis=null;
+	protected BigDecimal VATtotal=null;
 	protected TransactionCalculator tc=null;
 
     public void calculate() {
@@ -27,6 +29,10 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 		lineTotalAmount=tc.getValue();
 		duePayable=tc.getDuePayable();
 		taxBasis= tc.getTaxBasis();
+		VATtotal=BigDecimal.ZERO;
+		for (VATAmount vam:getCalculation().getTaxDetails()) {
+			VATtotal=VATtotal.add(vam.getCalculated());
+		}
     }
 	public BigDecimal getGrandTotal() {
 		if (grandTotal==null) {
@@ -86,6 +92,28 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 			calculate();
 		}
 		return lineTotalAmount;
+	}
+
+	/***
+	 * usually one would use calculate, use only if the invoice is parsed
+	 * BT-110
+	 * @param parsedValue the gross total minus net
+	 * @return fluent setter
+	 */
+	public CalculatedInvoice setVATtotal(BigDecimal parsedValue) {
+		VATtotal=parsedValue;
+		return this;
+	}
+
+	/***
+	 *
+	 * @return expect a value close to getGrandTotal-LineTotalAmount
+	 */
+	public BigDecimal getVATtotal() {
+		if (VATtotal==null) {
+			calculate();
+		}
+		return VATtotal;
 	}
 
 	/***

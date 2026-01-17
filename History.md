@@ -6,7 +6,8 @@
 - 997
 - 1000
 - deprecate itemTotalAllowances instead of itemAllowances oder itemCharges
-- 
+- #1011
+
 2.21.0
 =======
 2025-12-18

@@ -718,6 +718,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			zii.extractInto(i);
 			assertEquals("123", i.getNumber());
 			assertEquals("1.48", i.getGrandTotal().toString());
+			assertEquals("0.20", i.getVATtotal().toString());
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 			assertEquals("2020-10-01", sdf.format(i.getDetailedDeliveryPeriodFrom()));
@@ -751,13 +752,16 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		BigDecimal expectedPrepaid=new BigDecimal(50);
 		BigDecimal expectedLineTotal=new BigDecimal("180.76");
 		BigDecimal expectedDue=new BigDecimal("147.65");
+		BigDecimal expectedTax=new BigDecimal("20.16");
 		if (isBD) {
 			BigDecimal amread=invoice.getTotalPrepaidAmount();
 			BigDecimal importedLineTotal=invoice.getLineTotalAmount();
 			BigDecimal importedDuePayable=invoice.getDuePayable();
+			BigDecimal importedTaxAmount=invoice.getVATtotal();
 			assertTrue(amread.compareTo(expectedPrepaid) == 0);
 			assertTrue(importedLineTotal.compareTo(expectedLineTotal) == 0);
 			assertTrue(importedDuePayable.compareTo(expectedDue) == 0);
+			assertTrue(importedTaxAmount.compareTo(expectedTax) == 0);
 		}
 
 	}

@@ -514,6 +514,14 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
+		xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"TaxTotalAmount\"]|//*[local-name()=\"TaxTotal\"]/*[local-name()=\"TaxAmount\"]");
+		NodeList taxTotalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (taxTotalNodes.getLength() > 0) {
+			if (zpp instanceof CalculatedInvoice) {
+				((CalculatedInvoice) zpp).setVATtotal(new BigDecimal(XMLTools.trimOrNull(taxTotalNodes.item(0))));
+			}
+		}
+
 		xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"DuePayableAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"PayableAmount\"]");
 		NodeList lineDueNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		BigDecimal duePayableAmount = null;
