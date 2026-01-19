@@ -614,6 +614,7 @@ public class ZF2PushTest extends TestCase {
 						addAdditionalReference(dr2).addBuyerOrderReferencedDocumentID("orderId").addBuyerOrderReferencedDocumentLineID("xxx").addReferencedLineID("xxx")
 						.addNote("item level 1/1").addAllowance(new Allowance(new BigDecimal(0.02)).setReason("item discount").setTaxPercent(new BigDecimal(16))).setDetailedDeliveryPeriod(sdf.parse("2020-01-13"), sdf.parse("2020-01-15"))
 						.setDeliveryNoteReferencedDocumentID("deliverynote123")
+						.setDeliveryNoteReferencedDocumentLineID("deliverypos456")
 						.setDeliveryNoteReferencedDocumentDate(new SimpleDateFormat("dd.MM.yyyy").parse("14.01.2026"))
 					)
 					.addCharge(new Charge(new BigDecimal(0.5)).setReason("quick delivery charge").setTaxPercent(new BigDecimal(16)))
@@ -652,6 +653,7 @@ public class ZF2PushTest extends TestCase {
 		assertTrue(zi.getUTF8().contains(contractID));
 		assertEquals(zi.importedInvoice.getZFItems()[0].getId(), "a123");
 		assertEquals(zi.importedInvoice.getZFItems()[0].getDeliveryNoteReferencedDocumentID(), "deliverynote123");
+		assertEquals(zi.importedInvoice.getZFItems()[0].getDeliveryNoteReferencedDocumentLineID(), "deliverypos456");
 		try {
 			assertEquals(zi.importedInvoice.getZFItems()[0].getDeliveryNoteReferencedDocumentDate(), new SimpleDateFormat("dd.MM.yyyy").parse("14.01.2026"));
 		} catch (ParseException e) {

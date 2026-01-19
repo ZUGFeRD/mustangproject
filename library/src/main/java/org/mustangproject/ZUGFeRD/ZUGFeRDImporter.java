@@ -746,6 +746,10 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 								if (subnode != null) {
 									lineItem.setDeliveryNoteReferencedDocumentID(XMLTools.getNodeValue(subnode));
 								}
+								subnode = getNodeByName(node.getChildNodes(), "LineID");
+								if (subnode != null) {
+									lineItem.setDeliveryNoteReferencedDocumentLineID(XMLTools.getNodeValue(subnode));
+								}
 								node = getNodeByName(node.getChildNodes(), "FormattedIssueDateTime");
 								if (node != null) {
 									NodeList FormattedIssueDateTimeChilds = node.getChildNodes();

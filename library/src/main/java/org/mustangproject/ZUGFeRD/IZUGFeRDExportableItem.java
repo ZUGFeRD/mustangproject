@@ -267,4 +267,14 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 		return null;
 	}
 
+	/**
+	 * get delivery note document LineID (per Item - ZUGFeRD EXTENDED)
+	 * rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/LineID
+	 *
+	 * @return the LineID of the delivery note document item
+	 */
+	default String getDeliveryNoteReferencedDocumentLineID() {
+		return null;
+	}
+
 }

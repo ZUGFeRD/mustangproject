@@ -104,6 +104,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 					"<ram:BilledQuantity unitCode=\"HUR\">1.0000</ram:BilledQuantity>\n" +
 					"<ram:DeliveryNoteReferencedDocument>\n" +
 					"<ram:IssuerAssignedID>deliverynote123</ram:IssuerAssignedID>\n" +
+				    "<ram:LineID>deliverypos456</ram:LineID>\n" +
 					"<ram:FormattedIssueDateTime>\n" +
 					"<udt:DateTimeString format=\"102\">20260114</udt:DateTimeString>\n" +
 					"</ram:FormattedIssueDateTime>\n" +
@@ -288,6 +289,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		assertEquals(zi.getHolder(), "Bei Spiel GmbH");
 		assertEquals(zi.getForeignReference(), "RE-20171118/506");
 		assertEquals(zi.getLineItemList().get(0).getDeliveryNoteReferencedDocumentID(), "deliverynote123");
+		assertEquals(zi.getLineItemList().get(0).getDeliveryNoteReferencedDocumentLineID(), "deliverypos456");
 		try {
 			assertEquals(zi.getLineItemList().get(0).getDeliveryNoteReferencedDocumentDate(), new SimpleDateFormat("dd.MM.yyyy").parse("14.01.2026"));
 		} catch (ParseException e) {

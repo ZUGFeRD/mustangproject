@@ -539,6 +539,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					if (currentItem.getDeliveryNoteReferencedDocumentID() != null && !currentItem.getDeliveryNoteReferencedDocumentID().trim().isEmpty()) {
 						xml += "<ram:DeliveryNoteReferencedDocument>";
 						xml += "<ram:IssuerAssignedID>" + XMLTools.encodeXML(currentItem.getDeliveryNoteReferencedDocumentID()) + "</ram:IssuerAssignedID>";
+						xml += "<ram:LineID>" + XMLTools.encodeXML(currentItem.getDeliveryNoteReferencedDocumentLineID()) + "</ram:LineID>";
 						if (currentItem.getDeliveryNoteReferencedDocumentDate() != null) {
 							final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
 							xml += "<ram:FormattedIssueDateTime><qdt:DateTimeString format=\"102\">"+XMLTools.encodeXML(dateFormat102.format(currentItem.getDeliveryNoteReferencedDocumentDate()))+"</qdt:DateTimeString></ram:FormattedIssueDateTime>";

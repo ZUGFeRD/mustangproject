@@ -48,6 +48,7 @@ public class Item implements IZUGFeRDExportableItem {
  	protected TradeParty lineSeller;
 	protected String deliveryNoteReferencedDocumentID = null;
 	protected Date deliveryNoteReferencedDocumentDate = null;
+	protected String deliveryNoteReferencedDocumentLineID = null;
 	//protected HashMap<String, String> attributes = new HashMap<>();
 
 	/***
@@ -193,6 +194,9 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("DeliveryNoteReferencedDocument").ifPresent(dn -> {
 				dn.getAsString("IssuerAssignedID")
 					.ifPresent(this::setDeliveryNoteReferencedDocumentID);
+
+				dn.getAsString("LineID")
+						.ifPresent(this::setDeliveryNoteReferencedDocumentLineID);
 
 				dn.getAsNodeMap("FormattedIssueDateTime")
 					.flatMap(fdt -> fdt.getNode("DateTimeString"))
@@ -731,6 +735,17 @@ public class Item implements IZUGFeRDExportableItem {
 
 	public Item setDeliveryNoteReferencedDocumentDate(Date deliveryNoteReferencedDocumentDate) {
 		this.deliveryNoteReferencedDocumentDate = deliveryNoteReferencedDocumentDate;
+		return this;
+	}
+
+	@Override
+	public String getDeliveryNoteReferencedDocumentLineID() {
+		return deliveryNoteReferencedDocumentLineID;
+	}
+
+
+	public Item setDeliveryNoteReferencedDocumentLineID(String deliveryNoteReferencedDocumentLineID) {
+		this.deliveryNoteReferencedDocumentLineID = deliveryNoteReferencedDocumentLineID;
 		return this;
 	}
 
