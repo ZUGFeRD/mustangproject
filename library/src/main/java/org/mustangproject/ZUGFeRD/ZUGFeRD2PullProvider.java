@@ -645,17 +645,22 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "</ram:AdditionalReferencedDocument>";
 			}
 		}
-
-		if(trans.getTenderReferencedDocument() != null){
+		if (trans.getObjectIdentifierReferencedDocument() != null) {
+			xml += "<ram:AdditionalReferencedDocument>"
+				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getObjectIdentifierReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
+				+ "<ram:TypeCode>130</ram:TypeCode>";
+			if (trans.getObjectIdentifierReferencedDocument().getFormattedIssueDateTime()!=null) {
+				xml += "<ram:FormattedIssueDateTime>" + DATE.qdtFormat(trans.getObjectIdentifierReferencedDocument().getFormattedIssueDateTime()) + "</ram:FormattedIssueDateTime>";
+			}
+			xml += "</ram:AdditionalReferencedDocument>";
+		}
+		if (trans.getTenderReferencedDocument() != null){
 			xml += "<ram:AdditionalReferencedDocument>"
 				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getTenderReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
-				+ "<ram:TypeCode>" + 50 + "</ram:TypeCode>";
+				+ "<ram:TypeCode>50</ram:TypeCode>";
 			if (trans.getTenderReferencedDocument().getFormattedIssueDateTime()!=null) {
-				final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
-				xml += "<ram:FormattedIssueDateTime><qdt:DateTimeString format=\"102\">"+XMLTools.encodeXML(dateFormat102.format(trans.getTenderReferencedDocument().getFormattedIssueDateTime()))+"</qdt:DateTimeString></ram:FormattedIssueDateTime>";
+				xml += "<ram:FormattedIssueDateTime>" + DATE.qdtFormat(trans.getTenderReferencedDocument().getFormattedIssueDateTime()) + "</ram:FormattedIssueDateTime>";
 			}
-
-
 			xml += "</ram:AdditionalReferencedDocument>";
 		}
 		if (trans.getSpecifiedProcuringProjectID() != null) {
