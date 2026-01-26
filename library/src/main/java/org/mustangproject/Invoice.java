@@ -55,6 +55,7 @@ public class Invoice implements IExportableTransaction {
 	protected Date detailedDeliveryDateStart = null;
 	protected Date detailedDeliveryPeriodEnd = null;
 	protected IReferencedDocument tenderReference = null;
+	protected IReferencedDocument objectIdentifierReference = null;
 
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
 		Charges = new ArrayList<>(), LogisticsServiceCharges = new ArrayList<>();
@@ -172,6 +173,28 @@ public class Invoice implements IExportableTransaction {
 	public Invoice setTenderReferencedDocument(String ID) {
 		ReferencedDocument dr=new ReferencedDocument(ID);
 		setTenderReferencedDocument(dr);
+		return this;
+	}
+
+
+
+	/** BT-18 */
+	@Override
+	public IReferencedDocument getObjectIdentifierReferencedDocument() {
+		return objectIdentifierReference;
+	}
+
+
+	/** BT-18 */
+	public Invoice setObjectIdentifierReferencedDocument(ReferencedDocument dr) {
+		dr.setTypeCode("130");//50 is fixed for tender documents
+		objectIdentifierReference=dr;
+		return this;
+	}
+
+	public Invoice setObjectIdentifierReferencedDocument(String id) {
+		ReferencedDocument dr=new ReferencedDocument(id);
+		setObjectIdentifierReferencedDocument(dr);
 		return this;
 	}
 

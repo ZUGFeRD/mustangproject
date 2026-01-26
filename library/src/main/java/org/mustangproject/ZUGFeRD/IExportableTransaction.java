@@ -225,6 +225,15 @@ public interface IExportableTransaction {
 	}
 
 	/**
+	 * BT-18 Invoiced Object Identifier
+	 *
+	 * @return mandatory ID, optional Date
+	 */
+	default IReferencedDocument getObjectIdentifierReferencedDocument() {
+		return null;
+	}
+
+	/**
 	 * own name
 	 *
 	 * @return the sender's organisation name
