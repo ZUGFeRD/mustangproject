@@ -101,9 +101,7 @@ public class LineCalculator {
 		return itemTotalVATAmount;
 	}
 
-	public BigDecimal getItemTotalGrossAmount() {
-		return itemTotalNetAmount;
-	}
+	public BigDecimal getItemTotalGrossAmount() { return itemTotalNetAmount.add(itemTotalVATAmount); }
 
 	public BigDecimal getPriceGross() {
 		return priceGross;

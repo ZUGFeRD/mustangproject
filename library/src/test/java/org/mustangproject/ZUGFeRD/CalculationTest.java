@@ -41,6 +41,7 @@ public class CalculationTest extends ResourceCase {
 		assertEquals(valueOf(100).stripTrailingZeros(), calculator.getPrice().stripTrailingZeros());
 		assertEquals(valueOf(1000).stripTrailingZeros(), calculator.getItemTotalNetAmount().stripTrailingZeros());
 		assertEquals(valueOf(160).stripTrailingZeros(), calculator.getItemTotalVATAmount().stripTrailingZeros());
+		assertEquals(valueOf(1160).stripTrailingZeros(), calculator.getItemTotalGrossAmount().stripTrailingZeros());
 	}
 
 	@Test
