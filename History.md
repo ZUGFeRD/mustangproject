@@ -1,3 +1,5 @@
+**Important note: Not all versions are fully backward compatible. After updating the Mustang library, it may be necessary to make some changes to the code that uses the library. Breaking changes are not typically marked in the history-file.**
+
 - 990
 - 859
 - 992
