@@ -63,7 +63,15 @@ public class IncludedNote {
 	public static IncludedNote discountBonusNote(String content) {
 		return new IncludedNote(content, SubjectCode.AAK);
 	}
-
+	
+	public static IncludedNote paymentTermNote(String content) {
+		return new IncludedNote(content, SubjectCode.AAB);
+	}
+	
+	public static IncludedNote paymentDetailRemittanceInformationNote(String content) {
+		return new IncludedNote(content, SubjectCode.PMD);
+	}
+	
 	public static IncludedNote unspecifiedNote(String content) {
 		return new IncludedNote(content, null);
 	}
