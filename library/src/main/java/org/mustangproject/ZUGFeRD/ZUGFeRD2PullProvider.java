@@ -762,10 +762,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 			}
 		}
-		if (trans.getDocumentCode() != null
-			&& Arrays.asList(DocumentCodeTypeConstants.CORRECTEDINVOICE, DocumentCodeTypeConstants.CREDITNOTE).contains(trans.getDocumentCode())) {
-			hasDueDate = false;
-		}
 
 		final List<VATAmount> vatAmounts = calc.getVATAmountList();
 		for (final VATAmount amount : vatAmounts) {
@@ -1068,7 +1064,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				throw new IllegalStateException(
 					"if paymentTerms.dueDate is specified, paymentTerms.discountTerms.baseDate has not to be specified");
 			}
-			paymentTermsXml += "<ram:Description>" + pt.getDescription() + "</ram:Description>";
+
+			if(pt.getDescription() != null) {
+				paymentTermsXml += "<ram:Description>" + pt.getDescription() + "</ram:Description>";
+			}
 
 			if (dueDate != null)
 			{

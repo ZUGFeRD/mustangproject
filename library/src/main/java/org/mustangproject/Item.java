@@ -110,7 +110,7 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsBigDecimal("BaseQuantity").ifPresent(this::setBasisQuantity);
 		});
 
-		itemMap.getNode("InvoicedQuantity").ifPresent(icn -> {
+		itemMap.getNode(new String[]{"InvoicedQuantity", "CreditedQuantity"}).ifPresent(icn -> {
 			// ubl
 			setQuantity(new BigDecimal(icn.getTextContent().trim()));
 			product.setUnit(icn.getAttributes().getNamedItem("unitCode").getNodeValue());
