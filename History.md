@@ -1,12 +1,24 @@
-- 990
-- 859
-- 992
-- 994
-- 999
-- 997
-- 1000
-- deprecate itemTotalAllowances instead of itemAllowances oder itemCharges
-- #1011
+
+2.22.0
+=======
+2026-02-04
+
+- #990 Fix empty ValidationResult when XMP metadata contains invalid XML characters
+- #859 SpecifiedTradePaymentTerms doppelt in der XML ab Version 2.16.5
+- #992 fix typo
+- #253/#994 add DeliveryNoteReferencedDocument for import and export
+- #999 Write RateApplicablePercent on head also for tax free
+- #997 CategoryCode O Need VAT rate in header breakdown (BT-119) but MUST omit line VAT rate (BT-152)
+- #1000 Support ItemSellerTradeParty at line level (Factur-X / ZUGFeRD EXTENDED) for French municipalities subcontracting services to other municipalities
+- #1011 calculatedinvoice needs to contain VATtotal
+- #1003 IncludedNote SubjectCode PMD AAB
+- #998 ZUGFeRDInvoiceImporter does not properly handle UBL CreditNote documents
+- #1006 Duplicate Notes and Missing BIC Parsing in ZUGFeRDInvoiceImporter
+- #1010 add DeliveryNoteReferencedDocument per Item
+- #1017 Concurrency problems in ZUGFeRDDateFormat
+- #536 Add Field for "Invoiced Object Identifier" (BT-18) in Invoice.java to Align with XRechnung Requirements
+- deprecate itemTotalAllowances instead of itemAllowances over itemCharges
+- corrected import of UBL rounding amount
 
 2.21.0
 =======

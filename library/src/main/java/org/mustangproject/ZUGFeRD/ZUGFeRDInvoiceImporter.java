@@ -1082,7 +1082,7 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
-		String rounding = extractString("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"RoundingAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"Party\"]/*[local-name()=\"PayableRoundingAmount\"]");
+		String rounding = extractString("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"RoundingAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"PayableRoundingAmount\"]");
 		if (!rounding.isEmpty()) {
 			zpp.setRoundingAmount(new BigDecimal(rounding.trim()));
 		}
