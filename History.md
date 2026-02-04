@@ -84,7 +84,7 @@ corrections
 - support parsing of BT-90 CreditorReferenceID
 - #871 schema validation does not ignore external entities
 - #868 Fix wrong version in History.md
-- #729 Updates about SpecifiedTradeSettlementHeaderMonetarySummation and SpecifiedTradeSettlementPaymentMeans
+- #729 Updates about SpecifiedTradeSettlementHeaderMonetarySummation and SpecifiedTradeSettlementPaymentMeans. **Breaking Change:** The hardcoded values of ram:TypeCode (58) and ram:Information (SEPA credit transfer) in the getSettlementXML() method of the IZUGFeRDTradeSettlementPayment interface have been removed. Starting with this version, any code utilizing this interface must explicitly set the corresponding attributes.
 - #863 LineCalculator throws NPE if product is null (since 2.17.0)
 - #731 Got a broken translation key when visualizing XML into PDF (xr:Business_process_type)
 - #865 Add sevdesk signature to PDF creators
