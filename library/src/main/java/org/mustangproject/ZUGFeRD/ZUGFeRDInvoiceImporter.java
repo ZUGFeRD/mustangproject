@@ -48,6 +48,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -1269,6 +1270,25 @@ public class ZUGFeRDInvoiceImporter {
 					//appliedAmount
 					//AppliedTradeTax
 				}
+
+				if (cd.getDays() == null) {
+					NodeList siblingNodes = cashdiscountNodes.item(i).getParentNode().getChildNodes();
+					for (int siblingIndex = 0; siblingIndex < siblingNodes.getLength(); siblingIndex++) {
+						if (siblingNodes.item(siblingIndex).getLocalName() != null && siblingNodes.item(siblingIndex).getLocalName().equals("DueDateDateTime")) {
+							NodeList dueDateChilds = siblingNodes.item(siblingIndex).getChildNodes();
+							for (int dueDateChildIndex = 0; dueDateChildIndex < dueDateChilds.getLength(); dueDateChildIndex++) {
+								if ((dueDateChilds.item(dueDateChildIndex).getLocalName() != null) && (dueDateChilds.item(dueDateChildIndex).getLocalName().equals("DateTimeString"))) {
+									String dueDateString = XMLTools.trimOrNull(dueDateChilds.item(dueDateChildIndex));
+									dueDate = parseDate(dueDateString, "yyyyMMdd");
+									long diffInMillies = Math.abs(dueDate.getTime() - zpp.getIssueDate().getTime());
+									long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+									cd.setDays((int) diffInDays);
+								}
+							}
+						}
+					}
+				}
+
 				if ((cd.getPercent() != null)&&(cd.getDays() != null)) {
 					zpp.addCashDiscount(cd);
 				}
