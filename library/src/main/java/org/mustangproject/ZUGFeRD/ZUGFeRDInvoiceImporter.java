@@ -1129,7 +1129,7 @@ public class ZUGFeRDInvoiceImporter {
 			// be read,
 			// so the invoice remains arithmetically correct
 			// -> parse document level charges+allowances
-			xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"SpecifiedTradeAllowanceCharge\"]|/*[local-name()=\"AllowanceCharge\"]");//CII and UBL
+			xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"SpecifiedTradeAllowanceCharge\"]|/*[local-name()=\"AllowanceCharge\"] | /*[local-name()='Invoice']/*[local-name()='AllowanceCharge']");//CII and UBL
 			NodeList chargeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			for (int i = 0; i < chargeNodes.getLength(); i++) {
 				NodeList chargeNodeChilds = chargeNodes.item(i).getChildNodes();
