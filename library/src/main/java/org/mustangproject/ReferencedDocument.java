@@ -8,6 +8,7 @@ import java.util.Date;
 import org.mustangproject.ZUGFeRD.IReferencedDocument;
 import org.mustangproject.util.NodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -106,16 +107,39 @@ public class ReferencedDocument implements IReferencedDocument {
 			return null;
 		}
 		NodeMap nodes = new NodeMap(node);
+
+		// Handle date extraction - need to check for nested CII structure vs direct UBL element
+		String issueDateString = null;
+
+		// Try CII format: FormattedIssueDateTime/DateTimeString
+		Node formattedDateTimeNode = nodes.getNode(new String[]{"FormattedIssueDateTime"}).orElse(null);
+		if (formattedDateTimeNode != null && formattedDateTimeNode.hasChildNodes()) {
+			NodeList dateChildren = formattedDateTimeNode.getChildNodes();
+			for (int i = 0; i < dateChildren.getLength(); i++) {
+				Node dateChild = dateChildren.item(i);
+				if (dateChild.getNodeType() == Node.ELEMENT_NODE
+					&& "DateTimeString".equals(dateChild.getLocalName())) {
+					issueDateString = dateChild.getTextContent();
+					break;
+				}
+			}
+		}
+
+		// Try UBL format: IssueDate (direct text content)
+		if (issueDateString == null) {
+			issueDateString = nodes.getAsStringOrNull(new String[]{"IssueDate"});
+		}
+
 		ReferencedDocument rd = new ReferencedDocument(nodes.getAsStringOrNull("IssuerAssignedID", "ID"),
 			nodes.getAsStringOrNull("TypeCode", "DocumentTypeCode"),
 			nodes.getAsStringOrNull("ReferenceTypeCode"),
-			XMLTools.tryDate(nodes.getAsStringOrNull("FormattedIssueDateTime")));
+			XMLTools.tryDate(issueDateString));
 		if (nodes.getAsStringOrNull("ID") != null) {
 			//sure sign for UBL: here ReferenceTypeCode is no element but a "schemeID" attribute to ID
 			Node idNode = nodes.getNode("ID").get();
 			if (idNode != null) {
 				Node schemeIDAttr = idNode.getAttributes().getNamedItem("schemeID");
-				if (schemeIDAttr != null) {
+				if (schemeIDAttr != null && schemeIDAttr.getNodeValue() != null && !schemeIDAttr.getNodeValue().trim().isEmpty()) {
 					rd.setReferenceTypeCode(schemeIDAttr.getNodeValue());
 				}
 			}

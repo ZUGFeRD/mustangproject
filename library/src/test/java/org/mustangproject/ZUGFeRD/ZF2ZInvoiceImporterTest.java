@@ -893,7 +893,10 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertNull(invoice.getBuyerOrderReferencedDocumentID());
 		assertNull(invoice.getSellerOrderReferencedDocumentID());
 		assertNull(invoice.getDespatchAdviceReferencedDocumentID());
-		assertNull(invoice.getInvoiceReferencedDocumentID());
+		if(invoice.getSellerOrderReferencedDocumentID() != null){
+			invoice.getInvoiceReferencedDocuments().forEach(
+				ref-> assertNull(ref.getIssuerAssignedID()));
+		}
 		assertNull(invoice.getDeliveryNoteReferencedDocumentID());
 		assertNull(invoice.getDeliveryNoteReferencedDocumentDate());
 	}

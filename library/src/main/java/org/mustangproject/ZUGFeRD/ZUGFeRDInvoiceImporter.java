@@ -1041,22 +1041,19 @@ public class ZUGFeRDInvoiceImporter {
 			zpp.setDeliveryNoteReferencedDocumentDate(deliveryNoteReferencedDocumentDate);
 		}
 
-		String invoiceReferencedDocumentID = extractString("//*[local-name()=\"InvoiceReferencedDocument\"]/*[local-name()=\"IssuerAssignedID\"]|//*[local-name()=\"BillingReference\"]/*[local-name()=\"InvoiceDocumentReference\"]/*[local-name()=\"ID\"]");
-		if (!invoiceReferencedDocumentID.isEmpty()) {
-			zpp.setInvoiceReferencedDocumentID(invoiceReferencedDocumentID);
-		}
+		String invDocRefXpath = "//*[local-name()='InvoiceReferencedDocument']" +
+			"|//*[local-name()='BillingReference']/*[local-name()='InvoiceDocumentReference']" +
+			"|//*[local-name()='BillingReference']/*[local-name()='CreditNoteDocumentReference']";
 
-		xpr = xpath.compile("//*[local-name()=\"InvoiceReferencedDocument\"]");
-		NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		xpr = xpath.compile(invDocRefXpath);
+		NodeList nodes = (NodeList) xpr.evaluate(this.getDocument(), XPathConstants.NODESET);
 
-		if (nodes.getLength() != 0) {
+		if (nodes.getLength() > 0) {
 			for (int i = 0; i < nodes.getLength(); i++) {
-
 				Node currentItemNode = nodes.item(i);
 				ReferencedDocument doc = ReferencedDocument.fromNode(currentItemNode);
-				if (doc != null
-					&& (!Objects.equals(zpp.getInvoiceReferencedDocumentID(), doc.getIssuerAssignedID())
-					|| !Objects.equals(zpp.getInvoiceReferencedIssueDate(), doc.getFormattedIssueDateTime()))) {
+
+				if (doc != null && doc.getIssuerAssignedID() != null && !doc.getIssuerAssignedID().trim().isEmpty()) {
 					zpp.addInvoiceReferencedDocument(doc);
 				}
 			}
