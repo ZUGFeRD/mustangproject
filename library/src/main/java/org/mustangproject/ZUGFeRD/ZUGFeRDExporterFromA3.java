@@ -392,7 +392,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		dict.setString("Desc", description);
 
 		ByteArrayInputStream fakeFile = new ByteArrayInputStream(data);
-		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
+		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile, COSName.FLATE_DECODE);
 //		ef.addCompression();
 		ef.setSubtype(subType);
 		ef.setSize(data.length);
