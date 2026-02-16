@@ -339,10 +339,14 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		return itemTotalAllowanceChargeStr;
 	}
 
+	protected TransactionCalculator createCalculator(IExportableTransaction trans) {
+   		 return new TransactionCalculator(trans);
+	}	
+
 	@Override
 	public void generateXML(IExportableTransaction trans) {
 		this.trans = trans;
-		this.calc = new TransactionCalculator(trans);
+		this.calc = createCalculator(trans);
 
 		boolean hasDueDate = trans.getDueDate() != null;
 		final SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
