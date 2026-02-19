@@ -626,4 +626,16 @@ public interface IExportableTransaction {
 	default String getCreditorReferenceID() {
 		return null;
 	}
+
+	/**
+	 * BT-23 Business process identifier
+	 * /rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/
+	 *   ram:BusinessProcessSpecifiedDocumentContextParameter/ram:ID
+	 *
+	 * @return business process ID (e.g. "B1" or a URN) or null if not provided
+	 */
+	default String getBusinessProcessId() {
+		return null;
+	}
+
 }
