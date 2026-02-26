@@ -85,6 +85,9 @@ public class XMLValidatorTest extends ResourceCase {
 		} catch (final IrrecoverableValidationError e) {
 			noException = false;
 		}
+		assertTrue(noException);
+		noException=true;// moving on...
+
 		final String res = xv.getXMLResult();
 		/*OutputStream os = null;
 		try {
@@ -166,6 +169,8 @@ public class XMLValidatorTest extends ResourceCase {
 			noException = false;
 		}
 		assertTrue(noException);
+		noException=true;// moving on...
+
 		try {
 			ctx.clear();
 			tempFile = getResourceAsFile("invalidV2Root.xml");

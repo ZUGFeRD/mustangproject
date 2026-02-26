@@ -516,8 +516,9 @@ public class ZUGFeRDInvoiceImporter {
 		xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"TaxTotalAmount\"]|//*[local-name()=\"TaxTotal\"]/*[local-name()=\"TaxAmount\"]");
 		NodeList taxTotalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (taxTotalNodes.getLength() > 0) {
-			if (zpp instanceof CalculatedInvoice) {
-				((CalculatedInvoice) zpp).setVATtotal(new BigDecimal(XMLTools.trimOrNull(taxTotalNodes.item(0))));
+			String taxTotalStr=XMLTools.trimOrNull(taxTotalNodes.item(0));
+			if ((zpp instanceof CalculatedInvoice)&&(taxTotalStr!=null)) {
+				((CalculatedInvoice) zpp).setVATtotal(new BigDecimal(taxTotalStr));
 			}
 		}
 
@@ -525,8 +526,9 @@ public class ZUGFeRDInvoiceImporter {
 		NodeList lineDueNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		BigDecimal duePayableAmount = null;
 		if (lineDueNodes.getLength() > 0) {
-			duePayableAmount = new BigDecimal(XMLTools.trimOrNull(lineDueNodes.item(0)));
-			if (zpp instanceof CalculatedInvoice) {
+			String duePayableAmountStr=XMLTools.trimOrNull(lineDueNodes.item(0));
+			if ((zpp instanceof CalculatedInvoice) && (duePayableAmountStr!=null)) {
+				duePayableAmount = new BigDecimal(duePayableAmountStr);
 				((CalculatedInvoice) zpp).setDuePayable(duePayableAmount);
 			}
 		}
