@@ -1260,7 +1260,8 @@ public class ZUGFeRDInvoiceImporter {
 					if (chargeChildName != null) {
 						if (chargeChildName.equals("BasisPeriodMeasure")) {
 							if (currentNode.getAttributes().getNamedItem("unitCode").getNodeValue().equals("DAY")) {
-								cd.setDays(Integer.valueOf(XMLTools.trimOrNull(currentNode)));
+								cd.setDays(Math.round(Float.valueOf(XMLTools.trimOrNull(currentNode))));
+								// in case someone writes 30.00 days (happens!) we still want 30 integer days
 							}
 						} else if (chargeChildName.equals("CalculationPercent")) {
 							cd.setPercent(new BigDecimal(XMLTools.trimOrNull(currentNode)));
