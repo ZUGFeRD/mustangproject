@@ -1320,7 +1320,7 @@ public class ZUGFeRDInvoiceImporter {
 			if (whichType != EStandard.despatchadvice && !ignoreCalculationErrors) {
 				// Check calculation if document type allows it and calculation errors should not be ignored
 
-				String payableTotalFromXml = XMLTools.nDigitFormat(Objects.requireNonNullElse(duePayableAmount, expectedGrandTotal), 2);
+				String payableTotalFromXml = XMLTools.nDigitFormat(Objects.requireNonNullElse(tc.getDuePayable(), tc.getGrandTotal()), 2);
 				if (!calculatedPayableTotal.equals(payableTotalFromXml)) {
 					String moreDetails = "";
 					try {
