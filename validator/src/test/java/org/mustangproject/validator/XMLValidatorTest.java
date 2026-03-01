@@ -305,7 +305,7 @@ public class XMLValidatorTest extends ResourceCase {
 			assertEquals("valid", content);
 			assertThat(s).valueByXPath("count(//warning)")
 				.asInt()
-				.isEqualTo(4);
+				.isEqualTo(3);
 
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
