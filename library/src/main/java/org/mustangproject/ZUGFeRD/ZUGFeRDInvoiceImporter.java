@@ -623,14 +623,8 @@ public class ZUGFeRDInvoiceImporter {
 			}
 
 			String tenderReference = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"OriginatorDocumentReference\"]/*[local-name()=\"ID\"]").trim();
-			String tenderReferenceDate = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"OriginatorDocumentReference\"]/*[local-name()=\"ID\"]").trim();
 			if((tenderReference != null)&&(!tenderReference.isEmpty())){
-				if((tenderReferenceDate != null)&&(!tenderReferenceDate.isEmpty())){
-					zpp.setTenderReferencedDocument(new ReferencedDocument(tenderReference, parseDate(tenderReferenceDate, "yyyy-MM-dd")));
-				} else {
-					zpp.setTenderReferencedDocument(tenderReference);
-				}
-
+				zpp.setTenderReferencedDocument(tenderReference);
 			}
 
 			String dueDt = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"DueDate\"] | /*[local-name()=\"CreditNote\"]/*[local-name()=\"PaymentMeans\"]/*[local-name()=\"PaymentDueDate\"]").trim();
