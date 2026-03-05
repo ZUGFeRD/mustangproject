@@ -197,7 +197,18 @@ public class Invoice implements IExportableTransaction {
 		setObjectIdentifierReferencedDocument(dr);
 		return this;
 	}
-
+	public Invoice setObjectIdentifierReferencedDocument(String id, String referenceTypeCode) {
+	    ReferencedDocument dr = new ReferencedDocument(id);
+	    dr.setReferenceTypeCode(referenceTypeCode);
+	    return setObjectIdentifierReferencedDocument(dr);
+	}
+	
+	public Invoice setObjectIdentifierReferencedDocument(String id, String referenceTypeCode, Date issueDate) {
+	    ReferencedDocument dr = new ReferencedDocument(id);
+	    dr.setReferenceTypeCode(referenceTypeCode);
+	    dr.setFormattedIssueDateTime(issueDate);
+	    return setObjectIdentifierReferencedDocument(dr);
+	}
 
 	public Invoice setNumber(String number) {
 		this.number = number;
