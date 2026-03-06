@@ -38,7 +38,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.IncludedNote;
 import org.mustangproject.ReferencedDocument;
-import org.mustangproject.TradeParty;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 /***
@@ -48,6 +47,11 @@ import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
  * @see org.mustangproject.Invoice
  */
 public interface IExportableTransaction {
+
+	@JsonIgnore
+	default boolean getTestIndicator() {
+		return false;
+	}
 
 	/**
 	 * appears in /rsm:CrossIndustryDocument/rsm:HeaderExchangedDocument/ram:Name
