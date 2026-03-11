@@ -49,14 +49,6 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 	private String paymentTermsDescription;
 	protected Profile profile = Profiles.getByName("COMFORT", 1);
 
-
-	/**
-	 * enables the flag to indicate a test invoice in the XML structure
-	 */
-	@Override
-	public void setTest() {
-	}
-
 	@Override
   protected String vatFormat(BigDecimal value) {
 		return XMLTools.nDigitFormat(value, 2);
