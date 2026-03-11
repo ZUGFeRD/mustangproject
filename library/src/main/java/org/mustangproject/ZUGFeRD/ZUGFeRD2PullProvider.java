@@ -662,6 +662,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml += "<ram:AdditionalReferencedDocument>"
 				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getObjectIdentifierReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
 				+ "<ram:TypeCode>130</ram:TypeCode>";
+			 // NEW: BT-18-1 scheme identifier
+		    String rtc = trans.getObjectIdentifierReferencedDocument().getReferenceTypeCode();
+		    if (rtc != null && !rtc.isEmpty()) {
+		        xml += "<ram:ReferenceTypeCode>" + XMLTools.encodeXML(rtc) + "</ram:ReferenceTypeCode>";
+		    }
 			if (trans.getObjectIdentifierReferencedDocument().getFormattedIssueDateTime()!=null) {
 				xml += "<ram:FormattedIssueDateTime>" + DATE.qdtFormat(trans.getObjectIdentifierReferencedDocument().getFormattedIssueDateTime()) + "</ram:FormattedIssueDateTime>";
 			}
