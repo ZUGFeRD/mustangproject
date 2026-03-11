@@ -129,6 +129,9 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 	private boolean attachZUGFeRDHeaders = true;
 
+	/** Defines whether attachments to the PDF should be using FLATE compression */
+	private boolean compressionEnabled = false;
+
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
 	 * metadata level, this will not e.g. convert graphics to JPG-2000)
@@ -296,8 +299,8 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		dict.setString("Desc", description);
 
 		ByteArrayInputStream fakeFile = new ByteArrayInputStream(data);
-		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
-//		ef.addCompression();
+		COSName filter = compressionEnabled ? COSName.FLATE_DECODE : null;
+		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile, filter);
 		ef.setSubtype(subType);
 		ef.setSize(data.length);
 		ef.setCreationDate(new GregorianCalendar());

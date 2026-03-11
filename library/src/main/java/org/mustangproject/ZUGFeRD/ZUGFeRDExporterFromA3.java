@@ -101,6 +101,9 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	private Profile profile = null;
 	protected boolean documentPrepared = false;
 
+	/** Defines whether attachments to the PDF should be using FLATE compression */
+	private boolean compressionEnabled = false;
+
 	/**
 	 * Data (XML invoice) to be added to the ZUGFeRD PDF. It may be externally set,
 	 * in which case passing a IZUGFeRDExportableTransaction is not necessary. By
@@ -392,7 +395,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		dict.setString("Desc", description);
 
 		ByteArrayInputStream fakeFile = new ByteArrayInputStream(data);
-		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
+		COSName filter = compressionEnabled ? COSName.FLATE_DECODE : null;
+		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile, filter);
 //		ef.addCompression();
 		ef.setSubtype(subType);
 		ef.setSize(data.length);
@@ -500,6 +504,12 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 */
 	public ZUGFeRDExporterFromA3 setConformanceLevel(PDFAConformanceLevel newLevel) {
 		conformanceLevel = newLevel;
+		return this;
+	}
+
+	@Override
+	public IZUGFeRDExporter setEnablePDFAttachmentCompression(boolean compressionEnabled) {
+		this.compressionEnabled = compressionEnabled;
 		return this;
 	}
 
