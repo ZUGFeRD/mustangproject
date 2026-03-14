@@ -129,6 +129,29 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 	private boolean attachZUGFeRDHeaders = true;
 
+	/***
+	 * internal helper function: get namespace for order-x
+	 * @param ver the delivery-x version
+	 * @return the URN of the namespace
+	 */
+	@Override
+	public String getNamespaceForVersion(int ver) {
+		// As of late 2022 the Delivery-X standard is not yet published. See specification:
+		// Die digitale Ablösung des Papier-Lieferscheins, Version 1.1, April 2022
+		// Chapter 7.1 XMP-Erweiterungsschema für PDF/A-3
+		// http://docplayer.org/230301085-Der-digitale-lieferschein-dls.html
+		return "urn:factur-x:pdfa:CrossIndustryDocument:despatchadvice:1p0#";
+	}
+	/***
+	 * internal helper: returns the namespace prefix for the given order-x version number
+	 * @param ver the ox version
+	 * @return the namespace prefix as string, without colon
+	 */
+	@Override
+	public String getPrefixForVersion(int ver) {
+		return "fx";
+	}
+
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
 	 * metadata level, this will not e.g. convert graphics to JPG-2000)
