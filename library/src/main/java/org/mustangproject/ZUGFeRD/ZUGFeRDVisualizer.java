@@ -21,7 +21,6 @@
 package org.mustangproject.ZUGFeRD;
 
 import com.helger.commons.io.stream.StreamHelper;
-import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.*;
@@ -32,6 +31,7 @@ import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.mustangproject.ClasspathResolverURIAdapter;
 import org.mustangproject.EStandard;
+import org.mustangproject.util.SecurityConfigurater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -47,8 +47,6 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -85,8 +83,8 @@ public class ZUGFeRDVisualizer {
 	private Templates mXsltZF1HTMLTemplate = null;
 
 	public ZUGFeRDVisualizer() {
-		mFactory = new net.sf.saxon.TransformerFactoryImpl();
-		// fact = TransformerFactory.newInstance();
+		mFactory = TransformerFactory.newInstance();
+		SecurityConfigurater.configure(mFactory);
 		mFactory.setURIResolver(new ClasspathResourceURIResolver());
 	}
 
@@ -105,37 +103,8 @@ public class ZUGFeRDVisualizer {
 		String cioSignature = "SCRDMCCBDACIOMessageStructure";
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		//REDHAT
-		//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
-		dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-		try
-		{
-			dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-		}
-		catch (IllegalArgumentException e)
-		{
-			LOGGER.warn("Property: \"Access external DTD\" not supported.");
-		}
-		try
-		{
-			dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-		}
-		catch (IllegalArgumentException e)
-		{
-			LOGGER.warn("Property: \"Access external schema\" not supported.");
-		}
+		SecurityConfigurater.configure(dbf, true);
 
-		//OWASP
-		//https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
-		dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-		dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-		dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-		// Disable external DTDs as well
-		dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-		// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-		dbf.setXIncludeAware(false);
-		dbf.setExpandEntityReferences(false);
-		dbf.setNamespaceAware(true);
 		try {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(new InputSource(fis));
@@ -389,9 +358,7 @@ public class ZUGFeRDVisualizer {
 			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
 
 			// Step 4: Setup JAXP using identity transformer
-			TransformerFactory factory = TransformerFactory.newInstance();
-			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-			Transformer transformer = factory.newTransformer(); // identity transformer
+			Transformer transformer = mFactory.newTransformer(); // identity transformer
 
 			// Step 5: Setup input and output for XSLT transformation
 			// Setup input stream

@@ -10,6 +10,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.mustangproject.util.SecurityConfigurater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -60,11 +61,11 @@ public abstract class Validator {
 		URL schemaFile = Thread.currentThread().getContextClassLoader().getResource("schema/" + schemaPath);
 		Source xmlData = new StreamSource(new ByteArrayInputStream(xmlRawData));
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		SecurityConfigurater.configure(schemaFactory);
 		try {
-			schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
 			Schema schema = schemaFactory.newSchema(schemaFile);
 			javax.xml.validation.Validator validator = schema.newValidator();
-			validator.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			SecurityConfigurater.configure(validator);
 			validator.validate(xmlData);
 		} catch (SAXException e) {
 			context.addResultItem(new ValidationResultItem(ESeverity.error, "schema validation fails:" + e)

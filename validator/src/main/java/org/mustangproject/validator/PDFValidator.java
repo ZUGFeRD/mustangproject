@@ -23,6 +23,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.mustangproject.util.ByteArraySearcher;
+import org.mustangproject.util.SecurityConfigurater;
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,9 +144,7 @@ public class PDFValidator extends Validator {
 			 */
 			try {
 				final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-				factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-				// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-				factory.setXIncludeAware(false);
+				SecurityConfigurater.configure(factory, false);
 
 				final DocumentBuilder builder = factory.newDocumentBuilder();
 				final InputSource is = new InputSource(new StringReader(xmp));

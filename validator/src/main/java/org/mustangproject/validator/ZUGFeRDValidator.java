@@ -17,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -27,6 +26,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.util.ByteArraySearcher;
+import org.mustangproject.util.SecurityConfigurater;
 import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,22 +144,8 @@ public class ZUGFeRDValidator {
 					String xmlAsString = null;
 					try {
 						DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-						//REDHAT
-						//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
-						dbf.setAttribute(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-						dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-						dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+						SecurityConfigurater.configure(dbf, true);
 
-						//OWASP
-						//https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
-						dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-						dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-						// Disable external DTDs as well
-						dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-						// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-						dbf.setXIncludeAware(false);
-						dbf.setExpandEntityReferences(false);
-						dbf.setNamespaceAware(true);
 						DocumentBuilder db = dbf.newDocumentBuilder();
 
 						content = XMLTools.removeBOM(content);
