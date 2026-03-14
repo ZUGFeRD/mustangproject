@@ -15,10 +15,10 @@ import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.mustangproject.ClasspathResolverURIAdapter;
+import org.mustangproject.util.SecurityConfigurater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.XMLConstants;
 import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
@@ -42,8 +42,8 @@ public class ValidationLogVisualizer {
 
 
 	public ValidationLogVisualizer() {
-		mFactory = new net.sf.saxon.TransformerFactoryImpl();
-		// fact = TransformerFactory.newInstance();
+		mFactory = TransformerFactory.newInstance();
+		SecurityConfigurater.configure(mFactory);
 		mFactory.setURIResolver(new ValidationLogVisualizer.ClasspathResourceURIResolver());
 	}
 
@@ -127,10 +127,7 @@ public class ValidationLogVisualizer {
 			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
 
 			// Step 4: Setup JAXP using identity transformer
-			TransformerFactory factory = TransformerFactory.newInstance();
-
-			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-			Transformer transformer = factory.newTransformer(); // identity transformer
+			Transformer transformer = mFactory.newTransformer(); // identity transformer
 
 			// Step 5: Setup input and output for XSLT transformation
 			// Setup input stream
