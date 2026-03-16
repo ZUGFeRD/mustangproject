@@ -20,7 +20,7 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import com.helger.commons.io.stream.StreamHelper;
+import com.helger.base.io.stream.StreamHelper;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.IOUtils;

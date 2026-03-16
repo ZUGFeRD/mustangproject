@@ -26,15 +26,15 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
-import org.mustangproject.util.ByteArraySearcher;
 import org.mustangproject.XMLTools;
+import org.mustangproject.util.ByteArraySearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
-import com.helger.commons.io.stream.StreamHelper;
+import com.helger.base.io.stream.StreamHelper;
 
 import jakarta.xml.bind.DatatypeConverter;
 
