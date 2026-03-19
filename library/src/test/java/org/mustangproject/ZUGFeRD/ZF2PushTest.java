@@ -148,6 +148,7 @@ public class ZF2PushTest extends TestCase {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
 			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1();
+			ze.setProfile(Profiles.getByName("Extended")); // Necessary if line item exemption reason code is expected, only allowed in Extended
 			ze.ignorePDFAErrors();
 			ze.load(SOURCE_PDF);
 			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2);
@@ -958,5 +959,49 @@ public class ZF2PushTest extends TestCase {
 		assertFalse(theXML.contains("<ram:ContractReferencedDocument"));
 		assertFalse(theXML.contains("<ram:DespatchAdviceReferencedDocument"));
 		assertFalse(theXML.contains("<ram:InvoiceReferencedDocument"));
+	}
+
+	/**
+	 * Verify that BT-X-96 & BT-X-97 Line Item ApplicableTradeTax ExemptionReason& Exemption Reason Code is only written for EXTENDED-profile exports.
+	 */
+	public void testExemptionReasonOnlyWrittenToLineLevelForExtendedProfile() {
+		String orgname = "Test company";
+		String number = "123";
+		BigDecimal price = new BigDecimal(1.0);
+		BigDecimal qty = new BigDecimal(1.0);
+		final String exemptionReason = "Kleinunternehmer gemäß §19 UStG";
+		final String exemptionReasonCode = "VATEX-EU-I";
+
+		Invoice i = new Invoice().setIssueDate(new Date()).setDueDate(new Date()).setDetailedDeliveryPeriod(new Date(), new Date()).setDeliveryDate(new Date())
+			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815").addBankDetails(new BankDetails("DE88200800000970375700", "COBADEFFXXX")))
+			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE0815"))
+			.setNumber(number)
+			.addItem(new Item(
+				new Product("Insurance", "", "C62", BigDecimal.ZERO)
+					.setTaxCategoryCode("E")
+					.setTaxExemptionReason(exemptionReason)
+					.setTaxExemptionReasonCode(exemptionReasonCode),
+				new BigDecimal("100.00"),
+				new BigDecimal("1")
+			));
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile( Profiles.getByName( "EN16931" ) );
+
+		// Try EN16931
+		zf2p.generateXML(i);
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+		assertThat(theXML).doesNotHaveXPath("//*[local-name()='SpecifiedLineTradeSettlement']/*[local-name()='ApplicableTradeTax']/*[local-name()='ExemptionReason']");
+		assertThat(theXML).doesNotHaveXPath("//*[local-name()='SpecifiedLineTradeSettlement']/*[local-name()='ApplicableTradeTax']/*[local-name()='ExemptionReasonCode']");
+
+		// Try Extended
+		zf2p.setProfile( Profiles.getByName( "Extended" ) );
+		zf2p.generateXML(i);
+		theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+		// BT-X-96
+		assertThat(theXML).valueByXPath("//*[local-name()='SpecifiedLineTradeSettlement']/*[local-name()='ApplicableTradeTax']/*[local-name()='ExemptionReason']").asString().isEqualTo(exemptionReason);
+		// BT-X-97
+		assertThat(theXML).valueByXPath("//*[local-name()='SpecifiedLineTradeSettlement']/*[local-name()='ApplicableTradeTax']/*[local-name()='ExemptionReasonCode']").asString().isEqualTo(exemptionReasonCode);
+
 	}
 }
