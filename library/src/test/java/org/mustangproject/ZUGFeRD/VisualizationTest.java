@@ -32,8 +32,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class VisualizationTest extends ResourceCase {
@@ -116,6 +114,32 @@ public class VisualizationTest extends ResourceCase {
 
 		try {
 			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), "<rdf:li>de</rdf:li>".getBytes()));
+		} catch (IOException e) {
+			fail("IOException should not occur");
+		}
+	}
+
+	public void testPDFVisualizationCIIEnglish() {
+
+		File CIIinputFile = getResourceAsFile("cii/01.01a-INVOICE.cii.xml");
+
+		// the writing part
+
+		String expected = null;
+		String result = null;
+		try {
+			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+			zvi.toPDF(CIIinputFile.getAbsolutePath(), TARGET_PDF_CII, Language.EN);
+		} catch (UnsupportedOperationException e) {
+			fail("UnsupportedOperationException should not happen: " + e.getMessage());
+		} catch (IllegalArgumentException e) {
+			fail("IllegalArgumentException should not happen: " + e.getMessage());
+		}
+
+		try {
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), "<rdf:li>en</rdf:li>".getBytes()));
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}

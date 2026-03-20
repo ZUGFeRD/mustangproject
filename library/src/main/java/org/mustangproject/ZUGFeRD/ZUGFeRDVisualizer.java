@@ -47,8 +47,6 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -252,7 +250,7 @@ public class ZUGFeRDVisualizer {
 		}
 	}
 
-	protected String toFOP(String xmlFilename)
+	protected String toFOP(String xmlFilename, Language lang)
 		throws IOException, TransformerException, ParserConfigurationException {
 		EStandard theStandard;
 		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
@@ -260,11 +258,11 @@ public class ZUGFeRDVisualizer {
 		}
 		
 		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
-			return toFOP(fis, theStandard);
+			return toFOP(fis, theStandard, lang);
 		}
 	}
 
-	protected String toFOP(InputStream is, EStandard theStandard)
+	protected String toFOP(InputStream is, EStandard theStandard, Language lang)
 		throws TransformerException, IOException {
 
 		try {
@@ -291,12 +289,16 @@ public class ZUGFeRDVisualizer {
 		Optional<InputStream> in = copyStream(iaos);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		if (in.isPresent()) {
-			applyXSLTToPDF(in.get(), baos);
+			applyXSLTToPDF(in.get(), baos, lang);
 		}
 		return baos.toString(StandardCharsets.UTF_8);
 	}
 
 	public void toPDF(String xmlFilename, String pdfFilename) {
+		toPDF(xmlFilename, pdfFilename, Language.DE);
+	}
+	
+	public void toPDF(String xmlFilename, String pdfFilename, Language lang) {
 
 		// the writing part
 		File XMLinputFile = new File(xmlFilename);
@@ -307,7 +309,7 @@ public class ZUGFeRDVisualizer {
 			   out from git with arbitrary options (which may include CSRF changes)
 			 */
 		try {
-			fopInput = this.toFOP(XMLinputFile.getAbsolutePath());
+			fopInput = this.toFOP(XMLinputFile.getAbsolutePath(), lang);
 		} catch (TransformerException | IOException | ParserConfigurationException e) {
 			LOGGER.error("Failed to apply FOP", e);
 		}
@@ -321,8 +323,12 @@ public class ZUGFeRDVisualizer {
 			return null;
 		}, (OutputStream out) -> {});
 	}
-	
+
 	public byte[] toPDF(String xmlContent) {
+		return toPDF(xmlContent, Language.DE);
+	}
+	
+	public byte[] toPDF(String xmlContent, Language lang) {
 
 		String fopInput = null;
 
@@ -334,7 +340,7 @@ public class ZUGFeRDVisualizer {
 			EStandard theStandard = findOutStandardFromRootNode(fis);
 			fis = new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8));//rewind :-(
 			
-			fopInput = toFOP(fis, theStandard);
+			fopInput = toFOP(fis, theStandard, lang);
 		} catch (TransformerException | IOException | ParserConfigurationException e) {
 			LOGGER.error("Failed to apply FOP", e);
 		}
@@ -470,9 +476,10 @@ public class ZUGFeRDVisualizer {
 		xmlFile.close();
 	}
 
-	protected void applyXSLTToPDF(final InputStream xmlFile, final OutputStream PDFOutstream)
+	protected void applyXSLTToPDF(final InputStream xmlFile, final OutputStream PDFOutstream, Language lang)
 		throws TransformerException, IOException {
 		Transformer transformer = mXsltPDFTemplate.newTransformer();
+		transformer.setParameter("lang", lang.name().toLowerCase());
 
 		transformer.transform(new StreamSource(xmlFile), new StreamResult(PDFOutstream));
 		xmlFile.close();
