@@ -218,8 +218,6 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		zi.doRecalculateItemPricesFromLineTotals();
 		zi.doIgnoreCalculationErrors();
 		zi.setInputStream(inputStream);
-		// Reading ZUGFeRD
-		String amount = zi.getAmount();
 
 		assertEquals("<?xpacket begin=\"﻿\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>\n" +
 				"    <x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n" +
@@ -297,8 +295,8 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 				"    </x:xmpmeta>\n" +
 				"<?xpacket end=\"r\"?>", zi.getXMP());
 		// this resembles the data written in MustangReaderWriterCustomXMLTest
-		assertEquals(amount, "1005.55");
-
+		assertEquals("845.00", zi.getTaxBasisTotalAmount());
+		assertEquals("1005.55", zi.getAmount());
 	}
 
 

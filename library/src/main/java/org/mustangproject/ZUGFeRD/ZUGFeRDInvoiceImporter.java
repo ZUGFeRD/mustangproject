@@ -499,7 +499,7 @@ public class ZUGFeRDInvoiceImporter {
 		xpr = xpath.compile("//*[local-name()=\"ExchangedDocument\"]|//*[local-name()=\"HeaderExchangedDocument\"]");
 		NodeList ExchangedDocumentNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
-		xpr = xpath.compile("//*[local-name()=\"GrandTotalAmount\"]|//*[local-name()=\"TaxInclusiveAmount\"]");
+		xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeSettlementMonetarySummation\"]/*[local-name()=\"GrandTotalAmount\"]|//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"GrandTotalAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"TaxInclusiveAmount\"]");
 		BigDecimal expectedGrandTotal = null;
 		NodeList totalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (totalNodes.getLength() > 0) {
@@ -512,7 +512,7 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
-		xpr = xpath.compile("//*[local-name()=\"TaxBasisTotalAmount\"]|//*[local-name()=\"TaxExclusiveAmount\"]");
+		xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeSettlementMonetarySummation\"]/*[local-name()=\"TaxBasisTotalAmount\"]|//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"TaxBasisTotalAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"TaxExclusiveAmount\"]");
 		BigDecimal expectedTaxBasis = null;
 		NodeList basisNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (basisNodes.getLength() > 0) {
