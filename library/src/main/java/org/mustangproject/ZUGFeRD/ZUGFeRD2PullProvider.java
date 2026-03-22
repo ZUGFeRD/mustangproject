@@ -419,8 +419,16 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			if ((getProfile() != Profiles.getByName("Minimum")) && (getProfile() != Profiles.getByName("BasicWL"))) {
 				xml += "<ram:IncludedSupplyChainTradeLineItem>" +
 					"<ram:AssociatedDocumentLineDocument>"
-					+ "<ram:LineID>" + lineIDStr + "</ram:LineID>"
-					+ buildItemNotes(currentItem)
+					+ "<ram:LineID>" + lineIDStr + "</ram:LineID>";
+				if (getProfile() == Profiles.getByName("Extended")) {
+					if (currentItem.getParentLineID() != null) {
+						xml += "<ram:ParentLineID>" + XMLTools.encodeXML(currentItem.getParentLineID()) + "</ram:ParentLineID>";
+					}
+					if (currentItem.getLineStatusReasonCode() != null) {
+						xml += "<ram:LineStatusReasonCode>" + XMLTools.encodeXML(currentItem.getLineStatusReasonCode()) + "</ram:LineStatusReasonCode>";
+					}
+				}
+				xml += buildItemNotes(currentItem)
 					+ "</ram:AssociatedDocumentLineDocument>"
 
 					+ "<ram:SpecifiedTradeProduct>";
