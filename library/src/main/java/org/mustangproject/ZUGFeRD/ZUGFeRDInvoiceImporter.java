@@ -311,36 +311,62 @@ public class ZUGFeRDInvoiceImporter {
 		setRawXML(rawXML, true);
 	}
 
-	private void setDocument() throws ParserConfigurationException, IOException, SAXException, ParseException {
-		final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		//REDHAT
-		//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
-		dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-		dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-		dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
-		//OWASP
-		//https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
-		dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-		dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-		dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-		// Disable external DTDs as well
-		dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-		// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-		dbf.setXIncludeAware(false);
-		dbf.setExpandEntityReferences(false);
-		dbf.setNamespaceAware(true);
-		final DocumentBuilder builder = dbf.newDocumentBuilder();
+	/**
+	 * @return raw XML of the invoice
+	 */
+	public String getMeta() {
+		if (rawXML == null) {
+			return null;
+		}
+
+		return new String(rawXML, StandardCharsets.UTF_8);
+	}
+
+	/**
+	 * will return true if the metadata (just extract-ed or set with setMeta) contains ZUGFeRD XML
+	 *
+	 * @return true if the invoice contains ZUGFeRD XML
+	 */
+	public boolean canParse() {
+
+		// SpecifiedExchangedDocumentContext is in the schema, so a relatively good
+		// indication if zugferd is present - better than just invoice
+		final String meta = getMeta();
+		if ((meta == null) || (meta.length() == 0)) {
+			return false;
+		}
+
 		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
 		///    is.skip(guessBOMSize(is));
-		document = builder.parse(is);
-		if (parseAutomatically) {
-			try {
-				importedInvoice = new CalculatedInvoice();
-				extractInto(importedInvoice);
-			} catch (XPathExpressionException e) {
-				throw new RuntimeException(e);
+		try {
+			DocumentBuilder builder = XMLTools.getDocumentBuilder();
+			document = builder.parse(is);
+
+		} catch (Exception e) {
+			return false;
+		}
+		return  ((meta.contains("SpecifiedExchangedDocumentContext")
+			/* ZF1 */ || meta.contains("ExchangedDocumentContext") /* ZF2 */));
+	}
+
+	private void setDocument() throws ParserConfigurationException, IOException, SAXException, ParseException {
+
+
+		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
+		///    is.skip(guessBOMSize(is));
+		DocumentBuilder builder = XMLTools.getDocumentBuilder();
+		if (canParse()) {
+			document = builder.parse(is);
+			if (parseAutomatically) {
+				try {
+					importedInvoice = new CalculatedInvoice();
+					extractInto(importedInvoice);
+				} catch (XPathExpressionException e) {
+					throw new RuntimeException(e);
+				}
 			}
+
 		}
 	}
 
