@@ -1,5 +1,8 @@
 #1049
 #1044
+#1075
+#993
+-reduce exceptions in metrics 
 
 2.22.0
 =======
