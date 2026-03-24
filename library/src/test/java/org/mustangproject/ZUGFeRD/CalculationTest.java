@@ -297,6 +297,7 @@ public class CalculationTest extends ResourceCase {
 		assertEquals(valueOf(4.750).stripTrailingZeros(), calculator.getGrandTotal().stripTrailingZeros());
 	}
 
+	@Test
 	public void testSimpleItemPercentAllowance() {
 		/***
 		 * a product with net 1.10 and qty 5 and relative item allowance of 10% should return 5 as line and grand total
@@ -351,6 +352,7 @@ public class CalculationTest extends ResourceCase {
 		assertEquals(new BigDecimal("4.95"), calculator.getGrandTotal().stripTrailingZeros());
 	}
 
+	@Test
 	public void testSimpleItemPercentCharge() {
 		/***
 		 * a product with net 1.10 and qty 5 and relative item allowance of 10% should return 5 as line and grand total
@@ -405,6 +407,7 @@ public class CalculationTest extends ResourceCase {
 		assertEquals(new BigDecimal("6.05"), calculator.getGrandTotal().stripTrailingZeros());
 	}
 
+	@Test
 	public void testSimpleDocumentPercentCharge() {
 
 		String orgname = "Test company";
@@ -430,6 +433,7 @@ public class CalculationTest extends ResourceCase {
 		assertEquals(new BigDecimal("16.07"), tc.getDuePayable());
 	}
 
+	@Test
 	public void testSimpleDocumentPercentAllowance() {
 
 		String orgname = "Test company";
@@ -455,6 +459,7 @@ public class CalculationTest extends ResourceCase {
 		assertEquals(new BigDecimal("5.36"), tc.getDuePayable());
 	}
 
+	@Test
 	public void testSimpleItemTotalAllowance() {
 		/***
 		 * a product with net 1 and qty 5 and absolute _item_ allowance of 1 should return 4 as line total, and grand total
@@ -497,6 +502,62 @@ public class CalculationTest extends ResourceCase {
 		assertEquals(new BigDecimal(4), calculator.getGrandTotal().stripTrailingZeros());
 	}
 
+
+	@Test
+	public void testPercentProductAllowanceNotMultipliedByQuantity() {
+		// Bug A: 10% product discount on price=100, qty=5
+		// Correct: net price = 90, line total = 5 * 90 = 450
+		// Bug A would give: delta = 10*5 = 50, price = 50, total = 5*50 = 250
+		Product product = new Product("Test", "", "H87", BigDecimal.ZERO);
+		product.addAllowance((Allowance) new Allowance().setPercent(new BigDecimal(10)));
+		Item item = new Item(product, new BigDecimal("100.00"), new BigDecimal("5"));
+
+		LineCalculator lc = item.getCalculation();
+		assertEquals(new BigDecimal("450.00"), lc.getItemTotalNetAmount());
+		assertEquals(new BigDecimal("90.00").stripTrailingZeros(),
+			lc.getPrice().stripTrailingZeros());
+	}
+
+	@Test
+	public void testPercentItemAllowanceWithBasisQuantity() {
+		// Bug B: price=128.49 per 100 LTR, qty=50 LTR, 10% item allowance
+		// Line total before allowance = 50 * 128.49 / 100 = 64.245
+		// Allowance = 10% of 64.245 = 6.4245 -> 6.42 (rounded)
+		// Correct line total = 64.25 - 6.42 = 57.83
+		Product product = new Product("Test", "", "LTR", BigDecimal.ZERO);
+		Item item = new Item(product, new BigDecimal("128.49"), new BigDecimal("50"));
+		item.setBasisQuantity(new BigDecimal("100"));
+		item.addAllowance(new Allowance().setPercent(new BigDecimal(10)));
+
+		LineCalculator lc = item.getCalculation();
+		assertEquals(new BigDecimal("57.83"), lc.getItemTotalNetAmount());
+	}
+
+	@Test
+	public void testPercentProductAllowanceWithBasisQuantity() {
+		// 10% product discount, price=100 per 10 units, qty=50
+		// Net price = 100 - 10 = 90 (per 10 units)
+		// Line total = 50 * 90 / 10 = 450
+		Product product = new Product("Test", "", "H87", BigDecimal.ZERO);
+		product.addAllowance((Allowance) new Allowance().setPercent(new BigDecimal(10)));
+		Item item = new Item(product, new BigDecimal("100.00"), new BigDecimal("50"));
+		item.setBasisQuantity(new BigDecimal("10"));
+
+		LineCalculator lc = item.getCalculation();
+		assertEquals(new BigDecimal("450.00"), lc.getItemTotalNetAmount());
+	}
+
+	@Test
+	public void testPercentItemChargeWithBasisQuantity() {
+		// Item-level 10% charge with basisQuantity: line before charge = 50*100/100 = 50, charge = 5, total = 55
+		Product product = new Product("Test", "", "LTR", BigDecimal.ZERO);
+		Item item = new Item(product, new BigDecimal("100.00"), new BigDecimal("50"));
+		item.setBasisQuantity(new BigDecimal("100"));
+		item.addCharge(new Charge().setPercent(new BigDecimal(10)));
+
+		LineCalculator lc = item.getCalculation();
+		assertEquals(new BigDecimal("55.00"), lc.getItemTotalNetAmount());
+	}
 
 	/**
 	 * LineCalculator should not throw an exception when calculating a non-terminating decimal expansion

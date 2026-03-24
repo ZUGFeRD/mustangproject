@@ -26,6 +26,7 @@ import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATE
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -279,7 +280,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		String chargeIndicator = "false";
 		if ((allowance.getPercent() != null) && (profile == Profiles.getByName("Extended"))) {
 			percentage = "<ram:CalculationPercent>" + vatFormat(allowance.getPercent()) + "</ram:CalculationPercent>";
-			percentage += "<ram:BasisAmount>" + item.getValue() + "</ram:BasisAmount>";
+			percentage += "<ram:BasisAmount>" + currencyFormat(item.getValue()) + "</ram:BasisAmount>";
 		}
 		if (allowance.isCharge()) {
 			chargeIndicator = "true";
@@ -314,7 +315,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		String chargeIndicator = "false";
 		if ((allowance.getPercent() != null) && (profile == Profiles.getByName("Extended"))) {
 			percentage = "<ram:CalculationPercent>" + vatFormat(allowance.getPercent()) + "</ram:CalculationPercent>";
-			percentage += "<ram:BasisAmount>" + item.getValue() + "</ram:BasisAmount>";
+			percentage += "<ram:BasisAmount>" + currencyFormat(item.getValue()) + "</ram:BasisAmount>";
 		}
 		if (allowance.isCharge()) {
 			chargeIndicator = "true";
@@ -494,15 +495,27 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml += "</ram:BuyerOrderReferencedDocument>";
 				}
 
+				// Per-unit provider for product-level: ActualAmount must be per-unit (BT-147)
+				final IZUGFeRDExportableItem itemForProduct = currentItem;
+				IAbsoluteValueProvider perUnitProvider = new IAbsoluteValueProvider() {
+					@Override
+					public BigDecimal getValue() {
+						return itemForProduct.getPrice();
+					}
+					@Override
+					public BigDecimal getQuantity() {
+						return BigDecimal.ONE;
+					}
+				};
 				String allowanceChargeStr = "";
 				if (currentItem.getProduct().getAllowances() != null && currentItem.getProduct().getAllowances().length > 0) {
 					for (final IZUGFeRDAllowanceCharge allowance : currentItem.getProduct().getAllowances()) {
-						allowanceChargeStr += getAllowanceChargeStr(allowance, currentItem);
+						allowanceChargeStr += getAllowanceChargeStr(allowance, perUnitProvider);
 					}
 				}
 				if (currentItem.getProduct().getCharges() != null && currentItem.getProduct().getCharges().length > 0) {
 					for (final IZUGFeRDAllowanceCharge charge : currentItem.getProduct().getCharges()) {
-						allowanceChargeStr += getAllowanceChargeStr(charge, currentItem);
+						allowanceChargeStr += getAllowanceChargeStr(charge, perUnitProvider);
 					}
 				}
 				if (!allowanceChargeStr.isEmpty()) {
@@ -582,16 +595,31 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml += "</ram:BillingSpecifiedPeriod>";
 				}
 
-				// item charges/allowances
+				// Item-level: use basisQuantity-aware provider so ActualAmount (BT-136) is correct when basisQuantity != 1
+				BigDecimal itemBasisQty = currentItem.getBasisQuantity().compareTo(BigDecimal.ZERO) == 0
+					? BigDecimal.ONE.setScale(4)
+					: currentItem.getBasisQuantity();
+				final IZUGFeRDExportableItem itemForSettlement = currentItem;
+				final BigDecimal basisQty = itemBasisQty;
+				IAbsoluteValueProvider itemBasisProvider = new IAbsoluteValueProvider() {
+					@Override
+					public BigDecimal getValue() {
+						return itemForSettlement.getPrice().divide(basisQty, 18, RoundingMode.HALF_UP);
+					}
+					@Override
+					public BigDecimal getQuantity() {
+						return itemForSettlement.getQuantity();
+					}
+				};
 				String itemTotalAllowanceChargeStr = "";
 				if (currentItem.getAllowances() != null && currentItem.getAllowances().length > 0) {
 					for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getAllowances()) {
-						itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalAllowance, currentItem);
+						itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalAllowance, itemBasisProvider);
 					}
 				}
 				if (currentItem.getCharges() != null && currentItem.getCharges().length > 0) {
 					for (final IZUGFeRDAllowanceCharge itemTotalCharges : currentItem.getCharges()) {
-						itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalCharges, currentItem);
+						itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalCharges, itemBasisProvider);
 					}
 				}
 				if (!itemTotalAllowanceChargeStr.isEmpty()) {
