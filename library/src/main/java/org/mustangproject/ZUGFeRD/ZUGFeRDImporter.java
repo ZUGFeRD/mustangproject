@@ -19,6 +19,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -29,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDImporter.class);
@@ -472,17 +475,6 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	}
 
 
-	/**
-	 * @return raw XML of the invoice
-	 */
-	public String getMeta() {
-		if (rawXML == null) {
-			return null;
-		}
-
-		return new String(rawXML, StandardCharsets.UTF_8);
-	}
-
 
 	public int getVersion() throws Exception {
 		if (!containsMeta) {
@@ -516,20 +508,6 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 		return rawXML;
 	}
 
-
-	/**
-	 * will return true if the metadata (just extract-ed or set with setMeta) contains ZUGFeRD XML
-	 *
-	 * @return true if the invoice contains ZUGFeRD XML
-	 */
-	public boolean canParse() {
-
-		// SpecifiedExchangedDocumentContext is in the schema, so a relatively good
-		// indication if zugferd is present - better than just invoice
-		final String meta = getMeta();
-		return (meta != null) && (meta.length() > 0) && ((meta.contains("SpecifiedExchangedDocumentContext")
-			/* ZF1 */ || meta.contains("ExchangedDocumentContext") /* ZF2 */));
-	}
 
 
 	/**
