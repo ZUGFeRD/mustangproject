@@ -137,11 +137,6 @@ public class UBLDAPullProvider implements IXMLProvider {
 	}
 
 	@Override
-	public void setTest() {
-
-	}
-
-	@Override
 	public void setProfile(Profile p) {
 		profile = p;
 	}
@@ -150,5 +145,4 @@ public class UBLDAPullProvider implements IXMLProvider {
 	public Profile getProfile() {
 		return profile;
 	}
-
 }
