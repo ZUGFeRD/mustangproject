@@ -700,6 +700,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "</ram:ActualDeliverySupplyChainEvent>";
 		}
 
+		if (trans.getDespatchAdviceReferencedDocumentID() != null && !trans.getDespatchAdviceReferencedDocumentID().trim().isEmpty()) {
+			xml += "<ram:DespatchAdviceReferencedDocument>";
+			xml += "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getDespatchAdviceReferencedDocumentID()) + "</ram:IssuerAssignedID>";
+			xml += "</ram:DespatchAdviceReferencedDocument>";
+		}
+
 		if (trans.getDeliveryNoteReferencedDocumentID() != null && !trans.getDeliveryNoteReferencedDocumentID().trim().isEmpty()) {
 			xml += "<ram:DeliveryNoteReferencedDocument>";
 			xml += "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getDeliveryNoteReferencedDocumentID()) + "</ram:IssuerAssignedID>";
@@ -708,14 +714,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				xml += "<ram:FormattedIssueDateTime><qdt:DateTimeString format=\"102\">"+XMLTools.encodeXML(dateFormat102.format(trans.getDeliveryNoteReferencedDocumentDate()))+"</qdt:DateTimeString></ram:FormattedIssueDateTime>";
 			}
 			xml += "</ram:DeliveryNoteReferencedDocument>";
-
-		}
-
-		if (trans.getDespatchAdviceReferencedDocumentID() != null && !trans.getDespatchAdviceReferencedDocumentID().trim().isEmpty()) {
-			xml += "<ram:DespatchAdviceReferencedDocument>";
-			xml += "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getDespatchAdviceReferencedDocumentID()) + "</ram:IssuerAssignedID>";
-			xml += "</ram:DespatchAdviceReferencedDocument>";
-
 		}
 
 		xml += "</ram:ApplicableHeaderTradeDelivery>";
