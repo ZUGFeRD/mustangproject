@@ -127,7 +127,7 @@ public class PDFValidator extends Validator {
 		final ZUGFeRDImporter zi = new ZUGFeRDImporter();
 		zi.doIgnoreCalculationErrors();//of course the calculation will still be schematron checked
 		zi.setInputStream(inputStream);
-		final String xmp = zi.getXMP();
+		final String xmp = zi.getXMP().substring(zi.getXMP().indexOf('<'));
 
 		final Document docXMP;
 
