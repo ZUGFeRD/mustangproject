@@ -169,6 +169,16 @@ public class PDFValidatorTest extends ResourceCase {
 
 			assertEquals(false, actual.contains("<error"));// issue 18: "ConformanceLevel not found" should not be
 															// reported since it's actually there
+
+			contents = getResourceAsByteArray("invalidXMP-ParseError.pdf");
+
+			pv.setFilenameAndContents("invalidXMP-ParseError.pdf", contents);
+			vc.clear();
+			pv.validate();
+			actual = pv.getXMLResult();
+			
+			assertEquals(true, actual
+					.contains("<error type=\"28\">XMP Metadata: Could not parse XMP metadata (XML invalid)</error>"));
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
 		}

@@ -176,6 +176,38 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		};
 	}
 
+
+	@Override
+	public IReferencedDocument getObjectIdentifierReferencedDocument() {
+		return new IReferencedDocument() {
+			@Override
+			public String getIssuerAssignedID() {
+				return "gPogKLtac0";
+			}
+
+			@Override
+			public String getTypeCode() {
+				return "130";
+			}
+
+			@Override
+			public String getReferenceTypeCode() {
+				return "";
+			}
+
+			@Override
+			public Date getFormattedIssueDateTime() {
+				SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
+				try {
+					return sdf.parse("2026-01-26");
+				} catch (ParseException e) {
+					throw new RuntimeException(e);
+				}
+			}
+
+		};
+	}
+
 	@Override
 	public String getOwnLocation() {
 		return "Stadthausen";
@@ -302,6 +334,16 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	@Override
 	public String getDespatchAdviceReferencedDocumentID() {
 		return "123";
+	}
+
+	@Override
+	public String getDeliveryNoteReferencedDocumentID() {
+		return "0815";
+	}
+
+	@Override
+	public Date getDeliveryNoteReferencedDocumentDate() {
+		return new GregorianCalendar(2016, Calendar.APRIL, 1).getTime();
 	}
 
 	/**

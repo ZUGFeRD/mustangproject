@@ -120,7 +120,7 @@ public interface IZUGFeRDExportableProduct {
 		    return TaxCategoryCodeTypeConstants.INTRACOMMUNITY;// "K"; // within europe
 		} else if (isReverseCharge()) {
 		    return TaxCategoryCodeTypeConstants.REVERSECHARGE;// "AE"; // to out of europe...
-		} else if (getVATPercent().compareTo(BigDecimal.ZERO) == 0) {
+		} else if ((getVATPercent()==null)||(getVATPercent().compareTo(BigDecimal.ZERO) == 0)) {
 		    return TaxCategoryCodeTypeConstants.ZEROTAXPRODUCTS; // "Z"; // zero rated goods
 		} else {
 		    return TaxCategoryCodeTypeConstants.STANDARDRATE;// "S"; // one of the "standard" rates (not
@@ -155,6 +155,10 @@ public interface IZUGFeRDExportableProduct {
 		} else if (isReverseCharge()) {
 			return "Reverse Charge";
 		}
+		return null;
+	}
+
+	default String getTaxExemptionReasonCode() {
 		return null;
 	}
 

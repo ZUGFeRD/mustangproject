@@ -482,7 +482,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 *
 	 * @param trans a IZUGFeRDExportableTransaction that provides the data-model to
 	 *              populate the XML. This parameter may be null, if so the XML data
-	 *              should hav ebeen set via
+	 *              should have been set via
 	 *              <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
 	 * @throws IOException if anything is wrong with already loaded PDF
 	 */
