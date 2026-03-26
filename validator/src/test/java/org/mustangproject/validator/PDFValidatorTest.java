@@ -179,6 +179,15 @@ public class PDFValidatorTest extends ResourceCase {
 			
 			assertEquals(true, actual
 					.contains("<error type=\"28\">XMP Metadata: Could not parse XMP metadata (XML invalid)</error>"));
+
+			contents = getResourceAsByteArray("103767-Invoice-2026-03-24-1.pdf");
+
+			pv.setFilenameAndContents("103767-Invoice-2026-03-24-1.pdf", contents);
+			vc.clear();
+			pv.validate();
+			actual = pv.getXMLResult();
+
+			assertEquals(false, actual.contains("<error"));
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
 		}
