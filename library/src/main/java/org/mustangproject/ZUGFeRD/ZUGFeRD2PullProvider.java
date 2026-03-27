@@ -388,7 +388,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		// <ram:TestIndicator><udt:Indicator>"+testBooleanStr+"</udt:Indicator></ram:TestIndicator>"
 		//
 
-		if (getProfile() == Profiles.getByName("XRechnung")) {
+		String businessProcessId = trans.getBusinessProcessId();
+		if (businessProcessId != null && !businessProcessId.isBlank()) {
+ 			xml += "<ram:BusinessProcessSpecifiedDocumentContextParameter>\n"
+				+ "<ram:ID>" +  XMLTools.encodeXML(businessProcessId)  + "</ram:ID>\n"
+				+ "</ram:BusinessProcessSpecifiedDocumentContextParameter>\n";
+		}else if (getProfile() == Profiles.getByName("XRechnung")) {
 			xml += "<ram:BusinessProcessSpecifiedDocumentContextParameter>\n"
 				+ "<ram:ID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</ram:ID>\n"
 				+ "</ram:BusinessProcessSpecifiedDocumentContextParameter>\n";
