@@ -554,8 +554,8 @@ public class ZUGFeRDInvoiceImporter {
 		BigDecimal duePayableAmount = null;
 		if (lineDueNodes.getLength() > 0) {
 			String duePayableAmountStr=XMLTools.trimOrNull(lineDueNodes.item(0));
+			duePayableAmount = new BigDecimal(duePayableAmountStr);
 			if ((zpp instanceof CalculatedInvoice) && (duePayableAmountStr!=null)) {
-				duePayableAmount = new BigDecimal(duePayableAmountStr);
 				((CalculatedInvoice) zpp).setDuePayable(duePayableAmount);
 			}
 		}
