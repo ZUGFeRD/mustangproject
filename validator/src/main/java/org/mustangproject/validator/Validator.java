@@ -7,9 +7,8 @@ import java.net.URL;
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 
+import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -59,11 +58,8 @@ public abstract class Validator {
 	protected void validateSchema(byte[] xmlRawData, String schemaPath, int section, EPart part) throws IrrecoverableValidationError {
 		URL schemaFile = Thread.currentThread().getContextClassLoader().getResource("schema/" + schemaPath);
 		Source xmlData = new StreamSource(new ByteArrayInputStream(xmlRawData));
-		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		try {
-			schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-			Schema schema = schemaFactory.newSchema(schemaFile);
-			javax.xml.validation.Validator validator = schema.newValidator();
+			javax.xml.validation.Validator validator = XMLTools.getValidator(schemaFile);
 			validator.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 			validator.validate(xmlData);
 		} catch (SAXException e) {

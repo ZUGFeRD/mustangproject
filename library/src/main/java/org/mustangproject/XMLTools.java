@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -11,11 +12,19 @@ import org.apache.commons.io.IOUtils;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 public class XMLTools extends XMLWriter {
 	@Override
@@ -28,29 +37,85 @@ public class XMLTools extends XMLWriter {
 		return super.escapeElementEntities(s);
 	}
 
-	public static DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
+	public static DocumentBuilder getDocumentBuilder(boolean namespaceAware) throws ParserConfigurationException {
 		final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		//REDHAT
 		//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
-		dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-		dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-		dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+		try {
+			dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		} catch (ParserConfigurationException e) {
+			// ignore
+		}
+		try {
+			dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+		} catch (IllegalArgumentException e) {
+			// ignore
+		}
+		try {
+			dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+		} catch (IllegalArgumentException e) {
+			// ignore
+		}
 
 		//OWASP
 		//https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
-		dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-		dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-		dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		try {
+			dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		} catch (ParserConfigurationException e) {
+			// ignore
+		}
+		try {
+			dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		} catch (ParserConfigurationException e) {
+			// ignore
+		}
+		try {
+			dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		} catch (ParserConfigurationException e) {
+			// ignore
+		}
+		try {
 		// Disable external DTDs as well
-		dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+			dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+		} catch (ParserConfigurationException e) {
+			// ignore
+		}
 		// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
 		dbf.setXIncludeAware(false);
 		dbf.setExpandEntityReferences(false);
-		dbf.setNamespaceAware(true);
+		dbf.setNamespaceAware(namespaceAware);
 		return dbf.newDocumentBuilder();
-
 	}
 
+	public static Validator getValidator(URL schemaFile) throws SAXException
+	{
+		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		try {
+			schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+		} catch (SAXNotSupportedException | SAXNotRecognizedException e) {
+			// ignore
+		}
+		Schema schema = schemaFactory.newSchema(schemaFile);
+
+		Validator validator = schema.newValidator();
+		try {
+			validator.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		} catch (SAXNotSupportedException | SAXNotRecognizedException e) {
+			// ignore
+		}
+		return validator;
+	}
+
+	public static TransformerFactory getTransformerFactory()
+	{
+		TransformerFactory factory = new net.sf.saxon.TransformerFactoryImpl();
+		try {
+			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		} catch (TransformerConfigurationException e) {
+			// ignore
+		}
+		return factory;
+	}
 
 	public static String nDigitFormat(BigDecimal value, int scale) {
 		/*
