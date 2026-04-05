@@ -8,6 +8,7 @@
                 xmlns:xrf="https://projekte.kosit.org/xrechnung/xrechnung-visualization/functions">
   
   <xsl:decimal-format name="de" decimal-separator="," grouping-separator="." NaN="" />
+  <xsl:decimal-format name="fr" decimal-separator="," grouping-separator="." NaN="" />
   <xsl:decimal-format name="en" decimal-separator="." grouping-separator="," NaN="" />
   
   <xsl:template name="uebersicht">
