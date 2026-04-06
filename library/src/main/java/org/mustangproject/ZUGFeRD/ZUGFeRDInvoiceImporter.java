@@ -1374,6 +1374,9 @@ public class ZUGFeRDInvoiceImporter {
 							+ Stream.of(tc.trans.getZFItems())
 							.map(item -> item.getCalculation().getItemTotalNetAmount().toPlainString())
 							.collect(Collectors.joining(" + "));
+						if (tc.trans.getRoundingAmount()!=null) {
+							moreDetails += " and rounding amount "+tc.trans.getRoundingAmount().toPlainString();
+						}
 					} catch (Exception ignored) {
 					}
 					throw new ArithmeticException("Payable total in XML is " + payableTotalFromXml + ", but calculated total is " + calculatedPayableTotal + moreDetails);
