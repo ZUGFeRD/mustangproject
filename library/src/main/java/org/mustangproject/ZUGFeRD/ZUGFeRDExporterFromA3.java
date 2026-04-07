@@ -77,8 +77,11 @@ import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
 
 public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporter {
-	private boolean isFacturX = true;
+	
+	private static final String XML_DESCRIPTION = https://www.ferd-net.de/en/standards/zugferd/factur-x;
 
+	private boolean isFacturX = true;
+	
 	public static final int DefaultZUGFeRDVersion = 2;
 	protected boolean ignorePDFAErrors = false;
 
@@ -673,8 +676,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		}
 
 		PDFAttachGenericFile(doc, filename, relationship,
-			"Invoice metadata conforming to ZUGFeRD standard (https://www.ferd-net.de/en/standards/zugferd/factur-x)",
-			"text/xml", xmlProvider.getXML());
+			XML_DESCRIPTION, "text/xml", xmlProvider.getXML());
 
 		for (FileAttachment attachment : fileAttachments) {
 			PDFAttachGenericFile(doc, attachment.getFilename(), attachment.getRelation(), attachment.getDescription(), attachment.getMimetype(), attachment.getData());
