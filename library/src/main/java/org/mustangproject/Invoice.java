@@ -76,7 +76,7 @@ public class Invoice implements IExportableTransaction {
 	protected String creditorReferenceID; // required when direct debit is used.
 	private BigDecimal roundingAmount=null;
 	private String paymentReference; // Remittance information / Verwendungszweck, BT-83
-
+	private String businessProcessId;
 	public Invoice() {
 		ZFItems = new ArrayList<>();
 		cashDiscounts = new ArrayList<>();
@@ -1165,6 +1165,16 @@ public class Invoice implements IExportableTransaction {
 	public Invoice setCreditorReferenceID(String creditorReferenceID) {
 		this.creditorReferenceID = creditorReferenceID;
 		return this;
+	}
+
+	public Invoice setBusinessProcessId(String id) {
+  		this.businessProcessId = id;
+  		return this;
+	}
+
+	@Override
+	public String getBusinessProcessId() {
+  		return businessProcessId;
 	}
 
 }
