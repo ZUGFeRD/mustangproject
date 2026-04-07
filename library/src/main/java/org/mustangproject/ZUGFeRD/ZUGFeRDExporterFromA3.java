@@ -673,7 +673,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		}
 
 		PDFAttachGenericFile(doc, filename, relationship,
-			"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
+			"Invoice metadata conforming to ZUGFeRD standard (https://www.ferd-net.de/en/standards/zugferd/factur-x)",
 			"text/xml", xmlProvider.getXML());
 
 		for (FileAttachment attachment : fileAttachments) {
