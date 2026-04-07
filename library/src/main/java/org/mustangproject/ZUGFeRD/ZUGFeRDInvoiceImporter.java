@@ -18,9 +18,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -341,7 +339,7 @@ public class ZUGFeRDInvoiceImporter {
 		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
 		///    is.skip(guessBOMSize(is));
 		try {
-			DocumentBuilder builder = XMLTools.getDocumentBuilder();
+			DocumentBuilder builder = XMLTools.getDocumentBuilder(true);
 			document = builder.parse(is);
 
 		} catch (Exception e) {
@@ -356,7 +354,7 @@ public class ZUGFeRDInvoiceImporter {
 
 		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
 		///    is.skip(guessBOMSize(is));
-		DocumentBuilder builder = XMLTools.getDocumentBuilder();
+		DocumentBuilder builder = XMLTools.getDocumentBuilder(true);
 		if (canParse()) {
 			document = builder.parse(is);
 			if (parseAutomatically) {
