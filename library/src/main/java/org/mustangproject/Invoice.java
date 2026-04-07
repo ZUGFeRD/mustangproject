@@ -39,6 +39,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Invoice implements IExportableTransaction {
 
+	protected boolean testIndicator;
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
 	protected TradeParty sender = null, recipient = null, deliveryAddress = null, payee = null, invoicer = null, invoicee = null;
@@ -80,6 +81,16 @@ public class Invoice implements IExportableTransaction {
 		ZFItems = new ArrayList<>();
 		cashDiscounts = new ArrayList<>();
 		setCurrency("EUR");
+	}
+
+	@Override
+	public boolean getTestIndicator() {
+		return testIndicator;
+	}
+
+	public Invoice setTestIndicator() {
+		this.testIndicator = true;
+		return this;
 	}
 
 	@Override
