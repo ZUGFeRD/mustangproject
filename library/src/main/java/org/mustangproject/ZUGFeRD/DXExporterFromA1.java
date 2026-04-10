@@ -136,6 +136,7 @@ public class DXExporterFromA1 extends DXExporterFromA3 {
   public DXExporterFromA1 setConformanceLevel(PDFAConformanceLevel newLevel) {
 		return (DXExporterFromA1) super.setConformanceLevel(newLevel);
 	}
+
 	@Override
   public DXExporterFromA1 setProducer(String producer){
 		return (DXExporterFromA1) super.setProducer(producer);
