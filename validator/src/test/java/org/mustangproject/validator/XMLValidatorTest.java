@@ -337,6 +337,33 @@ public class XMLValidatorTest extends ResourceCase {
 
 	}
 
+	public void testFrenchSchematronValidation() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+
+		File tempFile = getResourceAsFile("validV2FR.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			assertThat(s).valueByXPath("count(//error)")
+				.asInt()
+				.isEqualTo(0);
+			assertThat(s).valueByXPath("count(//warning)")
+				.asInt()
+				.isEqualTo(12);
+			assertThat(s).valueByXPath("count(//warning[contains(text(),'XP_Z12_012')])")
+				.asInt()
+				.isEqualTo(9);
+			assertThat(s).valueByXPath("/validation/summary/@status")
+				.asString()
+				.isEqualTo("valid");
+		} catch (final IrrecoverableValidationError e) {
+			fail(e.getMessage());
+		}
+	}
+
 
 	public void testUBLValidation() {
 		ValidationContext ctx = new ValidationContext(null);
