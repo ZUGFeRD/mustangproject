@@ -32,6 +32,7 @@ import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.mustangproject.ClasspathResolverURIAdapter;
 import org.mustangproject.EStandard;
+import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -39,7 +40,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.*;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
@@ -47,8 +47,6 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -85,8 +83,7 @@ public class ZUGFeRDVisualizer {
 	private Templates mXsltZF1HTMLTemplate = null;
 
 	public ZUGFeRDVisualizer() {
-		mFactory = new net.sf.saxon.TransformerFactoryImpl();
-		// fact = TransformerFactory.newInstance();
+		mFactory = XMLTools.getTransformerFactory();
 		mFactory.setURIResolver(new ClasspathResourceURIResolver());
 	}
 
@@ -104,40 +101,8 @@ public class ZUGFeRDVisualizer {
 		String ublCreditNoteSignature = "CreditNote";
 		String cioSignature = "SCRDMCCBDACIOMessageStructure";
 
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		//REDHAT
-		//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
-		dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-		try
-		{
-			dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-		}
-		catch (IllegalArgumentException e)
-		{
-			LOGGER.warn("Property: \"Access external DTD\" not supported.");
-		}
-		try
-		{
-			dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-		}
-		catch (IllegalArgumentException e)
-		{
-			LOGGER.warn("Property: \"Access external schema\" not supported.");
-		}
-
-		//OWASP
-		//https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
-		dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-		dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-		dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-		// Disable external DTDs as well
-		dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-		// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-		dbf.setXIncludeAware(false);
-		dbf.setExpandEntityReferences(false);
-		dbf.setNamespaceAware(true);
 		try {
-			DocumentBuilder db = dbf.newDocumentBuilder();
+			DocumentBuilder db = XMLTools.getDocumentBuilder(true);
 			Document doc = db.parse(new InputSource(fis));
 			Element root = doc.getDocumentElement();
 			if (root.getLocalName().equals(zf1Signature)) {
@@ -252,7 +217,7 @@ public class ZUGFeRDVisualizer {
 		}
 	}
 
-	protected String toFOP(String xmlFilename)
+	protected String toFOP(String xmlFilename, Language lang)
 		throws IOException, TransformerException, ParserConfigurationException {
 		EStandard theStandard;
 		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
@@ -260,11 +225,11 @@ public class ZUGFeRDVisualizer {
 		}
 		
 		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
-			return toFOP(fis, theStandard);
+			return toFOP(fis, theStandard, lang);
 		}
 	}
 
-	protected String toFOP(InputStream is, EStandard theStandard)
+	protected String toFOP(InputStream is, EStandard theStandard, Language lang)
 		throws TransformerException, IOException {
 
 		try {
@@ -291,12 +256,16 @@ public class ZUGFeRDVisualizer {
 		Optional<InputStream> in = copyStream(iaos);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		if (in.isPresent()) {
-			applyXSLTToPDF(in.get(), baos);
+			applyXSLTToPDF(in.get(), baos, lang);
 		}
 		return baos.toString(StandardCharsets.UTF_8);
 	}
 
 	public void toPDF(String xmlFilename, String pdfFilename) {
+		toPDF(xmlFilename, pdfFilename, Language.DE);
+	}
+	
+	public void toPDF(String xmlFilename, String pdfFilename, Language lang) {
 
 		// the writing part
 		File XMLinputFile = new File(xmlFilename);
@@ -307,7 +276,7 @@ public class ZUGFeRDVisualizer {
 			   out from git with arbitrary options (which may include CSRF changes)
 			 */
 		try {
-			fopInput = this.toFOP(XMLinputFile.getAbsolutePath());
+			fopInput = this.toFOP(XMLinputFile.getAbsolutePath(), lang);
 		} catch (TransformerException | IOException | ParserConfigurationException e) {
 			LOGGER.error("Failed to apply FOP", e);
 		}
@@ -321,8 +290,12 @@ public class ZUGFeRDVisualizer {
 			return null;
 		}, (OutputStream out) -> {});
 	}
-	
+
 	public byte[] toPDF(String xmlContent) {
+		return toPDF(xmlContent, Language.DE);
+	}
+	
+	public byte[] toPDF(String xmlContent, Language lang) {
 
 		String fopInput = null;
 
@@ -334,7 +307,7 @@ public class ZUGFeRDVisualizer {
 			EStandard theStandard = findOutStandardFromRootNode(fis);
 			fis = new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8));//rewind :-(
 			
-			fopInput = toFOP(fis, theStandard);
+			fopInput = toFOP(fis, theStandard, lang);
 		} catch (TransformerException | IOException | ParserConfigurationException e) {
 			LOGGER.error("Failed to apply FOP", e);
 		}
@@ -470,9 +443,10 @@ public class ZUGFeRDVisualizer {
 		xmlFile.close();
 	}
 
-	protected void applyXSLTToPDF(final InputStream xmlFile, final OutputStream PDFOutstream)
+	protected void applyXSLTToPDF(final InputStream xmlFile, final OutputStream PDFOutstream, Language lang)
 		throws TransformerException, IOException {
 		Transformer transformer = mXsltPDFTemplate.newTransformer();
+		transformer.setParameter("lang", lang.name().toLowerCase());
 
 		transformer.transform(new StreamSource(xmlFile), new StreamResult(PDFOutstream));
 		xmlFile.close();

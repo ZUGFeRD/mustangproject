@@ -2,6 +2,7 @@
 #1044
 #1075
 #993
+#1072
 -reduce exceptions in metrics 
 
 2.22.0

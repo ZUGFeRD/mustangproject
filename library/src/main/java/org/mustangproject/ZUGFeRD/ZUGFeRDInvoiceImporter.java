@@ -18,9 +18,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -341,7 +339,7 @@ public class ZUGFeRDInvoiceImporter {
 		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
 		///    is.skip(guessBOMSize(is));
 		try {
-			DocumentBuilder builder = XMLTools.getDocumentBuilder();
+			DocumentBuilder builder = XMLTools.getDocumentBuilder(true);
 			document = builder.parse(is);
 
 		} catch (Exception e) {
@@ -356,7 +354,7 @@ public class ZUGFeRDInvoiceImporter {
 
 		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
 		///    is.skip(guessBOMSize(is));
-		DocumentBuilder builder = XMLTools.getDocumentBuilder();
+		DocumentBuilder builder = XMLTools.getDocumentBuilder(true);
 		if (canParse()) {
 			document = builder.parse(is);
 			if (parseAutomatically) {
@@ -553,9 +551,8 @@ public class ZUGFeRDInvoiceImporter {
 		NodeList lineDueNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		BigDecimal duePayableAmount = null;
 		if (lineDueNodes.getLength() > 0) {
-			String duePayableAmountStr=XMLTools.trimOrNull(lineDueNodes.item(0));
-			if ((zpp instanceof CalculatedInvoice) && (duePayableAmountStr!=null)) {
-				duePayableAmount = new BigDecimal(duePayableAmountStr);
+			duePayableAmount = new BigDecimal(XMLTools.trimOrNull(lineDueNodes.item(0)));
+			if (zpp instanceof CalculatedInvoice) {
 				((CalculatedInvoice) zpp).setDuePayable(duePayableAmount);
 			}
 		}
@@ -652,14 +649,8 @@ public class ZUGFeRDInvoiceImporter {
 			}
 
 			String tenderReference = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"OriginatorDocumentReference\"]/*[local-name()=\"ID\"]").trim();
-			String tenderReferenceDate = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"OriginatorDocumentReference\"]/*[local-name()=\"ID\"]").trim();
 			if((tenderReference != null)&&(!tenderReference.isEmpty())){
-				if((tenderReferenceDate != null)&&(!tenderReferenceDate.isEmpty())){
-					zpp.setTenderReferencedDocument(new ReferencedDocument(tenderReference, parseDate(tenderReferenceDate, "yyyy-MM-dd")));
-				} else {
-					zpp.setTenderReferencedDocument(tenderReference);
-				}
-
+				zpp.setTenderReferencedDocument(tenderReference);
 			}
 
 			String dueDt = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"DueDate\"] | /*[local-name()=\"CreditNote\"]/*[local-name()=\"PaymentMeans\"]/*[local-name()=\"PaymentDueDate\"]").trim();
@@ -1374,6 +1365,9 @@ public class ZUGFeRDInvoiceImporter {
 							+ Stream.of(tc.trans.getZFItems())
 							.map(item -> item.getCalculation().getItemTotalNetAmount().toPlainString())
 							.collect(Collectors.joining(" + "));
+						if (tc.trans.getRoundingAmount()!=null) {
+							moreDetails += " and rounding amount "+tc.trans.getRoundingAmount().toPlainString();
+						}
 					} catch (Exception ignored) {
 					}
 					throw new ArithmeticException("Payable total in XML is " + payableTotalFromXml + ", but calculated total is " + calculatedPayableTotal + moreDetails);
