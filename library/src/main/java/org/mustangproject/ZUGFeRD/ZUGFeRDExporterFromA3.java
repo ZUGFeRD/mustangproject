@@ -78,7 +78,7 @@ import jakarta.activation.FileDataSource;
 
 public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporter {
 	
-	private static final String XML_DESCRIPTION = https://www.ferd-net.de/en/standards/zugferd/factur-x;
+	private static final String XML_DESCRIPTION = "https://www.ferd-net.de/en/standards/zugferd/factur-x";
 
 	private boolean isFacturX = true;
 	
