@@ -309,9 +309,7 @@ public class ZF2PushTest extends TestCase {
 		String number = "123";
 		String priceStr = "3.00";
 		BigDecimal price = new BigDecimal(priceStr);
-		try {
-			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
-
+		try(InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf")) {
 			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1();
 			ze.ignorePDFAErrors().load(SOURCE_PDF);
 			ze.setProfile(Profiles.getByName("Extended"));
@@ -359,7 +357,7 @@ public class ZF2PushTest extends TestCase {
 
 
 	/***
-	 * you can activate intra community suppliy on item level
+	 * you can activate intra community supply on item level
 	 */
 	public void testIntraCommunitySupplyItemExport() {
 

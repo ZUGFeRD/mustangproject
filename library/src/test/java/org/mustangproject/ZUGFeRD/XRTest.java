@@ -81,10 +81,8 @@ public class XRTest extends TestCase {
 		assertThat(theXML).valueByXPath("//*[local-name()='DuePayableAmount']")
 			.asDouble()
 			.isEqualTo(1);
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML));
+		try(BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML))) {
 			writer.write(theXML);
-			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -134,10 +132,8 @@ public class XRTest extends TestCase {
 		assertThat(theXML).valueByXPath("//*[local-name()='DuePayableAmount']")
 			.asDouble()
 			.isEqualTo(1);
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_EDGE_XML));
+		try(BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_EDGE_XML))) {
 			writer.write(theXML);
-			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -251,10 +247,8 @@ public class XRTest extends TestCase {
 		assertThat(theXML).valueByXPath("//*[local-name()='DuePayableAmount']")
 			.asDouble()
 			.isEqualTo(1);
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML));
+		try(BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML))) {
 			writer.write(theXML);
-			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
