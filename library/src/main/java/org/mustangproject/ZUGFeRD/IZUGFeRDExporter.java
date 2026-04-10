@@ -56,6 +56,7 @@ public interface IZUGFeRDExporter extends Closeable, IExporter  {
 	public IZUGFeRDExporter load(InputStream pdfSource) throws IOException;
 	public IZUGFeRDExporter setCreator(String creator);
 	public IZUGFeRDExporter setConformanceLevel(PDFAConformanceLevel newLevel);
+	public IZUGFeRDExporter setEnablePDFAttachmentCompression(boolean enablePDFAttachmentCompression);
 	public IZUGFeRDExporter setProducer(String producer);
 	public IZUGFeRDExporter setZUGFeRDVersion(int version);
 	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException;
