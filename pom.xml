@@ -66,7 +66,7 @@
 
         <version.ch.qos.logback>1.5.32</version.ch.qos.logback><!-- from 1.5.16, 1.5.18 -->
         <version.com.fasterxml.jackson.core>2.21.1</version.com.fasterxml.jackson.core><!-- from 2.17.1, 2.17.3 -->
-        <version.com.helger.en16931-cii2ubl>3.1.3</version.com.helger.en16931-cii2ubl><!-- from 2.3.0, 2.3.1 -->
+        <version.com.helger.en16931-cii2ubl>3.1.4</version.com.helger.en16931-cii2ubl><!-- from 2.3.0, 2.3.1 -->
         <version.com.helger.schematron>9.1.1</version.com.helger.schematron><!-- from 8.0.0, 8.0.6 -->
         <version.commons-cli>1.11.0</version.commons-cli><!-- from 1.8.0, 1.10.0 -->
         <version.commons-io>2.21.0</version.commons-io><!-- from 2.16.1, 2.20.0 -->
