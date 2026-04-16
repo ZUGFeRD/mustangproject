@@ -492,7 +492,6 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 			}
 			PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
 			String xmlContent = new String(embeddedFile.toByteArray(), StandardCharsets.UTF_8);
-			System.out.println(xmlContent);
 			return xmlContent;
 		}
 	}
