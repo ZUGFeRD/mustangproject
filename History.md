@@ -16,6 +16,7 @@
 #1029
 #1038
 #1037
+#1089
 -reduce exceptions in metrics 
 
 2.22.0
@@ -216,7 +217,7 @@ corrections
 - #679 validation of a XR does not ignore whitespace
 - #681 IBAN assigned to invoice sender not recipient on direct debit
 - #689 incorrect element order when both charge reason and reasoncode are specified
-- be able to set detailedDeliveryPeriodFrom, detailedDeliveryPeriodTo MS188
+- be able to set detailedDeliveryPeriodFrom, detailedDeliverDeliveryPeriodTo MS188
 - updated verapdf from 1.26.1 to 1.26.2
 - cashDiscount JSON now corrently ignores values for cii and xr methods 
 
