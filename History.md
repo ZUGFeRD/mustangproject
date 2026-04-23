@@ -1,5 +1,6 @@
-2.23.0
+2.23.0 "Bonne Journées de la Facture Électronique"
 =======
+2026-04-23
 
 improved subitem support, support french validation
 
@@ -23,6 +24,7 @@ improved subitem support, support french validation
 - #1084 Fix xml description
 - #1089 Add France schematron ruleset
 - reduce possible exceptions in metrics action 
+- added Extended-CTC-FR profile to selection for command line
 
 2.22.0
 =======
