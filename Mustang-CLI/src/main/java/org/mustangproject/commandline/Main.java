@@ -70,7 +70,7 @@ public class Main {
 				+ "                [--version <1|2>]: set ZUGFeRD version\n"
 				+ "                [--profile <...>]: set ZUGFeRD profile\n"
 				+ "                        For ZUGFeRD v1 or Order-X: <B>ASIC, <C>OMFORT or EX<T>ENDED\n"
-				+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EX<T>ENDED\n"
+				+ "                        For ZUGFeRD v2: <M>INIMUM, BASIC <W>L, <B>ASIC, <C>IUS, <E>N16931, <X>Rechnung, EXTENDED-CTC-[F]R, EX<T>ENDED\n"
 				+ "                [--attachments <filenames>]: list of file attachments (passing a single empty file name prevents prompting)\n"
 				+ "                [--no-additional-attachments]: prevent prompting for attachments\n"
 				+ "        --action ubl  convert UN/CEFACT 2016b CII XML to UBL XML\n"
@@ -730,6 +730,8 @@ public class Main {
 					zfConformanceLevelProfile = Profiles.getByName(standard, "CIUS", zfIntVersion);
 				} else if (zfProfile.equals("e")) {
 					zfConformanceLevelProfile = Profiles.getByName(standard, "EN16931", zfIntVersion);
+				} else if (zfProfile.equals("f")) {
+					zfConformanceLevelProfile = Profiles.getByName(standard, "EXTENDED-CTC-FR", zfIntVersion);
 				} else if (zfProfile.equals("t")) {
 					zfConformanceLevelProfile = Profiles.getByName(standard, "EXTENDED", zfIntVersion);
 				} else if (zfProfile.equals("x")) {
