@@ -50,12 +50,6 @@ public class CustomXMLProvider implements IXMLProvider {
 	}
 
 	@Override
-	public void setTest() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public Profile getProfile() {
 		return profile;
 	}

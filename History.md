@@ -1,5 +1,30 @@
-#1049
-#1044
+2.23.0 "Bonne Journées de la Facture Électronique"
+=======
+2026-04-23
+
+improved subitem support, support french validation
+
+- #993 Cash discount not parsed
+- #1029 Added a breaking change notice regarding the removal of hardcoded values in #729
+- #1037 Compress attachments
+- #1038 Header allowances are aggregated incorrectly for non-XRechnung profiles
+- #1044 Correct version of org.apache.pdfbox:fontbox from 3.0.3 to 3.0.6.
+- #1046 Add configurable BT-23 business process ID for CII export
+- #1049 Prevent exceptions in validation
+- #1050 Add validator information to PDF report (name and version)
+- #1052 Remove parsing OriginatorDocumentReference.ID as date
+- #1055 Correct order of ApplicableTradeTax sub-elements.
+- #1061 Add ability to mark an Invoice as a test invoice.
+- #1072 Correct XPath-expressions for GrandTotal and TaxBasisTotalAmount.
+- #1073 add hierarchical invoice positions in CII XML export for EXTENDED profile
+- #1075 Vulnerability in dependency PDFBox version 3.0.6
+- #1076 XMP error during validation based on mustang version 2.22. (XMP Metadata: Could not parse XMP metadata (XML invalid))
+- #1082 Centralize and secure DocumentBuilder creation.
+- #1083 PDF Visualizations in English and French
+- #1084 Fix xml description
+- #1089 Add France schematron ruleset
+- reduce possible exceptions in metrics action 
+- added Extended-CTC-FR profile to selection for command line
 
 2.22.0
 =======
@@ -98,7 +123,7 @@ corrections
 - support parsing of BT-90 CreditorReferenceID
 - #871 schema validation does not ignore external entities
 - #868 Fix wrong version in History.md
-- #729 Updates about SpecifiedTradeSettlementHeaderMonetarySummation and SpecifiedTradeSettlementPaymentMeans
+- #729 Updates about SpecifiedTradeSettlementHeaderMonetarySummation and SpecifiedTradeSettlementPaymentMeans. **Breaking Change:** The hardcoded values of ram:TypeCode (58) and ram:Information ("SEPA credit transfer") in the getSettlementXML() method of the IZUGFeRDTradeSettlementPayment interface have been removed. Starting with this version, any code utilizing this interface must explicitly set the corresponding attributes.
 - #863 LineCalculator throws NPE if product is null (since 2.17.0)
 - #731 Got a broken translation key when visualizing XML into PDF (xr:Business_process_type)
 - #865 Add sevdesk signature to PDF creators
@@ -199,7 +224,7 @@ corrections
 - #679 validation of a XR does not ignore whitespace
 - #681 IBAN assigned to invoice sender not recipient on direct debit
 - #689 incorrect element order when both charge reason and reasoncode are specified
-- be able to set detailedDeliveryPeriodFrom, detailedDeliveryPeriodTo MS188
+- be able to set detailedDeliveryPeriodFrom, detailedDeliverDeliveryPeriodTo MS188
 - updated verapdf from 1.26.1 to 1.26.2
 - cashDiscount JSON now corrently ignores values for cii and xr methods 
 

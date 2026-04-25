@@ -71,6 +71,7 @@ import jakarta.activation.FileDataSource;
 public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 	protected PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
+	protected boolean compressionEnabled = false;
 	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<>();
 
 	/**
@@ -319,8 +320,8 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		dict.setString("Desc", description);
 
 		ByteArrayInputStream fakeFile = new ByteArrayInputStream(data);
-		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
-//		ef.addCompression();
+		COSName filter = compressionEnabled ? COSName.FLATE_DECODE : null;
+		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile, filter);
 		ef.setSubtype(subType);
 		ef.setSize(data.length);
 		ef.setCreationDate(new GregorianCalendar());
@@ -439,7 +440,6 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		conformanceLevel = newLevel;
 		return this;
 	}
-
 
 	@Override
   public DXExporterFromA3 setCreator(String creator) {

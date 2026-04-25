@@ -39,6 +39,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Invoice implements IExportableTransaction {
 
+	protected boolean testIndicator;
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
 	protected TradeParty sender = null, recipient = null, deliveryAddress = null, payee = null, invoicer = null, invoicee = null;
@@ -75,11 +76,21 @@ public class Invoice implements IExportableTransaction {
 	protected String creditorReferenceID; // required when direct debit is used.
 	private BigDecimal roundingAmount=null;
 	private String paymentReference; // Remittance information / Verwendungszweck, BT-83
-
+	private String businessProcessId;
 	public Invoice() {
 		ZFItems = new ArrayList<>();
 		cashDiscounts = new ArrayList<>();
 		setCurrency("EUR");
+	}
+
+	@Override
+	public boolean getTestIndicator() {
+		return testIndicator;
+	}
+
+	public Invoice setTestIndicator() {
+		this.testIndicator = true;
+		return this;
 	}
 
 	@Override
@@ -197,7 +208,18 @@ public class Invoice implements IExportableTransaction {
 		setObjectIdentifierReferencedDocument(dr);
 		return this;
 	}
-
+	public Invoice setObjectIdentifierReferencedDocument(String id, String referenceTypeCode) {
+	    ReferencedDocument dr = new ReferencedDocument(id);
+	    dr.setReferenceTypeCode(referenceTypeCode);
+	    return setObjectIdentifierReferencedDocument(dr);
+	}
+	
+	public Invoice setObjectIdentifierReferencedDocument(String id, String referenceTypeCode, Date issueDate) {
+	    ReferencedDocument dr = new ReferencedDocument(id);
+	    dr.setReferenceTypeCode(referenceTypeCode);
+	    dr.setFormattedIssueDateTime(issueDate);
+	    return setObjectIdentifierReferencedDocument(dr);
+	}
 
 	public Invoice setNumber(String number) {
 		this.number = number;
@@ -1154,6 +1176,16 @@ public class Invoice implements IExportableTransaction {
 	public Invoice setCreditorReferenceID(String creditorReferenceID) {
 		this.creditorReferenceID = creditorReferenceID;
 		return this;
+	}
+
+	public Invoice setBusinessProcessId(String id) {
+  		this.businessProcessId = id;
+  		return this;
+	}
+
+	@Override
+	public String getBusinessProcessId() {
+  		return businessProcessId;
 	}
 
 }

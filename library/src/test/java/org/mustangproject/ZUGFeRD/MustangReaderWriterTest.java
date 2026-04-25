@@ -23,7 +23,11 @@ import junit.framework.TestSuite;
 
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
+import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
+import org.apache.pdfbox.pdmodel.common.filespecification.PDComplexFileSpecification;
+import org.apache.pdfbox.pdmodel.common.filespecification.PDEmbeddedFile;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.PDFAIdentificationSchema;
@@ -218,8 +222,6 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		zi.doRecalculateItemPricesFromLineTotals();
 		zi.doIgnoreCalculationErrors();
 		zi.setInputStream(inputStream);
-		// Reading ZUGFeRD
-		String amount = zi.getAmount();
 
 		assertEquals("<?xpacket begin=\"﻿\" id=\"W5M0MpCehiHzreSzNTczkc9d\"?>\n" +
 				"    <x:xmpmeta xmlns:x=\"adobe:ns:meta/\">\n" +
@@ -297,8 +299,8 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 				"    </x:xmpmeta>\n" +
 				"<?xpacket end=\"r\"?>", zi.getXMP());
 		// this resembles the data written in MustangReaderWriterCustomXMLTest
-		assertEquals(amount, "1005.55");
-
+		assertEquals("845.00", zi.getTaxBasisTotalAmount());
+		assertEquals("1005.55", zi.getAmount());
 	}
 
 
@@ -415,17 +417,18 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ze.export(baos);
 			ze.close();
-			String pdfContent = baos.toString(StandardCharsets.UTF_8);
-			assertFalse(pdfContent.indexOf(DocumentContextParameterTypeConstants.BASIC) >= 0);
-			assertFalse(pdfContent.indexOf(DocumentContextParameterTypeConstants.EXTENDED) >= 0);
-			assertTrue(pdfContent.indexOf(DocumentContextParameterTypeConstants.COMFORT) >= 0);
+			byte[] targetBytes = baos.toByteArray();
+			String xmlContent = readEmbeddedXmlFromPdf(targetBytes, "ZUGFeRD-invoice.xml");
+			assertFalse(xmlContent.contains(DocumentContextParameterTypeConstants.BASIC));
+			assertFalse(xmlContent.contains(DocumentContextParameterTypeConstants.EXTENDED));
+			assertTrue(xmlContent.contains(DocumentContextParameterTypeConstants.COMFORT));
 
 		} catch (IOException e) {
 			fail("IOException should not happen in testZExport");
 		}
 	}
 
-	
+
 	public void testFXExport() throws Exception {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506fx.pdf";
@@ -442,7 +445,8 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 				result.write(buffer, 0, length);
 			}
 
-			ze.addAdditionalFile("test.pdf", result.toByteArray());
+			var bytes = result.toByteArray();
+			ze.addAdditionalFile("test.pdf", bytes);
 
 			ze.setTransaction(this);
 			ze.disableAutoClose(true);
@@ -451,12 +455,14 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ze.export(baos);
 			ze.close();
-			String pdfContent = baos.toString(StandardCharsets.UTF_8);
-			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
+			byte[] targetBytes = baos.toByteArray();
+			String pdfContent = new String(targetBytes, StandardCharsets.UTF_8);
+			String xmlContent = readEmbeddedXmlFromPdf(targetBytes, "factur-x.xml");
+			assertTrue(pdfContent.contains("(via mustangproject.org"));
 			// check for pdf-a schema extension
-			assertFalse(pdfContent.indexOf("<fx:ConformanceLevel>EN 16931</fx:ConformanceLevel>") == -1);
-			assertFalse(pdfContent.indexOf("<pdfaSchema:prefix>fx</pdfaSchema:prefix>") == -1);
-			assertFalse(pdfContent.indexOf("urn:cen.eu:en16931:2017") == -1);
+			assertTrue(pdfContent.contains("<fx:ConformanceLevel>EN 16931</fx:ConformanceLevel>"));
+			assertTrue(pdfContent.contains("<pdfaSchema:prefix>fx</pdfaSchema:prefix>"));
+			assertTrue(xmlContent.contains("urn:cen.eu:en16931:2017"));
 		}
 
 		// now check the contents (like MustangReaderTest)
@@ -468,6 +474,26 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		assertEquals("DE88 2008 0000 0970 3757 00", zi.getIBAN());
 		assertEquals(getOwnOrganisationName(), zi.getHolder());
 		assertEquals(getNumber(), zi.getForeignReference());
+	}
+
+	private static String readEmbeddedXmlFromPdf(byte[] targetBytes, String xmlFilename) throws IOException {
+		// Read attached (compressed) XML file
+		try (PDDocument pdDocument = Loader.loadPDF(targetBytes)) {
+			PDDocumentNameDictionary names = new PDDocumentNameDictionary(pdDocument.getDocumentCatalog());
+
+			PDEmbeddedFilesNameTreeNode embeddedFiles = names.getEmbeddedFiles();
+			Map<String, PDComplexFileSpecification> fileMap = embeddedFiles.getNames();
+
+
+			PDComplexFileSpecification fileSpec = fileMap.get(xmlFilename);
+			if (fileSpec == null) {
+				fail("Files does not contain a file named " + xmlFilename);
+				return null;
+			}
+			PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
+			String xmlContent = new String(embeddedFile.toByteArray(), StandardCharsets.UTF_8);
+			return xmlContent;
+		}
 	}
 
 	public void testExceptionOnPDF14() {

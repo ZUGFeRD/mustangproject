@@ -13,9 +13,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Set;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -156,26 +154,7 @@ public class XMLValidator extends Validator {
 				 *
 				 */
 
-				final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-				//REDHAT
-				//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
-				dbf.setAttribute(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-				dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-				dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-
-				//OWASP
-				//https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
-				dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-				dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-				dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-				// Disable external DTDs as well
-				dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-				// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-				dbf.setXIncludeAware(false);
-				dbf.setExpandEntityReferences(false);
-				dbf.setNamespaceAware(true);
-
-				final DocumentBuilder db = dbf.newDocumentBuilder();
+				final DocumentBuilder db = XMLTools.getDocumentBuilder(true);
 				final InputSource is = new InputSource(new StringReader(zfXML));
 				final Document doc = db.parse(is);
 
@@ -213,8 +192,10 @@ public class XMLValidator extends Validator {
 				boolean isExtended = false;
 				boolean isXRechnung = false;
 				String currentZFVersionDir = "ZF_240";
+				String currentXPZ12VersionDir ="XP_Z12_012";
 				int mainSchematronSectionErrorTypeCode = 4;
 				String xsltFilename = null;
+				boolean runFrenchCiiSchematron = false;
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:extended,
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:comfort,
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:basic,
@@ -234,6 +215,11 @@ public class XMLValidator extends Validator {
 					
 				} else if (root.getLocalName().equalsIgnoreCase("CrossIndustryInvoice")) { // ZUGFeRD 2.0 or Factur-X
 					context.setGeneration("2");
+					final String sellerCountry = getXPathString(doc,
+						"//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'SellerTradeParty']//*[local-name() = 'PostalTradeAddress']/*[local-name() = 'CountryID']/text()");
+					final String buyerCountry = getXPathString(doc,
+						"//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'PostalTradeAddress']/*[local-name() = 'CountryID']/text()");
+					runFrenchCiiSchematron = "FR".equalsIgnoreCase(sellerCountry) && "FR".equalsIgnoreCase(buyerCountry);
 
 					isMiniumum = contextProfile.contains("minimum");
 					isBasic = contextProfile.contains("basic");
@@ -391,6 +377,11 @@ public class XMLValidator extends Validator {
 					// main schematron validation
 					validateSchematron(zfXML, xsltFilename, mainSchematronSectionErrorTypeCode, ESeverity.error);
 
+					if (runFrenchCiiSchematron) {
+						String xsltFRFilename = "/xslt/" + currentXPZ12VersionDir + "/20260216_BR-FR-Flux2-Schematron-CII_V1.3.0.xsl";
+						validateSchematron(zfXML, xsltFRFilename, mainSchematronSectionErrorTypeCode, ESeverity.error);
+					}
+
 				}
 
 				if ("CII".equals(context.getFormat()) && ("2".equals(context.getGeneration()))) {
@@ -543,6 +534,16 @@ public class XMLValidator extends Validator {
 					}
 				}
 			}
+		}
+	}
+
+	private String getXPathString(Document doc, String expression) throws IrrecoverableValidationError {
+		try {
+			XPath xpath = XPathFactory.newInstance().newXPath();
+			String value = (String) xpath.compile(expression).evaluate(doc, XPathConstants.STRING);
+			return value == null ? "" : value.trim();
+		} catch (XPathExpressionException e) {
+			throw new IrrecoverableValidationError(e.getMessage());
 		}
 	}
 
