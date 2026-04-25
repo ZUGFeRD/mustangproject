@@ -126,8 +126,26 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 */
 	protected String orderXDocumentType = "ORDER";
 
-
 	private boolean attachZUGFeRDHeaders = true;
+
+	/***
+	 * internal helper function: get namespace for order-x
+	 * @param ver the order-x version
+	 * @return the URN of the namespace
+	 */
+	@Override
+	public String getNamespaceForVersion(int ver) {
+		return "urn:factur-x:pdfa:CrossIndustryDocument:1p0#";
+	}
+	/***
+	 * internal helper: returns the namespace prefix for the given order-x version number
+	 * @param ver the ox version
+	 * @return the namespace prefix as string, without colon
+	 */
+	@Override
+	public String getPrefixForVersion(int ver) {
+		return "fx";
+	}
 
 	/** Defines whether attachments to the PDF should be using FLATE compression */
 	private boolean compressionEnabled = false;
