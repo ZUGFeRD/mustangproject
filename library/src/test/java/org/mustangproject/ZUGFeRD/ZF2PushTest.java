@@ -622,7 +622,7 @@ public class ZF2PushTest extends TestCase {
 					.addCashDiscount(new CashDiscount(new BigDecimal(2), 14))
 					.setTenderReferencedDocument(dr1)
 					.setDeliveryDate(sdf.parse("2020-11-02")).setNumber(number).setVATDueDateTypeCode(EventTimeCodeTypeConstants.PAYMENT_DATE)
-					.setInvoiceReferencedDocumentID("abc123").addInvoiceReferencedDocument(new ReferencedDocument("abcd1234"))
+					.addInvoiceReferencedDocument(new ReferencedDocument("abc123"))
 				);
 			} catch (ParseException e) {
 				e.printStackTrace();
@@ -676,9 +676,8 @@ public class ZF2PushTest extends TestCase {
 		try {
 			Invoice i = zii.extractInvoice();
 
-			assertEquals("abc123", i.getInvoiceReferencedDocumentID());
+			assertEquals("abc123", i.getInvoiceReferencedDocuments().get(0).getIssuerAssignedID());
 			assertEquals(1, i.getInvoiceReferencedDocuments().size());
-			assertEquals("abcd1234", i.getInvoiceReferencedDocuments().get(0).getIssuerAssignedID());
 			assertEquals("4304171000002", i.getRecipient().getGlobalID());
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 			assertEquals(occurrenceFrom, sdf.format(i.getDetailedDeliveryPeriodFrom()));
@@ -932,7 +931,7 @@ public class ZF2PushTest extends TestCase {
 			.setContractReferencedDocument("")
 			.setDespatchAdviceReferencedDocumentID("")
 			.setDeliveryNoteReferencedDocumentID("")
-			.setInvoiceReferencedDocumentID("");
+			.addInvoiceReferencedDocument(new ReferencedDocument(""));
 
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
@@ -949,7 +948,7 @@ public class ZF2PushTest extends TestCase {
 			.setContractReferencedDocument("   ")
 			.setDespatchAdviceReferencedDocumentID("    ")
 			.setDeliveryNoteReferencedDocumentID("    ")
-			.setInvoiceReferencedDocumentID("     ");
+			.addInvoiceReferencedDocument(new ReferencedDocument("     "));
 
 		zf2p.generateXML(i);
 		theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
