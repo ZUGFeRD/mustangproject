@@ -306,7 +306,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		String chargeIndicator = "false";
 		if ((allowance.getPercent() != null) && (profile == Profiles.getByName("Extended"))) {
 			percentage = "<ram:CalculationPercent>" + vatFormat(allowance.getPercent()) + "</ram:CalculationPercent>";
-			percentage += "<ram:BasisAmount>" + currencyFormat(item.getValue()) + "</ram:BasisAmount>";
+			// BT-137/BT-142: BasisAmount = the value the percentage is applied to = line subtotal (price/basisQty)*qty
+			percentage += "<ram:BasisAmount>" + currencyFormat(item.getValue().multiply(item.getQuantity())) + "</ram:BasisAmount>";
 		}
 		if (allowance.isCharge()) {
 			chargeIndicator = "true";
