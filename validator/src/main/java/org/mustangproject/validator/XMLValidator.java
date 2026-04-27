@@ -464,6 +464,94 @@ public class XMLValidator extends Validator {
 			LOGGER.error(e.getMessage(), e);
 		}
 
+		checkLineAllowanceChargeArithmetic(context);
+	}
+
+	/**
+	 * Checks that for every line-level SpecifiedTradeAllowanceCharge with a CalculationPercent,
+	 * the identity ActualAmount = BasisAmount * CalculationPercent / 100 holds within 0.02.
+	 *
+	 * This is an informational warning anchored on the semantic definitions of BT-137 / BT-142
+	 * in EN 16931-1:2017+A1:2019: "the base amount used in conjunction with the percentage to
+	 * calculate the allowance/charge amount."
+	 *
+	 * No normative BR-* enforces this identity today (CEN explicitly left it out of scope in
+	 * ConnectingEurope/eInvoicing-EN16931 issue #350). This warning will become redundant if a
+	 * future CEN/TC 434 schematron release adds such a rule (tracked in .project/CEN-EN16931-tracking.md).
+	 */
+	private void checkLineAllowanceChargeArithmetic(ValidationContext context) {
+		try {
+			final DocumentBuilder db = XMLTools.getDocumentBuilder(true);
+			final Document doc = db.parse(new InputSource(new StringReader(zfXML)));
+			final XPath xpath = XPathFactory.newInstance().newXPath();
+
+			final NodeList lineItems = (NodeList) xpath.compile(
+				"//*[local-name()='IncludedSupplyChainTradeLineItem']"
+			).evaluate(doc, XPathConstants.NODESET);
+
+			for (int i = 0; i < lineItems.getLength(); i++) {
+				final Node lineItem = lineItems.item(i);
+
+				final NodeList allowanceCharges = (NodeList) xpath.compile(
+					"*[local-name()='SpecifiedLineTradeSettlement']" +
+					"/*[local-name()='SpecifiedTradeAllowanceCharge']"
+				).evaluate(lineItem, XPathConstants.NODESET);
+
+				for (int j = 0; j < allowanceCharges.getLength(); j++) {
+					final Node ac = allowanceCharges.item(j);
+
+					final String pctStr = (String) xpath.compile(
+						"*[local-name()='CalculationPercent']"
+					).evaluate(ac, XPathConstants.STRING);
+					if (pctStr == null || pctStr.isBlank()) {
+						continue;
+					}
+
+					final String basisStr = (String) xpath.compile(
+						"*[local-name()='BasisAmount']"
+					).evaluate(ac, XPathConstants.STRING);
+					final String actualStr = (String) xpath.compile(
+						"*[local-name()='ActualAmount']"
+					).evaluate(ac, XPathConstants.STRING);
+					final String chargeIndicatorStr = (String) xpath.compile(
+						"*[local-name()='ChargeIndicator']/*[local-name()='Indicator']"
+					).evaluate(ac, XPathConstants.STRING);
+
+					if (basisStr == null || basisStr.isBlank()
+							|| actualStr == null || actualStr.isBlank()) {
+						continue;
+					}
+
+					final BigDecimal basis = new BigDecimal(basisStr.trim());
+					final BigDecimal pct = new BigDecimal(pctStr.trim());
+					final BigDecimal actual = new BigDecimal(actualStr.trim());
+					final BigDecimal expected = basis.multiply(pct)
+						.divide(BigDecimal.valueOf(100), 18, java.math.RoundingMode.HALF_UP);
+					final BigDecimal deviation = actual.subtract(expected).abs();
+					final boolean isCharge = "true".equalsIgnoreCase(
+						chargeIndicatorStr != null ? chargeIndicatorStr.trim() : "");
+
+					if (deviation.compareTo(new BigDecimal("0.02")) > 0) {
+						context.addResultItem(new ValidationResultItem(ESeverity.warning,
+							"Line " + (i + 1) + " " + (isCharge ? "charge" : "allowance")
+							+ ": ActualAmount " + actual
+							+ " differs from BasisAmount * CalculationPercent / 100"
+							+ " (= " + expected.setScale(2, java.math.RoundingMode.HALF_UP) + ")"
+							+ " by more than 0.02."
+							+ " EN 16931-1:2017+A1:2019 BT-137/BT-142 define BasisAmount as"
+							+ " the base amount used in conjunction with the percentage to"
+							+ " calculate the allowance/charge amount."
+						).setSection(10));
+					}
+				}
+			}
+		} catch (IrrecoverableValidationError e) {
+			LOGGER.error(e.getMessage(), e);
+		} catch (XPathExpressionException e) {
+			LOGGER.error(e.getMessage(), e);
+		} catch (Exception e) {
+			LOGGER.error("checkLineAllowanceChargeArithmetic failed: " + e.getMessage(), e);
+		}
 	}
 
 	/***
