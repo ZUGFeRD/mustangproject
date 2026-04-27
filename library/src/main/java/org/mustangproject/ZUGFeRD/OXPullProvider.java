@@ -24,6 +24,7 @@ import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
 import static org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants.CORRECTEDINVOICE;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
@@ -124,16 +125,27 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 				xml += "<ram:BuyerAssignedID>"
 						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>";
 			}
+			// Product-level (GrossPriceProductTradePrice): ActualAmount must be per-unit (BT-147)
+			final IZUGFeRDExportableItem itemForProduct = currentItem;
+			IAbsoluteValueProvider perUnitProvider = new IAbsoluteValueProvider() {
+				@Override
+				public BigDecimal getValue() {
+					return itemForProduct.getPrice();
+				}
+				@Override
+				public BigDecimal getQuantity() {
+					return BigDecimal.ONE;
+				}
+			};
 			String allowanceChargeStr = "";
 			if (currentItem.getItemAllowances() != null) {
 				for (final IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
-					allowanceChargeStr += getAllowanceChargeStr(allowance, currentItem);
+					allowanceChargeStr += getAllowanceChargeStr(allowance, perUnitProvider);
 				}
 			}
 			if (currentItem.getItemCharges() != null) {
 				for (final IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
-					allowanceChargeStr += getAllowanceChargeStr(charge, currentItem);
-
+					allowanceChargeStr += getAllowanceChargeStr(charge, perUnitProvider);
 				}
 			}
 
