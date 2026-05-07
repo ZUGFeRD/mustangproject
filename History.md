@@ -1,22 +1,30 @@
-#1049
-#1044
-#1075
-#993
-#1072
-#1082
-#1061
-#1046
-#1050
-#1073
-#1052
-#1055
-#1084
-#1083
-#1077
-#1029
-#1038
-#1037
--reduce exceptions in metrics 
+2.23.0 "Bonne Journées de la Facture Électronique"
+=======
+2026-04-23
+
+improved subitem support, support french validation
+
+- #993 Cash discount not parsed
+- #1029 Added a breaking change notice regarding the removal of hardcoded values in #729
+- #1037 Compress attachments
+- #1038 Header allowances are aggregated incorrectly for non-XRechnung profiles
+- #1044 Correct version of org.apache.pdfbox:fontbox from 3.0.3 to 3.0.6.
+- #1046 Add configurable BT-23 business process ID for CII export
+- #1049 Prevent exceptions in validation
+- #1050 Add validator information to PDF report (name and version)
+- #1052 Remove parsing OriginatorDocumentReference.ID as date
+- #1055 Correct order of ApplicableTradeTax sub-elements.
+- #1061 Add ability to mark an Invoice as a test invoice.
+- #1072 Correct XPath-expressions for GrandTotal and TaxBasisTotalAmount.
+- #1073 add hierarchical invoice positions in CII XML export for EXTENDED profile
+- #1075 Vulnerability in dependency PDFBox version 3.0.6
+- #1076 XMP error during validation based on mustang version 2.22. (XMP Metadata: Could not parse XMP metadata (XML invalid))
+- #1082 Centralize and secure DocumentBuilder creation.
+- #1083 PDF Visualizations in English and French
+- #1084 Fix xml description
+- #1089 Add France schematron ruleset
+- reduce possible exceptions in metrics action 
+- added Extended-CTC-FR profile to selection for command line
 
 2.22.0
 =======
@@ -216,7 +224,7 @@ corrections
 - #679 validation of a XR does not ignore whitespace
 - #681 IBAN assigned to invoice sender not recipient on direct debit
 - #689 incorrect element order when both charge reason and reasoncode are specified
-- be able to set detailedDeliveryPeriodFrom, detailedDeliveryPeriodTo MS188
+- be able to set detailedDeliveryPeriodFrom, detailedDeliverDeliveryPeriodTo MS188
 - updated verapdf from 1.26.1 to 1.26.2
 - cashDiscount JSON now corrently ignores values for cii and xr methods 
 
