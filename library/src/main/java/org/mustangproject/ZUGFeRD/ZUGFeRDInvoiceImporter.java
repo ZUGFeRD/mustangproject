@@ -662,9 +662,18 @@ public class ZUGFeRDInvoiceImporter {
 				deliveryDate =  parseDate(deliveryDt, "yyyy-MM-dd");
 			}
 		} else {
-			//CII
-			potentialCashDiscountTerms = extractString("//*[local-name()=\"SpecifiedTradePaymentTerms\"]/*[local-name()=\"Description\"]").trim();
-
+			//CII — collect ALL Description texts so that #SKONTO# lines in any term block are found
+			XPathExpression descXpr = xpath.compile("//*[local-name()=\"SpecifiedTradePaymentTerms\"]/*[local-name()=\"Description\"]");
+			NodeList descNodes = (NodeList) descXpr.evaluate(getDocument(), XPathConstants.NODESET);
+			StringBuilder sbDesc = new StringBuilder();
+			for (int di = 0; di < descNodes.getLength(); di++) {
+				String txt = descNodes.item(di).getTextContent();
+				if (txt != null && !txt.trim().isEmpty()) {
+					if (sbDesc.length() > 0) sbDesc.append("\n");
+					sbDesc.append(txt.trim());
+				}
+			}
+			potentialCashDiscountTerms = sbDesc.toString();
 		}
 
 		String creditorReferenceID = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"CreditorReferenceID\"]").trim();//BT-90
@@ -820,6 +829,7 @@ public class ZUGFeRDInvoiceImporter {
 		String currency = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"InvoiceCurrencyCode\"]|//*[local-name()=\"DocumentCurrencyCode\"]");
 		zpp.setCurrency(currency);
 
+		// Backward-compatible: keep the first Description as the plain-text paymentTermDescription
 		String paymentTermsDescription = extractString("//*[local-name()=\"SpecifiedTradePaymentTerms\"]/*[local-name()=\"Description\"]|//*[local-name()=\"PaymentTerms\"]/*[local-name()=\"Note\"]");
 		if (!paymentTermsDescription.isEmpty()) {
 			zpp.setPaymentTermDescription(paymentTermsDescription);
@@ -848,16 +858,19 @@ public class ZUGFeRDInvoiceImporter {
 				if ((headerTradeSettlementChilds.item(settlementChildIndex).getLocalName() != null)
 					&& (headerTradeSettlementChilds.item(settlementChildIndex).getLocalName().equals("SpecifiedTradePaymentTerms"))) {
 					NodeList paymentTermChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
+					PaymentTerms pt = new PaymentTerms();
+					Date ptDueDate = null;
 					for (int paymentTermChildIndex = 0; paymentTermChildIndex < paymentTermChilds.getLength(); paymentTermChildIndex++) {
 						if ((paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("Description"))) {
-							zpp.setPaymentTermDescription(paymentTermChilds.item(paymentTermChildIndex).getTextContent());
+							pt.setDescription(paymentTermChilds.item(paymentTermChildIndex).getTextContent());
 						}
 						if ((paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null) && (paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("DueDateDateTime"))) {
 							NodeList dueDateChilds = paymentTermChilds.item(paymentTermChildIndex).getChildNodes();
 							for (int dueDateChildIndex = 0; dueDateChildIndex < dueDateChilds.getLength(); dueDateChildIndex++) {
 								if ((dueDateChilds.item(dueDateChildIndex).getLocalName() != null) && (dueDateChilds.item(dueDateChildIndex).getLocalName().equals("DateTimeString"))) {
 									String dueDateString = XMLTools.trimOrNull(dueDateChilds.item(dueDateChildIndex));
-									dueDate = parseDate(dueDateString, "yyyyMMdd");
+									ptDueDate = parseDate(dueDateString, "yyyyMMdd");
+									dueDate = ptDueDate;
 								}
 							}
 						}
@@ -865,6 +878,8 @@ public class ZUGFeRDInvoiceImporter {
 							directDebitMandateID = paymentTermChilds.item(paymentTermChildIndex).getTextContent();
 						}
 					}
+					pt.setDueDate(ptDueDate);
+					zpp.addPaymentTerms(pt);
 				}
 
 				if ((headerTradeSettlementChilds.item(settlementChildIndex).getLocalName() != null)

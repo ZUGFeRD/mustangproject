@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import javax.xml.xpath.XPathExpressionException;
 
 /* https://github.com/ZUGFeRD/mustangproject/issues/993 */
@@ -174,5 +175,126 @@ public class CashDiscountFacturXTest extends TestCase {
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(inputStream);
 		Invoice invoice = zii.extractInvoice();
 		assertEquals(new BigDecimal("4.00"), invoice.getCashDiscounts()[0].getPercent());
+	}
+
+	/**
+	 * Regression test for https://github.com/ZUGFeRD/mustangproject/issues/956
+	 * Verifies that all SpecifiedTradePaymentTerms blocks are available via getExtendedPaymentTerms().
+	 */
+	public void testMultiplePaymentTermsExtendedList() throws XPathExpressionException, ParseException {
+		InputStream inputStream = new ByteArrayInputStream(XMLString.getBytes(StandardCharsets.UTF_8));
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(inputStream);
+		Invoice invoice = zii.extractInvoice();
+
+		IZUGFeRDPaymentTerms[] terms = invoice.getExtendedPaymentTerms();
+		assertEquals("Expected 3 SpecifiedTradePaymentTerms blocks", 3, terms.length);
+
+		assertEquals("Please remit until 04.03.2018", terms[0].getDescription());
+		assertEquals("Bis zum 15.02.2026 erhalten Sie 4,000  % Skonto, 21.19 EUR", terms[1].getDescription());
+		assertEquals("Bis zum 16.02.2026 ohne Abzug", terms[2].getDescription());
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		assertEquals("20180304", sdf.format(terms[0].getDueDate()));
+		assertEquals("20260215", sdf.format(terms[1].getDueDate()));
+		assertEquals("20260216", sdf.format(terms[2].getDueDate()));
+
+		// Backward compat: getPaymentTermDescription() returns the FIRST description
+		assertEquals("Please remit until 04.03.2018", invoice.getPaymentTermDescription());
+	}
+
+	/**
+	 * Regression test for https://github.com/ZUGFeRD/mustangproject/issues/956 —
+	 * the #SKONTO# text-convention scenario where both payment terms use the #SKONTO# format.
+	 * Verifies that cash discounts from ALL Description fields are parsed, not just the first.
+	 */
+	public void testMultipleSkontoCashDiscountsFromDescriptions() throws XPathExpressionException, ParseException {
+		String twoSkontoXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+			"<rsm:CrossIndustryInvoice xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\"" +
+			" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100\"" +
+			" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100\">\n" +
+			"  <rsm:ExchangedDocumentContext>\n" +
+			"    <ram:GuidelineSpecifiedDocumentContextParameter>\n" +
+			"      <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended</ram:ID>\n" +
+			"    </ram:GuidelineSpecifiedDocumentContextParameter>\n" +
+			"  </rsm:ExchangedDocumentContext>\n" +
+			"  <rsm:ExchangedDocument>\n" +
+			"    <ram:ID>TEST-956</ram:ID>\n" +
+			"    <ram:TypeCode>380</ram:TypeCode>\n" +
+			"    <ram:IssueDateTime>\n" +
+			"      <udt:DateTimeString format=\"102\">20251016</udt:DateTimeString>\n" +
+			"    </ram:IssueDateTime>\n" +
+			"  </rsm:ExchangedDocument>\n" +
+			"  <rsm:SupplyChainTradeTransaction>\n" +
+			"    <ram:IncludedSupplyChainTradeLineItem>\n" +
+			"      <ram:AssociatedDocumentLineDocument><ram:LineID>1</ram:LineID></ram:AssociatedDocumentLineDocument>\n" +
+			"      <ram:SpecifiedTradeProduct><ram:Name>Test</ram:Name></ram:SpecifiedTradeProduct>\n" +
+			"      <ram:SpecifiedLineTradeAgreement>\n" +
+			"        <ram:NetPriceProductTradePrice>\n" +
+			"          <ram:ChargeAmount>100.00</ram:ChargeAmount>\n" +
+			"          <ram:BasisQuantity unitCode=\"C62\">1.0000</ram:BasisQuantity>\n" +
+			"        </ram:NetPriceProductTradePrice>\n" +
+			"      </ram:SpecifiedLineTradeAgreement>\n" +
+			"      <ram:SpecifiedLineTradeDelivery><ram:BilledQuantity unitCode=\"C62\">1.0000</ram:BilledQuantity></ram:SpecifiedLineTradeDelivery>\n" +
+			"      <ram:SpecifiedLineTradeSettlement>\n" +
+			"        <ram:ApplicableTradeTax><ram:TypeCode>VAT</ram:TypeCode><ram:CategoryCode>S</ram:CategoryCode><ram:RateApplicablePercent>19.00</ram:RateApplicablePercent></ram:ApplicableTradeTax>\n" +
+			"        <ram:SpecifiedTradeSettlementLineMonetarySummation><ram:LineTotalAmount>100.00</ram:LineTotalAmount></ram:SpecifiedTradeSettlementLineMonetarySummation>\n" +
+			"      </ram:SpecifiedLineTradeSettlement>\n" +
+			"    </ram:IncludedSupplyChainTradeLineItem>\n" +
+			"    <ram:ApplicableHeaderTradeAgreement>\n" +
+			"      <ram:SellerTradeParty><ram:Name>Seller</ram:Name><ram:PostalTradeAddress><ram:PostcodeCode>12345</ram:PostcodeCode><ram:LineOne>Street 1</ram:LineOne><ram:CityName>City</ram:CityName><ram:CountryID>DE</ram:CountryID></ram:PostalTradeAddress><ram:SpecifiedTaxRegistration><ram:ID schemeID=\"VA\">DE123456789</ram:ID></ram:SpecifiedTaxRegistration></ram:SellerTradeParty>\n" +
+			"      <ram:BuyerTradeParty><ram:Name>Buyer</ram:Name><ram:PostalTradeAddress><ram:PostcodeCode>67890</ram:PostcodeCode><ram:LineOne>Road 2</ram:LineOne><ram:CityName>Town</ram:CityName><ram:CountryID>DE</ram:CountryID></ram:PostalTradeAddress></ram:BuyerTradeParty>\n" +
+			"    </ram:ApplicableHeaderTradeAgreement>\n" +
+			"    <ram:ApplicableHeaderTradeDelivery>\n" +
+			"      <ram:ActualDeliverySupplyChainEvent><ram:OccurrenceDateTime><udt:DateTimeString format=\"102\">20251016</udt:DateTimeString></ram:OccurrenceDateTime></ram:ActualDeliverySupplyChainEvent>\n" +
+			"    </ram:ApplicableHeaderTradeDelivery>\n" +
+			"    <ram:ApplicableHeaderTradeSettlement>\n" +
+			"      <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>\n" +
+			"      <ram:ApplicableTradeTax><ram:CalculatedAmount>19.00</ram:CalculatedAmount><ram:TypeCode>VAT</ram:TypeCode><ram:BasisAmount>100.00</ram:BasisAmount><ram:CategoryCode>S</ram:CategoryCode><ram:RateApplicablePercent>19.00</ram:RateApplicablePercent></ram:ApplicableTradeTax>\n" +
+			"      <ram:SpecifiedTradePaymentTerms>\n" +
+			"        <ram:Description>#SKONTO#TAGE=8#PROZENT=3.00#BASISBETRAG=128.76# </ram:Description>\n" +
+			"        <ram:DueDateDateTime><udt:DateTimeString format=\"102\">20251024</udt:DateTimeString></ram:DueDateDateTime>\n" +
+			"      </ram:SpecifiedTradePaymentTerms>\n" +
+			"      <ram:SpecifiedTradePaymentTerms>\n" +
+			"        <ram:Description>#SKONTO#TAGE=10#PROZENT=0.00# </ram:Description>\n" +
+			"        <ram:DueDateDateTime><udt:DateTimeString format=\"102\">20251026</udt:DateTimeString></ram:DueDateDateTime>\n" +
+			"      </ram:SpecifiedTradePaymentTerms>\n" +
+			"      <ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n" +
+			"        <ram:LineTotalAmount>100.00</ram:LineTotalAmount>\n" +
+			"        <ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>\n" +
+			"        <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>\n" +
+			"        <ram:TaxBasisTotalAmount>100.00</ram:TaxBasisTotalAmount>\n" +
+			"        <ram:TaxTotalAmount currencyID=\"EUR\">19.00</ram:TaxTotalAmount>\n" +
+			"        <ram:GrandTotalAmount>119.00</ram:GrandTotalAmount>\n" +
+			"        <ram:TotalPrepaidAmount>0.00</ram:TotalPrepaidAmount>\n" +
+			"        <ram:DuePayableAmount>119.00</ram:DuePayableAmount>\n" +
+			"      </ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n" +
+			"    </ram:ApplicableHeaderTradeSettlement>\n" +
+			"  </rsm:SupplyChainTradeTransaction>\n" +
+			"</rsm:CrossIndustryInvoice>";
+
+		InputStream inputStream = new ByteArrayInputStream(twoSkontoXml.getBytes(StandardCharsets.UTF_8));
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(inputStream);
+		Invoice invoice = zii.extractInvoice();
+
+		// Both structured payment terms must be present
+		IZUGFeRDPaymentTerms[] terms = invoice.getExtendedPaymentTerms();
+		assertEquals("Expected 2 SpecifiedTradePaymentTerms blocks", 2, terms.length);
+		assertTrue(terms[0].getDescription().contains("#SKONTO#TAGE=8#PROZENT=3.00#"));
+		assertTrue(terms[1].getDescription().contains("#SKONTO#TAGE=10#PROZENT=0.00#"));
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		assertEquals("20251024", sdf.format(terms[0].getDueDate()));
+		assertEquals("20251026", sdf.format(terms[1].getDueDate()));
+
+		// Backward compat: getPaymentTermDescription() returns the FIRST description
+		assertTrue("First description must be the 3% skonto term",
+				invoice.getPaymentTermDescription().contains("#SKONTO#TAGE=8#PROZENT=3.00#"));
+
+		// Both #SKONTO# lines must be parsed as CashDiscount objects
+		assertEquals("Both skonto entries must yield a CashDiscount", 2, invoice.getCashDiscounts().length);
+		assertEquals(new BigDecimal("3.00"), invoice.getCashDiscounts()[0].getPercent());
+		assertEquals(Integer.valueOf(8), invoice.getCashDiscounts()[0].getDays());
+		assertEquals(new BigDecimal("0.00"), invoice.getCashDiscounts()[1].getPercent());
+		assertEquals(Integer.valueOf(10), invoice.getCashDiscounts()[1].getDays());
 	}
 }
