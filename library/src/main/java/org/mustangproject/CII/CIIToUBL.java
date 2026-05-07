@@ -3,7 +3,7 @@ package org.mustangproject.CII;
 import java.io.File;
 import java.io.Serializable;
 
-import com.helger.commons.error.list.ErrorList;
+import com.helger.diagnostics.error.list.ErrorList;
 import com.helger.en16931.cii2ubl.CIIToUBL23Converter;
 import com.helger.ubl23.UBL23Marshaller;
 

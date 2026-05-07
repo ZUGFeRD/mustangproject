@@ -26,7 +26,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.deploy.skip>false</maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
-        <maven.compiler.release>11</maven.compiler.release>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
     </properties>
     <dependencies>
         <!-- compile dependencies -->
@@ -141,8 +141,8 @@
                     <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
                              mvn clean compile assembly:single -->
                     <!-- or whatever version you use -->
-                    <source>11</source>
-                    <target>11</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
             <!-- /ZUV -->
@@ -273,7 +273,7 @@
                         <configuration>
                             <toolchains>
                                 <jdk>
-                                    <version>11</version>
+                                    <version>${java.version}</version>
                                     <vendor>adopt</vendor>
                                 </jdk>
                             </toolchains>
@@ -293,7 +293,7 @@
                     <plugin>
                         <groupId>com.helger.maven</groupId>
                         <artifactId>ph-schematron-maven-plugin</artifactId>
-                        <version>${version.com.helger.maven}</version>
+                        <version>${version.com.helger.maven.schematron}</version>
                         <configuration>
                             <schematronDirectory>${basedir}/src/main/resources/schematron</schematronDirectory>
                             <xsltDirectory>${basedir}/src/main/resources/xslt</xsltDirectory>

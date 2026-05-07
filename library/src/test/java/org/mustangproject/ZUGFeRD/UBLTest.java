@@ -30,8 +30,10 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.BankDetails;
 import org.mustangproject.CII.CIIToUBL;
 import org.mustangproject.Contact;
@@ -42,6 +44,7 @@ import org.mustangproject.TradeParty;
 
 import javax.xml.xpath.XPathExpressionException;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UBLTest extends ResourceCase {
 	final String TARGET_XML = "./target/testout-1Lieferschein.xml";
 

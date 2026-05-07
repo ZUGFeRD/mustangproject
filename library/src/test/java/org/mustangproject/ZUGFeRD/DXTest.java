@@ -335,10 +335,8 @@ public class DXTest extends MustangReaderTestCase {
 		zf2p.setProfile(Profiles.getByName(EStandard.despatchadvice,"Pilot",1));
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML));
+		try(BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML))) {
 			writer.write(theXML);
-			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

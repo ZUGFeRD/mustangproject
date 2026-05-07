@@ -44,7 +44,7 @@
         <github.global.server>github</github.global.server>
         <additionalparam>-Xdoclint:none</additionalparam>
         <!-- Skip error check for javadoc -->
-        <maven.compiler.release>11</maven.compiler.release>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven.deploy.skip>true</maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
     </properties>
     <dependencies>
@@ -149,6 +149,12 @@
             <version>${version.org.glassfish.jaxb}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${version.org.slf4j}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -169,8 +175,8 @@
                     <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
                         mvn clean compile assembly:single -->
                     <!-- or whatever version you use -->
-                    <source>11</source>
-                    <target>11</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -331,7 +337,7 @@
                         <configuration>
                             <toolchains>
                                 <jdk>
-                                    <version>11</version>
+                                    <version>${java.version}</version>
                                     <vendor>adopt</vendor>
                                 </jdk>
                             </toolchains>
