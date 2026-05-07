@@ -551,13 +551,9 @@ public class ZUGFeRDInvoiceImporter {
 		NodeList lineDueNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		BigDecimal duePayableAmount = null;
 		if (lineDueNodes.getLength() > 0) {
-			String duePayableAmountStr=XMLTools.trimOrNull(lineDueNodes.item(0));
-			if (duePayableAmountStr!=null) {
-			  // Always set it, because it is used in the calculation below
-				duePayableAmount = new BigDecimal(duePayableAmountStr);
-				if (zpp instanceof CalculatedInvoice) {
-					((CalculatedInvoice) zpp).setDuePayable(duePayableAmount);
-				}
+			duePayableAmount = new BigDecimal(XMLTools.trimOrNull(lineDueNodes.item(0)));
+			if (zpp instanceof CalculatedInvoice) {
+				((CalculatedInvoice) zpp).setDuePayable(duePayableAmount);
 			}
 		}
 
