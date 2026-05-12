@@ -160,29 +160,31 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 
 		if ((party.getContact() != null) && (isSender || profile == Profiles.getByName("EN16931") || profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung"))) {
-			xml += "<ram:DefinedTradeContact>";
+			String definedTradeContactXML = "";
 			if (party.getContact().getName() != null) {
-				xml += "<ram:PersonName>"
+				definedTradeContactXML += "<ram:PersonName>"
 					+ XMLTools.encodeXML(party.getContact().getName())
 					+ "</ram:PersonName>";
 			}
 			if (party.getContact().getPhone() != null) {
-				xml += "<ram:TelephoneUniversalCommunication><ram:CompleteNumber>"
+				definedTradeContactXML += "<ram:TelephoneUniversalCommunication><ram:CompleteNumber>"
 					+ XMLTools.encodeXML(party.getContact().getPhone()) + "</ram:CompleteNumber>"
 					+ "</ram:TelephoneUniversalCommunication>";
 			}
 
 			if ((party.getContact().getFax() != null) && (profile == Profiles.getByName("Extended"))) {
-				xml += "<ram:FaxUniversalCommunication><ram:CompleteNumber>"
+				definedTradeContactXML += "<ram:FaxUniversalCommunication><ram:CompleteNumber>"
 					+ XMLTools.encodeXML(party.getContact().getFax()) + "</ram:CompleteNumber>"
 					+ "</ram:FaxUniversalCommunication>";
 			}
 			if (party.getContact().getEMail() != null) {
-				xml += "<ram:EmailURIUniversalCommunication><ram:URIID>"
+				definedTradeContactXML += "<ram:EmailURIUniversalCommunication><ram:URIID>"
 					+ XMLTools.encodeXML(party.getContact().getEMail()) + "</ram:URIID>"
 					+ "</ram:EmailURIUniversalCommunication>";
 			}
-			xml += "</ram:DefinedTradeContact>";
+			if (!definedTradeContactXML.isEmpty()) {
+				xml += "<ram:DefinedTradeContact>" + definedTradeContactXML + "</ram:DefinedTradeContact>";
+			}
 		}
 
 		xml += "<ram:PostalTradeAddress>";
