@@ -1,3 +1,10 @@
+2.23.1
+=======
+2026-05-13
+
+- #1043 Fix percentage-based allowance/charge calculations
+- #1108 https://github.com/ZUGFeRD/mustangproject/issues/1108
+
 2.23.0 "Bonne Journées de la Facture Électronique"
 =======
 2026-04-23
