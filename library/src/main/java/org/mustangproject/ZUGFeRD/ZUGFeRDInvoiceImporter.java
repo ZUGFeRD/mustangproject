@@ -749,6 +749,16 @@ public class ZUGFeRDInvoiceImporter {
 			NodeList headerTradeAgreementChilds = headerTradeAgreementNode.getChildNodes();
 			for (int agreementChildIndex = 0; agreementChildIndex < headerTradeAgreementChilds.getLength(); agreementChildIndex++) {
 				if (headerTradeAgreementChilds.item(agreementChildIndex).getLocalName() != null) {
+					if (headerTradeAgreementChilds.item(agreementChildIndex).getLocalName().equals("ApplicableTradeDeliveryTerms")) {
+						NodeList applicableTradeDeliveryTermsChilds = headerTradeAgreementChilds.item(agreementChildIndex).getChildNodes();
+						for (int applicableTradeDeliveryTermsChildIndex = 0; applicableTradeDeliveryTermsChildIndex < applicableTradeDeliveryTermsChilds.getLength(); applicableTradeDeliveryTermsChildIndex++) {
+							if ((applicableTradeDeliveryTermsChilds.item(applicableTradeDeliveryTermsChildIndex).getLocalName() != null)
+								&& (applicableTradeDeliveryTermsChilds.item(applicableTradeDeliveryTermsChildIndex).getLocalName().equals("DeliveryTypeCode"))) {
+								zpp.setDeliveryTypeCode(XMLTools.trimOrNull(applicableTradeDeliveryTermsChilds.item(applicableTradeDeliveryTermsChildIndex)));
+							}
+						}
+					}
+
 					if (headerTradeAgreementChilds.item(agreementChildIndex).getLocalName().equals("BuyerOrderReferencedDocument")) {
 						NodeList buyerOrderChilds = headerTradeAgreementChilds.item(agreementChildIndex).getChildNodes();
 						for (int buyerOrderChildIndex = 0; buyerOrderChildIndex < buyerOrderChilds.getLength(); buyerOrderChildIndex++) {

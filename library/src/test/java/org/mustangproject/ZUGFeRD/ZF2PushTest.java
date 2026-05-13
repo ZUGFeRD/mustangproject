@@ -623,6 +623,7 @@ public class ZF2PushTest extends TestCase {
 					.setTenderReferencedDocument(dr1)
 					.setDeliveryDate(sdf.parse("2020-11-02")).setNumber(number).setVATDueDateTypeCode(EventTimeCodeTypeConstants.PAYMENT_DATE)
 					.setInvoiceReferencedDocumentID("abc123").addInvoiceReferencedDocument(new ReferencedDocument("abcd1234"))
+					.setDeliveryTypeCode("EXW")
 				);
 			} catch (ParseException e) {
 				e.printStackTrace();
@@ -652,6 +653,7 @@ public class ZF2PushTest extends TestCase {
 		assertTrue(zi.getUTF8().contains(occurrenceFrom));
 		assertTrue(zi.getUTF8().contains(occurrenceTo));
 		assertTrue(zi.getUTF8().contains(contractID));
+		assertTrue(zi.getUTF8().contains("EXW"));
 		assertEquals(zi.importedInvoice.getZFItems()[0].getId(), "a123");
 		assertEquals(zi.importedInvoice.getZFItems()[0].getDeliveryNoteReferencedDocumentID(), "deliverynote123");
 		assertEquals(zi.importedInvoice.getZFItems()[0].getDeliveryNoteReferencedDocumentLineID(), "deliverypos456");
@@ -677,6 +679,7 @@ public class ZF2PushTest extends TestCase {
 			Invoice i = zii.extractInvoice();
 
 			assertEquals("abc123", i.getInvoiceReferencedDocumentID());
+			assertEquals("EXW", i.getDeliveryTypeCode());
 			assertEquals(1, i.getInvoiceReferencedDocuments().size());
 			assertEquals("abcd1234", i.getInvoiceReferencedDocuments().get(0).getIssuerAssignedID());
 			assertEquals("4304171000002", i.getRecipient().getGlobalID());

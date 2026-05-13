@@ -438,6 +438,10 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	default String getDeliveryTypeCode() {
+		return null;
+	}
+
 	/**
 	 * get the ID of the SellerOrderReferencedDocument, which sits in the
 	 * ApplicableSupplyChainTradeAgreement/ApplicableHeaderTradeAgreement
