@@ -732,6 +732,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				getTradePartyAsXML(this.trans.getDeliveryAddress(), false, true) +
 				"</ram:ShipToTradeParty>";
 		}
+		if (this.trans.getEndCustomerDeliveryAddress() != null) {
+			xml += "<ram:UltimateShipToTradeParty>" +
+				getTradePartyAsXML(this.trans.getEndCustomerDeliveryAddress(), false, true) +
+				"</ram:UltimateShipToTradeParty>";
+		}
 
 
 		if (trans.getDeliveryDate() != null) {
