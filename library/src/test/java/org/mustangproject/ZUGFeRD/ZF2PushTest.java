@@ -605,6 +605,7 @@ public class ZF2PushTest extends TestCase {
 					.setDetailedDeliveryPeriod(new SimpleDateFormat("yyyyMMdd").parse(occurrenceFrom), new SimpleDateFormat("yyyyMMdd").parse(occurrenceTo))
 					.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID(taxID).setEmail("sender@test.org").setID(orgID).addVATID("DE0815"))
 					.setDeliveryAddress(new TradeParty("just the other side of the street", "teststr.12a", "55232", "Entenhausen", "DE").addVATID("DE47110"))
+					.setEndCustomerDeliveryAddress(new TradeParty("Max Mustermann", "Glückswinkel 42", "98765", "Musterhausen", "DE"))
 					.setContractReferencedDocument(contractID)
 					.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addGlobalID(gln).setEmail("recipient@test.org").addVATID("DE4711")
 						.setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE").setFax("++49555123456")).setAdditionalAddress("Hinterhaus 3"))
@@ -695,6 +696,7 @@ public class ZF2PushTest extends TestCase {
 
 			assertNotNull(i.getInvoicer());
 			assertNotNull(i.getInvoicee());
+			assertNotNull(i.getEndCustomerDeliveryAddress());
 		} catch (XPathExpressionException e) {
 			fail("XPathExpressionException should not be raised");
 		} catch (ParseException e) {

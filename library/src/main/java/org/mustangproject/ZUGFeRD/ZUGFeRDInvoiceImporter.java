@@ -396,10 +396,17 @@ public class ZUGFeRDInvoiceImporter {
 		XPath xpath = xpathFact.newXPath();
 		XPathExpression xpr = xpath.compile("//*[local-name()=\"SellerTradeParty\"]|//*[local-name()=\"AccountingSupplierParty\"]/*");
 		NodeList SellerNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+
 		XPathExpression shipEx = xpath.compile("//*[local-name()=\"ShipToTradeParty\"]");
 		NodeList deliveryNodes = (NodeList) shipEx.evaluate(getDocument(), XPathConstants.NODESET);
 		if (deliveryNodes.getLength() > 0) {
 			zpp.setDeliveryAddress(new TradeParty(deliveryNodes));
+		}
+
+		XPathExpression ultimateShipEx = xpath.compile("//*[local-name()=\"UltimateShipToTradeParty\"]");
+		NodeList ultimateDeliveryNodes = (NodeList) ultimateShipEx.evaluate(getDocument(), XPathConstants.NODESET);
+		if (ultimateDeliveryNodes.getLength() > 0) {
+			zpp.setEndCustomerDeliveryAddress(new TradeParty(ultimateDeliveryNodes));
 		}
 
 		List<IncludedNote> includedNotes = new ArrayList<>();

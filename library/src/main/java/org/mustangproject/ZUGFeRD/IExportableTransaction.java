@@ -518,6 +518,15 @@ public interface IExportableTransaction {
 	}
 
 	/***
+	 * ultimate delivery address, i.e. ram:UltimateShipToTradeParty (only supported for zf2)
+	 *
+	 * @return the IZUGFeRDExportableTradeParty delivery address
+	 */
+	default IZUGFeRDExportableTradeParty getEndCustomerDeliveryAddress() {
+		return null;
+	}
+
+	/***
 	 * payee / payment receiver, if different from seller, ram:Payee (only supported for zf2)
 	 *
 	 * @return the IZUGFeRDExportableTradeParty payment receiver, if different from seller
