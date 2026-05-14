@@ -661,6 +661,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		xml += "<ram:SellerTradeParty>" + getTradePartyAsXML(trans.getSender(), true, false) + "</ram:SellerTradeParty>";
 		xml += "<ram:BuyerTradeParty>" + getTradePartyAsXML(trans.getRecipient(), false, false) + "</ram:BuyerTradeParty>";
 
+		if (trans.getDeliveryTypeCode() != null && getProfile() == Profiles.getByName("Extended")) {
+			xml += "<ram:ApplicableTradeDeliveryTerms>"
+				+ "<ram:DeliveryTypeCode>"
+				+ trans.getDeliveryTypeCode()
+				+ "</ram:DeliveryTypeCode>"
+				+ "</ram:ApplicableTradeDeliveryTerms>";
+		}
 		if (trans.getSellerOrderReferencedDocumentID() != null && !trans.getSellerOrderReferencedDocumentID().trim().isEmpty()) {
 			xml += "<ram:SellerOrderReferencedDocument>"
 				+ "<ram:IssuerAssignedID>"
