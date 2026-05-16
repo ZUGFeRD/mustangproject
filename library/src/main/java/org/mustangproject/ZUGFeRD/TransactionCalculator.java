@@ -1,6 +1,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import static java.math.BigDecimal.ZERO;
+import static org.mustangproject.util.StringUtils.isNotBlank;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -208,6 +209,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 				if (reasonText != null) {
 					itemVATAmount.setVatExemptionReasonText(reasonText);
 				}
+				Optional.ofNullable(currentItem.getProduct().getTaxExemptionReasonCode()).ifPresent(itemVATAmount::setVatExemptionReasonCode);
 				VATAmount current = hm.get(percent.stripTrailingZeros());
 				if (current == null) {
 					hm.put(percent.stripTrailingZeros(), itemVATAmount);
@@ -281,6 +283,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			if (reasonText != null) {
 				itemVATAmount.setVatExemptionReasonText(reasonText);
 			}
+			Optional.ofNullable(currentItem.getProduct().getTaxExemptionReasonCode()).ifPresent(itemVATAmount::setVatExemptionReasonCode);
 			final Optional<VATAmount> currentVatAmount = this.getCurrentVatAmount(vatAmounts, currentItem.getProduct().getTaxCategoryCode(), percent);
 			if (currentVatAmount.isEmpty()) {
 				vatAmounts.add(itemVATAmount);
@@ -333,10 +336,17 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	public void mergeAdding(VATAmount vatAmount, VATAmount toAdd) {
 		vatAmount.setBasis(vatAmount.getBasis().add(toAdd.getBasis()));
 		vatAmount.setCalculated(vatAmount.getCalculated().add(toAdd.getCalculated()));
-		if (toAdd.getVatExemptionReasonText() != null && !toAdd.getVatExemptionReasonText().isBlank()) {
+		if (isNotBlank(toAdd.getVatExemptionReasonText())) {
 			Optional.ofNullable(vatAmount.getVatExemptionReasonText()).filter(reasonText -> !reasonText.equals(toAdd.getVatExemptionReasonText())).ifPresentOrElse(
 				text -> vatAmount.setVatExemptionReasonText(String.join(", ", text, toAdd.getVatExemptionReasonText())),
 				() -> vatAmount.setVatExemptionReasonText(toAdd.getVatExemptionReasonText()));
+		}
+		if (isNotBlank(toAdd.getVatExemptionReasonCode()) && !toAdd.getVatExemptionReasonCode().equals(vatAmount.getVatExemptionReasonCode())) {
+			if (vatAmount.getVatExemptionReasonCode() == null) {
+				vatAmount.setVatExemptionReasonCode(toAdd.getVatExemptionReasonCode());
+			} else {
+				vatAmount.vatExemptionReasonCode += ", " + toAdd.getVatExemptionReasonCode();
+			}
 		}
 	}
 
