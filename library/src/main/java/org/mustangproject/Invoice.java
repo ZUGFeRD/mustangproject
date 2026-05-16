@@ -41,8 +41,9 @@ public class Invoice implements IExportableTransaction {
 
 	protected boolean testIndicator;
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
+	protected String deliveryTypeCode;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
-	protected TradeParty sender = null, recipient = null, deliveryAddress = null, payee = null, invoicer = null, invoicee = null;
+	protected TradeParty sender = null, recipient = null, deliveryAddress = null, endCustomerDeliveryAddress = null, payee = null, invoicer = null, invoicee = null;
 	protected ArrayList<CashDiscount> cashDiscounts = null;
 	@JsonDeserialize(contentAs = Item.class)
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
@@ -329,6 +330,15 @@ public class Invoice implements IExportableTransaction {
 
 	public Invoice setShipToCountry(String shipToCountry) {
 		this.shipToCountry = shipToCountry;
+		return this;
+	}
+
+	public String getDeliveryTypeCode() {
+		return deliveryTypeCode;
+	}
+
+	public Invoice setDeliveryTypeCode(String deliveryTypeCode) {
+		this.deliveryTypeCode = deliveryTypeCode;
 		return this;
 	}
 
@@ -787,6 +797,16 @@ public class Invoice implements IExportableTransaction {
 	 */
 	public Invoice setDeliveryAddress(TradeParty deliveryAddress) {
 		this.deliveryAddress = deliveryAddress;
+		return this;
+	}
+
+	@Override
+	public TradeParty getEndCustomerDeliveryAddress() {
+		return endCustomerDeliveryAddress;
+	}
+
+	public Invoice setEndCustomerDeliveryAddress(TradeParty endCustomerDeliveryAddress) {
+		this.endCustomerDeliveryAddress = endCustomerDeliveryAddress;
 		return this;
 	}
 
