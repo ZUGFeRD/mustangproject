@@ -4,6 +4,13 @@
 
 - #1043 Fix percentage-based allowance/charge calculations
 - #1108 https://github.com/ZUGFeRD/mustangproject/issues/1108
+- #1093 #814 upgrade CEN EN16931 Schematron from v1.3.12 to v1.3.15
+- #1102 Add BasisAmount to CashDiscount.
+- #1109 Feature fix xml description
+- #1110 Avoid NPE by checking zi.getXMP() is not null.
+- #1116 dont emit empty node for definedTradeContact
+- #1118 Support <ram:UltimateShipToTradeParty/>
+- #1119 Support <ram:DeliveryTypeCode/>
 
 2.23.0 "Bonne Journées de la Facture Électronique"
 =======
