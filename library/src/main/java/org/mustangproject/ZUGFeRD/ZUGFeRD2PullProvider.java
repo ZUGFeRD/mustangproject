@@ -571,16 +571,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 					xml += "</ram:SpecifiedLineTradeDelivery>"
 					+ "<ram:SpecifiedLineTradeSettlement>"
-					+ "<ram:ApplicableTradeTax>"
-					+ "<ram:TypeCode>VAT</ram:TypeCode>";
-				if ((profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung")) && currentItem.getProduct().getTaxExemptionReason() != null) {
 					+ "<ram:ApplicableTradeTax>";
 				// <CalculatedAmount/>
 				xml += "<ram:TypeCode>VAT</ram:TypeCode>";
 				if (profile == Profiles.getByName("Extended") && currentItem.getProduct().getTaxExemptionReason() != null) {
 					xml += "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 				}
-				if ((profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung")) && currentItem.getProduct().getTaxExemptionReasonCode() != null) {
 				xml += "<ram:CategoryCode>" + currentItem.getProduct().getTaxCategoryCode() + "</ram:CategoryCode>";
 				if (profile == Profiles.getByName("Extended") && currentItem.getProduct().getTaxExemptionReasonCode() != null) {
 					xml += "<ram:ExemptionReasonCode>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReasonCode()) + "</ram:ExemptionReasonCode>";
