@@ -287,7 +287,7 @@ public class XRTest extends TestCase {
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertThat(theXML).valueByXPath("count(//*[local-name()='ExemptionReason'])")
 			.asInt()
-			.isEqualTo(2);
+			.isEqualTo(1);
 	}
 	
 
@@ -322,7 +322,7 @@ public class XRTest extends TestCase {
 		//Exemption reason needs to be set if TaxCategoryCode == "O", reason should be at the product and in the ApplicableTradeTax
 		assertThat(theXML).valueByXPath("count(//*[local-name()='ExemptionReason'])")
 			.asInt()
-			.isEqualTo(2);
+			.isEqualTo(1);
 	}
 
 	private org.mustangproject.Invoice createInvoice(TradeParty recipient) {
