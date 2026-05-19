@@ -336,7 +336,7 @@ public class Item implements IZUGFeRDExportableItem {
 	 * because some fields are excluded from per-line item tax in some profiles (e.g. EN16931)
 	 */
 	public void enrichProductFromVATBreakdown(NodeList taxNodes) {
-		// Match tax list with item product tax, set product exemption reason and code
+		// Match tax list with item product tax, set product exemption reason and code if not already set
 		// NB: For EN16931, exemption info only included in doc - level VAT Breakdown, not in per-line item nodes
 		if (taxNodes.getLength() != 0) {
 			for (int i = 0; i < taxNodes.getLength(); i++) {
@@ -350,8 +350,13 @@ public class Item implements IZUGFeRDExportableItem {
 				BigDecimal rateApplicablePercent = taxChildMap.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent").orElse(null);
 
 				if (taxCategoryCode != null && rateApplicablePercent != null && taxCategoryCode.equals(this.product.taxCategoryCode) && rateApplicablePercent.compareTo(this.product.getVATPercent()) == 0) {
-					this.product.setTaxExemptionReason(taxChildMap.getAsStringOrNull("ExemptionReason"));
-					this.product.setTaxExemptionReasonCode(taxChildMap.getAsStringOrNull("ExemptionReasonCode"));
+					// If product Exemption not already set (i.e. by per line-item exemption fields, set it from VAT Breakdown
+					if (this.product.getTaxExemptionReason() == null) {
+						this.product.setTaxExemptionReason(taxChildMap.getAsStringOrNull("ExemptionReason"));
+					}
+					if (this.product.getTaxExemptionReasonCode() == null) {
+						this.product.setTaxExemptionReasonCode(taxChildMap.getAsStringOrNull("ExemptionReasonCode"));
+					}
 					break;
 				}
 			}

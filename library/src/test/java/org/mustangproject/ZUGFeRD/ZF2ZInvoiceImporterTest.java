@@ -419,8 +419,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertTrue(new BigDecimal("1").compareTo(lc.getItemTotalNetAmount()) == 0);
 
 		assertEquals("Z", invoice.getZFItems()[0].getProduct().getTaxCategoryCode());
-		// Exemption Reason not allowed for tax code Z (see validation rule BR-Z-10)
-		assertNull(invoice.getZFItems()[0].getProduct().getTaxExemptionReason());
+		assertEquals("Kleinunternehmer", invoice.getZFItems()[0].getProduct().getTaxExemptionReason());
 
 		assertTrue(invoice.getTradeSettlement().length == 1);
 		assertTrue(invoice.getTradeSettlement()[0] instanceof IZUGFeRDTradeSettlementPayment);
