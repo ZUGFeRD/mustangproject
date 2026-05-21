@@ -14,12 +14,33 @@ import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+/***
+ * This is the invoice but with redundant information, i.e. total amount etc.
+ * It has a calculate function which overwrites this total amount but fundamentally
+ * it's useful e.g. for imported invoices, because they may have diverging
+ * amounts, and some users are interested in retrieving the original ones
+ */
 public class CalculatedInvoice extends Invoice implements Serializable {
 
+	/***
+	 * de factor the total net amount
+	 */
 	protected BigDecimal lineTotalAmount=null;
+	/**
+	 * still to be paid
+	 */
 	protected BigDecimal duePayable=null;
+	/**
+	 * originally to be paid (without prepayments)
+	 */
 	protected BigDecimal grandTotal=null;
+	/**
+	 * the net amount upon which value added taxes are applied
+	 */
 	protected BigDecimal taxBasis=null;
+	/**
+	 * the total sum of value added taxes
+	 */
 	protected BigDecimal VATtotal=null;
 	protected TransactionCalculator tc=null;
 
