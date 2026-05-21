@@ -2,8 +2,10 @@
 =======
 2026-05-13
 
+- #1108 Regression Issue caused by empty XMP (introduced by #1076)
+- #1120 ZUGFeRDImporter fails to extract Version if XML namespace is not exactly <rsm:CrossIndustryInvoice>
+(some of the following changes were already part of 2.23.0)
 - #1043 Fix percentage-based allowance/charge calculations
-- #1108 https://github.com/ZUGFeRD/mustangproject/issues/1108
 - #1093 #814 upgrade CEN EN16931 Schematron from v1.3.12 to v1.3.15
 - #1102 Add BasisAmount to CashDiscount.
 - #1109 Feature fix xml description
