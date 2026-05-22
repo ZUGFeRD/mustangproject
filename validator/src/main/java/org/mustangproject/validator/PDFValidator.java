@@ -56,6 +56,18 @@ public class PDFValidator extends Validator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PDFValidator.class.getCanonicalName()); // log output
 	private static final PDFAFlavour[] PDF_A_3_FLAVOURS = {PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_B, PDFAFlavour.PDFA_3_U};
 
+	private static String escapeXmlSpecialChars(String value) {
+		if (value == null || value.isEmpty()) {
+			return value;
+		}
+		return value
+			.replace("&", "&amp;")
+			.replace("<", "&lt;")
+			.replace(">", "&gt;")
+			.replace("\"", "&quot;")
+			.replace("'", "&apos;");
+	}
+
 	private String pdfFilename;
 
 	private byte[] fileContents;
@@ -113,10 +125,10 @@ public class PDFValidator extends Validator {
 			ItemDetails itemDetails = ItemDetails.fromValues(pdfFilename);
 			inputStream.mark(Integer.MAX_VALUE);
 			processorResult = processor.process(itemDetails, inputStream);
-			pdfReport = processorResult.getValidationResult().toString().replaceAll(
+			pdfReport = escapeXmlSpecialChars(processorResult.getValidationResult().toString().replaceAll(
 				"<\\?xml version=\"1\\.0\" encoding=\"utf-8\"\\?>",
 				""
-			);
+			));
 			inputStream.reset();
 		} catch (final Exception excep) {
 			context.addResultItem(new ValidationResultItem(ESeverity.exception, excep.getMessage()).setSection(7)
