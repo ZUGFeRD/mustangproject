@@ -53,7 +53,14 @@ public enum SubjectCode {
 	/**
 	 * Payment term
 	 */
-	AAB 
-
+	AAB,
+	/**
+	 * Additional information
+	 */
+	ACB,
+	/**
+	 * Invoice instruction
+	 */
+	INV
 
 }
