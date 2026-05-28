@@ -72,6 +72,14 @@ public class IncludedNote {
 		return new IncludedNote(content, SubjectCode.PMD);
 	}
 	
+	public static IncludedNote additionalInformationNote(String content) {
+		return new IncludedNote(content, SubjectCode.ACB);
+	}
+	
+	public static IncludedNote invoiceInstructionNote(String content) {
+		return new IncludedNote(content, SubjectCode.INV);
+	}
+	
 	public static IncludedNote unspecifiedNote(String content) {
 		return new IncludedNote(content, null);
 	}
