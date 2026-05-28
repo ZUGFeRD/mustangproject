@@ -1,3 +1,5 @@
+- 'Fix possible StringIndexOutOfBoundsException when extracting XMP.'
+
 2.23.1
 =======
 2026-05-13
