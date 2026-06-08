@@ -832,6 +832,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						exemptionReasonTextXML = "<ram:ExemptionReason>" + XMLTools.encodeXML(amount.getVatExemptionReasonText()) + "</ram:ExemptionReason>";
 					}
 
+					String exemptionReasonCodeXML = "";
+					if (amount.getVatExemptionReasonCode() != null) {
+						exemptionReasonCodeXML = "<ram:ExemptionReasonCode>" + XMLTools.encodeXML(amount.getVatExemptionReasonCode()) + "</ram:ExemptionReasonCode>";
+					}
+
 					xml += "<ram:ApplicableTradeTax>"
 						+ "<ram:CalculatedAmount>" + currencyFormat(amount.getCalculated())
 						+ "</ram:CalculatedAmount>" //currencyID=\"EUR\"
@@ -839,6 +844,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ exemptionReasonTextXML
 						+ "<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>" // currencyID=\"EUR\"
 						+ "<ram:CategoryCode>" + amountCategoryCode + "</ram:CategoryCode>"
+						+ exemptionReasonCodeXML
 						+ (amountDueDateTypeCode != null ? "<ram:DueDateTypeCode>" + amountDueDateTypeCode + "</ram:DueDateTypeCode>" : "");
 					xml += "<ram:RateApplicablePercent>"
 						+ vatFormat(amount.getApplicablePercent()) + "</ram:RateApplicablePercent>";

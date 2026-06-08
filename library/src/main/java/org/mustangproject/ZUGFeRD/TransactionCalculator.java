@@ -208,6 +208,10 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 				if (reasonText != null) {
 					itemVATAmount.setVatExemptionReasonText(reasonText);
 				}
+				String reasonCode = currentItem.getProduct().getTaxExemptionReasonCode();
+				if (reasonCode != null) {
+					itemVATAmount.setVatExemptionReasonCode(reasonCode);
+				}
 				VATAmount current = hm.get(percent.stripTrailingZeros());
 				if (current == null) {
 					hm.put(percent.stripTrailingZeros(), itemVATAmount);
@@ -280,6 +284,10 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			final String reasonText = currentItem.getProduct().getTaxExemptionReason();
 			if (reasonText != null) {
 				itemVATAmount.setVatExemptionReasonText(reasonText);
+			}
+			final String reasonCode = currentItem.getProduct().getTaxExemptionReasonCode();
+			if (reasonCode != null) {
+				itemVATAmount.setVatExemptionReasonCode(reasonCode);
 			}
 			final Optional<VATAmount> currentVatAmount = this.getCurrentVatAmount(vatAmounts, currentItem.getProduct().getTaxCategoryCode(), percent);
 			if (currentVatAmount.isEmpty()) {

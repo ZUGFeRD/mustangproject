@@ -187,6 +187,7 @@ public class ZF2PushTest extends TestCase {
 
 		assertEquals("EUR", zi.getInvoiceCurrencyCode());
 		assertTrue(zi.getUTF8().contains(taxID));
+		assertThat(zi.getUTF8()).valueByXPath("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"ExemptionReasonCode\"]");
 
 		// Reading ZUGFeRD
 		assertEquals("1.00", zi.getAmount());
