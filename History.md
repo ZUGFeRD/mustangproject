@@ -1,4 +1,7 @@
-- 'Fix possible StringIndexOutOfBoundsException when extracting XMP.'
+- #1127'Fix possible StringIndexOutOfBoundsException when extracting XMP.'
+- #1133 incorrect warning in Subinvoiceline calculation
+- Add Tax ExemptionReasonCode on document level.
+
 
 2.23.1
 =======
