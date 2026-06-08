@@ -38,7 +38,6 @@ public class VATAmount {
 	protected String categoryCode;
 
 	protected String vatExemptionReasonText;
-	protected String vatExemptionReasonCode;
 
 	protected String vatExemptionReasonCode;
 

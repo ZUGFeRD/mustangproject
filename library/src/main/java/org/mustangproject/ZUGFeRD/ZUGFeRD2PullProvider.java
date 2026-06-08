@@ -833,14 +833,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(amountCategoryCode);
 				if (getProfile() != Profiles.getByName("Minimum")) {
 					String exemptionReasonTextXML = "";
-					String exemptionReasonCodeXML = "";
 					if ((displayExemptionReason) && (amount.getVatExemptionReasonText() != null)) {
 						exemptionReasonTextXML = "<ram:ExemptionReason>" + XMLTools.encodeXML(amount.getVatExemptionReasonText()) + "</ram:ExemptionReason>";
 					}
-					if ((displayExemptionReason) && (amount.getVatExemptionReasonCode() != null)) {
-						exemptionReasonCodeXML = "<ram:ExemptionReasonCode>" + XMLTools.encodeXML(amount.getVatExemptionReasonCode()) + "</ram:ExemptionReasonCode>";
-					}
-
 					String exemptionReasonCodeXML = "";
 					if (amount.getVatExemptionReasonCode() != null) {
 						exemptionReasonCodeXML = "<ram:ExemptionReasonCode>" + XMLTools.encodeXML(amount.getVatExemptionReasonCode()) + "</ram:ExemptionReasonCode>";
