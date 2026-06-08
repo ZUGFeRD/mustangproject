@@ -347,13 +347,6 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 				text -> vatAmount.setVatExemptionReasonText(String.join(", ", text, toAdd.getVatExemptionReasonText())),
 				() -> vatAmount.setVatExemptionReasonText(toAdd.getVatExemptionReasonText()));
 		}
-		if (isNotBlank(toAdd.getVatExemptionReasonCode()) && !toAdd.getVatExemptionReasonCode().equals(vatAmount.getVatExemptionReasonCode())) {
-			if (vatAmount.getVatExemptionReasonCode() == null) {
-				vatAmount.setVatExemptionReasonCode(toAdd.getVatExemptionReasonCode());
-			} else {
-				vatAmount.vatExemptionReasonCode += ", " + toAdd.getVatExemptionReasonCode();
-			}
-		}
 	}
 
 	@Override
