@@ -649,6 +649,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				} else if (currentItem.getAdditionalReferencedDocumentID() != null) {
 					xml += "<ram:AdditionalReferencedDocument><ram:IssuerAssignedID>" + currentItem.getAdditionalReferencedDocumentID() + "</ram:IssuerAssignedID><ram:TypeCode>130</ram:TypeCode></ram:AdditionalReferencedDocument>";
 				}
+				if (currentItem.getAccountingReference() != null && !currentItem.getAccountingReference().trim().isEmpty()) {
+					xml += "<ram:ReceivableSpecifiedTradeAccountingAccount>"
+						+ "<ram:ID>" + XMLTools.encodeXML(currentItem.getAccountingReference()) + "</ram:ID>"
+						+ "</ram:ReceivableSpecifiedTradeAccountingAccount>";
+				}
 				xml += "</ram:SpecifiedLineTradeSettlement>"
 					+ "</ram:IncludedSupplyChainTradeLineItem>";
 			}

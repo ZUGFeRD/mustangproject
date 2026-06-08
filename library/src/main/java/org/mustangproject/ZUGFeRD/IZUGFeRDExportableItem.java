@@ -237,6 +237,10 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 		return null;
 	}
 
+	/***
+	 * BT-133 invoice line buyer accounting reference.
+	 * @return the buyer accounting reference for this invoice line
+	 */
 	default String getAccountingReference() {
 		return null;
 	}
