@@ -121,6 +121,10 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 		return BigDecimal.ONE.setScale(4);
 	}
 
+	default BigDecimal getLineTotalAmount() {
+		return null;
+	}
+
 	/***
 	 * the ID of an additionally referenced document for this item
 	 * @deprecated use {@link #getAdditionalReferences()} instead.
