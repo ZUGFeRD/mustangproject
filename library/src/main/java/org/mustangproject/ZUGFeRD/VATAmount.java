@@ -39,6 +39,8 @@ public class VATAmount {
 
 	protected String vatExemptionReasonText;
 
+	protected String vatExemptionReasonCode;
+
 	protected String dueDateTypeCode;
 
 
@@ -102,6 +104,15 @@ public class VATAmount {
 
 	public VATAmount setVatExemptionReasonText(String theText) {
 		this.vatExemptionReasonText = theText;
+		return this;
+	}
+
+	public String getVatExemptionReasonCode() {
+		return vatExemptionReasonCode;
+	}
+
+	public VATAmount setVatExemptionReasonCode(String taxExemptionReasonCode) {
+		this.vatExemptionReasonCode = taxExemptionReasonCode;
 		return this;
 	}
 
