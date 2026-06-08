@@ -1,6 +1,7 @@
 package org.mustangproject.ZUGFeRD;
 
 import static java.math.BigDecimal.ZERO;
+import static org.mustangproject.util.StringUtils.isNotBlank;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -341,10 +342,17 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	public void mergeAdding(VATAmount vatAmount, VATAmount toAdd) {
 		vatAmount.setBasis(vatAmount.getBasis().add(toAdd.getBasis()));
 		vatAmount.setCalculated(vatAmount.getCalculated().add(toAdd.getCalculated()));
-		if (toAdd.getVatExemptionReasonText() != null && !toAdd.getVatExemptionReasonText().isBlank()) {
+		if (isNotBlank(toAdd.getVatExemptionReasonText())) {
 			Optional.ofNullable(vatAmount.getVatExemptionReasonText()).filter(reasonText -> !reasonText.equals(toAdd.getVatExemptionReasonText())).ifPresentOrElse(
 				text -> vatAmount.setVatExemptionReasonText(String.join(", ", text, toAdd.getVatExemptionReasonText())),
 				() -> vatAmount.setVatExemptionReasonText(toAdd.getVatExemptionReasonText()));
+		}
+		if (isNotBlank(toAdd.getVatExemptionReasonCode()) && !toAdd.getVatExemptionReasonCode().equals(vatAmount.getVatExemptionReasonCode())) {
+			if (vatAmount.getVatExemptionReasonCode() == null) {
+				vatAmount.setVatExemptionReasonCode(toAdd.getVatExemptionReasonCode());
+			} else {
+				vatAmount.vatExemptionReasonCode += ", " + toAdd.getVatExemptionReasonCode();
+			}
 		}
 	}
 
