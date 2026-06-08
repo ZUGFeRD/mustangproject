@@ -132,6 +132,9 @@ public class Item implements IZUGFeRDExportableItem {
 		itemMap.getAsString("Note")
 			.ifPresent(this::addNote);
 
+		itemMap.getAsString("AccountingCost")
+			.ifPresent(this::setAccountingReference);
+
 		if (product==null) { // CII
 			if (itemMap.getNode("SpecifiedTradeProduct").isPresent()) {
 				product = new Product(itemMap.getNode("SpecifiedTradeProduct").get());
@@ -259,7 +262,9 @@ public class Item implements IZUGFeRDExportableItem {
 
 			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).forEach(this::addAdditionalReference);
 
-			icnm.getAsString("ReceivableSpecifiedTradeAccountingAccount").ifPresent(s -> this.accountingReference = s.trim());
+			icnm.getAsNodeMap("ReceivableSpecifiedTradeAccountingAccount")
+				.flatMap(account -> account.getAsString("ID"))
+				.ifPresent(this::setAccountingReference);
 
 			icnm.getAsNodeMap("BillingSpecifiedPeriod").ifPresent(periodNode -> {
 				Date start = periodNode.getAsNodeMap("StartDateTime").flatMap(dateTimeNode -> dateTimeNode.getNode("DateTimeString")).map(XMLTools::tryDate).orElse(null);
@@ -670,6 +675,16 @@ public class Item implements IZUGFeRDExportableItem {
 	@Override
 	public String getAccountingReference() {
 		return accountingReference;
+	}
+
+	/***
+	 * BT-133 invoice line buyer accounting reference.
+	 * @param accountingReference buyer accounting reference for this invoice line
+	 * @return fluent setter
+	 */
+	public Item setAccountingReference(String accountingReference) {
+		this.accountingReference = accountingReference != null ? accountingReference.trim() : null;
+		return this;
 	}
 
 	@Override

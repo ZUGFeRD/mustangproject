@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mustangproject</groupId>
     <artifactId>core</artifactId>
-    <version>2.23.1-SNAPSHOT</version>
+    <version>2.23.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Mustang</name>
 
@@ -220,6 +220,9 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>${version.org.apache.maven.plugins.maven-gpg-plugin}</version>
+                        <configuration>
+                            <keyname>C513CD930D3D3D210485C5671192EE264DB74319</keyname>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>

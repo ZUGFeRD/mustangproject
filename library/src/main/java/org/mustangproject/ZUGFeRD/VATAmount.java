@@ -40,6 +40,8 @@ public class VATAmount {
 	protected String vatExemptionReasonText;
 	protected String vatExemptionReasonCode;
 
+	protected String vatExemptionReasonCode;
+
 	protected String dueDateTypeCode;
 
 
@@ -106,13 +108,12 @@ public class VATAmount {
 		return this;
 	}
 
-
 	public String getVatExemptionReasonCode() {
 		return vatExemptionReasonCode;
 	}
 
-	public VATAmount setVatExemptionReasonCode(String code) {
-		this.vatExemptionReasonCode = code;
+	public VATAmount setVatExemptionReasonCode(String taxExemptionReasonCode) {
+		this.vatExemptionReasonCode = taxExemptionReasonCode;
 		return this;
 	}
 

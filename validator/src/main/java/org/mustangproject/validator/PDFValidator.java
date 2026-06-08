@@ -131,8 +131,10 @@ public class PDFValidator extends Validator {
 		String xmp;
 		if (zi.getXMP() == null) {
 			xmp = null;
-		} else {
+		} else if (zi.getXMP().indexOf('<') > 0) {
 			xmp = zi.getXMP().substring(zi.getXMP().indexOf('<'));
+		} else {
+			xmp = zi.getXMP();
 		}
 
 		final Document docXMP;
