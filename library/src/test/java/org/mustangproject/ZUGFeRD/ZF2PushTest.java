@@ -618,6 +618,7 @@ public class ZF2PushTest extends TestCase {
 						.setDeliveryNoteReferencedDocumentID("deliverynote123")
 						.setDeliveryNoteReferencedDocumentLineID("deliverypos456")
 						.setDeliveryNoteReferencedDocumentDate(new SimpleDateFormat("dd.MM.yyyy").parse("14.01.2026"))
+						.setAccountingReference("#11111#2222#xxxx#")
 					)
 					.addCharge(new Charge(new BigDecimal(0.5)).setReason("quick delivery charge").setTaxPercent(new BigDecimal(16)))
 					.addAllowance(new Allowance(new BigDecimal(0.2)).setReason("discount").setTaxPercent(new BigDecimal(16)))
@@ -652,6 +653,7 @@ public class ZF2PushTest extends TestCase {
 		assertTrue(zi.getUTF8().contains(orgID));
 		assertTrue(zi.getUTF8().contains("ram:BuyerOrderReferencedDocument"));
 		assertThat(zi.getUTF8()).valueByXPath("//*[local-name()='SpecifiedLineTradeAgreement']/*[local-name()='BuyerOrderReferencedDocument']/*[local-name()='IssuerAssignedID']").asString().isEqualTo("orderId");
+		assertThat(zi.getUTF8()).valueByXPath("//*[local-name()='SpecifiedLineTradeSettlement']/*[local-name()='ReceivableSpecifiedTradeAccountingAccount']/*[local-name()='ID']").asString().isEqualTo("#11111#2222#xxxx#");
 		assertTrue(zi.getUTF8().contains(occurrenceFrom));
 		assertTrue(zi.getUTF8().contains(occurrenceTo));
 		assertTrue(zi.getUTF8().contains(contractID));
@@ -689,6 +691,7 @@ public class ZF2PushTest extends TestCase {
 			assertEquals(occurrenceFrom, sdf.format(i.getDetailedDeliveryPeriodFrom()));
 			assertEquals(occurrenceTo, sdf.format(i.getDetailedDeliveryPeriodTo()));
 			assertEquals("2001015001325", i.getZFItems()[0].getProduct().getGlobalID());
+			assertEquals("#11111#2222#xxxx#", i.getZFItems()[0].getAccountingReference());
 			assertEquals(orgID, i.getSender().getID());
 			assertEquals("Verwendungszweck", i.getPaymentReference());
 			assertEquals("Rechnung", i.getDocumentName());
