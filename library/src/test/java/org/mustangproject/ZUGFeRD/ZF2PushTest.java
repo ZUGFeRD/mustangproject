@@ -921,6 +921,65 @@ public class ZF2PushTest extends TestCase {
 		}
 	}
 
+	public void testHeaderNoteSubjectCodeRoundTrip() {
+		// Tests that header IncludedNotes with SubjectCode round-trip correctly through
+		// CII export and re-import for both pre-existing codes and newly added ones.
+		// Prior to the fix, the header-note importer used a hard-coded switch covering only
+		// 8 codes; codes like PMT were silently dropped to null on import.
+		String orgname = "Test company";
+		String number = "123";
+		BigDecimal price = new BigDecimal("1.00");
+		BigDecimal qty = new BigDecimal("1.0");
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("EN16931"));
+
+		Invoice i = new Invoice()
+			.setIssueDate(new Date()).setDueDate(new Date()).setDeliveryDate(new Date())
+			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
+			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE0815"))
+			.setNumber(number)
+			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, qty))
+			.addNotes(java.util.Arrays.asList(
+				// PMT: was already in enum but missing from the switch (bug fix)
+				new IncludedNote("Payment note", SubjectCode.PMT),
+				// ZZZ: newly added code (enum expansion)
+				new IncludedNote("Mutually defined note", SubjectCode.ZZZ),
+				// AAI: pre-existing code that was handled by the old switch (regression check)
+				new IncludedNote("General note", SubjectCode.AAI)
+			));
+
+		zf2p.generateXML(i);
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+
+		assertTrue(theXML.contains("<ram:SubjectCode>PMT</ram:SubjectCode>"));
+		assertTrue(theXML.contains("<ram:SubjectCode>ZZZ</ram:SubjectCode>"));
+		assertTrue(theXML.contains("<ram:SubjectCode>AAI</ram:SubjectCode>"));
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(new ByteArrayInputStream(theXML.getBytes(StandardCharsets.UTF_8)));
+		Invoice read = new Invoice();
+		try {
+			zii.extractInto(read);
+		} catch (XPathExpressionException e) {
+			fail("XPathExpressionException should not be raised");
+		} catch (ParseException e) {
+			fail("ParseException should not be raised");
+		}
+
+		List<IncludedNote> notes = read.getNotesWithSubjectCode();
+		assertNotNull("Notes list should not be null", notes);
+		assertEquals("Expected 3 header notes", 3, notes.size());
+
+		assertEquals(SubjectCode.PMT, notes.get(0).getSubjectCode());
+		assertEquals("Payment note", notes.get(0).getContent());
+
+		assertEquals(SubjectCode.ZZZ, notes.get(1).getSubjectCode());
+		assertEquals("Mutually defined note", notes.get(1).getContent());
+
+		assertEquals(SubjectCode.AAI, notes.get(2).getSubjectCode());
+		assertEquals("General note", notes.get(2).getContent());
+	}
+
 	public void testEmptyDocumentReference() {
 		String orgname = "Test company";
 		String number = "123";
