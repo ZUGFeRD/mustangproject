@@ -1,10 +1,12 @@
-
 2.24.0
 =======
 2026-06-11
 
 - #1141 ZUGFeRD 2.5/Factur-X 1.09
-- #1127 'Fix possible StringIndexOutOfBoundsException when extracting XMP.'
+- #1127'Fix possible StringIndexOutOfBoundsException when extracting XMP.'
+- #1133 incorrect warning in Subinvoiceline calculation
+- Add Tax ExemptionReasonCode on document level.
+
 
 2.23.1
 =======

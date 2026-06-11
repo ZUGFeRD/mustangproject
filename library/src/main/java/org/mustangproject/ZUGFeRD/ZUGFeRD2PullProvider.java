@@ -649,6 +649,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				} else if (currentItem.getAdditionalReferencedDocumentID() != null) {
 					xml += "<ram:AdditionalReferencedDocument><ram:IssuerAssignedID>" + currentItem.getAdditionalReferencedDocumentID() + "</ram:IssuerAssignedID><ram:TypeCode>130</ram:TypeCode></ram:AdditionalReferencedDocument>";
 				}
+				if (currentItem.getAccountingReference() != null && !currentItem.getAccountingReference().trim().isEmpty()) {
+					xml += "<ram:ReceivableSpecifiedTradeAccountingAccount>"
+						+ "<ram:ID>" + XMLTools.encodeXML(currentItem.getAccountingReference()) + "</ram:ID>"
+						+ "</ram:ReceivableSpecifiedTradeAccountingAccount>";
+				}
 				xml += "</ram:SpecifiedLineTradeSettlement>"
 					+ "</ram:IncludedSupplyChainTradeLineItem>";
 			}
@@ -831,6 +836,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					if ((displayExemptionReason) && (amount.getVatExemptionReasonText() != null)) {
 						exemptionReasonTextXML = "<ram:ExemptionReason>" + XMLTools.encodeXML(amount.getVatExemptionReasonText()) + "</ram:ExemptionReason>";
 					}
+					String exemptionReasonCodeXML = "";
+					if (amount.getVatExemptionReasonCode() != null) {
+						exemptionReasonCodeXML = "<ram:ExemptionReasonCode>" + XMLTools.encodeXML(amount.getVatExemptionReasonCode()) + "</ram:ExemptionReasonCode>";
+					}
 
 					xml += "<ram:ApplicableTradeTax>"
 						+ "<ram:CalculatedAmount>" + currencyFormat(amount.getCalculated())
@@ -839,6 +848,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ exemptionReasonTextXML
 						+ "<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>" // currencyID=\"EUR\"
 						+ "<ram:CategoryCode>" + amountCategoryCode + "</ram:CategoryCode>"
+						+ exemptionReasonCodeXML
 						+ (amountDueDateTypeCode != null ? "<ram:DueDateTypeCode>" + amountDueDateTypeCode + "</ram:DueDateTypeCode>" : "");
 					xml += "<ram:RateApplicablePercent>"
 						+ vatFormat(amount.getApplicablePercent()) + "</ram:RateApplicablePercent>";

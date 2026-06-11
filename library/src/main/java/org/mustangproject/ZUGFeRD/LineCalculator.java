@@ -106,10 +106,14 @@ public class LineCalculator {
 		}
 
 		price = price.add(delta);
+
 		itemTotalNetAmount = quantity.multiply(price).divide(basisQuantity, 18, RoundingMode.HALF_UP)
 			.add(lineCharge).subtract(lineAllowance)
 			.subtract(allowanceItemTotal.setScale(2, RoundingMode.HALF_UP))
 			.setScale(2, RoundingMode.HALF_UP);
+		if (BigDecimal.ZERO.setScale(2).equals(itemTotalNetAmount) && "GROUP".equals(currentItem.getLineStatusReasonCode())) {
+			itemTotalNetAmount = currentItem.getLineTotalAmount();
+		}
 		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);
 	}
 
