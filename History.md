@@ -2,6 +2,7 @@
 =======
 2026-06-11
 
+- #1143 LineID may not be written empty in DeliveryNoteReferencedDocument
 - #1141 ZUGFeRD 2.5/Factur-X 1.09
 - #1127'Fix possible StringIndexOutOfBoundsException when extracting XMP.'
 - #1133 incorrect warning in Subinvoiceline calculation
