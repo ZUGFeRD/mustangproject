@@ -14,16 +14,19 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
+import org.mustangproject.ZUGFeRD.ValidationLogVisualizer;
 import org.mustangproject.util.ByteArraySearcher;
 import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
@@ -49,6 +52,8 @@ public class ZUGFeRDValidator {
 	protected boolean disableNotices = false;
 	protected String Signature;
 	protected boolean wasCompletelyValid = false;
+
+	protected boolean includePDFReportVisualization = false;
 	protected String logAppend = null;
 
 	/***
@@ -78,12 +83,13 @@ public class ZUGFeRDValidator {
 
 	private String internalValidate(String contextFilename, InputStream inputStream, long inputLength) {
 		context.clear();
-		StringBuilder finalStringResult = new StringBuilder();
+		StringBuilder firstPassXMLResult = new StringBuilder(); // this is the XML result
+		StringBuilder secondPassXMLResult; // the XML result with base64 encoded PDF of the visualization of the XML result
 		SimpleDateFormat isoDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
 		startTime = Calendar.getInstance().getTimeInMillis();
 		context.setFilename(contextFilename);// fallback to provided name
-		finalStringResult.append("<validation filename='").append(contextFilename).append("' datetime='").append(isoDF.format(date)).append("'>");
+		firstPassXMLResult.append("<validation filename='").append(contextFilename).append("' datetime='").append(isoDF.format(date)).append("'>");
 
 		boolean isPDF = false;
 		byte[] content = null;
@@ -121,7 +127,7 @@ public class ZUGFeRDValidator {
 
 					context.setHasPDF();
 					optionsRecognized = true;
-					finalStringResult.append("<pdf>");
+					firstPassXMLResult.append("<pdf>");
 					try {
 						pdfv.validate();
 
@@ -129,12 +135,12 @@ public class ZUGFeRDValidator {
 
 						// Validate PDF
 
-						getPdfValidationResults(finalStringResult, pdfv, xv);
+						getPdfValidationResults(firstPassXMLResult, pdfv, xv);
 					} catch (IrrecoverableValidationError irx) {
 						LOGGER.info(irx.getMessage());
 					}
 
-					finalStringResult.append("</pdf>\n");
+					firstPassXMLResult.append("</pdf>\n");
 
 					context.clearCustomXML();
 				} else {
@@ -175,14 +181,14 @@ public class ZUGFeRDValidator {
 					}
 				}
 				if ((optionsRecognized) && (displayXMLValidationOutput)) {
-					finalStringResult.append("<xml>");
+					firstPassXMLResult.append("<xml>");
 					try {
 						xv.validate();
 					} catch (IrrecoverableValidationError irx) {
 						LOGGER.error("XML validation threw an exception ", irx);
 					}
-					finalStringResult.append(xv.getXMLResult());
-					finalStringResult.append("</xml>");
+					firstPassXMLResult.append(xv.getXMLResult());
+					firstPassXMLResult.append("</xml>");
 					context.clearCustomXML();
 				}
 
@@ -191,12 +197,22 @@ public class ZUGFeRDValidator {
 			LOGGER.info(irx.getMessage());
 			context.setInvalid();
 		} finally {
-			finalStringResult.append(context.getXMLResult());
-			finalStringResult.append("</validation>");
+			firstPassXMLResult.append(context.getXMLResult());
+			secondPassXMLResult = new StringBuilder(firstPassXMLResult);
+			firstPassXMLResult.append("</validation>");
 
 		}
 
-		return formatOutput(finalStringResult, isPDF);
+		if (includePDFReportVisualization) {
+			ValidationLogVisualizer vlvi = new ValidationLogVisualizer();
+			byte[] pdfReport = vlvi.toPDF(firstPassXMLResult.toString());
+			secondPassXMLResult.append("<pdfreport>" + Base64.getEncoder().encodeToString(pdfReport) + "</pdfreport></validation>");
+			return formatOutput(secondPassXMLResult, isPDF);
+
+		} else {
+			return formatOutput(firstPassXMLResult, isPDF);
+
+		}
 	}
 
 	/***
@@ -314,7 +330,7 @@ public class ZUGFeRDValidator {
 		LOGGER.info("Parsed PDF:" + pdfResult + " XML:" + (xmlValidity ? "valid" : "invalid")
 			+ " Signature:" + Signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
 			+ " Version:" + context.getGeneration() + " Took:" + duration + "ms Errors:[" + context.getCSVResult()
-			+ "] ErrorIDs: [" + context.getCSVIDResult()  + "]" + toBeAppended);
+			+ "] ErrorIDs: [" + context.getCSVIDResult() + "]" + toBeAppended);
 		wasCompletelyValid = xmlValidity;
 		return sw.toString();
 	}
@@ -351,6 +367,16 @@ public class ZUGFeRDValidator {
 		} else {
 			return DatatypeConverter.printHexBinary(sha1.digest());
 		}
+	}
+
+	/***
+	 * adds a tag pdfreport with a base64 encoded pdf visualizing the validation report
+	 * @param includePDFReportVisualization true to add
+	 * @return fluent setter
+	 */
+	public ZUGFeRDValidator setIncludePDFReportVisualization(boolean includePDFReportVisualization) {
+		this.includePDFReportVisualization = includePDFReportVisualization;
+		return this;
 	}
 
 }

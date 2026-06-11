@@ -1,4 +1,10 @@
-- 'Fix possible StringIndexOutOfBoundsException when extracting XMP.'
+
+2.24.0
+=======
+2026-06-11
+
+- #1141 ZUGFeRD 2.5/Factur-X 1.09
+- #1127 'Fix possible StringIndexOutOfBoundsException when extracting XMP.'
 
 2.23.1
 =======
