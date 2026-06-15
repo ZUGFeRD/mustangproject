@@ -1,3 +1,8 @@
+2.24.x
+=======
+- #1145 Document-level allowance with VAT category O emits RateApplicablePercent (violates BR-O-06)
+
+
 2.24.0
 =======
 2026-06-11
