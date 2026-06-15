@@ -942,7 +942,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml += "<ram:CategoryTradeTax>" +
 						"<ram:TypeCode>VAT</ram:TypeCode>" +
 						"<ram:CategoryCode>" + allowance.getCategoryCode() + "</ram:CategoryCode>";
-					if (allowance.getTaxPercent() != null) {
+					if (allowance.getTaxPercent() != null && !allowance.getCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
 						xml += "<ram:RateApplicablePercent>" + vatFormat(allowance.getTaxPercent()) + "</ram:RateApplicablePercent>";
 					}
 					xml += "</ram:CategoryTradeTax>" +
