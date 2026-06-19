@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -23,6 +22,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.mustangproject.util.ByteArraySearcher;
+import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +56,18 @@ public class PDFValidator extends Validator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PDFValidator.class.getCanonicalName()); // log output
 	private static final PDFAFlavour[] PDF_A_3_FLAVOURS = {PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_B, PDFAFlavour.PDFA_3_U};
 
+	private static String escapeXmlSpecialChars(String value) {
+		if (value == null || value.isEmpty()) {
+			return value;
+		}
+		return value
+			.replace("&", "&amp;")
+			.replace("<", "&lt;")
+			.replace(">", "&gt;")
+			.replace("\"", "&quot;")
+			.replace("'", "&apos;");
+	}
+
 	private String pdfFilename;
 
 	private byte[] fileContents;
@@ -66,7 +78,7 @@ public class PDFValidator extends Validator {
 	private String Signature;
 
 	private String zfXML = null;
-	protected boolean autoload=true;
+	protected boolean autoload = true;
 
 	protected static boolean stringArrayContains(String[] arr, String targetValue) {
 		return Arrays.asList(arr).contains(targetValue);
@@ -113,10 +125,10 @@ public class PDFValidator extends Validator {
 			ItemDetails itemDetails = ItemDetails.fromValues(pdfFilename);
 			inputStream.mark(Integer.MAX_VALUE);
 			processorResult = processor.process(itemDetails, inputStream);
-			pdfReport = processorResult.getValidationResult().toString().replaceAll(
+			pdfReport = escapeXmlSpecialChars(processorResult.getValidationResult().toString().replaceAll(
 				"<\\?xml version=\"1\\.0\" encoding=\"utf-8\"\\?>",
 				""
-			);
+			));
 			inputStream.reset();
 		} catch (final Exception excep) {
 			context.addResultItem(new ValidationResultItem(ESeverity.exception, excep.getMessage()).setSection(7)
@@ -127,15 +139,22 @@ public class PDFValidator extends Validator {
 		final ZUGFeRDImporter zi = new ZUGFeRDImporter();
 		zi.doIgnoreCalculationErrors();//of course the calculation will still be schematron checked
 		zi.setInputStream(inputStream);
-		final String xmp = zi.getXMP();
+
+		String xmp;
+		if (zi.getXMP() == null) {
+			xmp = null;
+		} else if (zi.getXMP().indexOf('<') > 0) {
+			xmp = zi.getXMP().substring(zi.getXMP().indexOf('<'));
+		} else {
+			xmp = zi.getXMP();
+		}
 
 		final Document docXMP;
 
 		if (xmp == null || xmp.isEmpty()) {
 			context.addResultItem(new ValidationResultItem(ESeverity.error, "Invalid XMP Metadata not found")
 				.setSection(17).setPart(EPart.pdf));
-		}
-		else {
+		} else {
 			/*
 			 * checking for sth like <zf:ConformanceLevel>EXTENDED</zf:ConformanceLevel>
 			 * <zf:DocumentType>INVOICE</zf:DocumentType>
@@ -143,12 +162,7 @@ public class PDFValidator extends Validator {
 			 * <zf:Version>1.0</zf:Version>
 			 */
 			try {
-				final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-				factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-				// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-				factory.setXIncludeAware(false);
-
-				final DocumentBuilder builder = factory.newDocumentBuilder();
+				final DocumentBuilder builder = XMLTools.getDocumentBuilder(false);
 				final InputSource is = new InputSource(new StringReader(xmp));
 				docXMP = builder.parse(is);
 
@@ -266,7 +280,11 @@ public class PDFValidator extends Validator {
 							.setSection(16).setPart(EPart.pdf));
 
 				}
-			} catch (final SAXException | IOException | ParserConfigurationException | XPathExpressionException e) {
+			} catch (final SAXException e) {
+				context.addResultItem(
+					new ValidationResultItem(ESeverity.error, "XMP Metadata: Could not parse XMP metadata (XML invalid)")
+						.setSection(28).setPart(EPart.pdf));
+			} catch (IOException | ParserConfigurationException | XPathExpressionException e) {
 				LOGGER.error(e.getMessage(), e);
 			}
 		}
@@ -281,8 +299,9 @@ public class PDFValidator extends Validator {
 		final byte[] pdfMachineSignature = "pdfMachine from Broadgun Software".getBytes(StandardCharsets.UTF_8);
 		final byte[] ghostscriptSignature = "%%Invocation:".getBytes(StandardCharsets.UTF_8);
 		final byte[] cibpdfbrewerSignature = "CIB pdf brewer".getBytes(StandardCharsets.UTF_8);
-		final byte[] lexofficeSignature = "lexoffice".getBytes(StandardCharsets.UTF_8);		
+		final byte[] lexofficeSignature = "lexoffice".getBytes(StandardCharsets.UTF_8);
 		final byte[] s2IndustriesSignature = "s2industries.ZUGFeRD.PDF".getBytes(StandardCharsets.UTF_8); // https://github.com/stephanstapel/ZUGFeRD-csharp
+		final byte[] factoorSharpSignature = "FactoorSharp".getBytes(StandardCharsets.UTF_8); // https://github.com/S2-Industries/FactoorSharp
 		final byte[] sevdeskSignature = "sevdesk".getBytes(StandardCharsets.UTF_8);
 
 		if (ByteArraySearcher.contains(fileContents, symtraxSignature)) {
@@ -305,6 +324,8 @@ public class PDFValidator extends Validator {
 			Signature = "Lexware office";
 		} else if (ByteArraySearcher.contains(fileContents, s2IndustriesSignature)) {
 			Signature = "ZUGFeRD.PDF-csharp";
+		} else if (ByteArraySearcher.contains(fileContents, factoorSharpSignature)) {
+			Signature = "FactoorSharp";
 		} else if (ByteArraySearcher.contains(fileContents, sevdeskSignature)) {
 			Signature = "sevdesk";
 		}
@@ -344,23 +365,23 @@ public class PDFValidator extends Validator {
 	@Override
 	public void setFilename(String filename) throws IrrecoverableValidationError {
 		this.pdfFilename = filename;
-		if(autoload) {
+		if (autoload) {
 			try {
-				fileContents=Files.readAllBytes(Paths.get(pdfFilename));
+				fileContents = Files.readAllBytes(Paths.get(pdfFilename));
 			} catch (IOException ex) {
 				throw new IrrecoverableValidationError("Could not read file");
 			}
 		}
 	}
 
-  public void setFileContents(byte[] fileContents) {
-    this.fileContents = fileContents;
-  }
+	public void setFileContents(byte[] fileContents) {
+		this.fileContents = fileContents;
+	}
 
-  public void setFilenameAndContents(String filename, byte[] fileContents) {
-    this.pdfFilename = filename;
-    this.fileContents = fileContents;
-  }
+	public void setFilenameAndContents(String filename, byte[] fileContents) {
+		this.pdfFilename = filename;
+		this.fileContents = fileContents;
+	}
 
 	public String getRawXML() {
 		return zfXML;

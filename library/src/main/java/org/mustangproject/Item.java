@@ -3,10 +3,7 @@ package org.mustangproject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.mustangproject.ZUGFeRD.IReferencedDocument;
-import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
-import org.mustangproject.ZUGFeRD.LineCalculator;
+import org.mustangproject.ZUGFeRD.*;
 import org.mustangproject.util.NodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -46,6 +43,12 @@ public class Item implements IZUGFeRDExportableItem {
 	protected ArrayList<IZUGFeRDAllowanceCharge> Charges = new ArrayList<>();
 	protected List<IncludedNote> includedNotes = null;
 	protected String accountingReference;
+	protected String parentLineID = null;
+	protected String lineStatusReasonCode = null;
+ 	protected TradeParty lineSeller;
+	protected String deliveryNoteReferencedDocumentID = null;
+	protected Date deliveryNoteReferencedDocumentDate = null;
+	protected String deliveryNoteReferencedDocumentLineID = null;
 	//protected HashMap<String, String> attributes = new HashMap<>();
 
 	/***
@@ -90,10 +93,15 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("ClassifiedTaxCategory")
 				.flatMap(m -> m.getAsBigDecimal("Percent"))
 				.ifPresent(product::setVATPercent);
+
+
+
 		});
-		itemMap.getAsNodeMap("AssociatedDocumentLineDocument")
-			.flatMap(icnm -> icnm.getAsString("LineID"))
-			.ifPresent(this::setId);
+		itemMap.getAsNodeMap("AssociatedDocumentLineDocument").ifPresent(adld -> {
+			adld.getAsString("LineID").ifPresent(this::setId);
+			adld.getAsString("ParentLineID").ifPresent(this::setParentLineID);
+			adld.getAsString("LineStatusReasonCode").ifPresent(this::setLineStatusReasonCode);
+		});
 
 		itemMap.getAsNodeMap("Price").ifPresent(icnm -> {
 			// ubl
@@ -102,7 +110,7 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsBigDecimal("BaseQuantity").ifPresent(this::setBasisQuantity);
 		});
 
-		itemMap.getNode("InvoicedQuantity").ifPresent(icn -> {
+		itemMap.getNode(new String[]{"InvoicedQuantity", "CreditedQuantity"}).ifPresent(icn -> {
 			// ubl
 			setQuantity(new BigDecimal(icn.getTextContent().trim()));
 			product.setUnit(icn.getAttributes().getNamedItem("unitCode").getNodeValue());
@@ -124,6 +132,9 @@ public class Item implements IZUGFeRDExportableItem {
 		itemMap.getAsString("Note")
 			.ifPresent(this::addNote);
 
+		itemMap.getAsString("AccountingCost")
+			.ifPresent(this::setAccountingReference);
+
 		if (product==null) { // CII
 			if (itemMap.getNode("SpecifiedTradeProduct").isPresent()) {
 				product = new Product(itemMap.getNode("SpecifiedTradeProduct").get());
@@ -131,6 +142,7 @@ public class Item implements IZUGFeRDExportableItem {
 				product = new Product();
 			}
 		}
+
 
 		itemMap.getAsNodeMap("SpecifiedLineTradeAgreement", "SpecifiedSupplyChainTradeAgreement").ifPresent(icnm -> {
 			icnm.getAsNodeMap("BuyerOrderReferencedDocument")
@@ -181,6 +193,22 @@ public class Item implements IZUGFeRDExportableItem {
 				}
 			});
 
+		itemMap.getAsNodeMap("SpecifiedLineTradeDelivery").ifPresent(icnm -> {
+			icnm.getAsNodeMap("DeliveryNoteReferencedDocument").ifPresent(dn -> {
+				dn.getAsString("IssuerAssignedID")
+					.ifPresent(this::setDeliveryNoteReferencedDocumentID);
+
+				dn.getAsString("LineID")
+						.ifPresent(this::setDeliveryNoteReferencedDocumentLineID);
+
+				dn.getAsNodeMap("FormattedIssueDateTime")
+					.flatMap(fdt -> fdt.getNode("DateTimeString"))
+					.map(XMLTools::getNodeValue)
+					.map(XMLTools::tryDate)
+					.ifPresent(this::setDeliveryNoteReferencedDocumentDate);
+			});
+		});
+
 		itemMap.getAsNodeMap("SpecifiedLineTradeSettlement", "SpecifiedSupplyChainTradeSettlement").ifPresent(icnm -> {
 			icnm.getAsNodeMap("ApplicableTradeTax")
 				.flatMap(cnm -> cnm.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent"))
@@ -188,6 +216,9 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsNodeMap("ApplicableTradeTax")
 				.flatMap(cnm -> cnm.getAsString("ExemptionReason"))
 				.ifPresent(product::setTaxExemptionReason);
+			icnm.getAsNodeMap("ApplicableTradeTax")
+				.flatMap(cnm -> cnm.getAsString("ExemptionReasonCode"))
+				.ifPresent(product::setTaxExemptionReasonCode);
 
 			icnm.getAllNodes("SpecifiedTradeAllowanceCharge").map(NodeMap::new).forEach(stac -> {
 				stac.getAsNodeMap("ChargeIndicator").ifPresent(ci -> {
@@ -203,13 +234,13 @@ public class Item implements IZUGFeRDExportableItem {
 						izac = new Charge();
 					}
 					if (amountString != null) {
-						izac.setTotalAmount(new BigDecimal(amountString));
+						izac.setTotalAmount(new BigDecimal(amountString.trim()));
 					}
 					if (basisAmountString != null) {
-						izac.setBasisAmount(new BigDecimal(basisAmountString));
+						izac.setBasisAmount(new BigDecimal(basisAmountString.trim()));
 					}
 					if (percentString != null) {
-						izac.setPercent(new BigDecimal(percentString));
+						izac.setPercent(new BigDecimal(percentString.trim()));
 					}
 					if (reason != null) {
 						izac.setReason(reason);
@@ -231,7 +262,9 @@ public class Item implements IZUGFeRDExportableItem {
 
 			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).forEach(this::addAdditionalReference);
 
-			icnm.getAsString("ReceivableSpecifiedTradeAccountingAccount").ifPresent(s -> this.accountingReference = s.trim());
+			icnm.getAsNodeMap("ReceivableSpecifiedTradeAccountingAccount")
+				.flatMap(account -> account.getAsString("ID"))
+				.ifPresent(this::setAccountingReference);
 
 			icnm.getAsNodeMap("BillingSpecifiedPeriod").ifPresent(periodNode -> {
 				Date start = periodNode.getAsNodeMap("StartDateTime").flatMap(dateTimeNode -> dateTimeNode.getNode("DateTimeString")).map(XMLTools::tryDate).orElse(null);
@@ -622,6 +655,7 @@ public class Item implements IZUGFeRDExportableItem {
 		return detailedDeliveryPeriodTo;
 	}
 
+
 	public IZUGFeRDExportableItem addNotes(Collection<IncludedNote> notes) {
 		if (notes == null) {
 			return this;
@@ -642,4 +676,92 @@ public class Item implements IZUGFeRDExportableItem {
 	public String getAccountingReference() {
 		return accountingReference;
 	}
+
+	/***
+	 * BT-133 invoice line buyer accounting reference.
+	 * @param accountingReference buyer accounting reference for this invoice line
+	 * @return fluent setter
+	 */
+	public Item setAccountingReference(String accountingReference) {
+		this.accountingReference = accountingReference != null ? accountingReference.trim() : null;
+		return this;
+	}
+
+	@Override
+	public String getParentLineID() {
+		return parentLineID;
+	}
+
+	/***
+	 * for sub invoice lines: set the parent line ID
+	 * @param parentLineID the line ID of the parent line
+	 * @return fluent setter
+	 */
+	public Item setParentLineID(String parentLineID) {
+		this.parentLineID = parentLineID;
+		return this;
+	}
+
+	@Override
+	public String getLineStatusReasonCode() {
+		return lineStatusReasonCode;
+	}
+
+	/***
+	 * for sub invoice lines: set the status reason code (DETAIL, GROUP, INFORMATION)
+	 * @param lineStatusReasonCode the status reason code
+	 * @return fluent setter
+	 */
+	public Item setLineStatusReasonCode(String lineStatusReasonCode) {
+		this.lineStatusReasonCode = lineStatusReasonCode;
+		return this;
+	}
+
+	/***
+	 * For line seller 
+	 * @param seller The line seller
+	 * @return fluent setter
+	 */
+    public Item setLineSeller(TradeParty seller) {
+        this.lineSeller = seller;
+        return this;
+    }
+    @Override
+    public TradeParty getLineSeller() {
+        return this.lineSeller;
+    }
+
+	@Override
+	public String getDeliveryNoteReferencedDocumentID() {
+		return deliveryNoteReferencedDocumentID;
+	}
+
+
+	public Item setDeliveryNoteReferencedDocumentID(String deliveryNoteReferencedDocumentID) {
+		this.deliveryNoteReferencedDocumentID = deliveryNoteReferencedDocumentID;
+		return this;
+	}
+
+	@Override
+	public Date getDeliveryNoteReferencedDocumentDate() {
+		return deliveryNoteReferencedDocumentDate;
+	}
+
+
+	public Item setDeliveryNoteReferencedDocumentDate(Date deliveryNoteReferencedDocumentDate) {
+		this.deliveryNoteReferencedDocumentDate = deliveryNoteReferencedDocumentDate;
+		return this;
+	}
+
+	@Override
+	public String getDeliveryNoteReferencedDocumentLineID() {
+		return deliveryNoteReferencedDocumentLineID;
+	}
+
+
+	public Item setDeliveryNoteReferencedDocumentLineID(String deliveryNoteReferencedDocumentLineID) {
+		this.deliveryNoteReferencedDocumentLineID = deliveryNoteReferencedDocumentLineID;
+		return this;
+	}
+
 }

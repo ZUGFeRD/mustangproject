@@ -111,6 +111,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		if (metadata != null) {
 			try {
 				DomXmpParser xmpParser = new DomXmpParser();
+				xmpParser.setStrictParsing(false);
 				XMPMetadata xmp = xmpParser.parse(metadata.createInputStream());
 
 				PDFAIdentificationSchema pdfaSchema = xmp.getPDFAIdentificationSchema();
@@ -185,6 +186,10 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 
 	public IZUGFeRDExporter setConformanceLevel(PDFAConformanceLevel newLevel) {
 		return getExporter().setConformanceLevel(newLevel);
+	}
+
+	public IZUGFeRDExporter setEnablePDFAttachmentCompression(boolean compressionEnabled) {
+		return getExporter().setEnablePDFAttachmentCompression(compressionEnabled);
 	}
 
 	public IZUGFeRDExporter setProducer(String producer) {

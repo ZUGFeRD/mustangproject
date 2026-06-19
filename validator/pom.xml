@@ -77,6 +77,8 @@
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
+            <version>${version.org.junit}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -96,6 +98,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>${version.org.apache.maven.plugins.maven-surefire-plugin}</version>
                 <configuration>
                     <runOrder>alphabetical</runOrder>
                     <argLine>-Duser.timezone=UTC</argLine>
@@ -140,10 +143,10 @@
                         </goals>
 
                         <configuration>
-                            <outputDirectory>src/main/resources/xslt/ZF_233/</outputDirectory>
+                            <outputDirectory>src/main/resources/xslt/ZF_250/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/src/main/resources/schematron/ZF_233/</directory>
+                                    <directory>${basedir}/src/main/resources/schematron/ZF_250/</directory>
                                     <includes>
                                         <include>**/*.xml</include>
                                     </includes>

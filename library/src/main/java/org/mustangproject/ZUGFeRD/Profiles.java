@@ -32,6 +32,7 @@ public class Profiles {
 			{"BASICWL", new Profile("BASICWL", "urn:factur-x.eu:1p0:basicwl")},
 			{"BASIC", new Profile("BASIC", "urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic")},
 			{"EN16931", new Profile("EN16931", "urn:cen.eu:en16931:2017")},
+			{"EXTENDED-CTC-FR", new Profile("EXTENDED-CTC-FR", "urn:cen.eu:en16931:2017#conformant#urn.cpro.gouv.fr:1p0:extended-ctc-fr")},
 			{"EXTENDED", new Profile("EXTENDED", "urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended")},
 			{"XRECHNUNG", new Profile("XRECHNUNG", "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0")} // up next: urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0
 

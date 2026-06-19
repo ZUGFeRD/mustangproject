@@ -77,8 +77,11 @@ import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
 
 public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporter {
-	private boolean isFacturX = true;
 
+	private static final String XML_DESCRIPTION = "Invoice metadata conforming to ZUGFeRD standard (https://www.ferd-net.de/en/standards/zugferd/factur-x)";
+
+	private boolean isFacturX = true;
+	
 	public static final int DefaultZUGFeRDVersion = 2;
 	protected boolean ignorePDFAErrors = false;
 
@@ -100,6 +103,9 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	private boolean fileAttached = false;
 	private Profile profile = null;
 	protected boolean documentPrepared = false;
+
+	/** Defines whether attachments to the PDF should be using FLATE compression */
+	private boolean compressionEnabled = false;
 
 	/**
 	 * Data (XML invoice) to be added to the ZUGFeRD PDF. It may be externally set,
@@ -392,7 +398,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		dict.setString("Desc", description);
 
 		ByteArrayInputStream fakeFile = new ByteArrayInputStream(data);
-		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
+		COSName filter = compressionEnabled ? COSName.FLATE_DECODE : null;
+		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile, filter);
 //		ef.addCompression();
 		ef.setSubtype(subType);
 		ef.setSize(data.length);
@@ -500,6 +507,12 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 */
 	public ZUGFeRDExporterFromA3 setConformanceLevel(PDFAConformanceLevel newLevel) {
 		conformanceLevel = newLevel;
+		return this;
+	}
+
+	@Override
+	public IZUGFeRDExporter setEnablePDFAttachmentCompression(boolean compressionEnabled) {
+		this.compressionEnabled = compressionEnabled;
 		return this;
 	}
 
@@ -646,7 +659,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 *
 	 * @param trans a IZUGFeRDExportableTransaction that provides the data-model to
 	 *              populate the XML. This parameter may be null, if so the XML data
-	 *              should hav ebeen set via
+	 *              should have been set via
 	 *              <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
 	 * @throws IOException if anything is wrong with already loaded PDF
 	 */
@@ -673,8 +686,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		}
 
 		PDFAttachGenericFile(doc, filename, relationship,
-			"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
-			"text/xml", xmlProvider.getXML());
+			XML_DESCRIPTION, "text/xml", xmlProvider.getXML());
 
 		for (FileAttachment attachment : fileAttachments) {
 			PDFAttachGenericFile(doc, attachment.getFilename(), attachment.getRelation(), attachment.getDescription(), attachment.getMimetype(), attachment.getData());
@@ -696,6 +708,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		if ((meta != null) && (meta.getLength() > 0)) {
 			try {
 				DomXmpParser xmpParser = new DomXmpParser();
+				xmpParser.setStrictParsing(false);
 				return xmpParser.parse(meta.toByteArray());
 			} catch (XmpParsingException e) {
 				throw new IOException(e);

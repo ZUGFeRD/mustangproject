@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UncheckedIOException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -12,9 +13,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Set;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -24,6 +23,8 @@ import javax.xml.xpath.XPathFactory;
 
 import org.mustangproject.CalculatedInvoice;
 import org.mustangproject.XMLTools;
+import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
+import org.mustangproject.ZUGFeRD.LineCalculator;
 import org.mustangproject.ZUGFeRD.ZUGFeRDInvoiceImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,26 +154,7 @@ public class XMLValidator extends Validator {
 				 *
 				 */
 
-				final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-				//REDHAT
-				//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
-				dbf.setAttribute(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-				dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-				dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-
-				//OWASP
-				//https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
-				dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-				dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-				dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-				// Disable external DTDs as well
-				dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-				// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-				dbf.setXIncludeAware(false);
-				dbf.setExpandEntityReferences(false);
-				dbf.setNamespaceAware(true);
-
-				final DocumentBuilder db = dbf.newDocumentBuilder();
+				final DocumentBuilder db = XMLTools.getDocumentBuilder(true);
 				final InputSource is = new InputSource(new StringReader(zfXML));
 				final Document doc = db.parse(is);
 
@@ -209,9 +191,11 @@ public class XMLValidator extends Validator {
 				boolean isEN16931 = false;
 				boolean isExtended = false;
 				boolean isXRechnung = false;
-				String currentZFVersionDir = "ZF_233";
+				String currentZFVersionDir = "ZF_250";
+				String currentXPZ12VersionDir ="XP_Z12_012";
 				int mainSchematronSectionErrorTypeCode = 4;
 				String xsltFilename = null;
+				boolean runFrenchCiiSchematron = false;
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:extended,
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:comfort,
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:basic,
@@ -231,6 +215,11 @@ public class XMLValidator extends Validator {
 					
 				} else if (root.getLocalName().equalsIgnoreCase("CrossIndustryInvoice")) { // ZUGFeRD 2.0 or Factur-X
 					context.setGeneration("2");
+					final String sellerCountry = getXPathString(doc,
+						"//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'SellerTradeParty']//*[local-name() = 'PostalTradeAddress']/*[local-name() = 'CountryID']/text()");
+					final String buyerCountry = getXPathString(doc,
+						"//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'PostalTradeAddress']/*[local-name() = 'CountryID']/text()");
+					runFrenchCiiSchematron = "FR".equalsIgnoreCase(sellerCountry) && "FR".equalsIgnoreCase(buyerCountry);
 
 					isMiniumum = contextProfile.contains("minimum");
 					isBasic = contextProfile.contains("basic");
@@ -388,6 +377,11 @@ public class XMLValidator extends Validator {
 					// main schematron validation
 					validateSchematron(zfXML, xsltFilename, mainSchematronSectionErrorTypeCode, ESeverity.error);
 
+					if (runFrenchCiiSchematron) {
+						String xsltFRFilename = "/xslt/" + currentXPZ12VersionDir + "/20260216_BR-FR-Flux2-Schematron-CII_V1.3.0.xsl";
+						validateSchematron(zfXML, xsltFRFilename, mainSchematronSectionErrorTypeCode, ESeverity.error);
+					}
+
 				}
 
 				if ("CII".equals(context.getFormat()) && ("2".equals(context.getGeneration()))) {
@@ -454,6 +448,9 @@ public class XMLValidator extends Validator {
 			CalculatedInvoice ci=new CalculatedInvoice();
 			zi.extractInto(ci);
 
+			// check sub invoice line hierarchy if present
+			checkSubInvoiceLineHierarchy(ci, context);
+
 		} catch ( ArithmeticException e) {
 			try {
 				context.addResultItem(new ValidationResultItem(ESeverity.warning, "Arithmetical issue:"+e.getMessage()).setSection(10));
@@ -467,6 +464,87 @@ public class XMLValidator extends Validator {
 			LOGGER.error(e.getMessage(), e);
 		}
 
+	}
+
+	/***
+	 * validates that GROUP line totals match the sum of their DETAIL child lines
+	 */
+	private void checkSubInvoiceLineHierarchy(CalculatedInvoice invoice, ValidationContext context) {
+		IZUGFeRDExportableItem[] items = invoice.getZFItems();
+		if (items == null || items.length == 0) {
+			return;
+		}
+
+		// check if we have any sub invoice lines at all
+		boolean hasSubInvoiceLines = false;
+		for (IZUGFeRDExportableItem item : items) {
+			if (item.getLineStatusReasonCode() != null) {
+				hasSubInvoiceLines = true;
+				break;
+			}
+		}
+		if (!hasSubInvoiceLines) {
+			return;
+		}
+
+		// build a map of line ID to item for quick lookup
+		java.util.HashMap<String, IZUGFeRDExportableItem> itemMap = new java.util.HashMap<>();
+		for (IZUGFeRDExportableItem item : items) {
+			if (item.getId() != null) {
+				itemMap.put(item.getId(), item);
+			}
+		}
+
+		// for each GROUP line, sum up the DETAIL children and compare
+		for (IZUGFeRDExportableItem item : items) {
+			if ("GROUP".equals(item.getLineStatusReasonCode())) {
+				String groupId = item.getId();
+				if (groupId == null) {
+					continue;
+				}
+
+				// sum up direct DETAIL children
+				BigDecimal childSum = BigDecimal.ZERO;
+				for (IZUGFeRDExportableItem child : items) {
+					if (groupId.equals(child.getParentLineID()) && "DETAIL".equals(child.getLineStatusReasonCode())) {
+						LineCalculator lc = child.getCalculation();
+						childSum = childSum.add(lc.getItemTotalNetAmount());
+					}
+				}
+
+				// also sum up nested GROUP children (their totals should already include their DETAIL children)
+				for (IZUGFeRDExportableItem child : items) {
+					if (groupId.equals(child.getParentLineID()) && "GROUP".equals(child.getLineStatusReasonCode())) {
+						LineCalculator lc = child.getCalculation();
+						childSum = childSum.add(lc.getItemTotalNetAmount());
+					}
+				}
+
+				// compare with GROUP total
+				LineCalculator groupLc = item.getCalculation();
+				BigDecimal groupTotal = groupLc.getItemTotalNetAmount();
+				if (childSum.compareTo(groupTotal) != 0) {
+					try {
+						context.addResultItem(new ValidationResultItem(ESeverity.warning,
+							"Sub invoice line hierarchy mismatch: GROUP line " + groupId +
+							" has total " + groupTotal + " but sum of child lines is " + childSum)
+							.setSection(10));
+					} catch (IrrecoverableValidationError ie) {
+						LOGGER.error(ie.getMessage(), ie);
+					}
+				}
+			}
+		}
+	}
+
+	private String getXPathString(Document doc, String expression) throws IrrecoverableValidationError {
+		try {
+			XPath xpath = XPathFactory.newInstance().newXPath();
+			String value = (String) xpath.compile(expression).evaluate(doc, XPathConstants.STRING);
+			return value == null ? "" : value.trim();
+		} catch (XPathExpressionException e) {
+			throw new IrrecoverableValidationError(e.getMessage());
+		}
 	}
 
 	public void validateXR(String xml, ESeverity errorImpact) throws IrrecoverableValidationError {

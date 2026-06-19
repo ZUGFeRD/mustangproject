@@ -71,6 +71,7 @@ import jakarta.activation.FileDataSource;
 public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 	protected PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
+	protected boolean compressionEnabled = false;
 	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<>();
 
 	/**
@@ -128,6 +129,29 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 
 	private boolean attachZUGFeRDHeaders = true;
+
+	/***
+	 * internal helper function: get namespace for order-x
+	 * @param ver the delivery-x version
+	 * @return the URN of the namespace
+	 */
+	@Override
+	public String getNamespaceForVersion(int ver) {
+		// As of late 2022 the Delivery-X standard is not yet published. See specification:
+		// Die digitale Ablösung des Papier-Lieferscheins, Version 1.1, April 2022
+		// Chapter 7.1 XMP-Erweiterungsschema für PDF/A-3
+		// http://docplayer.org/230301085-Der-digitale-lieferschein-dls.html
+		return "urn:factur-x:pdfa:CrossIndustryDocument:despatchadvice:1p0#";
+	}
+	/***
+	 * internal helper: returns the namespace prefix for the given order-x version number
+	 * @param ver the ox version
+	 * @return the namespace prefix as string, without colon
+	 */
+	@Override
+	public String getPrefixForVersion(int ver) {
+		return "fx";
+	}
 
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
@@ -296,8 +320,8 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		dict.setString("Desc", description);
 
 		ByteArrayInputStream fakeFile = new ByteArrayInputStream(data);
-		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
-//		ef.addCompression();
+		COSName filter = compressionEnabled ? COSName.FLATE_DECODE : null;
+		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile, filter);
 		ef.setSubtype(subType);
 		ef.setSize(data.length);
 		ef.setCreationDate(new GregorianCalendar());
@@ -417,7 +441,6 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		return this;
 	}
 
-
 	@Override
   public DXExporterFromA3 setCreator(String creator) {
 		this.creator = creator;
@@ -492,7 +515,7 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 *
 	 * @param trans a IZUGFeRDExportableTransaction that provides the data-model to
 	 *              populate the XML. This parameter may be null, if so the XML data
-	 *              should hav ebeen set via
+	 *              should have been set via
 	 *              <code>setZUGFeRDXMLData(byte[] zugferdData)</code>
 	 * @throws IOException if anything is wrong with already loaded PDF
 	 */

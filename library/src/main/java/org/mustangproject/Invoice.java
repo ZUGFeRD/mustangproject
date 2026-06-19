@@ -39,9 +39,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Invoice implements IExportableTransaction {
 
+	protected boolean testIndicator;
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
+	protected String deliveryTypeCode;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
-	protected TradeParty sender = null, recipient = null, deliveryAddress = null, payee = null;
+	protected TradeParty sender = null, recipient = null, deliveryAddress = null, endCustomerDeliveryAddress = null, payee = null, invoicer = null, invoicee = null;
 	protected ArrayList<CashDiscount> cashDiscounts = null;
 	@JsonDeserialize(contentAs = Item.class)
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
@@ -54,6 +56,8 @@ public class Invoice implements IExportableTransaction {
 	protected BigDecimal totalPrepaidAmount = null;
 	protected Date detailedDeliveryDateStart = null;
 	protected Date detailedDeliveryPeriodEnd = null;
+	protected IReferencedDocument tenderReference = null;
+	protected IReferencedDocument objectIdentifierReference = null;
 
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
 		Charges = new ArrayList<>(), LogisticsServiceCharges = new ArrayList<>();
@@ -67,15 +71,27 @@ public class Invoice implements IExportableTransaction {
 	protected String specifiedProcuringProjectID = null;
 	protected String specifiedProcuringProjectName = null;
 	protected String despatchAdviceReferencedDocumentID = null;
+	protected String deliveryNoteReferencedDocumentID = null;
+	protected Date deliveryNoteReferencedDocumentDate = null;
 	protected String vatDueDateTypeCode = null;
 	protected String creditorReferenceID; // required when direct debit is used.
 	private BigDecimal roundingAmount=null;
 	private String paymentReference; // Remittance information / Verwendungszweck, BT-83
-
+	private String businessProcessId;
 	public Invoice() {
 		ZFItems = new ArrayList<>();
 		cashDiscounts = new ArrayList<>();
 		setCurrency("EUR");
+	}
+
+	@Override
+	public boolean getTestIndicator() {
+		return testIndicator;
+	}
+
+	public Invoice setTestIndicator() {
+		this.testIndicator = true;
+		return this;
 	}
 
 	@Override
@@ -135,13 +151,83 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	@Override
-	public IZUGFeRDCashDiscount[] getCashDiscounts() {
-		return cashDiscounts.toArray(new IZUGFeRDCashDiscount[0]);
+	public CashDiscount[] getCashDiscounts() {
+		return cashDiscounts.toArray(new CashDiscount[0]);
 	}
 
 	@Override
 	public String getNumber() {
 		return number;
+	}
+
+
+
+	@Override
+	/***
+	 * BT-17
+	 */
+	public IReferencedDocument getTenderReferencedDocument() {
+		return tenderReference;
+	}
+
+
+	/***
+	 * BT-17
+	 * @param dr the Referenced Document (may contain ID, typecode, date...)
+	 * @return fluent setter
+	 */
+	public Invoice setTenderReferencedDocument(ReferencedDocument dr) {
+		dr.setTypeCode("50");//50 is fixed for tender documents
+		tenderReference=dr;
+		return this;
+	}
+
+	/***
+	 * Sets a reference to a tender
+	 * @param ID the key ID of the tender
+	 * @return fluent setter
+	 */
+	public Invoice setTenderReferencedDocument(String ID) {
+		ReferencedDocument dr=new ReferencedDocument(ID);
+		setTenderReferencedDocument(dr);
+		return this;
+	}
+
+
+
+	/** BT-18 */
+	@Override
+	/***
+	 *
+	 */
+	public IReferencedDocument getObjectIdentifierReferencedDocument() {
+		return objectIdentifierReference;
+	}
+
+
+	/** BT-18 */
+	public Invoice setObjectIdentifierReferencedDocument(ReferencedDocument dr) {
+		dr.setTypeCode("130");//50 is fixed for tender documents
+		objectIdentifierReference=dr;
+		return this;
+	}
+
+	public Invoice setObjectIdentifierReferencedDocument(String id) {
+		ReferencedDocument dr=new ReferencedDocument(id);
+		setObjectIdentifierReferencedDocument(dr);
+		return this;
+	}
+	public Invoice setObjectIdentifierReferencedDocument(String id, String referenceTypeCode) {
+	    ReferencedDocument dr = new ReferencedDocument(id);
+	    dr.setReferenceTypeCode(referenceTypeCode);
+	    return setObjectIdentifierReferencedDocument(dr);
+	}
+	
+	public Invoice setObjectIdentifierReferencedDocument(String id, String referenceTypeCode, Date issueDate) {
+	    ReferencedDocument dr = new ReferencedDocument(id);
+	    dr.setReferenceTypeCode(referenceTypeCode);
+	    dr.setFormattedIssueDateTime(issueDate);
+	    return setObjectIdentifierReferencedDocument(dr);
 	}
 
 	public Invoice setNumber(String number) {
@@ -164,6 +250,12 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	public Invoice setCreditNote() {
+		documentCode = DocumentCodeTypeConstants.CREDITNOTE; // this value should somewhen be changed to Selfbilling
+		return this;
+	}
+
+	public Invoice setCreditNote(String number) {
+		setInvoiceReferencedDocumentID(number);
 		documentCode = DocumentCodeTypeConstants.CREDITNOTE;
 		return this;
 	}
@@ -246,6 +338,15 @@ public class Invoice implements IExportableTransaction {
 
 	public Invoice setShipToCountry(String shipToCountry) {
 		this.shipToCountry = shipToCountry;
+		return this;
+	}
+
+	public String getDeliveryTypeCode() {
+		return deliveryTypeCode;
+	}
+
+	public Invoice setDeliveryTypeCode(String deliveryTypeCode) {
+		this.deliveryTypeCode = deliveryTypeCode;
 		return this;
 	}
 
@@ -708,6 +809,16 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	@Override
+	public TradeParty getEndCustomerDeliveryAddress() {
+		return endCustomerDeliveryAddress;
+	}
+
+	public Invoice setEndCustomerDeliveryAddress(TradeParty endCustomerDeliveryAddress) {
+		this.endCustomerDeliveryAddress = endCustomerDeliveryAddress;
+		return this;
+	}
+
+	@Override
 	public TradeParty getPayee() {
 		return this.payee;
 	}
@@ -719,6 +830,36 @@ public class Invoice implements IExportableTransaction {
 	 */
 	public Invoice setPayee(TradeParty payee) {
 		this.payee = payee;
+		return this;
+	}
+
+	@Override
+	public TradeParty getInvoicer() {
+		return this.invoicer;
+	}
+
+	/***
+	 * if the invoicer is not the seller, it can be specified here
+	 * @param invoicer the invoice issuing organisation
+	 * @return fluent setter
+	 */
+	public Invoice setInvoicer(TradeParty invoicer) {
+		this.invoicer = invoicer;
+		return this;
+	}
+
+	@Override
+	public TradeParty getInvoicee() {
+		return this.invoicee;
+	}
+
+	/***
+	 * if the invoicee is not the buyer, it can be specified here
+	 * @param invoicee the invoice receiving organisation
+	 * @return fluent setter
+	 */
+	public Invoice setInvoicee(TradeParty invoicee) {
+		this.invoicee = invoicee;
 		return this;
 	}
 
@@ -1007,6 +1148,28 @@ public class Invoice implements IExportableTransaction {
 		return this;
 	}
 
+	@Override
+	public String getDeliveryNoteReferencedDocumentID() {
+		return deliveryNoteReferencedDocumentID;
+	}
+
+
+	public Invoice setDeliveryNoteReferencedDocumentID(String deliveryNoteReferencedDocumentID) {
+		this.deliveryNoteReferencedDocumentID = deliveryNoteReferencedDocumentID;
+		return this;
+	}
+
+	@Override
+	public Date getDeliveryNoteReferencedDocumentDate() {
+		return deliveryNoteReferencedDocumentDate;
+	}
+
+
+	public Invoice setDeliveryNoteReferencedDocumentDate(Date deliveryNoteReferencedDocumentDate) {
+		this.deliveryNoteReferencedDocumentDate = deliveryNoteReferencedDocumentDate;
+		return this;
+	}
+
 
 	@Override
 	public String getSpecifiedProcuringProjectName() {
@@ -1041,6 +1204,16 @@ public class Invoice implements IExportableTransaction {
 	public Invoice setCreditorReferenceID(String creditorReferenceID) {
 		this.creditorReferenceID = creditorReferenceID;
 		return this;
+	}
+
+	public Invoice setBusinessProcessId(String id) {
+  		this.businessProcessId = id;
+  		return this;
+	}
+
+	@Override
+	public String getBusinessProcessId() {
+  		return businessProcessId;
 	}
 
 }

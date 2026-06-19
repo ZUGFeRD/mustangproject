@@ -5,6 +5,7 @@ package org.mustangproject;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.TransactionCalculator;
+import org.mustangproject.ZUGFeRD.VATAmount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,12 +14,34 @@ import java.math.BigDecimal;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+/***
+ * This is the invoice but with redundant information, i.e. total amount etc.
+ * It has a calculate function which overwrites this total amount but fundamentally
+ * it's useful e.g. for imported invoices, because they may have diverging
+ * amounts, and some users are interested in retrieving the original ones
+ */
 public class CalculatedInvoice extends Invoice implements Serializable {
 
+	/***
+	 * de factor the total net amount
+	 */
 	protected BigDecimal lineTotalAmount=null;
+	/**
+	 * still to be paid
+	 */
 	protected BigDecimal duePayable=null;
+	/**
+	 * originally to be paid (without prepayments)
+	 */
 	protected BigDecimal grandTotal=null;
+	/**
+	 * the net amount upon which value added taxes are applied
+	 */
 	protected BigDecimal taxBasis=null;
+	/**
+	 * the total sum of value added taxes
+	 */
+	protected BigDecimal VATtotal=null;
 	protected TransactionCalculator tc=null;
 
     public void calculate() {
@@ -27,6 +50,10 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 		lineTotalAmount=tc.getValue();
 		duePayable=tc.getDuePayable();
 		taxBasis= tc.getTaxBasis();
+		VATtotal=BigDecimal.ZERO;
+		for (VATAmount vam:getCalculation().getTaxDetails()) {
+			VATtotal=VATtotal.add(vam.getCalculated());
+		}
     }
 	public BigDecimal getGrandTotal() {
 		if (grandTotal==null) {
@@ -86,6 +113,28 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 			calculate();
 		}
 		return lineTotalAmount;
+	}
+
+	/***
+	 * usually one would use calculate, use only if the invoice is parsed
+	 * BT-110
+	 * @param parsedValue the gross total minus net
+	 * @return fluent setter
+	 */
+	public CalculatedInvoice setVATtotal(BigDecimal parsedValue) {
+		VATtotal=parsedValue;
+		return this;
+	}
+
+	/***
+	 *
+	 * @return expect a value close to getGrandTotal-LineTotalAmount
+	 */
+	public BigDecimal getVATtotal() {
+		if (VATtotal==null) {
+			calculate();
+		}
+		return VATtotal;
 	}
 
 	/***

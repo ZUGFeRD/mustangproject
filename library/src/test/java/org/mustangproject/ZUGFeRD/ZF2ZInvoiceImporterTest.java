@@ -20,6 +20,7 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.Test;
@@ -178,15 +179,78 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
+		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
 		// Reading ZUGFeRD
 		assertEquals("4711", invoice.getZFItems()[0].getProduct().getSellerAssignedID());
 		assertEquals("9384", invoice.getSellerOrderReferencedDocumentID());
+		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
+
+		IReferencedDocument[] rd=invoice.getZFItems()[0].getAdditionalReferences();
+		assertEquals("90-kl-98798-C1", rd[0].getIssuerAssignedID());
+		assertEquals("AAG", rd[0].getReferenceTypeCode());
+
+
+
+		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
+		assertEquals("2025-10-12", sdf.format(invoice.getTenderReferencedDocument().getFormattedIssueDateTime()));
 		assertEquals("sender@test.org", invoice.getSender().getEmail());
 		assertEquals("recipient@test.org", invoice.getRecipient().getEmail());
 		assertEquals("28934", invoice.getBuyerOrderReferencedDocumentID());
 
+
+
+
 	}
 
+
+	public void testBT17InvoiceImport() {
+		boolean hasExceptions = false;
+		Invoice invoice = null;
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushEdge.pdf");
+
+		try {
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
+		// Reading ZUGFeRD
+		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
+		assertNotNull(invoice.getTenderReferencedDocument().getFormattedIssueDateTime());
+		assertEquals("2025-10-12", sdf.format(invoice.getTenderReferencedDocument().getFormattedIssueDateTime()));
+		try {
+			zii.setInputStream(new FileInputStream(getResourceAsFile("cii/bt17-response_1760553749128.cii.xml")));
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		// Reading ZUGFeRD
+		assertEquals("Testing1", invoice.getTenderReferencedDocument().getIssuerAssignedID());
+
+	}
+
+	public void testBT128InvoiceImport() {
+		boolean hasExceptions = false;
+		Invoice invoice = null;
+
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		try {
+		zii.setInputStream(new FileInputStream(getResourceAsFile("ubl/BT-128.ubl.xml")));
+
+			invoice = zii.extractInvoice();
+		} catch (XPathExpressionException | ParseException | FileNotFoundException  e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
+		// Reading ZUGFeRD
+		assertEquals("90-kl-98798-C1", invoice.getZFItems()[0].getAdditionalReferences()[0].getIssuerAssignedID());
+		assertEquals("AAG", invoice.getZFItems()[0].getAdditionalReferences()[0].getReferenceTypeCode());
+
+	}
 
 	public void testZF1Import() {
 
@@ -447,6 +511,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"  \"paymentTermDescription\" : "+expectedPaymentTermDesciption+",\n" +
 				"  \"issueDate\" : "+expectedIssueDate+",\n" +
 				"  \"dueDate\" : "+expectedDueDate+",\n" +
+				"  \"deliveryDate\" : "+expectedIssueDate+",\n" +
 				"  \"sender\" : {\n" +
 				"    \"name\" : \"Test company\",\n" +
 				"    \"zip\" : \"55232\",\n" +
@@ -653,6 +718,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			zii.extractInto(i);
 			assertEquals("123", i.getNumber());
 			assertEquals("1.48", i.getGrandTotal().toString());
+			assertEquals("0.20", i.getVATtotal().toString());
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 			assertEquals("2020-10-01", sdf.format(i.getDetailedDeliveryPeriodFrom()));
@@ -686,13 +752,16 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		BigDecimal expectedPrepaid=new BigDecimal(50);
 		BigDecimal expectedLineTotal=new BigDecimal("180.76");
 		BigDecimal expectedDue=new BigDecimal("147.65");
+		BigDecimal expectedTax=new BigDecimal("20.16");
 		if (isBD) {
 			BigDecimal amread=invoice.getTotalPrepaidAmount();
 			BigDecimal importedLineTotal=invoice.getLineTotalAmount();
 			BigDecimal importedDuePayable=invoice.getDuePayable();
+			BigDecimal importedTaxAmount=invoice.getVATtotal();
 			assertTrue(amread.compareTo(expectedPrepaid) == 0);
 			assertTrue(importedLineTotal.compareTo(expectedLineTotal) == 0);
 			assertTrue(importedDuePayable.compareTo(expectedDue) == 0);
+			assertTrue(importedTaxAmount.compareTo(expectedTax) == 0);
 		}
 
 	}
@@ -829,5 +898,120 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertNull(invoice.getSellerOrderReferencedDocumentID());
 		assertNull(invoice.getDespatchAdviceReferencedDocumentID());
 		assertNull(invoice.getInvoiceReferencedDocumentID());
+		assertNull(invoice.getDeliveryNoteReferencedDocumentID());
+		assertNull(invoice.getDeliveryNoteReferencedDocumentDate());
+	}
+
+	@Test
+	public void testSubInvoiceLinesImport() throws FileNotFoundException, XPathExpressionException, ParseException {
+		// test import of sub invoice lines with GROUP and DETAIL lines
+		File inputFile = getResourceAsFile("subinvoicelines/Extended_SubInvoiceLines_Hardware_Bsp2.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.setInputStream(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+		assertEquals(6, invoice.getZFItems().length);
+
+		// find GROUP and DETAIL lines and verify LineStatusReasonCode and ParentLineID
+		Item group01 = findItemById(invoice, "01");
+		assertNotNull(group01);
+		assertEquals("GROUP", group01.getLineStatusReasonCode());
+		assertNull(group01.getParentLineID());
+		assertFalse(group01.isCalculationRelevant());
+
+		Item detail0101 = findItemById(invoice, "0101");
+		assertNotNull(detail0101);
+		assertEquals("DETAIL", detail0101.getLineStatusReasonCode());
+		assertEquals("01", detail0101.getParentLineID());
+		assertTrue(detail0101.isCalculationRelevant());
+
+		Item detail0102 = findItemById(invoice, "0102");
+		assertNotNull(detail0102);
+		assertEquals("DETAIL", detail0102.getLineStatusReasonCode());
+		assertEquals("01", detail0102.getParentLineID());
+		assertTrue(detail0102.isCalculationRelevant());
+
+		// verify that only DETAIL lines are summed (not GROUP lines)
+		// DETAIL lines: 0101=600, 0102=450, 0201=360, 0202=90 = 1500
+		// GROUP lines should NOT be added: 01=1050, 02=450
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("1500.00"), tc.getTotal().setScale(2));
+		assertEquals(new BigDecimal("1785.00"), tc.getGrandTotal().setScale(2));
+	}
+
+	@Test
+	public void testSubInvoiceLinesNestedImport() throws FileNotFoundException, XPathExpressionException, ParseException {
+		// test import of nested sub invoice lines (GROUP containing GROUP containing DETAIL)
+		File inputFile = getResourceAsFile("subinvoicelines/Extended___SubInvoiceLines_Kaffee_Bundle_Set_Bsp4__.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.setInputStream(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+
+		// find nested structure: 1 (GROUP) -> 1.3 (GROUP) -> 1.3.1 (DETAIL)
+		Item group1 = findItemById(invoice, "1");
+		assertNotNull(group1);
+		assertEquals("GROUP", group1.getLineStatusReasonCode());
+
+		Item group13 = findItemById(invoice, "1.3");
+		assertNotNull(group13);
+		assertEquals("GROUP", group13.getLineStatusReasonCode());
+		assertEquals("1", group13.getParentLineID());
+
+		Item detail131 = findItemById(invoice, "1.3.1");
+		assertNotNull(detail131);
+		assertEquals("DETAIL", detail131.getLineStatusReasonCode());
+		assertEquals("1.3", detail131.getParentLineID());
+
+		// verify calculation only includes DETAIL lines
+		// DETAIL: 1.1=30, 1.2=60, 1.3.1=90, 1.3.2=36 = 216
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("216.00"), tc.getTotal().setScale(2));
+	}
+
+	@Test
+	public void testSubInvoiceLinesWithDiscounts() throws FileNotFoundException, XPathExpressionException, ParseException {
+		// test sub invoice lines with negative amounts (discounts)
+		File inputFile = getResourceAsFile("subinvoicelines/Extended___SubInvoiceLines_Buero_Material_Bsp3__.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.setInputStream(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+
+		// verify calculation handles negative DETAIL lines correctly
+		// GROUP 01: 600 + 450 - 50 = 1000
+		// GROUP 02: 360 + 90 - 45 = 405
+		// Total DETAIL: 1405
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("1405.00"), tc.getTotal().setScale(2));
+	}
+
+	@Test
+	public void testSubInvoiceLinesInformation() throws FileNotFoundException, XPathExpressionException, ParseException {
+		// test INFORMATION lines (should have price 0 and not affect calculation)
+		File inputFile = getResourceAsFile("subinvoicelines/Extended_Fallschutz-Set_SubInvoiceLine_Bsp5.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.setInputStream(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+
+		// find INFORMATION lines
+		Item info0101 = findItemById(invoice, "01.01");
+		assertNotNull(info0101);
+		assertEquals("INFORMATION", info0101.getLineStatusReasonCode());
+		assertFalse(info0101.isCalculationRelevant());
+
+		// DETAIL line 01 = 45000
+		TransactionCalculator tc = new TransactionCalculator(invoice);
+		assertEquals(new BigDecimal("45000.00"), tc.getTotal().setScale(2));
+	}
+
+	private Item findItemById(Invoice invoice, String id) {
+		for (IZUGFeRDExportableItem item : invoice.getZFItems()) {
+			if (item instanceof Item && id.equals(((Item) item).getId())) {
+				return (Item) item;
+			}
+		}
+		return null;
 	}
 }

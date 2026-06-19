@@ -23,6 +23,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	protected String unit, name, sellerAssignedID, buyerAssignedID;
 	protected String description = "";
 	protected String taxExemptionReason = null;
+	protected String taxExemptionReasonCode = null;
 	protected String taxCategoryCode = null;
 	protected BigDecimal VATPercent;
 	protected boolean isReverseCharge = false;
@@ -157,7 +158,22 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @return fluent setter
 	 */
 	public Product setTaxExemptionReason(String taxExemptionReasonText) {
-		taxExemptionReason = taxExemptionReasonText;
+		this.taxExemptionReason = taxExemptionReasonText;
+		return this;
+	}
+
+	@Override
+	public String getTaxExemptionReasonCode() {
+		return taxExemptionReasonCode;
+	}
+
+	/***
+	 *
+	 * @param taxExemptionReasonCode, https://docs.peppol.eu/poacc/billing/3.0/codelist/vatex/
+	 * @return fluent setter
+	 */
+	public Product setTaxExemptionReasonCode(String taxExemptionReasonCode) {
+		this.taxExemptionReasonCode = taxExemptionReasonCode;
 		return this;
 	}
 
@@ -233,6 +249,9 @@ public class Product implements IZUGFeRDExportableProduct {
 	 */
 	public Product setReverseCharge() {
 		isReverseCharge = true;
+		if ((getTaxExemptionReason()==null)||(getTaxExemptionReason().isEmpty())) {
+			setTaxExemptionReason("Reverse charge");
+		}
 		setVATPercent(BigDecimal.ZERO);
 		return this;
 	}
@@ -452,6 +471,75 @@ public class Product implements IZUGFeRDExportableProduct {
 	public Product setAllowances(ArrayList<Allowance> allowances) {
 		this.allowances=allowances;
 		return this;
+	}
+
+
+	private static final HashMap<String, HashMap<String, String>> unitAbbrevs = new HashMap<>();
+
+	static {
+		HashMap<String, String> inner1 = new HashMap<>();
+		inner1.put("H87", "Piece");
+		inner1.put("C62", "One");
+		inner1.put("ANN", "Years");
+		inner1.put("DAY", "Days");
+		inner1.put("H18", "Hectar");
+		inner1.put("HUR", "Hours");
+		inner1.put("KGM", "Kilogram");
+		inner1.put("KTM", "Kilometre");
+		inner1.put("KWH", "Kilowatt hour");
+		inner1.put("LS", "Lump sum");
+		inner1.put("MIN", "Minutes");
+		inner1.put("MMK", "Square millimetre");
+		inner1.put("MMT", "Millimetre");
+		inner1.put("MON", "Months");
+		inner1.put("MTK", "Square metre");
+		inner1.put("MTQ", "Cubic metre");
+		inner1.put("MTR", "Metre");
+		inner1.put("NAR", "Number of articles");
+		inner1.put("P1", "Percent");
+		inner1.put("SET", "Sets");
+		inner1.put("TNE", "Metric ton");
+		inner1.put("WEE", "Weeks");
+
+		HashMap<String, String> inner2 = new HashMap<>();
+		inner2.put("H87", "Stück");
+		inner2.put("C62", "Einzeln");
+		inner2.put("ANN", "Jahre");
+		inner2.put("DAY", "Tage");
+		inner2.put("H18", "Hektar");
+		inner2.put("HUR", "Stunden");
+		inner2.put("KGM", "Kilogramm");
+		inner2.put("KTM", "Kilometer");
+		inner2.put("KWH", "Kilowattstunde");
+		inner2.put("LS", "Pauschale");
+		inner2.put("MIN", "Minuten");
+		inner2.put("MMK", "Quadratmillimeter");
+		inner2.put("MMT", "Millimeter");
+		inner2.put("MON", "Monate");
+		inner2.put("MTK", "Quadratmeter");
+		inner2.put("MTQ", "Kubikmeter");
+		inner2.put("MTR", "Meter");
+		inner2.put("NAR", "Anzahl Artikel");
+		inner2.put("P1", "Prozent");
+		inner2.put("SET", "Sets");
+		inner2.put("TNE", "Tonne (metrisch)");
+		inner2.put("WEE", "Wochen");
+
+		unitAbbrevs.put("EN", inner1);
+		unitAbbrevs.put("DE", inner2);
+	}
+
+
+
+	public static String getHumanReadableUnit(String language, String unitcode) {
+		if (!unitAbbrevs.containsKey(language)) {
+			throw new RuntimeException("Language unknown");
+		}
+		if (unitAbbrevs.get(language).containsKey(unitcode)) {
+			return unitAbbrevs.get(language).get(unitcode);
+		} else{
+			return unitcode;
+		}
 	}
 
 }

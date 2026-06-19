@@ -112,6 +112,44 @@ public class LibraryTest extends ResourceCase {
 				.isEqualTo("valid");
 
 	}
+
+	public void testLibraryTaxcodeZ() {
+		File tempFile = new File("../library/target/testout-TaxcodeZ.pdf");
+		assertTrue(tempFile.exists());
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+
+		assertThat(res).valueByXPath("/validation/pdf/summary/@status")
+			.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+			.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.isEqualTo("valid");
+
+	}
+	public void testLibraryReverseCharge() {
+		File tempFile = new File("../library/target/testout-ReverseCharge.pdf");
+		assertTrue(tempFile.exists());
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+
+		assertThat(res).valueByXPath("/validation/pdf/summary/@status")
+			.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+			.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.isEqualTo("valid");
+
+	}
+
 	public void testLibraryPushAllowances() {
 		File tempFile = new File("../library/target/testout-ZF2PushChargesAllowances.pdf");
 		assertTrue(tempFile.exists());
@@ -291,6 +329,31 @@ public class LibraryTest extends ResourceCase {
 		assertThat(res).valueByXPath("count(//notice)")
 				.asInt()
 				.isEqualTo(0);
+	}
+
+	public void testSubInvoiceLineExportValidity() {
+		File tempFile = new File("../library/target/testout-SubInvoiceLines.pdf");
+		assertTrue(tempFile.exists());
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+		assertThat(res).valueByXPath("/validation/pdf/summary/@status")
+			.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+			.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("count(//error)")
+			.asInt()
+			.isEqualTo(0);
+
+		assertThat(res).valueByXPath("count(//warning)")
+			.asInt()
+			.isEqualTo(0);
 	}
 
 }
