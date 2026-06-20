@@ -1,8 +1,8 @@
 package org.mustangproject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -163,7 +163,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 												NodeList taxSchemechilds = partyTaxScheme.item(partyTaxSchemeIndex).getChildNodes();
 												for (int taxSchemechildsIndex = 0; taxSchemechildsIndex < taxSchemechilds.getLength(); taxSchemechildsIndex++) {
 													if (taxSchemechilds.item(taxSchemechildsIndex).getLocalName() != null) {
-														Set<String> taxSchemeTypes = Set.of("FC", "NOVAT");
+														List<String> taxSchemeTypes = Arrays.asList("FC", "NOVAT");
 														String textContent = taxSchemechilds.item(taxSchemechildsIndex).getTextContent();
 														if (textContent != null && taxSchemeTypes.contains(textContent)) {
 															setTaxID(CompanyId);

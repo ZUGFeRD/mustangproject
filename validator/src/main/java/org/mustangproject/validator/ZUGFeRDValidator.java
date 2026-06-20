@@ -76,6 +76,14 @@ public class ZUGFeRDValidator {
 
 	}
 
+	/***
+	 * Get access to the ValidationContext used.
+	 * @return	the validation context
+	 */
+	public ValidationContext getContext() {
+		return context;
+	}
+
 	private String internalValidate(String contextFilename, InputStream inputStream, long inputLength) {
 		context.clear();
 		StringBuilder finalStringResult = new StringBuilder();

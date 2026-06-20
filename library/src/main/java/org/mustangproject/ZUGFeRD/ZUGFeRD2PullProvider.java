@@ -49,6 +49,7 @@ import org.mustangproject.ReferencedDocument;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
+import static org.mustangproject.util.StringUtils.isNotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -385,7 +386,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 
 		String businessProcessId = trans.getBusinessProcessId();
-		if (businessProcessId != null && !businessProcessId.isBlank()) {
+		if (isNotBlank(businessProcessId)) {
  			xml += "<ram:BusinessProcessSpecifiedDocumentContextParameter>\n"
 				+ "<ram:ID>" +  XMLTools.encodeXML(businessProcessId)  + "</ram:ID>\n"
 				+ "</ram:BusinessProcessSpecifiedDocumentContextParameter>\n";

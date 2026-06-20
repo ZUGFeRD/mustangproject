@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -246,7 +245,7 @@ public class ZUGFeRDInvoiceImporter {
 			 */
 
 			final PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
-			Set<String> validFilenames = Set.of(
+			List<String> validFilenames = Arrays.asList(
 				"ZUGFeRD-invoice.xml",
 				"zugferd-invoice.xml",
 				"factur-x.xml",
@@ -644,7 +643,7 @@ public class ZUGFeRDInvoiceImporter {
 		zpp.addNotes(includedNotes);
 		String rootNode = extractString("local-name(/*)");
 		String potentialCashDiscountTerms=null;
-		if (rootNode != null && Set.of("Invoice", "CreditNote").contains(rootNode)) {
+		if (rootNode != null && Arrays.asList("Invoice", "CreditNote").contains(rootNode)) {
 			// UBL...
 			// //*[local-name()="Invoice" or local-name()="CreditNote"]
 			number = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"ID\"]").trim();
@@ -1404,7 +1403,7 @@ public class ZUGFeRDInvoiceImporter {
 			if (whichType != EStandard.despatchadvice && !ignoreCalculationErrors) {
 				// Check calculation if document type allows it and calculation errors should not be ignored
 
-				String payableTotalFromXml = XMLTools.nDigitFormat(Objects.requireNonNullElse(duePayableAmount, expectedGrandTotal), 2);
+				String payableTotalFromXml = XMLTools.nDigitFormat(duePayableAmount != null ? duePayableAmount : expectedGrandTotal, 2);
 				if (!calculatedPayableTotal.equals(payableTotalFromXml)) {
 					String moreDetails = "";
 					try {

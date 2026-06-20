@@ -1,5 +1,6 @@
 2.24.x
 =======
+- #1097 Invoice importer: LegalOrganization id not imported (wrong node name 'GlobalID' instead of 'ID' used)
 - #1151 'BR-FXEXT-IC-08rev' in ZF 2.5 requires VAT exemption reason text and code for allowances and charges
 - #1145 Document-level allowance with VAT category O emits RateApplicablePercent (violates BR-O-06)
 
