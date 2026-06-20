@@ -33,13 +33,13 @@ public interface IZUGFeRDAllowanceCharge {
 	BigDecimal getTotalAmount(IAbsoluteValueProvider trans);
 
 	/***
-	 * returns a percentage, if relative abount, or null for absolute amounts
-	 * @return null or Percentage as Bigdecimal
+	 * returns a percentage, if relative amount, or null for absolute amounts
+	 * @return null or Percentage as BigDecimal
 	 */
 	default BigDecimal getPercent() {return null;}
 
 	/***
-	 * returns a basis the precentage is calculated from
+	 * returns a basis the percentage is calculated from
 	 * @return null or the basis
 	 */
 	default BigDecimal getBasisAmount() {return null;}
@@ -72,7 +72,19 @@ public interface IZUGFeRDAllowanceCharge {
 
 	/***
 	 * is this in reality a charge and now allowance
-	 * @return true if amnount to be treated negative
+	 * @return true if amount to be treated negative
 	 */
 	public boolean isCharge();
+
+	/***
+	 * the the reason (text) why this allowance/charge is tax free
+	 * @return the reason text
+	 */
+	public String getTaxExemptionReason();
+
+	/***
+	 * the the reason code why this allowance/charge is tax free
+	 * @return the reason code
+	 */
+	public String getTaxExemptionReasonCode();
 }

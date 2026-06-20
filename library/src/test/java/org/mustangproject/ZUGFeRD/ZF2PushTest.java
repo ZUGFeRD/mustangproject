@@ -41,6 +41,7 @@ import junit.framework.TestCase;
 
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
 
 import javax.xml.xpath.XPathExpressionException;
 
@@ -63,6 +64,7 @@ public class ZF2PushTest extends TestCase {
 	final String TARGET_INTRACOMMUNITYSUPPLYMANUALPDF = "./target/testout-ZF2PushIntraCommunitySupplyManual.pdf";
 	final String TARGET_INTRACOMMUNITYSUPPLYPDF = "./target/testout-ZF2PushIntraCommunitySupply.pdf";
 	final String TARGET_REVERSECHARGEPDF = "./target/testout-ZF2PushReverseCharge.pdf";
+	final String TARGET_ALLOWANCES_TAXES = "./target/testout-ZF2PushAllowancesTaxes.pdf";
 
 	public void testPushExport() {
 		/***
@@ -969,5 +971,62 @@ public class ZF2PushTest extends TestCase {
 		assertFalse(theXML.contains("<ram:ContractReferencedDocument"));
 		assertFalse(theXML.contains("<ram:DespatchAdviceReferencedDocument"));
 		assertFalse(theXML.contains("<ram:InvoiceReferencedDocument"));
+	}
+
+	public void testDocumentLevelAllowanceVatRateByCategory() {
+		TradeParty sender = new TradeParty("Test Seller", "Seller Street 1", "10000", "Test City", "DE").setID("SELLER-001").addTaxID("4711").addVATID("DE0815");
+		TradeParty recipient = new TradeParty("Test Buyer", "Buyer Street 1", "10000", "Test City", "FR").addVATID("FR555444333222111");
+		String number = "INV-BR-O-06";
+		BigDecimal itemAmount = new BigDecimal("100.00");
+
+		Invoice invoice = new Invoice()
+			.setDueDate(new java.util.Date()).setIssueDate(new java.util.Date()).setDeliveryDate(new java.util.Date())
+			.setSender(sender)
+			.setRecipient(recipient)
+			.setDeliveryAddress(recipient)
+			.setNumber(number)
+			.addItem(new org.mustangproject.Item(new org.mustangproject.Product("Test item", "", "C62", java.math.BigDecimal.ZERO).setIntraCommunitySupply(), itemAmount, new java.math.BigDecimal("1.0")));
+
+		Allowance allowance1 = new Allowance(new BigDecimal("10.00"));
+		allowance1.setReason("Discount");
+		allowance1.setCategoryCode(TaxCategoryCodeTypeConstants.INTRACOMMUNITY);
+		allowance1.setTaxPercent(BigDecimal.ZERO);
+		allowance1.setTaxExemptionReasonCode("VATEX-EU-IC");
+		allowance1.setTaxExemptionReason(invoice.getZFItems()[0].getProduct().getTaxExemptionReason());
+		invoice.addAllowance(allowance1);
+
+		Allowance allowance2 = new Allowance(new BigDecimal("5.00"));
+		allowance2.setReason("another discount");
+		allowance2.setCategoryCode(TaxCategoryCodeTypeConstants.INTRACOMMUNITY);
+		allowance2.setTaxPercent(BigDecimal.ZERO);
+		allowance2.setTaxExemptionReasonCode("VATEX-EU-IC");
+		allowance2.setTaxExemptionReason(invoice.getZFItems()[0].getProduct().getTaxExemptionReason());
+		invoice.addAllowance(allowance2);
+
+		try {
+			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
+			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1();
+			ze.ignorePDFAErrors().load(SOURCE_PDF);
+			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile(Profiles.getByName("extended"));
+
+			ze.setTransaction(invoice);
+			ze.export(TARGET_ALLOWANCES_TAXES);
+
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_ALLOWANCES_TAXES);
+			try {
+				Invoice i = zii.extractInvoice();
+
+
+			} catch (XPathExpressionException e) {
+				fail("XPathExpressionException should not be raised");
+			} catch (ParseException e) {
+				fail("ParseException should not be raised");
+				/* a parseException would also be fired if the calculated grand total does not
+				match the read grand total */
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail("IOException should not be raised");
+		}
 	}
 }
