@@ -1014,6 +1014,7 @@ public class ZF2PushTest extends TestCase {
 		assertThat(theXML).valueByXPath("//*[local-name()='SpecifiedLineTradeSettlement']/*[local-name()='ApplicableTradeTax']/*[local-name()='ExemptionReason']").asString().isEqualTo(exemptionReason);
 		// BT-X-97
 		assertThat(theXML).valueByXPath("//*[local-name()='SpecifiedLineTradeSettlement']/*[local-name()='ApplicableTradeTax']/*[local-name()='ExemptionReasonCode']").asString().isEqualTo(exemptionReasonCode);
+	}
 
 	public void testDocumentLevelAllowanceVatRateByCategory() {
 		TradeParty sender = new TradeParty("Test Seller", "Seller Street 1", "10000", "Test City", "DE").setID("SELLER-001").addTaxID("4711").addVATID("DE0815");
