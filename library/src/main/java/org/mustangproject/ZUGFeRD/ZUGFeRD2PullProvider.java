@@ -835,11 +835,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(amountCategoryCode);
 				if (getProfile() != Profiles.getByName("Minimum")) {
 					String exemptionReasonTextXML = "";
-					if ((displayExemptionReason) && (amount.getVatExemptionReasonText() != null)) {
+					if (displayExemptionReason && amount.getVatExemptionReasonText() != null) {
 						exemptionReasonTextXML = "<ram:ExemptionReason>" + XMLTools.encodeXML(amount.getVatExemptionReasonText()) + "</ram:ExemptionReason>";
 					}
 					String exemptionReasonCodeXML = "";
-					if (amount.getVatExemptionReasonCode() != null) {
+					if (displayExemptionReason && amount.getVatExemptionReasonCode() != null) {
 						exemptionReasonCodeXML = "<ram:ExemptionReasonCode>" + XMLTools.encodeXML(amount.getVatExemptionReasonCode()) + "</ram:ExemptionReasonCode>";
 					}
 
@@ -872,6 +872,16 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if ((trans.getZFCharges() != null) && (trans.getZFCharges().length > 0)) {
 			if ((profile == Profiles.getByName("XRechnung")) || (profile == Profiles.getByName("EN16931")) || (profile == Profiles.getByName("EXTENDED"))) {
 				for (IZUGFeRDAllowanceCharge charge : trans.getZFCharges()) {
+					final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(charge.getCategoryCode());
+					String exemptionReasonTextXML = "";
+					if (displayExemptionReason && charge.getTaxExemptionReason() != null) {
+						exemptionReasonTextXML = "<ram:ExemptionReason>" + XMLTools.encodeXML(charge.getTaxExemptionReason()) + "</ram:ExemptionReason>";
+					}
+					String exemptionReasonCodeXML = "";
+					if (displayExemptionReason && charge.getTaxExemptionReasonCode() != null) {
+						exemptionReasonCodeXML = "<ram:ExemptionReasonCode>" + XMLTools.encodeXML(charge.getTaxExemptionReasonCode()) + "</ram:ExemptionReasonCode>";
+					}
+
 					xml += "<ram:SpecifiedTradeAllowanceCharge>" +
 						"<ram:ChargeIndicator>" +
 						"<udt:Indicator>true</udt:Indicator>" +
@@ -891,7 +901,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					}
 					xml += "<ram:CategoryTradeTax>" +
 						"<ram:TypeCode>VAT</ram:TypeCode>" +
-						"<ram:CategoryCode>" + charge.getCategoryCode() + "</ram:CategoryCode>";
+						exemptionReasonTextXML +
+						"<ram:CategoryCode>" + charge.getCategoryCode() + "</ram:CategoryCode>" +
+						exemptionReasonCodeXML;
 					if (charge.getTaxPercent() != null && !charge.getCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
 						xml += "<ram:RateApplicablePercent>" + vatFormat(charge.getTaxPercent()) + "</ram:RateApplicablePercent>";
 					}
@@ -922,6 +934,16 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if ((trans.getZFAllowances() != null) && (trans.getZFAllowances().length > 0)) {
 			if ((profile == Profiles.getByName("XRechnung")) || (profile == Profiles.getByName("EN16931")) || (profile == Profiles.getByName("EXTENDED"))) {
 				for (IZUGFeRDAllowanceCharge allowance : trans.getZFAllowances()) {
+					final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(allowance.getCategoryCode());
+					String exemptionReasonTextXML = "";
+					if (displayExemptionReason && allowance.getTaxExemptionReason() != null) {
+						exemptionReasonTextXML = "<ram:ExemptionReason>" + XMLTools.encodeXML(allowance.getTaxExemptionReason()) + "</ram:ExemptionReason>";
+					}
+					String exemptionReasonCodeXML = "";
+					if (displayExemptionReason && allowance.getTaxExemptionReasonCode() != null) {
+						exemptionReasonCodeXML = "<ram:ExemptionReasonCode>" + XMLTools.encodeXML(allowance.getTaxExemptionReasonCode()) + "</ram:ExemptionReasonCode>";
+					}
+
 					xml += "<ram:SpecifiedTradeAllowanceCharge>" +
 						"<ram:ChargeIndicator>" +
 						"<udt:Indicator>false</udt:Indicator>" +
@@ -940,8 +962,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						xml += "<ram:Reason>" + XMLTools.encodeXML(allowance.getReason()) + "</ram:Reason>";
 					}
 					xml += "<ram:CategoryTradeTax>" +
-						"<ram:TypeCode>VAT</ram:TypeCode>" +
-						"<ram:CategoryCode>" + allowance.getCategoryCode() + "</ram:CategoryCode>";
+							"<ram:TypeCode>VAT</ram:TypeCode>" +
+							exemptionReasonTextXML +
+							"<ram:CategoryCode>" + allowance.getCategoryCode() + "</ram:CategoryCode>" +
+							exemptionReasonCodeXML;
 					if (allowance.getTaxPercent() != null && !allowance.getCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
 						xml += "<ram:RateApplicablePercent>" + vatFormat(allowance.getTaxPercent()) + "</ram:RateApplicablePercent>";
 					}
