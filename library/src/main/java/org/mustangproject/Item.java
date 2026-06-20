@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 /***
  * describes any invoice line
@@ -214,6 +212,9 @@ public class Item implements IZUGFeRDExportableItem {
 				.flatMap(cnm -> cnm.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent"))
 				.ifPresent(product::setVATPercent);
 			icnm.getAsNodeMap("ApplicableTradeTax")
+				.flatMap(cnm -> cnm.getAsString("CategoryCode"))
+				.ifPresent(product::setTaxCategoryCode);
+			icnm.getAsNodeMap("ApplicableTradeTax")
 				.flatMap(cnm -> cnm.getAsString("ExemptionReason"))
 				.ifPresent(product::setTaxExemptionReason);
 			icnm.getAsNodeMap("ApplicableTradeTax")
@@ -333,6 +334,38 @@ public class Item implements IZUGFeRDExportableItem {
 			});
 			addNotes(includedNotes);
 		});
+	}
+
+	/**
+	 * If Item created from Importer, may need to add additional product tax information
+	 * because some fields are excluded from per-line item tax in some profiles (e.g. EN16931)
+	 */
+	public void enrichProductFromVATBreakdown(NodeList taxNodes) {
+		// Match tax list with item product tax, set product exemption reason and code if not already set
+		// NB: For EN16931, exemption info only included in doc - level VAT Breakdown, not in per-line item nodes
+		if (taxNodes.getLength() != 0) {
+			for (int i = 0; i < taxNodes.getLength(); i++) {
+				final Node taxNode = taxNodes.item(i);
+				if (!taxNode.getLocalName().equals("ApplicableTradeTax")) {
+					continue;
+				}
+				NodeList taxChilds = taxNode.getChildNodes();
+				NodeMap taxChildMap = new NodeMap(taxChilds);
+				String taxCategoryCode = taxChildMap.getAsStringOrNull("CategoryCode");
+				BigDecimal rateApplicablePercent = taxChildMap.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent").orElse(null);
+
+				if (taxCategoryCode != null && rateApplicablePercent != null && taxCategoryCode.equals(this.product.taxCategoryCode) && rateApplicablePercent.compareTo(this.product.getVATPercent()) == 0) {
+					// If product Exemption not already set (i.e. by per line-item exemption fields, set it from VAT Breakdown
+					if (this.product.getTaxExemptionReason() == null) {
+						this.product.setTaxExemptionReason(taxChildMap.getAsStringOrNull("ExemptionReason"));
+					}
+					if (this.product.getTaxExemptionReasonCode() == null) {
+						this.product.setTaxExemptionReasonCode(taxChildMap.getAsStringOrNull("ExemptionReasonCode"));
+					}
+					break;
+				}
+			}
+		}
 	}
 
 	public Item addBuyerOrderReferencedDocumentLineID(String s) {
