@@ -1,9 +1,29 @@
+2.24.x
+=======
+- #1097 Invoice importer: LegalOrganization id not imported (wrong node name 'GlobalID' instead of 'ID' used)
+- #1151 'BR-FXEXT-IC-08rev' in ZF 2.5 requires VAT exemption reason text and code for allowances and charges
+- #1145 Document-level allowance with VAT category O emits RateApplicablePercent (violates BR-O-06)
+
+
+2.24.0
+=======
+2026-06-11
+
+- #1143 LineID may not be written empty in DeliveryNoteReferencedDocument
+- #1141 ZUGFeRD 2.5/Factur-X 1.09
+- #1127'Fix possible StringIndexOutOfBoundsException when extracting XMP.'
+- #1133 incorrect warning in Subinvoiceline calculation
+- Add Tax ExemptionReasonCode on document level.
+
+
 2.23.1
 =======
 2026-05-13
 
+- #1108 Regression Issue caused by empty XMP (introduced by #1076)
+- #1120 ZUGFeRDImporter fails to extract Version if XML namespace is not exactly <rsm:CrossIndustryInvoice>
+(some of the following changes were already part of 2.23.0)
 - #1043 Fix percentage-based allowance/charge calculations
-- #1108 https://github.com/ZUGFeRD/mustangproject/issues/1108
 - #1093 #814 upgrade CEN EN16931 Schematron from v1.3.12 to v1.3.15
 - #1102 Add BasisAmount to CashDiscount.
 - #1109 Feature fix xml description

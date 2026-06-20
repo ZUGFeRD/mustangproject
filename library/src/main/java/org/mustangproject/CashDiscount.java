@@ -23,6 +23,9 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	 */
 	protected Integer days;
 
+	/**
+	 * The original payment amount
+	 */
 	protected BigDecimal basisAmount;
 
 	/***
@@ -45,6 +48,10 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 
 	}
 
+	/***
+	 * how much this discount removed from the original dept
+	 * @return the percent
+	 */
 	public BigDecimal getPercent() {
 		return percent;
 	}
@@ -54,6 +61,10 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 		return this;
 	}
 
+	/***
+	 * get the number of calendar days this cash discount is valid
+	 * @return the number (integer) of days
+	 */
 	public Integer getDays() {
 		return days;
 	}

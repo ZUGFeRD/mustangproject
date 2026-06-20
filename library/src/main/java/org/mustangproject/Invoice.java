@@ -173,15 +173,20 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * BT-17
-	 * @param dr
-	 * @return
+	 * @param dr the Referenced Document (may contain ID, typecode, date...)
+	 * @return fluent setter
 	 */
 	public Invoice setTenderReferencedDocument(ReferencedDocument dr) {
 		dr.setTypeCode("50");//50 is fixed for tender documents
 		tenderReference=dr;
 		return this;
 	}
-	
+
+	/***
+	 * Sets a reference to a tender
+	 * @param ID the key ID of the tender
+	 * @return fluent setter
+	 */
 	public Invoice setTenderReferencedDocument(String ID) {
 		ReferencedDocument dr=new ReferencedDocument(ID);
 		setTenderReferencedDocument(dr);
@@ -192,6 +197,9 @@ public class Invoice implements IExportableTransaction {
 
 	/** BT-18 */
 	@Override
+	/***
+	 *
+	 */
 	public IReferencedDocument getObjectIdentifierReferencedDocument() {
 		return objectIdentifierReference;
 	}

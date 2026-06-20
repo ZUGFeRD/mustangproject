@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -246,7 +245,7 @@ public class ZUGFeRDInvoiceImporter {
 			 */
 
 			final PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
-			Set<String> validFilenames = Set.of(
+			List<String> validFilenames = Arrays.asList(
 				"ZUGFeRD-invoice.xml",
 				"zugferd-invoice.xml",
 				"factur-x.xml",
@@ -644,7 +643,7 @@ public class ZUGFeRDInvoiceImporter {
 		zpp.addNotes(includedNotes);
 		String rootNode = extractString("local-name(/*)");
 		String potentialCashDiscountTerms=null;
-		if (rootNode != null && Set.of("Invoice", "CreditNote").contains(rootNode)) {
+		if (rootNode != null && Arrays.asList("Invoice", "CreditNote").contains(rootNode)) {
 			// UBL...
 			// //*[local-name()="Invoice" or local-name()="CreditNote"]
 			number = extractString("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"ID\"]").trim();
@@ -1180,6 +1179,9 @@ public class ZUGFeRDInvoiceImporter {
 				String reason = null;
 				String reasonCode = null;
 				String taxPercent = null;
+				String taxExemptionReason = null;
+				String categoryCode = null;
+				String taxExemptionReasonCode = null;
 				for (int chargeChildIndex = 0; chargeChildIndex < chargeNodeChilds.getLength(); chargeChildIndex++) {
 					String chargeChildName = chargeNodeChilds.item(chargeChildIndex).getLocalName();
 					if (chargeChildName != null) {
@@ -1214,8 +1216,17 @@ public class ZUGFeRDInvoiceImporter {
 							NodeList taxChilds = chargeNodeChilds.item(chargeChildIndex).getChildNodes();
 							for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
 								String taxItemName = taxChilds.item(taxChildIndex).getLocalName();
-								if ((taxItemName != null) && (taxItemName.equals("RateApplicablePercent") || taxItemName.equals("ApplicablePercent") || taxItemName.equals("Percent"))) {
+								if (taxItemName != null && (taxItemName.equals("RateApplicablePercent") || taxItemName.equals("ApplicablePercent") || taxItemName.equals("Percent"))) {
 									taxPercent = XMLTools.trimOrNull(taxChilds.item(taxChildIndex));
+								}
+								if (taxItemName != null && (taxItemName.equals("ExemptionReason") || taxItemName.equals("TaxExemptionReason"))) {
+									taxExemptionReason = XMLTools.trimOrNull(taxChilds.item(taxChildIndex));
+								}
+								if (taxItemName != null && (taxItemName.equals("CategoryCode") || taxItemName.equals("ID"))) {
+									categoryCode = XMLTools.trimOrNull(taxChilds.item(taxChildIndex));
+								}
+								if (taxItemName != null && (taxItemName.equals("ExemptionReasonCode") || taxItemName.equals("TaxExemptionReasonCode"))) {
+									taxExemptionReasonCode = XMLTools.trimOrNull(taxChilds.item(taxChildIndex));
 								}
 							}
 						}
@@ -1236,6 +1247,15 @@ public class ZUGFeRDInvoiceImporter {
 					if (basisAmount != null) {
 						c.setBasisAmount(new BigDecimal(basisAmount));
 					}
+					if (taxExemptionReason != null) {
+						c.setTaxExemptionReason(taxExemptionReason);
+					}
+					if (categoryCode != null) {
+						c.setCategoryCode(categoryCode);
+					}
+					if (taxExemptionReasonCode != null) {
+						c.setTaxExemptionReasonCode(taxExemptionReasonCode);
+					}
 					zpp.addCharge(c);
 				} else {
 					Allowance a = new Allowance(new BigDecimal(chargeAmount));
@@ -1250,6 +1270,15 @@ public class ZUGFeRDInvoiceImporter {
 					}
 					if (basisAmount != null) {
 						a.setBasisAmount(new BigDecimal(basisAmount));
+					}
+					if (taxExemptionReason != null) {
+						a.setTaxExemptionReason(taxExemptionReason);
+					}
+					if (categoryCode != null) {
+						a.setCategoryCode(categoryCode);
+					}
+					if (taxExemptionReasonCode != null) {
+						a.setTaxExemptionReasonCode(taxExemptionReasonCode);
 					}
 					zpp.addAllowance(a);
 				}
@@ -1378,7 +1407,7 @@ public class ZUGFeRDInvoiceImporter {
 			if (whichType != EStandard.despatchadvice && !ignoreCalculationErrors) {
 				// Check calculation if document type allows it and calculation errors should not be ignored
 
-				String payableTotalFromXml = XMLTools.nDigitFormat(Objects.requireNonNullElse(duePayableAmount, expectedGrandTotal), 2);
+				String payableTotalFromXml = XMLTools.nDigitFormat(duePayableAmount != null ? duePayableAmount : expectedGrandTotal, 2);
 				if (!calculatedPayableTotal.equals(payableTotalFromXml)) {
 					String moreDetails = "";
 					try {
