@@ -4,6 +4,7 @@ import java.io.File;
 
 import javax.xml.transform.Source;
 
+import org.junit.Test;
 import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
@@ -458,6 +459,24 @@ public class XMLValidatorTest extends ResourceCase {
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
 		}
+
+		xv.context.clear();
+		tempFile = getResourceAsFile("X03_01_Abschlagsrechnung_SubInvoiceLine_u_LV_Nr.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			// hierarchy mismatch should produce at least one warning
+			assertThat(s).valueByXPath("count(//warning)")
+				.asInt()
+				.isEqualTo(0);
+
+		} catch (final IrrecoverableValidationError e) {
+			// ignore, will be in XML output anyway
+		}
+
+
 
 	}
 

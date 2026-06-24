@@ -485,12 +485,12 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 		}
 
 		final String head = getUTF8();
-		if (head.contains("<rsm:CrossIndustryDocument") //
-			|| head.contains("<CrossIndustryDocument") //
-			|| head.contains("<SCRDMCCBDACIDAMessageStructure") //
-			|| head.contains("<rsm:SCRDMCCBDACIOMessageStructure")) { //
+		if (head.contains("CrossIndustryDocument") //
+			|| head.contains("CrossIndustryDocument") //
+			|| head.contains("SCRDMCCBDACIDAMessageStructure") //
+			|| head.contains("SCRDMCCBDACIOMessageStructure")) { //
 			version = 1;
-		} else if (head.contains("<rsm:CrossIndustryInvoice")) {
+		} else if (head.contains("CrossIndustryInvoice")) {
 			version = 2;
 		} else {
 			throw new Exception("ZUGFeRD version could not be determined");

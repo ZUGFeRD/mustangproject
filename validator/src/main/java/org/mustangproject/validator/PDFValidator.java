@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -55,6 +54,18 @@ public class PDFValidator extends Validator {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PDFValidator.class.getCanonicalName()); // log output
 	private static final PDFAFlavour[] PDF_A_3_FLAVOURS = {PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_B, PDFAFlavour.PDFA_3_U};
+
+	private static String escapeXmlSpecialChars(String value) {
+		if (value == null || value.isEmpty()) {
+			return value;
+		}
+		return value
+			.replace("&", "&amp;")
+			.replace("<", "&lt;")
+			.replace(">", "&gt;")
+			.replace("\"", "&quot;")
+			.replace("'", "&apos;");
+	}
 
 	private String pdfFilename;
 
@@ -113,10 +124,10 @@ public class PDFValidator extends Validator {
 			ItemDetails itemDetails = ItemDetails.fromValues(pdfFilename);
 			inputStream.mark(Integer.MAX_VALUE);
 			processorResult = processor.process(itemDetails, inputStream);
-			pdfReport = processorResult.getValidationResult().toString().replaceAll(
+			pdfReport = escapeXmlSpecialChars(processorResult.getValidationResult().toString().replaceAll(
 				"<\\?xml version=\"1\\.0\" encoding=\"utf-8\"\\?>",
 				""
-			);
+			));
 			inputStream.reset();
 		} catch (final Exception excep) {
 			context.addResultItem(new ValidationResultItem(ESeverity.exception, excep.getMessage()).setSection(7)
@@ -131,8 +142,10 @@ public class PDFValidator extends Validator {
 		String xmp;
 		if (zi.getXMP() == null) {
 			xmp = null;
-		} else {
+		} else if (zi.getXMP().indexOf('<') > 0) {
 			xmp = zi.getXMP().substring(zi.getXMP().indexOf('<'));
+		} else {
+			xmp = zi.getXMP();
 		}
 
 		final Document docXMP;
@@ -198,7 +211,7 @@ public class PDFValidator extends Validator {
 				for (int i = 0; i < nodes.getLength(); i++) {
 					Node item = nodes.item(i);
 					String textContent = item.getTextContent();
-					if (textContent != null && Set.of("INVOICE", "ORDER", "ORDER_RESPONSE", "ORDER_CHANGE").contains(textContent)) {
+					if (textContent != null && Arrays.asList("INVOICE", "ORDER", "ORDER_RESPONSE", "ORDER_CHANGE").contains(textContent)) {
 						documentTypeValid = true;
 					}
 				}

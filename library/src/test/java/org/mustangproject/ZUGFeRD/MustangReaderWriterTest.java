@@ -445,7 +445,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 				result.write(buffer, 0, length);
 			}
 
-			var bytes = result.toByteArray();
+			byte[] bytes = result.toByteArray();
 			ze.addAdditionalFile("test.pdf", bytes);
 
 			ze.setTransaction(this);
