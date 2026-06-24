@@ -101,6 +101,7 @@
       <ram:ApplicableTradeTax>
         <ram:CalculatedAmount>135.04</ram:CalculatedAmount>
         <ram:TypeCode>VAT</ram:TypeCode>
+        <ram:ExemptionReason>Normalsatz</ram:ExemptionReason>
         <ram:BasisAmount>710.79</ram:BasisAmount>
         <ram:CategoryCode>S</ram:CategoryCode>
         <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
