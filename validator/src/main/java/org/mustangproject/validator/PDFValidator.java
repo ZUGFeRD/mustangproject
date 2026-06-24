@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -212,7 +211,7 @@ public class PDFValidator extends Validator {
 				for (int i = 0; i < nodes.getLength(); i++) {
 					Node item = nodes.item(i);
 					String textContent = item.getTextContent();
-					if (textContent != null && Set.of("INVOICE", "ORDER", "ORDER_RESPONSE", "ORDER_CHANGE").contains(textContent)) {
+					if (textContent != null && Arrays.asList("INVOICE", "ORDER", "ORDER_RESPONSE", "ORDER_CHANGE").contains(textContent)) {
 						documentTypeValid = true;
 					}
 				}

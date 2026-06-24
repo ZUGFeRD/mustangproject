@@ -478,19 +478,19 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote/ram:SubjectCode">
       <let name="codeValue4" value="."/>
-      <assert test="string-length($codeValue4)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=4]/enumeration[@value=$codeValue4]">
+      <assert test="string-length($codeValue4)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=4]/enumeration[@value=$codeValue4]">
 	Value of 'ram:SubjectCode' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IssueDateTime/udt:DateTimeString">
       <assert test="@format">
 	Attribute '@format' is required in this context.</assert>
       <let name="codeValue3" value="@format"/>
-      <assert test="string-length($codeValue3)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert test="string-length($codeValue3)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:TypeCode">
       <let name="codeValue2" value="."/>
-      <assert test="string-length($codeValue2)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=2]/enumeration[@value=$codeValue2]">
+      <assert test="string-length($codeValue2)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=2]/enumeration[@value=$codeValue2]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext">
@@ -513,7 +513,7 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID">
       <let name="codeValue1" value="."/>
-      <assert test="string-length($codeValue1)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=1]/enumeration[@value=$codeValue1]">
+      <assert test="string-length($codeValue1)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=1]/enumeration[@value=$codeValue1]">
 	Value of 'ram:ID' is not allowed.</assert>
       <report test="@schemeID">
 	Attribute @schemeID' marked as not used in the given context.</report>
@@ -548,7 +548,7 @@
       <assert test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
       <let name="codeValue5" value="@schemeID"/>
-      <assert test="string-length($codeValue5)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
+      <assert test="string-length($codeValue5)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:ID">
@@ -563,12 +563,12 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue7" value="."/>
-      <assert test="string-length($codeValue7)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
+      <assert test="string-length($codeValue7)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue6" value="@schemeID"/>
-      <assert test="string-length($codeValue6)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=6]/enumeration[@value=$codeValue6]">
+      <assert test="string-length($codeValue6)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=6]/enumeration[@value=$codeValue6]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:TradingBusinessName">
@@ -583,7 +583,7 @@
       <assert test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
       <let name="codeValue9" value="@schemeID"/>
-      <assert test="string-length($codeValue9)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
+      <assert test="string-length($codeValue9)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication">
@@ -594,7 +594,7 @@
       <assert test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
       <let name="codeValue8" value="@schemeID"/>
-      <assert test="string-length($codeValue8)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=8]/enumeration[@value=$codeValue8]">
+      <assert test="string-length($codeValue8)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=8]/enumeration[@value=$codeValue8]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument">
@@ -633,7 +633,7 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue7" value="."/>
-      <assert test="string-length($codeValue7)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
+      <assert test="string-length($codeValue7)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization">
@@ -648,7 +648,7 @@
       <assert test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
       <let name="codeValue10" value="@schemeID"/>
-      <assert test="string-length($codeValue10)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=10]/enumeration[@value=$codeValue10]">
+      <assert test="string-length($codeValue10)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=10]/enumeration[@value=$codeValue10]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:URIUniversalCommunication">
@@ -671,7 +671,7 @@
       <assert test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
       <let name="codeValue5" value="@schemeID"/>
-      <assert test="string-length($codeValue5)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
+      <assert test="string-length($codeValue5)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:ID">
@@ -686,12 +686,12 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue7" value="."/>
-      <assert test="string-length($codeValue7)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
+      <assert test="string-length($codeValue7)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue6" value="@schemeID"/>
-      <assert test="string-length($codeValue6)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=6]/enumeration[@value=$codeValue6]">
+      <assert test="string-length($codeValue6)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=6]/enumeration[@value=$codeValue6]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ not(ram:ID/@schemeID=&quot;VA&quot;) and  not(ram:ID/@schemeID=&quot;FC&quot;)]">
@@ -722,7 +722,7 @@
       <assert test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
       <let name="codeValue8" value="@schemeID"/>
-      <assert test="string-length($codeValue8)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=8]/enumeration[@value=$codeValue8]">
+      <assert test="string-length($codeValue8)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=8]/enumeration[@value=$codeValue8]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent">
@@ -733,7 +733,7 @@
       <assert test="@format">
 	Attribute '@format' is required in this context.</assert>
       <let name="codeValue3" value="@format"/>
-      <assert test="string-length($codeValue3)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert test="string-length($codeValue3)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument">
@@ -758,7 +758,7 @@
       <assert test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
       <let name="codeValue5" value="@schemeID"/>
-      <assert test="string-length($codeValue5)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
+      <assert test="string-length($codeValue5)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:ID">
@@ -773,7 +773,7 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID">
       <let name="codeValue7" value="."/>
-      <assert test="string-length($codeValue7)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
+      <assert test="string-length($codeValue7)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
 	Value of 'ram:CountryID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedLegalOrganization">
@@ -822,36 +822,36 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode">
       <let name="codeValue14" value="."/>
-      <assert test="string-length($codeValue14)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=14]/enumeration[@value=$codeValue14]">
+      <assert test="string-length($codeValue14)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=14]/enumeration[@value=$codeValue14]">
 	Value of 'ram:CategoryCode' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:DueDateTypeCode">
       <let name="codeValue16" value="."/>
-      <assert test="string-length($codeValue16)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=16]/enumeration[@value=$codeValue16]">
+      <assert test="string-length($codeValue16)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=16]/enumeration[@value=$codeValue16]">
 	Value of 'ram:DueDateTypeCode' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:ExemptionReasonCode">
       <let name="codeValue15" value="."/>
-      <assert test="string-length($codeValue15)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=15]/enumeration[@value=$codeValue15]">
+      <assert test="string-length($codeValue15)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=15]/enumeration[@value=$codeValue15]">
 	Value of 'ram:ExemptionReasonCode' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:TypeCode">
       <let name="codeValue13" value="."/>
-      <assert test="string-length($codeValue13)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=13]/enumeration[@value=$codeValue13]">
+      <assert test="string-length($codeValue13)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=13]/enumeration[@value=$codeValue13]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod/ram:EndDateTime/udt:DateTimeString">
       <assert test="@format">
 	Attribute '@format' is required in this context.</assert>
       <let name="codeValue3" value="@format"/>
-      <assert test="string-length($codeValue3)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert test="string-length($codeValue3)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod/ram:StartDateTime/udt:DateTimeString">
       <assert test="@format">
 	Attribute '@format' is required in this context.</assert>
       <let name="codeValue3" value="@format"/>
-      <assert test="string-length($codeValue3)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert test="string-length($codeValue3)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:CreditorReferenceID">
@@ -860,14 +860,14 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode">
       <let name="codeValue11" value="."/>
-      <assert test="string-length($codeValue11)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
+      <assert test="string-length($codeValue11)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
 	Value of 'ram:InvoiceCurrencyCode' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString">
       <assert test="@format">
 	Attribute '@format' is required in this context.</assert>
       <let name="codeValue21" value="@format"/>
-      <assert test="string-length($codeValue21)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
+      <assert test="string-length($codeValue21)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
 	Value of '@format' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:IssuerAssignedID">
@@ -886,7 +886,7 @@
       <assert test="@schemeID">
 	Attribute '@schemeID' is required in this context.</assert>
       <let name="codeValue5" value="@schemeID"/>
-      <assert test="string-length($codeValue5)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
+      <assert test="string-length($codeValue5)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:ID">
@@ -899,7 +899,7 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
       <let name="codeValue6" value="@schemeID"/>
-      <assert test="string-length($codeValue6)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=6]/enumeration[@value=$codeValue6]">
+      <assert test="string-length($codeValue6)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=6]/enumeration[@value=$codeValue6]">
 	Value of '@schemeID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:TradingBusinessName">
@@ -954,7 +954,7 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:CategoryCode">
       <let name="codeValue14" value="."/>
-      <assert test="string-length($codeValue14)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=14]/enumeration[@value=$codeValue14]">
+      <assert test="string-length($codeValue14)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=14]/enumeration[@value=$codeValue14]">
 	Value of 'ram:CategoryCode' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:DueDateTypeCode">
@@ -971,12 +971,12 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:TypeCode">
       <let name="codeValue13" value="."/>
-      <assert test="string-length($codeValue13)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=13]/enumeration[@value=$codeValue13]">
+      <assert test="string-length($codeValue13)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=13]/enumeration[@value=$codeValue13]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ReasonCode">
       <let name="codeValue17" value="."/>
-      <assert test="string-length($codeValue17)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=17]/enumeration[@value=$codeValue17]">
+      <assert test="string-length($codeValue17)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=17]/enumeration[@value=$codeValue17]">
 	Value of 'ram:ReasonCode' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]">
@@ -1011,7 +1011,7 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:CategoryCode">
       <let name="codeValue14" value="."/>
-      <assert test="string-length($codeValue14)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=14]/enumeration[@value=$codeValue14]">
+      <assert test="string-length($codeValue14)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=14]/enumeration[@value=$codeValue14]">
 	Value of 'ram:CategoryCode' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:DueDateTypeCode">
@@ -1028,7 +1028,7 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:TypeCode">
       <let name="codeValue13" value="."/>
-      <assert test="string-length($codeValue13)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=13]/enumeration[@value=$codeValue13]">
+      <assert test="string-length($codeValue13)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=13]/enumeration[@value=$codeValue13]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ReasonCode[ not(not (@listID)) and  not(@listID=&quot;5153&quot;)]">
@@ -1037,7 +1037,7 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ReasonCode[not (@listID)]">
       <let name="codeValue18" value="."/>
-      <assert test="string-length($codeValue18)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=18]/enumeration[@value=$codeValue18]">
+      <assert test="string-length($codeValue18)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=18]/enumeration[@value=$codeValue18]">
 	Value of 'ram:ReasonCode[not (@listID)]' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms">
@@ -1054,7 +1054,7 @@
       <assert test="@format">
 	Attribute '@format' is required in this context.</assert>
       <let name="codeValue3" value="@format"/>
-      <assert test="string-length($codeValue3)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+      <assert test="string-length($codeValue3)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
 	Value of '@format' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation">
@@ -1107,12 +1107,12 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=../../ram:InvoiceCurrencyCode]">
       <let name="codeValue19" value="@currencyID"/>
-      <assert test="string-length($codeValue19)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=19]/enumeration[@value=$codeValue19]">
+      <assert test="string-length($codeValue19)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=19]/enumeration[@value=$codeValue19]">
 	Value of '@currencyID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=../../ram:TaxCurrencyCode]">
       <let name="codeValue20" value="@currencyID"/>
-      <assert test="string-length($codeValue20)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=20]/enumeration[@value=$codeValue20]">
+      <assert test="string-length($codeValue20)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=20]/enumeration[@value=$codeValue20]">
 	Value of '@currencyID' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TotalPrepaidAmount">
@@ -1143,12 +1143,12 @@
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:TypeCode">
       <let name="codeValue12" value="."/>
-      <assert test="string-length($codeValue12)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
+      <assert test="string-length($codeValue12)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
 	Value of 'ram:TypeCode' is not allowed.</assert>
     </rule>
     <rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode">
       <let name="codeValue11" value="."/>
-      <assert test="string-length($codeValue11)=0 or document(&apos;FACTUR-X_BASICWL_codedb.xml&apos;)/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
+      <assert test="string-length($codeValue11)=0 or document(&apos;FACTUR-X_BASIC-WL_codedb.xml&apos;)/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
 	Value of 'ram:TaxCurrencyCode' is not allowed.</assert>
     </rule>
   </pattern>

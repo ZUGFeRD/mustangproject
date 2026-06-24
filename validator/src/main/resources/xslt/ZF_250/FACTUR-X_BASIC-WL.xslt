@@ -486,6 +486,20 @@
         <xsl:apply-templates />
       </svrl:active-pattern>
       <xsl:apply-templates mode="M50" select="/" />
+      <svrl:active-pattern>
+        <xsl:attribute name="document">
+          <xsl:value-of select="document-uri(/)" />
+        </xsl:attribute>
+        <xsl:apply-templates />
+      </svrl:active-pattern>
+      <xsl:apply-templates mode="M51" select="/" />
+      <svrl:active-pattern>
+        <xsl:attribute name="document">
+          <xsl:value-of select="document-uri(/)" />
+        </xsl:attribute>
+        <xsl:apply-templates />
+      </svrl:active-pattern>
+      <xsl:apply-templates mode="M52" select="/" />
     </svrl:schematron-output>
   </xsl:template>
 
@@ -504,6 +518,7 @@
       <xsl:when test="(ram:BasisAmount)" />
       <xsl:otherwise>
         <svrl:failed-assert test="(ram:BasisAmount)">
+          <xsl:attribute name="id">FX-SCH-A-000047</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -518,6 +533,7 @@
       <xsl:when test="(ram:CalculatedAmount)" />
       <xsl:otherwise>
         <svrl:failed-assert test="(ram:CalculatedAmount)">
+          <xsl:attribute name="id">FX-SCH-A-000048</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -532,6 +548,7 @@
       <xsl:when test="(ram:CategoryCode)" />
       <xsl:otherwise>
         <svrl:failed-assert test="(ram:CategoryCode)">
+          <xsl:attribute name="id">FX-SCH-A-000049</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -546,6 +563,7 @@
       <xsl:when test="(ram:RateApplicablePercent) or (ram:CategoryCode = 'O')" />
       <xsl:otherwise>
         <svrl:failed-assert test="(ram:RateApplicablePercent) or (ram:CategoryCode = 'O')">
+          <xsl:attribute name="id">FX-SCH-A-000050</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -560,6 +578,7 @@
       <xsl:when test="((ram:TaxPointDate) and not (ram:DueDateTypeCode)) or (not (ram:TaxPointDate) and (ram:DueDateTypeCode)) or (not (ram:TaxPointDate) and not (ram:DueDateTypeCode))" />
       <xsl:otherwise>
         <svrl:failed-assert test="((ram:TaxPointDate) and not (ram:DueDateTypeCode)) or (not (ram:TaxPointDate) and (ram:DueDateTypeCode)) or (not (ram:TaxPointDate) and not (ram:DueDateTypeCode))">
+          <xsl:attribute name="id">FX-SCH-A-000051</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -574,6 +593,7 @@
       <xsl:when test="(round(.[normalize-space(upper-case(ram:TypeCode)) = 'VAT']/xs:decimal(ram:RateApplicablePercent)) = 0 and (round(xs:decimal(ram:CalculatedAmount)) = 0)) or (round(.[normalize-space(upper-case(ram:TypeCode)) = 'VAT']/xs:decimal(ram:RateApplicablePercent)) != 0 and ((abs(xs:decimal(ram:CalculatedAmount)) - 1 &lt;= round(abs(xs:decimal(ram:BasisAmount)) * (.[normalize-space(upper-case(ram:TypeCode)) = 'VAT']/xs:decimal(ram:RateApplicablePercent) div 100) * 10 * 10) div 100 ) and (abs(xs:decimal(ram:CalculatedAmount)) + 1 >= round(abs(xs:decimal(ram:BasisAmount)) * (.[normalize-space(upper-case(ram:TypeCode)) = 'VAT']/xs:decimal(ram:RateApplicablePercent) div 100) * 10 * 10) div 100 ))) or (not(exists(.[normalize-space(upper-case(ram:TypeCode))='VAT']/xs:decimal(ram:RateApplicablePercent))) and (round(xs:decimal(ram:CalculatedAmount)) = 0))" />
       <xsl:otherwise>
         <svrl:failed-assert test="(round(.[normalize-space(upper-case(ram:TypeCode)) = 'VAT']/xs:decimal(ram:RateApplicablePercent)) = 0 and (round(xs:decimal(ram:CalculatedAmount)) = 0)) or (round(.[normalize-space(upper-case(ram:TypeCode)) = 'VAT']/xs:decimal(ram:RateApplicablePercent)) != 0 and ((abs(xs:decimal(ram:CalculatedAmount)) - 1 &lt;= round(abs(xs:decimal(ram:BasisAmount)) * (.[normalize-space(upper-case(ram:TypeCode)) = 'VAT']/xs:decimal(ram:RateApplicablePercent) div 100) * 10 * 10) div 100 ) and (abs(xs:decimal(ram:CalculatedAmount)) + 1 >= round(abs(xs:decimal(ram:BasisAmount)) * (.[normalize-space(upper-case(ram:TypeCode)) = 'VAT']/xs:decimal(ram:RateApplicablePercent) div 100) * 10 * 10) div 100 ))) or (not(exists(.[normalize-space(upper-case(ram:TypeCode))='VAT']/xs:decimal(ram:RateApplicablePercent))) and (round(xs:decimal(ram:CalculatedAmount)) = 0))">
+          <xsl:attribute name="id">FX-SCH-A-000052</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -588,6 +608,7 @@
       <xsl:when test="string-length(substring-after(ram:BasisAmount,'.'))&lt;=2" />
       <xsl:otherwise>
         <svrl:failed-assert test="string-length(substring-after(ram:BasisAmount,'.'))&lt;=2">
+          <xsl:attribute name="id">FX-SCH-A-000053</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -602,6 +623,7 @@
       <xsl:when test="string-length(substring-after(ram:CalculatedAmount,'.'))&lt;=2" />
       <xsl:otherwise>
         <svrl:failed-assert test="string-length(substring-after(ram:CalculatedAmount,'.'))&lt;=2">
+          <xsl:attribute name="id">FX-SCH-A-000054</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -629,6 +651,7 @@
       <xsl:when test="../ram:CalculatedAmount = 0" />
       <xsl:otherwise>
         <svrl:failed-assert test="../ram:CalculatedAmount = 0">
+          <xsl:attribute name="id">FX-SCH-A-000055</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -643,6 +666,7 @@
       <xsl:when test="not(../ram:ExemptionReason) and not (../ram:ExemptionReasonCode)" />
       <xsl:otherwise>
         <svrl:failed-assert test="not(../ram:ExemptionReason) and not (../ram:ExemptionReasonCode)">
+          <xsl:attribute name="id">FX-SCH-A-000056</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -670,6 +694,7 @@
       <xsl:when test="(abs(xs:decimal(../ram:CalculatedAmount)) - 1 &lt; round(abs(xs:decimal(../ram:BasisAmount)) * ../ram:RateApplicablePercent) div 100 ) and (abs(xs:decimal(../ram:CalculatedAmount)) + 1 > round(abs(xs:decimal(../ram:BasisAmount)) * ../ram:RateApplicablePercent) div 100 )" />
       <xsl:otherwise>
         <svrl:failed-assert test="(abs(xs:decimal(../ram:CalculatedAmount)) - 1 &lt; round(abs(xs:decimal(../ram:BasisAmount)) * ../ram:RateApplicablePercent) div 100 ) and (abs(xs:decimal(../ram:CalculatedAmount)) + 1 > round(abs(xs:decimal(../ram:BasisAmount)) * ../ram:RateApplicablePercent) div 100 )">
+          <xsl:attribute name="id">FX-SCH-A-000057</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -684,6 +709,7 @@
       <xsl:when test="not(../ram:ExemptionReason) and not (../ram:ExemptionReasonCode)" />
       <xsl:otherwise>
         <svrl:failed-assert test="not(../ram:ExemptionReason) and not (../ram:ExemptionReasonCode)">
+          <xsl:attribute name="id">FX-SCH-A-000058</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -703,19 +729,21 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod" mode="M8" priority="1000">
-    <svrl:fired-rule context="//ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod" />
+<xsl:template match="//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='Z'][upper-case(ram:TypeCode) = 'VAT']" mode="M8" priority="1000">
+    <svrl:fired-rule context="//ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode='Z'][upper-case(ram:TypeCode) = 'VAT']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(ram:EndDateTime/udt:DateTimeString[@format = '102']) >= (ram:StartDateTime/udt:DateTimeString[@format = '102']) or not (ram:EndDateTime) or not (ram:StartDateTime)" />
+      <xsl:when test="(for  &#xD;&#xA;        $rate in xs:decimal(ram:RateApplicablePercent),&#xD;&#xA;        $exempReasonText in normalize-space(ram:ExemptionReason),&#xD;&#xA;        $exempReasonCode in normalize-space(ram:ExemptionReasonCode),&#xD;&#xA;        $basisAmount in xs:decimal(ram:BasisAmount),&#xD;&#xA;        $calculatedAmountBT131 in xs:decimal(round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'Z' and ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate and normalize-space(ram:ApplicableTradeTax/ram:ExemptionReasonCode) = $exempReasonCode and normalize-space(ram:ApplicableTradeTax/ram:ExemptionReason) = $exempReasonText]/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount)) * 100) div 100),&#xD;&#xA;        $allowancesAmountBT92 in xs:decimal(round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='Z' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate and normalize-space(ram:CategoryTradeTax/ram:ExemptionReasonCode) = $exempReasonCode and normalize-space(ram:CategoryTradeTax/ram:ExemptionReason) = $exempReasonText]/xs:decimal(ram:ActualAmount)) * 100) div 100),&#xD;&#xA;        $chargesAmountBT99 in xs:decimal(round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='Z' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate and normalize-space(ram:CategoryTradeTax/ram:ExemptionReasonCode) = $exempReasonCode and normalize-space(ram:CategoryTradeTax/ram:ExemptionReason) = $exempReasonText]/xs:decimal(ram:ActualAmount)) * 100) div 100),&#xD;&#xA;        $nbLineItems in xs:decimal(count(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem[ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode = 'Z' and ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate and normalize-space(ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:ExemptionReasonCode) = $exempReasonCode and normalize-space(ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:ExemptionReason) = $exempReasonText])),&#xD;&#xA;        $nbAllowancesOrCharges in xs:decimal(count(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:CategoryTradeTax/ram:CategoryCode='Z' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate  and normalize-space(ram:CategoryTradeTax/ram:ExemptionReasonCode) = $exempReasonCode and normalize-space(ram:CategoryTradeTax/ram:ExemptionReason) = $exempReasonText])),&#xD;&#xA;        $logisticChargeAmount in xs:decimal(round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge[ram:AppliedTradeTax/ram:CategoryCode='Z' and ram:AppliedTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate and normalize-space(ram:AppliedTradeTax/ram:ExemptionReasonCode) = $exempReasonCode and normalize-space(ram:AppliedTradeTax/ram:ExemptionReason) = $exempReasonText]/xs:decimal(ram:AppliedAmount)) * 100) div 100),&#xD;&#xA;        $nblogisticCharge in xs:decimal(count(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge[ram:AppliedTradeTax/ram:CategoryCode='Z' and ram:AppliedTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate and normalize-space(ram:AppliedTradeTax/ram:ExemptionReasonCode) = $exempReasonCode and normalize-space(ram:AppliedTradeTax/ram:ExemptionReason) = $exempReasonText]))&#xD;&#xA;        return      &#xD;&#xA;        abs($basisAmount - $calculatedAmountBT131 + $allowancesAmountBT92 - $chargesAmountBT99 - $logisticChargeAmount) le 0.01 * ($nbLineItems + $nbAllowancesOrCharges + $nblogisticCharge))" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(ram:EndDateTime/udt:DateTimeString[@format = '102']) >= (ram:StartDateTime/udt:DateTimeString[@format = '102']) or not (ram:EndDateTime) or not (ram:StartDateTime)">
+        <svrl:failed-assert test="(for $rate in xs:decimal(ram:RateApplicablePercent), $exempReasonText in normalize-space(ram:ExemptionReason), $exempReasonCode in normalize-space(ram:ExemptionReasonCode), $basisAmount in xs:decimal(ram:BasisAmount), $calculatedAmountBT131 in xs:decimal(round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeSettlement[ram:ApplicableTradeTax/ram:CategoryCode = 'Z' and ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate and normalize-space(ram:ApplicableTradeTax/ram:ExemptionReasonCode) = $exempReasonCode and normalize-space(ram:ApplicableTradeTax/ram:ExemptionReason) = $exempReasonText]/ram:SpecifiedTradeSettlementLineMonetarySummation/xs:decimal(ram:LineTotalAmount)) * 100) div 100), $allowancesAmountBT92 in xs:decimal(round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=false() and ram:CategoryTradeTax/ram:CategoryCode='Z' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate and normalize-space(ram:CategoryTradeTax/ram:ExemptionReasonCode) = $exempReasonCode and normalize-space(ram:CategoryTradeTax/ram:ExemptionReason) = $exempReasonText]/xs:decimal(ram:ActualAmount)) * 100) div 100), $chargesAmountBT99 in xs:decimal(round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=true() and ram:CategoryTradeTax/ram:CategoryCode='Z' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate and normalize-space(ram:CategoryTradeTax/ram:ExemptionReasonCode) = $exempReasonCode and normalize-space(ram:CategoryTradeTax/ram:ExemptionReason) = $exempReasonText]/xs:decimal(ram:ActualAmount)) * 100) div 100), $nbLineItems in xs:decimal(count(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem[ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode = 'Z' and ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/xs:decimal(ram:RateApplicablePercent) =$rate and normalize-space(ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:ExemptionReasonCode) = $exempReasonCode and normalize-space(ram:SpecifiedLineTradeSettlement/ram:ApplicableTradeTax/ram:ExemptionReason) = $exempReasonText])), $nbAllowancesOrCharges in xs:decimal(count(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:CategoryTradeTax/ram:CategoryCode='Z' and ram:CategoryTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate and normalize-space(ram:CategoryTradeTax/ram:ExemptionReasonCode) = $exempReasonCode and normalize-space(ram:CategoryTradeTax/ram:ExemptionReason) = $exempReasonText])), $logisticChargeAmount in xs:decimal(round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge[ram:AppliedTradeTax/ram:CategoryCode='Z' and ram:AppliedTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate and normalize-space(ram:AppliedTradeTax/ram:ExemptionReasonCode) = $exempReasonCode and normalize-space(ram:AppliedTradeTax/ram:ExemptionReason) = $exempReasonText]/xs:decimal(ram:AppliedAmount)) * 100) div 100), $nblogisticCharge in xs:decimal(count(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge[ram:AppliedTradeTax/ram:CategoryCode='Z' and ram:AppliedTradeTax/xs:decimal(ram:RateApplicablePercent)=$rate and normalize-space(ram:AppliedTradeTax/ram:ExemptionReasonCode) = $exempReasonCode and normalize-space(ram:AppliedTradeTax/ram:ExemptionReason) = $exempReasonText])) return abs($basisAmount - $calculatedAmountBT131 + $allowancesAmountBT92 - $chargesAmountBT99 - $logisticChargeAmount) le 0.01 * ($nbLineItems + $nbAllowancesOrCharges + $nblogisticCharge))">
+          <xsl:attribute name="id">FX-SCH-A-000399</xsl:attribute>
+          <xsl:attribute name="flag">warning</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-29]-If both Invoicing period start date (BT-73) and Invoicing period end date (BT-74) are given then the Invoicing period end date (BT-74) shall be later or equal to the Invoicing period start date (BT-73).</svrl:text>
+	[BR-FXEXT-Z-08rev] - With Exemption reason EN16931_2026  - In a VAT breakdown (BG-23) where VAT category code (BT-118) is equal to “Z” ("Zero Rated"), Absolute Value of (VAT category taxable amount (BT-116) - ∑ Invoice line net amounts (BT-131) + Σ Document level allowance amounts (BT-92) - Σ Document level charge amounts (BT-99) - Σ Logistics Service fee amounts (BT-X-272)) &lt;= 0,01 * ((Number of line net amounts (BT-131) + Number of Document level allowance amounts (BT-92) + Number of Document level charge amounts (BT-99) + Number of Logistics Service fee amounts (BT-X-272)), where the VAT category code (BT-151, BT-95, BT-102, BT-X-273) is "Zero Rated" (Z).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -730,103 +758,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge/ram:ChargeIndicator[udt:Indicator='false']" mode="M9" priority="1000">
-    <svrl:fired-rule context="//ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge/ram:ChargeIndicator[udt:Indicator='false']" />
+<xsl:template match="//ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod" mode="M9" priority="1000">
+    <svrl:fired-rule context="//ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(../ram:ActualAmount)" />
+      <xsl:when test="(ram:EndDateTime/udt:DateTimeString[@format = '102']) >= (ram:StartDateTime/udt:DateTimeString[@format = '102']) or not (ram:EndDateTime) or not (ram:StartDateTime)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(../ram:ActualAmount)">
+        <svrl:failed-assert test="(ram:EndDateTime/udt:DateTimeString[@format = '102']) >= (ram:StartDateTime/udt:DateTimeString[@format = '102']) or not (ram:EndDateTime) or not (ram:StartDateTime)">
+          <xsl:attribute name="id">FX-SCH-A-000059</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-31]-Each Document level allowance (BG-20) shall have a Document level allowance amount (BT-92).</svrl:text>
+	[BR-29]-If both Invoicing period start date (BT-73) and Invoicing period end date (BT-74) are given then the Invoicing period end date (BT-74) shall be later or equal to the Invoicing period start date (BT-73).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(../ram:CategoryTradeTax[upper-case(ram:TypeCode) = 'VAT']/ram:CategoryCode)" />
+      <xsl:when test="(ram:StartDateTime) or (ram:EndDateTime)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(../ram:CategoryTradeTax[upper-case(ram:TypeCode) = 'VAT']/ram:CategoryCode)">
+        <svrl:failed-assert test="(ram:StartDateTime) or (ram:EndDateTime)">
+          <xsl:attribute name="id">FX-SCH-A-000060</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-32]-Each Document level allowance (BG-20) shall have a Document level allowance VAT category code (BT-95).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(../ram:Reason) or (../ram:ReasonCode)" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(../ram:Reason) or (../ram:ReasonCode)">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-33]-Each Document level allowance (BG-20) shall have a Document level allowance reason (BT-97) or a Document level allowance reason code (BT-98).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="true()" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="true()">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-CO-05]-Document level allowance reason code (BT-98) and Document level allowance reason (BT-97) shall indicate the same type of allowance.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(../ram:Reason) or (../ram:ReasonCode)" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(../ram:Reason) or (../ram:ReasonCode)">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-CO-21]-Each Document level allowance (BG-20) shall contain a Document level allowance reason (BT-97) or a Document level allowance reason code (BT-98), or both.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="string-length(substring-after(../ram:ActualAmount[1],'.'))&lt;=2" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="string-length(substring-after(../ram:ActualAmount[1],'.'))&lt;=2">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-DEC-01]-The allowed maximum number of decimals for the Document level allowance amount (BT-92) is 2.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="string-length(substring-after(../ram:BasisAmount,'.'))&lt;=2" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="string-length(substring-after(../ram:BasisAmount,'.'))&lt;=2">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-DEC-02]-The allowed maximum number of decimals for the Document level allowance base amount (BT-93) is 2.</svrl:text>
+	[BR-CO-19]-If Invoicing period (BG-14) is used, the Invoicing period start date (BT-73) or the Invoicing period end date (BT-74) shall be filled, or both.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -841,19 +801,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge/ram:ChargeIndicator[udt:Indicator='true']" mode="M10" priority="1000">
-    <svrl:fired-rule context="//ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge/ram:ChargeIndicator[udt:Indicator='true']" />
+<xsl:template match="//ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge/ram:ChargeIndicator[udt:Indicator='false']" mode="M10" priority="1000">
+    <svrl:fired-rule context="//ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge/ram:ChargeIndicator[udt:Indicator='false']" />
 
 		<!--ASSERT -->
 <xsl:choose>
       <xsl:when test="(../ram:ActualAmount)" />
       <xsl:otherwise>
         <svrl:failed-assert test="(../ram:ActualAmount)">
+          <xsl:attribute name="id">FX-SCH-A-000061</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-36]-Each Document level charge (BG-21) shall have a Document level charge amount (BT-99).</svrl:text>
+	[BR-31]-Each Document level allowance (BG-20) shall have a Document level allowance amount (BT-92).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -863,11 +824,12 @@
       <xsl:when test="(../ram:CategoryTradeTax[upper-case(ram:TypeCode) = 'VAT']/ram:CategoryCode)" />
       <xsl:otherwise>
         <svrl:failed-assert test="(../ram:CategoryTradeTax[upper-case(ram:TypeCode) = 'VAT']/ram:CategoryCode)">
+          <xsl:attribute name="id">FX-SCH-A-000062</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-37]-Each Document level charge (BG-21) shall have a Document level charge VAT category code (BT-102).</svrl:text>
+	[BR-32]-Each Document level allowance (BG-20) shall have a Document level allowance VAT category code (BT-95).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -877,11 +839,12 @@
       <xsl:when test="(../ram:Reason) or (../ram:ReasonCode)" />
       <xsl:otherwise>
         <svrl:failed-assert test="(../ram:Reason) or (../ram:ReasonCode)">
+          <xsl:attribute name="id">FX-SCH-A-000063</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-38]-Each Document level charge (BG-21) shall have a Document level charge reason (BT-104) or a Document level charge reason code (BT-105).</svrl:text>
+	[BR-33]-Each Document level allowance (BG-20) shall have a Document level allowance reason (BT-97) or a Document level allowance reason code (BT-98).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -891,11 +854,12 @@
       <xsl:when test="true()" />
       <xsl:otherwise>
         <svrl:failed-assert test="true()">
+          <xsl:attribute name="id">FX-SCH-A-000064</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-CO-06]-Document level charge reason code (BT-105) and Document level charge reason (BT-104) shall indicate the same type of charge.</svrl:text>
+	[BR-CO-05]-Document level allowance reason code (BT-98) and Document level allowance reason (BT-97) shall indicate the same type of allowance.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -905,11 +869,12 @@
       <xsl:when test="(../ram:Reason) or (../ram:ReasonCode)" />
       <xsl:otherwise>
         <svrl:failed-assert test="(../ram:Reason) or (../ram:ReasonCode)">
+          <xsl:attribute name="id">FX-SCH-A-000065</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-CO-22]-Each Document level charge (BG-21) shall contain a Document level charge reason (BT-104) or a Document level charge reason code (BT-105), or both.</svrl:text>
+	[BR-CO-21]-Each Document level allowance (BG-20) shall contain a Document level allowance reason (BT-97) or a Document level allowance reason code (BT-98), or both.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -919,11 +884,12 @@
       <xsl:when test="string-length(substring-after(../ram:ActualAmount[1],'.'))&lt;=2" />
       <xsl:otherwise>
         <svrl:failed-assert test="string-length(substring-after(../ram:ActualAmount[1],'.'))&lt;=2">
+          <xsl:attribute name="id">FX-SCH-A-000066</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-DEC-05]-The allowed maximum number of decimals for the Document level charge amount (BT-99) is 2.</svrl:text>
+	[BR-DEC-01]-The allowed maximum number of decimals for the Document level allowance amount (BT-92) is 2.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -933,11 +899,12 @@
       <xsl:when test="string-length(substring-after(../ram:BasisAmount,'.'))&lt;=2" />
       <xsl:otherwise>
         <svrl:failed-assert test="string-length(substring-after(../ram:BasisAmount,'.'))&lt;=2">
+          <xsl:attribute name="id">FX-SCH-A-000067</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-DEC-06]-The allowed maximum number of decimals for the Document level charge base amount (BT-100) is 2.</svrl:text>
+	[BR-DEC-02]-The allowed maximum number of decimals for the Document level allowance base amount (BT-93) is 2.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -952,19 +919,110 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:PayeeTradeParty" mode="M11" priority="1000">
-    <svrl:fired-rule context="//ram:PayeeTradeParty" />
+<xsl:template match="//ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge/ram:ChargeIndicator[udt:Indicator='true']" mode="M11" priority="1000">
+    <svrl:fired-rule context="//ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge/ram:ChargeIndicator[udt:Indicator='true']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(ram:Name) and (not(ram:Name = ../ram:SellerTradeParty/ram:Name) and not(ram:ID = ../ram:SellerTradeParty/ram:ID) and not(ram:SpecifiedLegalOrganization/ram:ID = ../ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:ID))" />
+      <xsl:when test="(../ram:ActualAmount)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(ram:Name) and (not(ram:Name = ../ram:SellerTradeParty/ram:Name) and not(ram:ID = ../ram:SellerTradeParty/ram:ID) and not(ram:SpecifiedLegalOrganization/ram:ID = ../ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:ID))">
+        <svrl:failed-assert test="(../ram:ActualAmount)">
+          <xsl:attribute name="id">FX-SCH-A-000068</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-17]-The Payee name (BT-59) shall be provided in the Invoice, if the Payee (BG-10) is different from the Seller (BG-4).</svrl:text>
+	[BR-36]-Each Document level charge (BG-21) shall have a Document level charge amount (BT-99).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(../ram:CategoryTradeTax[upper-case(ram:TypeCode) = 'VAT']/ram:CategoryCode)" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(../ram:CategoryTradeTax[upper-case(ram:TypeCode) = 'VAT']/ram:CategoryCode)">
+          <xsl:attribute name="id">FX-SCH-A-000069</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-37]-Each Document level charge (BG-21) shall have a Document level charge VAT category code (BT-102).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(../ram:Reason) or (../ram:ReasonCode)" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(../ram:Reason) or (../ram:ReasonCode)">
+          <xsl:attribute name="id">FX-SCH-A-000070</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-38]-Each Document level charge (BG-21) shall have a Document level charge reason (BT-104) or a Document level charge reason code (BT-105).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="true()" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="true()">
+          <xsl:attribute name="id">FX-SCH-A-000071</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-CO-06]-Document level charge reason code (BT-105) and Document level charge reason (BT-104) shall indicate the same type of charge.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(../ram:Reason) or (../ram:ReasonCode)" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(../ram:Reason) or (../ram:ReasonCode)">
+          <xsl:attribute name="id">FX-SCH-A-000072</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-CO-22]-Each Document level charge (BG-21) shall contain a Document level charge reason (BT-104) or a Document level charge reason code (BT-105), or both.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="string-length(substring-after(../ram:ActualAmount[1],'.'))&lt;=2" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="string-length(substring-after(../ram:ActualAmount[1],'.'))&lt;=2">
+          <xsl:attribute name="id">FX-SCH-A-000073</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-DEC-05]-The allowed maximum number of decimals for the Document level charge amount (BT-99) is 2.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="string-length(substring-after(../ram:BasisAmount,'.'))&lt;=2" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="string-length(substring-after(../ram:BasisAmount,'.'))&lt;=2">
+          <xsl:attribute name="id">FX-SCH-A-000074</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-DEC-06]-The allowed maximum number of decimals for the Document level charge base amount (BT-100) is 2.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -979,61 +1037,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SellerTaxRepresentativeTradeParty" mode="M12" priority="1000">
-    <svrl:fired-rule context="//ram:SellerTaxRepresentativeTradeParty" />
+<xsl:template match="//ram:ApplicableTradeSettlementFinancialCard" mode="M12" priority="1000">
+    <svrl:fired-rule context="//ram:ApplicableTradeSettlementFinancialCard" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="normalize-space(ram:Name) != ''" />
+      <xsl:when test="string-length(normalize-space(ram:ID)) &lt;= 10" />
       <xsl:otherwise>
-        <svrl:failed-assert test="normalize-space(ram:Name) != ''">
+        <svrl:failed-assert test="string-length(normalize-space(ram:ID)) &lt;= 10">
+          <xsl:attribute name="id">FX-SCH-A-000281</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-18]-The Seller tax representative name (BT-62) shall be provided in the Invoice, if the Seller (BG-4) has a Seller tax representative party (BG-11).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(ram:PostalTradeAddress)" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(ram:PostalTradeAddress)">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-19]-The Seller tax representative postal address (BG-12) shall be provided in the Invoice, if the Seller (BG-4) has a Seller tax representative party (BG-11).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="normalize-space(ram:PostalTradeAddress/ram:CountryID) != ''" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="normalize-space(ram:PostalTradeAddress/ram:CountryID) != ''">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-20]-The Seller tax representative postal address (BG-12) shall contain a Tax representative country code (BT-69), if the Seller (BG-4) has a Seller tax representative party (BG-11).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA']!='')" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA']!='')">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-56]-Each Seller tax representative party (BG-11) shall have a Seller tax representative VAT identifier (BT-63).</svrl:text>
+	[BR-51]-In accordance with card payments security standards an invoice should never include a full card primary account number (BT-87). At the moment PCI Security Standards Council has defined that the first 6 digits and last 4 digits are the maximum number of digits to be shown.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1048,19 +1065,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SellerTradeParty" mode="M13" priority="1000">
-    <svrl:fired-rule context="//ram:SellerTradeParty" />
+<xsl:template match="//ram:PayeeTradeParty" mode="M13" priority="1000">
+    <svrl:fired-rule context="//ram:PayeeTradeParty" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(ram:ID) or (ram:GlobalID) or (ram:SpecifiedLegalOrganization/ram:ID) or (ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA'])" />
+      <xsl:when test="(ram:Name) and (not(ram:Name = ../ram:SellerTradeParty/ram:Name) and not(ram:ID = ../ram:SellerTradeParty/ram:ID) and not(ram:SpecifiedLegalOrganization/ram:ID = ../ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:ID))" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(ram:ID) or (ram:GlobalID) or (ram:SpecifiedLegalOrganization/ram:ID) or (ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA'])">
+        <svrl:failed-assert test="(ram:Name) and (not(ram:Name = ../ram:SellerTradeParty/ram:Name) and not(ram:ID = ../ram:SellerTradeParty/ram:ID) and not(ram:SpecifiedLegalOrganization/ram:ID = ../ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:ID))">
+          <xsl:attribute name="id">FX-SCH-A-000075</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-CO-26]-In order for the buyer to automatically identify a supplier, the Seller identifier (BT-29), the Seller legal registration identifier (BT-30) and/or the Seller VAT identifier (BT-31) shall be present.</svrl:text>
+	[BR-17]-The Payee name (BT-59) shall be provided in the Invoice, if the Payee (BG-10) is different from the Seller (BG-4).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1075,19 +1093,65 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA']" mode="M14" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA']" />
+<xsl:template match="//ram:SellerTaxRepresentativeTradeParty" mode="M14" priority="1000">
+    <svrl:fired-rule context="//ram:SellerTaxRepresentativeTradeParty" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="contains(' 1A AD AE AF AG AI AL AM AN AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH EL ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', substring(.,1,2), ' '))" />
+      <xsl:when test="normalize-space(ram:Name) != ''" />
       <xsl:otherwise>
-        <svrl:failed-assert test="contains(' 1A AD AE AF AG AI AL AM AN AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH EL ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', substring(.,1,2), ' '))">
+        <svrl:failed-assert test="normalize-space(ram:Name) != ''">
+          <xsl:attribute name="id">FX-SCH-A-000076</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-CO-09]-The Seller VAT identifier (BT-31), the Seller tax representative VAT identifier (BT-63) and the Buyer VAT identifier (BT-48) shall have a prefix in accordance with ISO code ISO 3166-1 alpha-2 by which the country of issue may be identified. Nevertheless, Greece may use the prefix ‘EL’.</svrl:text>
+	[BR-18]-The Seller tax representative name (BT-62) shall be provided in the Invoice, if the Seller (BG-4) has a Seller tax representative party (BG-11).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(ram:PostalTradeAddress)" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(ram:PostalTradeAddress)">
+          <xsl:attribute name="id">FX-SCH-A-000077</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-19]-The Seller tax representative postal address (BG-12) shall be provided in the Invoice, if the Seller (BG-4) has a Seller tax representative party (BG-11).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="normalize-space(ram:PostalTradeAddress/ram:CountryID) != ''" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="normalize-space(ram:PostalTradeAddress/ram:CountryID) != ''">
+          <xsl:attribute name="id">FX-SCH-A-000078</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-20]-The Seller tax representative postal address (BG-12) shall contain a Tax representative country code (BT-69), if the Seller (BG-4) has a Seller tax representative party (BG-11).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA']!='')" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA']!='')">
+          <xsl:attribute name="id">FX-SCH-A-000079</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-56]-Each Seller tax representative party (BG-11) shall have a Seller tax representative VAT identifier (BT-63).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1102,19 +1166,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge" mode="M15" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge" />
+<xsl:template match="//ram:SellerTradeParty" mode="M15" priority="1000">
+    <svrl:fired-rule context="//ram:SellerTradeParty" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(ram:ChargeIndicator)" />
+      <xsl:when test="(ram:ID) or (ram:GlobalID) or (ram:SpecifiedLegalOrganization/ram:ID) or (ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA'])" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(ram:ChargeIndicator)">
+        <svrl:failed-assert test="(ram:ID) or (ram:GlobalID) or (ram:SpecifiedLegalOrganization/ram:ID) or (ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA'])">
+          <xsl:attribute name="id">FX-SCH-A-000001</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[CII-SR-463]-Each Specified Trade Allowance Charge (BG-20)(BG-21) shall contain a Charge Indicator.</svrl:text>
+	[BR-CO-26]-In order for the buyer to automatically identify a supplier, the Seller identifier (BT-29), the Seller legal registration identifier (BT-30) and/or the Seller VAT identifier (BT-31) shall be present.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1129,33 +1194,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'AE']" mode="M16" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'AE']" />
+<xsl:template match="//ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA']" mode="M16" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTaxRegistration/ram:ID[@schemeID='VA']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:ID)" />
+      <xsl:when test="contains(' 1A AD AE AF AG AI AL AM AN AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH EL ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', substring(.,1,2), ' '))" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:ID)">
+        <svrl:failed-assert test="contains(' 1A AD AE AF AG AI AL AM AN AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BL BJ BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH EL ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XI YE YT ZA ZM ZW ', concat(' ', substring(.,1,2), ' '))">
+          <xsl:attribute name="id">FX-SCH-A-000002</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AE-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Reverse charge" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63) and the Buyer VAT identifier (BT-48) and/or the Buyer legal registration identifier (BT-47).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="ram:RateApplicablePercent = 0" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="ram:RateApplicablePercent = 0">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-AE-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Reverse charge" the Document level allowance VAT rate (BT-96) shall be 0 (zero).</svrl:text>
+	[BR-CO-09]-The Seller VAT identifier (BT-31), the Seller tax representative VAT identifier (BT-63) and the Buyer VAT identifier (BT-48) shall have a prefix in accordance with ISO code ISO 3166-1 alpha-2 by which the country of issue may be identified. Nevertheless, Greece may use the prefix ‘EL’.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1170,33 +1222,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'E']" mode="M17" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'E']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge" mode="M17" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
+      <xsl:when test="(ram:ChargeIndicator)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+        <svrl:failed-assert test="(ram:ChargeIndicator)">
+          <xsl:attribute name="id">FX-SCH-A-000348</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-E-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Exempt from VAT" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="ram:RateApplicablePercent = 0" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="ram:RateApplicablePercent = 0">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-E-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Exempt from VAT", the Document level allowance VAT rate (BT-96) shall be 0 (zero).</svrl:text>
+	[CII-SR-463]-Each Specified Trade Allowance Charge (BG-20)(BG-21) shall contain a Charge Indicator.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1211,19 +1250,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'G']" mode="M18" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'G']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'AE']" mode="M18" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'AE']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])" />
+      <xsl:when test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:ID)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])">
+        <svrl:failed-assert test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:ID)">
+          <xsl:attribute name="id">FX-SCH-A-000081</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-G-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Export outside the EU" shall contain the Seller VAT Identifier (BT-31) or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+	[BR-AE-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Reverse charge" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63) and the Buyer VAT identifier (BT-48) and/or the Buyer legal registration identifier (BT-47).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1233,11 +1273,12 @@
       <xsl:when test="ram:RateApplicablePercent = 0" />
       <xsl:otherwise>
         <svrl:failed-assert test="ram:RateApplicablePercent = 0">
+          <xsl:attribute name="id">FX-SCH-A-000082</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-G-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Export outside the EU" the Document level allowance VAT rate (BT-96) shall be 0 (zero).</svrl:text>
+	[BR-AE-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Reverse charge" the Document level allowance VAT rate (BT-96) shall be 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1252,19 +1293,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'K']" mode="M19" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'K']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'E']" mode="M19" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'E']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and //ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
+      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and //ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+          <xsl:attribute name="id">FX-SCH-A-000083</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-IC-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Intra-community supply" shall contain the Seller VAT Identifier (BT-31) or the Seller tax representative VAT identifier (BT-63) and the Buyer VAT identifier (BT-48).</svrl:text>
+	[BR-E-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Exempt from VAT" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1274,11 +1316,12 @@
       <xsl:when test="ram:RateApplicablePercent = 0" />
       <xsl:otherwise>
         <svrl:failed-assert test="ram:RateApplicablePercent = 0">
+          <xsl:attribute name="id">FX-SCH-A-000084</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-IC-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Intra-community supply" the Document level allowance VAT rate (BT-96) shall be 0 (zero).</svrl:text>
+	[BR-E-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Exempt from VAT", the Document level allowance VAT rate (BT-96) shall be 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1293,33 +1336,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'L']" mode="M20" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'L']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'G']" mode="M20" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'G']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
+      <xsl:when test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])" />
       <xsl:otherwise>
-        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+        <svrl:failed-assert test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])">
+          <xsl:attribute name="id">FX-SCH-A-000085</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AF-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IGIC" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+	[BR-G-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Export outside the EU" shall contain the Seller VAT Identifier (BT-31) or the Seller tax representative VAT identifier (BT-63).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="ram:RateApplicablePercent > 0" />
+      <xsl:when test="ram:RateApplicablePercent = 0" />
       <xsl:otherwise>
-        <svrl:failed-assert test="ram:RateApplicablePercent > 0">
+        <svrl:failed-assert test="ram:RateApplicablePercent = 0">
+          <xsl:attribute name="id">FX-SCH-A-000086</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AF-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IGIC" the Document level allowance VAT rate (BT-96) shall be 0 (zero) or greater than zero.</svrl:text>
+	[BR-G-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Export outside the EU" the Document level allowance VAT rate (BT-96) shall be 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1334,33 +1379,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'M']" mode="M21" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'M']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'K']" mode="M21" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'K']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
+      <xsl:when test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and //ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
       <xsl:otherwise>
-        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+        <svrl:failed-assert test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and //ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+          <xsl:attribute name="id">FX-SCH-A-000087</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AG-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IPSI" shall contain the Seller VAT Identifier (BT-31), the Seller Tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+	[BR-IC-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Intra-community supply" shall contain the Seller VAT Identifier (BT-31) or the Seller tax representative VAT identifier (BT-63) and the Buyer VAT identifier (BT-48).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="ram:RateApplicablePercent >= 0" />
+      <xsl:when test="ram:RateApplicablePercent = 0" />
       <xsl:otherwise>
-        <svrl:failed-assert test="ram:RateApplicablePercent >= 0">
+        <svrl:failed-assert test="ram:RateApplicablePercent = 0">
+          <xsl:attribute name="id">FX-SCH-A-000088</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AG-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IPSI" the Document level allowance VAT rate (BT-96) shall be 0 (zero) or greater than zero.</svrl:text>
+	[BR-IC-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Intra-community supply" the Document level allowance VAT rate (BT-96) shall be 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1375,33 +1422,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'O']" mode="M22" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'O']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'L']" mode="M22" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'L']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test=" not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])" />
+      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
       <xsl:otherwise>
-        <svrl:failed-assert test="not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])">
+        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+          <xsl:attribute name="id">FX-SCH-A-000089</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-O-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Not subject to VAT" shall not contain the Seller VAT identifier (BT-31), the Seller tax representative VAT identifier (BT-63) or the Buyer VAT identifier (BT-48).</svrl:text>
+	[BR-AF-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IGIC" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="not(ram:RateApplicablePercent)" />
+      <xsl:when test="ram:RateApplicablePercent > 0" />
       <xsl:otherwise>
-        <svrl:failed-assert test="not(ram:RateApplicablePercent)">
+        <svrl:failed-assert test="ram:RateApplicablePercent > 0">
+          <xsl:attribute name="id">FX-SCH-A-000090</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-O-06]-A Document level allowance (BG-20) where VAT category code (BT-95) is "Not subject to VAT" shall not contain a Document level allowance VAT rate (BT-96).</svrl:text>
+	[BR-AF-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IGIC" the Document level allowance VAT rate (BT-96) shall be 0 (zero) or greater than zero.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1416,33 +1465,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'S']" mode="M23" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'S']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'M']" mode="M23" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'M']" />
 
 		<!--ASSERT -->
 <xsl:choose>
       <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
       <xsl:otherwise>
         <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+          <xsl:attribute name="id">FX-SCH-A-000091</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-S-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Standard rated" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+	[BR-AG-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IPSI" shall contain the Seller VAT Identifier (BT-31), the Seller Tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="ram:RateApplicablePercent > 0" />
+      <xsl:when test="ram:RateApplicablePercent >= 0" />
       <xsl:otherwise>
-        <svrl:failed-assert test="ram:RateApplicablePercent > 0">
+        <svrl:failed-assert test="ram:RateApplicablePercent >= 0">
+          <xsl:attribute name="id">FX-SCH-A-000092</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-S-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Standard rated" the Document level allowance VAT rate (BT-96) shall be greater than zero.</svrl:text>
+	[BR-AG-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "IPSI" the Document level allowance VAT rate (BT-96) shall be 0 (zero) or greater than zero.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1457,33 +1508,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'Z']" mode="M24" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'Z']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'O']" mode="M24" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'O']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
+      <xsl:when test=" not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])" />
       <xsl:otherwise>
-        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+        <svrl:failed-assert test="not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])">
+          <xsl:attribute name="id">FX-SCH-A-000093</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-Z-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Zero rated" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+	[BR-O-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Not subject to VAT" shall not contain the Seller VAT identifier (BT-31), the Seller tax representative VAT identifier (BT-63) or the Buyer VAT identifier (BT-48).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="ram:RateApplicablePercent = 0" />
+      <xsl:when test="not(ram:RateApplicablePercent)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="ram:RateApplicablePercent = 0">
+        <svrl:failed-assert test="not(ram:RateApplicablePercent)">
+          <xsl:attribute name="id">FX-SCH-A-000094</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-Z-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Zero rated" the Document level allowance VAT rate (BT-96) shall be 0 (zero).</svrl:text>
+	[BR-O-06]-A Document level allowance (BG-20) where VAT category code (BT-95) is "Not subject to VAT" shall not contain a Document level allowance VAT rate (BT-96).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1498,33 +1551,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'AE']" mode="M25" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'AE']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'S']" mode="M25" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'S']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:ID)" />
+      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:ID)">
+        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+          <xsl:attribute name="id">FX-SCH-A-000095</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AE-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Reverse charge" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63) and the Buyer VAT identifier (BT-48) and/or the Buyer legal registration identifier (BT-47).</svrl:text>
+	[BR-S-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Standard rated" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="ram:RateApplicablePercent = 0" />
+      <xsl:when test="ram:RateApplicablePercent > 0" />
       <xsl:otherwise>
-        <svrl:failed-assert test="ram:RateApplicablePercent = 0">
+        <svrl:failed-assert test="ram:RateApplicablePercent > 0">
+          <xsl:attribute name="id">FX-SCH-A-000096</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AE-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Reverse charge" the Document level charge VAT rate (BT-103) shall be 0 (zero).</svrl:text>
+	[BR-S-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Standard rated" the Document level allowance VAT rate (BT-96) shall be greater than zero.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1539,19 +1594,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'E']" mode="M26" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'E']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'Z']" mode="M26" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:CategoryTradeTax[ram:CategoryCode = 'Z']" />
 
 		<!--ASSERT -->
 <xsl:choose>
       <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
       <xsl:otherwise>
         <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+          <xsl:attribute name="id">FX-SCH-A-000097</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-E-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Exempt from VAT" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+	[BR-Z-03]-An Invoice that contains a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Zero rated" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1561,11 +1617,12 @@
       <xsl:when test="ram:RateApplicablePercent = 0" />
       <xsl:otherwise>
         <svrl:failed-assert test="ram:RateApplicablePercent = 0">
+          <xsl:attribute name="id">FX-SCH-A-000098</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-E-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Exempt from VAT", the Document level charge VAT rate (BT-103) shall be 0 (zero).</svrl:text>
+	[BR-Z-06]-In a Document level allowance (BG-20) where the Document level allowance VAT category code (BT-95) is "Zero rated" the Document level allowance VAT rate (BT-96) shall be 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1580,19 +1637,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'G']" mode="M27" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'G']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'AE']" mode="M27" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'AE']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])" />
+      <xsl:when test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:ID)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])">
+        <svrl:failed-assert test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:ID)">
+          <xsl:attribute name="id">FX-SCH-A-000099</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-G-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Export outside the EU" shall contain the Seller VAT Identifier (BT-31) or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+	[BR-AE-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Reverse charge" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63) and the Buyer VAT identifier (BT-48) and/or the Buyer legal registration identifier (BT-47).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1602,11 +1660,12 @@
       <xsl:when test="ram:RateApplicablePercent = 0" />
       <xsl:otherwise>
         <svrl:failed-assert test="ram:RateApplicablePercent = 0">
+          <xsl:attribute name="id">FX-SCH-A-000100</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-G-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Export outside the EU" the Document level charge VAT rate (BT-103) shall be 0 (zero).</svrl:text>
+	[BR-AE-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Reverse charge" the Document level charge VAT rate (BT-103) shall be 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1621,19 +1680,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'K']" mode="M28" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'K']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'E']" mode="M28" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'E']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and //ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
+      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and //ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+          <xsl:attribute name="id">FX-SCH-A-000101</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-IC-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Intra-community supply" shall contain the Seller VAT Identifier (BT-31) or the Seller tax representative VAT identifier (BT-63) and the Buyer VAT identifier (BT-48).</svrl:text>
+	[BR-E-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Exempt from VAT" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1643,11 +1703,12 @@
       <xsl:when test="ram:RateApplicablePercent = 0" />
       <xsl:otherwise>
         <svrl:failed-assert test="ram:RateApplicablePercent = 0">
+          <xsl:attribute name="id">FX-SCH-A-000102</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-IC-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Intra-community supply" the Document level charge VAT rate (BT-103) shall be 0 (zero).</svrl:text>
+	[BR-E-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Exempt from VAT", the Document level charge VAT rate (BT-103) shall be 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1662,33 +1723,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'L']" mode="M29" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'L']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'G']" mode="M29" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'G']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
+      <xsl:when test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])" />
       <xsl:otherwise>
-        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+        <svrl:failed-assert test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])">
+          <xsl:attribute name="id">FX-SCH-A-000103</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AF-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IGIC" shall contain the Seller VAT Identifier (BT-31), the Seller Tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+	[BR-G-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Export outside the EU" shall contain the Seller VAT Identifier (BT-31) or the Seller tax representative VAT identifier (BT-63).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="ram:RateApplicablePercent > 0" />
+      <xsl:when test="ram:RateApplicablePercent = 0" />
       <xsl:otherwise>
-        <svrl:failed-assert test="ram:RateApplicablePercent > 0">
+        <svrl:failed-assert test="ram:RateApplicablePercent = 0">
+          <xsl:attribute name="id">FX-SCH-A-000104</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AF-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IGIC" the Document level charge VAT rate (BT-103) shall be 0 (zero) or greater than zero.</svrl:text>
+	[BR-G-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Export outside the EU" the Document level charge VAT rate (BT-103) shall be 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1703,33 +1766,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'M']" mode="M30" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'M']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'K']" mode="M30" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'K']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
+      <xsl:when test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and //ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
       <xsl:otherwise>
-        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+        <svrl:failed-assert test="(//ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'] or //ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and //ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+          <xsl:attribute name="id">FX-SCH-A-000105</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AG-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IPSI" shall contain the Seller VAT Identifier (BT-31), the Seller Tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+	[BR-IC-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Intra-community supply" shall contain the Seller VAT Identifier (BT-31) or the Seller tax representative VAT identifier (BT-63) and the Buyer VAT identifier (BT-48).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="ram:RateApplicablePercent >= 0" />
+      <xsl:when test="ram:RateApplicablePercent = 0" />
       <xsl:otherwise>
-        <svrl:failed-assert test="ram:RateApplicablePercent >= 0">
+        <svrl:failed-assert test="ram:RateApplicablePercent = 0">
+          <xsl:attribute name="id">FX-SCH-A-000106</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AG-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IPSI" the Document level charge VAT rate (BT-103) shall be 0 (zero) or greater than zero.</svrl:text>
+	[BR-IC-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Intra-community supply" the Document level charge VAT rate (BT-103) shall be 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1744,33 +1809,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'O']" mode="M31" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'O']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'L']" mode="M31" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'L']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test=" not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])" />
+      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
       <xsl:otherwise>
-        <svrl:failed-assert test="not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])">
+        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+          <xsl:attribute name="id">FX-SCH-A-000107</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-O-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Not subject to VAT" shall not contain the Seller VAT identifier (BT-31), the Seller tax representative VAT identifier (BT-63) or the Buyer VAT identifier (BT-48).</svrl:text>
+	[BR-AF-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IGIC" shall contain the Seller VAT Identifier (BT-31), the Seller Tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="not(ram:RateApplicablePercent)" />
+      <xsl:when test="ram:RateApplicablePercent > 0" />
       <xsl:otherwise>
-        <svrl:failed-assert test="not(ram:RateApplicablePercent)">
+        <svrl:failed-assert test="ram:RateApplicablePercent > 0">
+          <xsl:attribute name="id">FX-SCH-A-000108</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-O-07]-A Document level charge (BG-21) where the VAT category code (BT-102) is "Not subject to VAT" shall not contain a Document level charge VAT rate (BT-103).</svrl:text>
+	[BR-AF-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IGIC" the Document level charge VAT rate (BT-103) shall be 0 (zero) or greater than zero.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1785,33 +1852,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'S']" mode="M32" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'S']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'M']" mode="M32" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'M']" />
 
 		<!--ASSERT -->
 <xsl:choose>
       <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
       <xsl:otherwise>
         <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+          <xsl:attribute name="id">FX-SCH-A-000109</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-S-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Standard rated" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+	[BR-AG-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IPSI" shall contain the Seller VAT Identifier (BT-31), the Seller Tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="ram:RateApplicablePercent > 0" />
+      <xsl:when test="ram:RateApplicablePercent >= 0" />
       <xsl:otherwise>
-        <svrl:failed-assert test="ram:RateApplicablePercent > 0">
+        <svrl:failed-assert test="ram:RateApplicablePercent >= 0">
+          <xsl:attribute name="id">FX-SCH-A-000110</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-S-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Standard rated" the Document level charge VAT rate (BT-103) shall be greater than zero.</svrl:text>
+	[BR-AG-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "IPSI" the Document level charge VAT rate (BT-103) shall be 0 (zero) or greater than zero.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1826,33 +1895,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'Z']" mode="M33" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'Z']" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'O']" mode="M33" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'O']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
+      <xsl:when test=" not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])" />
       <xsl:otherwise>
-        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+        <svrl:failed-assert test="not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']) and not (//ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA'])">
+          <xsl:attribute name="id">FX-SCH-A-000111</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-Z-04]-An Invoice that contains a Document level charge where the Document level charge VAT category code (BT-102) is "Zero rated" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+	[BR-O-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Not subject to VAT" shall not contain the Seller VAT identifier (BT-31), the Seller tax representative VAT identifier (BT-63) or the Buyer VAT identifier (BT-48).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="ram:RateApplicablePercent = 0" />
+      <xsl:when test="not(ram:RateApplicablePercent)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="ram:RateApplicablePercent = 0">
+        <svrl:failed-assert test="not(ram:RateApplicablePercent)">
+          <xsl:attribute name="id">FX-SCH-A-000112</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-Z-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Zero rated" the Document level charge VAT rate (BT-103) shall be 0 (zero).</svrl:text>
+	[BR-O-07]-A Document level charge (BG-21) where the VAT category code (BT-102) is "Not subject to VAT" shall not contain a Document level charge VAT rate (BT-103).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -1867,285 +1938,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeSettlementHeaderMonetarySummation" mode="M34" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeSettlementHeaderMonetarySummation" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'S']" mode="M34" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'S']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(ram:LineTotalAmount)" />
+      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(ram:LineTotalAmount)">
+        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+          <xsl:attribute name="id">FX-SCH-A-000113</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-12]-An Invoice shall have the Sum of Invoice line net amount (BT-106).</svrl:text>
+	[BR-S-04]-An Invoice that contains a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Standard rated" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(ram:TaxBasisTotalAmount)" />
+      <xsl:when test="ram:RateApplicablePercent > 0" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(ram:TaxBasisTotalAmount)">
+        <svrl:failed-assert test="ram:RateApplicablePercent > 0">
+          <xsl:attribute name="id">FX-SCH-A-000114</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-13]-An Invoice shall have the Invoice total amount without VAT (BT-109).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(ram:GrandTotalAmount)" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(ram:GrandTotalAmount)">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-14]-An Invoice shall have the Invoice total amount with VAT (BT-112).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(ram:DuePayableAmount)" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(ram:DuePayableAmount)">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-15]-An Invoice shall have the Amount due for payment (BT-115).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false'])and not (ram:AllowanceTotalAmount)) or ram:AllowanceTotalAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:ActualAmount)* 10 * 10 ) div 100)" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false'])and not (ram:AllowanceTotalAmount)) or ram:AllowanceTotalAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:ActualAmount)* 10 * 10 ) div 100)">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-CO-11]-Sum of allowances on document level (BT-107) = Σ Document level allowance amount (BT-92).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true'])and not (ram:ChargeTotalAmount)) or (round (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:ChargeTotalAmount * 10 * 10) div 100)= &#xD;&#xA;round(((round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:ActualAmount)* 10 * 10 ) div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedAmount)* 10 * 10 ) div 100))*10*10) div 100" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true'])and not (ram:ChargeTotalAmount)) or (round (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:ChargeTotalAmount * 10 * 10) div 100)= round(((round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:ActualAmount)* 10 * 10 ) div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedAmount)* 10 * 10 ) div 100))*10*10) div 100">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-CO-12]-Sum of charges on document level (BT-108) = Σ Document level charge amount (BT-99).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) - xs:decimal(ram:AllowanceTotalAmount[1]) + xs:decimal(ram:ChargeTotalAmount[1])) * 10 * 10) div 100)&#xD;&#xA;    or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) - xs:decimal(ram:AllowanceTotalAmount[1])) * 10 * 10) div 100) and not(ram:ChargeTotalAmount))&#xD;&#xA;    or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) + xs:decimal(ram:ChargeTotalAmount[1])) * 10 * 10) div 100) and not(ram:AllowanceTotalAmount))&#xD;&#xA;    or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1])) * 10 * 10) div 100) and not(ram:ChargeTotalAmount) and not(ram:AllowanceTotalAmount))" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) - xs:decimal(ram:AllowanceTotalAmount[1]) + xs:decimal(ram:ChargeTotalAmount[1])) * 10 * 10) div 100) or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) - xs:decimal(ram:AllowanceTotalAmount[1])) * 10 * 10) div 100) and not(ram:ChargeTotalAmount)) or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) + xs:decimal(ram:ChargeTotalAmount[1])) * 10 * 10) div 100) and not(ram:AllowanceTotalAmount)) or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1])) * 10 * 10) div 100) and not(ram:ChargeTotalAmount) and not(ram:AllowanceTotalAmount))">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-CO-13]-Invoice total amount without VAT (BT-109) = Σ Invoice line net amount (BT-131) - Sum of allowances on document level (BT-107) + Sum of charges on document level (BT-108).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="every $Currency in /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode&#xD;&#xA;    satisfies&#xD;&#xA;    (&#xD;&#xA;    (&#xD;&#xA;    count(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID = $Currency]) = 1&#xD;&#xA;    and&#xD;&#xA;    xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount)[1])&#xD;&#xA;    =&#xD;&#xA;    round(&#xD;&#xA;    (&#xD;&#xA;    xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount)[1])&#xD;&#xA;    +&#xD;&#xA;    xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID = $Currency])[1])&#xD;&#xA;    ) * 100&#xD;&#xA;    ) div 100&#xD;&#xA;    )&#xD;&#xA;    or&#xD;&#xA;    (&#xD;&#xA;    xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount)[1])&#xD;&#xA;    =&#xD;&#xA;    xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount)[1])&#xD;&#xA;    )&#xD;&#xA;    )" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="every $Currency in /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode satisfies ( ( count(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID = $Currency]) = 1 and xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount)[1]) = round( ( xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount)[1]) + xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID = $Currency])[1]) ) * 100 ) div 100 ) or ( xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount)[1]) = xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount)[1]) ) )">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-CO-15]-Invoice total amount with VAT (BT-112) = Invoice total amount without VAT (BT-109) + Invoice total VAT amount (BT-110).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) - xs:decimal(ram:TotalPrepaidAmount[1]) + xs:decimal(ram:RoundingAmount[1]))&#xD;&#xA;    or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) + xs:decimal(ram:RoundingAmount[1])) and not(ram:TotalPrepaidAmount))&#xD;&#xA;    or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) - xs:decimal(ram:TotalPrepaidAmount[1])) and not(ram:RoundingAmount))&#xD;&#xA;    or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1])) and not(ram:TotalPrepaidAmount) and not(ram:RoundingAmount))" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) - xs:decimal(ram:TotalPrepaidAmount[1]) + xs:decimal(ram:RoundingAmount[1])) or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) + xs:decimal(ram:RoundingAmount[1])) and not(ram:TotalPrepaidAmount)) or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) - xs:decimal(ram:TotalPrepaidAmount[1])) and not(ram:RoundingAmount)) or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1])) and not(ram:TotalPrepaidAmount) and not(ram:RoundingAmount))">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-CO-16]-Amount due for payment (BT-115) = Invoice total amount with VAT (BT-112) -Paid amount (BT-113) +Rounding amount (BT-114).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="string-length(substring-after(ram:LineTotalAmount,'.'))&lt;=2" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="string-length(substring-after(ram:LineTotalAmount,'.'))&lt;=2">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-DEC-09]-The allowed maximum number of decimals for the Sum of Invoice line net amount (BT-106) is 2.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="string-length(substring-after(ram:AllowanceTotalAmount,'.'))&lt;=2" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="string-length(substring-after(ram:AllowanceTotalAmount,'.'))&lt;=2">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-DEC-10]-The allowed maximum number of decimals for the Sum of allowances on document level (BT-107) is 2.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="string-length(substring-after(ram:ChargeTotalAmount,'.'))&lt;=2" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="string-length(substring-after(ram:ChargeTotalAmount,'.'))&lt;=2">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-DEC-11]-The allowed maximum number of decimals for the Sum of charges on document level (BT-108) is 2.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="string-length(substring-after(ram:TaxBasisTotalAmount,'.'))&lt;=2" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="string-length(substring-after(ram:TaxBasisTotalAmount,'.'))&lt;=2">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-DEC-12]-The allowed maximum number of decimals for the Invoice total amount without VAT (BT-109) is 2.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode and . = round(. * 100) div 100) or not (@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode)]" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode and . = round(. * 100) div 100) or not (@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode)]">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-DEC-13]-The allowed maximum number of decimals for the Invoice total VAT amount (BT-110) is 2.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="string-length(substring-after(ram:GrandTotalAmount,'.'))&lt;=2" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="string-length(substring-after(ram:GrandTotalAmount,'.'))&lt;=2">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-DEC-14]-The allowed maximum number of decimals for the Invoice total amount with VAT (BT-112) is 2.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode and . = round(. * 100) div 100) or not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode)]" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode and . = round(. * 100) div 100) or not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode)]">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-DEC-15]-The allowed maximum number of decimals for the Invoice total VAT amount in accounting currency (BT-111) is 2.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="string-length(substring-after(ram:TotalPrepaidAmount,'.'))&lt;=2" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="string-length(substring-after(ram:TotalPrepaidAmount,'.'))&lt;=2">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-DEC-16]-The allowed maximum number of decimals for the Paid amount (BT-113) is 2.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="string-length(substring-after(ram:RoundingAmount,'.'))&lt;=2" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="string-length(substring-after(ram:RoundingAmount,'.'))&lt;=2">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-DEC-17]-The allowed maximum number of decimals for the Rounding amount (BT-114) is 2.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="string-length(substring-after(ram:DuePayableAmount,'.'))&lt;=2" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="string-length(substring-after(ram:DuePayableAmount,'.'))&lt;=2">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-DEC-18]-The allowed maximum number of decimals for the Amount due for payment (BT-115) is 2.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode) or (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode and (ram:TaxTotalAmount/@currencyID = /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode) and not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode = /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode))" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode) or (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode and (ram:TaxTotalAmount/@currencyID = /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode) and not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode = /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode))">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-53]-If the VAT accounting currency code (BT-6) is present, then the Invoice total VAT amount in accounting currency (BT-111) shall be provided.</svrl:text>
+	[BR-S-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Standard rated" the Document level charge VAT rate (BT-103) shall be greater than zero.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2160,19 +1981,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode]" mode="M35" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode]" />
+<xsl:template match="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'Z']" mode="M35" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:CategoryTradeTax[ram:CategoryCode = 'Z']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test=". = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount)*10*10)div 100)" />
+      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']" />
       <xsl:otherwise>
-        <svrl:failed-assert test=". = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount)*10*10)div 100)">
+        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = ('VA', 'FC')] or /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID = 'VA']">
+          <xsl:attribute name="id">FX-SCH-A-000115</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-CO-14]-Invoice total VAT amount (BT-110) = Σ VAT category tax amount (BT-117).</svrl:text>
+	[BR-Z-04]-An Invoice that contains a Document level charge where the Document level charge VAT category code (BT-102) is "Zero rated" shall contain the Seller VAT Identifier (BT-31), the Seller tax registration identifier (BT-32) and/or the Seller tax representative VAT identifier (BT-63).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="ram:RateApplicablePercent = 0" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="ram:RateApplicablePercent = 0">
+          <xsl:attribute name="id">FX-SCH-A-000116</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-Z-07]-In a Document level charge (BG-21) where the Document level charge VAT category code (BT-102) is "Zero rated" the Document level charge VAT rate (BT-103) shall be 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2187,33 +2024,305 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeSettlementPaymentMeans" mode="M36" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeSettlementPaymentMeans" />
+<xsl:template match="//ram:SpecifiedTradeSettlementHeaderMonetarySummation" mode="M36" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeSettlementHeaderMonetarySummation" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(ram:TypeCode)" />
+      <xsl:when test="(ram:LineTotalAmount)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(ram:TypeCode)">
+        <svrl:failed-assert test="(ram:LineTotalAmount)">
+          <xsl:attribute name="id">FX-SCH-A-000117</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-49]-A Payment instruction (BG-16) shall specify the Payment means type code (BT-81).</svrl:text>
+	[BR-12]-An Invoice shall have the Sum of Invoice line net amount (BT-106).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(ram:PayeeSpecifiedCreditorFinancialInstitution or ram:PayerSpecifiedDebtorFinancialInstitution) or (not(ram:PayeeSpecifiedCreditorFinancialInstitution) and not(ram:PayerSpecifiedDebtorFinancialInstitution))" />
+      <xsl:when test="(ram:TaxBasisTotalAmount)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(ram:PayeeSpecifiedCreditorFinancialInstitution or ram:PayerSpecifiedDebtorFinancialInstitution) or (not(ram:PayeeSpecifiedCreditorFinancialInstitution) and not(ram:PayerSpecifiedDebtorFinancialInstitution))">
+        <svrl:failed-assert test="(ram:TaxBasisTotalAmount)">
+          <xsl:attribute name="id">FX-SCH-A-000003</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[CII-SR-464]-Only one BT-86 element is allowed on an invoice.</svrl:text>
+	[BR-13]-An Invoice shall have the Invoice total amount without VAT (BT-109).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(ram:GrandTotalAmount)" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(ram:GrandTotalAmount)">
+          <xsl:attribute name="id">FX-SCH-A-000004</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-14]-An Invoice shall have the Invoice total amount with VAT (BT-112).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(ram:DuePayableAmount)" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(ram:DuePayableAmount)">
+          <xsl:attribute name="id">FX-SCH-A-000005</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-15]-An Invoice shall have the Amount due for payment (BT-115).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false'])and not (ram:AllowanceTotalAmount)) or ram:AllowanceTotalAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:ActualAmount)* 10 * 10 ) div 100)" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false'])and not (ram:AllowanceTotalAmount)) or ram:AllowanceTotalAmount = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='false']/ram:ActualAmount)* 10 * 10 ) div 100)">
+          <xsl:attribute name="id">FX-SCH-A-000118</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-CO-11]-Sum of allowances on document level (BT-107) = Σ Document level allowance amount (BT-92).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true'])and not (ram:ChargeTotalAmount)) or (round (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:ChargeTotalAmount * 10 * 10) div 100)= &#xD;&#xA;round(((round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:ActualAmount)* 10 * 10 ) div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedAmount)* 10 * 10 ) div 100))*10*10) div 100" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true'])and not (ram:ChargeTotalAmount)) or (round (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:ChargeTotalAmount * 10 * 10) div 100)= round(((round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator='true']/ram:ActualAmount)* 10 * 10 ) div 100) + (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedLogisticsServiceCharge/ram:AppliedAmount)* 10 * 10 ) div 100))*10*10) div 100">
+          <xsl:attribute name="id">FX-SCH-A-000119</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-CO-12]-Sum of charges on document level (BT-108) = Σ Document level charge amount (BT-99).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) - xs:decimal(ram:AllowanceTotalAmount[1]) + xs:decimal(ram:ChargeTotalAmount[1])) * 10 * 10) div 100)&#xD;&#xA;    or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) - xs:decimal(ram:AllowanceTotalAmount[1])) * 10 * 10) div 100) and not(ram:ChargeTotalAmount))&#xD;&#xA;    or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) + xs:decimal(ram:ChargeTotalAmount[1])) * 10 * 10) div 100) and not(ram:AllowanceTotalAmount))&#xD;&#xA;    or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1])) * 10 * 10) div 100) and not(ram:ChargeTotalAmount) and not(ram:AllowanceTotalAmount))" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) - xs:decimal(ram:AllowanceTotalAmount[1]) + xs:decimal(ram:ChargeTotalAmount[1])) * 10 * 10) div 100) or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) - xs:decimal(ram:AllowanceTotalAmount[1])) * 10 * 10) div 100) and not(ram:ChargeTotalAmount)) or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1]) + xs:decimal(ram:ChargeTotalAmount[1])) * 10 * 10) div 100) and not(ram:AllowanceTotalAmount)) or ((xs:decimal(ram:TaxBasisTotalAmount[1]) = round((xs:decimal(ram:LineTotalAmount[1])) * 10 * 10) div 100) and not(ram:ChargeTotalAmount) and not(ram:AllowanceTotalAmount))">
+          <xsl:attribute name="id">FX-SCH-A-000120</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-CO-13]-Invoice total amount without VAT (BT-109) = Σ Invoice line net amount (BT-131) - Sum of allowances on document level (BT-107) + Sum of charges on document level (BT-108).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="every $Currency in /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode&#xD;&#xA;    satisfies&#xD;&#xA;    (&#xD;&#xA;    (&#xD;&#xA;    count(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID = $Currency]) = 1&#xD;&#xA;    and&#xD;&#xA;    xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount)[1])&#xD;&#xA;    =&#xD;&#xA;    round(&#xD;&#xA;    (&#xD;&#xA;    xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount)[1])&#xD;&#xA;    +&#xD;&#xA;    xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID = $Currency])[1])&#xD;&#xA;    ) * 100&#xD;&#xA;    ) div 100&#xD;&#xA;    )&#xD;&#xA;    or&#xD;&#xA;    (&#xD;&#xA;    xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount)[1])&#xD;&#xA;    =&#xD;&#xA;    xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount)[1])&#xD;&#xA;    )&#xD;&#xA;    )" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="every $Currency in /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode satisfies ( ( count(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID = $Currency]) = 1 and xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount)[1]) = round( ( xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount)[1]) + xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID = $Currency])[1]) ) * 100 ) div 100 ) or ( xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount)[1]) = xs:decimal((/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount)[1]) ) )">
+          <xsl:attribute name="id">FX-SCH-A-000121</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-CO-15]-Invoice total amount with VAT (BT-112) = Invoice total amount without VAT (BT-109) + Invoice total VAT amount (BT-110).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) - xs:decimal(ram:TotalPrepaidAmount[1]) + xs:decimal(ram:RoundingAmount[1]))&#xD;&#xA;    or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) + xs:decimal(ram:RoundingAmount[1])) and not(ram:TotalPrepaidAmount))&#xD;&#xA;    or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) - xs:decimal(ram:TotalPrepaidAmount[1])) and not(ram:RoundingAmount))&#xD;&#xA;    or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1])) and not(ram:TotalPrepaidAmount) and not(ram:RoundingAmount))" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) - xs:decimal(ram:TotalPrepaidAmount[1]) + xs:decimal(ram:RoundingAmount[1])) or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) + xs:decimal(ram:RoundingAmount[1])) and not(ram:TotalPrepaidAmount)) or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1]) - xs:decimal(ram:TotalPrepaidAmount[1])) and not(ram:RoundingAmount)) or ((xs:decimal(ram:DuePayableAmount[1]) = xs:decimal(ram:GrandTotalAmount[1])) and not(ram:TotalPrepaidAmount) and not(ram:RoundingAmount))">
+          <xsl:attribute name="id">FX-SCH-A-000122</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-CO-16]-Amount due for payment (BT-115) = Invoice total amount with VAT (BT-112) -Paid amount (BT-113) +Rounding amount (BT-114).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="string-length(substring-after(ram:LineTotalAmount,'.'))&lt;=2" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="string-length(substring-after(ram:LineTotalAmount,'.'))&lt;=2">
+          <xsl:attribute name="id">FX-SCH-A-000123</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-DEC-09]-The allowed maximum number of decimals for the Sum of Invoice line net amount (BT-106) is 2.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="string-length(substring-after(ram:AllowanceTotalAmount,'.'))&lt;=2" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="string-length(substring-after(ram:AllowanceTotalAmount,'.'))&lt;=2">
+          <xsl:attribute name="id">FX-SCH-A-000374</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-DEC-10]-The allowed maximum number of decimals for the Sum of allowances on document level (BT-107) is 2.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="string-length(substring-after(ram:ChargeTotalAmount,'.'))&lt;=2" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="string-length(substring-after(ram:ChargeTotalAmount,'.'))&lt;=2">
+          <xsl:attribute name="id">FX-SCH-A-000125</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-DEC-11]-The allowed maximum number of decimals for the Sum of charges on document level (BT-108) is 2.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="string-length(substring-after(ram:TaxBasisTotalAmount,'.'))&lt;=2" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="string-length(substring-after(ram:TaxBasisTotalAmount,'.'))&lt;=2">
+          <xsl:attribute name="id">FX-SCH-A-000006</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-DEC-12]-The allowed maximum number of decimals for the Invoice total amount without VAT (BT-109) is 2.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode and . = round(. * 100) div 100) or not (@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode)]" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode and . = round(. * 100) div 100) or not (@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode)]">
+          <xsl:attribute name="id">FX-SCH-A-000007</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-DEC-13]-The allowed maximum number of decimals for the Invoice total VAT amount (BT-110) is 2.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="string-length(substring-after(ram:GrandTotalAmount,'.'))&lt;=2" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="string-length(substring-after(ram:GrandTotalAmount,'.'))&lt;=2">
+          <xsl:attribute name="id">FX-SCH-A-000008</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-DEC-14]-The allowed maximum number of decimals for the Invoice total amount with VAT (BT-112) is 2.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode and . = round(. * 100) div 100) or not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode)]" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="not(ram:TaxTotalAmount) or ram:TaxTotalAmount[(@currencyID =/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode and . = round(. * 100) div 100) or not (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode)]">
+          <xsl:attribute name="id">FX-SCH-A-000126</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-DEC-15]-The allowed maximum number of decimals for the Invoice total VAT amount in accounting currency (BT-111) is 2.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="string-length(substring-after(ram:TotalPrepaidAmount,'.'))&lt;=2" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="string-length(substring-after(ram:TotalPrepaidAmount,'.'))&lt;=2">
+          <xsl:attribute name="id">FX-SCH-A-000127</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-DEC-16]-The allowed maximum number of decimals for the Paid amount (BT-113) is 2.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="string-length(substring-after(ram:RoundingAmount,'.'))&lt;=2" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="string-length(substring-after(ram:RoundingAmount,'.'))&lt;=2">
+          <xsl:attribute name="id">FX-SCH-A-000128</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-DEC-17]-The allowed maximum number of decimals for the Rounding amount (BT-114) is 2.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="string-length(substring-after(ram:DuePayableAmount,'.'))&lt;=2" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="string-length(substring-after(ram:DuePayableAmount,'.'))&lt;=2">
+          <xsl:attribute name="id">FX-SCH-A-000009</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-DEC-18]-The allowed maximum number of decimals for the Amount due for payment (BT-115) is 2.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode) or (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode and (ram:TaxTotalAmount/@currencyID = /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode) and not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode = /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode))" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode) or (/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode and (ram:TaxTotalAmount/@currencyID = /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode) and not(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode = /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode))">
+          <xsl:attribute name="id">FX-SCH-A-000129</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-53]-If the VAT accounting currency code (BT-6) is present, then the Invoice total VAT amount in accounting currency (BT-111) shall be provided.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2228,33 +2337,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode='30' or ram:TypeCode='58']/ram:PayeePartyCreditorFinancialAccount" mode="M37" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode='30' or ram:TypeCode='58']/ram:PayeePartyCreditorFinancialAccount" />
+<xsl:template match="//ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode]" mode="M37" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode]" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="normalize-space(ram:IBANID) != '' or normalize-space(ram:ProprietaryID) != ''" />
+      <xsl:when test=". = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount)*10*10)div 100)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="normalize-space(ram:IBANID) != '' or normalize-space(ram:ProprietaryID) != ''">
+        <svrl:failed-assert test=". = (round(sum(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount)*10*10)div 100)">
+          <xsl:attribute name="id">FX-SCH-A-000130</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-50]-A Payment account identifier (BT-84) shall be present if Credit transfer (BG-16) information is provided in the Invoice.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(ram:IBANID) or (ram:ProprietaryID)" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(ram:IBANID) or (ram:ProprietaryID)">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-61]-If the Payment means type code (BT-81) means SEPA credit transfer, Local credit transfer or Non-SEPA international credit transfer, the Payment account identifier (BT-84) shall be present.</svrl:text>
+	[BR-CO-14]-Invoice total VAT amount (BT-110) = Σ VAT category tax amount (BT-117).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2269,19 +2365,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//ram:SpecifiedTradeSettlementPaymentMeans[some $code in tokenize('30 58', '\s')  satisfies normalize-space(ram:TypeCode) = $code]" mode="M38" priority="1000">
-    <svrl:fired-rule context="//ram:SpecifiedTradeSettlementPaymentMeans[some $code in tokenize('30 58', '\s')  satisfies normalize-space(ram:TypeCode) = $code]" />
+<xsl:template match="//ram:SpecifiedTradeSettlementPaymentMeans" mode="M38" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeSettlementPaymentMeans" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(ram:PayeePartyCreditorFinancialAccount/ram:IBANID or ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID) and not(ram:PayeePartyCreditorFinancialAccount/ram:IBANID and ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID)&#xD;&#xA;" />
+      <xsl:when test="(ram:TypeCode)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(ram:PayeePartyCreditorFinancialAccount/ram:IBANID or ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID) and not(ram:PayeePartyCreditorFinancialAccount/ram:IBANID and ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID)">
+        <svrl:failed-assert test="(ram:TypeCode)">
+          <xsl:attribute name="id">FX-SCH-A-000131</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-CO-27]-Either the IBAN or a Proprietary ID (BT-84) shall be used.</svrl:text>
+	[BR-49]-A Payment instruction (BG-16) shall specify the Payment means type code (BT-81).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(ram:PayeeSpecifiedCreditorFinancialInstitution or ram:PayerSpecifiedDebtorFinancialInstitution) or (not(ram:PayeeSpecifiedCreditorFinancialInstitution) and not(ram:PayerSpecifiedDebtorFinancialInstitution))" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(ram:PayeeSpecifiedCreditorFinancialInstitution or ram:PayerSpecifiedDebtorFinancialInstitution) or (not(ram:PayeeSpecifiedCreditorFinancialInstitution) and not(ram:PayerSpecifiedDebtorFinancialInstitution))">
+          <xsl:attribute name="id">FX-SCH-A-000349</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[CII-SR-464]-Only one BT-86 element is allowed on an invoice.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2296,33 +2408,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'AE']" mode="M39" priority="1000">
-    <svrl:fired-rule context="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'AE']" />
+<xsl:template match="//ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode='30' or ram:TypeCode='58']/ram:PayeePartyCreditorFinancialAccount" mode="M39" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeSettlementPaymentMeans[ram:TypeCode='30' or ram:TypeCode='58']/ram:PayeePartyCreditorFinancialAccount" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="../ram:CalculatedAmount = 0" />
+      <xsl:when test="normalize-space(ram:IBANID) != '' or normalize-space(ram:ProprietaryID) != ''" />
       <xsl:otherwise>
-        <svrl:failed-assert test="../ram:CalculatedAmount = 0">
+        <svrl:failed-assert test="normalize-space(ram:IBANID) != '' or normalize-space(ram:ProprietaryID) != ''">
+          <xsl:attribute name="id">FX-SCH-A-000133</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AE-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Reverse charge" shall be 0 (zero).</svrl:text>
+	[BR-50]-A Payment account identifier (BT-84) shall be present if Credit transfer (BG-16) information is provided in the Invoice.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(../ram:ExemptionReason) or (../ram:ExemptionReasonCode)" />
+      <xsl:when test="(ram:IBANID) or (ram:ProprietaryID)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(../ram:ExemptionReason) or (../ram:ExemptionReasonCode)">
+        <svrl:failed-assert test="(ram:IBANID) or (ram:ProprietaryID)">
+          <xsl:attribute name="id">FX-SCH-A-000134</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AE-10]-A VAT Breakdown (BG-23) with VAT Category code (BT-118) "Reverse charge" shall have a VAT exemption reason code (BT-121), meaning "Reverse charge" or the VAT exemption reason text (BT-120) "Reverse charge" (or the equivalent standard text in another language).</svrl:text>
+	[BR-61]-If the Payment means type code (BT-81) means SEPA credit transfer, Local credit transfer or Non-SEPA international credit transfer, the Payment account identifier (BT-84) shall be present.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2337,33 +2451,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'E']" mode="M40" priority="1000">
-    <svrl:fired-rule context="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'E']" />
+<xsl:template match="//ram:SpecifiedTradeSettlementPaymentMeans[some $code in tokenize('30 58', '\s')  satisfies normalize-space(ram:TypeCode) = $code]" mode="M40" priority="1000">
+    <svrl:fired-rule context="//ram:SpecifiedTradeSettlementPaymentMeans[some $code in tokenize('30 58', '\s')  satisfies normalize-space(ram:TypeCode) = $code]" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="../ram:CalculatedAmount = 0" />
+      <xsl:when test="(ram:PayeePartyCreditorFinancialAccount/ram:IBANID or ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID) and not(ram:PayeePartyCreditorFinancialAccount/ram:IBANID and ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID)&#xD;&#xA;" />
       <xsl:otherwise>
-        <svrl:failed-assert test="../ram:CalculatedAmount = 0">
+        <svrl:failed-assert test="(ram:PayeePartyCreditorFinancialAccount/ram:IBANID or ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID) and not(ram:PayeePartyCreditorFinancialAccount/ram:IBANID and ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID)">
+          <xsl:attribute name="id">FX-SCH-A-000132</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-E-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where the VAT category code (BT-118) equals "Exempt from VAT" shall equal 0 (zero).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(../ram:ExemptionReason) or (../ram:ExemptionReasonCode)" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(../ram:ExemptionReason) or (../ram:ExemptionReasonCode)">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-E-10]-A VAT Breakdown (BG-23) with VAT Category code (BT-118) "Exempt from VAT" shall have a VAT exemption reason code (BT-121) or a VAT exemption reason text (BT-120).</svrl:text>
+	[BR-CO-27]-Either the IBAN or a Proprietary ID (BT-84) shall be used.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2378,19 +2479,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'G']" mode="M41" priority="1000">
-    <svrl:fired-rule context="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'G']" />
+<xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'AE']" mode="M41" priority="1000">
+    <svrl:fired-rule context="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'AE']" />
 
 		<!--ASSERT -->
 <xsl:choose>
       <xsl:when test="../ram:CalculatedAmount = 0" />
       <xsl:otherwise>
         <svrl:failed-assert test="../ram:CalculatedAmount = 0">
+          <xsl:attribute name="id">FX-SCH-A-000136</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-G-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Export outside the EU" shall be 0 (zero).</svrl:text>
+	[BR-AE-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Reverse charge" shall be 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2400,11 +2502,12 @@
       <xsl:when test="(../ram:ExemptionReason) or (../ram:ExemptionReasonCode)" />
       <xsl:otherwise>
         <svrl:failed-assert test="(../ram:ExemptionReason) or (../ram:ExemptionReasonCode)">
+          <xsl:attribute name="id">FX-SCH-A-000137</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-G-10]-A VAT Breakdown (BG-23) with the VAT Category code (BT-118) "Export outside the EU" shall have a VAT exemption reason code (BT-121), meaning "Export outside the EU" or the VAT exemption reason text (BT-120) "Export outside the EU" (or the equivalent standard text in another language).</svrl:text>
+	[BR-AE-10]-A VAT Breakdown (BG-23) with VAT Category code (BT-118) "Reverse charge" shall have a VAT exemption reason code (BT-121), meaning "Reverse charge" or the VAT exemption reason text (BT-120) "Reverse charge" (or the equivalent standard text in another language).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2419,19 +2522,20 @@
 
 
 	<!--RULE -->
-<xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[.= 'K']" mode="M42" priority="1000">
-    <svrl:fired-rule context="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[.= 'K']" />
+<xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'E']" mode="M42" priority="1000">
+    <svrl:fired-rule context="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'E']" />
 
 		<!--ASSERT -->
 <xsl:choose>
       <xsl:when test="../ram:CalculatedAmount = 0" />
       <xsl:otherwise>
         <svrl:failed-assert test="../ram:CalculatedAmount = 0">
+          <xsl:attribute name="id">FX-SCH-A-000375</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-IC-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Intra-community supply" shall be 0 (zero).</svrl:text>
+	[BR-E-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where the VAT category code (BT-118) equals "Exempt from VAT" shall equal 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2441,39 +2545,12 @@
       <xsl:when test="(../ram:ExemptionReason) or (../ram:ExemptionReasonCode)" />
       <xsl:otherwise>
         <svrl:failed-assert test="(../ram:ExemptionReason) or (../ram:ExemptionReasonCode)">
+          <xsl:attribute name="id">FX-SCH-A-000139</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-IC-10]-A VAT Breakdown (BG-23) with the VAT Category code (BT-118) "Intra-community supply" shall have a VAT exemption reason code (BT-121), meaning "Intra-community supply" or the VAT exemption reason text (BT-120) "Intra-community supply" (or the equivalent standard text in another language).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent/ram:OccurrenceDateTime/udt:DateTimeString) or (../../ram:BillingSpecifiedPeriod/ram:StartDateTime) or (../../ram:BillingSpecifiedPeriod/ram:EndDateTime)" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent/ram:OccurrenceDateTime/udt:DateTimeString) or (../../ram:BillingSpecifiedPeriod/ram:StartDateTime) or (../../ram:BillingSpecifiedPeriod/ram:EndDateTime)">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-IC-11]-In an Invoice with a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Intra-community supply" the Actual delivery date (BT-72) or the Invoicing period (BG-14) shall not be blank.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-IC-12]-In an Invoice with a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Intra-community supply" the Deliver to country code (BT-80) shall not be blank.</svrl:text>
+	[BR-E-10]-A VAT Breakdown (BG-23) with VAT Category code (BT-118) "Exempt from VAT" shall have a VAT exemption reason code (BT-121) or a VAT exemption reason text (BT-120).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2488,33 +2565,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'L']" mode="M43" priority="1000">
-    <svrl:fired-rule context="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'L']" />
+<xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'G']" mode="M43" priority="1000">
+    <svrl:fired-rule context="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[. = 'G']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="true()" />
+      <xsl:when test="../ram:CalculatedAmount = 0" />
       <xsl:otherwise>
-        <svrl:failed-assert test="true()">
+        <svrl:failed-assert test="../ram:CalculatedAmount = 0">
+          <xsl:attribute name="id">FX-SCH-A-000140</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AF-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where VAT category code (BT-118) is "IGIC" shall equal the VAT category taxable amount (BT-116) multiplied by the VAT category rate (BT-119).</svrl:text>
+	[BR-G-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Export outside the EU" shall be 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="not(ram:ExemptionReason) and not (ram:ExemptionReasonCode)" />
+      <xsl:when test="(../ram:ExemptionReason) or (../ram:ExemptionReasonCode)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="not(ram:ExemptionReason) and not (ram:ExemptionReasonCode)">
+        <svrl:failed-assert test="(../ram:ExemptionReason) or (../ram:ExemptionReasonCode)">
+          <xsl:attribute name="id">FX-SCH-A-000141</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AF-10]-A VAT Breakdown (BG-23) with VAT Category code (BT-118) "IGIC" shall not have a VAT exemption reason code (BT-121) or VAT exemption reason text (BT-120).</svrl:text>
+	[BR-G-10]-A VAT Breakdown (BG-23) with the VAT Category code (BT-118) "Export outside the EU" shall have a VAT exemption reason code (BT-121), meaning "Export outside the EU" or the VAT exemption reason text (BT-120) "Export outside the EU" (or the equivalent standard text in another language).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2529,33 +2608,65 @@
 
 
 	<!--RULE -->
-<xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'M']" mode="M44" priority="1000">
-    <svrl:fired-rule context="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'M']" />
+<xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[.= 'K']" mode="M44" priority="1000">
+    <svrl:fired-rule context="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode[.= 'K']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="true()" />
+      <xsl:when test="../ram:CalculatedAmount = 0" />
       <xsl:otherwise>
-        <svrl:failed-assert test="true()">
+        <svrl:failed-assert test="../ram:CalculatedAmount = 0">
+          <xsl:attribute name="id">FX-SCH-A-000142</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AG-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where VAT category code (BT-118) is "IPSI" shall equal the VAT category taxable amount (BT-116) multiplied by the VAT category rate (BT-119).</svrl:text>
+	[BR-IC-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Intra-community supply" shall be 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="not(ram:ExemptionReason) and not (ram:ExemptionReasonCode)" />
+      <xsl:when test="(../ram:ExemptionReason) or (../ram:ExemptionReasonCode)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="not(ram:ExemptionReason) and not (ram:ExemptionReasonCode)">
+        <svrl:failed-assert test="(../ram:ExemptionReason) or (../ram:ExemptionReasonCode)">
+          <xsl:attribute name="id">FX-SCH-A-000143</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-AG-10]-A VAT Breakdown (BG-23) with VAT Category code (BT-118) "IPSI" shall not have a VAT exemption reason code (BT-121) or VAT exemption reason text (BT-120).</svrl:text>
+	[BR-IC-10]-A VAT Breakdown (BG-23) with the VAT Category code (BT-118) "Intra-community supply" shall have a VAT exemption reason code (BT-121), meaning "Intra-community supply" or the VAT exemption reason text (BT-120) "Intra-community supply" (or the equivalent standard text in another language).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent/ram:OccurrenceDateTime/udt:DateTimeString) or (../../ram:BillingSpecifiedPeriod/ram:StartDateTime) or (../../ram:BillingSpecifiedPeriod/ram:EndDateTime)" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent/ram:OccurrenceDateTime/udt:DateTimeString) or (../../ram:BillingSpecifiedPeriod/ram:StartDateTime) or (../../ram:BillingSpecifiedPeriod/ram:EndDateTime)">
+          <xsl:attribute name="id">FX-SCH-A-000144</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-IC-11]-In an Invoice with a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Intra-community supply" the Actual delivery date (BT-72) or the Invoicing period (BG-14) shall not be blank.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID">
+          <xsl:attribute name="id">FX-SCH-A-000145</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-IC-12]-In an Invoice with a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Intra-community supply" the Deliver to country code (BT-80) shall not be blank.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2570,75 +2681,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'O']" mode="M45" priority="1000">
-    <svrl:fired-rule context="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'O']" />
+<xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'L']" mode="M45" priority="1000">
+    <svrl:fired-rule context="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'L']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="ram:CalculatedAmount = 0" />
+      <xsl:when test="true()" />
       <xsl:otherwise>
-        <svrl:failed-assert test="ram:CalculatedAmount = 0">
+        <svrl:failed-assert test="true()">
+          <xsl:attribute name="id">FX-SCH-A-000146</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-O-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Not subject to VAT" shall be 0 (zero).</svrl:text>
+	[BR-AF-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where VAT category code (BT-118) is "IGIC" shall equal the VAT category taxable amount (BT-116) multiplied by the VAT category rate (BT-119).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(ram:ExemptionReason) or (ram:ExemptionReasonCode)" />
+      <xsl:when test="not(ram:ExemptionReason) and not (ram:ExemptionReasonCode)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(ram:ExemptionReason) or (ram:ExemptionReasonCode)">
+        <svrl:failed-assert test="not(ram:ExemptionReason) and not (ram:ExemptionReasonCode)">
+          <xsl:attribute name="id">FX-SCH-A-000147</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-O-10]-A VAT Breakdown (BG-23) with VAT Category code (BT-118) " Not subject to VAT" shall have a VAT exemption reason code (BT-121), meaning " Not subject to VAT" or a VAT exemption reason text (BT-120) " Not subject to VAT" (or the equivalent standard text in another language).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="not(//ram:ApplicableTradeTax[ram:CategoryCode != 'O'])" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="not(//ram:ApplicableTradeTax[ram:CategoryCode != 'O'])">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-O-11]-An Invoice that contains a VAT breakdown group (BG-23) with a VAT category code (BT-118) "Not subject to VAT" shall not contain other VAT breakdown groups (BG-23).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="not(//ram:CategoryTradeTax[ram:CategoryCode != 'O'])" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="not(//ram:CategoryTradeTax[ram:CategoryCode != 'O'])">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-O-13]-An Invoice that contains a VAT breakdown group (BG-23) with a VAT category code (BT-118) "Not subject to VAT" shall not contain Document level allowances (BG-20) where Document level allowance VAT category code (BT-95) is not "Not subject to VAT".</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="not(//ram:CategoryTradeTax[ram:CategoryCode != 'O'])" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="not(//ram:CategoryTradeTax[ram:CategoryCode != 'O'])">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-O-14]-An Invoice that contains a VAT breakdown group (BG-23) with a VAT category code (BT-118) "Not subject to VAT" shall not contain Document level charges (BG-21) where Document level charge VAT category code (BT-102) is not "Not subject to VAT".</svrl:text>
+	[BR-AF-10]-A VAT Breakdown (BG-23) with VAT Category code (BT-118) "IGIC" shall not have a VAT exemption reason code (BT-121) or VAT exemption reason text (BT-120).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2653,187 +2724,35 @@
 
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice" mode="M46" priority="1000">
-    <svrl:fired-rule context="/rsm:CrossIndustryInvoice" />
+<xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'M']" mode="M46" priority="1000">
+    <svrl:fired-rule context="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'M']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID != '')" />
+      <xsl:when test="true()" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID != '')">
+        <svrl:failed-assert test="true()">
+          <xsl:attribute name="id">FX-SCH-A-000148</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-01]-An Invoice shall have a Specification identifier (BT-24).</svrl:text>
+	[BR-AG-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where VAT category code (BT-118) is "IPSI" shall equal the VAT category taxable amount (BT-116) multiplied by the VAT category rate (BT-119).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(rsm:ExchangedDocument/ram:ID !='')" />
+      <xsl:when test="not(ram:ExemptionReason) and not (ram:ExemptionReasonCode)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(rsm:ExchangedDocument/ram:ID !='')">
+        <svrl:failed-assert test="not(ram:ExemptionReason) and not (ram:ExemptionReasonCode)">
+          <xsl:attribute name="id">FX-SCH-A-000149</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-02]-An Invoice shall have an Invoice number (BT-1).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(rsm:ExchangedDocument/ram:IssueDateTime/udt:DateTimeString[@format='102']!='')" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(rsm:ExchangedDocument/ram:IssueDateTime/udt:DateTimeString[@format='102']!='')">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-03]-An Invoice shall have an Invoice issue date (BT-2).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(rsm:ExchangedDocument/ram:TypeCode!='')" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(rsm:ExchangedDocument/ram:TypeCode!='')">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-04]-An Invoice shall have an Invoice type code (BT-3).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode!='')" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode!='')">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-05]-An Invoice shall have an Invoice currency code (BT-5).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:Name!='')" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:Name!='')">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-06]-An Invoice shall contain the Seller name (BT-27).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:Name!='')" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:Name!='')">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-07]-An Invoice shall contain the Buyer name (BT-44).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="//ram:SellerTradeParty/ram:PostalTradeAddress" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="//ram:SellerTradeParty/ram:PostalTradeAddress">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-08]-An Invoice shall contain the Seller postal address (BG-5).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="//ram:SellerTradeParty/ram:PostalTradeAddress/ram:CountryID!=''" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="//ram:SellerTradeParty/ram:PostalTradeAddress/ram:CountryID!=''">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-09]-The Seller postal address (BG-5) shall contain a Seller country code (BT-40).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="//ram:BuyerTradeParty/ram:PostalTradeAddress" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="//ram:BuyerTradeParty/ram:PostalTradeAddress">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-10]-An Invoice shall contain the Buyer postal address (BG-8).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="//ram:BuyerTradeParty/ram:PostalTradeAddress/ram:CountryID!=''" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="//ram:BuyerTradeParty/ram:PostalTradeAddress/ram:CountryID!=''">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-11]-The Buyer postal address shall contain a Buyer country code (BT-55).</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="normalize-space(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication[1]/ram:URIID/@schemeID) != '' or not (rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication)" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="normalize-space(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication[1]/ram:URIID/@schemeID) != '' or not (rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication)">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-62]-The Seller electronic address (BT-34) shall have a Scheme identifier.</svrl:text>
-        </svrl:failed-assert>
-      </xsl:otherwise>
-    </xsl:choose>
-
-		<!--ASSERT -->
-<xsl:choose>
-      <xsl:when test="normalize-space(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication[1]/ram:URIID/@schemeID) != '' or not (rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication)" />
-      <xsl:otherwise>
-        <svrl:failed-assert test="normalize-space(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication[1]/ram:URIID/@schemeID) != '' or not (rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication)">
-          <xsl:attribute name="location">
-            <xsl:apply-templates mode="schematron-select-full-path" select="." />
-          </xsl:attribute>
-          <svrl:text>
-	[BR-63]-The Buyer electronic address (BT-49) shall have a Scheme identifier.</svrl:text>
+	[BR-AG-10]-A VAT Breakdown (BG-23) with VAT Category code (BT-118) "IPSI" shall not have a VAT exemption reason code (BT-121) or VAT exemption reason text (BT-120).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2848,61 +2767,80 @@
 
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement" mode="M47" priority="1000">
-    <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement" />
+<xsl:template match="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'O']" mode="M47" priority="1000">
+    <svrl:fired-rule context="//rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax[ram:CategoryCode = 'O']" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="not(ram:SellerTradeParty/ram:DefinedTradeContact/ram:PersonName and ram:SellerTradeParty/ram:DefinedTradeContact/ram:DepartmentName)" />
+      <xsl:when test="ram:CalculatedAmount = 0" />
       <xsl:otherwise>
-        <svrl:failed-assert test="not(ram:SellerTradeParty/ram:DefinedTradeContact/ram:PersonName and ram:SellerTradeParty/ram:DefinedTradeContact/ram:DepartmentName)">
+        <svrl:failed-assert test="ram:CalculatedAmount = 0">
+          <xsl:attribute name="id">FX-SCH-A-000150</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[CII-SR-465]-Only one BT-41 element is allowed on an invoice.</svrl:text>
+	[BR-O-09]-The VAT category tax amount (BT-117) in a VAT breakdown (BG-23) where the VAT category code (BT-118) is "Not subject to VAT" shall be 0 (zero).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="not(ram:BuyerTradeParty/ram:DefinedTradeContact/ram:PersonName and ram:BuyerTradeParty/ram:DefinedTradeContact/ram:DepartmentName)" />
+      <xsl:when test="(ram:ExemptionReason) or (ram:ExemptionReasonCode)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="not(ram:BuyerTradeParty/ram:DefinedTradeContact/ram:PersonName and ram:BuyerTradeParty/ram:DefinedTradeContact/ram:DepartmentName)">
+        <svrl:failed-assert test="(ram:ExemptionReason) or (ram:ExemptionReasonCode)">
+          <xsl:attribute name="id">FX-SCH-A-000151</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[CII-SR-466]-Only one BT-56 element is allowed on an invoice.</svrl:text>
+	[BR-O-10]-A VAT Breakdown (BG-23) with VAT Category code (BT-118) " Not subject to VAT" shall have a VAT exemption reason code (BT-121), meaning " Not subject to VAT" or a VAT exemption reason text (BT-120) " Not subject to VAT" (or the equivalent standard text in another language).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="count(ram:SellerTradeParty)=1" />
+      <xsl:when test="not(//ram:ApplicableTradeTax[ram:CategoryCode != 'O'])" />
       <xsl:otherwise>
-        <svrl:failed-assert test="count(ram:SellerTradeParty)=1">
+        <svrl:failed-assert test="not(//ram:ApplicableTradeTax[ram:CategoryCode != 'O'])">
+          <xsl:attribute name="id">FX-SCH-A-000152</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	Element 'ram:SellerTradeParty' must occur exactly 1 times.</svrl:text>
+	[BR-O-11]-An Invoice that contains a VAT breakdown group (BG-23) with a VAT category code (BT-118) "Not subject to VAT" shall not contain other VAT breakdown groups (BG-23).</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="count(ram:BuyerTradeParty)=1" />
+      <xsl:when test="not(//ram:CategoryTradeTax[ram:CategoryCode != 'O'])" />
       <xsl:otherwise>
-        <svrl:failed-assert test="count(ram:BuyerTradeParty)=1">
+        <svrl:failed-assert test="not(//ram:CategoryTradeTax[ram:CategoryCode != 'O'])">
+          <xsl:attribute name="id">FX-SCH-A-000153</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	Element 'ram:BuyerTradeParty' must occur exactly 1 times.</svrl:text>
+	[BR-O-13]-An Invoice that contains a VAT breakdown group (BG-23) with a VAT category code (BT-118) "Not subject to VAT" shall not contain Document level allowances (BG-20) where Document level allowance VAT category code (BT-95) is not "Not subject to VAT".</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="not(//ram:CategoryTradeTax[ram:CategoryCode != 'O'])" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="not(//ram:CategoryTradeTax[ram:CategoryCode != 'O'])">
+          <xsl:attribute name="id">FX-SCH-A-000154</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-O-14]-An Invoice that contains a VAT breakdown group (BG-23) with a VAT category code (BT-118) "Not subject to VAT" shall not contain Document level charges (BG-21) where Document level charge VAT category code (BT-102) is not "Not subject to VAT".</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2917,19 +2855,200 @@
 
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery" mode="M48" priority="1000">
-    <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery" />
+<xsl:template match="/rsm:CrossIndustryInvoice" mode="M48" priority="1000">
+    <svrl:fired-rule context="/rsm:CrossIndustryInvoice" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(ram:ShipToTradeParty/ram:PostalTradeAddress and ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID!='') or not (ram:ShipToTradeParty/ram:PostalTradeAddress)" />
+      <xsl:when test="(rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID != '')" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(ram:ShipToTradeParty/ram:PostalTradeAddress and ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID!='') or not (ram:ShipToTradeParty/ram:PostalTradeAddress)">
+        <svrl:failed-assert test="(rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID != '')">
+          <xsl:attribute name="id">FX-SCH-A-000010</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-57]-Each Deliver to address (BG-15) shall contain a Deliver to country code (BT-80).</svrl:text>
+	[BR-01]-An Invoice shall have a Specification identifier (BT-24).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(rsm:ExchangedDocument/ram:ID !='')" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(rsm:ExchangedDocument/ram:ID !='')">
+          <xsl:attribute name="id">FX-SCH-A-000011</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-02]-An Invoice shall have an Invoice number (BT-1).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(rsm:ExchangedDocument/ram:IssueDateTime/udt:DateTimeString[@format='102']!='')" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(rsm:ExchangedDocument/ram:IssueDateTime/udt:DateTimeString[@format='102']!='')">
+          <xsl:attribute name="id">FX-SCH-A-000012</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-03]-An Invoice shall have an Invoice issue date (BT-2).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(rsm:ExchangedDocument/ram:TypeCode!='')" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(rsm:ExchangedDocument/ram:TypeCode!='')">
+          <xsl:attribute name="id">FX-SCH-A-000013</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-04]-An Invoice shall have an Invoice type code (BT-3).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode!='')" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode!='')">
+          <xsl:attribute name="id">FX-SCH-A-000014</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-05]-An Invoice shall have an Invoice currency code (BT-5).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:Name!='')" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:Name!='')">
+          <xsl:attribute name="id">FX-SCH-A-000015</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-06]-An Invoice shall contain the Seller name (BT-27).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:Name!='')" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:Name!='')">
+          <xsl:attribute name="id">FX-SCH-A-000016</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-07]-An Invoice shall contain the Buyer name (BT-44).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="//ram:SellerTradeParty/ram:PostalTradeAddress" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="//ram:SellerTradeParty/ram:PostalTradeAddress">
+          <xsl:attribute name="id">FX-SCH-A-000017</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-08]-An Invoice shall contain the Seller postal address (BG-5).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="//ram:SellerTradeParty/ram:PostalTradeAddress/ram:CountryID!=''" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="//ram:SellerTradeParty/ram:PostalTradeAddress/ram:CountryID!=''">
+          <xsl:attribute name="id">FX-SCH-A-000018</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-09]-The Seller postal address (BG-5) shall contain a Seller country code (BT-40).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="//ram:BuyerTradeParty/ram:PostalTradeAddress" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="//ram:BuyerTradeParty/ram:PostalTradeAddress">
+          <xsl:attribute name="id">FX-SCH-A-000156</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-10]-An Invoice shall contain the Buyer postal address (BG-8).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="//ram:BuyerTradeParty/ram:PostalTradeAddress/ram:CountryID!=''" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="//ram:BuyerTradeParty/ram:PostalTradeAddress/ram:CountryID!=''">
+          <xsl:attribute name="id">FX-SCH-A-000157</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-11]-The Buyer postal address shall contain a Buyer country code (BT-55).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="normalize-space(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication[1]/ram:URIID/@schemeID) != '' or not (rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication)" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="normalize-space(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication[1]/ram:URIID/@schemeID) != '' or not (rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication)">
+          <xsl:attribute name="id">FX-SCH-A-000158</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-62]-The Seller electronic address (BT-34) shall have a Scheme identifier.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="normalize-space(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication[1]/ram:URIID/@schemeID) != '' or not (rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication)" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="normalize-space(rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication[1]/ram:URIID/@schemeID) != '' or not (rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication)">
+          <xsl:attribute name="id">FX-SCH-A-000159</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-63]-The Buyer electronic address (BT-49) shall have a Scheme identifier.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2944,33 +3063,65 @@
 
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument" mode="M49" priority="1000">
-    <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument" />
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement" mode="M49" priority="1000">
+    <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="(ram:IssuerAssignedID!='')" />
+      <xsl:when test="not(ram:SellerTradeParty/ram:DefinedTradeContact/ram:PersonName and ram:SellerTradeParty/ram:DefinedTradeContact/ram:DepartmentName)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="(ram:IssuerAssignedID!='')">
+        <svrl:failed-assert test="not(ram:SellerTradeParty/ram:DefinedTradeContact/ram:PersonName and ram:SellerTradeParty/ram:DefinedTradeContact/ram:DepartmentName)">
+          <xsl:attribute name="id">FX-SCH-A-000350</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	[BR-55]-Each Preceding Invoice reference (BG-3) shall contain a Preceding Invoice reference (BT-25).</svrl:text>
+	[CII-SR-465]-Only one BT-41 element is allowed on an invoice.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="count(ram:IssuerAssignedID)=1" />
+      <xsl:when test="not(ram:BuyerTradeParty/ram:DefinedTradeContact/ram:PersonName and ram:BuyerTradeParty/ram:DefinedTradeContact/ram:DepartmentName)" />
       <xsl:otherwise>
-        <svrl:failed-assert test="count(ram:IssuerAssignedID)=1">
+        <svrl:failed-assert test="not(ram:BuyerTradeParty/ram:DefinedTradeContact/ram:PersonName and ram:BuyerTradeParty/ram:DefinedTradeContact/ram:DepartmentName)">
+          <xsl:attribute name="id">FX-SCH-A-000351</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
           <svrl:text>
-	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</svrl:text>
+	[CII-SR-466]-Only one BT-56 element is allowed on an invoice.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="count(ram:SellerTradeParty)=1" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="count(ram:SellerTradeParty)=1">
+          <xsl:attribute name="id">FX-SCH-A-000027</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	Element 'ram:SellerTradeParty' must occur exactly 1 times.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="count(ram:BuyerTradeParty)=1" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="count(ram:BuyerTradeParty)=1">
+          <xsl:attribute name="id">FX-SCH-A-000028</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	Element 'ram:BuyerTradeParty' must occur exactly 1 times.</svrl:text>
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
@@ -2985,7 +3136,78 @@
 
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument" mode="M50" priority="1132">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery" mode="M50" priority="1000">
+    <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery" />
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(ram:ShipToTradeParty/ram:PostalTradeAddress and ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID!='') or not (ram:ShipToTradeParty/ram:PostalTradeAddress)" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(ram:ShipToTradeParty/ram:PostalTradeAddress and ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID!='') or not (ram:ShipToTradeParty/ram:PostalTradeAddress)">
+          <xsl:attribute name="id">FX-SCH-A-000170</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-57]-Each Deliver to address (BG-15) shall contain a Deliver to country code (BT-80).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:apply-templates mode="M50" select="@*|*" />
+  </xsl:template>
+  <xsl:template match="text()" mode="M50" priority="-1" />
+  <xsl:template match="@*|node()" mode="M50" priority="-2">
+    <xsl:apply-templates mode="M50" select="@*|*" />
+  </xsl:template>
+
+<!--PATTERN -->
+
+
+	<!--RULE -->
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument" mode="M51" priority="1000">
+    <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument" />
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="(ram:IssuerAssignedID!='')" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="(ram:IssuerAssignedID!='')">
+          <xsl:attribute name="id">FX-SCH-A-000182</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	[BR-55]-Each Preceding Invoice reference (BG-3) shall contain a Preceding Invoice reference (BT-25).</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+
+		<!--ASSERT -->
+<xsl:choose>
+      <xsl:when test="count(ram:IssuerAssignedID)=1" />
+      <xsl:otherwise>
+        <svrl:failed-assert test="count(ram:IssuerAssignedID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000029</xsl:attribute>
+          <xsl:attribute name="location">
+            <xsl:apply-templates mode="schematron-select-full-path" select="." />
+          </xsl:attribute>
+          <svrl:text>
+	Element 'ram:IssuerAssignedID' must occur exactly 1 times.</svrl:text>
+        </svrl:failed-assert>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:apply-templates mode="M51" select="@*|*" />
+  </xsl:template>
+  <xsl:template match="text()" mode="M51" priority="-1" />
+  <xsl:template match="@*|node()" mode="M51" priority="-2">
+    <xsl:apply-templates mode="M51" select="@*|*" />
+  </xsl:template>
+
+<!--PATTERN -->
+
+
+	<!--RULE -->
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument" mode="M52" priority="1132">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument" />
 
 		<!--ASSERT -->
@@ -2993,6 +3215,7 @@
       <xsl:when test="count(ram:ID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000019</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3007,6 +3230,7 @@
       <xsl:when test="count(ram:TypeCode)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:TypeCode)=1">
+          <xsl:attribute name="id">FX-SCH-A-000020</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3015,11 +3239,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:ID" mode="M50" priority="1131">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:ID" mode="M52" priority="1131">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:ID" />
 
 		<!--REPORT -->
@@ -3032,11 +3256,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote" mode="M50" priority="1130">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote" mode="M52" priority="1130">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote" />
 
 		<!--ASSERT -->
@@ -3044,6 +3268,7 @@
       <xsl:when test="count(ram:Content)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:Content)=1">
+          <xsl:attribute name="id">FX-SCH-A-000160</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3058,6 +3283,7 @@
       <xsl:when test="count(ram:SubjectCode)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:SubjectCode)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000161</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3066,19 +3292,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote/ram:SubjectCode" mode="M50" priority="1129">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote/ram:SubjectCode" mode="M52" priority="1129">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IncludedNote/ram:SubjectCode" />
     <xsl:variable name="codeValue4" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue4)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=4]/enumeration[@value=$codeValue4]" />
+      <xsl:when test="string-length($codeValue4)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=4]/enumeration[@value=$codeValue4]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue4)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=4]/enumeration[@value=$codeValue4]">
+        <svrl:failed-assert test="string-length($codeValue4)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=4]/enumeration[@value=$codeValue4]">
+          <xsl:attribute name="id">FX-SCH-A-000162</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3087,11 +3314,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IssueDateTime/udt:DateTimeString" mode="M50" priority="1128">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IssueDateTime/udt:DateTimeString" mode="M52" priority="1128">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IssueDateTime/udt:DateTimeString" />
 
 		<!--ASSERT -->
@@ -3099,6 +3326,7 @@
       <xsl:when test="@format" />
       <xsl:otherwise>
         <svrl:failed-assert test="@format">
+          <xsl:attribute name="id">FX-SCH-A-000021</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3111,9 +3339,10 @@
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue3)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]" />
+      <xsl:when test="string-length($codeValue3)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue3)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+        <svrl:failed-assert test="string-length($codeValue3)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+          <xsl:attribute name="id">FX-SCH-A-000022</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3122,19 +3351,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:TypeCode" mode="M50" priority="1127">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:TypeCode" mode="M52" priority="1127">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:TypeCode" />
     <xsl:variable name="codeValue2" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue2)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=2]/enumeration[@value=$codeValue2]" />
+      <xsl:when test="string-length($codeValue2)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=2]/enumeration[@value=$codeValue2]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue2)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=2]/enumeration[@value=$codeValue2]">
+        <svrl:failed-assert test="string-length($codeValue2)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=2]/enumeration[@value=$codeValue2]">
+          <xsl:attribute name="id">FX-SCH-A-000023</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3143,11 +3373,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext" mode="M50" priority="1126">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext" mode="M52" priority="1126">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext" />
 
 		<!--ASSERT -->
@@ -3155,6 +3385,7 @@
       <xsl:when test="count(ram:BusinessProcessSpecifiedDocumentContextParameter)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:BusinessProcessSpecifiedDocumentContextParameter)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000024</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3169,6 +3400,7 @@
       <xsl:when test="count(ram:GuidelineSpecifiedDocumentContextParameter)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:GuidelineSpecifiedDocumentContextParameter)=1">
+          <xsl:attribute name="id">FX-SCH-A-000025</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3177,11 +3409,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:BusinessProcessSpecifiedDocumentContextParameter" mode="M50" priority="1125">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:BusinessProcessSpecifiedDocumentContextParameter" mode="M52" priority="1125">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:BusinessProcessSpecifiedDocumentContextParameter" />
 
 		<!--ASSERT -->
@@ -3189,6 +3421,7 @@
       <xsl:when test="count(ram:ID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000019</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3197,11 +3430,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:BusinessProcessSpecifiedDocumentContextParameter/ram:ID" mode="M50" priority="1124">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:BusinessProcessSpecifiedDocumentContextParameter/ram:ID" mode="M52" priority="1124">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:BusinessProcessSpecifiedDocumentContextParameter/ram:ID" />
 
 		<!--REPORT -->
@@ -3214,11 +3447,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter" mode="M50" priority="1123">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter" mode="M52" priority="1123">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter" />
 
 		<!--ASSERT -->
@@ -3226,6 +3459,7 @@
       <xsl:when test="count(ram:ID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000019</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3234,19 +3468,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID" mode="M50" priority="1122">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID" mode="M52" priority="1122">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID" />
     <xsl:variable name="codeValue1" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue1)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=1]/enumeration[@value=$codeValue1]" />
+      <xsl:when test="string-length($codeValue1)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=1]/enumeration[@value=$codeValue1]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue1)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=1]/enumeration[@value=$codeValue1]">
+        <svrl:failed-assert test="string-length($codeValue1)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=1]/enumeration[@value=$codeValue1]">
+          <xsl:attribute name="id">FX-SCH-A-000026</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3266,11 +3501,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument" mode="M50" priority="1121">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument" mode="M52" priority="1121">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument" />
 
 		<!--ASSERT -->
@@ -3278,6 +3513,7 @@
       <xsl:when test="count(ram:IssuerAssignedID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:IssuerAssignedID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000029</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3286,11 +3522,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:FormattedIssueDateTime" mode="M50" priority="1120">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:FormattedIssueDateTime" mode="M52" priority="1120">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:FormattedIssueDateTime" />
 
 		<!--REPORT -->
@@ -3303,11 +3539,11 @@
 	Element 'ram:FormattedIssueDateTime' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:IssuerAssignedID" mode="M50" priority="1119">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:IssuerAssignedID" mode="M52" priority="1119">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerOrderReferencedDocument/ram:IssuerAssignedID" />
 
 		<!--REPORT -->
@@ -3320,11 +3556,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty" mode="M50" priority="1118">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty" mode="M52" priority="1118">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty" />
 
 		<!--ASSERT -->
@@ -3332,6 +3568,7 @@
       <xsl:when test="count(ram:ID)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ID)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000163</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3346,6 +3583,7 @@
       <xsl:when test="count(ram:GlobalID)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:GlobalID)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000164</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3360,6 +3598,7 @@
       <xsl:when test="count(ram:Name)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:Name)=1">
+          <xsl:attribute name="id">FX-SCH-A-000030</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3374,6 +3613,7 @@
       <xsl:when test="count(ram:PostalTradeAddress)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:PostalTradeAddress)=1">
+          <xsl:attribute name="id">FX-SCH-A-000032</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3388,6 +3628,7 @@
       <xsl:when test="count(ram:URIUniversalCommunication)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:URIUniversalCommunication)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000165</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3402,6 +3643,7 @@
       <xsl:when test="count(ram:SpecifiedTaxRegistration)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:SpecifiedTaxRegistration)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000166</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3410,11 +3652,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:GlobalID" mode="M50" priority="1117">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:GlobalID" mode="M52" priority="1117">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:GlobalID" />
 
 		<!--ASSERT -->
@@ -3422,6 +3664,7 @@
       <xsl:when test="@schemeID" />
       <xsl:otherwise>
         <svrl:failed-assert test="@schemeID">
+          <xsl:attribute name="id">FX-SCH-A-000037</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3434,9 +3677,10 @@
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue5)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]" />
+      <xsl:when test="string-length($codeValue5)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue5)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
+        <svrl:failed-assert test="string-length($codeValue5)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
+          <xsl:attribute name="id">FX-SCH-A-000031</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3445,11 +3689,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:ID" mode="M50" priority="1116">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:ID" mode="M52" priority="1116">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:ID" />
 
 		<!--REPORT -->
@@ -3462,11 +3706,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:PostalTradeAddress" mode="M50" priority="1115">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:PostalTradeAddress" mode="M52" priority="1115">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:PostalTradeAddress" />
 
 		<!--ASSERT -->
@@ -3474,6 +3718,7 @@
       <xsl:when test="count(ram:CountryID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:CountryID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000035</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3488,6 +3733,7 @@
       <xsl:when test="count(ram:CountrySubDivisionName)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:CountrySubDivisionName)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000167</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3496,19 +3742,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:PostalTradeAddress/ram:CountryID" mode="M50" priority="1114">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:PostalTradeAddress/ram:CountryID" mode="M52" priority="1114">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:PostalTradeAddress/ram:CountryID" />
     <xsl:variable name="codeValue7" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue7)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]" />
+      <xsl:when test="string-length($codeValue7)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue7)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
+        <svrl:failed-assert test="string-length($codeValue7)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
+          <xsl:attribute name="id">FX-SCH-A-000036</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3517,19 +3764,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:ID" mode="M50" priority="1113">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:ID" mode="M52" priority="1113">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:ID" />
     <xsl:variable name="codeValue6" select="@schemeID" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue6)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=6]/enumeration[@value=$codeValue6]" />
+      <xsl:when test="string-length($codeValue6)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=6]/enumeration[@value=$codeValue6]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue6)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=6]/enumeration[@value=$codeValue6]">
+        <svrl:failed-assert test="string-length($codeValue6)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=6]/enumeration[@value=$codeValue6]">
+          <xsl:attribute name="id">FX-SCH-A-000031</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3538,11 +3786,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:TradingBusinessName" mode="M50" priority="1112">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:TradingBusinessName" mode="M52" priority="1112">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedLegalOrganization/ram:TradingBusinessName" />
 
 		<!--REPORT -->
@@ -3555,11 +3803,11 @@
 	Element 'ram:TradingBusinessName' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration" mode="M50" priority="1111">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration" mode="M52" priority="1111">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration" />
 
 		<!--ASSERT -->
@@ -3567,6 +3815,7 @@
       <xsl:when test="count(ram:ID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000019</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3575,11 +3824,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID" mode="M50" priority="1110">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID" mode="M52" priority="1110">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:SpecifiedTaxRegistration/ram:ID" />
 
 		<!--ASSERT -->
@@ -3587,6 +3836,7 @@
       <xsl:when test="@schemeID" />
       <xsl:otherwise>
         <svrl:failed-assert test="@schemeID">
+          <xsl:attribute name="id">FX-SCH-A-000037</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3599,9 +3849,10 @@
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue9)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]" />
+      <xsl:when test="string-length($codeValue9)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue9)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
+        <svrl:failed-assert test="string-length($codeValue9)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=9]/enumeration[@value=$codeValue9]">
+          <xsl:attribute name="id">FX-SCH-A-000031</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3610,11 +3861,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication" mode="M50" priority="1109">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication" mode="M52" priority="1109">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication" />
 
 		<!--ASSERT -->
@@ -3622,6 +3873,7 @@
       <xsl:when test="count(ram:URIID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:URIID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000168</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3630,11 +3882,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication/ram:URIID" mode="M50" priority="1108">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication/ram:URIID" mode="M52" priority="1108">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty/ram:URIUniversalCommunication/ram:URIID" />
 
 		<!--ASSERT -->
@@ -3642,6 +3894,7 @@
       <xsl:when test="@schemeID" />
       <xsl:otherwise>
         <svrl:failed-assert test="@schemeID">
+          <xsl:attribute name="id">FX-SCH-A-000037</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3654,9 +3907,10 @@
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue8)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=8]/enumeration[@value=$codeValue8]" />
+      <xsl:when test="string-length($codeValue8)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=8]/enumeration[@value=$codeValue8]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue8)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=8]/enumeration[@value=$codeValue8]">
+        <svrl:failed-assert test="string-length($codeValue8)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=8]/enumeration[@value=$codeValue8]">
+          <xsl:attribute name="id">FX-SCH-A-000031</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3665,11 +3919,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument" mode="M50" priority="1107">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument" mode="M52" priority="1107">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument" />
 
 		<!--ASSERT -->
@@ -3677,6 +3931,7 @@
       <xsl:when test="count(ram:IssuerAssignedID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:IssuerAssignedID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000029</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3685,11 +3940,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:FormattedIssueDateTime" mode="M50" priority="1106">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:FormattedIssueDateTime" mode="M52" priority="1106">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:FormattedIssueDateTime" />
 
 		<!--REPORT -->
@@ -3702,11 +3957,11 @@
 	Element 'ram:FormattedIssueDateTime' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:IssuerAssignedID" mode="M50" priority="1105">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:IssuerAssignedID" mode="M52" priority="1105">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:ContractReferencedDocument/ram:IssuerAssignedID" />
 
 		<!--REPORT -->
@@ -3719,11 +3974,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty" mode="M50" priority="1104">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty" mode="M52" priority="1104">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty" />
 
 		<!--ASSERT -->
@@ -3731,6 +3986,7 @@
       <xsl:when test="count(ram:Name)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:Name)=1">
+          <xsl:attribute name="id">FX-SCH-A-000030</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3745,6 +4001,7 @@
       <xsl:when test="count(ram:PostalTradeAddress)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:PostalTradeAddress)=1">
+          <xsl:attribute name="id">FX-SCH-A-000032</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3759,6 +4016,7 @@
       <xsl:when test="count(ram:SpecifiedTaxRegistration)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:SpecifiedTaxRegistration)=1">
+          <xsl:attribute name="id">FX-SCH-A-000169</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3767,11 +4025,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:GlobalID" mode="M50" priority="1103">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:GlobalID" mode="M52" priority="1103">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:GlobalID" />
 
 		<!--REPORT -->
@@ -3784,11 +4042,11 @@
 	Element 'ram:GlobalID' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:ID" mode="M50" priority="1102">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:ID" mode="M52" priority="1102">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:ID" />
 
 		<!--REPORT -->
@@ -3801,11 +4059,11 @@
 	Element 'ram:ID' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:PostalTradeAddress" mode="M50" priority="1101">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:PostalTradeAddress" mode="M52" priority="1101">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:PostalTradeAddress" />
 
 		<!--ASSERT -->
@@ -3813,6 +4071,7 @@
       <xsl:when test="count(ram:CountryID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:CountryID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000035</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3827,6 +4086,7 @@
       <xsl:when test="count(ram:CountrySubDivisionName)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:CountrySubDivisionName)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000167</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3835,19 +4095,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:PostalTradeAddress/ram:CountryID" mode="M50" priority="1100">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:PostalTradeAddress/ram:CountryID" mode="M52" priority="1100">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:PostalTradeAddress/ram:CountryID" />
     <xsl:variable name="codeValue7" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue7)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]" />
+      <xsl:when test="string-length($codeValue7)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue7)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
+        <svrl:failed-assert test="string-length($codeValue7)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
+          <xsl:attribute name="id">FX-SCH-A-000036</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3856,11 +4117,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization" mode="M50" priority="1099">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization" mode="M52" priority="1099">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedLegalOrganization" />
 
 		<!--REPORT -->
@@ -3873,11 +4134,11 @@
 	Element 'ram:SpecifiedLegalOrganization' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration" mode="M50" priority="1098">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration" mode="M52" priority="1098">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration" />
 
 		<!--ASSERT -->
@@ -3885,6 +4146,7 @@
       <xsl:when test="count(ram:ID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000019</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3893,11 +4155,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID" mode="M50" priority="1097">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID" mode="M52" priority="1097">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:SpecifiedTaxRegistration/ram:ID" />
 
 		<!--ASSERT -->
@@ -3905,6 +4167,7 @@
       <xsl:when test="@schemeID" />
       <xsl:otherwise>
         <svrl:failed-assert test="@schemeID">
+          <xsl:attribute name="id">FX-SCH-A-000037</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3917,9 +4180,10 @@
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue10)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=10]/enumeration[@value=$codeValue10]" />
+      <xsl:when test="string-length($codeValue10)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=10]/enumeration[@value=$codeValue10]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue10)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=10]/enumeration[@value=$codeValue10]">
+        <svrl:failed-assert test="string-length($codeValue10)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=10]/enumeration[@value=$codeValue10]">
+          <xsl:attribute name="id">FX-SCH-A-000031</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3928,11 +4192,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:URIUniversalCommunication" mode="M50" priority="1096">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:URIUniversalCommunication" mode="M52" priority="1096">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTaxRepresentativeTradeParty/ram:URIUniversalCommunication" />
 
 		<!--REPORT -->
@@ -3945,11 +4209,11 @@
 	Element 'ram:URIUniversalCommunication' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty" mode="M50" priority="1095">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty" mode="M52" priority="1095">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty" />
 
 		<!--ASSERT -->
@@ -3957,6 +4221,7 @@
       <xsl:when test="count(ram:Name)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:Name)=1">
+          <xsl:attribute name="id">FX-SCH-A-000030</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3971,6 +4236,7 @@
       <xsl:when test="count(ram:PostalTradeAddress)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:PostalTradeAddress)=1">
+          <xsl:attribute name="id">FX-SCH-A-000032</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3985,6 +4251,7 @@
       <xsl:when test="count(ram:URIUniversalCommunication)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:URIUniversalCommunication)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000165</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -3999,6 +4266,7 @@
       <xsl:when test="count(ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;VA&quot;])&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;VA&quot;])&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000033</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4013,6 +4281,7 @@
       <xsl:when test="count(ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;FC&quot;])&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;FC&quot;])&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000034</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4021,11 +4290,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:GlobalID" mode="M50" priority="1094">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:GlobalID" mode="M52" priority="1094">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:GlobalID" />
 
 		<!--ASSERT -->
@@ -4033,6 +4302,7 @@
       <xsl:when test="@schemeID" />
       <xsl:otherwise>
         <svrl:failed-assert test="@schemeID">
+          <xsl:attribute name="id">FX-SCH-A-000037</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4045,9 +4315,10 @@
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue5)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]" />
+      <xsl:when test="string-length($codeValue5)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue5)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
+        <svrl:failed-assert test="string-length($codeValue5)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
+          <xsl:attribute name="id">FX-SCH-A-000031</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4056,11 +4327,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:ID" mode="M50" priority="1093">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:ID" mode="M52" priority="1093">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:ID" />
 
 		<!--REPORT -->
@@ -4073,11 +4344,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:PostalTradeAddress" mode="M50" priority="1092">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:PostalTradeAddress" mode="M52" priority="1092">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:PostalTradeAddress" />
 
 		<!--ASSERT -->
@@ -4085,6 +4356,7 @@
       <xsl:when test="count(ram:CountryID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:CountryID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000035</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4099,6 +4371,7 @@
       <xsl:when test="count(ram:CountrySubDivisionName)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:CountrySubDivisionName)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000167</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4107,19 +4380,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:PostalTradeAddress/ram:CountryID" mode="M50" priority="1091">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:PostalTradeAddress/ram:CountryID" mode="M52" priority="1091">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:PostalTradeAddress/ram:CountryID" />
     <xsl:variable name="codeValue7" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue7)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]" />
+      <xsl:when test="string-length($codeValue7)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue7)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
+        <svrl:failed-assert test="string-length($codeValue7)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
+          <xsl:attribute name="id">FX-SCH-A-000036</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4128,19 +4402,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:ID" mode="M50" priority="1090">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:ID" mode="M52" priority="1090">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedLegalOrganization/ram:ID" />
     <xsl:variable name="codeValue6" select="@schemeID" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue6)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=6]/enumeration[@value=$codeValue6]" />
+      <xsl:when test="string-length($codeValue6)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=6]/enumeration[@value=$codeValue6]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue6)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=6]/enumeration[@value=$codeValue6]">
+        <svrl:failed-assert test="string-length($codeValue6)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=6]/enumeration[@value=$codeValue6]">
+          <xsl:attribute name="id">FX-SCH-A-000031</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4149,11 +4424,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ not(ram:ID/@schemeID=&quot;VA&quot;) and  not(ram:ID/@schemeID=&quot;FC&quot;)]" mode="M50" priority="1089">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ not(ram:ID/@schemeID=&quot;VA&quot;) and  not(ram:ID/@schemeID=&quot;FC&quot;)]" mode="M52" priority="1089">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ not(ram:ID/@schemeID=&quot;VA&quot;) and  not(ram:ID/@schemeID=&quot;FC&quot;)]" />
 
 		<!--REPORT -->
@@ -4166,11 +4441,11 @@
 	Element variant 'ram:SpecifiedTaxRegistration[ not(ram:ID/@schemeID="VA") and  not(ram:ID/@schemeID="FC")]' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;FC&quot;]" mode="M50" priority="1088">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;FC&quot;]" mode="M52" priority="1088">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;FC&quot;]" />
 
 		<!--ASSERT -->
@@ -4178,6 +4453,7 @@
       <xsl:when test="count(ram:ID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000019</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4186,11 +4462,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;FC&quot;]/ram:ID" mode="M50" priority="1087">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;FC&quot;]/ram:ID" mode="M52" priority="1087">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;FC&quot;]/ram:ID" />
 
 		<!--ASSERT -->
@@ -4198,6 +4474,7 @@
       <xsl:when test="@schemeID" />
       <xsl:otherwise>
         <svrl:failed-assert test="@schemeID">
+          <xsl:attribute name="id">FX-SCH-A-000037</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4206,11 +4483,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;VA&quot;]" mode="M50" priority="1086">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;VA&quot;]" mode="M52" priority="1086">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;VA&quot;]" />
 
 		<!--ASSERT -->
@@ -4218,6 +4495,7 @@
       <xsl:when test="count(ram:ID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000019</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4226,11 +4504,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;VA&quot;]/ram:ID" mode="M50" priority="1085">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;VA&quot;]/ram:ID" mode="M52" priority="1085">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:SpecifiedTaxRegistration[ram:ID/@schemeID=&quot;VA&quot;]/ram:ID" />
 
 		<!--ASSERT -->
@@ -4238,6 +4516,7 @@
       <xsl:when test="@schemeID" />
       <xsl:otherwise>
         <svrl:failed-assert test="@schemeID">
+          <xsl:attribute name="id">FX-SCH-A-000037</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4246,11 +4525,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication" mode="M50" priority="1084">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication" mode="M52" priority="1084">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication" />
 
 		<!--ASSERT -->
@@ -4258,6 +4537,7 @@
       <xsl:when test="count(ram:URIID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:URIID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000168</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4266,11 +4546,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication/ram:URIID" mode="M50" priority="1083">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication/ram:URIID" mode="M52" priority="1083">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty/ram:URIUniversalCommunication/ram:URIID" />
 
 		<!--ASSERT -->
@@ -4278,6 +4558,7 @@
       <xsl:when test="@schemeID" />
       <xsl:otherwise>
         <svrl:failed-assert test="@schemeID">
+          <xsl:attribute name="id">FX-SCH-A-000037</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4290,9 +4571,10 @@
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue8)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=8]/enumeration[@value=$codeValue8]" />
+      <xsl:when test="string-length($codeValue8)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=8]/enumeration[@value=$codeValue8]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue8)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=8]/enumeration[@value=$codeValue8]">
+        <svrl:failed-assert test="string-length($codeValue8)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=8]/enumeration[@value=$codeValue8]">
+          <xsl:attribute name="id">FX-SCH-A-000031</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4301,11 +4583,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent" mode="M50" priority="1082">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent" mode="M52" priority="1082">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent" />
 
 		<!--ASSERT -->
@@ -4313,6 +4595,7 @@
       <xsl:when test="count(ram:OccurrenceDateTime)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:OccurrenceDateTime)=1">
+          <xsl:attribute name="id">FX-SCH-A-000171</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4321,11 +4604,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent/ram:OccurrenceDateTime/udt:DateTimeString" mode="M50" priority="1081">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent/ram:OccurrenceDateTime/udt:DateTimeString" mode="M52" priority="1081">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ActualDeliverySupplyChainEvent/ram:OccurrenceDateTime/udt:DateTimeString" />
 
 		<!--ASSERT -->
@@ -4333,6 +4616,7 @@
       <xsl:when test="@format" />
       <xsl:otherwise>
         <svrl:failed-assert test="@format">
+          <xsl:attribute name="id">FX-SCH-A-000021</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4345,9 +4629,10 @@
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue3)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]" />
+      <xsl:when test="string-length($codeValue3)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue3)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+        <svrl:failed-assert test="string-length($codeValue3)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+          <xsl:attribute name="id">FX-SCH-A-000022</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4356,11 +4641,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument" mode="M50" priority="1080">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument" mode="M52" priority="1080">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument" />
 
 		<!--ASSERT -->
@@ -4368,6 +4653,7 @@
       <xsl:when test="count(ram:IssuerAssignedID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:IssuerAssignedID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000029</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4376,11 +4662,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:FormattedIssueDateTime" mode="M50" priority="1079">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:FormattedIssueDateTime" mode="M52" priority="1079">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:FormattedIssueDateTime" />
 
 		<!--REPORT -->
@@ -4393,11 +4679,11 @@
 	Element 'ram:FormattedIssueDateTime' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:IssuerAssignedID" mode="M50" priority="1078">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:IssuerAssignedID" mode="M52" priority="1078">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:DespatchAdviceReferencedDocument/ram:IssuerAssignedID" />
 
 		<!--REPORT -->
@@ -4410,11 +4696,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty" mode="M50" priority="1077">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty" mode="M52" priority="1077">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty" />
 
 		<!--ASSERT -->
@@ -4422,6 +4708,7 @@
       <xsl:when test="count(ram:ID)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ID)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000163</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4436,6 +4723,7 @@
       <xsl:when test="count(ram:GlobalID)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:GlobalID)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000164</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4444,11 +4732,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:GlobalID" mode="M50" priority="1076">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:GlobalID" mode="M52" priority="1076">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:GlobalID" />
 
 		<!--ASSERT -->
@@ -4456,6 +4744,7 @@
       <xsl:when test="@schemeID" />
       <xsl:otherwise>
         <svrl:failed-assert test="@schemeID">
+          <xsl:attribute name="id">FX-SCH-A-000037</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4468,9 +4757,10 @@
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue5)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]" />
+      <xsl:when test="string-length($codeValue5)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue5)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
+        <svrl:failed-assert test="string-length($codeValue5)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
+          <xsl:attribute name="id">FX-SCH-A-000031</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4479,11 +4769,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:ID" mode="M50" priority="1075">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:ID" mode="M52" priority="1075">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:ID" />
 
 		<!--REPORT -->
@@ -4496,11 +4786,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress" mode="M50" priority="1074">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress" mode="M52" priority="1074">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress" />
 
 		<!--ASSERT -->
@@ -4508,6 +4798,7 @@
       <xsl:when test="count(ram:CountryID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:CountryID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000035</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4522,6 +4813,7 @@
       <xsl:when test="count(ram:CountrySubDivisionName)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:CountrySubDivisionName)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000167</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4530,19 +4822,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID" mode="M50" priority="1073">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID" mode="M52" priority="1073">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:PostalTradeAddress/ram:CountryID" />
     <xsl:variable name="codeValue7" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue7)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]" />
+      <xsl:when test="string-length($codeValue7)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue7)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
+        <svrl:failed-assert test="string-length($codeValue7)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=7]/enumeration[@value=$codeValue7]">
+          <xsl:attribute name="id">FX-SCH-A-000036</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4551,11 +4844,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedLegalOrganization" mode="M50" priority="1072">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedLegalOrganization" mode="M52" priority="1072">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedLegalOrganization" />
 
 		<!--REPORT -->
@@ -4568,11 +4861,11 @@
 	Element 'ram:SpecifiedLegalOrganization' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedTaxRegistration" mode="M50" priority="1071">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedTaxRegistration" mode="M52" priority="1071">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:SpecifiedTaxRegistration" />
 
 		<!--REPORT -->
@@ -4585,11 +4878,11 @@
 	Element 'ram:SpecifiedTaxRegistration' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:URIUniversalCommunication" mode="M50" priority="1070">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:URIUniversalCommunication" mode="M52" priority="1070">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeDelivery/ram:ShipToTradeParty/ram:URIUniversalCommunication" />
 
 		<!--REPORT -->
@@ -4602,11 +4895,11 @@
 	Element 'ram:URIUniversalCommunication' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement" mode="M50" priority="1069">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement" mode="M52" priority="1069">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement" />
 
 		<!--ASSERT -->
@@ -4614,6 +4907,7 @@
       <xsl:when test="count(ram:PaymentReference)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:PaymentReference)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000172</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4628,6 +4922,7 @@
       <xsl:when test="count(ram:InvoiceCurrencyCode)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:InvoiceCurrencyCode)=1">
+          <xsl:attribute name="id">FX-SCH-A-000038</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4642,6 +4937,7 @@
       <xsl:when test="count(ram:ApplicableTradeTax)>=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ApplicableTradeTax)>=1">
+          <xsl:attribute name="id">FX-SCH-A-000173</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4656,6 +4952,7 @@
       <xsl:when test="count(ram:SpecifiedTradePaymentTerms)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:SpecifiedTradePaymentTerms)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000174</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4670,6 +4967,7 @@
       <xsl:when test="count(ram:SpecifiedTradeSettlementHeaderMonetarySummation)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:SpecifiedTradeSettlementHeaderMonetarySummation)=1">
+          <xsl:attribute name="id">FX-SCH-A-000039</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4684,6 +4982,7 @@
       <xsl:when test="count(ram:ReceivableSpecifiedTradeAccountingAccount)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ReceivableSpecifiedTradeAccountingAccount)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000175</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4692,11 +4991,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax" mode="M50" priority="1068">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax" mode="M52" priority="1068">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax" />
 
 		<!--ASSERT -->
@@ -4704,6 +5003,7 @@
       <xsl:when test="count(ram:CalculatedAmount)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:CalculatedAmount)=1">
+          <xsl:attribute name="id">FX-SCH-A-000176</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4718,6 +5018,7 @@
       <xsl:when test="count(ram:TypeCode)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:TypeCode)=1">
+          <xsl:attribute name="id">FX-SCH-A-000020</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4732,6 +5033,7 @@
       <xsl:when test="count(ram:BasisAmount)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:BasisAmount)=1">
+          <xsl:attribute name="id">FX-SCH-A-000177</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4746,6 +5048,7 @@
       <xsl:when test="count(ram:CategoryCode)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:CategoryCode)=1">
+          <xsl:attribute name="id">FX-SCH-A-000178</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4754,11 +5057,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:BasisAmount" mode="M50" priority="1067">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:BasisAmount" mode="M52" priority="1067">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:BasisAmount" />
 
 		<!--REPORT -->
@@ -4771,11 +5074,11 @@
 	Attribute @currencyID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount" mode="M50" priority="1066">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount" mode="M52" priority="1066">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CalculatedAmount" />
 
 		<!--REPORT -->
@@ -4788,19 +5091,20 @@
 	Attribute @currencyID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode" mode="M50" priority="1065">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode" mode="M52" priority="1065">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:CategoryCode" />
     <xsl:variable name="codeValue14" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue14)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=14]/enumeration[@value=$codeValue14]" />
+      <xsl:when test="string-length($codeValue14)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=14]/enumeration[@value=$codeValue14]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue14)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=14]/enumeration[@value=$codeValue14]">
+        <svrl:failed-assert test="string-length($codeValue14)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=14]/enumeration[@value=$codeValue14]">
+          <xsl:attribute name="id">FX-SCH-A-000179</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4809,19 +5113,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:DueDateTypeCode" mode="M50" priority="1064">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:DueDateTypeCode" mode="M52" priority="1064">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:DueDateTypeCode" />
     <xsl:variable name="codeValue16" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue16)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=16]/enumeration[@value=$codeValue16]" />
+      <xsl:when test="string-length($codeValue16)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=16]/enumeration[@value=$codeValue16]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue16)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=16]/enumeration[@value=$codeValue16]">
+        <svrl:failed-assert test="string-length($codeValue16)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=16]/enumeration[@value=$codeValue16]">
+          <xsl:attribute name="id">FX-SCH-A-000180</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4830,19 +5135,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:ExemptionReasonCode" mode="M50" priority="1063">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:ExemptionReasonCode" mode="M52" priority="1063">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:ExemptionReasonCode" />
     <xsl:variable name="codeValue15" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue15)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=15]/enumeration[@value=$codeValue15]" />
+      <xsl:when test="string-length($codeValue15)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=15]/enumeration[@value=$codeValue15]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue15)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=15]/enumeration[@value=$codeValue15]">
+        <svrl:failed-assert test="string-length($codeValue15)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=15]/enumeration[@value=$codeValue15]">
+          <xsl:attribute name="id">FX-SCH-A-000181</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4851,19 +5157,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:TypeCode" mode="M50" priority="1062">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:TypeCode" mode="M52" priority="1062">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ApplicableTradeTax/ram:TypeCode" />
     <xsl:variable name="codeValue13" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue13)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=13]/enumeration[@value=$codeValue13]" />
+      <xsl:when test="string-length($codeValue13)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=13]/enumeration[@value=$codeValue13]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue13)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=13]/enumeration[@value=$codeValue13]">
+        <svrl:failed-assert test="string-length($codeValue13)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=13]/enumeration[@value=$codeValue13]">
+          <xsl:attribute name="id">FX-SCH-A-000023</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4872,11 +5179,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod/ram:EndDateTime/udt:DateTimeString" mode="M50" priority="1061">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod/ram:EndDateTime/udt:DateTimeString" mode="M52" priority="1061">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod/ram:EndDateTime/udt:DateTimeString" />
 
 		<!--ASSERT -->
@@ -4884,6 +5191,7 @@
       <xsl:when test="@format" />
       <xsl:otherwise>
         <svrl:failed-assert test="@format">
+          <xsl:attribute name="id">FX-SCH-A-000021</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4896,9 +5204,10 @@
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue3)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]" />
+      <xsl:when test="string-length($codeValue3)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue3)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+        <svrl:failed-assert test="string-length($codeValue3)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+          <xsl:attribute name="id">FX-SCH-A-000022</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4907,11 +5216,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod/ram:StartDateTime/udt:DateTimeString" mode="M50" priority="1060">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod/ram:StartDateTime/udt:DateTimeString" mode="M52" priority="1060">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:BillingSpecifiedPeriod/ram:StartDateTime/udt:DateTimeString" />
 
 		<!--ASSERT -->
@@ -4919,6 +5228,7 @@
       <xsl:when test="@format" />
       <xsl:otherwise>
         <svrl:failed-assert test="@format">
+          <xsl:attribute name="id">FX-SCH-A-000021</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4931,9 +5241,10 @@
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue3)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]" />
+      <xsl:when test="string-length($codeValue3)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue3)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+        <svrl:failed-assert test="string-length($codeValue3)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+          <xsl:attribute name="id">FX-SCH-A-000022</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4942,11 +5253,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:CreditorReferenceID" mode="M50" priority="1059">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:CreditorReferenceID" mode="M52" priority="1059">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:CreditorReferenceID" />
 
 		<!--REPORT -->
@@ -4959,19 +5270,20 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode" mode="M50" priority="1058">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode" mode="M52" priority="1058">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceCurrencyCode" />
     <xsl:variable name="codeValue11" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue11)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]" />
+      <xsl:when test="string-length($codeValue11)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue11)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
+        <svrl:failed-assert test="string-length($codeValue11)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
+          <xsl:attribute name="id">FX-SCH-A-000040</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -4980,11 +5292,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString" mode="M50" priority="1057">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString" mode="M52" priority="1057">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:FormattedIssueDateTime/qdt:DateTimeString" />
 
 		<!--ASSERT -->
@@ -4992,6 +5304,7 @@
       <xsl:when test="@format" />
       <xsl:otherwise>
         <svrl:failed-assert test="@format">
+          <xsl:attribute name="id">FX-SCH-A-000021</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5004,9 +5317,10 @@
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue21)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]" />
+      <xsl:when test="string-length($codeValue21)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue21)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
+        <svrl:failed-assert test="string-length($codeValue21)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=21]/enumeration[@value=$codeValue21]">
+          <xsl:attribute name="id">FX-SCH-A-000022</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5015,11 +5329,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:IssuerAssignedID" mode="M50" priority="1056">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:IssuerAssignedID" mode="M52" priority="1056">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceReferencedDocument/ram:IssuerAssignedID" />
 
 		<!--REPORT -->
@@ -5032,11 +5346,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty" mode="M50" priority="1055">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty" mode="M52" priority="1055">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty" />
 
 		<!--ASSERT -->
@@ -5044,6 +5358,7 @@
       <xsl:when test="count(ram:ID)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ID)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000163</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5058,6 +5373,7 @@
       <xsl:when test="count(ram:GlobalID)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:GlobalID)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000164</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5072,6 +5388,7 @@
       <xsl:when test="count(ram:Name)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:Name)=1">
+          <xsl:attribute name="id">FX-SCH-A-000030</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5080,11 +5397,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:GlobalID" mode="M50" priority="1054">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:GlobalID" mode="M52" priority="1054">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:GlobalID" />
 
 		<!--ASSERT -->
@@ -5092,6 +5409,7 @@
       <xsl:when test="@schemeID" />
       <xsl:otherwise>
         <svrl:failed-assert test="@schemeID">
+          <xsl:attribute name="id">FX-SCH-A-000037</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5104,9 +5422,10 @@
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue5)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]" />
+      <xsl:when test="string-length($codeValue5)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue5)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
+        <svrl:failed-assert test="string-length($codeValue5)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=5]/enumeration[@value=$codeValue5]">
+          <xsl:attribute name="id">FX-SCH-A-000031</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5115,11 +5434,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:ID" mode="M50" priority="1053">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:ID" mode="M52" priority="1053">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:ID" />
 
 		<!--REPORT -->
@@ -5132,11 +5451,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:PostalTradeAddress" mode="M50" priority="1052">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:PostalTradeAddress" mode="M52" priority="1052">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:PostalTradeAddress" />
 
 		<!--REPORT -->
@@ -5149,19 +5468,20 @@
 	Element 'ram:PostalTradeAddress' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:ID" mode="M50" priority="1051">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:ID" mode="M52" priority="1051">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:ID" />
     <xsl:variable name="codeValue6" select="@schemeID" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue6)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=6]/enumeration[@value=$codeValue6]" />
+      <xsl:when test="string-length($codeValue6)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=6]/enumeration[@value=$codeValue6]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue6)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=6]/enumeration[@value=$codeValue6]">
+        <svrl:failed-assert test="string-length($codeValue6)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=6]/enumeration[@value=$codeValue6]">
+          <xsl:attribute name="id">FX-SCH-A-000031</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5170,11 +5490,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:TradingBusinessName" mode="M50" priority="1050">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:TradingBusinessName" mode="M52" priority="1050">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedLegalOrganization/ram:TradingBusinessName" />
 
 		<!--REPORT -->
@@ -5187,11 +5507,11 @@
 	Element 'ram:TradingBusinessName' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedTaxRegistration" mode="M50" priority="1049">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedTaxRegistration" mode="M52" priority="1049">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:SpecifiedTaxRegistration" />
 
 		<!--REPORT -->
@@ -5204,11 +5524,11 @@
 	Element 'ram:SpecifiedTaxRegistration' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:URIUniversalCommunication" mode="M50" priority="1048">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:URIUniversalCommunication" mode="M52" priority="1048">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty/ram:URIUniversalCommunication" />
 
 		<!--REPORT -->
@@ -5221,11 +5541,11 @@
 	Element 'ram:URIUniversalCommunication' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ReceivableSpecifiedTradeAccountingAccount/ram:ID" mode="M50" priority="1047">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ReceivableSpecifiedTradeAccountingAccount/ram:ID" mode="M52" priority="1047">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ReceivableSpecifiedTradeAccountingAccount/ram:ID" />
 
 		<!--REPORT -->
@@ -5238,11 +5558,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ not(ram:ChargeIndicator/udt:Indicator=&quot;false&quot;) and  not(ram:ChargeIndicator/udt:Indicator=&quot;true&quot;)]" mode="M50" priority="1046">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ not(ram:ChargeIndicator/udt:Indicator=&quot;false&quot;) and  not(ram:ChargeIndicator/udt:Indicator=&quot;true&quot;)]" mode="M52" priority="1046">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ not(ram:ChargeIndicator/udt:Indicator=&quot;false&quot;) and  not(ram:ChargeIndicator/udt:Indicator=&quot;true&quot;)]" />
 
 		<!--REPORT -->
@@ -5255,11 +5575,11 @@
 	Element variant 'ram:SpecifiedTradeAllowanceCharge[ not(ram:ChargeIndicator/udt:Indicator="false") and  not(ram:ChargeIndicator/udt:Indicator="true")]' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]" mode="M50" priority="1045">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]" mode="M52" priority="1045">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]" />
 
 		<!--ASSERT -->
@@ -5267,6 +5587,7 @@
       <xsl:when test="count(ram:ChargeIndicator)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ChargeIndicator)=1">
+          <xsl:attribute name="id">FX-SCH-A-000183</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5281,6 +5602,7 @@
       <xsl:when test="count(ram:ActualAmount)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ActualAmount)=1">
+          <xsl:attribute name="id">FX-SCH-A-000184</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5295,6 +5617,7 @@
       <xsl:when test="count(ram:CategoryTradeTax)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:CategoryTradeTax)=1">
+          <xsl:attribute name="id">FX-SCH-A-000185</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5303,11 +5626,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ActualAmount" mode="M50" priority="1044">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ActualAmount" mode="M52" priority="1044">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ActualAmount" />
 
 		<!--REPORT -->
@@ -5320,11 +5643,11 @@
 	Attribute @currencyID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:BasisAmount" mode="M50" priority="1043">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:BasisAmount" mode="M52" priority="1043">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:BasisAmount" />
 
 		<!--REPORT -->
@@ -5337,11 +5660,11 @@
 	Attribute @currencyID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax" mode="M50" priority="1042">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax" mode="M52" priority="1042">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax" />
 
 		<!--ASSERT -->
@@ -5349,6 +5672,7 @@
       <xsl:when test="count(ram:TypeCode)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:TypeCode)=1">
+          <xsl:attribute name="id">FX-SCH-A-000020</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5363,6 +5687,7 @@
       <xsl:when test="count(ram:CategoryCode)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:CategoryCode)=1">
+          <xsl:attribute name="id">FX-SCH-A-000178</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5371,11 +5696,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:BasisAmount" mode="M50" priority="1041">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:BasisAmount" mode="M52" priority="1041">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:BasisAmount" />
 
 		<!--REPORT -->
@@ -5388,11 +5713,11 @@
 	Element 'ram:BasisAmount' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:CalculatedAmount" mode="M50" priority="1040">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:CalculatedAmount" mode="M52" priority="1040">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:CalculatedAmount" />
 
 		<!--REPORT -->
@@ -5405,19 +5730,20 @@
 	Element 'ram:CalculatedAmount' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:CategoryCode" mode="M50" priority="1039">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:CategoryCode" mode="M52" priority="1039">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:CategoryCode" />
     <xsl:variable name="codeValue14" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue14)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=14]/enumeration[@value=$codeValue14]" />
+      <xsl:when test="string-length($codeValue14)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=14]/enumeration[@value=$codeValue14]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue14)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=14]/enumeration[@value=$codeValue14]">
+        <svrl:failed-assert test="string-length($codeValue14)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=14]/enumeration[@value=$codeValue14]">
+          <xsl:attribute name="id">FX-SCH-A-000179</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5426,11 +5752,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:DueDateTypeCode" mode="M50" priority="1038">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:DueDateTypeCode" mode="M52" priority="1038">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:DueDateTypeCode" />
 
 		<!--REPORT -->
@@ -5443,11 +5769,11 @@
 	Element 'ram:DueDateTypeCode' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:ExemptionReason" mode="M50" priority="1037">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:ExemptionReason" mode="M52" priority="1037">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:ExemptionReason" />
 
 		<!--REPORT -->
@@ -5460,11 +5786,11 @@
 	Element 'ram:ExemptionReason' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:ExemptionReasonCode" mode="M50" priority="1036">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:ExemptionReasonCode" mode="M52" priority="1036">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:ExemptionReasonCode" />
 
 		<!--REPORT -->
@@ -5477,19 +5803,20 @@
 	Element 'ram:ExemptionReasonCode' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:TypeCode" mode="M50" priority="1035">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:TypeCode" mode="M52" priority="1035">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:CategoryTradeTax/ram:TypeCode" />
     <xsl:variable name="codeValue13" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue13)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=13]/enumeration[@value=$codeValue13]" />
+      <xsl:when test="string-length($codeValue13)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=13]/enumeration[@value=$codeValue13]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue13)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=13]/enumeration[@value=$codeValue13]">
+        <svrl:failed-assert test="string-length($codeValue13)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=13]/enumeration[@value=$codeValue13]">
+          <xsl:attribute name="id">FX-SCH-A-000023</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5498,19 +5825,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ReasonCode" mode="M50" priority="1034">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ReasonCode" mode="M52" priority="1034">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;false&quot;]/ram:ReasonCode" />
     <xsl:variable name="codeValue17" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue17)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=17]/enumeration[@value=$codeValue17]" />
+      <xsl:when test="string-length($codeValue17)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=17]/enumeration[@value=$codeValue17]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue17)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=17]/enumeration[@value=$codeValue17]">
+        <svrl:failed-assert test="string-length($codeValue17)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=17]/enumeration[@value=$codeValue17]">
+          <xsl:attribute name="id">FX-SCH-A-000186</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5519,11 +5847,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]" mode="M50" priority="1033">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]" mode="M52" priority="1033">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]" />
 
 		<!--ASSERT -->
@@ -5531,6 +5859,7 @@
       <xsl:when test="count(ram:ChargeIndicator)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ChargeIndicator)=1">
+          <xsl:attribute name="id">FX-SCH-A-000183</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5545,6 +5874,7 @@
       <xsl:when test="count(ram:ActualAmount)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ActualAmount)=1">
+          <xsl:attribute name="id">FX-SCH-A-000184</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5559,6 +5889,7 @@
       <xsl:when test="count(ram:CategoryTradeTax)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:CategoryTradeTax)=1">
+          <xsl:attribute name="id">FX-SCH-A-000185</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5567,11 +5898,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ActualAmount" mode="M50" priority="1032">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ActualAmount" mode="M52" priority="1032">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ActualAmount" />
 
 		<!--REPORT -->
@@ -5584,11 +5915,11 @@
 	Attribute @currencyID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:BasisAmount" mode="M50" priority="1031">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:BasisAmount" mode="M52" priority="1031">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:BasisAmount" />
 
 		<!--REPORT -->
@@ -5601,11 +5932,11 @@
 	Attribute @currencyID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax" mode="M50" priority="1030">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax" mode="M52" priority="1030">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax" />
 
 		<!--ASSERT -->
@@ -5613,6 +5944,7 @@
       <xsl:when test="count(ram:TypeCode)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:TypeCode)=1">
+          <xsl:attribute name="id">FX-SCH-A-000020</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5627,6 +5959,7 @@
       <xsl:when test="count(ram:CategoryCode)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:CategoryCode)=1">
+          <xsl:attribute name="id">FX-SCH-A-000178</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5635,11 +5968,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:BasisAmount" mode="M50" priority="1029">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:BasisAmount" mode="M52" priority="1029">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:BasisAmount" />
 
 		<!--REPORT -->
@@ -5652,11 +5985,11 @@
 	Element 'ram:BasisAmount' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:CalculatedAmount" mode="M50" priority="1028">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:CalculatedAmount" mode="M52" priority="1028">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:CalculatedAmount" />
 
 		<!--REPORT -->
@@ -5669,19 +6002,20 @@
 	Element 'ram:CalculatedAmount' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:CategoryCode" mode="M50" priority="1027">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:CategoryCode" mode="M52" priority="1027">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:CategoryCode" />
     <xsl:variable name="codeValue14" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue14)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=14]/enumeration[@value=$codeValue14]" />
+      <xsl:when test="string-length($codeValue14)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=14]/enumeration[@value=$codeValue14]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue14)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=14]/enumeration[@value=$codeValue14]">
+        <svrl:failed-assert test="string-length($codeValue14)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=14]/enumeration[@value=$codeValue14]">
+          <xsl:attribute name="id">FX-SCH-A-000179</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5690,11 +6024,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:DueDateTypeCode" mode="M50" priority="1026">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:DueDateTypeCode" mode="M52" priority="1026">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:DueDateTypeCode" />
 
 		<!--REPORT -->
@@ -5707,11 +6041,11 @@
 	Element 'ram:DueDateTypeCode' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:ExemptionReason" mode="M50" priority="1025">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:ExemptionReason" mode="M52" priority="1025">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:ExemptionReason" />
 
 		<!--REPORT -->
@@ -5724,11 +6058,11 @@
 	Element 'ram:ExemptionReason' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:ExemptionReasonCode" mode="M50" priority="1024">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:ExemptionReasonCode" mode="M52" priority="1024">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:ExemptionReasonCode" />
 
 		<!--REPORT -->
@@ -5741,19 +6075,20 @@
 	Element 'ram:ExemptionReasonCode' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:TypeCode" mode="M50" priority="1023">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:TypeCode" mode="M52" priority="1023">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:CategoryTradeTax/ram:TypeCode" />
     <xsl:variable name="codeValue13" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue13)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=13]/enumeration[@value=$codeValue13]" />
+      <xsl:when test="string-length($codeValue13)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=13]/enumeration[@value=$codeValue13]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue13)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=13]/enumeration[@value=$codeValue13]">
+        <svrl:failed-assert test="string-length($codeValue13)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=13]/enumeration[@value=$codeValue13]">
+          <xsl:attribute name="id">FX-SCH-A-000023</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5762,11 +6097,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ReasonCode[ not(not (@listID)) and  not(@listID=&quot;5153&quot;)]" mode="M50" priority="1022">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ReasonCode[ not(not (@listID)) and  not(@listID=&quot;5153&quot;)]" mode="M52" priority="1022">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ReasonCode[ not(not (@listID)) and  not(@listID=&quot;5153&quot;)]" />
 
 		<!--REPORT -->
@@ -5779,19 +6114,20 @@
 	Element variant 'ram:ReasonCode[ not(not (@listID)) and  not(@listID="5153")]' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ReasonCode[not (@listID)]" mode="M50" priority="1021">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ReasonCode[not (@listID)]" mode="M52" priority="1021">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeAllowanceCharge[ram:ChargeIndicator/udt:Indicator=&quot;true&quot;]/ram:ReasonCode[not (@listID)]" />
     <xsl:variable name="codeValue18" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue18)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=18]/enumeration[@value=$codeValue18]" />
+      <xsl:when test="string-length($codeValue18)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=18]/enumeration[@value=$codeValue18]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue18)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=18]/enumeration[@value=$codeValue18]">
+        <svrl:failed-assert test="string-length($codeValue18)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=18]/enumeration[@value=$codeValue18]">
+          <xsl:attribute name="id">FX-SCH-A-000376</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5800,11 +6136,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms" mode="M50" priority="1020">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms" mode="M52" priority="1020">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms" />
 
 		<!--ASSERT -->
@@ -5812,6 +6148,7 @@
       <xsl:when test="count(ram:Description)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:Description)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000187</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5826,6 +6163,7 @@
       <xsl:when test="count(ram:DirectDebitMandateID)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:DirectDebitMandateID)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000188</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5834,11 +6172,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DirectDebitMandateID" mode="M50" priority="1019">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DirectDebitMandateID" mode="M52" priority="1019">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DirectDebitMandateID" />
 
 		<!--REPORT -->
@@ -5851,11 +6189,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DueDateDateTime/udt:DateTimeString" mode="M50" priority="1018">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DueDateDateTime/udt:DateTimeString" mode="M52" priority="1018">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradePaymentTerms/ram:DueDateDateTime/udt:DateTimeString" />
 
 		<!--ASSERT -->
@@ -5863,6 +6201,7 @@
       <xsl:when test="@format" />
       <xsl:otherwise>
         <svrl:failed-assert test="@format">
+          <xsl:attribute name="id">FX-SCH-A-000021</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5875,9 +6214,10 @@
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue3)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]" />
+      <xsl:when test="string-length($codeValue3)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue3)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+        <svrl:failed-assert test="string-length($codeValue3)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=3]/enumeration[@value=$codeValue3]">
+          <xsl:attribute name="id">FX-SCH-A-000022</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5886,11 +6226,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation" mode="M50" priority="1017">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation" mode="M52" priority="1017">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation" />
 
 		<!--ASSERT -->
@@ -5898,6 +6238,7 @@
       <xsl:when test="count(ram:LineTotalAmount)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:LineTotalAmount)=1">
+          <xsl:attribute name="id">FX-SCH-A-000189</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5912,6 +6253,7 @@
       <xsl:when test="count(ram:ChargeTotalAmount)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:ChargeTotalAmount)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000190</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5926,6 +6268,7 @@
       <xsl:when test="count(ram:AllowanceTotalAmount)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:AllowanceTotalAmount)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000191</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5940,6 +6283,7 @@
       <xsl:when test="count(ram:TaxBasisTotalAmount)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:TaxBasisTotalAmount)=1">
+          <xsl:attribute name="id">FX-SCH-A-000041</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5954,6 +6298,7 @@
       <xsl:when test="count(ram:TaxTotalAmount[@currencyID=../../ram:InvoiceCurrencyCode])&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:TaxTotalAmount[@currencyID=../../ram:InvoiceCurrencyCode])&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000042</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5968,6 +6313,7 @@
       <xsl:when test="count(ram:TaxTotalAmount[@currencyID=../../ram:TaxCurrencyCode])&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:TaxTotalAmount[@currencyID=../../ram:TaxCurrencyCode])&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000192</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5982,6 +6328,7 @@
       <xsl:when test="count(ram:GrandTotalAmount)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:GrandTotalAmount)=1">
+          <xsl:attribute name="id">FX-SCH-A-000043</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -5996,6 +6343,7 @@
       <xsl:when test="count(ram:TotalPrepaidAmount)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:TotalPrepaidAmount)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000193</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -6010,6 +6358,7 @@
       <xsl:when test="count(ram:DuePayableAmount)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:DuePayableAmount)=1">
+          <xsl:attribute name="id">FX-SCH-A-000044</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -6018,11 +6367,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:AllowanceTotalAmount" mode="M50" priority="1016">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:AllowanceTotalAmount" mode="M52" priority="1016">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:AllowanceTotalAmount" />
 
 		<!--REPORT -->
@@ -6035,11 +6384,11 @@
 	Attribute @currencyID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:ChargeTotalAmount" mode="M50" priority="1015">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:ChargeTotalAmount" mode="M52" priority="1015">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:ChargeTotalAmount" />
 
 		<!--REPORT -->
@@ -6052,11 +6401,11 @@
 	Attribute @currencyID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:DuePayableAmount" mode="M50" priority="1014">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:DuePayableAmount" mode="M52" priority="1014">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:DuePayableAmount" />
 
 		<!--REPORT -->
@@ -6069,11 +6418,11 @@
 	Attribute @currencyID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount" mode="M50" priority="1013">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount" mode="M52" priority="1013">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:GrandTotalAmount" />
 
 		<!--REPORT -->
@@ -6086,11 +6435,11 @@
 	Attribute @currencyID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:LineTotalAmount" mode="M50" priority="1012">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:LineTotalAmount" mode="M52" priority="1012">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:LineTotalAmount" />
 
 		<!--REPORT -->
@@ -6103,11 +6452,11 @@
 	Attribute @currencyID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount" mode="M50" priority="1011">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount" mode="M52" priority="1011">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxBasisTotalAmount" />
 
 		<!--REPORT -->
@@ -6120,11 +6469,11 @@
 	Attribute @currencyID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[ not(@currencyID=../../ram:InvoiceCurrencyCode) and  not(@currencyID=../../ram:TaxCurrencyCode)]" mode="M50" priority="1010">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[ not(@currencyID=../../ram:InvoiceCurrencyCode) and  not(@currencyID=../../ram:TaxCurrencyCode)]" mode="M52" priority="1010">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[ not(@currencyID=../../ram:InvoiceCurrencyCode) and  not(@currencyID=../../ram:TaxCurrencyCode)]" />
 
 		<!--REPORT -->
@@ -6137,19 +6486,20 @@
 	Element variant 'ram:TaxTotalAmount[ not(@currencyID=../../ram:InvoiceCurrencyCode) and  not(@currencyID=../../ram:TaxCurrencyCode)]' is marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=../../ram:InvoiceCurrencyCode]" mode="M50" priority="1009">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=../../ram:InvoiceCurrencyCode]" mode="M52" priority="1009">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=../../ram:InvoiceCurrencyCode]" />
     <xsl:variable name="codeValue19" select="@currencyID" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue19)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=19]/enumeration[@value=$codeValue19]" />
+      <xsl:when test="string-length($codeValue19)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=19]/enumeration[@value=$codeValue19]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue19)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=19]/enumeration[@value=$codeValue19]">
+        <svrl:failed-assert test="string-length($codeValue19)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=19]/enumeration[@value=$codeValue19]">
+          <xsl:attribute name="id">FX-SCH-A-000045</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -6158,19 +6508,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=../../ram:TaxCurrencyCode]" mode="M50" priority="1008">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=../../ram:TaxCurrencyCode]" mode="M52" priority="1008">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TaxTotalAmount[@currencyID=../../ram:TaxCurrencyCode]" />
     <xsl:variable name="codeValue20" select="@currencyID" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue20)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=20]/enumeration[@value=$codeValue20]" />
+      <xsl:when test="string-length($codeValue20)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=20]/enumeration[@value=$codeValue20]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue20)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=20]/enumeration[@value=$codeValue20]">
+        <svrl:failed-assert test="string-length($codeValue20)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=20]/enumeration[@value=$codeValue20]">
+          <xsl:attribute name="id">FX-SCH-A-000045</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -6179,11 +6530,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TotalPrepaidAmount" mode="M50" priority="1007">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TotalPrepaidAmount" mode="M52" priority="1007">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementHeaderMonetarySummation/ram:TotalPrepaidAmount" />
 
 		<!--REPORT -->
@@ -6196,11 +6547,11 @@
 	Attribute @currencyID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans" mode="M50" priority="1006">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans" mode="M52" priority="1006">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans" />
 
 		<!--ASSERT -->
@@ -6208,6 +6559,7 @@
       <xsl:when test="count(ram:TypeCode)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:TypeCode)=1">
+          <xsl:attribute name="id">FX-SCH-A-000020</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -6222,6 +6574,7 @@
       <xsl:when test="count(ram:PayeePartyCreditorFinancialAccount)&lt;=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:PayeePartyCreditorFinancialAccount)&lt;=1">
+          <xsl:attribute name="id">FX-SCH-A-000194</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -6230,11 +6583,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeePartyCreditorFinancialAccount/ram:IBANID" mode="M50" priority="1005">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeePartyCreditorFinancialAccount/ram:IBANID" mode="M52" priority="1005">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeePartyCreditorFinancialAccount/ram:IBANID" />
 
 		<!--REPORT -->
@@ -6247,11 +6600,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID" mode="M50" priority="1004">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID" mode="M52" priority="1004">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeePartyCreditorFinancialAccount/ram:ProprietaryID" />
 
 		<!--REPORT -->
@@ -6264,11 +6617,11 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayerPartyDebtorFinancialAccount" mode="M50" priority="1003">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayerPartyDebtorFinancialAccount" mode="M52" priority="1003">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayerPartyDebtorFinancialAccount" />
 
 		<!--ASSERT -->
@@ -6276,6 +6629,7 @@
       <xsl:when test="count(ram:IBANID)=1" />
       <xsl:otherwise>
         <svrl:failed-assert test="count(ram:IBANID)=1">
+          <xsl:attribute name="id">FX-SCH-A-000195</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -6284,11 +6638,11 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayerPartyDebtorFinancialAccount/ram:IBANID" mode="M50" priority="1002">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayerPartyDebtorFinancialAccount/ram:IBANID" mode="M52" priority="1002">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayerPartyDebtorFinancialAccount/ram:IBANID" />
 
 		<!--REPORT -->
@@ -6301,19 +6655,20 @@
 	Attribute @schemeID' marked as not used in the given context.</svrl:text>
       </svrl:successful-report>
     </xsl:if>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:TypeCode" mode="M50" priority="1001">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:TypeCode" mode="M52" priority="1001">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:TypeCode" />
     <xsl:variable name="codeValue12" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue12)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]" />
+      <xsl:when test="string-length($codeValue12)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue12)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
+        <svrl:failed-assert test="string-length($codeValue12)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=12]/enumeration[@value=$codeValue12]">
+          <xsl:attribute name="id">FX-SCH-A-000023</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -6322,19 +6677,20 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 
 	<!--RULE -->
-<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode" mode="M50" priority="1000">
+<xsl:template match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode" mode="M52" priority="1000">
     <svrl:fired-rule context="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:TaxCurrencyCode" />
     <xsl:variable name="codeValue11" select="." />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="string-length($codeValue11)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]" />
+      <xsl:when test="string-length($codeValue11)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]" />
       <xsl:otherwise>
-        <svrl:failed-assert test="string-length($codeValue11)=0 or document('FACTUR-X_BASICWL_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
+        <svrl:failed-assert test="string-length($codeValue11)=0 or document('FACTUR-X_BASIC-WL_codedb.xml')/codedb/cl[@id=11]/enumeration[@value=$codeValue11]">
+          <xsl:attribute name="id">FX-SCH-A-000196</xsl:attribute>
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -6343,10 +6699,10 @@
         </svrl:failed-assert>
       </xsl:otherwise>
     </xsl:choose>
-    <xsl:apply-templates mode="M50" select="@*|*" />
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
-  <xsl:template match="text()" mode="M50" priority="-1" />
-  <xsl:template match="@*|node()" mode="M50" priority="-2">
-    <xsl:apply-templates mode="M50" select="@*|*" />
+  <xsl:template match="text()" mode="M52" priority="-1" />
+  <xsl:template match="@*|node()" mode="M52" priority="-2">
+    <xsl:apply-templates mode="M52" select="@*|*" />
   </xsl:template>
 </xsl:stylesheet>
