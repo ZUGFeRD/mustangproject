@@ -121,11 +121,11 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 								}
 								if (party.item(partyIndex).getLocalName().equals("EndpointID")) {
 									Node currentNode = party.item(partyIndex);
-									if ((currentNode.getAttributes() != null &&
-										(currentNode.getAttributes().getNamedItem("schemeID") != null))
-										&& (party.item(partyIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("EM"))
-									) {
-										setEmail(currentNode.getTextContent());
+									List<String> supportedSchemeIDs = Arrays.asList("EM", "0225");
+									if ((currentNode.getAttributes() != null
+											&& (currentNode.getAttributes().getNamedItem("schemeID") != null))
+											&& (supportedSchemeIDs.contains(currentNode.getAttributes().getNamedItem("schemeID").getNodeValue()))) {
+										setEmail(currentNode.getAttributes().getNamedItem("schemeID").getNodeValue(), currentNode.getTextContent());
 									}
 
 								}
@@ -425,14 +425,13 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 						}
 						if (itemChilds.item(itemChildIndex).getLocalName().equals("URIUniversalCommunication")) {
 							NodeList URIchilds = itemChilds.item(itemChildIndex).getChildNodes();
+							List<String> supportedSchemeIDs = Arrays.asList("EM", "0225");
 							for (int URIChildIndex = 0; URIChildIndex < URIchilds.getLength(); URIChildIndex++) {
 								Node currentNode = URIchilds.item(URIChildIndex);
 								if ((currentNode.getLocalName() != null) && (currentNode.getLocalName().equals("URIID")
-									&&
-									(currentNode.getAttributes().getNamedItem("schemeID") != null))
-									&& (URIchilds.item(URIChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue().equals("EM"))
-								) {
-									setEmail(currentNode.getTextContent());
+										&& (currentNode.getAttributes().getNamedItem("schemeID") != null))
+										&& (supportedSchemeIDs.contains(currentNode.getAttributes().getNamedItem("schemeID").getNodeValue()))) {
+									setEmail(currentNode.getAttributes().getNamedItem("schemeID").getNodeValue(), currentNode.getTextContent());
 								}
 							}
 						}
@@ -514,8 +513,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	 * @param eMail address of institution (not contact)
 	 * @return fluent setter
 	 */
-	public TradeParty setEmail(String eMail) {
-		SchemedID theSchemedID = new SchemedID("EM", eMail);
+	public TradeParty setEmail(String schemeID, String eMail) {
+		SchemedID theSchemedID = new SchemedID(schemeID, eMail);
 		addUriUniversalCommunicationID(theSchemedID);
 		return this;
 	}
