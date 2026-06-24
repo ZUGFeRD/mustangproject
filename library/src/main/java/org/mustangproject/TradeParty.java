@@ -513,6 +513,12 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	 * @param eMail address of institution (not contact)
 	 * @return fluent setter
 	 */
+	public TradeParty setEmail(String eMail) {
+		SchemedID theSchemedID = new SchemedID("EM", eMail);
+		addUriUniversalCommunicationID(theSchemedID);
+		return this;
+	}
+
 	public TradeParty setEmail(String schemeID, String eMail) {
 		SchemedID theSchemedID = new SchemedID(schemeID, eMail);
 		addUriUniversalCommunicationID(theSchemedID);
