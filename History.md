@@ -1,6 +1,6 @@
 2.24.x
 =======
-- #1134 Fix: Invoice Importer: Trade party universal communication id not imported when scheme is not email.
+- #1134 Fix: Trade party universal communication id not imported when scheme is not "email address" (EM) but "electronic address" (0225).
 - #1150 Remove [D].[M].[Y] after Rechnungsdatum in HTML visualization
 - #996  Omit ExemptionReason written to line item level for profile EN16931, some validators raise a warning or even an error
 - #1097 Invoice importer: LegalOrganization id not imported (wrong node name 'GlobalID' instead of 'ID' used)
