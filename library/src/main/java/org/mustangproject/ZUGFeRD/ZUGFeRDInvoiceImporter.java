@@ -507,7 +507,7 @@ public class ZUGFeRDInvoiceImporter {
 		BigDecimal expectedGrandTotal = null;
 		NodeList totalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (totalNodes.getLength() > 0) {
-			expectedGrandTotal = new BigDecimal(XMLTools.trimOrNull(totalNodes.item(0)));
+			expectedGrandTotal = NodeMap.parse(XMLTools.trimOrNull(totalNodes.item(0)));
 			if (zpp instanceof CalculatedInvoice) {
 				// usually we would re-calculate the invoice to get expectedGrandTotal
 				// however, for "minimal" invoices or other invoices without lines
@@ -520,7 +520,7 @@ public class ZUGFeRDInvoiceImporter {
 		BigDecimal expectedTaxBasis = null;
 		NodeList basisNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (basisNodes.getLength() > 0) {
-			expectedTaxBasis = new BigDecimal(XMLTools.trimOrNull(basisNodes.item(0)));
+			expectedTaxBasis = NodeMap.parse(XMLTools.trimOrNull(basisNodes.item(0)));
 			if (zpp instanceof CalculatedInvoice) {
 				// usually we would re-calculate the invoice to get expectedGrandTotal
 				// however, for "minimal" invoices or other invoices without lines
@@ -532,7 +532,7 @@ public class ZUGFeRDInvoiceImporter {
 		xpr = xpath.compile("//*[local-name()=\"TotalPrepaidAmount\"]|//*[local-name()=\"PrepaidAmount\"]");
 		NodeList prepaidNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (prepaidNodes.getLength() > 0) {
-			zpp.setTotalPrepaidAmount(new BigDecimal(XMLTools.trimOrNull(prepaidNodes.item(0))));
+			zpp.setTotalPrepaidAmount(NodeMap.parse(XMLTools.trimOrNull(prepaidNodes.item(0))));
 		}
 
 
@@ -540,7 +540,7 @@ public class ZUGFeRDInvoiceImporter {
 		NodeList lineTotalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (lineTotalNodes.getLength() > 0) {
 			if (zpp instanceof CalculatedInvoice) {
-				((CalculatedInvoice) zpp).setLineTotalAmount(new BigDecimal(XMLTools.trimOrNull(lineTotalNodes.item(0))));
+				((CalculatedInvoice) zpp).setLineTotalAmount(NodeMap.parse(XMLTools.trimOrNull(lineTotalNodes.item(0))));
 			}
 		}
 
@@ -549,7 +549,7 @@ public class ZUGFeRDInvoiceImporter {
 		if (taxTotalNodes.getLength() > 0) {
 			String taxTotalStr=XMLTools.trimOrNull(taxTotalNodes.item(0));
 			if ((zpp instanceof CalculatedInvoice)&&(taxTotalStr!=null)) {
-				((CalculatedInvoice) zpp).setVATtotal(new BigDecimal(taxTotalStr));
+				((CalculatedInvoice) zpp).setVATtotal(NodeMap.parse(taxTotalStr));
 			}
 		}
 
@@ -557,7 +557,7 @@ public class ZUGFeRDInvoiceImporter {
 		NodeList lineDueNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		BigDecimal duePayableAmount = null;
 		if (lineDueNodes.getLength() > 0) {
-			duePayableAmount = new BigDecimal(XMLTools.trimOrNull(lineDueNodes.item(0)));
+			duePayableAmount = NodeMap.parse(XMLTools.trimOrNull(lineDueNodes.item(0)));
 			if (zpp instanceof CalculatedInvoice) {
 				((CalculatedInvoice) zpp).setDuePayable(duePayableAmount);
 			}
@@ -1120,7 +1120,7 @@ public class ZUGFeRDInvoiceImporter {
 
 		String rounding = extractString("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"RoundingAmount\"]|//*[local-name()=\"LegalMonetaryTotal\"]/*[local-name()=\"PayableRoundingAmount\"]");
 		if (!rounding.isEmpty()) {
-			zpp.setRoundingAmount(new BigDecimal(rounding.trim()));
+			zpp.setRoundingAmount(NodeMap.parse(rounding.trim()));
 		}
 
 		xpr = xpath.compile("//*[local-name()=\"BuyerReference\"]");
@@ -1234,7 +1234,7 @@ public class ZUGFeRDInvoiceImporter {
 				}
 
 				if (isCharge) {
-					Charge c = new Charge(new BigDecimal(chargeAmount));
+					Charge c = new Charge(NodeMap.parse(chargeAmount));
 					if (reason != null) {
 						c.setReason(reason);
 					}
@@ -1242,10 +1242,10 @@ public class ZUGFeRDInvoiceImporter {
 						c.setReasonCode(reasonCode);
 					}
 					if (taxPercent != null) {
-						c.setTaxPercent(new BigDecimal(taxPercent));
+						c.setTaxPercent(NodeMap.parse(taxPercent));
 					}
 					if (basisAmount != null) {
-						c.setBasisAmount(new BigDecimal(basisAmount));
+						c.setBasisAmount(NodeMap.parse(basisAmount));
 					}
 					if (taxExemptionReason != null) {
 						c.setTaxExemptionReason(taxExemptionReason);
@@ -1258,7 +1258,7 @@ public class ZUGFeRDInvoiceImporter {
 					}
 					zpp.addCharge(c);
 				} else {
-					Allowance a = new Allowance(new BigDecimal(chargeAmount));
+					Allowance a = new Allowance(NodeMap.parse(chargeAmount));
 					if (reason != null) {
 						a.setReason(reason);
 					}
@@ -1266,10 +1266,10 @@ public class ZUGFeRDInvoiceImporter {
 						a.setReasonCode(reasonCode);
 					}
 					if (taxPercent != null) {
-						a.setTaxPercent(new BigDecimal(taxPercent));
+						a.setTaxPercent(NodeMap.parse(taxPercent));
 					}
 					if (basisAmount != null) {
-						a.setBasisAmount(new BigDecimal(basisAmount));
+						a.setBasisAmount(NodeMap.parse(basisAmount));
 					}
 					if (taxExemptionReason != null) {
 						a.setTaxExemptionReason(taxExemptionReason);
@@ -1309,9 +1309,9 @@ public class ZUGFeRDInvoiceImporter {
 					//AppliedTradeTax
 				}
 				if (chargeAmount != null) {
-					Charge c = new Charge(new BigDecimal(chargeAmount));
+					Charge c = new Charge(NodeMap.parse(chargeAmount));
 					if (taxPercent != null) {
-						c.setTaxPercent(new BigDecimal(taxPercent));
+						c.setTaxPercent(NodeMap.parse(taxPercent));
 					}
 					zpp.addCharge(c);
 				}
@@ -1334,7 +1334,7 @@ public class ZUGFeRDInvoiceImporter {
 								// in case someone writes 30.00 days (happens!) we still want 30 integer days
 							}
 						} else if (chargeChildName.equals("CalculationPercent")) {
-							cd.setPercent(new BigDecimal(XMLTools.trimOrNull(currentNode)));
+							cd.setPercent(NodeMap.parse(XMLTools.trimOrNull(currentNode)));
 						}
 					}
 					//appliedAmount
@@ -1378,7 +1378,7 @@ public class ZUGFeRDInvoiceImporter {
 
 						if (daysFound&&percentFound) {
 							cd.setDays(Integer.valueOf(days));
-							cd.setPercent(new BigDecimal(percent));
+							cd.setPercent(NodeMap.parse(percent));
 							zpp.addCashDiscount(cd);
 						} //else : could not parse skonto
 
