@@ -110,7 +110,7 @@ public class Item implements IZUGFeRDExportableItem {
 
 		itemMap.getNode(new String[]{"InvoicedQuantity", "CreditedQuantity"}).ifPresent(icn -> {
 			// ubl
-			setQuantity(new BigDecimal(icn.getTextContent().trim()));
+			setQuantity(NodeMap.parse(icn.getTextContent().trim()));
 			product.setUnit(icn.getAttributes().getNamedItem("unitCode").getNodeValue());
 		});
 
@@ -182,7 +182,7 @@ public class Item implements IZUGFeRDExportableItem {
 		itemMap.getAsNodeMap("SpecifiedLineTradeDelivery", "SpecifiedSupplyChainTradeDelivery")
 			.flatMap(icnm -> icnm.getNode("BilledQuantity", "RequestedQuantity", "DespatchedQuantity"))
 			.ifPresent(bq -> {
-				setQuantity(new BigDecimal(bq.getTextContent().trim()));
+				setQuantity(NodeMap.parse(bq.getTextContent().trim()));
 				if (bq.hasAttributes()) {
 					Node unitAttr = bq.getAttributes().getNamedItem("unitCode");
 					if (unitAttr != null) {
@@ -235,13 +235,13 @@ public class Item implements IZUGFeRDExportableItem {
 						izac = new Charge();
 					}
 					if (amountString != null) {
-						izac.setTotalAmount(new BigDecimal(amountString.trim()));
+						izac.setTotalAmount(NodeMap.parse(amountString.trim()));
 					}
 					if (basisAmountString != null) {
-						izac.setBasisAmount(new BigDecimal(basisAmountString.trim()));
+						izac.setBasisAmount(NodeMap.parse(basisAmountString.trim()));
 					}
 					if (percentString != null) {
-						izac.setPercent(new BigDecimal(percentString.trim()));
+						izac.setPercent(NodeMap.parse(percentString.trim()));
 					}
 					if (reason != null) {
 						izac.setReason(reason);
@@ -287,10 +287,10 @@ public class Item implements IZUGFeRDExportableItem {
 				izac = new Charge();
 			}
 			if (amountString != null) {
-				izac.setTotalAmount(new BigDecimal(amountString));
+				izac.setTotalAmount(NodeMap.parse(amountString));
 			}
 			if (percentString != null) {
-				izac.setPercent(new BigDecimal(percentString));
+				izac.setPercent(NodeMap.parse(percentString));
 			}
 			if (reason != null) {
 				izac.setReason(reason);
