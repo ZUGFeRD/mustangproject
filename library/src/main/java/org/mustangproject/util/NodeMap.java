@@ -106,14 +106,29 @@ public class NodeMap {
 	 * @return the text content of the matching node, converted to BigDecimal
 	 */
 	public Optional<BigDecimal> getAsBigDecimal(String... localNames) {
-		return getNode(localNames).map(Node::getTextContent).map(s->{
-			try {
-				return new BigDecimal(s.trim());
-			} catch (NumberFormatException e) {
-				return null;
-			}
+		return getNode(localNames).map(Node::getTextContent).map(NodeMap::parse);
+	}
 
-		});
+	/**
+	 * Leniently parses text into a {@link BigDecimal}.
+	 * <p>
+	 * The value is trimmed first and {@code null} is returned - instead of throwing -
+	 * when the input is {@code null}, blank or not a valid decimal. This is the single
+	 * entry point all importer-side decimal parsing should use, so that one malformed
+	 * field degrades to {@code null} rather than aborting the whole invoice import.
+	 *
+	 * @param value the raw text content to parse (may be {@code null})
+	 * @return the parsed {@code BigDecimal}, or {@code null} if it cannot be parsed
+	 */
+	public static BigDecimal parse(String value) {
+		if (value == null) {
+			return null;
+		}
+		try {
+			return new BigDecimal(value.trim());
+		} catch (NumberFormatException e) {
+			return null;
+		}
 	}
 
 	/**
