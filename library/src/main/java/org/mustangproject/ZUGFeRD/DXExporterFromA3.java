@@ -676,6 +676,7 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		return xmp.createAndAddXMPBasicSchema();
 	}
 
+	// TODO this method does the same as the inherited one - deletion possible
 	@Override
   protected void writeDocumentInformation() {
 		String fullProducer = producer + " (via mustangproject.org " + Version.VERSION + ")";
