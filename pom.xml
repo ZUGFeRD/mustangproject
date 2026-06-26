@@ -247,7 +247,7 @@
                         <configuration>
                             <toolchains>
                                 <jdk>
-                                    <version>11</version>
+                                    <version>17</version>
                                     <vendor>adopt</vendor>
                                 </jdk>
                             </toolchains>
