@@ -813,7 +813,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				if (payment != null) {
 					hasDueDate = true;
 					if (getProfile() != Profiles.getByName("Minimum")) {
-						xml += payment.getSettlementXML();
+						xml += payment.getSettlementXML(getProfile());
 					}
 				}
 			}
@@ -825,7 +825,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						hasDueDate = true;
 					}
 					if (getProfile() != Profiles.getByName("Minimum")) {
-						xml += payment.getSettlementXML();
+						xml += payment.getSettlementXML(getProfile());
 					}
 				}
 			}
