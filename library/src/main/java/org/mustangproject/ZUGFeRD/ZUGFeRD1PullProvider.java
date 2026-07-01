@@ -240,7 +240,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 			for (final IZUGFeRDTradeSettlementPayment payment : trans.getTradeSettlementPayment()) {
 				if (payment != null) {
 					hasDueDate = true;
-					xml += payment.getSettlementXML();
+					xml += payment.getSettlementXML(getProfile());
 				}
 			}
 		}
@@ -250,7 +250,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 					if (payment instanceof IZUGFeRDTradeSettlementPayment) {
 						hasDueDate = true;
 					}
-					xml += payment.getSettlementXML();
+					xml += payment.getSettlementXML(getProfile());
 				}
 			}
 		}
