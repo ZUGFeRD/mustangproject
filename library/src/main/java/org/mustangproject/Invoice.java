@@ -61,6 +61,7 @@ public class Invoice implements IExportableTransaction {
 
 	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
 		Charges = new ArrayList<>(), LogisticsServiceCharges = new ArrayList<>();
+	@JsonIgnore
 	protected ArrayList<IZUGFeRDPaymentTerms> paymentTerms = new ArrayList<>();
 
 	protected String invoiceReferencedDocumentID = null;
@@ -745,6 +746,7 @@ public class Invoice implements IExportableTransaction {
 	}
 
 
+	@JsonIgnore
 	@Override
 	public IZUGFeRDPaymentTerms getPaymentTerms() {
 		if (!paymentTerms.isEmpty()) {
@@ -763,6 +765,7 @@ public class Invoice implements IExportableTransaction {
 		return this;
 	}
 
+	@JsonIgnore
 	@Override
 	public IZUGFeRDPaymentTerms[] getExtendedPaymentTerms() {
 		return paymentTerms.toArray(new IZUGFeRDPaymentTerms[0]);
