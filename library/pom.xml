@@ -44,7 +44,7 @@
         <github.global.server>github</github.global.server>
         <additionalparam>-Xdoclint:none</additionalparam>
         <!-- Skip error check for javadoc -->
-        <maven.compiler.release>11</maven.compiler.release>
+        <maven.compiler.release>17</maven.compiler.release>
         <maven.deploy.skip>true</maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
     </properties>
     <dependencies>
@@ -169,8 +169,8 @@
                     <!-- http://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven
                         mvn clean compile assembly:single -->
                     <!-- or whatever version you use -->
-                    <source>11</source>
-                    <target>11</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
             <plugin>

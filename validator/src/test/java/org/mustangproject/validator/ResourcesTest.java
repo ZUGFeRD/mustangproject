@@ -40,6 +40,7 @@ public class ResourcesTest {
 		//Config
 		private static final String RHINO_LOADER = "org.mozilla.javascript.DefiningClassLoader";
 		private static final String TEMP_DIR = "./tmp";
+		// TODO: Point to correct folder full of test zugferd examples
 		private static final String FILE_SOURCE = "./src/main/resources/classloader";
 		private static final boolean CREATE_HEAP_DUMP = false;
 
