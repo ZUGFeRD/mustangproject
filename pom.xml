@@ -28,7 +28,7 @@
         <github.global.server>github</github.global.server>
         <additionalparam>-Xdoclint:none</additionalparam>
         <!-- Skip error check for javadoc -->
-        <maven.compiler.release>11</maven.compiler.release>
+        <maven.compiler.release>17</maven.compiler.release>
         <maven.deploy.skip>true</maven.deploy.skip><!-- prevent this to be deployed to maven central as "core",
         we only want submodules, see also https://stackoverflow.com/questions/7446599/how-to-deploy-only-the-sub-modules-using-maven-deploy-->
 
