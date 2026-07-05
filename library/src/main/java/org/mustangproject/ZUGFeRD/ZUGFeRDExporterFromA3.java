@@ -625,8 +625,14 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	protected void prepareDocument() throws IOException {
 
 		PDDocumentCatalog cat = doc.getDocumentCatalog();
-		metadata = new PDMetadata(doc);
-		cat.setMetadata(metadata);
+		PDMetadata existingMetadata = cat.getMetadata();
+		if (overwrite || existingMetadata == null || existingMetadata.getLength() == 0)
+		{
+			metadata = new PDMetadata(doc);
+			cat.setMetadata(metadata);
+		} else {
+			metadata = existingMetadata;
+		}
 
 		removeCidSet(doc);
 		xmp = getXmpMetadata();
