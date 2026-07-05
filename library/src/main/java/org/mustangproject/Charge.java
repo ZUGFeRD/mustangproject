@@ -45,6 +45,17 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	 */
 	protected String categoryCode;
 
+	/**
+	 * a simple human readable description
+	 */
+	protected String taxExemptionReason;
+	/***
+	 *
+	 * @param taxExemptionReasonCode, https://docs.peppol.eu/poacc/billing/3.0/codelist/vatex/
+	 * @return fluent setter
+	 */
+	protected String taxExemptionReasonCode;
+
 	/***
 	 * Bean connstructor
 	 */
@@ -204,6 +215,40 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	 */
 	public Charge setCategoryCode(String categoryCode) {
 		this.categoryCode = categoryCode;
+		return this;
+	}
+
+	/***
+	 *
+	 * @return e.g. intra-commnunity supply or small business
+	 */
+	@Override
+	public String getTaxExemptionReason() {
+		return taxExemptionReason;
+	}
+
+	/***
+	 *
+	 * @param taxExemptionReasonText String e.g. Kleinunternehmer gemäß §19 UStG https://github.com/ZUGFeRD/mustangproject/issues/463
+	 * @return fluent setter
+	 */
+	public Charge setTaxExemptionReason(String taxExemptionReasonText) {
+		this.taxExemptionReason = taxExemptionReasonText;
+		return this;
+	}
+
+	@Override
+	public String getTaxExemptionReasonCode() {
+		return taxExemptionReasonCode;
+	}
+
+	/***
+	 *
+	 * @param taxExemptionReasonCode, https://docs.peppol.eu/poacc/billing/3.0/codelist/vatex/
+	 * @return fluent setter
+	 */
+	public Charge setTaxExemptionReasonCode(String taxExemptionReasonCode) {
+		this.taxExemptionReasonCode = taxExemptionReasonCode;
 		return this;
 	}
 }
