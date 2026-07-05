@@ -101,6 +101,11 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 */
 	protected boolean overwrite = true;
 
+	public ZUGFeRDExporterFromA3 setOverwrite(boolean overwrite) {
+		this.overwrite = overwrite;
+		return this;
+	}
+
 	private boolean disableAutoClose;
 	private boolean fileAttached = false;
 	private Profile profile = null;
