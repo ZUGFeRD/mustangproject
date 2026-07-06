@@ -308,6 +308,34 @@ public class XMLValidatorTest extends ResourceCase {
 
 	}
 
+	public void testDisableArithmeticCheck() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		xv.disableArithmeticCheck();
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("invalidArithmetics.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("valid", content);
+			assertThat(s).valueByXPath("count(//warning)")
+				.asInt()
+				.isLessThan(4);
+			assertThat(s).valueByXPath("count(//warning[contains(text(),\"Arithmetical issue\")])")
+				.asInt()
+				.isEqualTo(0);
+
+		} catch (final IrrecoverableValidationError e) {
+			// ignore, will be in XML output anyway
+		}
+
+	}
+
 	public void testXRValidationUBL() {
 		ValidationContext ctx = new ValidationContext(null);
 		XMLValidator xv = new XMLValidator(ctx);

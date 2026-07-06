@@ -6,6 +6,7 @@
 - 997
 - 1000
 - deprecate itemTotalAllowances instead of itemAllowances oder itemCharges
+- add disableArithmeticCheck() / --no-arithmetic-check option to skip the arithmetic recalculation pass during validation
 - 
 2.21.0
 =======

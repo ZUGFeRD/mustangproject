@@ -82,6 +82,7 @@ public class Main {
 			+ "                [--out <filename>]: set output XML ZUGFeRD 2 file\n"
 			+ "        --action validate  validate XML or PDF file \n"
 			+ "                [--no-notices]: refrain from reporting notices\n"
+			+ "                [--no-arithmetic-check]: skip the arithmetic recalculation check\n"
 			+ "                [--logAppend <text>]: text to be added to log line\n"
 			+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 			+ "                [--source <filename>]: input PDF or XML file\n"
@@ -361,6 +362,7 @@ public class Main {
 			options.addOption(new Option("language", "language", true, "output language (en, de or fr)"));
 			options.addOption(new Option("out", "out", true, "which output file to write to"));
 			options.addOption(new Option("no-notices", "no-notices", false, "suppress non-fatal errors"));
+			options.addOption(new Option("no-arithmetic-check", "no-arithmetic-check", false, "skip the arithmetic recalculation check during validation"));
 			options.addOption(new Option("logAppend", "logAppend", true, "freeform text to be appended to log messages"));
 			options.addOption(new Option("disable-file-logging", "disable-file-logging", false, "suppress logging to file"));
 			options.addOption(new Option("d", "directory", true, "which directory to operate on"));
@@ -390,6 +392,7 @@ public class Main {
 				String format = cmd.getOptionValue("format");
 				String lang = cmd.getOptionValue("language");
 				boolean noNotices = cmd.hasOption("no-notices");
+				boolean noArithmeticCheck = cmd.hasOption("no-arithmetic-check");
 				boolean LogAsPDF = cmd.hasOption("log-as-pdf");
 
 				String zugferdVersion = cmd.getOptionValue("version");
@@ -439,7 +442,7 @@ public class Main {
 					performUBL(sourceName, outName);
 					optionsRecognized = true;
 				} else if ((action != null) && (action.equals("validate"))) {
-					optionsRecognized = performValidate(sourceName, noNotices, cmd.getOptionValue("logAppend"), LogAsPDF);
+					optionsRecognized = performValidate(sourceName, noNotices, noArithmeticCheck, cmd.getOptionValue("logAppend"), LogAsPDF);
 				} else if ((action != null) && (action.equals("validateExpectValid"))) {
 					optionsRecognized = performValidateExpect(true, directoryName, excludedFilenames);
 				} else if ((action != null) && (action.equals("validateExpectInvalid"))) {
@@ -466,7 +469,7 @@ public class Main {
 
 	}
 
-	private static boolean performValidate(String sourceName, boolean noNotices, String logAppend, boolean createLogAsPDF) {
+	private static boolean performValidate(String sourceName, boolean noNotices, boolean noArithmeticCheck, String logAppend, boolean createLogAsPDF) {
 		boolean optionsRecognized;
 		if (sourceName == null) {
 			sourceName = getFilenameFromUser("Source PDF or XML", "invoice.pdf", "pdf|xml", true, false);
@@ -477,6 +480,9 @@ public class Main {
 		}
 		if (noNotices) {
 			zfv.disableNotices();
+		}
+		if (noArithmeticCheck) {
+			zfv.disableArithmeticCheck();
 		}
 
 		String validationResultXML = zfv.validate(sourceName);
