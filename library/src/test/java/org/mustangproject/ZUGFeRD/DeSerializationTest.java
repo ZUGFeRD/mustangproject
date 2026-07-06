@@ -63,10 +63,10 @@ public class DeSerializationTest extends ResourceCase {
 
 	public void testProduct() throws IOException, XPathExpressionException, ParseException {
 		File inputCII = getResourceAsFile("Extended_fremdwaehrung.xml");
-		var zii = new ZUGFeRDInvoiceImporter();
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
 		zii.doIgnoreCalculationErrors();
 		zii.fromXML(Files.readString(inputCII.toPath()));
-		var product = zii.extractInvoice()
+		IZUGFeRDExportableProduct product = zii.extractInvoice()
 			.getZFItems()[0]
 			.getProduct();
 

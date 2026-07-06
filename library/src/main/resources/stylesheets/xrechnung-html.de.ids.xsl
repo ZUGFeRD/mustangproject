@@ -1378,7 +1378,7 @@ function downloadData (element_id) {
                     </div>
                     <div class="boxzeile">
                       <div class="boxdaten legende">Rechnungsdatum (BT-26):</div>
-                      <div id="BT-26" title="BT-26" class="boxdaten wert"><xsl:value-of select="(format-date,xr:Preceding_Invoice_issue_date,'[D].[M].[Y]')"/></div>
+                      <div id="BT-26" title="BT-26" class="boxdaten wert"><xsl:value-of select="format-date(xr:Preceding_Invoice_issue_date,'[D].[M].[Y]')"/></div>
                     </div>
                   </div>
   </xsl:template>

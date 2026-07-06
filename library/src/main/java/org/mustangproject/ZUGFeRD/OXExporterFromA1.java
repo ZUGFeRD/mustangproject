@@ -41,24 +41,6 @@ public class OXExporterFromA1 extends OXExporterFromA3 {
 	private static boolean isValidA1(DataSource dataSource) throws IOException {
 		return getPDFAParserValidationResult(PreflightParserHelper.createPreflightParser(dataSource));
 	}
-	/***
-	 * internal helper function: get namespace for order-x
-	 * @param ver the order-x version
-	 * @return the URN of the namespace
-	 */
-	@Override
-  public String getNamespaceForVersion(int ver) {
-		return "urn:factur-x:pdfa:CrossIndustryDocument:1p0#";
-	}
-	/***
-	 * internal helper: returns the namespace prefix for the given order-x version number
-	 * @param ver the ox version
-	 * @return the namespace prefix as string, without colon
-	 */
-	@Override
-  public String getPrefixForVersion(int ver) {
-		return "fx";
-	}
 
 	private static boolean getPDFAParserValidationResult(PreflightParser parser) throws IOException {
 		/*

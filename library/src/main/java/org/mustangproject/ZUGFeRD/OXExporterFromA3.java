@@ -64,6 +64,8 @@ import org.apache.xmpbox.xml.XmpParsingException;
 import org.apache.xmpbox.xml.XmpSerializer;
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
+import static org.mustangproject.util.StringUtils.isBlank;
+import static org.mustangproject.util.StringUtils.isNotBlank;
 
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
@@ -126,8 +128,29 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 */
 	protected String orderXDocumentType = "ORDER";
 
-
 	private boolean attachZUGFeRDHeaders = true;
+
+	/***
+	 * internal helper function: get namespace for order-x
+	 * @param ver the order-x version
+	 * @return the URN of the namespace
+	 */
+	@Override
+	public String getNamespaceForVersion(int ver) {
+		return "urn:factur-x:pdfa:CrossIndustryDocument:1p0#";
+	}
+	/***
+	 * internal helper: returns the namespace prefix for the given order-x version number
+	 * @param ver the ox version
+	 * @return the namespace prefix as string, without colon
+	 */
+	@Override
+	public String getPrefixForVersion(int ver) {
+		return "fx";
+	}
+
+	/** Defines whether attachments to the PDF should be using FLATE compression */
+	private boolean compressionEnabled = false;
 
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
@@ -296,8 +319,8 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		dict.setString("Desc", description);
 
 		ByteArrayInputStream fakeFile = new ByteArrayInputStream(data);
-		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
-//		ef.addCompression();
+		COSName filter = compressionEnabled ? COSName.FLATE_DECODE : null;
+		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile, filter);
 		ef.setSubtype(subType);
 		ef.setSize(data.length);
 		ef.setCreationDate(new GregorianCalendar());
@@ -540,7 +563,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	@Override
   protected void writeAdobePDFSchema(XMPMetadata xmp) {
 		AdobePDFSchema pdf = getAdobePDFSchema(xmp);
-		if (overwrite || isEmpty(pdf.getProducer()))
+		if (overwrite || isBlank(pdf.getProducer()))
 			pdf.setProducer(producer);
 	}
 
@@ -562,7 +585,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	@Override
   protected void writePDFAIdentificationSchema(XMPMetadata xmp) {
 		PDFAIdentificationSchema pdfaid = getPDFAIdentificationSchema(xmp);
-		if (overwrite || isEmpty(pdfaid.getConformance())) {
+		if (overwrite || isBlank(pdfaid.getConformance())) {
 			try {
 				pdfaid.setConformance(conformanceLevel.getLetter());
 			} catch (BadFieldValueException ex) {
@@ -598,14 +621,14 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 		ArrayProperty titleProperty = dc.getTitleProperty();
 		if (titleProperty != null) {
-			if (overwrite && !isEmpty(title)) {
+			if (overwrite && isNotBlank(title)) {
 				dc.removeProperty(titleProperty);
 				dc.setTitle(title);
 			} else if (titleProperty.getElementsAsString().stream().anyMatch("Untitled"::equalsIgnoreCase)) {
 				// remove unfitting ghostscript default
 				dc.removeProperty(titleProperty);
 			}
-		} else if (!isEmpty(title)) {
+		} else if (isNotBlank(title)) {
 			dc.setTitle(title);
 		}
 	}
@@ -624,7 +647,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	@Override
   protected void writeXMLBasicSchema(XMPMetadata xmp) {
 		XMPBasicSchema xsb = getXmpBasicSchema(xmp);
-		if (overwrite || isEmpty(xsb.getCreatorTool()) || "UnknownApplication".equals(xsb.getCreatorTool()))
+		if (overwrite || isBlank(xsb.getCreatorTool()) || "UnknownApplication".equals(xsb.getCreatorTool()))
 			xsb.setCreatorTool(creatorTool);
 		if (overwrite || xsb.getCreateDate() == null)
 			xsb.setCreateDate(Calendar.getInstance());
@@ -649,15 +672,15 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 			info.setCreationDate(Calendar.getInstance());
 		if (overwrite || info.getModificationDate() == null)
 			info.setModificationDate(Calendar.getInstance());
-		if (overwrite || (isEmpty(info.getAuthor()) && !isEmpty(author)))
+		if (overwrite || (isBlank(info.getAuthor()) && isNotBlank(author)))
 			info.setAuthor(author);
-		if (overwrite || (isEmpty(info.getProducer()) && !isEmpty(fullProducer)))
+		if (overwrite || (isBlank(info.getProducer()) && isNotBlank(fullProducer)))
 			info.setProducer(fullProducer);
-		if (overwrite || (isEmpty(info.getCreator()) && !isEmpty(creator)))
+		if (overwrite || (isBlank(info.getCreator()) && isNotBlank(creator)))
 			info.setCreator(creator);
-		if (overwrite || (isEmpty(info.getTitle()) && !isEmpty(title)))
+		if (overwrite || (isBlank(info.getTitle()) && isNotBlank(title)))
 			info.setTitle(title);
-		if (overwrite || (isEmpty(info.getSubject()) && !isEmpty(subject)))
+		if (overwrite || (isBlank(info.getSubject()) && isNotBlank(subject)))
 			info.setSubject(subject);
 	}
 
@@ -738,15 +761,5 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		OXPullProvider z2p = new OXPullProvider();
 		setXMLProvider(z2p);
 		return this;
-	}
-
-	/**
-	 * Utility method inspired by apache commons-lang3 StringUtils.
-	 *
-	 * @param string the string to test
-	 * @return true if the string is null or empty
-	 */
-	private boolean isEmpty(String string) {
-		return string == null || string.isEmpty();
 	}
 }

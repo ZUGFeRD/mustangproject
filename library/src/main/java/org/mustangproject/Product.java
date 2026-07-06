@@ -264,6 +264,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	public Product setIntraCommunitySupply() {
 		isIntraCommunitySupply = true;
 		setVATPercent(BigDecimal.ZERO);
+		setTaxExemptionReasonCode("VATEX-EU-IC");
 		setTaxExemptionReason("Intra-community supply");
 		setTaxCategoryCode("K");
 		return this;
