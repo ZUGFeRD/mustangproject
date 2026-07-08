@@ -1,5 +1,6 @@
 2.24.x
 =======
+- #1163 Make doRecalculateItemPricesFromLineTotals() use more than the fixed scale of 4.
 - #1162 Skip the elements "Information" and "PayeeSpecifiedCreditorFinancialInstitution" for basic profiles.
 - #1134 Fix: Trade party universal communication id not imported when scheme is not "email address" (EM) but "electronic address" (0225).
 - #1150 Remove [D].[M].[Y] after Rechnungsdatum in HTML visualization

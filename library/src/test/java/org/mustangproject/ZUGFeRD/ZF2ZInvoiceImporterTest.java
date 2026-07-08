@@ -1014,4 +1014,20 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 		return null;
 	}
+
+	@Test
+	public void testRecalc() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("XRechnung_internalRecalcBug.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.doRecalculateItemPricesFromLineTotals();
+		// zii.doIgnoreCalculationErrors();
+		zii.setInputStream(new FileInputStream(inputFile));
+
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		zii.extractInto(invoice);
+
+		assertEquals(new BigDecimal("0.012148"), invoice.getZFItems()[0].getPrice());
+		assertEquals(new BigDecimal("12.44"), invoice.getLineTotalAmount().setScale(2));
+		assertEquals(new BigDecimal("12.44"), invoice.getGrandTotal().setScale(2));
+	}
 }
