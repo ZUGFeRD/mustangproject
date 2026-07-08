@@ -1169,13 +1169,14 @@ public class ZUGFeRDInvoiceImporter {
 			// be read,
 			// so the invoice remains arithmetically correct
 			// -> parse document level charges+allowances
-			xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"SpecifiedTradeAllowanceCharge\"]|/*[local-name()=\"AllowanceCharge\"]");//CII and UBL
+			xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"SpecifiedTradeAllowanceCharge\"]|/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"AllowanceCharge\"]");//CII and UBL
 			NodeList chargeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			for (int i = 0; i < chargeNodes.getLength(); i++) {
 				NodeList chargeNodeChilds = chargeNodes.item(i).getChildNodes();
 				boolean isCharge = true;
 				String chargeAmount = null;
 				String basisAmount = null;
+				String percent = null;
 				String reason = null;
 				String reasonCode = null;
 				String taxPercent = null;
@@ -1206,8 +1207,10 @@ public class ZUGFeRDInvoiceImporter {
 
 						} else if (chargeChildName.equals("ActualAmount") || chargeChildName.equals("Amount")) {
 							chargeAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
-						} else if (chargeChildName.equals("BasisAmount")) {
+						} else if (chargeChildName.equals("BasisAmount") || chargeChildName.equals("BaseAmount")) {
 							basisAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
+						} else if (chargeChildName.equals("CalculationPercent") || chargeChildName.equals("MultiplierFactorNumeric")) {
+							percent = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
 						} else if (chargeChildName.equals("Reason") || chargeChildName.equals("AllowanceChargeReason")) {
 							reason = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
 						} else if (chargeChildName.equals("ReasonCode") || chargeChildName.equals("AllowanceChargeReasonCode")) {
@@ -1234,7 +1237,13 @@ public class ZUGFeRDInvoiceImporter {
 				}
 
 				if (isCharge) {
-					Charge c = new Charge(new BigDecimal(chargeAmount));
+					Charge c = new Charge();
+					if (chargeAmount != null) {
+						c.setTotalAmount(new BigDecimal(chargeAmount));
+					}
+					if (percent != null) {
+						c.setPercent(new BigDecimal(percent));
+					}
 					if (reason != null) {
 						c.setReason(reason);
 					}
@@ -1258,7 +1267,13 @@ public class ZUGFeRDInvoiceImporter {
 					}
 					zpp.addCharge(c);
 				} else {
-					Allowance a = new Allowance(new BigDecimal(chargeAmount));
+					Allowance a = new Allowance();
+					if (chargeAmount != null) {
+						a.setTotalAmount(new BigDecimal(chargeAmount));
+					}
+					if (percent != null) {
+						a.setPercent(new BigDecimal(percent));
+					}
 					if (reason != null) {
 						a.setReason(reason);
 					}
