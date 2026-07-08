@@ -2,18 +2,13 @@ package org.mustangproject.ZUGFeRD;
 
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.valueOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 import org.junit.Test;
 import org.mustangproject.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xmlunit.builder.Input;
 
-import javax.xml.transform.Source;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
 import java.math.BigDecimal;

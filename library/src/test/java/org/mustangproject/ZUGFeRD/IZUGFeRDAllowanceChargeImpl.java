@@ -20,7 +20,7 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 
-public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
+public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge, IZUGFeRDTradeTax {
 	private BigDecimal totalAmount;
 	private String reason;
 	private String reasonCode;
@@ -97,5 +97,17 @@ public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
 	public IZUGFeRDAllowanceChargeImpl setTaxExemptionReasonCode(String taxExemptionReasonCode) {
 		this.taxExemptionReasonCode = taxExemptionReasonCode;
 		return this;
+	}
+
+	/*
+	 * for backward compatibility
+	 */
+	/**
+	 * @deprecated use getTaxCategoryCode() instead.
+	 */
+	@Deprecated
+	@Override
+	public String getCategoryCode() {
+		return getTaxCategoryCode();
 	}
 }

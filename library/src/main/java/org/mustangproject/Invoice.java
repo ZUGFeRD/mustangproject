@@ -59,8 +59,8 @@ public class Invoice implements IExportableTransaction {
 	protected IReferencedDocument tenderReference = null;
 	protected IReferencedDocument objectIdentifierReference = null;
 
-	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
-		Charges = new ArrayList<>(), LogisticsServiceCharges = new ArrayList<>();
+	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(), Charges = new ArrayList<>();
+	protected ArrayList<IZUGFeRDLogisticsServiceCharge> logisticsServiceCharges = new ArrayList<>();
 	protected ArrayList<IZUGFeRDPaymentTerms> paymentTerms = new ArrayList<>();
 
 	protected String invoiceReferencedDocumentID = null;
@@ -724,14 +724,24 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	@Override
-	public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
-		if (LogisticsServiceCharges.isEmpty()) {
+	public IZUGFeRDLogisticsServiceCharge[] getZFLogisticsServiceCharges() {
+		if (logisticsServiceCharges.isEmpty()) {
 			return null;
 		} else {
-			return LogisticsServiceCharges.toArray(new IZUGFeRDAllowanceCharge[0]);
+			return logisticsServiceCharges.toArray(new IZUGFeRDLogisticsServiceCharge[0]);
 		}
 	}
 
+	/***
+	 * this is wrong and only used from jackson
+	 * @param iza the array of charges
+	 * @return fluent setter
+	 */
+	public Invoice setZFLogisticsServiceCharges(LogisticsServiceCharge[] iza) {
+		logisticsServiceCharges = new ArrayList<>();
+		logisticsServiceCharges.addAll(Arrays.asList(iza));
+		return this;
+	}
 
 	@Override
 	public IZUGFeRDTradeSettlement[] getTradeSettlement() {
@@ -921,6 +931,17 @@ public class Invoice implements IExportableTransaction {
 	 */
 	public Invoice addCharge(IZUGFeRDAllowanceCharge izac) {
 		Charges.add(izac);
+		return this;
+	}
+
+	/***
+	 * adds a document level addition to the price
+	 * @see Charge
+	 * @param izac the charge to be applied
+	 * @return fluent setter
+	 */
+	public Invoice addLogisticServiceCharge(IZUGFeRDLogisticsServiceCharge charge) {
+		logisticsServiceCharges.add(charge);
 		return this;
 	}
 

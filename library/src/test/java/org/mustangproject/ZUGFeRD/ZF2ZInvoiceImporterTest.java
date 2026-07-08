@@ -495,7 +495,6 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			ObjectMapper mapper = new ObjectMapper();
 
 			String jsonArray = mapper.writeValueAsString(i);
-			SimpleDateFormat iso=new SimpleDateFormat("yyyy-MM-dd");
 			SimpleDateFormat german=new SimpleDateFormat("dd.MM.yyyy");
 			Date now=new Date();
 			Date morning=atStartOfDay(now);
@@ -549,9 +548,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"    },\n" +
 				"    \"itemAllowances\" : [ {\n" +
 				"      \"totalAmount\" : 0.1,\n" +
-				"      \"taxPercent\" : 0,\n" +
-				"      \"reasonCode\" : \"95\",\n" +
-				"      \"categoryCode\" : \"S\"\n" +
+				"      \"taxRateApplicablePercent\" : 0,\n" +
+				"      \"taxCategoryCode\" : \"S\",\n" +
+				"      \"reasonCode\" : \"95\"\n" +
 				"    } ],\n" +
 				"    \"value\" : 3.0,\n" +
 				"    \"calculation\" : {\n" +
@@ -576,9 +575,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"      \"percent\" : 50.0,\n" +
 				"      \"totalAmount\" : 1.5,\n" +
 				"      \"basisAmount\" : 3.0,\n" +
-				"      \"taxPercent\" : 0,\n" +
+				"      \"taxRateApplicablePercent\" : 0,\n" +
 				"      \"reason\" : \"In love with salesperson\",\n" +
-				"      \"categoryCode\" : \"S\"\n" +
+				"      \"taxCategoryCode\" : \"S\"\n" +
 				"    } ],\n" +
 				"    \"value\" : 3.0,\n" +
 				"    \"calculation\" : {\n" +
@@ -601,10 +600,10 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"    },\n" +
 				"    \"itemCharges\" : [ {\n" +
 				"      \"totalAmount\" : 1.0,\n" +
-				"      \"taxPercent\" : 0,\n" +
+				"      \"taxRateApplicablePercent\" : 0,\n" +
 				"      \"reason\" : \"AnotherReason\",\n" +
-				"      \"reasonCode\" : \"ABK\",\n" +
-				"      \"categoryCode\" : \"S\"\n" +
+				"      \"taxCategoryCode\" : \"S\",\n" +
+				"      \"reasonCode\" : \"ABK\"\n" +
 				"    } ],\n" +
 				"    \"value\" : 3.0,\n" +
 				"    \"calculation\" : {\n" +
@@ -627,16 +626,16 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"    },\n" +
 				"    \"itemAllowances\" : [ {\n" +
 				"      \"totalAmount\" : 1.0,\n" +
-				"      \"taxPercent\" : 0,\n" +
+				"      \"taxRateApplicablePercent\" : 0,\n" +
 				"      \"reason\" : \"Something completely strange\",\n" +
-				"      \"categoryCode\" : \"S\"\n" +
+				"      \"taxCategoryCode\" : \"S\"\n" +
 				"    } ],\n" +
 				"    \"itemCharges\" : [ {\n" +
 				"      \"totalAmount\" : 1.0,\n" +
-				"      \"taxPercent\" : 0,\n" +
+				"      \"taxRateApplicablePercent\" : 0,\n" +
 				"      \"reason\" : \"Yet another reason\",\n" +
-				"      \"reasonCode\" : \"ABK\",\n" +
-				"      \"categoryCode\" : \"S\"\n" +
+				"      \"taxCategoryCode\" : \"S\",\n" +
+				"      \"reasonCode\" : \"ABK\"\n" +
 				"    } ],\n" +
 				"    \"value\" : 3.0,\n" +
 				"    \"calculation\" : {\n" +
@@ -649,10 +648,10 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"  } ],\n" +
 				"  \"zfcharges\" : [ {\n" +
 				"    \"totalAmount\" : 1.0,\n" +
-				"    \"taxPercent\" : 19.0,\n" +
+				"    \"taxRateApplicablePercent\" : 19.0,\n" +
 				"    \"reason\" : \"AReason\",\n" +
 				"    \"reasonCode\" : \"ABK\",\n" +
-				"    \"categoryCode\" : \"S\"\n" +
+				"    \"taxCategoryCode\" : \"S\"\n" +
 				"  } ]\n" +
 				"}",jsonArray,true);
 		} catch (IOException e) {

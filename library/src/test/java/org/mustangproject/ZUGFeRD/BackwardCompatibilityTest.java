@@ -349,7 +349,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 		return allItems;
 	}
 
-	public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
+	public IZUGFeRDLogisticsServiceCharge[] getZFLogisticsServiceCharges() {
 		// TODO Auto-generated method stub
 		return null;
 	}
