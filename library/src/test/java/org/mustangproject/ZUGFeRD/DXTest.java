@@ -242,7 +242,7 @@ public class DXTest extends MustangReaderTestCase {
 	}
 
 	@Override
-	public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
+	public IZUGFeRDLogisticsServiceCharge[] getZFLogisticsServiceCharges() {
 		return null;
 	}
 

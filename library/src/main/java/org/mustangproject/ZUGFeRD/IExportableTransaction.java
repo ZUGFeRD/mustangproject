@@ -144,7 +144,7 @@ public interface IExportableTransaction {
 		return null;
 	}
 
-	default IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
+	default IZUGFeRDLogisticsServiceCharge[] getZFLogisticsServiceCharges() {
 		return null;
 	}
 

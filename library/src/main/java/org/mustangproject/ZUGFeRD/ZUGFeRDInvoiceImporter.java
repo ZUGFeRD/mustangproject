@@ -368,10 +368,6 @@ public class ZUGFeRDInvoiceImporter {
 		}
 	}
 
-	public void setID(String id) {
-		String ud = id;
-	}
-
 	/***
 	 * This will parse a XML into the given invoice object
 	 * @param zpp the invoice to be altered
@@ -1242,7 +1238,7 @@ public class ZUGFeRDInvoiceImporter {
 						c.setReasonCode(reasonCode);
 					}
 					if (taxPercent != null) {
-						c.setTaxPercent(new BigDecimal(taxPercent));
+						c.setTaxRateApplicablePercent(new BigDecimal(taxPercent));
 					}
 					if (basisAmount != null) {
 						c.setBasisAmount(new BigDecimal(basisAmount));
@@ -1251,7 +1247,7 @@ public class ZUGFeRDInvoiceImporter {
 						c.setTaxExemptionReason(taxExemptionReason);
 					}
 					if (categoryCode != null) {
-						c.setCategoryCode(categoryCode);
+						c.setTaxCategoryCode(categoryCode);
 					}
 					if (taxExemptionReasonCode != null) {
 						c.setTaxExemptionReasonCode(taxExemptionReasonCode);
@@ -1266,7 +1262,7 @@ public class ZUGFeRDInvoiceImporter {
 						a.setReasonCode(reasonCode);
 					}
 					if (taxPercent != null) {
-						a.setTaxPercent(new BigDecimal(taxPercent));
+						a.setTaxRateApplicablePercent(new BigDecimal(taxPercent));
 					}
 					if (basisAmount != null) {
 						a.setBasisAmount(new BigDecimal(basisAmount));
@@ -1275,7 +1271,7 @@ public class ZUGFeRDInvoiceImporter {
 						a.setTaxExemptionReason(taxExemptionReason);
 					}
 					if (categoryCode != null) {
-						a.setCategoryCode(categoryCode);
+						a.setTaxCategoryCode(categoryCode);
 					}
 					if (taxExemptionReasonCode != null) {
 						a.setTaxExemptionReasonCode(taxExemptionReasonCode);
@@ -1309,11 +1305,11 @@ public class ZUGFeRDInvoiceImporter {
 					//AppliedTradeTax
 				}
 				if (chargeAmount != null) {
-					Charge c = new Charge(new BigDecimal(chargeAmount));
+					LogisticsServiceCharge c = new LogisticsServiceCharge(new BigDecimal(chargeAmount));
 					if (taxPercent != null) {
-						c.setTaxPercent(new BigDecimal(taxPercent));
+						c.setTaxRateApplicablePercent(new BigDecimal(taxPercent));
 					}
-					zpp.addCharge(c);
+					zpp.addLogisticServiceCharge(c);
 				}
 			}
 
@@ -1321,8 +1317,6 @@ public class ZUGFeRDInvoiceImporter {
 			NodeList cashdiscountNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			for (int i = 0; i < cashdiscountNodes.getLength(); i++) {
 				NodeList cashDiscountNodeChilds = cashdiscountNodes.item(i).getChildNodes();
-				String chargeAmount = null;
-				String taxPercent = null;
 				CashDiscount cd=new CashDiscount();
 				for (int cashDiscountChildIndex = 0; cashDiscountChildIndex < cashDiscountNodeChilds.getLength(); cashDiscountChildIndex++) {
 					Node currentNode=cashDiscountNodeChilds.item(cashDiscountChildIndex);
