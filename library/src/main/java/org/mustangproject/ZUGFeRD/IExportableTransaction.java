@@ -322,6 +322,13 @@ public interface IExportableTransaction {
 	}
 
 	/**
+	 * BT-6, used when the VAT accounting currency code differs from the Invoice currency code
+	 *
+	 * @return three character currency code for the deviating VAT currency
+	 */
+	default String getTaxCurrency() { return null; }
+
+	/**
 	 * get payment term descriptional text e.g. Bis zum 22.10.2015 ohne Abzug
 	 *
 	 * @return get payment terms
