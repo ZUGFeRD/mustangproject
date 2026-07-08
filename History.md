@@ -1,5 +1,6 @@
 2.24.x
 =======
+- #228  Support LogisticsServiceCharges (Zuschläge für Versand & Verpackung)
 - #1174 Fix UBL AllowanceCharge import, add missing percent/basisAmount aliases, dropped per-unit-price allowances
 - #1163 Make doRecalculateItemPricesFromLineTotals() use more than the fixed scale of 4.
 - #1162 Skip the elements "Information" and "PayeeSpecifiedCreditorFinancialInstitution" for basic profiles.
