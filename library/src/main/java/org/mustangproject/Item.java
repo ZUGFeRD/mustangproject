@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.*;
+import org.mustangproject.util.BigDecimalUtils;
 import org.mustangproject.util.NodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -258,7 +258,8 @@ public class Item implements IZUGFeRDExportableItem {
 			if (recalcPrice && !BigDecimal.ZERO.equals(quantity)) {
 				icnm.getAsNodeMap("SpecifiedTradeSettlementLineMonetarySummation")
 					.flatMap(cnm -> cnm.getAsBigDecimal("LineTotalAmount"))
-					.ifPresent(lineTotal -> setPrice(lineTotal.divide(quantity, 4, RoundingMode.HALF_UP)));
+					// minScale = 2 fits most currencies in practice. Possible improvement could be to determine the scale by the invoices currency dynamically
+					.ifPresent(lineTotal -> setPrice(BigDecimalUtils.divideReversible(lineTotal, quantity, 2)));
 			}
 
 			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).forEach(this::addAdditionalReference);
@@ -751,7 +752,7 @@ public class Item implements IZUGFeRDExportableItem {
 	}
 
 	/***
-	 * For line seller 
+	 * For line seller
 	 * @param seller The line seller
 	 * @return fluent setter
 	 */
