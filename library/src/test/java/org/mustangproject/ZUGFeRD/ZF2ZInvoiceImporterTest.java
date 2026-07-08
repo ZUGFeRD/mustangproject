@@ -550,6 +550,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"    \"itemAllowances\" : [ {\n" +
 				"      \"totalAmount\" : 0.1,\n" +
 				"      \"taxPercent\" : 0,\n" +
+				"      \"reasonCode\" : \"95\",\n" +
 				"      \"categoryCode\" : \"S\"\n" +
 				"    } ],\n" +
 				"    \"value\" : 3.0,\n" +
@@ -602,6 +603,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"      \"totalAmount\" : 1.0,\n" +
 				"      \"taxPercent\" : 0,\n" +
 				"      \"reason\" : \"AnotherReason\",\n" +
+				"      \"reasonCode\" : \"ABK\",\n" +
 				"      \"categoryCode\" : \"S\"\n" +
 				"    } ],\n" +
 				"    \"value\" : 3.0,\n" +
@@ -633,6 +635,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"      \"totalAmount\" : 1.0,\n" +
 				"      \"taxPercent\" : 0,\n" +
 				"      \"reason\" : \"Yet another reason\",\n" +
+				"      \"reasonCode\" : \"ABK\",\n" +
 				"      \"categoryCode\" : \"S\"\n" +
 				"    } ],\n" +
 				"    \"value\" : 3.0,\n" +

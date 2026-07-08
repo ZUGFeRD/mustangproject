@@ -106,6 +106,55 @@ public class Item implements IZUGFeRDExportableItem {
 			// PriceAmount with currencyID and  BaseQuantity with unitCode
 			icnm.getAsBigDecimal("PriceAmount").ifPresent(this::setPrice);
 			icnm.getAsBigDecimal("BaseQuantity").ifPresent(this::setBasisQuantity);
+
+			// ubl equivalent of CII's GrossPriceProductTradePrice/AppliedTradeAllowanceCharge:
+			// a per-unit price allowance/charge nested under cac:Price
+			icnm.getAsNodeMap("AllowanceCharge").ifPresent(priceAtacNodes -> {
+				String chargeIndicator = priceAtacNodes.getAsStringOrNull("ChargeIndicator");
+				String percentString = priceAtacNodes.getAsStringOrNull("MultiplierFactorNumeric");
+				String basisAmountString = priceAtacNodes.getAsStringOrNull("BaseAmount");
+				String reason = priceAtacNodes.getAsStringOrNull("AllowanceChargeReason");
+				String reasonCode = priceAtacNodes.getAsStringOrNull("AllowanceChargeReasonCode");
+				if ((chargeIndicator != null) && priceAtacNodes.getAsBigDecimal("Amount").isPresent()) {
+					BigDecimal actual = priceAtacNodes.getAsBigDecimal("Amount").get();
+					if (chargeIndicator.equalsIgnoreCase("true")) {
+						Charge izac = new Charge();
+						izac.setTotalAmount(actual);
+						if (percentString != null) {
+							izac.setPercent(new BigDecimal(percentString));
+						}
+						if (basisAmountString != null) {
+							izac.setBasisAmount(new BigDecimal(basisAmountString));
+						}
+						if (reason != null) {
+							izac.setReason(reason);
+						}
+						if (reasonCode != null) {
+							izac.setReasonCode(reasonCode);
+						}
+						product.addCharge(izac);
+						setPrice(getPrice().subtract(actual)); // the gross price affects the net price, which is read,
+						// so if we do not ignore charges|allowances we have to re-compensate the net price
+					} else {
+						Allowance izac = new Allowance();
+						izac.setTotalAmount(actual);
+						if (percentString != null) {
+							izac.setPercent(new BigDecimal(percentString));
+						}
+						if (basisAmountString != null) {
+							izac.setBasisAmount(new BigDecimal(basisAmountString));
+						}
+						if (reason != null) {
+							izac.setReason(reason);
+						}
+						if (reasonCode != null) {
+							izac.setReasonCode(reasonCode);
+						}
+						product.addAllowance(izac);
+						setPrice(getPrice().add(actual));
+					}
+				}
+			});
 		});
 
 		itemMap.getNode(new String[]{"InvoicedQuantity", "CreditedQuantity"}).ifPresent(icn -> {
@@ -228,6 +277,7 @@ public class Item implements IZUGFeRDExportableItem {
 					String amountString = stac.getAsStringOrNull("ActualAmount");
 					String basisAmountString = stac.getAsStringOrNull("BasisAmount");
 					String reason = stac.getAsStringOrNull("Reason");
+					String reasonCode = stac.getAsStringOrNull("ReasonCode");
 					Charge izac = new Charge();
 					if (isChargeString.equalsIgnoreCase("false")) {
 						izac = new Allowance();
@@ -245,6 +295,9 @@ public class Item implements IZUGFeRDExportableItem {
 					}
 					if (reason != null) {
 						izac.setReason(reason);
+					}
+					if (reasonCode != null) {
+						izac.setReasonCode(reasonCode);
 					}
 
 					if (isChargeString.equalsIgnoreCase("false")) {
@@ -281,6 +334,7 @@ public class Item implements IZUGFeRDExportableItem {
 			String percentString = stac.getAsStringOrNull("MultiplierFactorNumeric");
 			String amountString = stac.getAsStringOrNull("Amount");
 			String reason = stac.getAsStringOrNull("AllowanceChargeReason");
+			String reasonCode = stac.getAsStringOrNull("AllowanceChargeReasonCode");
 			Charge izac = new Charge();
 			if (isChargeString.equalsIgnoreCase("false")) {
 				izac = new Allowance();
@@ -295,6 +349,9 @@ public class Item implements IZUGFeRDExportableItem {
 			}
 			if (reason != null) {
 				izac.setReason(reason);
+			}
+			if (reasonCode != null) {
+				izac.setReasonCode(reasonCode);
 			}
 
 			if (isChargeString.equalsIgnoreCase("false")) {
