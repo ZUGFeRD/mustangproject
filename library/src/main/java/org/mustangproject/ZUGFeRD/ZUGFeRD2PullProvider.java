@@ -1082,8 +1082,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 			if (trans.getTradeSettlement() != null) {
 				for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
-					if ((payment != null) && (payment instanceof IZUGFeRDTradeSettlementDebit)) {
+					if (payment instanceof IZUGFeRDTradeSettlementDebit) {
 						xml.append(payment.getPaymentXML());
+					}
 					if (payment instanceof IZUGFeRDTradeSettlementDebit) {
 						xml.append(payment.getPaymentXML());
 					}
