@@ -1048,7 +1048,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					if ( charge.getTaxCategoryCode() != null ) {
 						xml.append("<ram:CategoryCode>" + charge.getTaxCategoryCode() + "</ram:CategoryCode>");
 					}
-					xml += exemptionReasonCodeXML;
+					xml.append(exemptionReasonCodeXML);
 					if ( charge.getTaxPointDate() != null ) {
 						final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
 						xml.append("<ram:TaxPointDate><qdt:DateTimeString format=\"102\">" + XMLTools.encodeXML(dateFormat102.format(charge.getTaxPointDate())) + "</qdt:DateTimeString></ram:TaxPointDate>");
@@ -1085,7 +1085,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					if ((payment != null) && (payment instanceof IZUGFeRDTradeSettlementDebit)) {
 						xml.append(payment.getPaymentXML());
 					if (payment instanceof IZUGFeRDTradeSettlementDebit) {
-						xml.appemd(payment.getPaymentXML());
+						xml.append(payment.getPaymentXML());
 					}
 				}
 			}
