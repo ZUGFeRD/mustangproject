@@ -461,7 +461,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 				// currencyID=\"EUR\"
 				//+ "<ram:TotalPrepaidAmount>" + currencyFormat(calc.getTotalPrepaid()) + "</ram:TotalPrepaidAmount>"
 				//+ "<ram:DuePayableAmount>" + currencyFormat(calc.getGrandTotal().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>"
-				+ "</ram:SpecifiedTradeSettlementHeaderMonetarySummation>";
+				+ "</ram:SpecifiedTradeSettlementHeaderMonetarySummation>");
 		if (trans.getInvoiceReferencedDocuments() != null) {
 			for (ReferencedDocument doc : trans.getInvoiceReferencedDocuments()) {
 				if(doc.getIssuerAssignedID() == null || doc.getIssuerAssignedID().trim().isEmpty()) continue;
