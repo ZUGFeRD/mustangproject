@@ -350,12 +350,8 @@ public class ZUGFeRDInvoiceImporter {
 
 	private void setDocument() throws ParserConfigurationException, IOException, SAXException, ParseException {
 
-
-		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
-		///    is.skip(guessBOMSize(is));
-		DocumentBuilder builder = XMLTools.getDocumentBuilder(true);
 		if (canParse()) {
-			document = builder.parse(is);
+			// canParse() already parsed rawXML and assigned it to the `document` field
 			if (parseAutomatically) {
 				try {
 					importedInvoice = new CalculatedInvoice();
@@ -366,10 +362,6 @@ public class ZUGFeRDInvoiceImporter {
 			}
 
 		}
-	}
-
-	public void setID(String id) {
-		String ud = id;
 	}
 
 	/***
@@ -1166,13 +1158,14 @@ public class ZUGFeRDInvoiceImporter {
 			// be read,
 			// so the invoice remains arithmetically correct
 			// -> parse document level charges+allowances
-			xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"SpecifiedTradeAllowanceCharge\"]|/*[local-name()=\"AllowanceCharge\"]");//CII and UBL
+			xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"SpecifiedTradeAllowanceCharge\"]|/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"AllowanceCharge\"]");//CII and UBL
 			NodeList chargeNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			for (int i = 0; i < chargeNodes.getLength(); i++) {
 				NodeList chargeNodeChilds = chargeNodes.item(i).getChildNodes();
 				boolean isCharge = true;
 				String chargeAmount = null;
 				String basisAmount = null;
+				String percent = null;
 				String reason = null;
 				String reasonCode = null;
 				String taxPercent = null;
@@ -1203,8 +1196,10 @@ public class ZUGFeRDInvoiceImporter {
 
 						} else if (chargeChildName.equals("ActualAmount") || chargeChildName.equals("Amount")) {
 							chargeAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
-						} else if (chargeChildName.equals("BasisAmount")) {
+						} else if (chargeChildName.equals("BasisAmount") || chargeChildName.equals("BaseAmount")) {
 							basisAmount = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
+						} else if (chargeChildName.equals("CalculationPercent") || chargeChildName.equals("MultiplierFactorNumeric")) {
+							percent = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
 						} else if (chargeChildName.equals("Reason") || chargeChildName.equals("AllowanceChargeReason")) {
 							reason = XMLTools.trimOrNull(chargeNodeChilds.item(chargeChildIndex));
 						} else if (chargeChildName.equals("ReasonCode") || chargeChildName.equals("AllowanceChargeReasonCode")) {
@@ -1231,7 +1226,13 @@ public class ZUGFeRDInvoiceImporter {
 				}
 
 				if (isCharge) {
-					Charge c = new Charge(new BigDecimal(chargeAmount));
+					Charge c = new Charge();
+					if (chargeAmount != null) {
+						c.setTotalAmount(new BigDecimal(chargeAmount));
+					}
+					if (percent != null) {
+						c.setPercent(new BigDecimal(percent));
+					}
 					if (reason != null) {
 						c.setReason(reason);
 					}
@@ -1239,7 +1240,7 @@ public class ZUGFeRDInvoiceImporter {
 						c.setReasonCode(reasonCode);
 					}
 					if (taxPercent != null) {
-						c.setTaxPercent(new BigDecimal(taxPercent));
+						c.setTaxRateApplicablePercent(new BigDecimal(taxPercent));
 					}
 					if (basisAmount != null) {
 						c.setBasisAmount(new BigDecimal(basisAmount));
@@ -1248,14 +1249,20 @@ public class ZUGFeRDInvoiceImporter {
 						c.setTaxExemptionReason(taxExemptionReason);
 					}
 					if (categoryCode != null) {
-						c.setCategoryCode(categoryCode);
+						c.setTaxCategoryCode(categoryCode);
 					}
 					if (taxExemptionReasonCode != null) {
 						c.setTaxExemptionReasonCode(taxExemptionReasonCode);
 					}
 					zpp.addCharge(c);
 				} else {
-					Allowance a = new Allowance(new BigDecimal(chargeAmount));
+					Allowance a = new Allowance();
+					if (chargeAmount != null) {
+						a.setTotalAmount(new BigDecimal(chargeAmount));
+					}
+					if (percent != null) {
+						a.setPercent(new BigDecimal(percent));
+					}
 					if (reason != null) {
 						a.setReason(reason);
 					}
@@ -1263,7 +1270,7 @@ public class ZUGFeRDInvoiceImporter {
 						a.setReasonCode(reasonCode);
 					}
 					if (taxPercent != null) {
-						a.setTaxPercent(new BigDecimal(taxPercent));
+						a.setTaxRateApplicablePercent(new BigDecimal(taxPercent));
 					}
 					if (basisAmount != null) {
 						a.setBasisAmount(new BigDecimal(basisAmount));
@@ -1272,7 +1279,7 @@ public class ZUGFeRDInvoiceImporter {
 						a.setTaxExemptionReason(taxExemptionReason);
 					}
 					if (categoryCode != null) {
-						a.setCategoryCode(categoryCode);
+						a.setTaxCategoryCode(categoryCode);
 					}
 					if (taxExemptionReasonCode != null) {
 						a.setTaxExemptionReasonCode(taxExemptionReasonCode);
@@ -1306,11 +1313,11 @@ public class ZUGFeRDInvoiceImporter {
 					//AppliedTradeTax
 				}
 				if (chargeAmount != null) {
-					Charge c = new Charge(new BigDecimal(chargeAmount));
+					LogisticsServiceCharge c = new LogisticsServiceCharge(new BigDecimal(chargeAmount));
 					if (taxPercent != null) {
-						c.setTaxPercent(new BigDecimal(taxPercent));
+						c.setTaxRateApplicablePercent(new BigDecimal(taxPercent));
 					}
-					zpp.addCharge(c);
+					zpp.addLogisticServiceCharge(c);
 				}
 			}
 
@@ -1318,8 +1325,6 @@ public class ZUGFeRDInvoiceImporter {
 			NodeList cashdiscountNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			for (int i = 0; i < cashdiscountNodes.getLength(); i++) {
 				NodeList cashDiscountNodeChilds = cashdiscountNodes.item(i).getChildNodes();
-				String chargeAmount = null;
-				String taxPercent = null;
 				CashDiscount cd=new CashDiscount();
 				for (int cashDiscountChildIndex = 0; cashDiscountChildIndex < cashDiscountNodeChilds.getLength(); cashDiscountChildIndex++) {
 					Node currentNode=cashDiscountNodeChilds.item(cashDiscountChildIndex);

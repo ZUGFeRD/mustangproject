@@ -495,7 +495,6 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			ObjectMapper mapper = new ObjectMapper();
 
 			String jsonArray = mapper.writeValueAsString(i);
-			SimpleDateFormat iso=new SimpleDateFormat("yyyy-MM-dd");
 			SimpleDateFormat german=new SimpleDateFormat("dd.MM.yyyy");
 			Date now=new Date();
 			Date morning=atStartOfDay(now);
@@ -549,8 +548,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"    },\n" +
 				"    \"itemAllowances\" : [ {\n" +
 				"      \"totalAmount\" : 0.1,\n" +
-				"      \"taxPercent\" : 0,\n" +
-				"      \"categoryCode\" : \"S\"\n" +
+				"      \"taxRateApplicablePercent\" : 0,\n" +
+				"      \"taxCategoryCode\" : \"S\",\n" +
+				"      \"reasonCode\" : \"95\"\n" +
 				"    } ],\n" +
 				"    \"value\" : 3.0,\n" +
 				"    \"calculation\" : {\n" +
@@ -575,9 +575,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"      \"percent\" : 50.0,\n" +
 				"      \"totalAmount\" : 1.5,\n" +
 				"      \"basisAmount\" : 3.0,\n" +
-				"      \"taxPercent\" : 0,\n" +
+				"      \"taxRateApplicablePercent\" : 0,\n" +
 				"      \"reason\" : \"In love with salesperson\",\n" +
-				"      \"categoryCode\" : \"S\"\n" +
+				"      \"taxCategoryCode\" : \"S\"\n" +
 				"    } ],\n" +
 				"    \"value\" : 3.0,\n" +
 				"    \"calculation\" : {\n" +
@@ -600,9 +600,10 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"    },\n" +
 				"    \"itemCharges\" : [ {\n" +
 				"      \"totalAmount\" : 1.0,\n" +
-				"      \"taxPercent\" : 0,\n" +
+				"      \"taxRateApplicablePercent\" : 0,\n" +
 				"      \"reason\" : \"AnotherReason\",\n" +
-				"      \"categoryCode\" : \"S\"\n" +
+				"      \"taxCategoryCode\" : \"S\",\n" +
+				"      \"reasonCode\" : \"ABK\"\n" +
 				"    } ],\n" +
 				"    \"value\" : 3.0,\n" +
 				"    \"calculation\" : {\n" +
@@ -625,15 +626,16 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"    },\n" +
 				"    \"itemAllowances\" : [ {\n" +
 				"      \"totalAmount\" : 1.0,\n" +
-				"      \"taxPercent\" : 0,\n" +
+				"      \"taxRateApplicablePercent\" : 0,\n" +
 				"      \"reason\" : \"Something completely strange\",\n" +
-				"      \"categoryCode\" : \"S\"\n" +
+				"      \"taxCategoryCode\" : \"S\"\n" +
 				"    } ],\n" +
 				"    \"itemCharges\" : [ {\n" +
 				"      \"totalAmount\" : 1.0,\n" +
-				"      \"taxPercent\" : 0,\n" +
+				"      \"taxRateApplicablePercent\" : 0,\n" +
 				"      \"reason\" : \"Yet another reason\",\n" +
-				"      \"categoryCode\" : \"S\"\n" +
+				"      \"taxCategoryCode\" : \"S\",\n" +
+				"      \"reasonCode\" : \"ABK\"\n" +
 				"    } ],\n" +
 				"    \"value\" : 3.0,\n" +
 				"    \"calculation\" : {\n" +
@@ -646,10 +648,10 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"  } ],\n" +
 				"  \"zfcharges\" : [ {\n" +
 				"    \"totalAmount\" : 1.0,\n" +
-				"    \"taxPercent\" : 19.0,\n" +
+				"    \"taxRateApplicablePercent\" : 19.0,\n" +
 				"    \"reason\" : \"AReason\",\n" +
 				"    \"reasonCode\" : \"ABK\",\n" +
-				"    \"categoryCode\" : \"S\"\n" +
+				"    \"taxCategoryCode\" : \"S\"\n" +
 				"  } ]\n" +
 				"}",jsonArray,true);
 		} catch (IOException e) {
@@ -1016,5 +1018,21 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			}
 		}
 		return null;
+	}
+
+	@Test
+	public void testRecalc() throws FileNotFoundException, XPathExpressionException, ParseException {
+		File inputFile = getResourceAsFile("XRechnung_internalRecalcBug.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.doRecalculateItemPricesFromLineTotals();
+		// zii.doIgnoreCalculationErrors();
+		zii.setInputStream(new FileInputStream(inputFile));
+
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		zii.extractInto(invoice);
+
+		assertEquals(new BigDecimal("0.012148"), invoice.getZFItems()[0].getPrice());
+		assertEquals(new BigDecimal("12.44"), invoice.getLineTotalAmount().setScale(2));
+		assertEquals(new BigDecimal("12.44"), invoice.getGrandTotal().setScale(2));
 	}
 }

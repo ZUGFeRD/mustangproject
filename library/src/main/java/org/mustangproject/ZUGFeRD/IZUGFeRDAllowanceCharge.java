@@ -17,20 +17,37 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 
-import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
-
 /**
  * The interface for allowances or charges, to be used by the pullprovider
  * @author AlexanderSchmidt
+ * 
+ * <xs:complexType name="TradeAllowanceChargeType">
+ *   <xs:sequence>
+ *     <xs:element name="ChargeIndicator" type="udt:IndicatorType"/>
+ *     <xs:element name="SequenceNumeric" type="udt:NumericType" minOccurs="0"/>
+ *     <xs:element name="CalculationPercent" type="udt:PercentType" minOccurs="0"/>
+ *     <xs:element name="BasisAmount" type="udt:AmountType" minOccurs="0"/>
+ *     <xs:element name="BasisQuantity" type="udt:QuantityType" minOccurs="0"/>
+ *     <xs:element name="ActualAmount" type="udt:AmountType"/>
+ *     <xs:element name="ReasonCode" type="qdt:AllowanceChargeReasonCodeType" minOccurs="0"/>
+ *     <xs:element name="Reason" type="udt:TextType" minOccurs="0"/>
+ *     <xs:element name="CategoryTradeTax" type="ram:TradeTaxType" minOccurs="0"/>
+ *   </xs:sequence>
+ * </xs:complexType>
  */
-public interface IZUGFeRDAllowanceCharge {
+public interface IZUGFeRDAllowanceCharge extends IZUGFeRDTradeTax {
 
 	/***
-	 * returns the absolute amount, even if it was relative in the first place
-	 * @param trans the class delivering the initial value
-	 * @return the calculated value (e.g. when percentage)
+	 * is this in reality a charge and now allowance
+	 * @return true if amount to be treated negative
 	 */
-	BigDecimal getTotalAmount(IAbsoluteValueProvider trans);
+	public boolean isCharge();
+
+	/***
+	 * returns the sequence number
+	 * @return	sequence number
+	 */
+	default Integer getSequenceNumeric() {return null;}
 
 	/***
 	 * returns a percentage, if relative amount, or null for absolute amounts
@@ -45,10 +62,17 @@ public interface IZUGFeRDAllowanceCharge {
 	default BigDecimal getBasisAmount() {return null;}
 
 	/***
-	 * get a description for the allowance/charge
-	 * @return the description
+	 * returns a basis the percentage is calculated from
+	 * @return null or the basis
 	 */
-	String getReason();
+	default BigDecimal getBasisQuantity() {return null;}
+
+	/***
+	 * returns the absolute amount, even if it was relative in the first place
+	 * @param trans the class delivering the initial value
+	 * @return the calculated value (e.g. when percentage)
+	 */
+	BigDecimal getTotalAmount(IAbsoluteValueProvider trans);
 
 	/***
 	 * get the code for the allowance/charge
@@ -57,34 +81,28 @@ public interface IZUGFeRDAllowanceCharge {
 	String getReasonCode();
 
 	/***
-	 * get the applicable tax percentage for the allowance/charge
-	 * @return the percentage
+	 * get a description for the allowance/charge
+	 * @return the description
 	 */
-	BigDecimal getTaxPercent();
+	String getReason();
 
-	/***
-	 * the category ID why this has been applied
-	 * @return default value Standard rate=S
+
+	/*
+	 * for backward compatibility
 	 */
+	/**
+	 * @deprecated use getTaxCategoryCode() instead.
+	 */
+	@Deprecated
 	default String getCategoryCode() {
-		return TaxCategoryCodeTypeConstants.STANDARDRATE;
+		return getTaxCategoryCode();
 	}
 
-	/***
-	 * is this in reality a charge and now allowance
-	 * @return true if amount to be treated negative
+	/**
+	 * @deprecated use getTaxRateApplicablePercent() instead.
 	 */
-	public boolean isCharge();
-
-	/***
-	 * the the reason (text) why this allowance/charge is tax free
-	 * @return the reason text
-	 */
-	public String getTaxExemptionReason();
-
-	/***
-	 * the the reason code why this allowance/charge is tax free
-	 * @return the reason code
-	 */
-	public String getTaxExemptionReasonCode();
+	@Deprecated
+	default BigDecimal getTaxPercent() {
+		return getTaxRateApplicablePercent();
+	}
 }

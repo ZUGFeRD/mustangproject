@@ -730,9 +730,11 @@ public class ZF2PushTest extends TestCase {
 				.setNumber(number)
 				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)).addAllowance(new Allowance(BigDecimal.ONE)), new BigDecimal(500.0), qty).addAllowance(new Allowance(new BigDecimal(300)).setTaxPercent(new BigDecimal(19))))
 				.addAllowance(new Allowance(new BigDecimal(600)).setTaxPercent(new BigDecimal(19)))
+				.addLogisticServiceCharge(new LogisticsServiceCharge().setAppliedAmount(BigDecimal.valueOf(25)))
 			);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+			assertFalse(theXML.contains("<ram:SpecifiedLogisticsServiceCharge"));
 			ze.export(TARGET_ALLOWANCESPDF);
 		} catch (IOException e) {
 			fail("IOException should not be raised");
@@ -760,6 +762,8 @@ public class ZF2PushTest extends TestCase {
 		String number = "123";
 		String priceStr = "3.00";
 		BigDecimal price = new BigDecimal(priceStr);
+		LogisticsServiceCharge logisticsServiceCharge = new LogisticsServiceCharge().setDescription("Frachtkosten").setAppliedAmount(BigDecimal.valueOf(25));
+		logisticsServiceCharge.setTaxRateApplicablePercent(new BigDecimal(19));
 		try {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
@@ -777,6 +781,7 @@ public class ZF2PushTest extends TestCase {
 				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
 						.addCharge(new Charge().setPercent(new BigDecimal(50)).setBasisAmount(price).setTaxPercent(new BigDecimal(19)).setReasonCode("ABK").setReason("Verschiedenes"))
 						.addAllowance(new Allowance().setPercent(new BigDecimal(50)).setTaxPercent(new BigDecimal(19)).setReasonCode("95").setReason("Mengenrabatt"))
+						.addLogisticServiceCharge(logisticsServiceCharge)
 			);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
@@ -789,7 +794,7 @@ public class ZF2PushTest extends TestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_RELATIVECHARGESALLOWANCESPDF);
 
 		assertEquals("CHF", zi.getInvoiceCurrencyCode());
-		assertEquals("10.71", zi.getAmount());
+		assertEquals("40.46", zi.getAmount());
 		assertEquals(orgname, zi.getHolder());
 		assertEquals(number, zi.getForeignReference());
 		try {
