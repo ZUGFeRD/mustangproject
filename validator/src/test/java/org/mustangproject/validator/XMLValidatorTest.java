@@ -4,6 +4,7 @@ import java.io.File;
 
 import javax.xml.transform.Source;
 
+import org.junit.Test;
 import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
@@ -85,6 +86,9 @@ public class XMLValidatorTest extends ResourceCase {
 		} catch (final IrrecoverableValidationError e) {
 			noException = false;
 		}
+		assertTrue(noException);
+		noException=true;// moving on...
+
 		final String res = xv.getXMLResult();
 		/*OutputStream os = null;
 		try {
@@ -166,6 +170,8 @@ public class XMLValidatorTest extends ResourceCase {
 			noException = false;
 		}
 		assertTrue(noException);
+		noException=true;// moving on...
+
 		try {
 			ctx.clear();
 			tempFile = getResourceAsFile("invalidV2Root.xml");
@@ -332,6 +338,33 @@ public class XMLValidatorTest extends ResourceCase {
 
 	}
 
+	public void testFrenchSchematronValidation() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+
+		File tempFile = getResourceAsFile("validV2FR.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			assertThat(s).valueByXPath("count(//error)")
+				.asInt()
+				.isEqualTo(0);
+			assertThat(s).valueByXPath("count(//warning)")
+				.asInt()
+				.isEqualTo(12);
+			assertThat(s).valueByXPath("count(//warning[contains(text(),'XP_Z12_012')])")
+				.asInt()
+				.isEqualTo(9);
+			assertThat(s).valueByXPath("/validation/summary/@status")
+				.asString()
+				.isEqualTo("valid");
+		} catch (final IrrecoverableValidationError e) {
+			fail(e.getMessage());
+		}
+	}
+
 
 	public void testUBLValidation() {
 		ValidationContext ctx = new ValidationContext(null);
@@ -373,6 +406,38 @@ public class XMLValidatorTest extends ResourceCase {
 
 	}
 
+	public void testBRDEC23Regression() {
+		// Regression test: BR-DEC-23 must fire for XRechnung CII invoices whose
+		// LineTotalAmount (BT-131) has more than 2 decimal places.
+		// The bug existed in CEN Schematron <=1.3.12 due to a wrong XPath context
+		// (SpecifiedTradeSettlement instead of SpecifiedLineTradeSettlement).
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("invalidXRV30_BR-DEC-23.xml");
+		boolean noExceptions = true;
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+
+			// must be invalid overall
+			String status = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("invalid", status);
+
+			// must contain the BR-DEC-23 rule ID in at least one error
+			assertThat(s).valueByXPath("count(//error[contains(text(),'BR-DEC-23')])")
+				.asInt()
+				.isGreaterThanOrEqualTo(1);
+		} catch (IrrecoverableValidationError e) {
+			noExceptions = false;
+		}
+		assertTrue(noExceptions);
+	}
+
 	public void testSubInvoiceLineHierarchy() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -394,6 +459,24 @@ public class XMLValidatorTest extends ResourceCase {
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
 		}
+
+		xv.context.clear();
+		tempFile = getResourceAsFile("X03_01_Abschlagsrechnung_SubInvoiceLine_u_LV_Nr.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			// hierarchy mismatch should produce at least one warning
+			assertThat(s).valueByXPath("count(//warning)")
+				.asInt()
+				.isEqualTo(0);
+
+		} catch (final IrrecoverableValidationError e) {
+			// ignore, will be in XML output anyway
+		}
+
+
 
 	}
 

@@ -72,13 +72,18 @@ import org.apache.xmpbox.xml.XmpParsingException;
 import org.apache.xmpbox.xml.XmpSerializer;
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
+import static org.mustangproject.util.StringUtils.isBlank;
+import static org.mustangproject.util.StringUtils.isNotBlank;
 
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
 
 public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporter {
-	private boolean isFacturX = true;
 
+	private static final String XML_DESCRIPTION = "Invoice metadata conforming to ZUGFeRD standard (https://www.ferd-net.de/en/standards/zugferd/factur-x)";
+
+	private boolean isFacturX = true;
+	
 	public static final int DefaultZUGFeRDVersion = 2;
 	protected boolean ignorePDFAErrors = false;
 
@@ -100,6 +105,9 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	private boolean fileAttached = false;
 	private Profile profile = null;
 	protected boolean documentPrepared = false;
+
+	/** Defines whether attachments to the PDF should be using FLATE compression */
+	private boolean compressionEnabled = false;
 
 	/**
 	 * Data (XML invoice) to be added to the ZUGFeRD PDF. It may be externally set,
@@ -392,7 +400,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		dict.setString("Desc", description);
 
 		ByteArrayInputStream fakeFile = new ByteArrayInputStream(data);
-		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile);
+		COSName filter = compressionEnabled ? COSName.FLATE_DECODE : null;
+		PDEmbeddedFile ef = new PDEmbeddedFile(doc, fakeFile, filter);
 //		ef.addCompression();
 		ef.setSubtype(subType);
 		ef.setSize(data.length);
@@ -500,6 +509,12 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 */
 	public ZUGFeRDExporterFromA3 setConformanceLevel(PDFAConformanceLevel newLevel) {
 		conformanceLevel = newLevel;
+		return this;
+	}
+
+	@Override
+	public IZUGFeRDExporter setEnablePDFAttachmentCompression(boolean compressionEnabled) {
+		this.compressionEnabled = compressionEnabled;
 		return this;
 	}
 
@@ -673,8 +688,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		}
 
 		PDFAttachGenericFile(doc, filename, relationship,
-			"Invoice metadata conforming to ZUGFeRD standard (http://www.ferd-net.de/front_content.php?idcat=231&lang=4)",
-			"text/xml", xmlProvider.getXML());
+			XML_DESCRIPTION, "text/xml", xmlProvider.getXML());
 
 		for (FileAttachment attachment : fileAttachments) {
 			PDFAttachGenericFile(doc, attachment.getFilename(), attachment.getRelation(), attachment.getDescription(), attachment.getMimetype(), attachment.getData());
@@ -719,7 +733,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 */
 	protected void writeAdobePDFSchema(XMPMetadata xmp) {
 		AdobePDFSchema pdf = getAdobePDFSchema(xmp);
-		if (overwrite || isEmpty(pdf.getProducer()))
+		if (overwrite || isBlank(pdf.getProducer()))
 			pdf.setProducer(producer);
 	}
 
@@ -742,7 +756,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	protected void writePDFAIdentificationSchema(XMPMetadata xmp) {
 		PDFAIdentificationSchema pdfaid = getPDFAIdentificationSchema(xmp);
-		if (overwrite || isEmpty(pdfaid.getConformance())) {
+		if (overwrite || isBlank(pdfaid.getConformance())) {
 			try {
 				pdfaid.setConformance(conformanceLevel.getLetter());
 			} catch (BadFieldValueException ex) {
@@ -776,14 +790,14 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 		ArrayProperty titleProperty = dc.getTitleProperty();
 		if (titleProperty != null) {
-			if (overwrite && !isEmpty(title)) {
+			if (overwrite && isNotBlank(title)) {
 				dc.removeProperty(titleProperty);
 				dc.setTitle(title);
 			} else if (titleProperty.getElementsAsString().stream().anyMatch("Untitled"::equalsIgnoreCase)) {
 				// remove unfitting ghostscript default
 				dc.removeProperty(titleProperty);
 			}
-		} else if (!isEmpty(title)) {
+		} else if (isNotBlank(title)) {
 			dc.setTitle(title);
 		}
 	}
@@ -800,7 +814,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	protected void writeXMLBasicSchema(XMPMetadata xmp) {
 		XMPBasicSchema xsb = getXmpBasicSchema(xmp);
-		if (overwrite || isEmpty(xsb.getCreatorTool()) || "UnknownApplication".equals(xsb.getCreatorTool()))
+		if (overwrite || isBlank(xsb.getCreatorTool()) || "UnknownApplication".equals(xsb.getCreatorTool()))
 			xsb.setCreatorTool(creatorTool);
 		if (overwrite || xsb.getCreateDate() == null)
 			xsb.setCreateDate(Calendar.getInstance());
@@ -823,15 +837,15 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 			info.setCreationDate(Calendar.getInstance());
 		if (overwrite || info.getModificationDate() == null)
 			info.setModificationDate(Calendar.getInstance());
-		if (overwrite || (isEmpty(info.getAuthor()) && !isEmpty(author)))
+		if (overwrite || (isBlank(info.getAuthor()) && isNotBlank(author)))
 			info.setAuthor(author);
-		if (overwrite || (isEmpty(info.getProducer()) && !isEmpty(fullProducer)))
+		if (overwrite || (isBlank(info.getProducer()) && isNotBlank(fullProducer)))
 			info.setProducer(fullProducer);
-		if (overwrite || (isEmpty(info.getCreator()) && !isEmpty(creator)))
+		if (overwrite || (isBlank(info.getCreator()) && isNotBlank(creator)))
 			info.setCreator(creator);
-		if (overwrite || (isEmpty(info.getTitle()) && !isEmpty(title)))
+		if (overwrite || (isBlank(info.getTitle()) && isNotBlank(title)))
 			info.setTitle(title);
-		if (overwrite || (isEmpty(info.getSubject()) && !isEmpty(subject)))
+		if (overwrite || (isBlank(info.getSubject()) && isNotBlank(subject)))
 			info.setSubject(subject);
 	}
 
@@ -941,15 +955,5 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		}
 
 		return this;
-	}
-
-	/**
-	 * Utility method inspired by apache commons-lang3 StringUtils.
-	 *
-	 * @param string the string to test
-	 * @return true if the string is null or empty
-	 */
-	private boolean isEmpty(String string) {
-		return string == null || string.isEmpty();
 	}
 }

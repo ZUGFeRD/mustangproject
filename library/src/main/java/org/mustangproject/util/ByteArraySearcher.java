@@ -1,5 +1,8 @@
 package org.mustangproject.util;
 
+/**
+ * Find string in large files, text, binary or binary (PDF)
+ */
 public final class ByteArraySearcher {
 
 	private ByteArraySearcher() {
@@ -31,10 +34,22 @@ public final class ByteArraySearcher {
 		return -1;
 	}
 
+	/***
+	 * check if a string or any substring of haystack matches (case sensitive) needle
+	 * @param haystack
+	 * @param needle
+	 * @return true, if haystack contains needle
+	 */
 	public static boolean contains(byte[] haystack, byte[] needle) {
 		return indexOf(haystack, needle) >= 0;
 	}
 
+	/***
+	 * check if haystack starts with (case sensitive) needle
+	 * @param haystack
+	 * @param needle
+	 * @return true, if haystack immediately starts with needle
+	 */
 	public static boolean startsWith(byte[] haystack, byte[] needle) {
 		if (needle.length > haystack.length) {
 			return false;

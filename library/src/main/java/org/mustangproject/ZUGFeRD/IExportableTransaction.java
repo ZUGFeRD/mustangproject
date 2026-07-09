@@ -38,7 +38,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.IncludedNote;
 import org.mustangproject.ReferencedDocument;
-import org.mustangproject.TradeParty;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
 /***
@@ -48,6 +47,11 @@ import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
  * @see org.mustangproject.Invoice
  */
 public interface IExportableTransaction {
+
+	@JsonIgnore
+	default boolean getTestIndicator() {
+		return false;
+	}
 
 	/**
 	 * appears in /rsm:CrossIndustryDocument/rsm:HeaderExchangedDocument/ram:Name
@@ -221,6 +225,15 @@ public interface IExportableTransaction {
 	 * @return mandatory ID, optional Date
 	 */
 	default IReferencedDocument getTenderReferencedDocument() {
+		return null;
+	}
+
+	/**
+	 * BT-18 Invoiced Object Identifier
+	 *
+	 * @return mandatory ID, optional Date
+	 */
+	default IReferencedDocument getObjectIdentifierReferencedDocument() {
 		return null;
 	}
 
@@ -425,6 +438,10 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	default String getDeliveryTypeCode() {
+		return null;
+	}
+
 	/**
 	 * get the ID of the SellerOrderReferencedDocument, which sits in the
 	 * ApplicableSupplyChainTradeAgreement/ApplicableHeaderTradeAgreement
@@ -497,6 +514,15 @@ public interface IExportableTransaction {
 	 * @return the IZUGFeRDExportableTradeParty delivery address
 	 */
 	default IZUGFeRDExportableTradeParty getDeliveryAddress() {
+		return null;
+	}
+
+	/***
+	 * ultimate delivery address, i.e. ram:UltimateShipToTradeParty (only supported for zf2)
+	 *
+	 * @return the IZUGFeRDExportableTradeParty delivery address
+	 */
+	default IZUGFeRDExportableTradeParty getEndCustomerDeliveryAddress() {
 		return null;
 	}
 
@@ -617,4 +643,16 @@ public interface IExportableTransaction {
 	default String getCreditorReferenceID() {
 		return null;
 	}
+
+	/**
+	 * BT-23 Business process identifier
+	 * /rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/
+	 *   ram:BusinessProcessSpecifiedDocumentContextParameter/ram:ID
+	 *
+	 * @return business process ID (e.g. "B1" or a URN) or null if not provided
+	 */
+	default String getBusinessProcessId() {
+		return null;
+	}
+
 }

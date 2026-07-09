@@ -87,6 +87,37 @@
                     </fo:block>
                     <xsl:call-template name="SubHeader">
                         <xsl:with-param name="text"
+                                        select="'Angaben zur Prüfanwendung'"/>
+                        <xsl:with-param name="color"
+                                        select="'black'"/>
+                    </xsl:call-template>
+                    <fo:table>
+                        <fo:table-column border-style="none"/>
+                        <fo:table-column column-width="70%"
+                                         border-style="none"/>
+                        <fo:table-body>
+                            <fo:table-row>
+                                <fo:table-cell>
+                                    <fo:block text-align="left">Name:</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell>
+                                    <fo:block text-align="right">mustangproject.org</fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                            <fo:table-row>
+                                <fo:table-cell>
+                                    <fo:block text-align="left">Version:</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell>
+                                    <fo:block text-align="right">
+                                        <xsl:value-of select="./xml/info/validator/@version"/>
+                                    </fo:block>
+                                </fo:table-cell>
+                            </fo:table-row>
+                        </fo:table-body>
+                    </fo:table>
+                    <xsl:call-template name="SubHeader">
+                        <xsl:with-param name="text"
                                         select="'Angaben zum geprüften Dokument'"/>
                         <xsl:with-param name="color"
                                         select="'black'"/>

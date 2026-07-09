@@ -261,4 +261,27 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 			.isEqualTo("valid");
 
 	}
+	public void testXMLFRValidation() {
+		File tempFile = getResourceAsFile("validV2FR.xml");
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+		assertThat(res).valueByXPath("count(//error)")
+			.asInt()
+			.isEqualTo(0);
+		assertThat(res).valueByXPath("count(//warning)")
+			.asInt()
+			.isEqualTo(12); // 3 empty-element warnings plus 9 French schematron warnings
+		assertThat(res).valueByXPath("count(//notice)")
+			.asInt()
+			.isEqualTo(9); // 9 notices RE XRechnung 3.0
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.asString()
+			.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+			.asString()
+			.isEqualTo("valid");
+
+	}
 }

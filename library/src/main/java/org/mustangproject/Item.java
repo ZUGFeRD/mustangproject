@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 /***
  * describes any invoice line
@@ -46,6 +44,9 @@ public class Item implements IZUGFeRDExportableItem {
 	protected String parentLineID = null;
 	protected String lineStatusReasonCode = null;
  	protected TradeParty lineSeller;
+	protected String deliveryNoteReferencedDocumentID = null;
+	protected Date deliveryNoteReferencedDocumentDate = null;
+	protected String deliveryNoteReferencedDocumentLineID = null;
 	//protected HashMap<String, String> attributes = new HashMap<>();
 
 	/***
@@ -107,7 +108,7 @@ public class Item implements IZUGFeRDExportableItem {
 			icnm.getAsBigDecimal("BaseQuantity").ifPresent(this::setBasisQuantity);
 		});
 
-		itemMap.getNode("InvoicedQuantity").ifPresent(icn -> {
+		itemMap.getNode(new String[]{"InvoicedQuantity", "CreditedQuantity"}).ifPresent(icn -> {
 			// ubl
 			setQuantity(new BigDecimal(icn.getTextContent().trim()));
 			product.setUnit(icn.getAttributes().getNamedItem("unitCode").getNodeValue());
@@ -128,6 +129,9 @@ public class Item implements IZUGFeRDExportableItem {
 
 		itemMap.getAsString("Note")
 			.ifPresent(this::addNote);
+
+		itemMap.getAsString("AccountingCost")
+			.ifPresent(this::setAccountingReference);
 
 		if (product==null) { // CII
 			if (itemMap.getNode("SpecifiedTradeProduct").isPresent()) {
@@ -187,10 +191,29 @@ public class Item implements IZUGFeRDExportableItem {
 				}
 			});
 
+		itemMap.getAsNodeMap("SpecifiedLineTradeDelivery").ifPresent(icnm -> {
+			icnm.getAsNodeMap("DeliveryNoteReferencedDocument").ifPresent(dn -> {
+				dn.getAsString("IssuerAssignedID")
+					.ifPresent(this::setDeliveryNoteReferencedDocumentID);
+
+				dn.getAsString("LineID")
+						.ifPresent(this::setDeliveryNoteReferencedDocumentLineID);
+
+				dn.getAsNodeMap("FormattedIssueDateTime")
+					.flatMap(fdt -> fdt.getNode("DateTimeString"))
+					.map(XMLTools::getNodeValue)
+					.map(XMLTools::tryDate)
+					.ifPresent(this::setDeliveryNoteReferencedDocumentDate);
+			});
+		});
+
 		itemMap.getAsNodeMap("SpecifiedLineTradeSettlement", "SpecifiedSupplyChainTradeSettlement").ifPresent(icnm -> {
 			icnm.getAsNodeMap("ApplicableTradeTax")
 				.flatMap(cnm -> cnm.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent"))
 				.ifPresent(product::setVATPercent);
+			icnm.getAsNodeMap("ApplicableTradeTax")
+				.flatMap(cnm -> cnm.getAsString("CategoryCode"))
+				.ifPresent(product::setTaxCategoryCode);
 			icnm.getAsNodeMap("ApplicableTradeTax")
 				.flatMap(cnm -> cnm.getAsString("ExemptionReason"))
 				.ifPresent(product::setTaxExemptionReason);
@@ -212,13 +235,13 @@ public class Item implements IZUGFeRDExportableItem {
 						izac = new Charge();
 					}
 					if (amountString != null) {
-						izac.setTotalAmount(new BigDecimal(amountString));
+						izac.setTotalAmount(new BigDecimal(amountString.trim()));
 					}
 					if (basisAmountString != null) {
-						izac.setBasisAmount(new BigDecimal(basisAmountString));
+						izac.setBasisAmount(new BigDecimal(basisAmountString.trim()));
 					}
 					if (percentString != null) {
-						izac.setPercent(new BigDecimal(percentString));
+						izac.setPercent(new BigDecimal(percentString.trim()));
 					}
 					if (reason != null) {
 						izac.setReason(reason);
@@ -240,7 +263,9 @@ public class Item implements IZUGFeRDExportableItem {
 
 			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).forEach(this::addAdditionalReference);
 
-			icnm.getAsString("ReceivableSpecifiedTradeAccountingAccount").ifPresent(s -> this.accountingReference = s.trim());
+			icnm.getAsNodeMap("ReceivableSpecifiedTradeAccountingAccount")
+				.flatMap(account -> account.getAsString("ID"))
+				.ifPresent(this::setAccountingReference);
 
 			icnm.getAsNodeMap("BillingSpecifiedPeriod").ifPresent(periodNode -> {
 				Date start = periodNode.getAsNodeMap("StartDateTime").flatMap(dateTimeNode -> dateTimeNode.getNode("DateTimeString")).map(XMLTools::tryDate).orElse(null);
@@ -309,6 +334,38 @@ public class Item implements IZUGFeRDExportableItem {
 			});
 			addNotes(includedNotes);
 		});
+	}
+
+	/**
+	 * If Item created from Importer, may need to add additional product tax information
+	 * because some fields are excluded from per-line item tax in some profiles (e.g. EN16931)
+	 */
+	public void enrichProductFromVATBreakdown(NodeList taxNodes) {
+		// Match tax list with item product tax, set product exemption reason and code if not already set
+		// NB: For EN16931, exemption info only included in doc - level VAT Breakdown, not in per-line item nodes
+		if (taxNodes.getLength() != 0) {
+			for (int i = 0; i < taxNodes.getLength(); i++) {
+				final Node taxNode = taxNodes.item(i);
+				if (!taxNode.getLocalName().equals("ApplicableTradeTax")) {
+					continue;
+				}
+				NodeList taxChilds = taxNode.getChildNodes();
+				NodeMap taxChildMap = new NodeMap(taxChilds);
+				String taxCategoryCode = taxChildMap.getAsStringOrNull("CategoryCode");
+				BigDecimal rateApplicablePercent = taxChildMap.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent").orElse(null);
+
+				if (taxCategoryCode != null && rateApplicablePercent != null && taxCategoryCode.equals(this.product.taxCategoryCode) && rateApplicablePercent.compareTo(this.product.getVATPercent()) == 0) {
+					// If product Exemption not already set (i.e. by per line-item exemption fields, set it from VAT Breakdown
+					if (this.product.getTaxExemptionReason() == null) {
+						this.product.setTaxExemptionReason(taxChildMap.getAsStringOrNull("ExemptionReason"));
+					}
+					if (this.product.getTaxExemptionReasonCode() == null) {
+						this.product.setTaxExemptionReasonCode(taxChildMap.getAsStringOrNull("ExemptionReasonCode"));
+					}
+					break;
+				}
+			}
+		}
 	}
 
 	public Item addBuyerOrderReferencedDocumentLineID(String s) {
@@ -653,6 +710,16 @@ public class Item implements IZUGFeRDExportableItem {
 		return accountingReference;
 	}
 
+	/***
+	 * BT-133 invoice line buyer accounting reference.
+	 * @param accountingReference buyer accounting reference for this invoice line
+	 * @return fluent setter
+	 */
+	public Item setAccountingReference(String accountingReference) {
+		this.accountingReference = accountingReference != null ? accountingReference.trim() : null;
+		return this;
+	}
+
 	@Override
 	public String getParentLineID() {
 		return parentLineID;
@@ -696,5 +763,38 @@ public class Item implements IZUGFeRDExportableItem {
     public TradeParty getLineSeller() {
         return this.lineSeller;
     }
+
+	@Override
+	public String getDeliveryNoteReferencedDocumentID() {
+		return deliveryNoteReferencedDocumentID;
+	}
+
+
+	public Item setDeliveryNoteReferencedDocumentID(String deliveryNoteReferencedDocumentID) {
+		this.deliveryNoteReferencedDocumentID = deliveryNoteReferencedDocumentID;
+		return this;
+	}
+
+	@Override
+	public Date getDeliveryNoteReferencedDocumentDate() {
+		return deliveryNoteReferencedDocumentDate;
+	}
+
+
+	public Item setDeliveryNoteReferencedDocumentDate(Date deliveryNoteReferencedDocumentDate) {
+		this.deliveryNoteReferencedDocumentDate = deliveryNoteReferencedDocumentDate;
+		return this;
+	}
+
+	@Override
+	public String getDeliveryNoteReferencedDocumentLineID() {
+		return deliveryNoteReferencedDocumentLineID;
+	}
+
+
+	public Item setDeliveryNoteReferencedDocumentLineID(String deliveryNoteReferencedDocumentLineID) {
+		this.deliveryNoteReferencedDocumentLineID = deliveryNoteReferencedDocumentLineID;
+		return this;
+	}
 
 }

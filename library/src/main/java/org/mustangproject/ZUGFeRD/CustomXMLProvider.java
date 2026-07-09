@@ -23,6 +23,9 @@ import java.nio.charset.StandardCharsets;
 public class CustomXMLProvider implements IXMLProvider {
 
 	protected byte[] zugferdData;
+	/***
+	 * the scope=profile this XML data is provided in
+	 */
 	protected Profile profile=Profiles.getByName("EN16931");
 
 	@Override
@@ -45,12 +48,6 @@ public class CustomXMLProvider implements IXMLProvider {
 
 	@Override
 	public void generateXML(IExportableTransaction trans) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setTest() {
 		// TODO Auto-generated method stub
 
 	}

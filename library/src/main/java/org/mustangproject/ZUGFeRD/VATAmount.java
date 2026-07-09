@@ -39,6 +39,8 @@ public class VATAmount {
 
 	protected String vatExemptionReasonText;
 
+	protected String vatExemptionReasonCode;
+
 	protected String dueDateTypeCode;
 
 
@@ -57,7 +59,7 @@ public class VATAmount {
 		this.categoryCode = categoryCode;
 		this.dueDateTypeCode = dueDateTypeCode;
 	}
-	
+
 	public VATAmount(BigDecimal basis, BigDecimal calculated, String categoryCode, String dueDateTypeCode, BigDecimal applicablePercent)
 	{
 		super();
@@ -105,6 +107,15 @@ public class VATAmount {
 		return this;
 	}
 
+	public String getVatExemptionReasonCode() {
+		return vatExemptionReasonCode;
+	}
+
+	public VATAmount setVatExemptionReasonCode(String taxExemptionReasonCode) {
+		this.vatExemptionReasonCode = taxExemptionReasonCode;
+		return this;
+	}
+
 	/**
 	 *
 	 * @deprecated Use {@link #getCategoryCode() instead}
@@ -145,11 +156,15 @@ public class VATAmount {
 	}
 
 	public VATAmount add(VATAmount v) {
-		return new VATAmount(basis.add(v.getBasis()), calculated.add(v.getCalculated()), this.categoryCode, this.dueDateTypeCode).setVatExemptionReasonText(v.getVatExemptionReasonText() != null ? v.getVatExemptionReasonText(): this.vatExemptionReasonText);
+		return new VATAmount(basis.add(v.getBasis()), calculated.add(v.getCalculated()), this.categoryCode, this.dueDateTypeCode)
+			.setVatExemptionReasonCode(v.getVatExemptionReasonCode() != null ? v.getVatExemptionReasonCode(): this.vatExemptionReasonCode);
+
 	}
 
 	public VATAmount subtract(VATAmount v) {
-		return new VATAmount(basis.subtract(v.getBasis()), calculated.subtract(v.getCalculated()), this.categoryCode, this.dueDateTypeCode).setVatExemptionReasonText(v.getVatExemptionReasonText());
+		return new VATAmount(basis.subtract(v.getBasis()), calculated.subtract(v.getCalculated()), this.categoryCode, this.dueDateTypeCode)
+			.setVatExemptionReasonText(v.getVatExemptionReasonText())
+			.setVatExemptionReasonCode(v.getVatExemptionReasonCode());
 	}
 
 }

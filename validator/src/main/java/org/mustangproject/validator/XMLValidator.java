@@ -10,12 +10,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Set;
+import java.util.List;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -156,26 +155,7 @@ public class XMLValidator extends Validator {
 				 *
 				 */
 
-				final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-				//REDHAT
-				//https://www.blackhat.com/docs/us-15/materials/us-15-Wang-FileCry-The-New-Age-Of-XXE-java-wp.pdf
-				dbf.setAttribute(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-				dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-				dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-
-				//OWASP
-				//https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html
-				dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-				dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-				dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-				// Disable external DTDs as well
-				dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-				// and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks"
-				dbf.setXIncludeAware(false);
-				dbf.setExpandEntityReferences(false);
-				dbf.setNamespaceAware(true);
-
-				final DocumentBuilder db = dbf.newDocumentBuilder();
+				final DocumentBuilder db = XMLTools.getDocumentBuilder(true);
 				final InputSource is = new InputSource(new StringReader(zfXML));
 				final Document doc = db.parse(is);
 
@@ -212,9 +192,11 @@ public class XMLValidator extends Validator {
 				boolean isEN16931 = false;
 				boolean isExtended = false;
 				boolean isXRechnung = false;
-				String currentZFVersionDir = "ZF_240";
+				String currentZFVersionDir = "ZF_250";
+				String currentXPZ12VersionDir ="XP_Z12_012";
 				int mainSchematronSectionErrorTypeCode = 4;
 				String xsltFilename = null;
+				boolean runFrenchCiiSchematron = false;
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:extended,
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:comfort,
 				// urn:ferd:CrossIndustryDocument:invoice:1p0:basic,
@@ -234,6 +216,11 @@ public class XMLValidator extends Validator {
 					
 				} else if (root.getLocalName().equalsIgnoreCase("CrossIndustryInvoice")) { // ZUGFeRD 2.0 or Factur-X
 					context.setGeneration("2");
+					final String sellerCountry = getXPathString(doc,
+						"//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'SellerTradeParty']//*[local-name() = 'PostalTradeAddress']/*[local-name() = 'CountryID']/text()");
+					final String buyerCountry = getXPathString(doc,
+						"//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'BuyerTradeParty']//*[local-name() = 'PostalTradeAddress']/*[local-name() = 'CountryID']/text()");
+					runFrenchCiiSchematron = "FR".equalsIgnoreCase(sellerCountry) && "FR".equalsIgnoreCase(buyerCountry);
 
 					isMiniumum = contextProfile.contains("minimum");
 					isBasic = contextProfile.contains("basic");
@@ -241,7 +228,7 @@ public class XMLValidator extends Validator {
 					if (isBasicWithoutLines) {
 						isBasic = false;// basicwl also contains the string basic...
 					}
-					isEN16931 = Set.of(
+					isEN16931 = Arrays.asList(
 							"urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:en16931",
 							"urn:cen.eu:en16931:2017"
 						)
@@ -311,7 +298,7 @@ public class XMLValidator extends Validator {
 						//validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
 						String xrVersion = contextProfile.substring(contextProfile.length() - 3).replace(".", "");
 						
-						Set<String> supportedVersions = Set.of("12", "20", "21", "22", "23", "30");
+						List<String> supportedVersions = Arrays.asList("12", "20", "21", "22", "23", "30");
 						if (!supportedVersions.contains(xrVersion)) {
 							throw new Exception("Unsupported XR version");
 						}
@@ -325,7 +312,7 @@ public class XMLValidator extends Validator {
 				} else if ("CrossIndustryDocument".equalsIgnoreCase(rootLocalName)) { // ZUGFeRD 1.0
 					context.setGeneration("1");
 					//
-					Set<String> validZF1Profiles = Set.of(
+					List<String> validZF1Profiles = Arrays.asList(
 						"urn:ferd:CrossIndustryDocument:invoice:1p0:basic",
 						"urn:ferd:CrossIndustryDocument:invoice:1p0:comfort",
 						"urn:ferd:CrossIndustryDocument:invoice:1p0:extended"
@@ -343,7 +330,7 @@ public class XMLValidator extends Validator {
 				if ("CII".equals(context.getFormat())) {
 
 					if ("2".equals(context.getGeneration())) {
-						Set<String> validZF2Profiles = Set.of(
+						List<String> validZF2Profiles = Arrays.asList(
 							"urn:factur-x.eu:1p0:minimum",
 							"urn:zugferd.de:2p0:minimum",
 							"urn:factur-x.eu:1p0:basicwl",
@@ -360,7 +347,7 @@ public class XMLValidator extends Validator {
 					} else /** v1 */ {
 						if (isOrderX) {
 							//order-x 1.0
-							if(Set.of(
+							if(Arrays.asList(
 								"urn:order-x.eu:1p0:basic",
 								"urn:order-x.eu:1p0:comfort",
 								"urn:order-x.eu:1p0:extended"
@@ -368,7 +355,7 @@ public class XMLValidator extends Validator {
 								addUnsupportedProfileResultItem();
 							}
 
-						} else if (Set.of(
+						} else if (Arrays.asList(
 							"urn:ferd:CrossIndustryDocument:invoice:1p0:basic",
 							"urn:ferd:CrossIndustryDocument:invoice:1p0:comfort",
 							"urn:ferd:CrossIndustryDocument:invoice:1p0:extended"
@@ -390,6 +377,11 @@ public class XMLValidator extends Validator {
 				if (xsltFilename != null) {
 					// main schematron validation
 					validateSchematron(zfXML, xsltFilename, mainSchematronSectionErrorTypeCode, ESeverity.error);
+
+					if (runFrenchCiiSchematron) {
+						String xsltFRFilename = "/xslt/" + currentXPZ12VersionDir + "/20260216_BR-FR-Flux2-Schematron-CII_V1.3.0.xsl";
+						validateSchematron(zfXML, xsltFRFilename, mainSchematronSectionErrorTypeCode, ESeverity.error);
+					}
 
 				}
 
@@ -543,6 +535,16 @@ public class XMLValidator extends Validator {
 					}
 				}
 			}
+		}
+	}
+
+	private String getXPathString(Document doc, String expression) throws IrrecoverableValidationError {
+		try {
+			XPath xpath = XPathFactory.newInstance().newXPath();
+			String value = (String) xpath.compile(expression).evaluate(doc, XPathConstants.STRING);
+			return value == null ? "" : value.trim();
+		} catch (XPathExpressionException e) {
+			throw new IrrecoverableValidationError(e.getMessage());
 		}
 	}
 

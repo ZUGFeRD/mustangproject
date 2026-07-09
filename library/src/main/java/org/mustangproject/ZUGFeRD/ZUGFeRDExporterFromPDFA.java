@@ -188,6 +188,10 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		return getExporter().setConformanceLevel(newLevel);
 	}
 
+	public IZUGFeRDExporter setEnablePDFAttachmentCompression(boolean compressionEnabled) {
+		return getExporter().setEnablePDFAttachmentCompression(compressionEnabled);
+	}
+
 	public IZUGFeRDExporter setProducer(String producer) {
 
 		return getExporter().setProducer(producer);

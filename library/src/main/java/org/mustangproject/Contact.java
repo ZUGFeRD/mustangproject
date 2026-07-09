@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import java.util.Set;
+
+import java.util.Arrays;
+import java.util.List;
 
 /***
  * a named contact person in an organisation
@@ -115,7 +117,7 @@ public class Contact implements IZUGFeRDExportableContact {
 				String localName = currentItemNode.getLocalName();
 				if (localName != null) {
 
-					Set<String> nameElements = Set.of("PersonName"/*CII*/, "Name"/*UBL*/);
+					List<String> nameElements = Arrays.asList("PersonName"/*CII*/, "Name"/*UBL*/);
 					if (localName != null && nameElements.contains(localName)
 						&& currentItemNode.getFirstChild()!=null) {
 							setName(currentItemNode.getFirstChild().getNodeValue());

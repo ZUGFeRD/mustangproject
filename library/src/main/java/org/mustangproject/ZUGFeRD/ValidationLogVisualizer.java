@@ -15,6 +15,7 @@ import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.mustangproject.ClasspathResolverURIAdapter;
+import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +43,7 @@ public class ValidationLogVisualizer {
 
 
 	public ValidationLogVisualizer() {
-		mFactory = new net.sf.saxon.TransformerFactoryImpl();
-		// fact = TransformerFactory.newInstance();
+		mFactory = XMLTools.getTransformerFactory();
 		mFactory.setURIResolver(new ValidationLogVisualizer.ClasspathResourceURIResolver());
 	}
 
