@@ -350,12 +350,8 @@ public class ZUGFeRDInvoiceImporter {
 
 	private void setDocument() throws ParserConfigurationException, IOException, SAXException, ParseException {
 
-
-		final ByteArrayInputStream is = new ByteArrayInputStream(rawXML);
-		///    is.skip(guessBOMSize(is));
-		DocumentBuilder builder = XMLTools.getDocumentBuilder(true);
 		if (canParse()) {
-			document = builder.parse(is);
+			// canParse() already parsed rawXML and assigned it to the `document` field
 			if (parseAutomatically) {
 				try {
 					importedInvoice = new CalculatedInvoice();

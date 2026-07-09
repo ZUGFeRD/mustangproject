@@ -52,26 +52,26 @@ public class UBLDAPullProvider implements IXMLProvider {
 		final SimpleDateFormat ublDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
 
-		String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+		StringBuilder xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
 				"<DespatchAdvice xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:DespatchAdvice-2\" xmlns:cac=\"urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2\" xmlns:cbc=\"urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2\" xmlns:cec=\"urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2\" xmlns:csc=\"urn:oasis:names:specification:ubl:schema:xsd:CommonSignatureComponents-2\">\n" +
 				"  <cbc:UBLVersionID>2.2</cbc:UBLVersionID>\n" +
 				"  <cbc:CustomizationID>1Lieferschein</cbc:CustomizationID>\n" +
 				"  <cbc:ProfileID>ubl-xml-only</cbc:ProfileID>\n" +
 				"  <cbc:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</cbc:ID>\n" +
 				"  <cbc:IssueDate>" + ublDateFormat.format(trans.getIssueDate()) + "</cbc:IssueDate>\n" +
-				"  <cbc:DespatchAdviceTypeCode>900</cbc:DespatchAdviceTypeCode>\n";
+				"  <cbc:DespatchAdviceTypeCode>900</cbc:DespatchAdviceTypeCode>\n");
 		if (trans.getReferenceNumber() != null) {
-			xml += "<cac:OrderReference>  <cbc:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</cbc:ID></cac:OrderReference>\n";
+			xml.append("<cac:OrderReference>  <cbc:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</cbc:ID></cac:OrderReference>\n");
 
 		}
-		xml += "  <cac:DespatchSupplierParty>" + getPartyXML(trans.getSender()) + "</cac:DespatchSupplierParty>\n" +
-				"  <cac:DeliveryCustomerParty>" + getPartyXML(trans.getRecipient()) + "</cac:DeliveryCustomerParty>\n";
+		xml.append("  <cac:DespatchSupplierParty>" + getPartyXML(trans.getSender()) + "</cac:DespatchSupplierParty>\n" +
+				"  <cac:DeliveryCustomerParty>" + getPartyXML(trans.getRecipient()) + "</cac:DeliveryCustomerParty>\n");
 		if (trans.getDeliveryDate() != null) {
-			xml += "   <cac:Shipment><cbc:ID>1</cbc:ID><cac:Delivery><cbc:ActualDeliveryDate>" + ublDateFormat.format(trans.getDeliveryDate()) + "</cbc:ActualDeliveryDate></cac:Delivery></cac:Shipment>";
+			xml.append("   <cac:Shipment><cbc:ID>1</cbc:ID><cac:Delivery><cbc:ActualDeliveryDate>" + ublDateFormat.format(trans.getDeliveryDate()) + "</cbc:ActualDeliveryDate></cac:Delivery></cac:Shipment>");
 		}
 		int i = 1;
 		for (IZUGFeRDExportableItem item : trans.getZFItems()) {
-			xml +=
+			xml.append(
 					"  <cac:DespatchLine>\n" +
 							"    <cbc:ID>" + XMLTools.encodeXML(Integer.toString(i++)) + "</cbc:ID>\n" +
 							"    <cbc:DeliveredQuantity unitCode=\"" + XMLTools.encodeXML(item.getProduct().getUnit()) + "\">" + item.getQuantity() + "</cbc:DeliveredQuantity>\n" +
@@ -81,12 +81,12 @@ public class UBLDAPullProvider implements IXMLProvider {
 							"    <cac:Item>\n" +
 							"      <cbc:Name>" + XMLTools.encodeXML(item.getProduct().getName()) + "</cbc:Name>\n" +
 							"    </cac:Item>\n" +
-							"  </cac:DespatchLine>\n";
+							"  </cac:DespatchLine>\n");
 
 		}
-		xml += "</DespatchAdvice>\n";
+		xml.append("</DespatchAdvice>\n");
 		final byte[] ublRaw;
-		ublRaw = xml.getBytes(StandardCharsets.UTF_8);
+		ublRaw = xml.toString().getBytes(StandardCharsets.UTF_8);
 
 		ublData = XMLTools.removeBOM(ublRaw);
 	}
