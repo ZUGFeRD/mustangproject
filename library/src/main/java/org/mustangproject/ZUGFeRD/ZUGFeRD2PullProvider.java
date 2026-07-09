@@ -45,6 +45,8 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.IncludedNote;
+import org.mustangproject.Invoice;
+import org.mustangproject.LogisticsServiceCharge;
 import org.mustangproject.ReferencedDocument;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
@@ -876,7 +878,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if ((trans.getZFCharges() != null) && (trans.getZFCharges().length > 0)) {
 			if ((profile == Profiles.getByName("XRechnung")) || (profile == Profiles.getByName("EN16931")) || (profile == Profiles.getByName("EXTENDED"))) {
 				for (IZUGFeRDAllowanceCharge charge : trans.getZFCharges()) {
-					final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(charge.getCategoryCode());
+					final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(charge.getTaxCategoryCode());
 					String exemptionReasonTextXML = "";
 					if (displayExemptionReason && charge.getTaxExemptionReason() != null) {
 						exemptionReasonTextXML = "<ram:ExemptionReason>" + XMLTools.encodeXML(charge.getTaxExemptionReason()) + "</ram:ExemptionReason>";
@@ -890,6 +892,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						"<ram:ChargeIndicator>" +
 						"<udt:Indicator>true</udt:Indicator>" +
 						"</ram:ChargeIndicator>");
+						"</ram:ChargeIndicator>");
+					if (charge.getSequenceNumeric() != null) {
+						xml += "<ram:SequenceNumeric>" + charge.getSequenceNumeric() + "</ram:SequenceNumeric>";
+					}
 					if (charge.getPercent() != null && (profile == Profiles.getByName("EN16931") || (profile == Profiles.getByName("EXTENDED")))) {
 						xml.append("<ram:CalculationPercent>" + vatFormat(charge.getPercent()) + "</ram:CalculationPercent>");
 					}
@@ -910,6 +916,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						exemptionReasonCodeXML);
 					if (charge.getTaxPercent() != null && !charge.getCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
 						xml.append("<ram:RateApplicablePercent>" + vatFormat(charge.getTaxPercent()) + "</ram:RateApplicablePercent>");
+						"<ram:CategoryCode>" + charge.getTaxCategoryCode() + "</ram:CategoryCode>" +
+						exemptionReasonCodeXML);
+					if (charge.getTaxRateApplicablePercent() != null && !charge.getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
+						xml.append("<ram:RateApplicablePercent>" + vatFormat(charge.getTaxRateApplicablePercent()) + "</ram:RateApplicablePercent>");
 					}
 					xml.append("</ram:CategoryTradeTax>" +
 						"</ram:SpecifiedTradeAllowanceCharge>");
@@ -938,7 +948,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if ((trans.getZFAllowances() != null) && (trans.getZFAllowances().length > 0)) {
 			if ((profile == Profiles.getByName("XRechnung")) || (profile == Profiles.getByName("EN16931")) || (profile == Profiles.getByName("EXTENDED"))) {
 				for (IZUGFeRDAllowanceCharge allowance : trans.getZFAllowances()) {
-					final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(allowance.getCategoryCode());
+					final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(allowance.getTaxCategoryCode());
 					String exemptionReasonTextXML = "";
 					if (displayExemptionReason && allowance.getTaxExemptionReason() != null) {
 						exemptionReasonTextXML = "<ram:ExemptionReason>" + XMLTools.encodeXML(allowance.getTaxExemptionReason()) + "</ram:ExemptionReason>";
@@ -952,6 +962,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						"<ram:ChargeIndicator>" +
 						"<udt:Indicator>false</udt:Indicator>" +
 						"</ram:ChargeIndicator>");
+					if (allowance.getSequenceNumeric() != null) {
+						xml.append("<ram:SequenceNumeric>" + allowance.getSequenceNumeric() + "</ram:SequenceNumeric>");
+					}
 					if (allowance.getPercent() != null) {
 						xml.append("<ram:CalculationPercent>" + vatFormat(allowance.getPercent()) + "</ram:CalculationPercent>");
 					}
@@ -972,6 +985,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 							exemptionReasonCodeXML);
 					if (allowance.getTaxPercent() != null && !allowance.getCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
 						xml.append("<ram:RateApplicablePercent>" + vatFormat(allowance.getTaxPercent()) + "</ram:RateApplicablePercent>");
+							"<ram:CategoryCode>" + allowance.getTaxCategoryCode() + "</ram:CategoryCode>" +
+							exemptionReasonCodeXML);
+					if (allowance.getTaxRateApplicablePercent() != null && !allowance.getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
+						xml.appemd("<ram:RateApplicablePercent>" + vatFormat(allowance.getTaxRateApplicablePercent()) + "</ram:RateApplicablePercent>");
 					}
 					xml.append("</ram:CategoryTradeTax>" +
 						"</ram:SpecifiedTradeAllowanceCharge>");
@@ -996,6 +1013,59 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			}
 		}
 
+		if ((trans.getZFLogisticsServiceCharges() != null) && (trans.getZFLogisticsServiceCharges().length > 0)) {
+			if (profile == Profiles.getByName("EXTENDED")) {
+				for (IZUGFeRDLogisticsServiceCharge charge : trans.getZFLogisticsServiceCharges()) {
+					final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(charge.getTaxCategoryCode());
+					String exemptionReasonTextXML = "";
+					if (displayExemptionReason && charge.getTaxExemptionReason() != null) {
+						exemptionReasonTextXML = "<ram:ExemptionReason>" + XMLTools.encodeXML(charge.getTaxExemptionReason()) + "</ram:ExemptionReason>";
+					}
+					String exemptionReasonCodeXML = "";
+					if (displayExemptionReason && charge.getTaxExemptionReasonCode() != null) {
+						exemptionReasonCodeXML = "<ram:ExemptionReasonCode>" + XMLTools.encodeXML(charge.getTaxExemptionReasonCode()) + "</ram:ExemptionReasonCode>";
+					}
+
+					xml += "<ram:SpecifiedLogisticsServiceCharge>";
+					xml += "<ram:Description>" + XMLTools.encodeXML(charge.getDescription()) + "</ram:Description>";
+					xml += "<ram:AppliedAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(charge.getAppliedAmount()) + "</ram:AppliedAmount>";
+					xml += "<ram:AppliedTradeTax>";
+					if ( charge.getTaxCalculatedAmount() != null ) {
+						xml += "<ram:CalculatedAmount>" + currencyFormat(charge.getTaxCalculatedAmount()) + "</ram:CalculatedAmount>";
+					}
+					xml += "<ram:TypeCode>VAT</ram:TypeCode>";
+					xml += exemptionReasonTextXML;
+					if ( charge.getTaxBasisAmount() != null ) {
+						xml += "<ram:BasisAmount>" + currencyFormat(charge.getTaxBasisAmount()) + "</ram:BasisAmount>";
+					}
+					if ( charge.getTaxLineTotalBasisAmount() != null ) {
+						xml += "<ram:LineTotalBasisAmount>" + currencyFormat(charge.getTaxLineTotalBasisAmount()) + "</ram:LineTotalBasisAmount>";
+					}
+					if ( charge.getTaxAllowanceChargeBasisAmount() != null ) {
+						xml += "<ram:AllowanceChargeBasisAmount>" + currencyFormat(charge.getTaxAllowanceChargeBasisAmount()) + "</ram:AllowanceChargeBasisAmount>";
+					}
+					if ( charge.getTaxCategoryCode() != null ) {
+						xml += "<ram:CategoryCode>" + charge.getTaxCategoryCode() + "</ram:CategoryCode>";
+					}
+					xml += exemptionReasonCodeXML;
+					if ( charge.getTaxPointDate() != null ) {
+						final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
+						xml += "<ram:TaxPointDate><qdt:DateTimeString format=\"102\">" + XMLTools.encodeXML(dateFormat102.format(charge.getTaxPointDate())) + "</qdt:DateTimeString></ram:TaxPointDate>";
+					}
+					if (charge.getTaxDueDateTypeCode() != null) {
+						xml += "<ram:DueDateTypeCode>" + XMLTools.encodeXML(charge.getTaxDueDateTypeCode()) + "</ram:DueDateTypeCode>";
+					}
+					if (charge.getTaxRateApplicablePercent() != null && !charge.getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
+						xml += "<ram:RateApplicablePercent>" + vatFormat(charge.getTaxRateApplicablePercent()) + "</ram:RateApplicablePercent>";
+					}
+					xml += "</ram:AppliedTradeTax>";
+					xml += "</ram:SpecifiedLogisticsServiceCharge>";
+				}
+			} else {
+				((Invoice)trans).setZFLogisticsServiceCharges(new ArrayList<LogisticsServiceCharge>().toArray( new LogisticsServiceCharge[0]));
+			}
+		}
+
 		if ((trans.getPaymentTerms() == null) && (getProfile() != Profiles.getByName("Minimum")) && ((paymentTermsDescription != null) || (trans.getTradeSettlement() != null) || (hasDueDate))) {
 			xml.append("<ram:SpecifiedTradePaymentTerms>");
 
@@ -1013,6 +1083,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
 					if ((payment != null) && (payment instanceof IZUGFeRDTradeSettlementDebit)) {
 						xml.append(payment.getPaymentXML());
+					if (payment instanceof IZUGFeRDTradeSettlementDebit) {
+						xml.appemd(payment.getPaymentXML());
 					}
 				}
 			}
