@@ -913,11 +913,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						exemptionReasonTextXML +
 						"<ram:CategoryCode>" + charge.getCategoryCode() + "</ram:CategoryCode>" +
 						exemptionReasonCodeXML);
-					if (charge.getTaxPercent() != null && !charge.getCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
-						xml.append("<ram:RateApplicablePercent>" + vatFormat(charge.getTaxPercent()) + "</ram:RateApplicablePercent>" +
-						"<ram:CategoryCode>" + charge.getTaxCategoryCode() + "</ram:CategoryCode>" +
-						exemptionReasonCodeXML);
-					}
 					if (charge.getTaxRateApplicablePercent() != null && !charge.getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
 						xml.append("<ram:RateApplicablePercent>" + vatFormat(charge.getTaxRateApplicablePercent()) + "</ram:RateApplicablePercent>");
 					}
@@ -983,11 +978,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 							exemptionReasonTextXML +
 							"<ram:CategoryCode>" + allowance.getCategoryCode() + "</ram:CategoryCode>" +
 							exemptionReasonCodeXML);
-					if (allowance.getTaxPercent() != null && !allowance.getCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
-						xml.append("<ram:RateApplicablePercent>" + vatFormat(allowance.getTaxPercent()) + "</ram:RateApplicablePercent>" +
-							"<ram:CategoryCode>" + allowance.getTaxCategoryCode() + "</ram:CategoryCode>" +
-							exemptionReasonCodeXML);
-					}
 					if (allowance.getTaxRateApplicablePercent() != null && !allowance.getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
 						xml.append("<ram:RateApplicablePercent>" + vatFormat(allowance.getTaxRateApplicablePercent()) + "</ram:RateApplicablePercent>");
 					}
