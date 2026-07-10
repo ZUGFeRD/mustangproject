@@ -40,7 +40,7 @@ public class ResourcesTest {
 	//Config
 	private static final String RHINO_LOADER = "org.mozilla.javascript.DefiningClassLoader";
 	private static final String TEMP_DIR = "./tmp";
-	private static final String FILE_SOURCE = "./src/main/resources/classloader";
+	private static final String FILE_SOURCE = "C:\\Users\\jstaerk\\workspace\\mustangproject\\library\\src\\main\\resources\\classloader";
 	private static final boolean CREATE_HEAP_DUMP = false;
 
 	/**
