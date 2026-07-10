@@ -64,7 +64,7 @@
         <version.org.sonatype.plugins>1.7.0</version.org.sonatype.plugins>
 
         <version.ch.qos.logback>1.5.18</version.ch.qos.logback><!-- from 1.5.16 -->
-        <version.com.fasterxml.jackson.core>2.22.0</version.com.fasterxml.jackson.core>
+        <version.com.fasterxml.jackson.core>2.22.1</version.com.fasterxml.jackson.core>
         <version.com.helger.en16931-cii2ubl>2.3.1</version.com.helger.en16931-cii2ubl><!-- from 2.3.0 -->
         <version.com.helger.schematron>8.0.6</version.com.helger.schematron><!-- from 8.0.0 -->
         <version.commons-cli>1.10.0</version.commons-cli><!-- from 1.8.0 -->

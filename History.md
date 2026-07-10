@@ -1,5 +1,8 @@
+- #1176
+
 2.24.x
 =======
+- #1171 Removed deprecated methods Item::getAllowances() Item::getCharges() and their last usage in ZUGFeRD2PullProvider.
 - #228  Support LogisticsServiceCharges (Zuschläge für Versand & Verpackung)
 - #1174 Fix UBL AllowanceCharge import, add missing percent/basisAmount aliases, dropped per-unit-price allowances
 - #1163 Make doRecalculateItemPricesFromLineTotals() use more than the fixed scale of 4.
@@ -10,6 +13,7 @@
 - #1097 Invoice importer: LegalOrganization id not imported (wrong node name 'GlobalID' instead of 'ID' used)
 - #1151 'BR-FXEXT-IC-08rev' in ZF 2.5 requires VAT exemption reason text and code for allowances and charges
 - #1145 Document-level allowance with VAT category O emits RateApplicablePercent (violates BR-O-06)
+- add disableArithmeticCheck() / --no-arithmetic-check option to skip the arithmetic recalculation pass during validation
 
 
 2.24.0
@@ -164,7 +168,7 @@ corrections
 - support parsing of BT-90 CreditorReferenceID
 - #871 schema validation does not ignore external entities
 - #868 Fix wrong version in History.md
-- #729 Updates about SpecifiedTradeSettlementHeaderMonetarySummation and SpecifiedTradeSettlementPaymentMeans. **Breaking Change:** The hardcoded values of ram:TypeCode (58) and ram:Information ("SEPA credit transfer") in the getSettlementXML() method of the IZUGFeRDTradeSettlementPayment interface have been removed. Starting with this version, any code utilizing this interface must explicitly set the corresponding attributes.
+- #729 Updates about SpecifiedTradeSettlementHeaderMonetarySummation and SpecifiedTradeSettlementPaymentMeans
 - #863 LineCalculator throws NPE if product is null (since 2.17.0)
 - #731 Got a broken translation key when visualizing XML into PDF (xr:Business_process_type)
 - #865 Add sevdesk signature to PDF creators
@@ -265,7 +269,7 @@ corrections
 - #679 validation of a XR does not ignore whitespace
 - #681 IBAN assigned to invoice sender not recipient on direct debit
 - #689 incorrect element order when both charge reason and reasoncode are specified
-- be able to set detailedDeliveryPeriodFrom, detailedDeliverDeliveryPeriodTo MS188
+- be able to set detailedDeliveryPeriodFrom, detailedDeliveryPeriodTo MS188
 - updated verapdf from 1.26.1 to 1.26.2
 - cashDiscount JSON now corrently ignores values for cii and xr methods 
 

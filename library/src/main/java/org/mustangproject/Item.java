@@ -1,6 +1,5 @@
 package org.mustangproject;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.*;
@@ -444,20 +443,6 @@ public class Item implements IZUGFeRDExportableItem {
 	public Item addBuyerOrderReferencedDocumentID(String s) {
 		buyerOrderReferencedDocumentID = s;
 		return this;
-	}
-
-	@JsonIgnore
-	@Override
-	public IZUGFeRDAllowanceCharge[] getAllowances() { // in JSON is already returned as itemAllowances (and only read from there)
-		IZUGFeRDAllowanceCharge[] izac = new IZUGFeRDAllowanceCharge[Allowances.size()];
-		return Allowances.toArray(izac);
-	}
-
-	@JsonIgnore
-	@Override
-	public IZUGFeRDAllowanceCharge[] getCharges() { // in JSON is already returned as itemAllowances (and only read from there)
-		IZUGFeRDAllowanceCharge[] izac = new IZUGFeRDAllowanceCharge[Charges.size()];
-		return Charges.toArray(izac);
 	}
 
 	/***

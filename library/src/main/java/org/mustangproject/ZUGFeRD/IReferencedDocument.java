@@ -17,6 +17,12 @@ public interface IReferencedDocument {
 	String getTypeCode();
 
 	/***
+	 * sets the Name assigned by the sender
+	 * @return String of the Name
+	 */
+	default String getName() { return null; }
+
+	/***
 	 * type of the reference of this line, a UNTDID 1153 code
 	 * @return String of a code
 	 */

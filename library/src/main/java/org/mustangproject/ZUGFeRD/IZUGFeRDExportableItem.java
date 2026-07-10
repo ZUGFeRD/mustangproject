@@ -19,7 +19,7 @@
 package org.mustangproject.ZUGFeRD;
 /**
  * Mustangproject's ZUGFeRD implementation
- * Neccessary interface for ZUGFeRD exporter
+ * Necessary interface for ZUGFeRD exporter
  * Licensed under the APLv2
  * @date 2014-05-10
  * @version 1.2.0
@@ -62,20 +62,6 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 		return null;
 	}
 
-	@Deprecated
-	default IZUGFeRDAllowanceCharge[] getAllowances() {
-		return null;
-	}
-
-	/**
-	 * item level price additions
-	 * @return array of the additional charges on the item
-	 */
-	@Deprecated
-	default IZUGFeRDAllowanceCharge[] getCharges() {
-		return null;
-	}
-
 	/***
 	 * buyer order reference document id
 	 * @return  the document id (defaults to {@code null})
@@ -110,6 +96,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 *
 	 * @return the quantity of the item
 	 */
+	@Override
 	BigDecimal getQuantity();
 
 	/**
@@ -122,16 +109,6 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	}
 
 	default BigDecimal getLineTotalAmount() {
-		return null;
-	}
-
-	/***
-	 * the ID of an additionally referenced document for this item
-	 * @deprecated use {@link #getAdditionalReferences()} instead.
-	 * @return the id as string
-	 */
-	@Deprecated
-	default String getAdditionalReferencedDocumentID() {
 		return null;
 	}
 
@@ -160,12 +137,11 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	}
 
 
-
-		/***
-		 * specifies the item level delivery period (there is also one on document level),
-		 * this will be included in a BillingSpecifiedPeriod element
-		 * @return the beginning of the delivery period
-		 */
+	/***
+	 * specifies the item level delivery period (there is also one on document level),
+	 * this will be included in a BillingSpecifiedPeriod element
+	 * @return the beginning of the delivery period
+	 */
 	default Date getDetailedDeliveryPeriodFrom() {
 		return null;
 	}
@@ -176,16 +152,6 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 * @return the end of the delivery period
 	 */
 	default Date getDetailedDeliveryPeriodTo() {
-		return null;
-	}
-
-	/***
-	 *  get all (allowances and charges) SpecifiedTradeAllowanceCharges
-	 *
-	 * @return the real item lecel SpecifiedTradeAllowanceCharges
-	 */
-	@Deprecated
-	default IZUGFeRDAllowanceCharge[] getItemTotalAllowances() {
 		return null;
 	}
 
@@ -245,12 +211,12 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 		return null;
 	}
 
-    default LineCalculator getCalculation() {return new LineCalculator(this); };
-	/***
+	default LineCalculator getCalculation() { return new LineCalculator(this); }
+
+    /***
 	 * For line seller 
 	 * @return the seller
 	 */
-
 	default  TradeParty getLineSeller() { 
 		return null;
 	}
@@ -284,5 +250,4 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	default String getDeliveryNoteReferencedDocumentLineID() {
 		return null;
 	}
-
 }

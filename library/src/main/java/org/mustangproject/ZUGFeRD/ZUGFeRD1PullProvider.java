@@ -378,8 +378,6 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 					+ "</ram:SpecifiedTradeSettlementMonetarySummation>");
 			if (currentItem.getAdditionalReferences() != null) {
 				xml.append("<ram:AdditionalReferencedDocument><ram:ID>" + currentItem.getAdditionalReferences()[0].getIssuerAssignedID() + "</ram:ID><ram:TypeCode>130</ram:TypeCode></ram:AdditionalReferencedDocument>");
-			} else if (currentItem.getAdditionalReferencedDocumentID() != null) {
-				xml.append("<ram:AdditionalReferencedDocument><ram:ID>" + currentItem.getAdditionalReferencedDocumentID() + "</ram:ID><ram:TypeCode>130</ram:TypeCode></ram:AdditionalReferencedDocument>");
 			}
 			xml.append("</ram:SpecifiedSupplyChainTradeSettlement>"
 					+ "<ram:SpecifiedTradeProduct>");
