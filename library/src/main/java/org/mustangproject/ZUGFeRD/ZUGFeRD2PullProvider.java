@@ -629,13 +629,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					}
 				};
 				String itemTotalAllowanceChargeStr = "";
-				if (currentItem.getAllowances() != null && currentItem.getAllowances().length > 0) {
-					for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getAllowances()) {
+				if (currentItem.getItemAllowances() != null && currentItem.getItemAllowances().length > 0) {
+					for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getItemAllowances()) {
 						itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalAllowance, itemBasisProvider);
 					}
 				}
-				if (currentItem.getCharges() != null && currentItem.getCharges().length > 0) {
-					for (final IZUGFeRDAllowanceCharge itemTotalCharges : currentItem.getCharges()) {
+				if (currentItem.getItemCharges() != null && currentItem.getItemCharges().length > 0) {
+					for (final IZUGFeRDAllowanceCharge itemTotalCharges : currentItem.getItemCharges()) {
 						itemTotalAllowanceChargeStr += getItemTotalAllowanceChargeStr(itemTotalCharges, itemBasisProvider);
 					}
 				}
@@ -654,8 +654,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 							"<ram:ReferenceTypeCode>" + XMLTools.encodeXML(currentReference.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>" +
 							"</ram:AdditionalReferencedDocument>");
 					}
-				} else if (currentItem.getAdditionalReferencedDocumentID() != null) {
-					xml.append("<ram:AdditionalReferencedDocument><ram:IssuerAssignedID>" + currentItem.getAdditionalReferencedDocumentID() + "</ram:IssuerAssignedID><ram:TypeCode>130</ram:TypeCode></ram:AdditionalReferencedDocument>");
 				}
 				if (currentItem.getAccountingReference() != null && !currentItem.getAccountingReference().trim().isEmpty()) {
 					xml.append("<ram:ReceivableSpecifiedTradeAccountingAccount>"

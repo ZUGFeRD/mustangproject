@@ -2,11 +2,9 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.List;
 
 /***
- * the linecalculator does the math within an item line, and e.g. calculates quantity*price.
+ * the line calculator does the math within an item line, and e.g. calculates quantity*price.
  * @see TransactionCalculator
  */
 public class LineCalculator {
@@ -52,11 +50,6 @@ public class LineCalculator {
 				BigDecimal singleCharge = charge.getTotalAmount(itemBasisProvider);
 				addItemCharge(singleCharge);
 				subtractAllowanceItemTotal(singleCharge);
-			}
-		}
-		if (currentItem.getItemTotalAllowances() != null) {
-			for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getItemTotalAllowances()) {
-				addAllowanceItemTotal(itemTotalAllowance.getTotalAmount(itemBasisProvider));
 			}
 		}
 
