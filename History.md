@@ -1,3 +1,5 @@
+- #1176
+
 2.24.x
 =======
 - #228  Support LogisticsServiceCharges (Zuschläge für Versand & Verpackung)
