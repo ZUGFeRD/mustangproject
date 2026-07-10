@@ -47,6 +47,7 @@ public class ZUGFeRDValidator {
 	protected long startTime;
 	protected boolean optionsRecognized;
 	protected boolean disableNotices = false;
+	protected boolean disableArithmeticCheck = false;
 	protected String Signature;
 	protected boolean wasCompletelyValid = false;
 	protected String logAppend = null;
@@ -121,6 +122,9 @@ public class ZUGFeRDValidator {
 				XMLValidator xv = new XMLValidator(context);
 				if (disableNotices) {
 					xv.disableNotices();
+				}
+				if (disableArithmeticCheck) {
+					xv.disableArithmeticCheck();
 				}
 				isPDF = ByteArraySearcher.startsWith(content, new byte[]{'%', 'P', 'D', 'F'});
 				if (isPDF) {
@@ -332,6 +336,13 @@ public class ZUGFeRDValidator {
 	 */
 	public void disableNotices() {
 		disableNotices = true;
+	}
+
+	/***
+	 * don't perform the arithmetic recalculation check in the validation report
+	 */
+	public void disableArithmeticCheck() {
+		disableArithmeticCheck = true;
 	}
 
 	/**

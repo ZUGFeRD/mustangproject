@@ -53,6 +53,7 @@ public class XMLValidator extends Validator {
 	int firedRules = 0;
 	int failedRules = 0;
 	boolean disableNotices = false;
+	boolean disableArithmeticCheck = false;
 	ISchematronResource aResSCH = null;
 
 
@@ -115,6 +116,13 @@ public class XMLValidator extends Validator {
 	 */
 	public void disableNotices() {
 		disableNotices = true;
+	}
+
+	/***
+	 * don't perform the arithmetic recalculation check in the validation report
+	 */
+	public void disableArithmeticCheck() {
+		disableArithmeticCheck = true;
 	}
 
 
@@ -398,7 +406,9 @@ public class XMLValidator extends Validator {
 						}
 					}
 				}
-				checkArithmetics(context);
+				if (!disableArithmeticCheck) {
+					checkArithmetics(context);
+				}
 
 
 			} catch (final IrrecoverableValidationError er) {
