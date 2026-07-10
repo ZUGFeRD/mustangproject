@@ -480,31 +480,34 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					}
 				}
 				if (currentItem.getProduct().getCountryOfOrigin() != null) {
-					xml.append("<ram:OriginTradeCountry><ram:ID>" +
-						XMLTools.encodeXML(currentItem.getProduct().getCountryOfOrigin()) +
-						"</ram:ID></ram:OriginTradeCountry>");
+					xml.append("<ram:OriginTradeCountry><ram:ID>" + XMLTools.encodeXML(currentItem.getProduct().getCountryOfOrigin()) + "</ram:ID></ram:OriginTradeCountry>");
 				}
-				xml.append("</ram:SpecifiedTradeProduct>"
-
-					+ "<ram:SpecifiedLineTradeAgreement>");
+				xml.append("</ram:SpecifiedTradeProduct>" + "<ram:SpecifiedLineTradeAgreement>");
 				if (currentItem.getReferencedDocuments() != null) {
 					for (final IReferencedDocument currentReferencedDocument : currentItem.getReferencedDocuments()) {
 						xml.append("<ram:AdditionalReferencedDocument>" +
 							"<ram:IssuerAssignedID>" + XMLTools.encodeXML(currentReferencedDocument.getIssuerAssignedID()) + "</ram:IssuerAssignedID>" +
-							"<ram:TypeCode>" + XMLTools.encodeXML(currentReferencedDocument.getTypeCode()) + "</ram:TypeCode>" +
-							"<ram:ReferenceTypeCode>" + XMLTools.encodeXML(currentReferencedDocument.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>" +
-							"</ram:AdditionalReferencedDocument>");
+							"<ram:TypeCode>" + XMLTools.encodeXML(currentReferencedDocument.getTypeCode()) + "</ram:TypeCode>");
+						if (currentReferencedDocument.getName() != null) {
+							xml.append("<ram:name>" + XMLTools.encodeXML(currentReferencedDocument.getName()) + "</ram:Name>");
+						}
+						if (currentReferencedDocument.getReferenceTypeCode() != null) {
+							xml.append("<ram:ReferenceTypeCode>" + XMLTools.encodeXML(currentReferencedDocument.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>");
+						}
+						if (currentReferencedDocument.getFormattedIssueDateTime() != null) {
+							final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
+							xml.append("<ram:FormattedIssueDateTime><qdt:DateTimeString format=\"102\">" + XMLTools.encodeXML(dateFormat102.format(currentReferencedDocument.getFormattedIssueDateTime())) + "</qdt:DateTimeString></ram:FormattedIssueDateTime>");
+						}
+						xml.append("</ram:AdditionalReferencedDocument>");
 					}
 				}
 				if ((currentItem.getBuyerOrderReferencedDocumentLineID() != null) || (currentItem.getBuyerOrderReferencedDocumentID() != null)) {
 					xml.append("<ram:BuyerOrderReferencedDocument> ");
 					if (currentItem.getBuyerOrderReferencedDocumentID() != null) {
-						xml.append("<ram:IssuerAssignedID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentID())
-							+ "</ram:IssuerAssignedID>");
+						xml.append("<ram:IssuerAssignedID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>");
 					}
 					if (currentItem.getBuyerOrderReferencedDocumentLineID() != null) {
-						xml.append("<ram:LineID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentLineID())
-							+ "</ram:LineID>");
+						xml.append("<ram:LineID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentLineID()) + "</ram:LineID>");
 					}
 					xml.append("</ram:BuyerOrderReferencedDocument>");
 				}
@@ -650,9 +653,18 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					for (final IReferencedDocument currentReference : currentItem.getAdditionalReferences()) {
 						xml.append("<ram:AdditionalReferencedDocument>" +
 							"<ram:IssuerAssignedID>" + XMLTools.encodeXML(currentReference.getIssuerAssignedID()) + "</ram:IssuerAssignedID>" +
-							"<ram:TypeCode>130</ram:TypeCode>" +
-							"<ram:ReferenceTypeCode>" + XMLTools.encodeXML(currentReference.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>" +
-							"</ram:AdditionalReferencedDocument>");
+							"<ram:TypeCode>130</ram:TypeCode>");
+						if (currentReference.getName() != null) {
+							xml.append("<ram:name>" + XMLTools.encodeXML(currentReference.getName()) + "</ram:Name>");
+						}
+						if (currentReference.getReferenceTypeCode() != null) {
+							xml.append("<ram:ReferenceTypeCode>" + XMLTools.encodeXML(currentReference.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>");
+						}
+						if (currentReference.getFormattedIssueDateTime() != null) {
+							final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
+							xml.append("<ram:FormattedIssueDateTime><qdt:DateTimeString format=\"102\">" + XMLTools.encodeXML(dateFormat102.format(currentReference.getFormattedIssueDateTime())) + "</qdt:DateTimeString></ram:FormattedIssueDateTime>");
+						}
+						xml.append("</ram:AdditionalReferencedDocument>");
 					}
 				}
 				if (currentItem.getAccountingReference() != null && !currentItem.getAccountingReference().trim().isEmpty()) {
