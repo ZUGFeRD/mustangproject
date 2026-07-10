@@ -160,7 +160,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 	}
 
 	@Override
-	public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
+	public IZUGFeRDLogisticsServiceCharge[] getZFLogisticsServiceCharges() {
 		return null;
 		// throw new UnsupportedOperationException("Not supported yet."); //To change
 		// body of generated methods, choose Tools | Templates.
@@ -445,7 +445,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 				result.write(buffer, 0, length);
 			}
 
-			var bytes = result.toByteArray();
+			byte[] bytes = result.toByteArray();
 			ze.addAdditionalFile("test.pdf", bytes);
 
 			ze.setTransaction(this);
@@ -492,7 +492,6 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 			}
 			PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
 			String xmlContent = new String(embeddedFile.toByteArray(), StandardCharsets.UTF_8);
-			System.out.println(xmlContent);
 			return xmlContent;
 		}
 	}

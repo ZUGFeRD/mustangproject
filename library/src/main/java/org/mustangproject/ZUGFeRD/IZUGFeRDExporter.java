@@ -66,7 +66,24 @@ public interface IZUGFeRDExporter extends Closeable, IExporter  {
 	public String getNamespaceForVersion(int ver);
 	public String getPrefixForVersion(int ver) ;
 	public IZUGFeRDExporter disableAutoClose(boolean disableAutoClose);
+
+	/***
+	 * attach an additional PDF file attachment for Factur-X attachments
+	 * (for attached files embedded into XML, within Germany domestically preferred,
+	 * please refer to @see Invoice.embedFileInXML)
+	 * @param file mime type and data
+	 */
 	public void attachFile(FileAttachment file);
+	/***
+	 * attach an additional PDF file attachment for Factur-X attachments
+	 * (for attached files embedded into XML, within Germany domestically preferred,
+	 * please refer to @see Invoice.embedFileInXML
+	 *
+	 * @param filename the filename to be suggested
+	 * @param data the binary data
+	 * @param mimetype the mime type, from the list of allowed mime types
+	 * @param relation the PDF relation
+	 */
 	public void attachFile(String filename, byte[] data, String mimetype, String relation);
 	public IXMLProvider getProvider();
 

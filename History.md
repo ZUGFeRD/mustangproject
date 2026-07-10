@@ -1,22 +1,75 @@
-#1049
-#1044
-#1075
-#993
-#1072
-#1082
-#1061
-#1046
-#1050
-#1073
-#1052
-#1055
-#1084
-#1083
-#1077
-#1029
-#1038
-#1037
--reduce exceptions in metrics 
+- #1176
+
+2.24.x
+=======
+- #1171 Removed deprecated methods Item::getAllowances() Item::getCharges() and their last usage in ZUGFeRD2PullProvider.
+- #228  Support LogisticsServiceCharges (Zuschläge für Versand & Verpackung)
+- #1174 Fix UBL AllowanceCharge import, add missing percent/basisAmount aliases, dropped per-unit-price allowances
+- #1163 Make doRecalculateItemPricesFromLineTotals() use more than the fixed scale of 4.
+- #1162 Skip the elements "Information" and "PayeeSpecifiedCreditorFinancialInstitution" for basic profiles.
+- #1134 Fix: Trade party universal communication id not imported when scheme is not "email address" (EM) but "electronic address" (0225).
+- #1150 Remove [D].[M].[Y] after Rechnungsdatum in HTML visualization
+- #996  Omit ExemptionReason written to line item level for profile EN16931, some validators raise a warning or even an error
+- #1097 Invoice importer: LegalOrganization id not imported (wrong node name 'GlobalID' instead of 'ID' used)
+- #1151 'BR-FXEXT-IC-08rev' in ZF 2.5 requires VAT exemption reason text and code for allowances and charges
+- #1145 Document-level allowance with VAT category O emits RateApplicablePercent (violates BR-O-06)
+- add disableArithmeticCheck() / --no-arithmetic-check option to skip the arithmetic recalculation pass during validation
+
+
+2.24.0
+=======
+2026-06-11
+
+- #1143 LineID may not be written empty in DeliveryNoteReferencedDocument
+- #1141 ZUGFeRD 2.5/Factur-X 1.09
+- #1127'Fix possible StringIndexOutOfBoundsException when extracting XMP.'
+- #1133 incorrect warning in Subinvoiceline calculation
+- Add Tax ExemptionReasonCode on document level.
+
+
+2.23.1
+=======
+2026-05-13
+
+- #1108 Regression Issue caused by empty XMP (introduced by #1076)
+- #1120 ZUGFeRDImporter fails to extract Version if XML namespace is not exactly <rsm:CrossIndustryInvoice>
+(some of the following changes were already part of 2.23.0)
+- #1043 Fix percentage-based allowance/charge calculations
+- #1093 #814 upgrade CEN EN16931 Schematron from v1.3.12 to v1.3.15
+- #1102 Add BasisAmount to CashDiscount.
+- #1109 Feature fix xml description
+- #1110 Avoid NPE by checking zi.getXMP() is not null.
+- #1116 dont emit empty node for definedTradeContact
+- #1118 Support <ram:UltimateShipToTradeParty/>
+- #1119 Support <ram:DeliveryTypeCode/>
+
+2.23.0 "Bonne Journées de la Facture Électronique"
+=======
+2026-04-23
+
+improved subitem support, support french validation
+
+- #993 Cash discount not parsed
+- #1029 Added a breaking change notice regarding the removal of hardcoded values in #729
+- #1037 Compress attachments
+- #1038 Header allowances are aggregated incorrectly for non-XRechnung profiles
+- #1044 Correct version of org.apache.pdfbox:fontbox from 3.0.3 to 3.0.6.
+- #1046 Add configurable BT-23 business process ID for CII export
+- #1049 Prevent exceptions in validation
+- #1050 Add validator information to PDF report (name and version)
+- #1052 Remove parsing OriginatorDocumentReference.ID as date
+- #1055 Correct order of ApplicableTradeTax sub-elements.
+- #1061 Add ability to mark an Invoice as a test invoice.
+- #1072 Correct XPath-expressions for GrandTotal and TaxBasisTotalAmount.
+- #1073 add hierarchical invoice positions in CII XML export for EXTENDED profile
+- #1075 Vulnerability in dependency PDFBox version 3.0.6
+- #1076 XMP error during validation based on mustang version 2.22. (XMP Metadata: Could not parse XMP metadata (XML invalid))
+- #1082 Centralize and secure DocumentBuilder creation.
+- #1083 PDF Visualizations in English and French
+- #1084 Fix xml description
+- #1089 Add France schematron ruleset
+- reduce possible exceptions in metrics action 
+- added Extended-CTC-FR profile to selection for command line
 
 2.22.0
 =======
@@ -115,7 +168,7 @@ corrections
 - support parsing of BT-90 CreditorReferenceID
 - #871 schema validation does not ignore external entities
 - #868 Fix wrong version in History.md
-- #729 Updates about SpecifiedTradeSettlementHeaderMonetarySummation and SpecifiedTradeSettlementPaymentMeans. **Breaking Change:** The hardcoded values of ram:TypeCode (58) and ram:Information ("SEPA credit transfer") in the getSettlementXML() method of the IZUGFeRDTradeSettlementPayment interface have been removed. Starting with this version, any code utilizing this interface must explicitly set the corresponding attributes.
+- #729 Updates about SpecifiedTradeSettlementHeaderMonetarySummation and SpecifiedTradeSettlementPaymentMeans
 - #863 LineCalculator throws NPE if product is null (since 2.17.0)
 - #731 Got a broken translation key when visualizing XML into PDF (xr:Business_process_type)
 - #865 Add sevdesk signature to PDF creators

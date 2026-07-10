@@ -18,7 +18,7 @@ Please indicate
 * a proof of concept, if possible
 * If any of the information you submit, e.g. an invoice which can not be [anonymized](https://github.com/ZUGFeRD/einvoice-anonymizer), is confidential
 * A quick justification why you require a fix in a older version than he most up to date one, if you can not update to the most recent version
-* If you require encrypted communication (our GPG fingerprint will likely be 68F4 2269 8165 F0F5 63CA  A13B 7CB7 1548 B596 66A3)
+* If you require encrypted communication (our GPG fingerprint will likely be fingerprinted C513 CD93 0D3D 3D21 0485  C567 1192 EE26 4DB7 4319)
 
 
 ## After your Report

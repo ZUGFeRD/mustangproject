@@ -41,8 +41,9 @@ public class Invoice implements IExportableTransaction {
 
 	protected boolean testIndicator;
 	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, buyerOrderReferencedDocumentIssueDateTime = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
+	protected String deliveryTypeCode;
 	protected Date issueDate = null, dueDate = null, deliveryDate = null;
-	protected TradeParty sender = null, recipient = null, deliveryAddress = null, payee = null, invoicer = null, invoicee = null;
+	protected TradeParty sender = null, recipient = null, deliveryAddress = null, endCustomerDeliveryAddress = null, payee = null, invoicer = null, invoicee = null;
 	protected ArrayList<CashDiscount> cashDiscounts = null;
 	@JsonDeserialize(contentAs = Item.class)
 	protected ArrayList<IZUGFeRDExportableItem> ZFItems = null;
@@ -58,9 +59,8 @@ public class Invoice implements IExportableTransaction {
 	protected IReferencedDocument tenderReference = null;
 	protected IReferencedDocument objectIdentifierReference = null;
 
-	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(),
-		Charges = new ArrayList<>(), LogisticsServiceCharges = new ArrayList<>();
-	@JsonIgnore
+	protected ArrayList<IZUGFeRDAllowanceCharge> Allowances = new ArrayList<>(), Charges = new ArrayList<>();
+	protected ArrayList<IZUGFeRDLogisticsServiceCharge> logisticsServiceCharges = new ArrayList<>();
 	protected ArrayList<IZUGFeRDPaymentTerms> paymentTerms = new ArrayList<>();
 
 	protected String invoiceReferencedDocumentID = null;
@@ -173,15 +173,20 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * BT-17
-	 * @param dr
-	 * @return
+	 * @param dr the Referenced Document (may contain ID, typecode, date...)
+	 * @return fluent setter
 	 */
 	public Invoice setTenderReferencedDocument(ReferencedDocument dr) {
 		dr.setTypeCode("50");//50 is fixed for tender documents
 		tenderReference=dr;
 		return this;
 	}
-	
+
+	/***
+	 * Sets a reference to a tender
+	 * @param ID the key ID of the tender
+	 * @return fluent setter
+	 */
 	public Invoice setTenderReferencedDocument(String ID) {
 		ReferencedDocument dr=new ReferencedDocument(ID);
 		setTenderReferencedDocument(dr);
@@ -192,6 +197,9 @@ public class Invoice implements IExportableTransaction {
 
 	/** BT-18 */
 	@Override
+	/***
+	 *
+	 */
 	public IReferencedDocument getObjectIdentifierReferencedDocument() {
 		return objectIdentifierReference;
 	}
@@ -330,6 +338,15 @@ public class Invoice implements IExportableTransaction {
 
 	public Invoice setShipToCountry(String shipToCountry) {
 		this.shipToCountry = shipToCountry;
+		return this;
+	}
+
+	public String getDeliveryTypeCode() {
+		return deliveryTypeCode;
+	}
+
+	public Invoice setDeliveryTypeCode(String deliveryTypeCode) {
+		this.deliveryTypeCode = deliveryTypeCode;
 		return this;
 	}
 
@@ -707,14 +724,24 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	@Override
-	public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
-		if (LogisticsServiceCharges.isEmpty()) {
+	public IZUGFeRDLogisticsServiceCharge[] getZFLogisticsServiceCharges() {
+		if (logisticsServiceCharges.isEmpty()) {
 			return null;
 		} else {
-			return LogisticsServiceCharges.toArray(new IZUGFeRDAllowanceCharge[0]);
+			return logisticsServiceCharges.toArray(new IZUGFeRDLogisticsServiceCharge[0]);
 		}
 	}
 
+	/***
+	 * this is wrong and only used from jackson
+	 * @param iza the array of charges
+	 * @return fluent setter
+	 */
+	public Invoice setZFLogisticsServiceCharges(LogisticsServiceCharge[] iza) {
+		logisticsServiceCharges = new ArrayList<>();
+		logisticsServiceCharges.addAll(Arrays.asList(iza));
+		return this;
+	}
 
 	@Override
 	public IZUGFeRDTradeSettlement[] getTradeSettlement() {
@@ -790,6 +817,16 @@ public class Invoice implements IExportableTransaction {
 	 */
 	public Invoice setDeliveryAddress(TradeParty deliveryAddress) {
 		this.deliveryAddress = deliveryAddress;
+		return this;
+	}
+
+	@Override
+	public TradeParty getEndCustomerDeliveryAddress() {
+		return endCustomerDeliveryAddress;
+	}
+
+	public Invoice setEndCustomerDeliveryAddress(TradeParty endCustomerDeliveryAddress) {
+		this.endCustomerDeliveryAddress = endCustomerDeliveryAddress;
 		return this;
 	}
 
@@ -896,6 +933,17 @@ public class Invoice implements IExportableTransaction {
 	 */
 	public Invoice addCharge(IZUGFeRDAllowanceCharge izac) {
 		Charges.add(izac);
+		return this;
+	}
+
+	/***
+	 * adds a document level addition to the price
+	 * @see Charge
+	 * @param izac the charge to be applied
+	 * @return fluent setter
+	 */
+	public Invoice addLogisticServiceCharge(IZUGFeRDLogisticsServiceCharge charge) {
+		logisticsServiceCharges.add(charge);
 		return this;
 	}
 

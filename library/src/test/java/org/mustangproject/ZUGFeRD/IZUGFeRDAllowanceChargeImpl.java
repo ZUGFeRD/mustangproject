@@ -20,12 +20,14 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 
-public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
+public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge, IZUGFeRDTradeTax {
 	private BigDecimal totalAmount;
 	private String reason;
 	private String reasonCode;
 	private BigDecimal taxPercent;
-	boolean isCharge=true;
+	private boolean isCharge=true;
+	private String taxExemptionReason;
+	private String taxExemptionReasonCode;
 
 	@Override
 	public BigDecimal getTotalAmount(IAbsoluteValueProvider currentItem) {
@@ -52,6 +54,16 @@ public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
 		return isCharge;
 	}
 
+	@Override
+	public String getTaxExemptionReason() {
+		return taxExemptionReason;
+	}
+
+	@Override
+	public String getTaxExemptionReasonCode() {
+		return taxExemptionReasonCode;
+	}
+
 	public IZUGFeRDAllowanceChargeImpl setAllowance() {
 		isCharge = false;
 		return this;
@@ -75,5 +87,27 @@ public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
 	public IZUGFeRDAllowanceChargeImpl setTaxPercent(BigDecimal taxPercent) {
 		this.taxPercent = taxPercent;
 		return this;
+	}
+
+	public IZUGFeRDAllowanceChargeImpl setTaxExemptionReason(String taxExemptionReasonText) {
+		this.taxExemptionReason = taxExemptionReasonText;
+		return this;
+	}
+
+	public IZUGFeRDAllowanceChargeImpl setTaxExemptionReasonCode(String taxExemptionReasonCode) {
+		this.taxExemptionReasonCode = taxExemptionReasonCode;
+		return this;
+	}
+
+	/*
+	 * for backward compatibility
+	 */
+	/**
+	 * @deprecated use getTaxCategoryCode() instead.
+	 */
+	@Deprecated
+	@Override
+	public String getCategoryCode() {
+		return getTaxCategoryCode();
 	}
 }

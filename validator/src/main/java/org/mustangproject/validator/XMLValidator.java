@@ -10,8 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Set;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.stream.StreamSource;
@@ -52,6 +53,7 @@ public class XMLValidator extends Validator {
 	int firedRules = 0;
 	int failedRules = 0;
 	boolean disableNotices = false;
+	boolean disableArithmeticCheck = false;
 	ISchematronResource aResSCH = null;
 
 
@@ -114,6 +116,13 @@ public class XMLValidator extends Validator {
 	 */
 	public void disableNotices() {
 		disableNotices = true;
+	}
+
+	/***
+	 * don't perform the arithmetic recalculation check in the validation report
+	 */
+	public void disableArithmeticCheck() {
+		disableArithmeticCheck = true;
 	}
 
 
@@ -191,7 +200,7 @@ public class XMLValidator extends Validator {
 				boolean isEN16931 = false;
 				boolean isExtended = false;
 				boolean isXRechnung = false;
-				String currentZFVersionDir = "ZF_240";
+				String currentZFVersionDir = "ZF_250";
 				String currentXPZ12VersionDir ="XP_Z12_012";
 				int mainSchematronSectionErrorTypeCode = 4;
 				String xsltFilename = null;
@@ -227,7 +236,7 @@ public class XMLValidator extends Validator {
 					if (isBasicWithoutLines) {
 						isBasic = false;// basicwl also contains the string basic...
 					}
-					isEN16931 = Set.of(
+					isEN16931 = Arrays.asList(
 							"urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:en16931",
 							"urn:cen.eu:en16931:2017"
 						)
@@ -297,7 +306,7 @@ public class XMLValidator extends Validator {
 						//validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
 						String xrVersion = contextProfile.substring(contextProfile.length() - 3).replace(".", "");
 						
-						Set<String> supportedVersions = Set.of("12", "20", "21", "22", "23", "30");
+						List<String> supportedVersions = Arrays.asList("12", "20", "21", "22", "23", "30");
 						if (!supportedVersions.contains(xrVersion)) {
 							throw new Exception("Unsupported XR version");
 						}
@@ -311,7 +320,7 @@ public class XMLValidator extends Validator {
 				} else if ("CrossIndustryDocument".equalsIgnoreCase(rootLocalName)) { // ZUGFeRD 1.0
 					context.setGeneration("1");
 					//
-					Set<String> validZF1Profiles = Set.of(
+					List<String> validZF1Profiles = Arrays.asList(
 						"urn:ferd:CrossIndustryDocument:invoice:1p0:basic",
 						"urn:ferd:CrossIndustryDocument:invoice:1p0:comfort",
 						"urn:ferd:CrossIndustryDocument:invoice:1p0:extended"
@@ -329,7 +338,7 @@ public class XMLValidator extends Validator {
 				if ("CII".equals(context.getFormat())) {
 
 					if ("2".equals(context.getGeneration())) {
-						Set<String> validZF2Profiles = Set.of(
+						List<String> validZF2Profiles = Arrays.asList(
 							"urn:factur-x.eu:1p0:minimum",
 							"urn:zugferd.de:2p0:minimum",
 							"urn:factur-x.eu:1p0:basicwl",
@@ -346,7 +355,7 @@ public class XMLValidator extends Validator {
 					} else /** v1 */ {
 						if (isOrderX) {
 							//order-x 1.0
-							if(Set.of(
+							if(Arrays.asList(
 								"urn:order-x.eu:1p0:basic",
 								"urn:order-x.eu:1p0:comfort",
 								"urn:order-x.eu:1p0:extended"
@@ -354,7 +363,7 @@ public class XMLValidator extends Validator {
 								addUnsupportedProfileResultItem();
 							}
 
-						} else if (Set.of(
+						} else if (Arrays.asList(
 							"urn:ferd:CrossIndustryDocument:invoice:1p0:basic",
 							"urn:ferd:CrossIndustryDocument:invoice:1p0:comfort",
 							"urn:ferd:CrossIndustryDocument:invoice:1p0:extended"
@@ -397,7 +406,9 @@ public class XMLValidator extends Validator {
 						}
 					}
 				}
-				checkArithmetics(context);
+				if (!disableArithmeticCheck) {
+					checkArithmetics(context);
+				}
 
 
 			} catch (final IrrecoverableValidationError er) {

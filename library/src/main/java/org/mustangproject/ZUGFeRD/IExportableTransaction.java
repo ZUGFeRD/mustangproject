@@ -144,7 +144,7 @@ public interface IExportableTransaction {
 		return null;
 	}
 
-	default IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
+	default IZUGFeRDLogisticsServiceCharge[] getZFLogisticsServiceCharges() {
 		return null;
 	}
 
@@ -438,6 +438,10 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	default String getDeliveryTypeCode() {
+		return null;
+	}
+
 	/**
 	 * get the ID of the SellerOrderReferencedDocument, which sits in the
 	 * ApplicableSupplyChainTradeAgreement/ApplicableHeaderTradeAgreement
@@ -510,6 +514,15 @@ public interface IExportableTransaction {
 	 * @return the IZUGFeRDExportableTradeParty delivery address
 	 */
 	default IZUGFeRDExportableTradeParty getDeliveryAddress() {
+		return null;
+	}
+
+	/***
+	 * ultimate delivery address, i.e. ram:UltimateShipToTradeParty (only supported for zf2)
+	 *
+	 * @return the IZUGFeRDExportableTradeParty delivery address
+	 */
+	default IZUGFeRDExportableTradeParty getEndCustomerDeliveryAddress() {
 		return null;
 	}
 

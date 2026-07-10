@@ -1,21 +1,18 @@
 package org.mustangproject;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.*;
+import org.mustangproject.util.BigDecimalUtils;
 import org.mustangproject.util.NodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 /***
  * describes any invoice line
@@ -108,6 +105,55 @@ public class Item implements IZUGFeRDExportableItem {
 			// PriceAmount with currencyID and  BaseQuantity with unitCode
 			icnm.getAsBigDecimal("PriceAmount").ifPresent(this::setPrice);
 			icnm.getAsBigDecimal("BaseQuantity").ifPresent(this::setBasisQuantity);
+
+			// ubl equivalent of CII's GrossPriceProductTradePrice/AppliedTradeAllowanceCharge:
+			// a per-unit price allowance/charge nested under cac:Price
+			icnm.getAsNodeMap("AllowanceCharge").ifPresent(priceAtacNodes -> {
+				String chargeIndicator = priceAtacNodes.getAsStringOrNull("ChargeIndicator");
+				String percentString = priceAtacNodes.getAsStringOrNull("MultiplierFactorNumeric");
+				String basisAmountString = priceAtacNodes.getAsStringOrNull("BaseAmount");
+				String reason = priceAtacNodes.getAsStringOrNull("AllowanceChargeReason");
+				String reasonCode = priceAtacNodes.getAsStringOrNull("AllowanceChargeReasonCode");
+				if ((chargeIndicator != null) && priceAtacNodes.getAsBigDecimal("Amount").isPresent()) {
+					BigDecimal actual = priceAtacNodes.getAsBigDecimal("Amount").get();
+					if (chargeIndicator.equalsIgnoreCase("true")) {
+						Charge izac = new Charge();
+						izac.setTotalAmount(actual);
+						if (percentString != null) {
+							izac.setPercent(new BigDecimal(percentString));
+						}
+						if (basisAmountString != null) {
+							izac.setBasisAmount(new BigDecimal(basisAmountString));
+						}
+						if (reason != null) {
+							izac.setReason(reason);
+						}
+						if (reasonCode != null) {
+							izac.setReasonCode(reasonCode);
+						}
+						product.addCharge(izac);
+						setPrice(getPrice().subtract(actual)); // the gross price affects the net price, which is read,
+						// so if we do not ignore charges|allowances we have to re-compensate the net price
+					} else {
+						Allowance izac = new Allowance();
+						izac.setTotalAmount(actual);
+						if (percentString != null) {
+							izac.setPercent(new BigDecimal(percentString));
+						}
+						if (basisAmountString != null) {
+							izac.setBasisAmount(new BigDecimal(basisAmountString));
+						}
+						if (reason != null) {
+							izac.setReason(reason);
+						}
+						if (reasonCode != null) {
+							izac.setReasonCode(reasonCode);
+						}
+						product.addAllowance(izac);
+						setPrice(getPrice().add(actual));
+					}
+				}
+			});
 		});
 
 		itemMap.getNode(new String[]{"InvoicedQuantity", "CreditedQuantity"}).ifPresent(icn -> {
@@ -131,6 +177,9 @@ public class Item implements IZUGFeRDExportableItem {
 
 		itemMap.getAsString("Note")
 			.ifPresent(this::addNote);
+
+		itemMap.getAsString("AccountingCost")
+			.ifPresent(this::setAccountingReference);
 
 		if (product==null) { // CII
 			if (itemMap.getNode("SpecifiedTradeProduct").isPresent()) {
@@ -211,6 +260,9 @@ public class Item implements IZUGFeRDExportableItem {
 				.flatMap(cnm -> cnm.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent"))
 				.ifPresent(product::setVATPercent);
 			icnm.getAsNodeMap("ApplicableTradeTax")
+				.flatMap(cnm -> cnm.getAsString("CategoryCode"))
+				.ifPresent(product::setTaxCategoryCode);
+			icnm.getAsNodeMap("ApplicableTradeTax")
 				.flatMap(cnm -> cnm.getAsString("ExemptionReason"))
 				.ifPresent(product::setTaxExemptionReason);
 			icnm.getAsNodeMap("ApplicableTradeTax")
@@ -224,6 +276,7 @@ public class Item implements IZUGFeRDExportableItem {
 					String amountString = stac.getAsStringOrNull("ActualAmount");
 					String basisAmountString = stac.getAsStringOrNull("BasisAmount");
 					String reason = stac.getAsStringOrNull("Reason");
+					String reasonCode = stac.getAsStringOrNull("ReasonCode");
 					Charge izac = new Charge();
 					if (isChargeString.equalsIgnoreCase("false")) {
 						izac = new Allowance();
@@ -242,6 +295,9 @@ public class Item implements IZUGFeRDExportableItem {
 					if (reason != null) {
 						izac.setReason(reason);
 					}
+					if (reasonCode != null) {
+						izac.setReasonCode(reasonCode);
+					}
 
 					if (isChargeString.equalsIgnoreCase("false")) {
 						addAllowance(izac);
@@ -254,12 +310,15 @@ public class Item implements IZUGFeRDExportableItem {
 			if (recalcPrice && !BigDecimal.ZERO.equals(quantity)) {
 				icnm.getAsNodeMap("SpecifiedTradeSettlementLineMonetarySummation")
 					.flatMap(cnm -> cnm.getAsBigDecimal("LineTotalAmount"))
-					.ifPresent(lineTotal -> setPrice(lineTotal.divide(quantity, 4, RoundingMode.HALF_UP)));
+					// minScale = 2 fits most currencies in practice. Possible improvement could be to determine the scale by the invoices currency dynamically
+					.ifPresent(lineTotal -> setPrice(BigDecimalUtils.divideReversible(lineTotal, quantity, 2)));
 			}
 
 			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).forEach(this::addAdditionalReference);
 
-			icnm.getAsString("ReceivableSpecifiedTradeAccountingAccount").ifPresent(s -> this.accountingReference = s.trim());
+			icnm.getAsNodeMap("ReceivableSpecifiedTradeAccountingAccount")
+				.flatMap(account -> account.getAsString("ID"))
+				.ifPresent(this::setAccountingReference);
 
 			icnm.getAsNodeMap("BillingSpecifiedPeriod").ifPresent(periodNode -> {
 				Date start = periodNode.getAsNodeMap("StartDateTime").flatMap(dateTimeNode -> dateTimeNode.getNode("DateTimeString")).map(XMLTools::tryDate).orElse(null);
@@ -274,6 +333,7 @@ public class Item implements IZUGFeRDExportableItem {
 			String percentString = stac.getAsStringOrNull("MultiplierFactorNumeric");
 			String amountString = stac.getAsStringOrNull("Amount");
 			String reason = stac.getAsStringOrNull("AllowanceChargeReason");
+			String reasonCode = stac.getAsStringOrNull("AllowanceChargeReasonCode");
 			Charge izac = new Charge();
 			if (isChargeString.equalsIgnoreCase("false")) {
 				izac = new Allowance();
@@ -288,6 +348,9 @@ public class Item implements IZUGFeRDExportableItem {
 			}
 			if (reason != null) {
 				izac.setReason(reason);
+			}
+			if (reasonCode != null) {
+				izac.setReasonCode(reasonCode);
 			}
 
 			if (isChargeString.equalsIgnoreCase("false")) {
@@ -330,6 +393,38 @@ public class Item implements IZUGFeRDExportableItem {
 		});
 	}
 
+	/**
+	 * If Item created from Importer, may need to add additional product tax information
+	 * because some fields are excluded from per-line item tax in some profiles (e.g. EN16931)
+	 */
+	public void enrichProductFromVATBreakdown(NodeList taxNodes) {
+		// Match tax list with item product tax, set product exemption reason and code if not already set
+		// NB: For EN16931, exemption info only included in doc - level VAT Breakdown, not in per-line item nodes
+		if (taxNodes.getLength() != 0) {
+			for (int i = 0; i < taxNodes.getLength(); i++) {
+				final Node taxNode = taxNodes.item(i);
+				if (!taxNode.getLocalName().equals("ApplicableTradeTax")) {
+					continue;
+				}
+				NodeList taxChilds = taxNode.getChildNodes();
+				NodeMap taxChildMap = new NodeMap(taxChilds);
+				String taxCategoryCode = taxChildMap.getAsStringOrNull("CategoryCode");
+				BigDecimal rateApplicablePercent = taxChildMap.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent").orElse(null);
+
+				if (taxCategoryCode != null && rateApplicablePercent != null && taxCategoryCode.equals(this.product.taxCategoryCode) && rateApplicablePercent.compareTo(this.product.getVATPercent()) == 0) {
+					// If product Exemption not already set (i.e. by per line-item exemption fields, set it from VAT Breakdown
+					if (this.product.getTaxExemptionReason() == null) {
+						this.product.setTaxExemptionReason(taxChildMap.getAsStringOrNull("ExemptionReason"));
+					}
+					if (this.product.getTaxExemptionReasonCode() == null) {
+						this.product.setTaxExemptionReasonCode(taxChildMap.getAsStringOrNull("ExemptionReasonCode"));
+					}
+					break;
+				}
+			}
+		}
+	}
+
 	public Item addBuyerOrderReferencedDocumentLineID(String s) {
 		buyerOrderReferencedDocumentLineID = s;
 		return this;
@@ -348,20 +443,6 @@ public class Item implements IZUGFeRDExportableItem {
 	public Item addBuyerOrderReferencedDocumentID(String s) {
 		buyerOrderReferencedDocumentID = s;
 		return this;
-	}
-
-	@JsonIgnore
-	@Override
-	public IZUGFeRDAllowanceCharge[] getAllowances() { // in JSON is already returned as itemAllowances (and only read from there)
-		IZUGFeRDAllowanceCharge[] izac = new IZUGFeRDAllowanceCharge[Allowances.size()];
-		return Allowances.toArray(izac);
-	}
-
-	@JsonIgnore
-	@Override
-	public IZUGFeRDAllowanceCharge[] getCharges() { // in JSON is already returned as itemAllowances (and only read from there)
-		IZUGFeRDAllowanceCharge[] izac = new IZUGFeRDAllowanceCharge[Charges.size()];
-		return Charges.toArray(izac);
 	}
 
 	/***
@@ -672,6 +753,16 @@ public class Item implements IZUGFeRDExportableItem {
 		return accountingReference;
 	}
 
+	/***
+	 * BT-133 invoice line buyer accounting reference.
+	 * @param accountingReference buyer accounting reference for this invoice line
+	 * @return fluent setter
+	 */
+	public Item setAccountingReference(String accountingReference) {
+		this.accountingReference = accountingReference != null ? accountingReference.trim() : null;
+		return this;
+	}
+
 	@Override
 	public String getParentLineID() {
 		return parentLineID;
@@ -703,7 +794,7 @@ public class Item implements IZUGFeRDExportableItem {
 	}
 
 	/***
-	 * For line seller 
+	 * For line seller
 	 * @param seller The line seller
 	 * @return fluent setter
 	 */

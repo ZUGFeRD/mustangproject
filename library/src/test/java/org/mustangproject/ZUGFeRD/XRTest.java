@@ -325,6 +325,61 @@ public class XRTest extends TestCase {
 			.isEqualTo(2);
 	}
 
+	/**
+	 * BR-O-06: a document-level allowance with VAT category O must not carry RateApplicablePercent.
+	 * BR-AE-06: a document-level allowance with VAT category AE must carry RateApplicablePercent = 0.
+	 */
+	public void testDocumentLevelAllowanceVatRateByCategory() {
+		TradeParty recipient = new TradeParty("Test Buyer", "Buyer Street 1", "10000", "Test City", "DE");
+		String orgname = "Test Seller";
+		String number = "INV-BR-O-06";
+		BigDecimal itemAmount = new BigDecimal("100.00");
+
+		Invoice invoice = new Invoice()
+			.setDueDate(new java.util.Date()).setIssueDate(new java.util.Date()).setDeliveryDate(new java.util.Date())
+			.setSender(new TradeParty(orgname, "Seller Street 1", "10000", "Test City", "DE")
+				.setID("SELLER-001").addTaxID("DE000000000"))
+			.setRecipient(recipient)
+			.setNumber(number)
+			.addItem(new org.mustangproject.Item(
+				new org.mustangproject.Product("Test item", "", "C62", java.math.BigDecimal.ZERO)
+					.setTaxCategoryCode(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)
+					.setTaxExemptionReason("Not subject to VAT"),
+				itemAmount, new java.math.BigDecimal("1.0")));
+
+		// document-level allowance with category O — must NOT produce RateApplicablePercent (BR-O-06)
+		Allowance allowanceO = new Allowance(new BigDecimal("10.00"));
+		allowanceO.setReason("Discount");
+		allowanceO.setCategoryCode(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE);
+		allowanceO.setTaxPercent(BigDecimal.ZERO);
+		invoice.addAllowance(allowanceO);
+
+		// document-level allowance with category AE — MUST produce RateApplicablePercent = 0 (BR-AE-06)
+		Allowance allowanceAE = new Allowance(new BigDecimal("5.00"));
+		allowanceAE.setReason("Reverse charge discount");
+		allowanceAE.setCategoryCode(TaxCategoryCodeTypeConstants.REVERSECHARGE);
+		allowanceAE.setTaxPercent(BigDecimal.ZERO);
+		invoice.addAllowance(allowanceAE);
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("EN16931"));
+		zf2p.generateXML(invoice);
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+
+		// Count RateApplicablePercent inside SpecifiedTradeAllowanceCharge nodes only
+		assertThat(theXML)
+			// The O-category allowance CategoryTradeTax must have no RateApplicablePercent
+			.valueByXPath("count(//*[local-name()='SpecifiedTradeAllowanceCharge'][.//*[local-name()='CategoryCode' and text()='O']]//*[local-name()='RateApplicablePercent'])")
+			.asInt()
+			.isEqualTo(0);
+
+		// The AE-category allowance CategoryTradeTax must have exactly one RateApplicablePercent
+		assertThat(theXML)
+			.valueByXPath("count(//*[local-name()='SpecifiedTradeAllowanceCharge'][.//*[local-name()='CategoryCode' and text()='AE']]//*[local-name()='RateApplicablePercent'])")
+			.asInt()
+			.isEqualTo(1);
+	}
+
 	private org.mustangproject.Invoice createInvoice(TradeParty recipient) {
 		String orgname = "Test company";
 		String number = "123";

@@ -11,15 +11,31 @@ import java.math.RoundingMode;
 
 /***
  * Absolute and relative charges for document and item level
+ * 
+ * <xs:complexType name="TradeAllowanceChargeType">
+ *   <xs:sequence>
+ *     <xs:element name="ChargeIndicator" type="udt:IndicatorType"/>
+ *     <xs:element name="SequenceNumeric" type="udt:NumericType" minOccurs="0"/>
+ *     <xs:element name="CalculationPercent" type="udt:PercentType" minOccurs="0"/>
+ *     <xs:element name="BasisAmount" type="udt:AmountType" minOccurs="0"/>
+ *     <xs:element name="BasisQuantity" type="udt:QuantityType" minOccurs="0"/>
+ *     <xs:element name="ActualAmount" type="udt:AmountType"/>
+ *     <xs:element name="ReasonCode" type="qdt:AllowanceChargeReasonCodeType" minOccurs="0"/>
+ *     <xs:element name="Reason" type="udt:TextType" minOccurs="0"/>
+ *     <xs:element name="CategoryTradeTax" type="ram:TradeTaxType" minOccurs="0"/>
+ *   </xs:sequence>
+ * </xs:complexType>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class Charge implements IZUGFeRDAllowanceCharge {
+public class Charge extends TradeTax implements IZUGFeRDAllowanceCharge {
+
+	protected Integer sequenceNumeric;
 
 	/**
 	 * the percentage, null if not relative at all
 	 */
-	protected BigDecimal percent = null;
+	protected BigDecimal percent;
 	/**
 	 * the absolute value if not percentage
 	 */
@@ -29,9 +45,9 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	 */
 	protected BigDecimal basisAmount;
 	/**
-	 * the tax rate the charge belongs to
+	 * the quantity the percentage is applied upon
 	 */
-	protected BigDecimal taxPercent;
+	protected BigDecimal basisQuantity;
 	/**
 	 * a simple human readable description
 	 */
@@ -40,16 +56,12 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 	 * Code from list UNTDID 5189
 	 */
 	protected String reasonCode;
-	/**
-	 * the category ID why this charge has been applied
-	 */
-	protected String categoryCode;
 
 	/***
-	 * Bean connstructor
+	 * Bean constructor
 	 */
 	public Charge() {
-		taxPercent=BigDecimal.ZERO;
+		setTaxRateApplicablePercent(BigDecimal.ZERO);
 	}
 
 	/***
@@ -60,15 +72,36 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 		this.totalAmount = totalAmount;
 	}
 
-
 	/***
-	 * sets the total amount to be changed to, e.g. if not specified via constructor
-	 * @param totalAmount 2 decimal money amount
-	 * @return fluid setter
+	 * Always to return true  for IZUGFeRDAllowanceCharge
+	 * @return true since it is supposed to be calculated negatively
 	 */
-	public Charge setTotalAmount(BigDecimal totalAmount) {
-		this.totalAmount = totalAmount;
-		return this;
+	@Override
+	@JsonIgnore
+	public boolean isCharge() {
+		return true;
+	}
+
+	/**
+	 * @return the sequenceNumeric
+	 */
+	public Integer getSequenceNumeric() {
+		return sequenceNumeric;
+	}
+
+	/**
+	 * @param sequenceNumeric the sequenceNumeric to set
+	 */
+	public void setSequenceNumeric(Integer sequenceNumeric) {
+		this.sequenceNumeric = sequenceNumeric;
+	}
+
+	/**
+	 * if relative charge: percent to increase the item
+	 */
+	@Override
+	public BigDecimal getPercent() {
+		return percent;
 	}
 
 	/***
@@ -80,33 +113,6 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 		this.percent = percent;
 		return this;
 	}
-
-	/***
-	 * charges can be applied to VAT items, in which case they take the same VAT rate
-	 * @param taxPercent the tax percentage on the charge
-	 * @return fluid setter
-	 */
-	public Charge setTaxPercent(BigDecimal taxPercent) {
-		this.taxPercent = taxPercent;
-		return this;
-	}
-
-
-	@Override
-	public String getReason() {
-		return reason;
-	}
-
-	/***
-	 * Freetext (?) reason for the charge
-	 * @param reason freetext
-	 * @return fluid setter
-	 */
-	public Charge setReason(String reason) {
-		this.reason = reason;
-		return this;
-	}
-
 
 	@Override
 	public BigDecimal getBasisAmount() {
@@ -123,23 +129,21 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 		return this;
 	}
 
-
 	@Override
-	public String getReasonCode() {
-		return reasonCode;
+	public BigDecimal getBasisQuantity() {
+		return basisQuantity;
 	}
 
 	/***
-	 * Reason code for the charge
-	 * @param reasonCode from list UNTDID 5189
+	 * sets a potential basis for the potential percentage
+	 * @param basis the basis quantity
 	 * @return fluid setter
 	 */
-	public Charge setReasonCode(String reasonCode) {
-		this.reasonCode = reasonCode;
+	public Charge setBasisQuantity(BigDecimal basis) {
+		this.basisQuantity = basis;
 		return this;
 	}
 
-	
 	@Override
 	public BigDecimal getTotalAmount(IAbsoluteValueProvider currentItem) {
 		if(totalAmount != null) {
@@ -165,45 +169,91 @@ public class Charge implements IZUGFeRDAllowanceCharge {
 		}
 	}
 
-
-	@Override
-	public BigDecimal getPercent() {
-		return percent;
-	}
-
-	@Override
-	public BigDecimal getTaxPercent() {
-		return taxPercent;
-	}
-
-
-
 	/***
-	 * Always to return true  for IZUGFeRDAllowanceCharge
-	 * @return true since it is supposed to be calculated negatively
-	 */
-	@Override
-	@JsonIgnore
-	public boolean isCharge() {
-		return true;
-	}
-
-	@Override
-	public String getCategoryCode() {
-		if(categoryCode != null){
-		    return categoryCode;
-		}
-		return IZUGFeRDAllowanceCharge.super.getCategoryCode();
-	}
-
-
-	/***
-	 * the category ID why this has been applied
-	 * @param categoryCode usually S
+	 * sets the total amount to be changed to, e.g. if not specified via constructor
+	 * @param totalAmount 2 decimal money amount
 	 * @return fluid setter
 	 */
-	public Charge setCategoryCode(String categoryCode) {
-		this.categoryCode = categoryCode;
+	public Charge setTotalAmount(BigDecimal totalAmount) {
+		this.totalAmount = totalAmount;
+		return this;
+	}
+
+	/***
+	 * Reason code for the charge
+	 * @param reasonCode from list UNTDID 5189
+	 * @return fluid setter
+	 */
+	public Charge setReasonCode(String reasonCode) {
+		this.reasonCode = reasonCode;
+		return this;
+	}
+
+	@Override
+	public String getReasonCode() {
+		return reasonCode;
+	}
+
+	@Override
+	public String getReason() {
+		return reason;
+	}
+
+	/***
+	 * Freetext (?) reason for the charge
+	 * @param reason free text
+	 * @return fluid setter
+	 */
+	public Charge setReason(String reason) {
+		this.reason = reason;
+		return this;
+	}
+
+	/*
+	 * for backward compatibility only
+	 */
+	/**
+	 * @deprecated use getTaxRateApplicablePercent() instead.
+	 */
+	@Deprecated
+	@JsonIgnore
+	@Override
+	public BigDecimal getTaxPercent() {
+		return getTaxRateApplicablePercent();
+	}
+
+	/**
+	 * set the taxRateApplicablePercent.
+	 * @deprecated use setTaxRateApplicablePercent(BigDecimal) instead.
+	 * @param percent
+	 * @return
+	 */
+	@Deprecated
+	public Charge setTaxPercent(BigDecimal percent)
+	{
+		this.setTaxRateApplicablePercent(percent);
+		return this;
+	}
+
+	/**
+	 * @deprecated use getTaxCategoryCode() instead.
+	 */
+	@Deprecated
+	@JsonIgnore
+	@Override
+	public String getCategoryCode() {
+		return getTaxCategoryCode();
+	}
+
+	/**
+	 * @deprecated use setTaxCategoryCode(String) instead.
+	 * @param taxCategoryCode
+	 * @return
+	 */
+	@Deprecated
+	public Charge setCategoryCode(String taxCategoryCode)
+	{
+		this.setTaxCategoryCode(taxCategoryCode);
 		return this;
 	}
 }

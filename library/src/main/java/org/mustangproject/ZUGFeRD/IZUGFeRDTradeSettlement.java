@@ -27,18 +27,15 @@ public interface IZUGFeRDTradeSettlement {
 	 * @return zf2 xml
 	 */
 	@JsonIgnore
-	 String getSettlementXML();
-	 
+	String getSettlementXML(Profile profile);
+
 
 	/***
 	 * 	gets the applicableHeaderTradePayment
 	 * @return zf2 xml
 	 */
 	@JsonIgnore
-	 default String getPaymentXML() {
+	default String getPaymentXML() {
 		 return null;
-	 }
-	 
-		
-
+	}
 }
