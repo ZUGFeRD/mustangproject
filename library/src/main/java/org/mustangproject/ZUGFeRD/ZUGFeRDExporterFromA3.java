@@ -631,8 +631,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 		PDDocumentCatalog cat = doc.getDocumentCatalog();
 		PDMetadata existingMetadata = cat.getMetadata();
-		if (overwrite || existingMetadata == null || existingMetadata.getLength() == 0)
-		{
+		if (overwrite || existingMetadata == null || existingMetadata.getLength() == 0) {
 			metadata = new PDMetadata(doc);
 			cat.setMetadata(metadata);
 		} else {
