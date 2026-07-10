@@ -13,10 +13,11 @@ import org.w3c.dom.Node;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ReferencedDocument implements IReferencedDocument {
 
-	String issuerAssignedID;
-	String typeCode;
-	String referenceTypeCode;
-	Date formattedIssueDateTime;
+	private String issuerAssignedID;
+	private String typeCode;
+	private String name;
+	private String referenceTypeCode;
+	private Date formattedIssueDateTime;
 
 	public ReferencedDocument() {
 		//bean
@@ -50,8 +51,9 @@ public class ReferencedDocument implements IReferencedDocument {
 	 * sets an ID assigned by the sender
 	 * @param issuerAssignedID the ID as a string :-)
 	 */
-	public void setIssuerAssignedID(String issuerAssignedID) {
+	public ReferencedDocument setIssuerAssignedID(String issuerAssignedID) {
 		this.issuerAssignedID = issuerAssignedID;
+		return this;
 	}
 
 	/**
@@ -59,8 +61,18 @@ public class ReferencedDocument implements IReferencedDocument {
 	 *
 	 * @param typeCode as String, e.g. 916
 	 */
-	public void setTypeCode(String typeCode) {
+	public ReferencedDocument setTypeCode(String typeCode) {
 		this.typeCode = typeCode;
+		return this;
+	}
+
+	/**
+	 * Name of the document.
+	 * @param name as String
+	 */
+	public ReferencedDocument setName(String name) {
+		this.name = name;
+		return this;
 	}
 
 	/**
@@ -68,8 +80,9 @@ public class ReferencedDocument implements IReferencedDocument {
 	 *
 	 * @param referenceTypeCode three uppercase character reference type code as string
 	 */
-	public void setReferenceTypeCode(String referenceTypeCode) {
+	public ReferencedDocument setReferenceTypeCode(String referenceTypeCode) {
 		this.referenceTypeCode = referenceTypeCode;
+		return this;
 	}
 
 	/**
@@ -89,6 +102,11 @@ public class ReferencedDocument implements IReferencedDocument {
 	@Override
 	public String getTypeCode() {
 		return typeCode;
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 	@Override
