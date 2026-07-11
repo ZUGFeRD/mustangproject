@@ -1,4 +1,3 @@
-
 /**
  * *********************************************************************
  * <p>
@@ -45,11 +44,11 @@ import javax.xml.xpath.XPathExpressionException;
 public class UBLTest extends ResourceCase {
 	final String TARGET_XML = "./target/testout-1Lieferschein.xml";
 
-  public UBLTest() {
-  }
+	public UBLTest() {
+	}
 
-  @Test
-  @Order(2)
+	@Test
+	@Order(2)
 	public void testUBLBasic() {
 
 		// the writing part
@@ -61,7 +60,7 @@ public class UBLTest extends ResourceCase {
 		String result = null;
 		try {
 			final File tempFile = File.createTempFile("ZUGFeRD-UBL-", "-test");
-			c2u.convert(input, tempFile);
+			c2u.convert(input, tempFile, "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0", "urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0");
 			expected = ResourceUtilities.readFile(StandardCharsets.UTF_8, expectedFile.getAbsolutePath());
 			result = ResourceUtilities.readFile(StandardCharsets.UTF_8, tempFile.getAbsolutePath());
 		} catch (final IOException e) {
@@ -73,8 +72,8 @@ public class UBLTest extends ResourceCase {
 		Assertions.assertThat(result).isXmlEqualTo(expected);
 	}
 
-  @Test
-  @Order(1)
+	@Test
+	@Order(1)
 	public void test1Lieferschein() {
 
 		final EinLieferscheinExporter oe = new EinLieferscheinExporter();
