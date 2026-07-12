@@ -13,12 +13,12 @@
     <description>FOSS Java library to read, write and validate european electronic invoices and orders in the UN/CEFACT
         Cross Industry Invoice based formats Factur-X/ZUGFeRD, XRechnung and Order-X in your invoice PDFs.
     </description>
-    <url>http://www.mustangproject.org/</url>
+    <url>https://www.mustangproject.org/</url>
     <scm>
         <connection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</connection>
-        <developerConnection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@github.com/ZUGFeRD/mustangproject.git</developerConnection>
         <url>https://github.com/ZUGFeRD/mustangproject</url>
-        <tag>core-2.3.2</tag>
+        <tag>HEAD</tag>
     </scm>
     <repositories>
         <repository><!-- for jargs -->
@@ -32,20 +32,13 @@
             </snapshots>
         </repository>
     </repositories>
-    <distributionManagement>
-        <repository>
-            <id>internal.repo</id>
-            <name>Temporary Staging Repository</name>
-            <url>file://${project.build.directory}/mvn-repo</url>
-        </repository>
-    </distributionManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <github.global.server>github</github.global.server>
         <additionalparam>-Xdoclint:none</additionalparam>
         <!-- Skip error check for javadoc -->
         <maven.compiler.release>11</maven.compiler.release>
-        <maven.deploy.skip>true</maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
+        <maven.deploy.skip>false</maven.deploy.skip><!-- deploy this library; the parent POM remains skipped -->
     </properties>
     <dependencies>
         <!-- compile dependencies -->

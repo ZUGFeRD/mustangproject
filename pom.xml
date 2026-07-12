@@ -15,12 +15,12 @@
 
     <description>Mustangproject is a java library and commandline tool to read, validate, write and convert EN16931 e-invoices, e.g. Factur-X and XRechnung (read and writing CII and reading also UBL).
     </description>
-    <url>http://www.mustangproject.org/</url>
+    <url>https://www.mustangproject.org/</url>
     <scm>
-        <connection>scm:git:git://github.com/dexecutor/dependent-tasks-executor.git</connection>
-        <developerConnection>scm:git:git@github.com:dexecutor/dexecutor.git</developerConnection>
-        <url>https://github.com/dexecutor/dependent-tasks-executor</url>
-        <tag>core-2.3.2</tag>
+        <connection>scm:git:https://github.com/ZUGFeRD/mustangproject.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/ZUGFeRD/mustangproject.git</developerConnection>
+        <url>https://github.com/ZUGFeRD/mustangproject</url>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
@@ -48,8 +48,7 @@
             First the versions for plugins, then those for libraries.
          -->
         <version.org.apache.maven.plugins.maven-compiler-plugin>3.13.0</version.org.apache.maven.plugins.maven-compiler-plugin><!-- from 2.3.2, 3.13.0 -->
-        <version.org.apache.maven.plugins.maven-deploy-plugin>3.0.0-M1</version.org.apache.maven.plugins.maven-deploy-plugin><!-- from 3.0.0-M1 -->
-        <version.org.apache.maven.plugins.maven-gpg-plugin>1.6</version.org.apache.maven.plugins.maven-gpg-plugin><!-- from 1.6 -->
+        <version.org.apache.maven.plugins.maven-gpg-plugin>3.2.7</version.org.apache.maven.plugins.maven-gpg-plugin><!-- from 1.6 -->
         <version.org.apache.maven.plugins.maven-jar-plugin>3.4.2</version.org.apache.maven.plugins.maven-jar-plugin><!-- from 3.2.0, 3.4.2 -->
         <version.org.apache.maven.plugins.maven-javadoc-plugin>3.0.1</version.org.apache.maven.plugins.maven-javadoc-plugin><!-- from 3.0.1 -->
         <version.org.apache.maven.plugins.maven-release-plugin>2.5.3</version.org.apache.maven.plugins.maven-release-plugin><!-- from 2.5.3 -->
@@ -61,7 +60,7 @@
         <version.org.apache.maven.scm>1.9.5</version.org.apache.maven.scm>
         <version.org.codehaus.mojo>1.0.0</version.org.codehaus.mojo>
         <version.com.helger.maven>8.0.0</version.com.helger.maven>
-        <version.org.sonatype.plugins>1.7.0</version.org.sonatype.plugins>
+        <version.org.sonatype.central.central-publishing-maven-plugin>0.11.0</version.org.sonatype.central.central-publishing-maven-plugin>
 
         <version.ch.qos.logback>1.5.18</version.ch.qos.logback><!-- from 1.5.16 -->
         <version.com.fasterxml.jackson.core>2.22.1</version.com.fasterxml.jackson.core>
@@ -116,26 +115,32 @@
                 <version>${version.org.apache.maven.plugins.maven-javadoc-plugin}</version>
                 <configuration>
                     <excludePackageNames>org.mustangproject.ZUGFeRD.model.*</excludePackageNames>
+                    <!-- Existing API Javadoc has diagnostics on newer JDKs. Central
+                         requires an attached Javadoc archive; retain it while the
+                         documentation is improved independently. -->
+                    <failOnError>false</failOnError>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>${version.org.apache.maven.plugins.maven-deploy-plugin}</version>
-                <configuration>
-                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
+            <!-- Replaces the retired OSSRH/Nexus staging plugin. A release is uploaded
+                 as a Central Portal bundle by mvn deploy; it is published manually. -->
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>${version.org.sonatype.plugins}</version>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>${version.org.sonatype.central.central-publishing-maven-plugin}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://ossrh-staging-api.central.sonatype.com/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <publishingServerId>central</publishingServerId>
+                    <deploymentName>mustangproject-${project.version}</deploymentName>
+                    <autoPublish>false</autoPublish>
                 </configuration>
             </plugin>
             <plugin>
@@ -146,29 +151,14 @@
                     <runOrder>alphabetical</runOrder>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${version.org.apache.maven.plugins.maven-source-plugin}</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadoc</id>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
 
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
+            <id>central</id>
             <url>https://central.sonatype.com/repository/maven-snapshots/</url>
         </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/</url>
-        </repository>
     </distributionManagement>
     <mailingLists>
         <mailingList>

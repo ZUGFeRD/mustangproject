@@ -24,6 +24,7 @@ cache. After that the mustang JAR can be used.
 More information on how to develop **on** mustang: 
  
  - [Developer documentation](https://github.com/ZUGFeRD/mustangproject/blob/master/doc/development_documentation.md)
+ - [Maven Central publishing guide](doc/maven-central-publishing.md)
 
 Usage
 -----

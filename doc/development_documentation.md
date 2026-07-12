@@ -97,6 +97,16 @@ can be used as debug configuration goal in Eclipse. In that case you can set bre
 
 ## Deployment
 
+The current deployment process uses the Central Portal, not OSSRH/Nexus. Follow
+the [Maven Central publishing guide](maven-central-publishing.md). Do not put
+Central or GPG credentials in this repository.
+
+## Legacy OSSRH deployment (retired)
+
+The following information is retained only as historical context. Do not copy
+its OSSRH credentials, endpoints, or GitHub-token instructions into a current
+release setup.
+
 A section in Maven's settings.xml is needed, in Linux (and MacOS) that's at ~/.m2/settings.xml 
 
 As „servers“, enter the following
