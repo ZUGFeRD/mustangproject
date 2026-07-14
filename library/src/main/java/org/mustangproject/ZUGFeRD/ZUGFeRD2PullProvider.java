@@ -1134,19 +1134,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 		xml.append("<ram:DuePayableAmount>" + currencyFormat(calc.getDuePayable()) + "</ram:DuePayableAmount>"
 			+ "</ram:SpecifiedTradeSettlementHeaderMonetarySummation>");
-		if (trans.getInvoiceReferencedDocumentID() != null && !trans.getInvoiceReferencedDocumentID().trim().isEmpty()) {
-			xml.append("<ram:InvoiceReferencedDocument>"
-				+ "<ram:IssuerAssignedID>"
-				+ XMLTools.encodeXML(trans.getInvoiceReferencedDocumentID()) + "</ram:IssuerAssignedID>");
-			if (trans.getInvoiceReferencedIssueDate() != null) {
-				xml.append("<ram:FormattedIssueDateTime>"
-					+ DATE.qdtFormat(trans.getInvoiceReferencedIssueDate())
-					+ "</ram:FormattedIssueDateTime>");
-			}
-			xml.append("</ram:InvoiceReferencedDocument>");
-		}
 		if (trans.getInvoiceReferencedDocuments() != null) {
 			for (ReferencedDocument doc : trans.getInvoiceReferencedDocuments()) {
+				if(doc.getIssuerAssignedID() == null || doc.getIssuerAssignedID().trim().isEmpty()) continue;
 				xml.append("<ram:InvoiceReferencedDocument>"
 					+ "<ram:IssuerAssignedID>"
 					+ XMLTools.encodeXML(doc.getIssuerAssignedID()) + "</ram:IssuerAssignedID>");

@@ -66,7 +66,7 @@ public class Invoice implements IExportableTransaction {
 	protected String invoiceReferencedDocumentID = null;
 	protected Date invoiceReferencedIssueDate;
 	// New field for storing Invoiced Object Identifier (BG-3)
-	protected ArrayList<ReferencedDocument> invoiceReferencedDocuments = null;
+	protected ArrayList<ReferencedDocument> invoiceReferencedDocuments;
 
 	protected String specifiedProcuringProjectID = null;
 	protected String specifiedProcuringProjectName = null;
@@ -244,7 +244,7 @@ public class Invoice implements IExportableTransaction {
 	 * @return this object (fluent setter)
 	 */
 	public Invoice setCorrection(String number) {
-		setInvoiceReferencedDocumentID(number);
+		addInvoiceReferencedDocument(new ReferencedDocument(number));
 		documentCode = DocumentCodeTypeConstants.CORRECTEDINVOICE;
 		return this;
 	}
@@ -255,7 +255,7 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	public Invoice setCreditNote(String number) {
-		setInvoiceReferencedDocumentID(number);
+		addInvoiceReferencedDocument(new ReferencedDocument(number));
 		documentCode = DocumentCodeTypeConstants.CREDITNOTE;
 		return this;
 	}
