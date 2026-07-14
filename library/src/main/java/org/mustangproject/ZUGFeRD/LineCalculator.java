@@ -105,7 +105,12 @@ public class LineCalculator {
 			.subtract(allowanceItemTotal.setScale(2, RoundingMode.HALF_UP))
 			.setScale(2, RoundingMode.HALF_UP);
 		if (BigDecimal.ZERO.setScale(2).equals(itemTotalNetAmount) && "GROUP".equals(currentItem.getLineStatusReasonCode())) {
-			itemTotalNetAmount = currentItem.getLineTotalAmount();
+			// GROUP lines may omit the optional LineTotalAmount. Keep the calculated
+			// zero in that case; assigning null causes the VAT calculation below to fail.
+			BigDecimal groupLineTotalAmount = currentItem.getLineTotalAmount();
+			if (groupLineTotalAmount != null) {
+				itemTotalNetAmount = groupLineTotalAmount;
+			}
 		}
 		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);
 	}
