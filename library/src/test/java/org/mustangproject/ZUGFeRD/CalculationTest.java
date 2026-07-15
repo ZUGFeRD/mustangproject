@@ -654,4 +654,21 @@ public class CalculationTest extends ResourceCase {
 		assertEquals(BigDecimal.valueOf(32.74), calculator.getItemTotalNetAmount());
 	}
 
+	/**
+	 * A GROUP line may omit the optional LineTotalAmount. It must still have a
+	 * calculable zero amount rather than turning the calculated value into null.
+	 * This reproduces the former issue_96_subtotals_ex4 validator crash.
+	 */
+	@Test
+	public void testGroupLineWithoutLineTotalAmountDoesNotThrow() {
+		final Product product = new Product("Group", "", "H87", BigDecimal.valueOf(19));
+		final Item groupLine = new Item(product, BigDecimal.ZERO, BigDecimal.ZERO)
+			.setLineStatusReasonCode("GROUP");
+
+		final LineCalculator calculator = groupLine.getCalculation();
+
+		assertEquals(BigDecimal.ZERO.setScale(2), calculator.getItemTotalNetAmount());
+		assertEquals(0, calculator.getItemTotalVATAmount().compareTo(BigDecimal.ZERO));
+	}
+
 }
