@@ -495,10 +495,9 @@ public class XMLValidatorTest extends ResourceCase {
 			xv.validate();
 
 			String s = "<validation>" + xv.getXMLResult() + "</validation>";
-			// hierarchy mismatch should produce at least one warning
 			assertThat(s).valueByXPath("count(//warning)")
 				.asInt()
-				.isEqualTo(0);
+				.isEqualTo(2);
 
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
