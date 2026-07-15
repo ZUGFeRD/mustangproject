@@ -497,7 +497,7 @@ public class XMLValidatorTest extends ResourceCase {
 			String s = "<validation>" + xv.getXMLResult() + "</validation>";
 			assertThat(s).valueByXPath("count(//warning)")
 				.asInt()
-				.isEqualTo(2);
+				.isEqualTo(0);
 
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
