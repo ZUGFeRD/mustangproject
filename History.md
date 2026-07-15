@@ -1,4 +1,3 @@
-- #1176
 
 2.24.x
 =======
@@ -14,6 +13,8 @@
 - #1151 'BR-FXEXT-IC-08rev' in ZF 2.5 requires VAT exemption reason text and code for allowances and charges
 - #1145 Document-level allowance with VAT category O emits RateApplicablePercent (violates BR-O-06)
 - add disableArithmeticCheck() / --no-arithmetic-check option to skip the arithmetic recalculation pass during validation
+- #1167 Upgrade com.fasterxml.jackson.core to 2.22.1 from 2.17.3
+- #1186 Read Item LineTotalAmount from SpecifiedTradeSettlementLineMonetarySummation
 
 
 2.24.0
