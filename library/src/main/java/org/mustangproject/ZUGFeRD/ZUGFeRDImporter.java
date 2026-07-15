@@ -641,7 +641,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 
 	/**
 	 * returns a list of LineItems
-	 * @deprecated use invoiceimporter getZFItems
+	 * @deprecated use invoice::getZFItems
 	 *
 	 * @return a List of LineItem instances
 	 */
@@ -730,11 +730,11 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 								}
 								node = getNodeByName(node.getChildNodes(), "FormattedIssueDateTime");
 								if (node != null) {
-									NodeList FormattedIssueDateTimeChilds = node.getChildNodes();
-									for (int dateChildIndex = 0; dateChildIndex < FormattedIssueDateTimeChilds.getLength(); dateChildIndex++) {
-										if ((FormattedIssueDateTimeChilds.item(dateChildIndex).getLocalName() != null)
-											&& (FormattedIssueDateTimeChilds.item(dateChildIndex).getLocalName().equals("DateTimeString"))) {
-											lineItem.setDeliveryNoteReferencedDocumentDate(XMLTools.tryDate(FormattedIssueDateTimeChilds.item(dateChildIndex)));
+									NodeList formattedIssueDateTimeChilds = node.getChildNodes();
+									for (int dateChildIndex = 0; dateChildIndex < formattedIssueDateTimeChilds.getLength(); dateChildIndex++) {
+										if ((formattedIssueDateTimeChilds.item(dateChildIndex).getLocalName() != null)
+											&& (formattedIssueDateTimeChilds.item(dateChildIndex).getLocalName().equals("DateTimeString"))) {
+											lineItem.setDeliveryNoteReferencedDocumentDate(XMLTools.tryDate(formattedIssueDateTimeChilds.item(dateChildIndex)));
 										}
 									}
 								}
@@ -823,14 +823,14 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 		try {
 			nl = getNodeListByPath("//*[local-name() = 'IncludedSupplyChainTradeLineItem']");
 
+			for (int i = 0; i < nl.getLength(); i++) {
+				final Node n = nl.item(i);
+				lineItemNodes.add(n);
+			}
 		} catch (final Exception e) {
 			// Exception was already logged
 		}
 
-		for (int i = 0; i < nl.getLength(); i++) {
-			final Node n = nl.item(i);
-			lineItemNodes.add(n);
-		}
 		return lineItemNodes;
 	}
 

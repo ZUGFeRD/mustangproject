@@ -331,7 +331,7 @@ public class ZUGFeRDInvoiceImporter {
 		// SpecifiedExchangedDocumentContext is in the schema, so a relatively good
 		// indication if zugferd is present - better than just invoice
 		final String meta = getMeta();
-		if ((meta == null) || (meta.length() == 0)) {
+		if (meta == null || meta.isEmpty()) {
 			return false;
 		}
 
