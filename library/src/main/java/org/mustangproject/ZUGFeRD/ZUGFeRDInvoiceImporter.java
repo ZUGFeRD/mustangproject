@@ -536,12 +536,29 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
+		String currency = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"InvoiceCurrencyCode\"]|//*[local-name()=\"DocumentCurrencyCode\"]");
+		zpp.setCurrency(currency);
+		String taxCurrency = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"TaxCurrencyCode\"]");
+		zpp.setTaxCurrency(taxCurrency);
+
 		xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"TaxTotalAmount\"]|//*[local-name()=\"TaxTotal\"]/*[local-name()=\"TaxAmount\"]");
 		NodeList taxTotalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-		if (taxTotalNodes.getLength() > 0) {
-			String taxTotalStr=XMLTools.trimOrNull(taxTotalNodes.item(0));
-			if ((zpp instanceof CalculatedInvoice)&&(taxTotalStr!=null)) {
-				((CalculatedInvoice) zpp).setVATtotal(new BigDecimal(taxTotalStr));
+		if (zpp instanceof CalculatedInvoice) {
+			for (int i = 0; i < taxTotalNodes.getLength(); i++) {
+				String taxTotalStr = XMLTools.trimOrNull(taxTotalNodes.item(i));
+				if (taxTotalStr == null) {
+					continue;
+				}
+				String currencyID = XMLTools.trimOrNull(taxTotalNodes.item(i).getAttributes().getNamedItem("currencyID"));
+				if (zpp.getCurrency() != null && zpp.getCurrency().equalsIgnoreCase(currencyID)) {
+					((CalculatedInvoice) zpp).setVATtotal(new BigDecimal(taxTotalStr));
+				} else if (taxCurrency != null && taxCurrency.equalsIgnoreCase(currencyID)) {
+					((CalculatedInvoice) zpp).setVATTotalInAccountingCurrency(new BigDecimal(taxTotalStr));
+				} else if (taxTotalNodes.getLength() == 1) {
+					// try to be lenient if the currencyID doesn't match or is missing, yet this is the only value provided
+					//  Might be wrong though.
+					((CalculatedInvoice) zpp).setVATtotal(new BigDecimal(taxTotalStr));
+				}
 			}
 		}
 
@@ -824,9 +841,6 @@ public class ZUGFeRDInvoiceImporter {
 
 
 
-
-		String currency = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"InvoiceCurrencyCode\"]|//*[local-name()=\"DocumentCurrencyCode\"]");
-		zpp.setCurrency(currency);
 
 		String paymentTermsDescription = extractString("//*[local-name()=\"SpecifiedTradePaymentTerms\"]/*[local-name()=\"Description\"]|//*[local-name()=\"PaymentTerms\"]/*[local-name()=\"Note\"]");
 		if (!paymentTermsDescription.isEmpty()) {

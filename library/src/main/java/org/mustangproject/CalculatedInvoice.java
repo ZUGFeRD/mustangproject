@@ -42,6 +42,10 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 	 * the total sum of value added taxes
 	 */
 	protected BigDecimal VATtotal=null;
+	/**
+	 * the total sum of value added taxes in accounting currency
+	 */
+	private BigDecimal VATTotalInAccountingCurrency;
 	protected TransactionCalculator tc=null;
 
     public void calculate() {
@@ -136,6 +140,21 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 		}
 		return VATtotal;
 	}
+
+
+	public CalculatedInvoice setVATTotalInAccountingCurrency(BigDecimal parsedValue) {
+		VATTotalInAccountingCurrency = parsedValue;
+		return this;
+	}
+
+	/**
+	 * @return BT-111 VAT total amount in VAT accounting currency, nullable
+	 */
+	public BigDecimal getVATTotalInAccountingCurrency() {
+		return VATTotalInAccountingCurrency;
+	}
+
+
 
 	/***
 	 * usually one would use calculate, use only if the invoice is parsed
