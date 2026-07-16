@@ -15,6 +15,7 @@
 - add disableArithmeticCheck() / --no-arithmetic-check option to skip the arithmetic recalculation pass during validation
 - #1167 Upgrade com.fasterxml.jackson.core to 2.22.1 from 2.17.3
 - #1186 Read Item LineTotalAmount from SpecifiedTradeSettlementLineMonetarySummation
+- Some minor dependency upgrades.
 
 
 2.24.0
