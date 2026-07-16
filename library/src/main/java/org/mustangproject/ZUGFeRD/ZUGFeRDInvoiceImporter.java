@@ -600,34 +600,16 @@ public class ZUGFeRDInvoiceImporter {
 							subjectCode = XMLTools.trimOrNull(includedNodeChilds.item(issueDateChildIndex));
 						}
 					}
-					switch (subjectCode) {
-						case "AAI":
-							includedNotes.add(IncludedNote.generalNote(content));
+					boolean foundCode = false;
+					for (SubjectCode code : SubjectCode.values()) {
+						if (code.toString().equals(subjectCode)) {
+							includedNotes.add(new IncludedNote(content, code));
+							foundCode = true;
 							break;
-						case "REG":
-							includedNotes.add(IncludedNote.regulatoryNote(content));
-							break;
-						case "ABL":
-							includedNotes.add(IncludedNote.legalNote(content));
-							break;
-						case "CUS":
-							includedNotes.add(IncludedNote.customsNote(content));
-							break;
-						case "SUR":
-							includedNotes.add(IncludedNote.sellerNote(content));
-							break;
-						case "TXD":
-							includedNotes.add(IncludedNote.taxNote(content));
-							break;
-						case "ACY":
-							includedNotes.add(IncludedNote.introductionNote(content));
-							break;
-						case "AAK":
-							includedNotes.add(IncludedNote.discountBonusNote(content));
-							break;
-						default:
-							includedNotes.add(IncludedNote.unspecifiedNote(content));
-							break;
+						}
+					}
+					if (!foundCode) {
+						includedNotes.add(IncludedNote.unspecifiedNote(content));
 					}
 				}
 			}
