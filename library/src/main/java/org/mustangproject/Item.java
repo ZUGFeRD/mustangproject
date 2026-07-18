@@ -632,10 +632,6 @@ public class Item implements IZUGFeRDExportableItem {
 			notes = new ArrayList<>();
 		}
 		notes.add(text);
-
-		addNote(IncludedNote.unspecifiedNote(text));
-
-
 		return this;
 	}
 
@@ -650,8 +646,6 @@ public class Item implements IZUGFeRDExportableItem {
 			includedNotes = new ArrayList<>();
 		}
 		includedNotes.add(theNote);
-
-
 		return this;
 	}
 
