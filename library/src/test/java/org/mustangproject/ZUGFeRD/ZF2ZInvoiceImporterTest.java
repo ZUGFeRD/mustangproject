@@ -127,8 +127,8 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		// Reading ZUGFeRD
 		assertEquals("Bei Spiel GmbH", invoice.getSender().getName());
 		assertEquals(3, invoice.getZFItems().length);
-		assertEquals(invoice.getZFItems()[0].getNotesWithSubjectCode().get(0).getContent(),"Something");
-		assertEquals(invoice.getZFItems()[0].getNotesWithSubjectCode().size(),1);
+		assertEquals("Something",invoice.getZFItems()[0].getNotes()[0]);
+		assertEquals(1,invoice.getZFItems()[0].getNotes().length);
 		assertEquals("400", invoice.getZFItems()[1].getQuantity().toString());
 		assertEquals("Zahlbar ohne Abzug bis zum 30.05.2017", invoice.getPaymentTermDescription());
 		assertEquals("AB321", invoice.getReferenceNumber());
@@ -1033,5 +1033,24 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals(new BigDecimal("0.012148"), invoice.getZFItems()[0].getPrice());
 		assertEquals(new BigDecimal("12.44"), invoice.getLineTotalAmount().setScale(2));
 		assertEquals(new BigDecimal("12.44"), invoice.getGrandTotal().setScale(2));
+	}
+
+	@Test
+	public void testInvoiceNotes() throws XPathExpressionException, ParseException, FileNotFoundException {
+		File inputFile = getResourceAsFile("test_invoice_note.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.doIgnoreCalculationErrors();
+		zii.setInputStream(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+		assertNotNull(invoice.getNotesWithSubjectCode());
+		assertEquals(1, invoice.getNotesWithSubjectCode().size());
+		assertNotNull(invoice.getZFItems()[0].getNotesWithSubjectCode());
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(invoice);
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+		assertTrue(theXML.contains("Associated document note for test"));
 	}
 }

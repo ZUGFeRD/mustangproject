@@ -439,10 +439,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						xml.append("<ram:LineStatusReasonCode>" + XMLTools.encodeXML(currentItem.getLineStatusReasonCode()) + "</ram:LineStatusReasonCode>");
 					}
 				}
-				xml.append(buildItemNotes(currentItem)
-					+ "</ram:AssociatedDocumentLineDocument>"
-
-					+ "<ram:SpecifiedTradeProduct>");
+				xml.append(buildItemNotes(currentItem))
+					.append("</ram:AssociatedDocumentLineDocument>")
+					.append("<ram:SpecifiedTradeProduct>");
 				if ((currentItem.getProduct().getGlobalIDScheme() != null) && (currentItem.getProduct().getGlobalID() != null)) {
 					xml.append("<ram:GlobalID schemeID=\"" + XMLTools.encodeXML(currentItem.getProduct().getGlobalIDScheme()) + "\">" + XMLTools.encodeXML(currentItem.getProduct().getGlobalID()) + "</ram:GlobalID>");
 				}
@@ -1178,17 +1177,22 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	}
 
 	protected String buildItemNotes(IZUGFeRDExportableItem currentItem) {
-		if (currentItem.getNotes() == null) {
-			return "";
+		final List<IncludedNote> includedNotes = new ArrayList<>();
+
+		Optional.ofNullable(currentItem.getNotesWithSubjectCode()).ifPresent(includedNotes::addAll);
+
+		if (currentItem.getNotes() != null) {
+			for (final String currentNote : currentItem.getNotes()) {
+				includedNotes.add(IncludedNote.unspecifiedNote(currentNote));
+			}
 		}
-		return Arrays.stream(currentItem.getNotes())
-			.map(IncludedNote::unspecifiedNote)
-			.map(IncludedNote::toCiiXml)
-			.collect(Collectors.joining());
+
+		return includedNotes.stream().map(IncludedNote::toCiiXml).collect(Collectors.joining(""));
 	}
 
 	protected String buildNotes(IExportableTransaction exportableTransaction) {
 		final List<IncludedNote> includedNotes = new ArrayList<>();
+
 		Optional.ofNullable(exportableTransaction.getNotesWithSubjectCode()).ifPresent(includedNotes::addAll);
 
 		if (exportableTransaction.getNotes() != null) {

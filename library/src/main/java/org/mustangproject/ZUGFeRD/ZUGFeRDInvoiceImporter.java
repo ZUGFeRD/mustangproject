@@ -625,6 +625,18 @@ public class ZUGFeRDInvoiceImporter {
 						case "AAK":
 							includedNotes.add(IncludedNote.discountBonusNote(content));
 							break;
+						case "AAB":
+							includedNotes.add(IncludedNote.paymentTermNote(content));
+							break;
+						case "PMD":
+							includedNotes.add(IncludedNote.paymentDetailRemittanceInformationNote(content));
+							break;
+						case "ACB":
+							includedNotes.add(IncludedNote.additionalInformationNote(content));
+							break;
+						case "INV":
+							includedNotes.add(IncludedNote.invoiceInstructionNote(content));
+							break;
 						default:
 							includedNotes.add(IncludedNote.unspecifiedNote(content));
 							break;
