@@ -30,7 +30,6 @@ import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -339,7 +338,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 	protected TransactionCalculator createCalculator(IExportableTransaction trans) {
    		 return new TransactionCalculator(trans);
-	}	
+	}
 
 	@Override
 	public void generateXML(IExportableTransaction trans) {
@@ -559,11 +558,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "<ram:BasisQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit())
 					+ "\">" + quantityFormat(currentItem.getBasisQuantity()) + "</ram:BasisQuantity>"
 					+ "</ram:NetPriceProductTradePrice>");
-				  
+
                 if(currentItem.getLineSeller()!=null) {
                     xml.append("<ram:ItemSellerTradeParty>" + getTradePartyAsXML(currentItem.getLineSeller(), true, false) + "</ram:ItemSellerTradeParty>");
-    
-                }	            
+
+                }
 				xml.append("</ram:SpecifiedLineTradeAgreement>"
 					+ "<ram:SpecifiedLineTradeDelivery>"
 					+ "<ram:BilledQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">"
@@ -732,7 +731,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml.append("<ram:AdditionalReferencedDocument>"
 				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getObjectIdentifierReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
 				+ "<ram:TypeCode>130</ram:TypeCode>");
-			 // NEW: BT-18-1 scheme identifier
+		    String name = trans.getObjectIdentifierReferencedDocument().getName();
+		    if (name != null && !name.isEmpty()) {
+		        xml.append("<ram:Name>" + XMLTools.encodeXML(name) + "</ram:Name>");
+		    }
+		    // NEW: BT-18-1 scheme identifier
 		    String rtc = trans.getObjectIdentifierReferencedDocument().getReferenceTypeCode();
 		    if (rtc != null && !rtc.isEmpty()) {
 		        xml.append("<ram:ReferenceTypeCode>" + XMLTools.encodeXML(rtc) + "</ram:ReferenceTypeCode>");
@@ -746,8 +749,35 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml.append("<ram:AdditionalReferencedDocument>"
 				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getTenderReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
 				+ "<ram:TypeCode>50</ram:TypeCode>");
+		    String name = trans.getTenderReferencedDocument().getName();
+		    if (name != null && !name.isEmpty()) {
+		        xml.append("<ram:Name>" + XMLTools.encodeXML(name) + "</ram:Name>");
+		    }
+		    // NEW: BT-18-1 scheme identifier
+		    String rtc = trans.getTenderReferencedDocument().getReferenceTypeCode();
+		    if (rtc != null && !rtc.isEmpty()) {
+		    	xml.append("<ram:ReferenceTypeCode>" + XMLTools.encodeXML(rtc) + "</ram:ReferenceTypeCode>");
+		    }
 			if (trans.getTenderReferencedDocument().getFormattedIssueDateTime()!=null) {
 				xml.append("<ram:FormattedIssueDateTime>" + DATE.qdtFormat(trans.getTenderReferencedDocument().getFormattedIssueDateTime()) + "</ram:FormattedIssueDateTime>");
+			}
+			xml.append("</ram:AdditionalReferencedDocument>");
+		}
+		if (trans.getRelatedReferencedDocument() != null){
+			xml.append("<ram:AdditionalReferencedDocument>"
+				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getRelatedReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
+				+ "<ram:TypeCode>916</ram:TypeCode>");
+		    String name = trans.getRelatedReferencedDocument().getName();
+		    if (name != null && !name.isEmpty()) {
+		        xml.append("<ram:Name>" + XMLTools.encodeXML(name) + "</ram:Name>");
+		    }
+		    // NEW: BT-18-1 scheme identifier
+		    String rtc = trans.getRelatedReferencedDocument().getReferenceTypeCode();
+		    if (rtc != null && !rtc.isEmpty()) {
+		    	xml.append("<ram:ReferenceTypeCode>" + XMLTools.encodeXML(rtc) + "</ram:ReferenceTypeCode>");
+		    }
+			if (trans.getRelatedReferencedDocument().getFormattedIssueDateTime()!=null) {
+				xml.append("<ram:FormattedIssueDateTime>" + DATE.qdtFormat(trans.getRelatedReferencedDocument().getFormattedIssueDateTime()) + "</ram:FormattedIssueDateTime>");
 			}
 			xml.append("</ram:AdditionalReferencedDocument>");
 		}

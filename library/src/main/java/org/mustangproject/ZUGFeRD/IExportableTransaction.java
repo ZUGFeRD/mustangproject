@@ -31,7 +31,7 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date; 
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -238,6 +238,15 @@ public interface IExportableTransaction {
 	}
 
 	/**
+	 * Related Documents
+	 *
+	 * @return mandatory ID, optional Date
+	 */
+	default IReferencedDocument getRelatedReferencedDocument() {
+		return null;
+	}
+
+	/**
 	 * own name
 	 *
 	 * @return the sender's organisation name
@@ -361,7 +370,7 @@ public interface IExportableTransaction {
 	}
 
 	/**
-	 * get the rounding amount 
+	 * get the rounding amount
    * (only to be usef for NL whose currency requires a rounding to 5ct)
 	 *
 	 * @return the Bigdecimal
@@ -373,7 +382,7 @@ public interface IExportableTransaction {
 	/**
 	 * get BuyerReference (BT-10) an identifier assigned by the buyer and used
 	 * for internal routing. Used for the Leitweg-ID.
-	 * 
+	 *
 	 * @return the BuyerReference of this document
 	 */
 	default String getReferenceNumber() {
@@ -477,12 +486,12 @@ public interface IExportableTransaction {
 	default Date getInvoiceReferencedIssueDate() {
 		return null;
 	}
-	
+
 	/**
 	 * Getter for BG-3
 	 * @return list of documents
 	 */
-	default ArrayList<ReferencedDocument> getInvoiceReferencedDocuments() {
+	default List<ReferencedDocument> getInvoiceReferencedDocuments() {
 		return null;
 	}
 
@@ -492,7 +501,7 @@ public interface IExportableTransaction {
 	 *
 	 * @return the IssueDateTime in format CCYY-MM-DDTHH:MM:SS
 	 */
-	default String getBuyerOrderReferencedDocumentIssueDateTime() {
+	default Date getBuyerOrderReferencedDocumentIssueDateTime() {
 		return null;
 	}
 
