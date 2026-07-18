@@ -16,10 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -43,6 +41,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -62,7 +61,7 @@ public class ZUGFeRDInvoiceImporter {
 	/**
 	 * map filenames of all embedded files in the respective PDF
 	 */
-	protected final ArrayList<FileAttachment> PDFAttachments = new ArrayList<>();
+	protected final ArrayList<FileAttachment> pdfAttachments = new ArrayList<>();
 	/**
 	 * if metadata has been found
 	 */
@@ -125,7 +124,7 @@ public class ZUGFeRDInvoiceImporter {
 	 * @return a ArrayList of FileAttachments, empty if none
 	 */
 	public List<FileAttachment> getFileAttachmentsPDF() {
-		return PDFAttachments;
+		return pdfAttachments;
 	}
 
 	/**
@@ -137,11 +136,10 @@ public class ZUGFeRDInvoiceImporter {
 		BufferedInputStream pdfStream = new BufferedInputStream(inStream);
 		byte[] pad = new byte[4];
 		pdfStream.mark(0);
-		pdfStream.read(pad);
+		int count = pdfStream.read(pad);
 		pdfStream.reset();
 		byte[] pdfSignature = {'%', 'P', 'D', 'F'};
-		if (Arrays.equals(pad, pdfSignature)) { // we have a pdf
-
+		if (count == 4 && Arrays.equals(pad, pdfSignature)) { // we have a pdf
 
 			try (PDDocument doc = Loader.loadPDF(IOUtils.toByteArray(pdfStream))) {
 				// PDDocumentInformation info = doc.getDocumentInformation();
@@ -233,10 +231,8 @@ public class ZUGFeRDInvoiceImporter {
 	 */
 	private void extractFiles(Map<String, PDComplexFileSpecification> names) throws IOException {
 		containsAXMLFileAttachment = false;
-		for (final String alias : names.keySet()) {
-
-			final PDComplexFileSpecification fileSpec = names.get(alias);
-			final String filename = fileSpec.getFilename();
+		for (final Entry<String, PDComplexFileSpecification> entry : names.entrySet()) {
+			final String filename = entry.getValue().getFilename();
 			if (filename.toUpperCase().endsWith(".XML")) {
 				containsAXMLFileAttachment = true;
 			}
@@ -244,7 +240,7 @@ public class ZUGFeRDInvoiceImporter {
 			 * filenames for invoice data (ZUGFeRD v1 and v2, Factur-X)
 			 */
 
-			final PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
+			final PDEmbeddedFile embeddedFile = entry.getValue().getEmbeddedFile();
 			List<String> validFilenames = Arrays.asList(
 				"ZUGFeRD-invoice.xml",
 				"zugferd-invoice.xml",
@@ -275,7 +271,7 @@ public class ZUGFeRDInvoiceImporter {
 			if (filename.startsWith("additional_data")) {
 				additionalXMLs.put(filename, embeddedFile.toByteArray());
 			}
-			PDFAttachments.add(new FileAttachment(filename, embeddedFile.getSubtype(), "Data", embeddedFile.toByteArray()));
+			pdfAttachments.add(new FileAttachment(filename, embeddedFile.getSubtype(), "Data", embeddedFile.toByteArray()));
 		}
 	}
 
@@ -293,7 +289,7 @@ public class ZUGFeRDInvoiceImporter {
 
 		try {
 			setDocument();
-		} catch (ParserConfigurationException | SAXException e) {
+		} catch (ParseException e) {
 			LOGGER.error("Failed to parse XML", e);
 			throw new ZUGFeRDExportException(e);
 		}
@@ -344,12 +340,11 @@ public class ZUGFeRDInvoiceImporter {
 		} catch (Exception e) {
 			return false;
 		}
-		return  ((meta.contains("SpecifiedExchangedDocumentContext")
-			/* ZF1 */ || meta.contains("ExchangedDocumentContext") /* ZF2 */));
+		return meta.contains("SpecifiedExchangedDocumentContext") /* ZF1 */
+				|| meta.contains("ExchangedDocumentContext") /* ZF2 */;
 	}
 
-	private void setDocument() throws ParserConfigurationException, IOException, SAXException, ParseException {
-
+	private void setDocument() throws ParseException {
 		if (canParse()) {
 			// canParse() already parsed rawXML and assigned it to the `document` field
 			if (parseAutomatically) {
@@ -750,8 +745,6 @@ public class ZUGFeRDInvoiceImporter {
 		NodeList headerTradeAgreementNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		String buyerOrderIssuerAssignedID = null;
 		String sellerOrderIssuerAssignedID = null;
-		String additionalReferencedDocument = null;
-		Date additionalReferencedDocumentDate = null;
 
 		for (int i = 0; i < headerTradeAgreementNodes.getLength(); i++) {
 			// XMLTools.trimOrNull(nodes.item(i)))) {
@@ -788,46 +781,64 @@ public class ZUGFeRDInvoiceImporter {
 							}
 						}
 					}
+
 					int typeC = 0;
-					additionalReferencedDocument=null;
-					additionalReferencedDocumentDate=null;
+					String additionalReferencedDocumentID = null;
+					String additionalReferencedDocumentName = null;
+					String additionalReferencedDocumentReferenceTypeCode = null;
+					Date additionalReferencedDocumentDate = null;
 					//Reading BT-17
 					if (headerTradeAgreementChilds.item(agreementChildIndex).getLocalName().equals("AdditionalReferencedDocument")) {
 						NodeList additionalChilds = headerTradeAgreementChilds.item(agreementChildIndex).getChildNodes();
 						for (int additionalChildIndex = 0; additionalChildIndex < additionalChilds.getLength(); additionalChildIndex++) {
-
-							if ((additionalChilds.item(additionalChildIndex).getLocalName() != null)
-								&& additionalChilds.item(additionalChildIndex).getLocalName().equals("TypeCode")) {
-								typeC = Integer.parseInt(XMLTools.trimOrNull(additionalChilds.item(additionalChildIndex)));
-							}
-
-								if ((additionalChilds.item(additionalChildIndex).getLocalName() != null)
-									&& (additionalChilds.item(additionalChildIndex).getLocalName().equals("IssuerAssignedID"))) {
-									additionalReferencedDocument = XMLTools.trimOrNull(additionalChilds.item(additionalChildIndex));
+							if (additionalChilds.item(additionalChildIndex).getLocalName() != null) {
+								if (additionalChilds.item(additionalChildIndex).getLocalName().equals("TypeCode")) {
+									typeC = Integer.parseInt(XMLTools.trimOrNull(additionalChilds.item(additionalChildIndex)));
 								}
-								if ((additionalChilds.item(additionalChildIndex).getLocalName() != null)
-									&& (additionalChilds.item(additionalChildIndex).getLocalName().equals("FormattedIssueDateTime"))) {
-
+								if (additionalChilds.item(additionalChildIndex).getLocalName().equals("IssuerAssignedID")) {
+									additionalReferencedDocumentID = XMLTools.trimOrNull(additionalChilds.item(additionalChildIndex));
+								}
+								if (additionalChilds.item(additionalChildIndex).getLocalName().equals("Name")) {
+									additionalReferencedDocumentName = XMLTools.trimOrNull(additionalChilds.item(additionalChildIndex));
+								}
+								if (additionalChilds.item(additionalChildIndex).getLocalName().equals("ReferenceTypeCode")) {
+									additionalReferencedDocumentReferenceTypeCode = XMLTools.trimOrNull(additionalChilds.item(additionalChildIndex));
+								}
+								if (additionalChilds.item(additionalChildIndex).getLocalName().equals("FormattedIssueDateTime")) {
 									NodeList FormattedIssueDateTimeChilds = additionalChilds.item(additionalChildIndex).getChildNodes();
 									for (int dateChildIndex = 0; dateChildIndex < FormattedIssueDateTimeChilds.getLength(); dateChildIndex++) {
 										if ((FormattedIssueDateTimeChilds.item(dateChildIndex).getLocalName() != null)
-											&& (FormattedIssueDateTimeChilds.item(dateChildIndex).getLocalName().equals("DateTimeString"))) {
+												&& (FormattedIssueDateTimeChilds.item(dateChildIndex).getLocalName().equals("DateTimeString"))) {
 											additionalReferencedDocumentDate = XMLTools.tryDate(FormattedIssueDateTimeChilds.item(dateChildIndex));
 										}
-
 									}
 								}
-
+							}
 						}
 						if (typeC == 50) {
-							if (additionalReferencedDocument != null){
-								if (additionalReferencedDocumentDate!=null) {
-									zpp.setTenderReferencedDocument(new ReferencedDocument(additionalReferencedDocument, additionalReferencedDocumentDate));
-								} else {
-									zpp.setTenderReferencedDocument(additionalReferencedDocument);
-								}
+							if (additionalReferencedDocumentID != null) {
+								ReferencedDocument referencedDocument = new ReferencedDocument(additionalReferencedDocumentID);
+								referencedDocument.setName(additionalReferencedDocumentName);
+								referencedDocument.setReferenceTypeCode(additionalReferencedDocumentReferenceTypeCode);
+								referencedDocument.setFormattedIssueDateTime(additionalReferencedDocumentDate);
+								zpp.setTenderReferencedDocument(referencedDocument);
 							}
-
+						} else if (typeC == 130) {
+							if (additionalReferencedDocumentID != null){
+								ReferencedDocument referencedDocument = new ReferencedDocument(additionalReferencedDocumentID);
+								referencedDocument.setName(additionalReferencedDocumentName);
+								referencedDocument.setReferenceTypeCode(additionalReferencedDocumentReferenceTypeCode);
+								referencedDocument.setFormattedIssueDateTime(additionalReferencedDocumentDate);
+								zpp.setObjectIdentifierReferencedDocument(referencedDocument);
+							}
+						} else if (typeC == 916) {
+							if (additionalReferencedDocumentID != null){
+								ReferencedDocument referencedDocument = new ReferencedDocument(additionalReferencedDocumentID);
+								referencedDocument.setName(additionalReferencedDocumentName);
+								referencedDocument.setReferenceTypeCode(additionalReferencedDocumentReferenceTypeCode);
+								referencedDocument.setFormattedIssueDateTime(additionalReferencedDocumentDate);
+								zpp.setRelatedReferencedDocument(referencedDocument);
+							}
 						}
 					}
 				}
@@ -1436,6 +1447,7 @@ public class ZUGFeRDInvoiceImporter {
 							moreDetails += " and rounding amount "+tc.trans.getRoundingAmount().toPlainString();
 						}
 					} catch (Exception ignored) {
+						// ignore
 					}
 					throw new ArithmeticException("Payable total in XML is " + payableTotalFromXml + ", but calculated total is " + calculatedPayableTotal + moreDetails);
 				}
@@ -1467,10 +1479,10 @@ public class ZUGFeRDInvoiceImporter {
 		}
 		final String result;
 		try {
-			final Document document = getDocument();
+			final Document doc = getDocument();
 			final XPathFactory xpathFact = XPathFactory.newInstance();
 			final XPath xpath = xpathFact.newXPath();
-			result = xpath.evaluate(xpathStr, document);
+			result = xpath.evaluate(xpathStr, doc);
 		} catch (final XPathExpressionException e) {
 			LOGGER.error("Failed to evaluate XPath", e);
 			throw new ZUGFeRDExportException(e);

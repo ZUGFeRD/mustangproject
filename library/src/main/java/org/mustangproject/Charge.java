@@ -11,7 +11,7 @@ import java.math.RoundingMode;
 
 /***
  * Absolute and relative charges for document and item level
- * 
+ *
  * <xs:complexType name="TradeAllowanceChargeType">
  *   <xs:sequence>
  *     <xs:element name="ChargeIndicator" type="udt:IndicatorType"/>
