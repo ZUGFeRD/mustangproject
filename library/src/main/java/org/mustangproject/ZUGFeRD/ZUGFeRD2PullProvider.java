@@ -308,17 +308,23 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 	protected String getItemTotalAllowanceChargeStr(IZUGFeRDAllowanceCharge allowance, IAbsoluteValueProvider item) {
 		String percentage = "";
 		String chargeIndicator = "false";
-		if ((allowance.getPercent() != null) && (profile == Profiles.getByName("Extended"))) {
-			percentage = "<ram:CalculationPercent>" + vatFormat(allowance.getPercent()) + "</ram:CalculationPercent>";
-			// BT-137/BT-142: BasisAmount = the value the percentage is applied to = line subtotal (price/basisQty)*qty
-			percentage += "<ram:BasisAmount>" + currencyFormat(item.getValue().multiply(item.getQuantity())) + "</ram:BasisAmount>";
+		boolean isEN16931 = (profile == Profiles.getByName("XRechnung")) || (profile == Profiles.getByName("EN16931"));
+		if (isEN16931 || (profile == Profiles.getByName("Extended"))) {
+			if (allowance.getPercent() != null) {
+				percentage += "<ram:CalculationPercent>" + vatFormat(allowance.getPercent()) + "</ram:CalculationPercent>";
+			}
+			if (allowance.getBasisAmount() != null) {
+				percentage += "<ram:BasisAmount>" + currencyFormat(allowance.getBasisAmount()) + "</ram:BasisAmount>";
+			} else if (allowance.getPercent() != null) {
+				// BT-137/BT-142: fall back to the line subtotal (price/basisQty)*qty when the caller did not supply BasisAmount
+				percentage += "<ram:BasisAmount>" + currencyFormat(item.getValue().multiply(item.getQuantity())) + "</ram:BasisAmount>";
+			}
 		}
 		if (allowance.isCharge()) {
 			chargeIndicator = "true";
 		}
 
 		String reason = "";
-		boolean isEN16931=(profile == Profiles.getByName("XRechnung")) || (profile == Profiles.getByName("EN16931"));
 		if ((allowance.getReason() != null) && (profile == Profiles.getByName("Extended") || isEN16931)) {
 			reason = "<ram:Reason>" + XMLTools.encodeXML(allowance.getReason()) + "</ram:Reason>";
 		}
