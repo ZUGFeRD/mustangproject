@@ -47,6 +47,37 @@ public class VisualizationTest extends ResourceCase {
 		this.runZUGFeRDVisualization("factur-x-extended.xml", "factur-x-vis-extended.de.html", Language.DE);
 	}
 
+	public void testCIIVisualizationMultiplePaymentMeansBIC() {
+		File CIIinputFile = getResourceAsFile("multiple-payment-means.cii.xml");
+		String result = null;
+		try {
+			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+			result = zvi.visualize(CIIinputFile.getAbsolutePath(), Language.EN);
+		} catch (UnsupportedOperationException e) {
+			fail("UnsupportedOperationException should not happen: " + e.getMessage());
+		} catch (IllegalArgumentException e) {
+			fail("IllegalArgumentException should not happen: " + e.getMessage());
+		} catch (TransformerException e) {
+			fail("TransformerException should not happen: " + e.getMessage());
+		} catch (IOException e) {
+			fail("IOException should not happen: " + e.getMessage());
+		} catch (ParserConfigurationException e) {
+			fail("ParserConfigurationException should not happen: " + e.getMessage());
+		}
+
+		assertNotNull(result);
+		// regression for https://github.com/ZUGFeRD/mustangproject/issues/987:
+		// BICs from other payment means must not be concatenated onto this one
+		assertFalse(result.contains("COBADEFF760;HYVEDEMM419"));
+		assertFalse(result.contains("HYVEDEMM419;OBKLDEMXXXX"));
+		assertFalse(result.contains("OBKLDEMXXXX;SOLADEST600"));
+		// each BIC must still be present, paired with its own IBAN
+		assertTrue(result.contains("COBADEFF760"));
+		assertTrue(result.contains("HYVEDEMM419"));
+		assertTrue(result.contains("OBKLDEMXXXX"));
+		assertTrue(result.contains("SOLADEST600"));
+	}
+
 	public void testUBLCreditNoteVisualizationBasic() {
 		this.runZUGFeRDVisualization("ubl-creditnote.xml", "factur-x-vis-ubl-creditnote.en.html", Language.EN);
 	}
