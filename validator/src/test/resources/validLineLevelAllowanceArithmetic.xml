@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding="UTF-8" standalone="yes"?>
+<!-- Fixture: line-level SpecifiedTradeAllowanceCharge with CalculationPercent.
+     BasisAmount * CalculationPercent / 100 = 64.25 * 10 / 100 = 6.425 -> within 0.02 of ActualAmount 6.42.
+     Validator warning must NOT fire. -->
+<rsm:CrossIndustryInvoice
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"
+    xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100"
+    xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
+    <rsm:ExchangedDocumentContext>
+        <ram:GuidelineSpecifiedDocumentContextParameter>
+            <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended</ram:ID>
+        </ram:GuidelineSpecifiedDocumentContextParameter>
+    </rsm:ExchangedDocumentContext>
+    <rsm:ExchangedDocument>
+        <ram:ID>TEST-VALID-001</ram:ID>
+        <ram:TypeCode>380</ram:TypeCode>
+        <ram:IssueDateTime><udt:DateTimeString format="102">20240101</udt:DateTimeString></ram:IssueDateTime>
+    </rsm:ExchangedDocument>
+    <rsm:SupplyChainTradeTransaction>
+        <ram:IncludedSupplyChainTradeLineItem>
+            <ram:AssociatedDocumentLineDocument>
+                <ram:LineID>1</ram:LineID>
+            </ram:AssociatedDocumentLineDocument>
+            <ram:SpecifiedTradeProduct>
+                <ram:Name>Testartikel</ram:Name>
+            </ram:SpecifiedTradeProduct>
+            <ram:SpecifiedLineTradeAgreement>
+                <ram:NetPriceProductTradePrice>
+                    <ram:ChargeAmount>128.49</ram:ChargeAmount>
+                    <ram:BasisQuantity unitCode="LTR">100.0000</ram:BasisQuantity>
+                </ram:NetPriceProductTradePrice>
+            </ram:SpecifiedLineTradeAgreement>
+            <ram:SpecifiedLineTradeDelivery>
+                <ram:BilledQuantity unitCode="LTR">50.0000</ram:BilledQuantity>
+            </ram:SpecifiedLineTradeDelivery>
+            <ram:SpecifiedLineTradeSettlement>
+                <ram:ApplicableTradeTax>
+                    <ram:TypeCode>VAT</ram:TypeCode>
+                    <ram:CategoryCode>Z</ram:CategoryCode>
+                    <ram:RateApplicablePercent>0.00</ram:RateApplicablePercent>
+                </ram:ApplicableTradeTax>
+                <ram:SpecifiedTradeAllowanceCharge>
+                    <ram:ChargeIndicator>
+                        <udt:Indicator>false</udt:Indicator>
+                    </ram:ChargeIndicator>
+                    <ram:CalculationPercent>10</ram:CalculationPercent>
+                    <!-- BasisAmount = (128.49/100)*50 = 64.245 -> 64.25 (HALF_UP) -->
+                    <ram:BasisAmount>64.25</ram:BasisAmount>
+                    <!-- ActualAmount = 64.245 * 0.10 = 6.4245 -> 6.42; deviation from 6.425 = 0.005 < 0.02 -->
+                    <ram:ActualAmount>6.42</ram:ActualAmount>
+                    <ram:Reason>Positionsrabatt</ram:Reason>
+                </ram:SpecifiedTradeAllowanceCharge>
+                <ram:SpecifiedTradeSettlementLineMonetarySummation>
+                    <ram:LineTotalAmount>57.83</ram:LineTotalAmount>
+                </ram:SpecifiedTradeSettlementLineMonetarySummation>
+            </ram:SpecifiedLineTradeSettlement>
+        </ram:IncludedSupplyChainTradeLineItem>
+        <ram:ApplicableHeaderTradeAgreement>
+            <ram:SellerTradeParty>
+                <ram:Name>Sender GmbH</ram:Name>
+                <ram:SpecifiedTaxRegistration>
+                    <ram:ID schemeID="VA">DE123456789</ram:ID>
+                </ram:SpecifiedTaxRegistration>
+            </ram:SellerTradeParty>
+            <ram:BuyerTradeParty>
+                <ram:Name>Recipient GmbH</ram:Name>
+            </ram:BuyerTradeParty>
+        </ram:ApplicableHeaderTradeAgreement>
+        <ram:ApplicableHeaderTradeDelivery/>
+        <ram:ApplicableHeaderTradeSettlement>
+            <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
+            <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+                <ram:LineTotalAmount>57.83</ram:LineTotalAmount>
+                <ram:TaxBasisTotalAmount>57.83</ram:TaxBasisTotalAmount>
+                <ram:TaxTotalAmount currencyID="EUR">0.00</ram:TaxTotalAmount>
+                <ram:GrandTotalAmount>57.83</ram:GrandTotalAmount>
+                <ram:DuePayableAmount>57.83</ram:DuePayableAmount>
+            </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+        </ram:ApplicableHeaderTradeSettlement>
+    </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>
