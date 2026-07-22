@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC
+  "-//Checkstyle//DTD Checkstyle Configuration 1.2//EN"
+  "https://checkstyle.org/dtds/configuration_1_2.dtd">
+<module name="Checker">
+	<property name="charset" value="UTF-8"/>
+	<property name="fileExtensions" value="java"/>
+
+
+	<module name="RegexpSingleline">
+		<property name="format" value="\s+$"/>
+		<property name="minimum" value="0"/>
+		<property name="maximum" value="0"/>
+		<property name="message" value="Line has trailing whitespaces."/>
+	</module>
+
+	<module name="TreeWalker">
+		<!--
+			Imports Checks: https://checkstyle.sourceforge.io/checks/imports/index.html
+		 -->
+		<module name="AvoidStarImport"/>
+		<module name="IllegalImport"/>
+		<module name="RedundantImport"/>
+		<module name="UnusedImports"/>
+		<!-- 
+			Block Checks: https://checkstyle.sourceforge.io/checks/blocks/index.html
+		-->
+		<module name="LeftCurly"/>
+		<module name="NeedBraces"/>
+		<module name="RightCurly"/>
+		<!--
+			Coding Checks https://checkstyle.sourceforge.io/checks/coding/index.html
+		 -->
+		<module name="AvoidDoubleBraceInitialization"/>
+		<module name="DeclarationOrder"/>
+		<module name="DefaultComesLast"/>
+		<module name="EmptyStatement"/>
+		<module name="ExplicitInitialization"/>
+		<module name="FallThrough"/>
+		<module name="OneStatementPerLine"/>
+		<module name="UnnecessarySemicolonAfterOuterTypeDeclaration"/>
+		<module name="UnnecessarySemicolonAfterTypeMemberDeclaration"/>
+		<module name="UnnecessarySemicolonInEnumeration"/>
+		<module name="UnnecessarySemicolonInTryWithResources"/>
+		<module name="UnusedLocalVariable"/>
+
+		<!--
+			Whitespace Checks: https://checkstyle.sourceforge.io/checks/whitespace/index.html
+		 -->
+		<module name="SingleSpaceSeparator"/>
+		<module name="WhitespaceAfter"/>
+		<module name="WhitespaceAround"/>
+		<!--
+			Design Checks: https://checkstyle.sourceforge.io/checks/design/index.html
+		-->
+		<module name="FinalClass"/>
+
+		<!-- Miscellaneous -->
+		<module name="ArrayTypeStyle"/>
+
+		<!--  Modifiers -->
+		<module name="ModifierOrder"/>
+		<module name="RedundantModifier"/>
+	</module>
+</module>
