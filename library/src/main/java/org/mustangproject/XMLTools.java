@@ -87,8 +87,7 @@ public class XMLTools extends XMLWriter {
 		return dbf.newDocumentBuilder();
 	}
 
-	public static Validator getValidator(URL schemaFile) throws SAXException
-	{
+	public static Validator getValidator(URL schemaFile) throws SAXException {
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		try {
 			schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -106,8 +105,7 @@ public class XMLTools extends XMLWriter {
 		return validator;
 	}
 
-	public static TransformerFactory getTransformerFactory()
-	{
+	public static TransformerFactory getTransformerFactory() {
 		TransformerFactory factory = new net.sf.saxon.TransformerFactoryImpl();
 		try {
 			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -192,11 +190,11 @@ public class XMLTools extends XMLWriter {
 	 * @return value as String with decimals in the specified range
 	 */
 	public static String nDigitFormatDecimalRange(BigDecimal value, int maxDecimals, int minDecimals) {
-		if ((maxDecimals<minDecimals)||(maxDecimals<0)||(minDecimals<0)) {
+		if (maxDecimals < minDecimals || maxDecimals < 0 || minDecimals < 0) {
 			throw new IllegalArgumentException("Invalid scale range provided");
 		}
-		int curDecimals=maxDecimals;
-		while  ( (curDecimals>minDecimals) && (value.setScale(curDecimals, RoundingMode.HALF_UP).compareTo(value.setScale(curDecimals-1, RoundingMode.HALF_UP))==0)) {
+		int curDecimals = maxDecimals;
+		while (curDecimals > minDecimals && value.setScale(curDecimals, RoundingMode.HALF_UP).compareTo(value.setScale(curDecimals - 1, RoundingMode.HALF_UP)) == 0) {
 			 curDecimals--;
 		}
 		return value.setScale(curDecimals, RoundingMode.HALF_UP).toPlainString();
@@ -224,7 +222,7 @@ public class XMLTools extends XMLWriter {
 	 */
 	public static Date tryDate(String toParse) {
 		SimpleDateFormat formatter = null;
-		if (toParse==null) {
+		if (toParse == null) {
 			return null;
 		}
 		if (toParse.contains("-")) {
@@ -302,7 +300,7 @@ public class XMLTools extends XMLWriter {
 	 */
 	public static byte[] removeBOM(byte[] zugferdRaw) {
 		final byte[] zugferdData;
-		// This handles the UTF-8 BOM 
+		// This handles the UTF-8 BOM
 		if ((zugferdRaw[0] == (byte) 0xEF) && (zugferdRaw[1] == (byte) 0xBB) && (zugferdRaw[2] == (byte) 0xBF)) {
 			// I don't like BOMs, lets remove it
 			zugferdData = new byte[zugferdRaw.length - 3];

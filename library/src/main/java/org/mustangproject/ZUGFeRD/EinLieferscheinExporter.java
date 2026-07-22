@@ -25,18 +25,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class EinLieferscheinExporter implements IExporter  {
+public class EinLieferscheinExporter implements IExporter {
 	IXMLProvider xmlProvider;
 	IExportableTransaction trans;
 
 	public EinLieferscheinExporter() {
-		xmlProvider=new UBLDAPullProvider();
+		xmlProvider = new UBLDAPullProvider();
 	}
 
 
 	@Override
 	public IExporter setTransaction(IExportableTransaction trans) throws IOException {
-		this.trans=trans;
+		this.trans = trans;
 		return this;
 	}
 
@@ -49,7 +49,7 @@ public class EinLieferscheinExporter implements IExporter  {
 	@Override
 	public void export(OutputStream output) throws IOException {
 		xmlProvider.generateXML(trans);
-		byte[] bytes=xmlProvider.getXML();
+		byte[] bytes = xmlProvider.getXML();
 		output.write(bytes, 0, bytes.length);
 	}
 }

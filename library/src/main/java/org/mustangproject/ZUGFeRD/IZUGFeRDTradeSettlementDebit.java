@@ -30,7 +30,6 @@ public interface IZUGFeRDTradeSettlementDebit extends IZUGFeRDTradeSettlement {
 				+ "<ram:PayerPartyDebtorFinancialAccount>"
 				+ "<ram:IBANID>" + XMLTools.encodeXML(getIBAN()) + "</ram:IBANID>"
 				+ "</ram:PayerPartyDebtorFinancialAccount>";
-		
 		xml += "</ram:SpecifiedTradeSettlementPaymentMeans>";
 		return xml;
 	}

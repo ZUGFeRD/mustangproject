@@ -1,17 +1,21 @@
 package org.mustangproject;
 
-import com.fasterxml.jackson.annotation.*;
-import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
-import org.mustangproject.util.NodeMap;
-import org.w3c.dom.Node;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
+import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
+import org.mustangproject.util.NodeMap;
+import org.w3c.dom.Node;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 /***
  * describes a product, good or service used in an invoice item line
@@ -20,20 +24,21 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 
 public class Product implements IZUGFeRDExportableProduct {
+	private static final HashMap<String, HashMap<String, String>> unitAbbrevs = new HashMap<>();
+
 	protected String unit, name, sellerAssignedID, buyerAssignedID;
 	protected String description = "";
-	protected String taxExemptionReason = null;
-	protected String taxExemptionReasonCode = null;
-	protected String taxCategoryCode = null;
-	protected BigDecimal VATPercent;
-	protected boolean isReverseCharge = false;
-	protected boolean isIntraCommunitySupply = false;
-	protected SchemedID globalId = null;
-	protected String countryOfOrigin = null;
-	protected ArrayList<Charge> charges=new ArrayList<>();
-	protected ArrayList<Allowance> allowances=new ArrayList<>();
+	protected String taxExemptionReason;
+	protected String taxExemptionReasonCode;
+	protected String taxCategoryCode;
+	protected BigDecimal vatPercent;
+	protected boolean isReverseCharge;
+	protected boolean isIntraCommunitySupply;
+	protected SchemedID globalId;
+	protected String countryOfOrigin;
+	protected ArrayList<Charge> charges = new ArrayList<>();
+	protected ArrayList<Allowance> allowances = new ArrayList<>();
 	protected HashMap<String, String> attributes = new HashMap<>();
-
 	protected List<IDesignatedProductClassification> classifications = new ArrayList<>();
 
 	/***
@@ -47,7 +52,7 @@ public class Product implements IZUGFeRDExportableProduct {
 		this.unit = unit;
 		this.name = name;
 		this.description = description;
-		this.VATPercent = VATPercent;
+		this.vatPercent = VATPercent;
 	}
 
 	public Product(Node node) {
@@ -82,13 +87,13 @@ public class Product implements IZUGFeRDExportableProduct {
 
 		//UBL
 		nodeMap.getAsNodeMap("AdditionalItemProperty").ifPresent(aipNodes -> {
-			String name = aipNodes.getAsStringOrNull("Name");
-			String val = aipNodes.getAsStringOrNull("Value");
-			if (name != null && val != null) {
+			String propertyName = aipNodes.getAsStringOrNull("Name");
+			String propertyValue = aipNodes.getAsStringOrNull("Value");
+			if (propertyName != null && propertyValue != null) {
 				if (attributes == null) {
 					attributes = new HashMap<>();
 				}
-				attributes.put(name, val);
+				attributes.put(propertyName, propertyValue);
 			}
 		});
 
@@ -249,7 +254,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	 */
 	public Product setReverseCharge() {
 		isReverseCharge = true;
-		if ((getTaxExemptionReason()==null)||(getTaxExemptionReason().isEmpty())) {
+		if (getTaxExemptionReason() == null || getTaxExemptionReason().isEmpty()) {
 			setTaxExemptionReason("Reverse charge");
 		}
 		setVATPercent(BigDecimal.ZERO);
@@ -319,7 +324,7 @@ public class Product implements IZUGFeRDExportableProduct {
 
 	@Override
 	public BigDecimal getVATPercent() {
-		return VATPercent;
+		return vatPercent;
 	}
 
 	/****
@@ -329,9 +334,9 @@ public class Product implements IZUGFeRDExportableProduct {
 	 */
 	public Product setVATPercent(BigDecimal VATPercent) {
 		if (VATPercent == null) {
-			this.VATPercent = BigDecimal.ZERO;
+			this.vatPercent = BigDecimal.ZERO;
 		} else {
-			this.VATPercent = VATPercent;
+			this.vatPercent = VATPercent;
 		}
 		return this;
 	}
@@ -434,8 +439,9 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * Jackson courtesy function, please use addCharge if you have the choice
 	 * @return array of or null, if none
 	 */
-	public Product setCharges(ArrayList<Charge> charges) {
-		this.charges=charges;
+	public Product setCharges(List<Charge> charges) {
+		this.charges.clear();
+		this.charges.addAll(charges);
 		return this;
 	}
 
@@ -445,7 +451,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	 */
 	@Override
 	public Charge[] getCharges() {
-		if (charges.size()==0) {
+		if (charges.isEmpty()) {
 			return null;
 		}
 		Charge[] chargeArr = new Charge[charges.size()];
@@ -458,7 +464,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @return array of or null, if none
 	 */
 	public Allowance[] getAllowances() {
-		if (allowances.size()==0) {
+		if (allowances.isEmpty()) {
 			return null;
 		}
 		Allowance[] allowanceArr = new Allowance[allowances.size()];
@@ -469,13 +475,11 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * Jackson courtesy function, please use addAllowance if you have the choice
 	 * @return array of or null, if none
 	 */
-	public Product setAllowances(ArrayList<Allowance> allowances) {
-		this.allowances=allowances;
+	public Product setAllowances(List<Allowance> allowances) {
+		this.allowances.clear();
+		this.allowances.addAll(allowances);
 		return this;
 	}
-
-
-	private static final HashMap<String, HashMap<String, String>> unitAbbrevs = new HashMap<>();
 
 	static {
 		HashMap<String, String> inner1 = new HashMap<>();
@@ -538,7 +542,7 @@ public class Product implements IZUGFeRDExportableProduct {
 		}
 		if (unitAbbrevs.get(language).containsKey(unitcode)) {
 			return unitAbbrevs.get(language).get(unitcode);
-		} else{
+		} else {
 			return unitcode;
 		}
 	}

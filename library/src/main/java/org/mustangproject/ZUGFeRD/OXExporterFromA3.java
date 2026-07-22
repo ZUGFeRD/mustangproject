@@ -26,7 +26,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -72,63 +71,24 @@ import jakarta.activation.FileDataSource;
 
 public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
-	protected PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
-	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<>();
-
-	/**
-	 * This flag controls whether or not the metadata is overwritten, or kind of merged.
-	 * The merging probably needs to be overhauled, but for my purpose it was good enough.
-	 */
-	protected boolean overwrite = true;
+	protected String orderXDocumentType = "ORDER";
 
 	private boolean disableAutoClose;
-	private boolean fileAttached = false;
-	private Profile profile = null;
-	private boolean documentPrepared = false;
+	private boolean fileAttached;
+	private Profile profile;
 
-	/**
-	 * Data (XML invoice) to be added to the ZUGFeRD PDF. It may be externally set,
-	 * in which case passing a IZUGFeRDExportableTransaction is not necessary. By
-	 * default it is null meaning the caller needs to pass a
-	 * IZUGFeRDExportableTransaction for the XML to be populated.
-	 */
-	protected PDMetadata metadata = null;
-	/**
-	 * Producer attribute for PDF
-	 */
-	protected String producer = "mustangproject";
-	/**
-	 * Author/Creator attribute for PDF
-	 */
-	protected String creator = "mustangproject";
-	/**
-	 * CreatorTool
-	 */
-	protected String creatorTool = "mustangproject";
-
-	/**
-	 * @deprecated author is never set yet
-	 */
-	@Deprecated
-	protected String author;
-	/**
-	 * @deprecated title is never set yet
-	 */
-	@Deprecated
-	protected String title;
-	/**
-	 * @deprecated subject is never set yet
-	 */
-	@Deprecated
-	protected String subject;
+	/** Defines whether attachments to the PDF should be using FLATE compression */
+	private boolean compressionEnabled;
 
 	/**
 	 * OrderX document type. As of version 1.0 it may be
 	 * ORDER, ORDER_RESPONSE, or ORDER_CHANGE
 	 */
-	protected String orderXDocumentType = "ORDER";
-
 	private boolean attachZUGFeRDHeaders = true;
+
+	public OXExporterFromA3() {
+		super();
+	}
 
 	/***
 	 * internal helper function: get namespace for order-x
@@ -149,9 +109,6 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		return "fx";
 	}
 
-	/** Defines whether attachments to the PDF should be using FLATE compression */
-	private boolean compressionEnabled = false;
-
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
 	 * metadata level, this will not e.g. convert graphics to JPG-2000)
@@ -159,7 +116,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @param pdfFilename filename of an PDF/A1 compliant document
 	 */
 	@Override
-  public OXExporterFromA3 load(String pdfFilename) throws IOException {
+	public OXExporterFromA3 load(String pdfFilename) throws IOException {
 
 		ensurePDFIsValid(new FileDataSource(pdfFilename));
 		try (FileInputStream pdf = new FileInputStream(pdfFilename)) {
@@ -168,12 +125,12 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	}
 
 	@Override
-  public IXMLProvider getProvider() {
+	public IXMLProvider getProvider() {
 		return xmlProvider;
 	}
 
 	@Override
-  public OXExporterFromA3 setProfile(Profile p) {
+	public OXExporterFromA3 setProfile(Profile p) {
 		this.profile = p;
 		if (xmlProvider != null) {
 			xmlProvider.setProfile(p);
@@ -182,7 +139,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	}
 
 	@Override
-  public OXExporterFromA3 setProfile(String profilename) {
+	public OXExporterFromA3 setProfile(String profilename) {
 		this.profile = Profiles.getByName(profilename);
 
 		if (xmlProvider != null) {
@@ -192,12 +149,10 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	}
 
 	@Override
-  public OXExporterFromA3 addAdditionalFile(String name, byte[] content) {
+	public OXExporterFromA3 addAdditionalFile(String name, byte[] content) {
 		fileAttachments.add(new FileAttachment(name, "text/xml", "Supplement", content).setDescription("ZUGFeRD extension/additional data"));
 		return this;
 	}
-
-
 
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
@@ -206,23 +161,19 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @param pdfBinary binary of a PDF/A1 compliant document
 	 */
 	@Override
-  public OXExporterFromA3 load(byte[] pdfBinary) throws IOException {
+	public OXExporterFromA3 load(byte[] pdfBinary) throws IOException {
 		ensurePDFIsValid(new ByteArrayDataSource(new ByteArrayInputStream(pdfBinary)));
 		doc = Loader.loadPDF(pdfBinary);
 		return this;
 	}
 
-	public OXExporterFromA3() {
-		super();
-	}
-
 	@Override
-  public void attachFile(FileAttachment file) {
+	public void attachFile(FileAttachment file) {
 		fileAttachments.add(file);
 	}
 
 	@Override
-  public void attachFile(String filename, byte[] data, String mimetype, String relation) {
+	public void attachFile(String filename, byte[] data, String mimetype, String relation) {
 		FileAttachment fa = new FileAttachment(filename, mimetype, relation, data);
 		fileAttachments.add(fa);
 	}
@@ -233,7 +184,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @throws IOException if anything is wrong in the target location
 	 */
 	@Override
-  public void export(String ZUGFeRDfilename) throws IOException {
+	public void export(String ZUGFeRDfilename) throws IOException {
 		if (!documentPrepared) {
 			prepareDocument();
 		}
@@ -261,7 +212,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @throws IOException if anything is wrong in the OutputStream
 	 */
 	@Override
-  public void export(OutputStream output) throws IOException {
+	public void export(OutputStream output) throws IOException {
 		if (!documentPrepared) {
 			prepareDocument();
 		}
@@ -288,7 +239,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @throws java.io.IOException if anything is wrong with filename
 	 */
 	@Override
-  public void PDFAttachGenericFile(String filename, String relationship, String description,
+	public void PDFAttachGenericFile(String filename, String relationship, String description,
 									 String subType, byte[] data) throws IOException {
 		PDFAttachGenericFile(this.doc, filename, relationship, description, subType, data);
 	}
@@ -306,7 +257,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @throws IOException if anything is wrong with filename
 	 */
 	@Override
-  public void PDFAttachGenericFile(PDDocument doc, String filename, String relationship, String description,
+	public void PDFAttachGenericFile(PDDocument doc, String filename, String relationship, String description,
 									 String subType, byte[] data) throws IOException {
 		fileAttached = true;
 
@@ -346,9 +297,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 		Map<String, PDComplexFileSpecification> oldNamesMap = efTree.getNames();
 		if (oldNamesMap != null) {
-			for (String key : oldNamesMap.keySet()) {
-				namesMap.put(key, oldNamesMap.get(key));
-			}
+			namesMap.putAll(oldNamesMap);
 		}
 		namesMap.put(filename, fs);
 		efTree.setNames(namesMap);
@@ -384,7 +333,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @throws IOException (should not happen)
 	 */
 	@Override
-  public OXExporterFromA3 setXML(byte[] zugferdData) throws IOException {
+	public OXExporterFromA3 setXML(byte[] zugferdData) throws IOException {
 		CustomXMLProvider cus = new CustomXMLProvider();
 		cus.setXML(zugferdData);
 		this.setXMLProvider(cus);
@@ -400,12 +349,12 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @param pdfSource source to read a PDF/A1 compliant document from
 	 */
 	@Override
-  public OXExporterFromA3 load(InputStream pdfSource) throws IOException {
+	public OXExporterFromA3 load(InputStream pdfSource) throws IOException {
 		return load(readAllBytes(pdfSource));
 	}
 
 	@Override
-  public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
+	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
 		return true;
 	}
 
@@ -429,26 +378,26 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * Feel free to pass "A" as new level if you know what you are doing :-)
 	 */
 	@Override
-  public OXExporterFromA3 setConformanceLevel(PDFAConformanceLevel newLevel) {
+	public OXExporterFromA3 setConformanceLevel(PDFAConformanceLevel newLevel) {
 		conformanceLevel = newLevel;
 		return this;
 	}
 
 
 	@Override
-  public OXExporterFromA3 setCreator(String creator) {
+	public OXExporterFromA3 setCreator(String creator) {
 		this.creator = creator;
 		return this;
 	}
 
 	@Override
-  public OXExporterFromA3 setCreatorTool(String creatorTool) {
+	public OXExporterFromA3 setCreatorTool(String creatorTool) {
 		this.creatorTool = creatorTool;
 		return this;
 	}
 
 	@Override
-  public OXExporterFromA3 setProducer(String producer) {
+	public OXExporterFromA3 setProducer(String producer) {
 		this.producer = producer;
 		return this;
 	}
@@ -460,15 +409,14 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 *
 	 * @return this exporter
 	 */
-	public OXExporterFromA3 setOrderXDocumentType(String orderXDocumentType)
-	{
+	public OXExporterFromA3 setOrderXDocumentType(String orderXDocumentType) {
 		this.orderXDocumentType = orderXDocumentType;
 
 		return this;
 	}
 
 	@Override
-  protected OXExporterFromA3 setAttachZUGFeRDHeaders(boolean attachHeaders) {
+	protected OXExporterFromA3 setAttachZUGFeRDHeaders(boolean attachHeaders) {
 		this.attachZUGFeRDHeaders = attachHeaders;
 		return this;
 	}
@@ -482,7 +430,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @param metadata the PDFbox XMPMetadata object
 	 */
 	@Override
-  protected void addXMP(XMPMetadata metadata) {
+	protected void addXMP(XMPMetadata metadata) {
 
 		if (attachZUGFeRDHeaders) {
 			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, 1, true, xmlProvider.getProfile(),
@@ -492,7 +440,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 			metadata.addSchema(zf);
 			// also add the schema extensions...
-			XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(this, metadata, 1, attachZUGFeRDHeaders, EStandard.orderx);
+			XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(this, metadata, 1, attachZUGFeRDHeaders, EStandard.ORDER_X);
 			pdfaex.setZUGFeRDVersion(1);
 			metadata.addSchema(pdfaex);
 		}
@@ -510,13 +458,13 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @throws IOException if anything is wrong with already loaded PDF
 	 */
 	@Override
-  public IExporter setTransaction(IExportableTransaction trans) throws IOException {
+	public IExporter setTransaction(IExportableTransaction trans) throws IOException {
 		this.trans = trans;
 		return prepare();
 	}
 
 	@Override
-  public IExporter prepare() throws IOException {
+	public IExporter prepare() throws IOException {
 		prepareDocument();
 		xmlProvider.generateXML(trans);
 		String filename = "order-x.xml";
@@ -536,7 +484,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * Otherwise creates XMPMetadata.
 	 */
 	@Override
-  protected XMPMetadata getXmpMetadata() throws IOException {
+	protected XMPMetadata getXmpMetadata() throws IOException {
 		PDMetadata meta = doc.getDocumentCatalog().getMetadata();
 		if ((meta != null) && (meta.getLength() > 0)) {
 			try {
@@ -550,7 +498,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	}
 
 	@Override
-  protected byte[] serializeXmpMetadata(XMPMetadata xmpMetadata) throws TransformerException {
+	protected byte[] serializeXmpMetadata(XMPMetadata xmpMetadata) throws TransformerException {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		new XmpSerializer().serialize(xmpMetadata, buffer, true); // see https://github.com/ZUGFeRD/mustangproject/issues/44
 		return buffer.toByteArray();
@@ -561,10 +509,11 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * Sets the PDFVersion to 1.4 if the field is empty.
 	 */
 	@Override
-  protected void writeAdobePDFSchema(XMPMetadata xmp) {
+	protected void writeAdobePDFSchema(XMPMetadata xmp) {
 		AdobePDFSchema pdf = getAdobePDFSchema(xmp);
-		if (overwrite || isBlank(pdf.getProducer()))
+		if (overwrite || isBlank(pdf.getProducer())) {
 			pdf.setProducer(producer);
+		}
 	}
 
 	/**
@@ -572,18 +521,20 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * If the overwrite flag is set or no AdobePDFSchema exists in the XMPMetadata, it is created, added and returned.
 	 */
 	@Override
-  protected AdobePDFSchema getAdobePDFSchema(XMPMetadata xmp) {
+	protected AdobePDFSchema getAdobePDFSchema(XMPMetadata xmp) {
 		AdobePDFSchema pdf = xmp.getAdobePDFSchema();
-		if (pdf != null)
-			if (overwrite)
+		if (pdf != null) {
+			if (overwrite) {
 				xmp.removeSchema(pdf);
-			else
+			} else {
 				return pdf;
+			}
+		}
 		return xmp.createAndAddAdobePDFSchema();
 	}
 
 	@Override
-  protected void writePDFAIdentificationSchema(XMPMetadata xmp) {
+	protected void writePDFAIdentificationSchema(XMPMetadata xmp) {
 		PDFAIdentificationSchema pdfaid = getPDFAIdentificationSchema(xmp);
 		if (overwrite || isBlank(pdfaid.getConformance())) {
 			try {
@@ -599,25 +550,30 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	}
 
 	@Override
-  protected PDFAIdentificationSchema getPDFAIdentificationSchema(XMPMetadata xmp) {
+	protected PDFAIdentificationSchema getPDFAIdentificationSchema(XMPMetadata xmp) {
 		PDFAIdentificationSchema pdfaid = xmp.getPDFAIdentificationSchema();
-		if (pdfaid != null)
-			if (overwrite)
+		if (pdfaid != null) {
+			if (overwrite) {
 				xmp.removeSchema(pdfaid);
-			else
+			} else {
 				return pdfaid;
+			}
+		}
 		return xmp.createAndAddPDFAIdentificationSchema();
 	}
 
 	@Override
-  protected void writeDublinCoreSchema(XMPMetadata xmp) {
+	protected void writeDublinCoreSchema(XMPMetadata xmp) {
 		DublinCoreSchema dc = getDublinCoreSchema(xmp);
-		if (dc.getFormat() == null)
+		if (dc.getFormat() == null) {
 			dc.setFormat("application/pdf");
-		if ((overwrite || dc.getCreators() == null || dc.getCreators().isEmpty()) && creator != null)
+		}
+		if ((overwrite || dc.getCreators() == null || dc.getCreators().isEmpty()) && creator != null) {
 			dc.addCreator(creator);
-		if ((overwrite || dc.getDates() == null || dc.getDates().isEmpty()) && creator != null)
+		}
+		if ((overwrite || dc.getDates() == null || dc.getDates().isEmpty()) && creator != null) {
 			dc.addDate(Calendar.getInstance());
+		}
 
 		ArrayProperty titleProperty = dc.getTitleProperty();
 		if (titleProperty != null) {
@@ -634,67 +590,79 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	}
 
 	@Override
-  protected DublinCoreSchema getDublinCoreSchema(XMPMetadata xmp) {
+	protected DublinCoreSchema getDublinCoreSchema(XMPMetadata xmp) {
 		DublinCoreSchema dc = xmp.getDublinCoreSchema();
-		if (dc != null)
-			if (overwrite)
+		if (dc != null) {
+			if (overwrite) {
 				xmp.removeSchema(dc);
-			else
+			} else {
 				return dc;
+			}
+		}
 		return xmp.createAndAddDublinCoreSchema();
 	}
 
 	@Override
-  protected void writeXMLBasicSchema(XMPMetadata xmp) {
+	protected void writeXMLBasicSchema(XMPMetadata xmp) {
 		XMPBasicSchema xsb = getXmpBasicSchema(xmp);
-		if (overwrite || isBlank(xsb.getCreatorTool()) || "UnknownApplication".equals(xsb.getCreatorTool()))
+		if (overwrite || isBlank(xsb.getCreatorTool()) || "UnknownApplication".equals(xsb.getCreatorTool())) {
 			xsb.setCreatorTool(creatorTool);
-		if (overwrite || xsb.getCreateDate() == null)
+		}
+		if (overwrite || xsb.getCreateDate() == null) {
 			xsb.setCreateDate(Calendar.getInstance());
+		}
 	}
 
 	@Override
-  protected XMPBasicSchema getXmpBasicSchema(XMPMetadata xmp) {
+	protected XMPBasicSchema getXmpBasicSchema(XMPMetadata xmp) {
 		XMPBasicSchema xsb = xmp.getXMPBasicSchema();
-		if (xsb != null)
-			if (overwrite)
+		if (xsb != null) {
+			if (overwrite) {
 				xmp.removeSchema(xsb);
-			else
+			} else {
 				return xsb;
+			}
+		}
 		return xmp.createAndAddXMPBasicSchema();
 	}
 
 	@Override
-  protected void writeDocumentInformation() {
+	protected void writeDocumentInformation() {
 		String fullProducer = producer + " (via mustangproject.org " + Version.VERSION + ")";
 		PDDocumentInformation info = doc.getDocumentInformation();
-		if (overwrite || info.getCreationDate() == null)
+		if (overwrite || info.getCreationDate() == null) {
 			info.setCreationDate(Calendar.getInstance());
-		if (overwrite || info.getModificationDate() == null)
+		}
+		if (overwrite || info.getModificationDate() == null) {
 			info.setModificationDate(Calendar.getInstance());
-		if (overwrite || (isBlank(info.getAuthor()) && isNotBlank(author)))
+		}
+		if (overwrite || (isBlank(info.getAuthor()) && isNotBlank(author))) {
 			info.setAuthor(author);
-		if (overwrite || (isBlank(info.getProducer()) && isNotBlank(fullProducer)))
+		}
+		if (overwrite || (isBlank(info.getProducer()) && isNotBlank(fullProducer))) {
 			info.setProducer(fullProducer);
-		if (overwrite || (isBlank(info.getCreator()) && isNotBlank(creator)))
+		}
+		if (overwrite || (isBlank(info.getCreator()) && isNotBlank(creator))) {
 			info.setCreator(creator);
-		if (overwrite || (isBlank(info.getTitle()) && isNotBlank(title)))
+		}
+		if (overwrite || (isBlank(info.getTitle()) && isNotBlank(title))) {
 			info.setTitle(title);
-		if (overwrite || (isBlank(info.getSubject()) && isNotBlank(subject)))
+		}
+		if (overwrite || (isBlank(info.getSubject()) && isNotBlank(subject))) {
 			info.setSubject(subject);
+		}
 	}
 
 	/**
 	 * Adds an OutputIntent and the sRGB color profile if no OutputIntent exist
 	 */
 	@Override
-  protected void addSRGBOutputIntend() throws IOException {
+	protected void addSRGBOutputIntend() throws IOException {
 		if (!doc.getDocumentCatalog().getOutputIntents().isEmpty()) {
 			return;
 		}
 
-		try {
-			InputStream colorProfile = Thread.currentThread().getContextClassLoader().getResourceAsStream("sRGB.icc");
+		try (InputStream colorProfile = Thread.currentThread().getContextClassLoader().getResourceAsStream("sRGB.icc")) {
 			if (colorProfile != null) {
 				PDOutputIntent intent = new PDOutputIntent(doc, colorProfile);
 				intent.setInfo("sRGB IEC61966-2.1");
@@ -712,7 +680,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * Adds a MarkInfo element to the PDF if it doesn't already exist and sets it as marked.
 	 */
 	@Override
-  protected void setMarked() {
+	protected void setMarked() {
 		PDDocumentCatalog catalog = doc.getDocumentCatalog();
 		if (catalog.getMarkInfo() == null) {
 			catalog.setMarkInfo(new PDMarkInfo(doc.getPages().getCOSObject()));
@@ -724,7 +692,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * Adds a StructureTreeRoot element to the PDF if it doesn't already exist.
 	 */
 	@Override
-  protected void addStructureTreeRoot() {
+	protected void addStructureTreeRoot() {
 		if (doc.getDocumentCatalog().getStructureTreeRoot() == null) {
 			doc.getDocumentCatalog().setStructureTreeRoot(new PDStructureTreeRoot());
 		}
@@ -735,7 +703,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @return if pdf file will be automatically closed after adding ZF
 	 */
 	@Override
-  public boolean isAutoCloseDisabled() {
+	public boolean isAutoCloseDisabled() {
 		return disableAutoClose;
 	}
 
@@ -743,13 +711,13 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	 * @param disableAutoClose prevent PDF file from being closed after adding ZF
 	 */
 	@Override
-  public OXExporterFromA3 disableAutoClose(boolean disableAutoClose) {
+	public OXExporterFromA3 disableAutoClose(boolean disableAutoClose) {
 		this.disableAutoClose = disableAutoClose;
 		return this;
 	}
 
 	@Override
-  protected void setXMLProvider(IXMLProvider p) {
+	protected void setXMLProvider(IXMLProvider p) {
 		this.xmlProvider = p;
 		if (profile != null) {
 			xmlProvider.setProfile(profile);

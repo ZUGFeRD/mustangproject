@@ -9,13 +9,14 @@ import org.slf4j.Logger;
 public class ValidationContext {
 	protected Vector<ValidationResultItem> results;
 	protected String customXML = "";
-	private String format = "CII";// CII or UBL
-	private String generation = null; // generation 1 is ZF1, gen 2 is ZF2, XRechnung, Factur-X or UBL
-	private String profile = null;
-	private String signature = null;
-	private boolean isValid = true;
-	private boolean hasPDF = false;
 	protected Logger logger;
+
+	private String format = "CII"; // CII or UBL
+	private String generation; // generation 1 is ZF1, gen 2 is ZF2, XRechnung, Factur-X or UBL
+	private String profile;
+	private String signature;
+	private boolean isValid = true;
+	private boolean hasPDF;
 	private String filename;
 
 	public ValidationContext(Logger log) {
@@ -24,7 +25,7 @@ public class ValidationContext {
 	}
 
 	public void setHasPDF() {
-		hasPDF=true;
+		hasPDF = true;
 	}
 
 	public boolean hasPDF() {
@@ -60,7 +61,7 @@ public class ValidationContext {
 	public void clearCustomXML() {
 		customXML = "";
 	}
-	
+
 	public void addCustomXML(String XML) {
 		customXML += XML;
 	}
@@ -70,7 +71,7 @@ public class ValidationContext {
 	}
 
 	public void setFormat(String format) {
-		this.format=format;
+		this.format = format;
 	}
 
 	public ValidationContext setGeneration(String version) {
@@ -108,10 +109,6 @@ public class ValidationContext {
 		results.clear();
 		isValid = true;
 		clearCustomXML();
-		generation = null;
-		profile = null;
-		signature = null;
-
 	}
 
 	public String getXMLResult() {
@@ -135,7 +132,7 @@ public class ValidationContext {
 	public String getCSVResult() {
 		final ArrayList<String> errorcodes = new ArrayList<>();
 		for (final ValidationResultItem validationResultItem : results) {
-			final String errorCodeStr=Integer.toString(validationResultItem.getSection());
+			final String errorCodeStr = Integer.toString(validationResultItem.getSection());
 			errorcodes.add(errorCodeStr);
 		}
 		return String.join(",", errorcodes);
@@ -149,7 +146,7 @@ public class ValidationContext {
 		final ArrayList<String> errorIDs = new ArrayList<>();
 		for (final ValidationResultItem validationResultItem : results) {
 			if (!validationResultItem.getID().isEmpty()) {
-				final String errorID=validationResultItem.getID();
+				final String errorID = validationResultItem.getID();
 				errorIDs.add(errorID);
 
 			}
@@ -162,10 +159,10 @@ public class ValidationContext {
 	}
 
 	public void setFilename(String filename) {
-		this.filename=filename;
+		this.filename = filename;
 	}
 	public String getFilename() {
-		if (filename==null) {
+		if (filename == null) {
 			return "";
 		} else {
 			return filename;

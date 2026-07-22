@@ -46,7 +46,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
@@ -231,7 +230,7 @@ public class XRTest extends TestCase {
 			.evaluate(taxNode2);
 		Assertions.assertTrue(BigDecimal.valueOf(5).compareTo(new BigDecimal(basisAmount2)) == 0);
 	}
-	
+
 	public void testXRExportWithoutStreet() {
 
 		// the writing part
@@ -260,7 +259,7 @@ public class XRTest extends TestCase {
 		}
 
 	}
-	
+
 	public void testTaxExemptionReasonIssue() {
 		String orgname = "Test company";
 		String number = "123";
@@ -289,7 +288,7 @@ public class XRTest extends TestCase {
 			.asInt()
 			.isEqualTo(2);
 	}
-	
+
 
 	public void testApplicablePercentInUntaxedService() {
 

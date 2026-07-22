@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,9 +21,9 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.mustangproject.util.ByteArraySearcher;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
+import org.mustangproject.util.ByteArraySearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.verapdf.features.FeatureExtractorConfig;
@@ -47,13 +48,25 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class PDFValidator extends Validator {
+	private static final Logger LOGGER = LoggerFactory.getLogger(PDFValidator.class.getCanonicalName()); // log output
+
+	private static final PDFAFlavour[] PDF_A_3_FLAVOURS = {PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_B, PDFAFlavour.PDFA_3_U};
+
+	private String pdfFilename;
+
+	private byte[] fileContents;
+
+	private String pdfReport;
+
+	private ProcessorResult processorResult;
+
+	private String signature;
+
+	private String zfXML;
 
 	public PDFValidator(ValidationContext ctx) {
 		super(ctx);
 	}
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(PDFValidator.class.getCanonicalName()); // log output
-	private static final PDFAFlavour[] PDF_A_3_FLAVOURS = {PDFAFlavour.PDFA_3_A, PDFAFlavour.PDFA_3_B, PDFAFlavour.PDFA_3_U};
 
 	private static String escapeXmlSpecialChars(String value) {
 		if (value == null || value.isEmpty()) {
@@ -67,25 +80,12 @@ public class PDFValidator extends Validator {
 			.replace("'", "&apos;");
 	}
 
-	private String pdfFilename;
-
-	private byte[] fileContents;
-
-	private String pdfReport;
-	private ProcessorResult processorResult = null;
-
-	private String Signature;
-
-	private String zfXML = null;
-	protected boolean autoload = true;
-
 	protected static boolean stringArrayContains(String[] arr, String targetValue) {
 		return Arrays.asList(arr).contains(targetValue);
 	}
 
 	@Override
 	public void validate() throws IrrecoverableValidationError {
-
 		zfXML = null;
 		// file existence must have been checked before
 		if (!ByteArraySearcher.startsWith(fileContents, new byte[]{'%', 'P', 'D', 'F'})) {
@@ -124,19 +124,19 @@ public class PDFValidator extends Validator {
 			ItemDetails itemDetails = ItemDetails.fromValues(pdfFilename);
 			inputStream.mark(Integer.MAX_VALUE);
 			processorResult = processor.process(itemDetails, inputStream);
-			pdfReport = escapeXmlSpecialChars(processorResult.getValidationResult().toString().replaceAll(
+			pdfReport = escapeXmlSpecialChars(processorResult.getValidationResult().toString().replace(
 				"<\\?xml version=\"1\\.0\" encoding=\"utf-8\"\\?>",
 				""
 			));
 			inputStream.reset();
 		} catch (final Exception excep) {
 			context.addResultItem(new ValidationResultItem(ESeverity.exception, excep.getMessage()).setSection(7)
-				.setPart(EPart.pdf).setStacktrace(excep.getStackTrace().toString()));
+				.setPart(EPart.pdf).setStacktrace(Arrays.toString(excep.getStackTrace())));
 		}
 
 		// step 2 validate XMP
 		final ZUGFeRDImporter zi = new ZUGFeRDImporter();
-		zi.doIgnoreCalculationErrors();//of course the calculation will still be schematron checked
+		zi.doIgnoreCalculationErrors(); //of course the calculation will still be schematron checked
 		zi.setInputStream(inputStream);
 
 		String xmp;
@@ -304,39 +304,39 @@ public class PDFValidator extends Validator {
 		final byte[] sevdeskSignature = "sevdesk".getBytes(StandardCharsets.UTF_8);
 
 		if (ByteArraySearcher.contains(fileContents, symtraxSignature)) {
-			Signature = "Symtrax";
+			signature = "Symtrax";
 		} else if (ByteArraySearcher.contains(fileContents, mustangSignature)) {
-			Signature = "Mustang";
+			signature = "Mustang";
 		} else if (ByteArraySearcher.contains(fileContents, facturxpythonSignature)) {
-			Signature = "Factur/X Python";
+			signature = "Factur/X Python";
 		} else if (ByteArraySearcher.contains(fileContents, intarsysSignature)) {
-			Signature = "Intarsys";
+			signature = "Intarsys";
 		} else if (ByteArraySearcher.contains(fileContents, konikSignature)) {
-			Signature = "Konik";
+			signature = "Konik";
 		} else if (ByteArraySearcher.contains(fileContents, pdfMachineSignature)) {
-			Signature = "pdfMachine";
+			signature = "pdfMachine";
 		} else if (ByteArraySearcher.contains(fileContents, ghostscriptSignature)) {
-			Signature = "Ghostscript";
+			signature = "Ghostscript";
 		} else if (ByteArraySearcher.contains(fileContents, cibpdfbrewerSignature)) {
-			Signature = "CIB pdf brewer";
+			signature = "CIB pdf brewer";
 		} else if (ByteArraySearcher.contains(fileContents, lexofficeSignature)) {
-			Signature = "Lexware office";
+			signature = "Lexware office";
 		} else if (ByteArraySearcher.contains(fileContents, s2IndustriesSignature)) {
-			Signature = "ZUGFeRD.PDF-csharp";
+			signature = "ZUGFeRD.PDF-csharp";
 		} else if (ByteArraySearcher.contains(fileContents, factoorSharpSignature)) {
-			Signature = "FactoorSharp";
+			signature = "FactoorSharp";
 		} else if (ByteArraySearcher.contains(fileContents, sevdeskSignature)) {
-			Signature = "sevdesk";
+			signature = "sevdesk";
 		}
 
-		context.setSignature(Signature);
+		context.setSignature(signature);
 
 		// step 4:validate additional data
 		final HashMap<String, byte[]> additionalData = zi.getAdditionalData();
-		for (final String filename : additionalData.keySet()) {
+		for (final Entry<String, byte[]> entry : additionalData.entrySet()) {
 			// validating xml in byte[]	additionalData.get(filename)
-			LOGGER.info("validating additionalData {}", filename);
-			validateSchema(additionalData.get(filename), "ad/basic/additional_data_base_schema.xsd", 2, EPart.pdf);
+			LOGGER.info("validating additionalData {}", entry.getKey());
+			validateSchema(additionalData.get(entry.getKey()), "ad/basic/additional_data_base_schema.xsd", 2, EPart.pdf);
 		}
 
 
@@ -388,7 +388,7 @@ public class PDFValidator extends Validator {
 	}
 
 	public String getSignature() {
-		return Signature;
+		return signature;
 	}
 
 }

@@ -18,11 +18,11 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	/**
 	 * BIC, I believe it's optional
 	 */
-	protected String BIC = null;
+	protected String BIC;
 	/**
 	 * the "name" of the bank account (holder)
 	 */
-	protected String accountName = null;
+	protected String accountName;
 	/**
 	 * payment means code
 	 */
@@ -143,7 +143,9 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	}
 
 	@Override
-	public String getPaymentMeansCode() { return paymentMeansCode; }
+	public String getPaymentMeansCode() {
+		return paymentMeansCode;
+	}
 
 	/**
 	 * set payment means information
@@ -157,5 +159,7 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	}
 
 	@Override
-	public String getPaymentMeansInformation() { return paymentMeansInformation; }
+	public String getPaymentMeansInformation() {
+		return paymentMeansInformation;
+	}
 }

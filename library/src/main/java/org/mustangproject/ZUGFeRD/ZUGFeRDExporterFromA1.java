@@ -67,16 +67,16 @@ public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 {
 
 
 	@Override
-  public ZUGFeRDExporterFromA1 setProfile(Profile p) {
-		return (ZUGFeRDExporterFromA1)super.setProfile(p);
+	public ZUGFeRDExporterFromA1 setProfile(Profile p) {
+		return (ZUGFeRDExporterFromA1) super.setProfile(p);
 	}
 	@Override
-  public ZUGFeRDExporterFromA1 setProfile(String profileName) {
-		return (ZUGFeRDExporterFromA1)super.setProfile(profileName);
+	public ZUGFeRDExporterFromA1 setProfile(String profileName) {
+		return (ZUGFeRDExporterFromA1) super.setProfile(profileName);
 	}
 
 	@Override
-  public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
+	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
 		if (!ignorePDFAErrors && !isValidA1(dataSource)) {
 			throw new IOException("File is not a valid PDF/A-1 input file");
 		}
@@ -85,44 +85,44 @@ public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 {
 
 
 	@Override
-  public ZUGFeRDExporterFromA1 load(String pdfFilename) throws IOException {
+	public ZUGFeRDExporterFromA1 load(String pdfFilename) throws IOException {
 		return (ZUGFeRDExporterFromA1) super.load(pdfFilename);
 	}
 	@Override
-  public ZUGFeRDExporterFromA1 load(byte[] pdfBinary) throws IOException {
+	public ZUGFeRDExporterFromA1 load(byte[] pdfBinary) throws IOException {
 		return (ZUGFeRDExporterFromA1) super.load(pdfBinary);
 	}
 	@Override
-  public ZUGFeRDExporterFromA1 load(InputStream pdfSource) throws IOException{
+	public ZUGFeRDExporterFromA1 load(InputStream pdfSource) throws IOException {
 		return (ZUGFeRDExporterFromA1) super.load(pdfSource);
 	}
 	@Override
-  public ZUGFeRDExporterFromA1 setCreator(String creator) {
+	public ZUGFeRDExporterFromA1 setCreator(String creator) {
 		return (ZUGFeRDExporterFromA1) super.setCreator(creator);
 	}
 	@Override
-  public ZUGFeRDExporterFromA1 setConformanceLevel(PDFAConformanceLevel newLevel) {
+	public ZUGFeRDExporterFromA1 setConformanceLevel(PDFAConformanceLevel newLevel) {
 		return (ZUGFeRDExporterFromA1) super.setConformanceLevel(newLevel);
 	}
 	@Override
-  public ZUGFeRDExporterFromA1 setProducer(String producer){
+	public ZUGFeRDExporterFromA1 setProducer(String producer) {
 		return (ZUGFeRDExporterFromA1) super.setProducer(producer);
 	}
 	@Override
-  public ZUGFeRDExporterFromA1 setZUGFeRDVersion(EStandard est, int version){
+	public ZUGFeRDExporterFromA1 setZUGFeRDVersion(EStandard est, int version) {
 		return (ZUGFeRDExporterFromA1) super.setZUGFeRDVersion(est, version);
 	}
 	@Override
-  public ZUGFeRDExporterFromA1 setZUGFeRDVersion(int version){
+	public ZUGFeRDExporterFromA1 setZUGFeRDVersion(int version) {
 		return (ZUGFeRDExporterFromA1) super.setZUGFeRDVersion(version);
 	}
 	@Override
-  public ZUGFeRDExporterFromA1 setXML(byte[] zugferdData) throws IOException{
+	public ZUGFeRDExporterFromA1 setXML(byte[] zugferdData) throws IOException {
 		return (ZUGFeRDExporterFromA1) super.setXML(zugferdData);
 	}
 
 	@Override
-  public ZUGFeRDExporterFromA1 disableAutoClose(boolean disableAutoClose){
+	public ZUGFeRDExporterFromA1 disableAutoClose(boolean disableAutoClose) {
 		return (ZUGFeRDExporterFromA1) super.disableAutoClose(disableAutoClose);
 	}
 	public ZUGFeRDExporterFromA1 convertOnly() {

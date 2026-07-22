@@ -35,11 +35,11 @@ public class Allowance extends Charge {
 
 	@Override
 	public BigDecimal getTotalAmount(IAbsoluteValueProvider currentItem) {
-		if(totalAmount != null) {
+		if (totalAmount != null) {
 			return totalAmount;
-		} else if (percent!=null) {
-			BigDecimal singlePrice=currentItem.getValue().multiply(BigDecimal.ONE.subtract(getPercent().divide(new BigDecimal(100), 18, RoundingMode.HALF_UP)));
-			BigDecimal singlePriceDiff=currentItem.getValue().subtract(singlePrice);
+		} else if (percent != null) {
+			BigDecimal singlePrice = currentItem.getValue().multiply(BigDecimal.ONE.subtract(getPercent().divide(new BigDecimal(100), 18, RoundingMode.HALF_UP)));
+			BigDecimal singlePriceDiff = currentItem.getValue().subtract(singlePrice);
 			return singlePriceDiff.multiply(currentItem.getQuantity());
 		} else {
 			throw new RuntimeException("percent must be set");

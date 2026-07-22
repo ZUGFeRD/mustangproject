@@ -39,10 +39,9 @@ public class CIIToUBL {
 		}
 		final Serializable aUBL = cc.convertCIItoUBL(input, occurred);
 		if (aUBL instanceof oasis.names.specification.ubl.schema.xsd.invoice_23.InvoiceType) {
-			UBL23Marshaller.invoice ().setFormattedOutput (true).write((oasis.names.specification.ubl.schema.xsd.invoice_23.InvoiceType)aUBL, output);
-		}
-		else if (aUBL instanceof oasis.names.specification.ubl.schema.xsd.creditnote_23.CreditNoteType)	{
-		   UBL23Marshaller.creditNote ().setFormattedOutput (true).write((oasis.names.specification.ubl.schema.xsd.creditnote_23.CreditNoteType) aUBL, output);
+			UBL23Marshaller.invoice().setFormattedOutput(true).write((oasis.names.specification.ubl.schema.xsd.invoice_23.InvoiceType) aUBL, output);
+		} else if (aUBL instanceof oasis.names.specification.ubl.schema.xsd.creditnote_23.CreditNoteType) {
+		   UBL23Marshaller.creditNote().setFormattedOutput(true).write((oasis.names.specification.ubl.schema.xsd.creditnote_23.CreditNoteType) aUBL, output);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package org.mustangproject;
+	package org.mustangproject;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -161,8 +161,8 @@ public class TradeTax implements IZUGFeRDTradeTax {
 	 */
 	@Override
 	public String getTaxCategoryCode() {
-		if(taxCategoryCode != null){
-		    return taxCategoryCode;
+		if (taxCategoryCode != null) {
+			return taxCategoryCode;
 		}
 		return IZUGFeRDTradeTax.super.getTaxCategoryCode();
 	}

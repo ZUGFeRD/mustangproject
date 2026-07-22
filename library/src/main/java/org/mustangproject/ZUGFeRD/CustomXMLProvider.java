@@ -26,7 +26,7 @@ public class CustomXMLProvider implements IXMLProvider {
 	/***
 	 * the scope=profile this XML data is provided in
 	 */
-	protected Profile profile=Profiles.getByName("EN16931");
+	protected Profile profile = Profiles.getByName("EN16931");
 
 	@Override
 	public byte[] getXML() {
@@ -58,6 +58,6 @@ public class CustomXMLProvider implements IXMLProvider {
 	}
 
 	public void setProfile(Profile level) {
-		profile=level;
+		profile = level;
 	}
 }

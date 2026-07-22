@@ -40,8 +40,8 @@ public class UBLDAPullProvider implements IXMLProvider {
 
 	protected IExportableTransaction trans;
 	protected TransactionCalculator calc;
+	protected Profile profile = Profiles.getByName(EStandard.UBL_DESPATCHADVICE, "basic", 1);
 	byte[] ublData;
-	protected Profile profile = Profiles.getByName(EStandard.ubldespatchadvice, "basic", 1);
 
 
 	@Override

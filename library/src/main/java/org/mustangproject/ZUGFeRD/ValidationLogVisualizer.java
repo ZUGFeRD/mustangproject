@@ -8,7 +8,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
-import org.apache.fop.apps.*;
+import java.nio.charset.StandardCharsets;
+
+import javax.xml.XMLConstants;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.fop.apps.FOPException;
+import org.apache.fop.apps.FOUserAgent;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationException;
@@ -18,14 +37,6 @@ import org.mustangproject.ClasspathResolverURIAdapter;
 import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.xml.XMLConstants;
-import javax.xml.transform.*;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
-import java.nio.charset.StandardCharsets;
 
 public class ValidationLogVisualizer {
 	public enum Language {
@@ -38,8 +49,8 @@ public class ValidationLogVisualizer {
 	private static final String RESOURCE_PATH = "";
 	private static final Logger LOGGER = LoggerFactory.getLogger(ValidationLogVisualizer.class);
 
-	private TransformerFactory mFactory = null;
-	private Templates mXsltPDFTemplate = null;
+	private TransformerFactory mFactory;
+	private Templates mXsltPDFTemplate;
 
 
 	public ValidationLogVisualizer() {

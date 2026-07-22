@@ -299,8 +299,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	protected List<VATAmount> getVATAmountList() {
 		final List<VATAmount> vatAmounts = new ArrayList<>();
 		final String vatDueDateTypeCode = this.trans.getVATDueDateTypeCode();
-		for (final IZUGFeRDExportableItem currentItem : this.trans.getZFItems())
-		{
+		for (final IZUGFeRDExportableItem currentItem : this.trans.getZFItems()) {
 			// skip GROUP and INFORMATION lines for sub invoice lines
 			if (!currentItem.isCalculationRelevant()) {
 				continue;

@@ -25,7 +25,7 @@ package org.mustangproject.ZUGFeRD;
  * @date 2014-05-10
  * @version 1.2.0
  * @author jstaerk
- * */
+ */
 
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.XmpConstants;
@@ -59,11 +59,25 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 	public final String prefix_pdfaSchema = "pdfaSchema";
 	public final String xmlns_pdfaProperty = "http://www.aiim.org/pdfa/ns/property#";
 	public final String prefix_pdfaProperty = "pdfaProperty";
-	public String namespace = null;
-	public String prefix = null;
+	public String namespace;
+	public String prefix;
 
 	protected IZUGFeRDExporter exporter;
 
+	public XMPSchemaPDFAExtensions(IZUGFeRDExporter ze, XMPMetadata metadata, int ZFVersion) {
+		this(ze, metadata, ZFVersion, true);
+	}
+
+	public XMPSchemaPDFAExtensions(IZUGFeRDExporter ze, XMPMetadata metadata, int ZFVersion, boolean withZF) {
+		this(ze, metadata, ZFVersion, withZF, null);
+	}
+
+	public XMPSchemaPDFAExtensions(IZUGFeRDExporter ze, XMPMetadata metadata, int ZFVersion, boolean withZF, EStandard eStandard) {
+		super(metadata);
+		exporter = ze;
+		setZUGFeRDVersion(ZFVersion);
+		attachExtensions(metadata, withZF, eStandard);
+	}
 
 	protected void setZUGFeRDVersion(int ver) {
 		namespace = exporter.getNamespaceForVersion(ver);
@@ -71,8 +85,7 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 	}
 
 
-	private DefinedStructuredType addProperty(ArrayProperty parent, String name, String type, String category,
-											  String description) {
+	private DefinedStructuredType addProperty(ArrayProperty parent, String name, String type, String category, String description) {
 		XMPMetadata metadata = getMetadata();
 
 		DefinedStructuredType li = new DefinedStructuredType(metadata, getNamespace(), getPrefix(),
@@ -98,72 +111,49 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 		return li;
 	}
 
-	public XMPSchemaPDFAExtensions(IZUGFeRDExporter ze, XMPMetadata metadata, int ZFVersion) {
-		this(ze, metadata, ZFVersion, true);
-	}
-
-	public XMPSchemaPDFAExtensions(IZUGFeRDExporter ze, XMPMetadata metadata, int ZFVersion, boolean withZF) {
-		this(ze, metadata, ZFVersion, withZF, null);
-	}
-
-	public XMPSchemaPDFAExtensions(IZUGFeRDExporter ze, XMPMetadata metadata, int ZFVersion, boolean withZF, EStandard eStandard) {
-		super(metadata);
-		exporter=ze;
-		setZUGFeRDVersion(ZFVersion);
-		attachExtensions(metadata, withZF, eStandard);
-	}
-
 	public void attachExtensions(XMPMetadata metadata, boolean withZF, EStandard eStandard) {
 
 		addNamespace(xmlns_pdfaSchema, prefix_pdfaSchema);
 		addNamespace(xmlns_pdfaProperty, prefix_pdfaProperty);
 
 		ArrayProperty newBag = createArrayProperty(SCHEMAS, Cardinality.Bag);
-		DefinedStructuredType li = new DefinedStructuredType(metadata, getNamespace(), getPrefix(),
-				XmpConstants.LIST_NAME);
+		DefinedStructuredType li = new DefinedStructuredType(metadata, getNamespace(), getPrefix(), XmpConstants.LIST_NAME);
 		li.setAttribute(new Attribute(getNamespace(), XmpConstants.PARSE_TYPE, XmpConstants.RESOURCE_NAME));
 		newBag.addProperty(li);
 		addProperty(newBag);
 		if (withZF) {
-			TextType pdfa1 = new TextType(metadata, xmlns_pdfaSchema, prefix_pdfaSchema, PDFASchemaType.SCHEMA,
-					"Factur-X PDFA Extension Schema");
+			TextType pdfa1 = new TextType(metadata, xmlns_pdfaSchema, prefix_pdfaSchema, PDFASchemaType.SCHEMA, "Factur-X PDFA Extension Schema");
 			li.addProperty(pdfa1);
 
-			pdfa1 = new TextType(metadata, xmlns_pdfaSchema, prefix_pdfaSchema, PDFASchemaType.NAMESPACE_URI,
-					namespace);
+			pdfa1 = new TextType(metadata, xmlns_pdfaSchema, prefix_pdfaSchema, PDFASchemaType.NAMESPACE_URI, namespace);
 			li.addProperty(pdfa1);
 
 			pdfa1 = new TextType(metadata, xmlns_pdfaSchema, prefix_pdfaSchema, PDFASchemaType.PREFIX, prefix);
 			li.addProperty(pdfa1);
 
-			ArrayProperty newSeq = new ArrayProperty(metadata, xmlns_pdfaSchema, prefix_pdfaSchema,
-					PDFASchemaType.PROPERTY, Cardinality.Seq);
+			ArrayProperty newSeq = new ArrayProperty(metadata, xmlns_pdfaSchema, prefix_pdfaSchema, PDFASchemaType.PROPERTY, Cardinality.Seq);
 			li.addProperty(newSeq);
 
-			if ((eStandard != null) && (eStandard == EStandard.orderx))
-			{
+			if ((eStandard != null) && (eStandard == EStandard.ORDER_X)) {
 				addProperty(newSeq, "DocumentFileName", "Text", "external", "Name of the embedded XML Order (or related) file");
 				addProperty(newSeq, "DocumentType", "Text", "external", "ORDER, ORDER_RESPONSE, or ORDER_CHANGE");
 				addProperty(newSeq, "Version", "Text", "external", "The actual version of the Order-X XML schema");
 				addProperty(newSeq, "ConformanceLevel", "Text", "external",
 								    "The selected Order-X profile completeness");
-			} else if ((eStandard != null) && (eStandard == EStandard.despatchadvice))
-			{
+			} else if ((eStandard != null) && (eStandard == EStandard.DELIVER_X)) {
 				// As of late 2022 the Delivery-X standard is not yet published. See specification:
 				// Die digitale Ablösung des Papier-Lieferscheins, Version 1.1, April 2022
 				// Chapter 7.1 XMP-Erweiterungsschema für PDF/A-3
 				// http://docplayer.org/230301085-Der-digitale-lieferschein-dls.html
 				addProperty(newSeq, "DocumentFileName", "Text", "external", "Name of the embedded XML despatch advice file");
-				addProperty(newSeq, "DocumentType",     "Text", "external", "DESPATCHADVICE");
-				addProperty(newSeq, "Version",          "Text", "external", "The actual version of the despatch advice dataset");
+				addProperty(newSeq, "DocumentType", "Text", "external", "DESPATCHADVICE");
+				addProperty(newSeq, "Version", "Text", "external", "The actual version of the despatch advice dataset");
 				addProperty(newSeq, "ConformanceLevel", "Text", "external", "The conformance level of the despatch advice dataset");
-			} else
-			{
+			} else {
 				addProperty(newSeq, "DocumentFileName", "Text", "external", "name of the embedded XML invoice file");
 				addProperty(newSeq, "DocumentType", "Text", "external", "INVOICE");
 				addProperty(newSeq, "Version", "Text", "external", "The actual version of the ZUGFeRD XML schema");
-				addProperty(newSeq, "ConformanceLevel", "Text", "external",
-								    "The selected ZUGFeRD profile completeness");
+				addProperty(newSeq, "ConformanceLevel", "Text", "external", "The selected ZUGFeRD profile completeness");
 			}
 		}
 	}

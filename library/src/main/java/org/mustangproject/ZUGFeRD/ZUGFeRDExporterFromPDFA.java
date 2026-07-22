@@ -50,7 +50,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 
 	protected IZUGFeRDExporter theExporter;
 
-	protected boolean ignorePDFAErrors = false;
+	protected boolean ignorePDFAErrors;
 
 	public ZUGFeRDExporterFromPDFA ignorePDFAErrors() {
 		this.ignorePDFAErrors = true;
@@ -60,12 +60,12 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		if (PDFAVersion == 3) {
 			theExporter = new ZUGFeRDExporterFromA3();
 			if (ignorePDFAErrors) {
-				((ZUGFeRDExporterFromA3)theExporter).ignorePDFAErrors();
+				((ZUGFeRDExporterFromA3) theExporter).ignorePDFAErrors();
 			}
 		} else if (PDFAVersion == 1) {
 			theExporter = new ZUGFeRDExporterFromA1();
 			if (ignorePDFAErrors) {
-				((ZUGFeRDExporterFromA1)theExporter).ignorePDFAErrors();
+				((ZUGFeRDExporterFromA1) theExporter).ignorePDFAErrors();
 			}
 		} else {
 			throw new IllegalArgumentException("PDF-A version not supported");
@@ -75,7 +75,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	}
 
 	public IZUGFeRDExporter getExporter() {
-		if (theExporter==null) {
+		if (theExporter == null) {
 			throw new RuntimeException("In ZUGFeRDExporterFromPDFA, source must always be loaded before other operations are performed.");
 		}
 
@@ -88,7 +88,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		}
 	}
 
-	protected byte[] inputstreamToByteArray(InputStream fileInputStream) throws IOException  {
+	protected byte[] inputstreamToByteArray(InputStream fileInputStream) throws IOException {
 		byte[] bytes = new byte[fileInputStream.available()];
 		try (DataInputStream dataInputStream = new DataInputStream(fileInputStream)) {
 			dataInputStream.readFully(bytes);
@@ -162,7 +162,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	 * @throws IOException if anything is wrong with inputstream
 	 */
 	public IZUGFeRDExporter load(InputStream pdfSource) throws IOException {
-		byte[] byteArray=inputstreamToByteArray(pdfSource);
+		byte[] byteArray = inputstreamToByteArray(pdfSource);
 		determineAndSetExporter(getPDFAVersion(byteArray));
 		return theExporter.load(byteArray);
 	}
@@ -178,7 +178,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 
 	public IZUGFeRDExporter setProfile(String profileName) {
 		Profile p = Profiles.getByName(profileName);
-		if (p==null)  {
+		if (p == null) {
 			throw new RuntimeException("Profile not found.");
 		}
 		return getExporter().setProfile(p);
