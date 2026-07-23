@@ -23,85 +23,29 @@ package org.mustangproject.ZUGFeRD;
 import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
 import static org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants.CATEGORY_CODES_WITH_EXEMPTION_REASON;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
 import org.mustangproject.XMLTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
-  private static final Logger LOGGER = LoggerFactory.getLogger (ZUGFeRD1PullProvider.class);
 
-	//// MAIN CLASS
-
-	protected byte[] zugferdData;
-	private String paymentTermsDescription;
-	protected Profile profile = Profiles.getByName("COMFORT", 1);
-
-	@Override
-  protected String vatFormat(BigDecimal value) {
-		return XMLTools.nDigitFormat(value, 2);
+	public ZUGFeRD1PullProvider() {
+		profile = Profiles.getByName("COMFORT", 1);
 	}
 
 	@Override
-  protected String currencyFormat(BigDecimal value) {
-		return XMLTools.nDigitFormat(value, 2);
-	}
-
-	@Override
-  protected String priceFormat(BigDecimal value) {
+	protected String priceFormat(BigDecimal value) {
 		return XMLTools.nDigitFormat(value, 4);
 	}
 
 	@Override
-  protected String quantityFormat(BigDecimal value) {
+	protected String quantityFormat(BigDecimal value) {
 		return XMLTools.nDigitFormat(value, 4);
 	}
-
-
-	@Override
-	public Profile getProfile() {
-		return profile;
-	}
-
-	@Override
-	public byte[] getXML() {
-
-		byte[] res = zugferdData;
-
-		final StringWriter sw = new StringWriter();
-		Document document = null;
-		try {
-			document = DocumentHelper.parseText(new String(zugferdData, StandardCharsets.UTF_8));
-		} catch (final DocumentException e1) {
-			LOGGER.error ("Failed to parse ZUGFeRD data", e1);
-		}
-		try {
-			final OutputFormat format = OutputFormat.createPrettyPrint();
-			format.setTrimText(false);
-			final XMLWriter writer = new XMLWriter(sw, format);
-			writer.write(document);
-			res = sw.toString().getBytes(StandardCharsets.UTF_8);
-
-		} catch (final IOException e) {
-      		LOGGER.error ("Failed to write ZUGFeRD data", e);
-		}
-
-		return res;
-
-	}
-
 
 	@Override
 	public void generateXML(IExportableTransaction trans) {
@@ -290,7 +234,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 			if (hasDueDate && (trans.getDueDate() != null)) {
 				xml.append("<ram:DueDateDateTime>" // $NON-NLS-2$
 						+ DATE.udtFormat(trans.getDueDate())
-						+ "</ram:DueDateDateTime>");// 20130704
+						+ "</ram:DueDateDateTime>"); // 20130704
 
 			}
 			xml.append("</ram:SpecifiedTradePaymentTerms>");
@@ -410,13 +354,8 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 				+ "</rsm:CrossIndustryDocument>");
 
 		final byte[] zugferdRaw;
-    zugferdRaw = xml.toString().getBytes(StandardCharsets.UTF_8);
-    zugferdData = XMLTools.removeBOM(zugferdRaw);
-  }
-
-	@Override
-	public void setProfile(Profile p) {
-		profile = p;
+		zugferdRaw = xml.toString().getBytes(StandardCharsets.UTF_8);
+		zugferdData = XMLTools.removeBOM(zugferdRaw);
 	}
 
 	private String buildPaymentTermsXml() {
@@ -427,27 +366,23 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 			return paymentTermsXml;
 		}
 
-		for (IZUGFeRDPaymentTerms pt : paymentTerms)
-		{
+		for (IZUGFeRDPaymentTerms pt : paymentTerms) {
 			paymentTermsXml += "<ram:SpecifiedTradePaymentTerms>";
 
 			final IZUGFeRDPaymentDiscountTerms discountTerms = pt.getDiscountTerms();
 			final Date dueDate = pt.getDueDate();
-			if (dueDate != null && discountTerms != null && discountTerms.getBaseDate() != null)
-			{
+			if (dueDate != null && discountTerms != null && discountTerms.getBaseDate() != null) {
 				throw new IllegalStateException(
 					"if paymentTerms.dueDate is specified, paymentTerms.discountTerms.baseDate has not to be specified");
 			}
 			paymentTermsXml += "<ram:Description>" + pt.getDescription() + "</ram:Description>";
-			if (dueDate != null)
-			{
+			if (dueDate != null) {
 				paymentTermsXml += "<ram:DueDateDateTime>";
 				paymentTermsXml += DATE.udtFormat(dueDate);
 				paymentTermsXml += "</ram:DueDateDateTime>";
 			}
 
-			if (discountTerms != null)
-			{
+			if (discountTerms != null) {
 				paymentTermsXml += "<ram:ApplicableTradePaymentDiscountTerms>";
 				final String currency = trans.getCurrency();
 				final String basisAmount = currencyFormat(calc.getGrandTotal());
@@ -455,8 +390,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 				paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toString()
 					+ "</ram:CalculationPercent>";
 
-				if (discountTerms.getBaseDate() != null)
-				{
+				if (discountTerms.getBaseDate() != null) {
 					final Date baseDate = discountTerms.getBaseDate();
 					paymentTermsXml += "<ram:BasisDateTime>";
 					paymentTermsXml += DATE.udtFormat(baseDate);

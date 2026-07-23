@@ -21,10 +21,10 @@ package org.mustangproject.commandline;
 import java.math.BigDecimal;
 
 public class StatRun {
-	private int pdfCount = 0;
-	private int horseCount = 0;
-	private int fileCount = 0;
-	private int dirCount = 0;
+	private int pdfCount;
+	private int horseCount;
+	private int fileCount;
+	private int dirCount;
 	private BigDecimal total = BigDecimal.ZERO;
 	private boolean checkFileExt = true;
 
@@ -74,11 +74,9 @@ public class StatRun {
 	 * @return english string with linefeeds detailling number of files, directories, number of pdfs and of zugferd files
 	 */
 	public String getSummaryLine() {
-
 		return "\r\n===================================================================\r\n" + String.format(
 				"Files:\t%d\tDirs:\t%d\tPDF:\t%d\tZUGFeRD:\t%d\tTotal:\t%s\r\n",
 				getFileCount(), getDirCount(), getPDFCount(), getZUGFeRDCount(), total.toString());
-
 	}
 
 	/**
@@ -91,8 +89,7 @@ public class StatRun {
 	}
 
 	public void incTotal(BigDecimal delta) {
-		total=total.add(delta);
-		
+		total = total.add(delta);
 	}
 
 

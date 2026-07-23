@@ -25,7 +25,7 @@ import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
 public class FileChecker {
 	String filename;
 	StatRun thisRun;
-	boolean isPDF = false;
+	boolean isPDF;
 
 	public FileChecker(String filename, StatRun statistics) {
 		this.filename = filename;
@@ -36,7 +36,7 @@ public class FileChecker {
 			int extIndex = filename.lastIndexOf(".");
 			if (extIndex >= 0) {
 				extension = filename.substring(extIndex).toLowerCase();
-				isPDF = extension.equals(".pdf");// alternative check for PDF: File starts with %PDF-
+				isPDF = extension.equals(".pdf"); // alternative check for PDF: File starts with %PDF-
 				if (isPDF) {
 					thisRun.incPDFCount();
 				}

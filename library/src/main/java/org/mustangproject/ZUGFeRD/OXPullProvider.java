@@ -24,7 +24,6 @@ import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
 import static org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants.CORRECTEDINVOICE;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
@@ -38,11 +37,9 @@ import org.mustangproject.XMLTools;
 
 public class OXPullProvider extends ZUGFeRD2PullProvider {
 
-	protected IExportableTransaction trans;
-	protected TransactionCalculator calc;
-	private String paymentTermsDescription;
-	protected Profile profile = Profiles.getByName(EStandard.orderx,"basic", 1);
-
+	public OXPullProvider() {
+		profile = Profiles.getByName(EStandard.ORDER_X, "basic", 1);
+	}
 
 	@Override
 	public void generateXML(IExportableTransaction trans) {
@@ -55,19 +52,18 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 		final String exemptionReason = "";
 
 		if (trans.getPaymentTermDescription() != null) {
-      paymentTermsDescription = XMLTools.encodeXML(trans.getPaymentTermDescription());
+			paymentTermsDescription = XMLTools.encodeXML(trans.getPaymentTermDescription());
 		}
 
 		if (paymentTermsDescription == null && !CORRECTEDINVOICE.equals(trans.getDocumentCode())/* && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)*/) {
 			paymentTermsDescription = "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
-
 		}
 
 		final String typecode = "220";
 		/*if (trans.getDocumentCode() != null) {
 			typecode = trans.getDocumentCode();
 		}*/
-	
+
 		StringBuilder xml = new StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 
 				+ "<rsm:SCRDMCCBDACIOMessageStructure\n" +
@@ -107,7 +103,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 			if (currentItem.getProduct().getTaxExemptionReason() != null) {
 			//	exemptionReason = "<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>";
 			}
-    
+
 			final LineCalculator lc = currentItem.getCalculation();
 			xml.append("<ram:IncludedSupplyChainTradeLineItem>" +
 					"<ram:AssociatedDocumentLineDocument>"
@@ -291,7 +287,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 		}
 		xml.append("</ram:ApplicableHeaderTradeAgreement>"
 				+ "<ram:ApplicableHeaderTradeDelivery>");
-		IZUGFeRDExportableTradeParty deliveryAddress=this.trans.getDeliveryAddress();
+		IZUGFeRDExportableTradeParty deliveryAddress = this.trans.getDeliveryAddress();
 		if (deliveryAddress == null) {
 			deliveryAddress = this.trans.getRecipient();
 		}
@@ -431,7 +427,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 
 			if (trans.getTradeSettlement() != null) {
 				for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
-					if ((payment != null) && (payment instanceof IZUGFeRDTradeSettlementDebit)) {
+					if (payment != null && payment instanceof IZUGFeRDTradeSettlementDebit) {
 		//not in order-x				xml.append(payment.getPaymentXML());
 					}
 				}
@@ -526,14 +522,12 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 			return "";
 		}
 
-		for (IZUGFeRDPaymentTerms pt : paymentTerms)
-		{
+		for (IZUGFeRDPaymentTerms pt : paymentTerms) {
 			paymentTermsXml += "<ram:SpecifiedTradePaymentTerms>";
 
 			final IZUGFeRDPaymentDiscountTerms discountTerms = pt.getDiscountTerms();
 			paymentTermsXml += "<ram:Description>" + pt.getDescription() + "</ram:Description>";
-			if (discountTerms != null)
-			{
+			if (discountTerms != null) {
 				paymentTermsXml += "<ram:ApplicableTradePaymentDiscountTerms>";
 				final String currency = trans.getCurrency();
 				final String basisAmount = currencyFormat(calc.getGrandTotal());
@@ -541,8 +535,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 				paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toString()
 					+ "</ram:CalculationPercent>";
 
-				if (discountTerms.getBaseDate() != null)
-				{
+				if (discountTerms.getBaseDate() != null) {
 					final Date baseDate = discountTerms.getBaseDate();
 					paymentTermsXml += "<ram:BasisDateTime>";
 					paymentTermsXml += DATE.udtFormat(baseDate);

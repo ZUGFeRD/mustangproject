@@ -73,8 +73,8 @@ public class XMPSchemaZugferd extends XMPSchema {
 
 		if (version == null) {
 		    version = "1.0";
-		    if ((zfVersion==2)&&(!isFacturX)) {
-				version="2p0";
+		    if (zfVersion == 2 && !isFacturX) {
+				version = "2p0";
 			}
 		}
 		setTextPropertyValue("Version", version);

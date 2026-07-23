@@ -57,14 +57,14 @@ public class Profiles {
 
 
 	public static Profile getByName(EStandard standard, String name, int version) {
-		if (standard == EStandard.orderx) {
+		if (standard == EStandard.ORDER_X) {
 			Profile result = null;
 			result = ox1Map.get(name.toUpperCase());
 			if (result == null) {
 				throw new RuntimeException("Profile not found");
 			}
 			return result;
-		} else if (standard == EStandard.despatchadvice) {
+		} else if (standard == EStandard.DELIVER_X) {
 			Profile result = null;
 			result = dx1Map.get(name.toUpperCase());
 			if (result == null) {
@@ -73,7 +73,7 @@ public class Profiles {
 			return result;
 		} else {
 			int generation = version;
-			if ((standard==EStandard.facturx) && (version==1)) {
+			if (standard == EStandard.FACTUR_X && version == 1) {
 				generation = 2;
 			}
 			return getByName(name, generation);
@@ -95,7 +95,7 @@ public class Profiles {
 	}
 
 	public static Profile getByName(String name) {
-		return getByName(name, ZUGFeRDExporterFromA3.DefaultZUGFeRDVersion);
+		return getByName(name, ZUGFeRDExporterFromA3.defaultZUGFeRDVersion);
 	}
 
 
@@ -107,19 +107,16 @@ public class Profiles {
 	 *
 	 * @return a profile matching the requested name
 	 */
-	public static Profile getByNameDisregardingVersion(String name)
-	{
+	public static Profile getByNameDisregardingVersion(String name) {
 		Profile result = null;
 
 		result = zf1Map.get(name.toUpperCase());
 
-		if (result == null)
-		{
+		if (result == null) {
 			result = zf2Map.get(name.toUpperCase());
 		}
 
-		if (result==null)
-		{
+		if (result == null) {
 			throw new RuntimeException("Profile " + name + " not found");
 		}
 

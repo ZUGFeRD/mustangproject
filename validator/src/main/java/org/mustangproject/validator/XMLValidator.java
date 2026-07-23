@@ -50,11 +50,11 @@ public class XMLValidator extends Validator {
 
 	protected String zfXML = "";
 	protected String filename = "";
-	int firedRules = 0;
-	int failedRules = 0;
-	boolean disableNotices = false;
-	boolean disableArithmeticCheck = false;
-	ISchematronResource aResSCH = null;
+	int firedRules;
+	int failedRules;
+	boolean disableNotices;
+	boolean disableArithmeticCheck;
+	ISchematronResource aResSCH;
 
 
 	public XMLValidator(ValidationContext ctx) {
@@ -77,8 +77,8 @@ public class XMLValidator extends Validator {
 
 				final ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(9)
 					.setPart(EPart.fx);
-				try (final StringWriter sw = new StringWriter();
-					 final PrintWriter pw = new PrintWriter(sw)) {
+				try (StringWriter sw = new StringWriter();
+					 PrintWriter pw = new PrintWriter(sw)) {
 					e.printStackTrace(pw);
 					vri.setStacktrace(sw.toString());
 					context.addResultItem(vri);
@@ -193,7 +193,6 @@ public class XMLValidator extends Validator {
 					context.setProfile(booking.getNodeValue());
 				}
 				boolean isOrderX = false;
-				boolean isDespatchAdvice = false;
 				boolean isMiniumum = false;
 				boolean isBasic = false;
 				boolean isBasicWithoutLines = false;
@@ -201,7 +200,7 @@ public class XMLValidator extends Validator {
 				boolean isExtended = false;
 				boolean isXRechnung = false;
 				String currentZFVersionDir = "ZF_250";
-				String currentXPZ12VersionDir ="XP_Z12_012";
+				String currentXPZ12VersionDir = "XP_Z12_012";
 				int mainSchematronSectionErrorTypeCode = 4;
 				String xsltFilename = null;
 				boolean runFrenchCiiSchematron = false;
@@ -221,7 +220,7 @@ public class XMLValidator extends Validator {
 					isExtended = contextProfile.contains("extended");
 					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B.xsd", 99, EPart.ox);
 					xsltFilename = "/xslt/OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B_COMFORT.xslt";
-					
+
 				} else if (root.getLocalName().equalsIgnoreCase("CrossIndustryInvoice")) { // ZUGFeRD 2.0 or Factur-X
 					context.setGeneration("2");
 					final String sellerCountry = getXPathString(doc,
@@ -234,7 +233,7 @@ public class XMLValidator extends Validator {
 					isBasic = contextProfile.contains("basic");
 					isBasicWithoutLines = contextProfile.contains("basicwl");
 					if (isBasicWithoutLines) {
-						isBasic = false;// basicwl also contains the string basic...
+						isBasic = false; // basicwl also contains the string basic...
 					}
 					isEN16931 = Arrays.asList(
 							"urn:cen.eu:en16931:2017:compliant:factur-x.eu:1p0:en16931",
@@ -247,7 +246,7 @@ public class XMLValidator extends Validator {
 					isXRechnung = contextProfile.contains("xrechnung");
 
 					if ((isExtended) || (isXRechnung)) {
-						isEN16931 = false;// the uri for extended is urn:cen.eu:en16931:2017#conformant#urn:zugferd.de:2p0:extended and thus contains en16931...
+						isEN16931 = false; // the uri for extended is urn:cen.eu:en16931:2017#conformant#urn:zugferd.de:2p0:extended and thus contains en16931...
 					}
 					if (isMiniumum) {
 						LOGGER.debug("is Minimum");
@@ -305,7 +304,7 @@ public class XMLValidator extends Validator {
 						* */
 						//validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_211/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
 						String xrVersion = contextProfile.substring(contextProfile.length() - 3).replace(".", "");
-						
+
 						List<String> supportedVersions = Arrays.asList("12", "20", "21", "22", "23", "30");
 						if (!supportedVersions.contains(xrVersion)) {
 							throw new Exception("Unsupported XR version");
@@ -355,7 +354,7 @@ public class XMLValidator extends Validator {
 					} else /** v1 */ {
 						if (isOrderX) {
 							//order-x 1.0
-							if(Arrays.asList(
+							if (Arrays.asList(
 								"urn:order-x.eu:1p0:basic",
 								"urn:order-x.eu:1p0:comfort",
 								"urn:order-x.eu:1p0:extended"
@@ -453,10 +452,10 @@ public class XMLValidator extends Validator {
 	}
 
 	private void checkArithmetics(ValidationContext context) {
-		ZUGFeRDInvoiceImporter zi=new ZUGFeRDInvoiceImporter();
+		ZUGFeRDInvoiceImporter zi = new ZUGFeRDInvoiceImporter();
 		try {
 			zi.fromXML(zfXML);
-			CalculatedInvoice ci=new CalculatedInvoice();
+			CalculatedInvoice ci = new CalculatedInvoice();
 			zi.extractInto(ci);
 
 			// check sub invoice line hierarchy if present
@@ -464,7 +463,7 @@ public class XMLValidator extends Validator {
 
 		} catch ( ArithmeticException e) {
 			try {
-				context.addResultItem(new ValidationResultItem(ESeverity.warning, "Arithmetical issue:"+e.getMessage()).setSection(10));
+				context.addResultItem(new ValidationResultItem(ESeverity.warning, "Arithmetical issue:" + e.getMessage()).setSection(10));
 
 			} catch (IrrecoverableValidationError ie) {
 				LOGGER.error(ie.getMessage(), ie);

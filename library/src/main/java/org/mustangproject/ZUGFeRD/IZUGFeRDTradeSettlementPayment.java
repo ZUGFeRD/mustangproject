@@ -46,7 +46,6 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 		return null;
 	}
 
-
 	/**
 	 * IBAN of the sender
 	 *
@@ -61,26 +60,32 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 	 *
 	 * @return the name of the account holder (if not identical to sender)
 	 */
-	default String getAccountName() { return null; }
+	default String getAccountName() {
+		return null;
+	}
 
 	/***
 	 * @return payment means code (BT-81 / UNTDID 4461)
 	 */
-	default String getPaymentMeansCode() { return null; }
+	default String getPaymentMeansCode() {
+		return null;
+	}
 
 	/***
 	 * @return payment means description (BT-82) (optional)
 	 */
-	default String getPaymentMeansInformation() { return null; }
+	default String getPaymentMeansInformation() {
+		return null;
+	}
 
 
 	@Override
 	@JsonIgnore
 	default String getSettlementXML(Profile profile) {
 		List<Profile> basicProfiles = Arrays.asList(Profiles.getByName("Basic", 1), Profiles.getByName("BasicWL", 2), Profiles.getByName("Basic", 2));
-		String accountNameStr="";
+		String accountNameStr = "";
 		if (getAccountName() != null) {
-			accountNameStr="<ram:AccountName>" + XMLTools.encodeXML(getAccountName()) + "</ram:AccountName>";
+			accountNameStr = "<ram:AccountName>" + XMLTools.encodeXML(getAccountName()) + "</ram:AccountName>";
 		}
 
 		String xml = "<ram:SpecifiedTradeSettlementPaymentMeans>"
@@ -104,8 +109,8 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 		xml += "</ram:SpecifiedTradeSettlementPaymentMeans>";
 		return xml;
 	}
-	
-	
+
+
 	/* I'd love to implement getPaymentXML() and put <ram:DueDateDateTime> there because this is where it belongs
 	 * unfortunately, the due date is part of the transaction which is not accessible here :-(
 	 */

@@ -24,7 +24,7 @@ package org.mustangproject.ZUGFeRD;
  * @date 2014-05-10
  * @version 1.2.0
  * @author jstaerk
- * */
+ **/
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -37,7 +37,7 @@ import org.mustangproject.TradeParty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(as = Item.class)
-public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
+public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider {
 	IZUGFeRDExportableProduct getProduct();
 
 	/**
@@ -45,7 +45,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 * @return array of the discounts on a single item
 	 */
 	default IZUGFeRDAllowanceCharge[] getItemAllowances() {
-		if (getProduct()!=null) {
+		if (getProduct() != null) {
 			return getProduct().getAllowances();
 		}
 		return null;
@@ -56,7 +56,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 * @return array of the additional charges on the item
 	 */
 	default IZUGFeRDAllowanceCharge[] getItemCharges() {
-		if (getProduct()!=null) {
+		if (getProduct() != null) {
 			return getProduct().getCharges();
 		}
 		return null;
@@ -159,7 +159,7 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 	 *
 	 * @return the line ID
 	 */
-	default String getId()  {
+	default String getId() {
 		return null;
 	}
 
@@ -211,13 +211,15 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider{
 		return null;
 	}
 
-	default LineCalculator getCalculation() { return new LineCalculator(this); }
+	default LineCalculator getCalculation() {
+		return new LineCalculator(this);
+	}
 
     /***
-	 * For line seller 
+	 * For line seller
 	 * @return the seller
 	 */
-	default  TradeParty getLineSeller() { 
+	default TradeParty getLineSeller() {
 		return null;
 	}
 

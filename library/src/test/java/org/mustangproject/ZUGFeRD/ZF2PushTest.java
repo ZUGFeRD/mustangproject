@@ -349,7 +349,7 @@ public class ZF2PushTest extends TestCase {
 	public void testItemAllowanceChargePercentBasisExport() {
 		Invoice invoice = new Invoice().setNumber("1").setIssueDate(new Date()).setDueDate(new Date())
 			.setSender(new TradeParty("Seller", "Street", "12345", "City", "DE").addVATID("DE123456789"))
-			.setRecipient(new TradeParty("Buyer", "Street", "12345", "City", "DE"))
+			.setRecipient(new TradeParty("Buyer", "Street", "12345", "City", "DE").setVATID("DE123456789"))
 			.addItem(new Item(new Product("Item", "", "C62", new BigDecimal("19")), new BigDecimal("80.00"), new BigDecimal("5"))
 				.addAllowance(new Allowance(new BigDecimal("40.00"))
 					.setPercent(new BigDecimal("10.00"))
@@ -612,7 +612,7 @@ public class ZF2PushTest extends TestCase {
 			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile(Profiles.getByName("en16931"));
 			ze.setTransaction(new Invoice().setCurrency("CHF").setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
-				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
+				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE08154711"))
 				.setNumber(number)
 				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
 				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))

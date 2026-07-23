@@ -1,6 +1,5 @@
 package org.mustangproject.Exceptions;
 
-import java.text.ParseException;
 
 /***
  * ArithmetricException for backwards compatibility, was a spelling error

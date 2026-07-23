@@ -1,18 +1,21 @@
 package org.mustangproject;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.mustangproject.ZUGFeRD.*;
-import org.mustangproject.util.BigDecimalUtils;
-import org.mustangproject.util.NodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+
+import org.mustangproject.ZUGFeRD.IReferencedDocument;
+import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
+import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
+import org.mustangproject.util.BigDecimalUtils;
+import org.mustangproject.util.NodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /***
  * describes any invoice line
@@ -27,25 +30,25 @@ public class Item implements IZUGFeRDExportableItem {
 	protected BigDecimal grossPrice;
 	protected BigDecimal lineTotalAmount;
 	protected BigDecimal basisQuantity = BigDecimal.ONE;
-	protected Date detailedDeliveryPeriodFrom = null;
-	protected Date detailedDeliveryPeriodTo = null;
+	protected Date detailedDeliveryPeriodFrom;
+	protected Date detailedDeliveryPeriodTo;
 	protected String id;
-	protected String buyerOrderReferencedDocumentLineID = null;
-	protected String buyerOrderReferencedDocumentID = null;
+	protected String buyerOrderReferencedDocumentLineID;
+	protected String buyerOrderReferencedDocumentID;
 	protected Product product;
-	protected ArrayList<String> notes = null;
-	protected ArrayList<ReferencedDocument> referencedDocuments = null;
-	protected ArrayList<ReferencedDocument> additionalReference = null;
+	protected ArrayList<String> notes;
+	protected ArrayList<ReferencedDocument> referencedDocuments;
+	protected ArrayList<ReferencedDocument> additionalReference;
 	protected ArrayList<IZUGFeRDAllowanceCharge> allowances = new ArrayList<>();
 	protected ArrayList<IZUGFeRDAllowanceCharge> charges = new ArrayList<>();
-	protected List<IncludedNote> includedNotes = null;
+	protected List<IncludedNote> includedNotes;
 	protected String accountingReference;
-	protected String parentLineID = null;
-	protected String lineStatusReasonCode = null;
+	protected String parentLineID;
+	protected String lineStatusReasonCode;
  	protected TradeParty lineSeller;
-	protected String deliveryNoteReferencedDocumentID = null;
-	protected Date deliveryNoteReferencedDocumentDate = null;
-	protected String deliveryNoteReferencedDocumentLineID = null;
+	protected String deliveryNoteReferencedDocumentID;
+	protected Date deliveryNoteReferencedDocumentDate;
+	protected String deliveryNoteReferencedDocumentLineID;
 	//protected HashMap<String, String> attributes = new HashMap<>();
 
 	/***
@@ -208,7 +211,7 @@ public class Item implements IZUGFeRDExportableItem {
 
 						/** mustang attributes differences between net and gross price to the product */
 						String chargeIndicator = gpptpAtacNodes.getAsStringOrNull("ChargeIndicator");
-						if ((chargeIndicator != null)&&(gpptpAtacNodes.getAsBigDecimal("ActualAmount").isPresent())) {
+						if (chargeIndicator != null && gpptpAtacNodes.getAsBigDecimal("ActualAmount").isPresent()) {
 							BigDecimal actual = gpptpAtacNodes.getAsBigDecimal("ActualAmount").get();
 							if (chargeIndicator.equals("true")) {
 								product.addCharge(new Charge(actual));
@@ -548,8 +551,9 @@ public class Item implements IZUGFeRDExportableItem {
 	public IZUGFeRDAllowanceCharge[] getItemAllowances() {
 		if (allowances.isEmpty()) {
 			return null;
-		} else
+		} else {
 			return allowances.toArray(new IZUGFeRDAllowanceCharge[0]);
+		}
 	}
 
 	/***
@@ -576,8 +580,9 @@ public class Item implements IZUGFeRDExportableItem {
 	public IZUGFeRDAllowanceCharge[] getItemCharges() {
 		if (charges.isEmpty()) {
 			return null;
-		} else
+		} else {
 			return charges.toArray(new IZUGFeRDAllowanceCharge[0]);
+		}
 	}
 
 

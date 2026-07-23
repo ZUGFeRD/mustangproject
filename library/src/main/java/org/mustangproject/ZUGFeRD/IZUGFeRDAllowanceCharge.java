@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 /**
  * The interface for allowances or charges, to be used by the pullprovider
  * @author AlexanderSchmidt
- * 
+ *
  * <xs:complexType name="TradeAllowanceChargeType">
  *   <xs:sequence>
  *     <xs:element name="ChargeIndicator" type="udt:IndicatorType"/>
@@ -41,31 +41,39 @@ public interface IZUGFeRDAllowanceCharge extends IZUGFeRDTradeTax {
 	 * is this in reality a charge and now allowance
 	 * @return true if amount to be treated negative
 	 */
-	public boolean isCharge();
+	boolean isCharge();
 
 	/***
 	 * returns the sequence number
 	 * @return	sequence number
 	 */
-	default Integer getSequenceNumeric() {return null;}
+	default Integer getSequenceNumeric() {
+		return null;
+	}
 
 	/***
 	 * returns a percentage, if relative amount, or null for absolute amounts
 	 * @return null or Percentage as BigDecimal
 	 */
-	default BigDecimal getPercent() {return null;}
+	default BigDecimal getPercent() {
+		return null;
+	}
 
 	/***
 	 * returns a basis the percentage is calculated from
 	 * @return null or the basis
 	 */
-	default BigDecimal getBasisAmount() {return null;}
+	default BigDecimal getBasisAmount() {
+		return null;
+	}
 
 	/***
 	 * returns a basis the percentage is calculated from
 	 * @return null or the basis
 	 */
-	default BigDecimal getBasisQuantity() {return null;}
+	default BigDecimal getBasisQuantity() {
+		return null;
+	}
 
 	/***
 	 * returns the absolute amount, even if it was relative in the first place

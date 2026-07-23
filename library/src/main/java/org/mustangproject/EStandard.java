@@ -2,34 +2,34 @@ package org.mustangproject;
 
 public enum EStandard {
 	/**factur-x/zugferd 2*/
-	facturx,
+	FACTUR_X,
 	/***
 	 * order-x
 	 */
-	orderx,
+	ORDER_X,
 	/***
 	 * deliver-x
 	 */
-	despatchadvice,
+	DELIVER_X,
 	/***
 	 * 1lieferschein
 	 */
-	ubldespatchadvice,
+	UBL_DESPATCHADVICE,
 	/***
 	 * ZUGFeRD 1
 	 */
-	zugferd,
+	ZUGFERD,
 	/***
 	 * imported from cross industry invoice
 	 */
-	cii,
+	CII,
 	/***
 	 * imported from an UBL invoice
 	 */
-	ubl,
+	UBL,
 	/***
 	 * imported from an UBL credit note
 	 */
-	ubl_creditnote
+	UBL_CREDITNOTE
 
 }

@@ -37,9 +37,9 @@ import org.mustangproject.XMLTools;
  */
 public class DAPullProvider extends ZUGFeRD2PullProvider {
 
-	protected IExportableTransaction trans;
-	protected Profile profile = Profiles.getByName(EStandard.despatchadvice,"pilot", 1);
-
+	public DAPullProvider() {
+		profile = Profiles.getByName(EStandard.DELIVER_X, "pilot", 1);
+	}
 
 	@Override
 	public void generateXML(IExportableTransaction trans) {
@@ -50,7 +50,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 			typecode = trans.getDocumentCode();
 		}*/
 
-		String testBooleanStr="true";
+		String testBooleanStr = "true";
 		StringBuilder xml = new StringBuilder("<SCRDMCCBDACIDAMessageStructure\n" +
 				"        xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:25\"\n" +
 				"        xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101\"\n" +
@@ -60,7 +60,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 				// ../Schema/ZUGFeRD1p0.xsd\""
 				+ "<px:ExchangedDocumentContext>"
 				// + "
-				+" <ram:TestIndicator><udt:Indicator>"+testBooleanStr+"</udt:Indicator></ram:TestIndicator>\n"
+				+ "<ram:TestIndicator><udt:Indicator>" + testBooleanStr + "</udt:Indicator></ram:TestIndicator>\n"
 				//
 				+ "<ram:BusinessProcessSpecifiedDocumentContextParameter>"
 				+ "<ram:ID>" + getProfile().getID() + "</ram:ID>"
@@ -87,7 +87,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 			xml.append("<ram:IncludedSupplyChainTradeLineItem>" +
 					"<ram:AssociatedDocumentLineDocument>"
 					+ "<ram:LineID>" + lineID + "</ram:LineID>"
-          + buildItemNotes(currentItem)
+					+ buildItemNotes(currentItem)
 					+ "</ram:AssociatedDocumentLineDocument>"
 
 					+ "<ram:SpecifiedTradeProduct>");
@@ -129,7 +129,6 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 					+ "<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription())
 					+ "</ram:Description>"
 					+ "</ram:SpecifiedTradeProduct>"
-
 					+ "<ram:SpecifiedLineTradeDelivery>"
 					+ "<ram:DespatchedQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">"
 					+ quantityFormat(currentItem.getQuantity()) + "</ram:DespatchedQuantity>"
@@ -227,7 +226,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 		xml.append(" <ram:ActualDespatchSupplyChainEvent>\n" +
 				"                <ram:OccurrenceDateTime>\n" +
 				"                    <udt:DateTimeString\n" +
-				"                            format=\"102\">"+ DATE.udtFormat(trans.getDeliveryDate() )+"</udt:DateTimeString>\n" +
+				"                            format=\"102\">" + DATE.udtFormat(trans.getDeliveryDate() ) + "</udt:DateTimeString>\n" +
 				"                </ram:OccurrenceDateTime>\n" +
 				"            </ram:ActualDespatchSupplyChainEvent>");
 
@@ -285,7 +284,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
     Invoice copyWithoutRebateInfo = new Invoice()
         .setOwnOrganisationFullPlaintextInfo(exportableTransaction.getOwnOrganisationFullPlaintextInfo())
         .addNotes(exportableTransaction.getNotesWithSubjectCode());
-    if(exportableTransaction.getNotes() != null) {
+    if (exportableTransaction.getNotes() != null) {
       for (String note : exportableTransaction.getNotes()) {
         copyWithoutRebateInfo.addNote(note);
       }

@@ -393,10 +393,11 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		int version=-1;
 		try {
 			zii.fromXML(new String(Files.readAllBytes(Paths.get("./target/testout-XR-Edge.xml")), StandardCharsets.UTF_8));
-			version=zii.getVersion();
+			version = zii.getVersion();
 		} catch (IOException e) {
 			hasExceptions = true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 

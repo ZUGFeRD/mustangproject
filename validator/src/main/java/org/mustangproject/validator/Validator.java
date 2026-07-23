@@ -16,14 +16,15 @@ import org.xml.sax.SAXException;
 //abstract class
 public abstract class Validator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Validator.class.getCanonicalName()); // log output
-	
+
 	protected ValidationContext context;
-	protected boolean autoload=true;
-	
-	public Validator(ValidationContext ctx){
-		this.context=ctx;
+
+	protected boolean autoload = true;
+
+	protected Validator(ValidationContext ctx) {
+		this.context = ctx;
 	}
-	
+
 	//abstract method
 
 	/***
@@ -46,7 +47,7 @@ public abstract class Validator {
 	public String getXMLResult() {
 		return context.getXMLResult();
 	}
-	
+
 	/***
 	 * validates a schema, which can only be needed in XML validation - and in pdf validation for additional data
 	 * @param xmlRawData the XML to be validated
@@ -79,7 +80,6 @@ public abstract class Validator {
 	public void setAutoload(boolean autoload) {
 		this.autoload = autoload;
 	}
-
 
 
 }

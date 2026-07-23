@@ -332,7 +332,7 @@ public class DXTest extends MustangReaderTestCase {
 		Invoice i = createDA(recipient);
 
 		DAPullProvider zf2p = new DAPullProvider();
-		zf2p.setProfile(Profiles.getByName(EStandard.despatchadvice,"Pilot",1));
+		zf2p.setProfile(Profiles.getByName(EStandard.DELIVER_X,"Pilot",1));
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		try {

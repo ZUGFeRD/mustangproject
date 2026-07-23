@@ -30,7 +30,6 @@ package org.mustangproject.ZUGFeRD;
  * */
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -148,7 +147,9 @@ public interface IExportableTransaction {
 		return null;
 	}
 
-	default IZUGFeRDCashDiscount[] getCashDiscounts() {	return null; }
+	default IZUGFeRDCashDiscount[] getCashDiscounts() {
+		return null;
+	}
 
 	/***
 	 * @return the invoice line items with the positions
@@ -472,8 +473,7 @@ public interface IExportableTransaction {
 	}
 
 	/**
-	 * get the ID of the preceding invoice, which is e.g. to be corrected if this is
-	 * a correction
+	 * get the ID of the preceding invoice, which is e.g. to be corrected if this is a correction
 	 *
 	 * @return the ID of the document
 	 */

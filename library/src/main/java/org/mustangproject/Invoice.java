@@ -21,14 +21,24 @@
 package org.mustangproject;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.mustangproject.ZUGFeRD.*;
+import org.mustangproject.ZUGFeRD.IExportableTransaction;
+import org.mustangproject.ZUGFeRD.IReferencedDocument;
+import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
+import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
+import org.mustangproject.ZUGFeRD.IZUGFeRDLogisticsServiceCharge;
+import org.mustangproject.ZUGFeRD.IZUGFeRDPaymentTerms;
+import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlement;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /***
@@ -40,22 +50,21 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 public class Invoice implements IExportableTransaction {
 
 	protected boolean testIndicator;
-	protected String documentName = null, documentCode = null, number = null, ownOrganisationFullPlaintextInfo = null, referenceNumber = null, shipToOrganisationID = null, shipToOrganisationName = null, shipToStreet = null, shipToZIP = null, shipToLocation = null, shipToCountry = null, buyerOrderReferencedDocumentID = null, ownForeignOrganisationID = null, ownOrganisationName = null, currency = null, paymentTermDescription = null;
+	protected String documentName, documentCode, number, ownOrganisationFullPlaintextInfo, referenceNumber, shipToOrganisationID, shipToOrganisationName, shipToStreet, shipToZIP, shipToLocation, shipToCountry, buyerOrderReferencedDocumentID, ownForeignOrganisationID, ownOrganisationName, currency, paymentTermDescription;
 	protected String deliveryTypeCode;
-	protected Date issueDate = null, dueDate = null, deliveryDate = null, buyerOrderReferencedDocumentIssueDateTime = null;
-	protected TradeParty sender = null, recipient = null, deliveryAddress = null, endCustomerDeliveryAddress = null, payee = null, invoicer = null, invoicee = null;
-	protected ArrayList<CashDiscount> cashDiscounts = null;
+	protected Date issueDate, dueDate, deliveryDate, buyerOrderReferencedDocumentIssueDateTime;
+	protected TradeParty sender, recipient, deliveryAddress, endCustomerDeliveryAddress, payee, invoicer, invoicee;
+	protected ArrayList<CashDiscount> cashDiscounts;
 	@JsonDeserialize(contentAs = Item.class)
-	protected List<IZUGFeRDExportableItem> zfItems = null;
-	protected ArrayList<String> notes = null;
-	private List<IncludedNote> includedNotes = null;
+	protected List<IZUGFeRDExportableItem> zfItems;
+	protected ArrayList<String> notes;
 	protected String sellerOrderReferencedDocumentID;
-	protected String contractReferencedDocument = null;
-	protected ArrayList<FileAttachment> xmlEmbeddedFiles = null;
+	protected String contractReferencedDocument;
+	protected ArrayList<FileAttachment> xmlEmbeddedFiles;
 
-	protected BigDecimal totalPrepaidAmount = null;
-	protected Date detailedDeliveryDateStart = null;
-	protected Date detailedDeliveryPeriodEnd = null;
+	protected BigDecimal totalPrepaidAmount;
+	protected Date detailedDeliveryDateStart;
+	protected Date detailedDeliveryPeriodEnd;
 	protected IReferencedDocument tenderReference; // TypeCode 50
 	protected IReferencedDocument objectIdentifierReferencedDocument; // TypeCode 130
 	protected IReferencedDocument relatedReferenceDocument; // TypeCode 916
@@ -64,21 +73,24 @@ public class Invoice implements IExportableTransaction {
 	protected ArrayList<IZUGFeRDLogisticsServiceCharge> logisticsServiceCharges = new ArrayList<>();
 	protected ArrayList<IZUGFeRDPaymentTerms> paymentTerms = new ArrayList<>();
 
-	protected String invoiceReferencedDocumentID = null;
+	protected String invoiceReferencedDocumentID;
 	protected Date invoiceReferencedIssueDate;
 	// New field for storing Invoiced Object Identifier (BG-3)
-	protected List<ReferencedDocument> invoiceReferencedDocuments = null;
+	protected List<ReferencedDocument> invoiceReferencedDocuments;
 
-	protected String specifiedProcuringProjectID = null;
-	protected String specifiedProcuringProjectName = null;
-	protected String despatchAdviceReferencedDocumentID = null;
-	protected String deliveryNoteReferencedDocumentID = null;
-	protected Date deliveryNoteReferencedDocumentDate = null;
-	protected String vatDueDateTypeCode = null;
+	protected String specifiedProcuringProjectID;
+	protected String specifiedProcuringProjectName;
+	protected String despatchAdviceReferencedDocumentID;
+	protected String deliveryNoteReferencedDocumentID;
+	protected Date deliveryNoteReferencedDocumentDate;
+	protected String vatDueDateTypeCode;
 	protected String creditorReferenceID; // required when direct debit is used.
-	private BigDecimal roundingAmount=null;
+
+	private List<IncludedNote> includedNotes;
+	private BigDecimal roundingAmount;
 	private String paymentReference; // Remittance information / Verwendungszweck, BT-83
 	private String businessProcessId;
+
 	public Invoice() {
 		zfItems = new ArrayList<>();
 		cashDiscounts = new ArrayList<>();
@@ -143,7 +155,7 @@ public class Invoice implements IExportableTransaction {
 	 * @return fluent setter
 	 */
 	public Invoice setAdditionalReferencedDocuments(FileAttachment[] fileArr) {
-		if (fileArr!=null) {
+		if (fileArr != null) {
 			xmlEmbeddedFiles = new ArrayList<>(Arrays.asList(fileArr));
 		} else {
 			xmlEmbeddedFiles = new ArrayList<>();
@@ -223,17 +235,17 @@ public class Invoice implements IExportableTransaction {
 
 	@JsonIgnore
 	public Invoice setObjectIdentifierReferencedDocument(String id, String referenceTypeCode) {
-	    ReferencedDocument dr = new ReferencedDocument(id);
-	    dr.setReferenceTypeCode(referenceTypeCode);
-	    return setObjectIdentifierReferencedDocument(dr);
+		ReferencedDocument dr = new ReferencedDocument(id);
+		dr.setReferenceTypeCode(referenceTypeCode);
+		return setObjectIdentifierReferencedDocument(dr);
 	}
 
 	@JsonIgnore
 	public Invoice setObjectIdentifierReferencedDocument(String id, String referenceTypeCode, Date issueDate) {
-	    ReferencedDocument dr = new ReferencedDocument(id);
-	    dr.setReferenceTypeCode(referenceTypeCode);
-	    dr.setFormattedIssueDateTime(issueDate);
-	    return setObjectIdentifierReferencedDocument(dr);
+		ReferencedDocument dr = new ReferencedDocument(id);
+		dr.setReferenceTypeCode(referenceTypeCode);
+		dr.setFormattedIssueDateTime(issueDate);
+		return setObjectIdentifierReferencedDocument(dr);
 	}
 
 	@Override
@@ -257,17 +269,17 @@ public class Invoice implements IExportableTransaction {
 
 	@JsonIgnore
 	public Invoice setRelatedReferencedDocument(String id, String referenceTypeCode) {
-	    ReferencedDocument dr = new ReferencedDocument(id);
-	    dr.setReferenceTypeCode(referenceTypeCode);
-	    return setRelatedReferencedDocument(dr);
+		ReferencedDocument dr = new ReferencedDocument(id);
+		dr.setReferenceTypeCode(referenceTypeCode);
+		return setRelatedReferencedDocument(dr);
 	}
 
 	@JsonIgnore
 	public Invoice setRelatedReferencedDocument(String id, String referenceTypeCode, Date issueDate) {
-	    ReferencedDocument dr = new ReferencedDocument(id);
-	    dr.setReferenceTypeCode(referenceTypeCode);
-	    dr.setFormattedIssueDateTime(issueDate);
-	    return setRelatedReferencedDocument(dr);
+		ReferencedDocument dr = new ReferencedDocument(id);
+		dr.setReferenceTypeCode(referenceTypeCode);
+		dr.setFormattedIssueDateTime(issueDate);
+		return setRelatedReferencedDocument(dr);
 	}
 
 
@@ -428,11 +440,13 @@ public class Invoice implements IExportableTransaction {
 		return this;
 	}
 
+	@Deprecated
 	@Override
 	public String getInvoiceReferencedDocumentID() {
 		return invoiceReferencedDocumentID;
 	}
 
+	@Deprecated
 	@Override
 	public Date getInvoiceReferencedIssueDate() {
 		return invoiceReferencedIssueDate;
@@ -579,7 +593,7 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	public Invoice setNotesWithSubjectCode(List<IncludedNote> theList) {
-		includedNotes=theList;
+		includedNotes = theList;
 		return this;
 	}
 
@@ -654,7 +668,7 @@ public class Invoice implements IExportableTransaction {
 	 * @return fluent setter
 	 */
 	public Invoice setRoundingAmount(BigDecimal amount) {
-		 roundingAmount=amount;
+		 roundingAmount = amount;
 		 return this;
 	}
 
@@ -745,7 +759,7 @@ public class Invoice implements IExportableTransaction {
 	 * @return fluent setter
 	 */
 	public Invoice setZFCharges(Charge[] iza) {
-		charges=new ArrayList<>();
+		charges = new ArrayList<>();
 		charges.addAll(Arrays.asList(iza));
 		return this;
 	}
@@ -793,8 +807,7 @@ public class Invoice implements IExportableTransaction {
 	public Invoice setPaymentTerms(IZUGFeRDPaymentTerms paymentTerm) {
 		if (paymentTerms.isEmpty()) {
 			paymentTerms.add(paymentTerm);
-		}
-		else {
+		} else {
 			paymentTerms.set(0, paymentTerm);
 		}
 		return this;
@@ -1017,7 +1030,7 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	public Invoice setDetailedDeliveryPeriodFrom(Date dt) {
-		detailedDeliveryDateStart=dt;
+		detailedDeliveryDateStart = dt;
 		return this;
 	}
 
@@ -1027,7 +1040,7 @@ public class Invoice implements IExportableTransaction {
 	}
 
 	public Invoice setDetailedDeliveryPeriodTo(Date dt) {
-		detailedDeliveryPeriodEnd=dt;
+		detailedDeliveryPeriodEnd = dt;
 		return this;
 	}
 
