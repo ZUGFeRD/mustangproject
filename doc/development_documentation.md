@@ -75,7 +75,7 @@ And when writing,
 
 ## Build
 
-Target platform is java 1.17
+Target platform is java 11
 
 The package can be build with
 ```
