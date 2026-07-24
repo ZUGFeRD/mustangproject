@@ -124,7 +124,7 @@ public class PDFValidator extends Validator {
 			ItemDetails itemDetails = ItemDetails.fromValues(pdfFilename);
 			inputStream.mark(Integer.MAX_VALUE);
 			processorResult = processor.process(itemDetails, inputStream);
-			pdfReport = escapeXmlSpecialChars(processorResult.getValidationResult().toString().replace(
+			pdfReport = escapeXmlSpecialChars(processorResult.getValidationResults().get(0).toString().replace(
 				"<\\?xml version=\"1\\.0\" encoding=\"utf-8\"\\?>",
 				""
 			));
@@ -343,11 +343,11 @@ public class PDFValidator extends Validator {
 		//end
 
 		final long endTime = Calendar.getInstance().getTimeInMillis();
-		if (!processorResult.getValidationResult().isCompliant()) {
+		if (!processorResult.getValidationResults().get(0).isCompliant()) {
 			context.setInvalid();
 		}
 
-		PDFAFlavour pdfaFlavourFromValidationResult = processorResult.getValidationResult().getPDFAFlavour();
+		PDFAFlavour pdfaFlavourFromValidationResult = processorResult.getValidationResults().get(0).getPDFAFlavour();
 		if (Arrays.stream(PDF_A_3_FLAVOURS)
 			.noneMatch(pdfaFlavourFromValidationResult::equals)) {
 			context.addResultItem(
