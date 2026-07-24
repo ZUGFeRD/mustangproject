@@ -796,6 +796,7 @@ public class Invoice implements IExportableTransaction {
 	}
 
 
+	@JsonIgnore
 	@Override
 	public IZUGFeRDPaymentTerms getPaymentTerms() {
 		if (!paymentTerms.isEmpty()) {
@@ -813,6 +814,7 @@ public class Invoice implements IExportableTransaction {
 		return this;
 	}
 
+	@JsonIgnore
 	@Override
 	public IZUGFeRDPaymentTerms[] getExtendedPaymentTerms() {
 		return paymentTerms.toArray(new IZUGFeRDPaymentTerms[0]);
