@@ -16,7 +16,10 @@
 - add disableArithmeticCheck() / --no-arithmetic-check option to skip the arithmetic recalculation pass during validation
 - #1167 Upgrade com.fasterxml.jackson.core to 2.22.1 from 2.17.3
 - #1186 Read Item LineTotalAmount from SpecifiedTradeSettlementLineMonetarySummation
-- Some minor dependency upgrades.
+- Some minor dependency upgrades. / Upgrade verapdf from 1.26.5 to 1.30.2.
+- #976 / #797 InvoiceImport: read ContractReferencedDocument/IssuerAssignedID into Invoice.contractReferencedDocument
+- #987 Show only the matching BIC per IBAN in invoice visualization
+- #982 Support TypeCodes 130 and 916 for AdditionalReferencedDocuments
 
 
 2.24.0
