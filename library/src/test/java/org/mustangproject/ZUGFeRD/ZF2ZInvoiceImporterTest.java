@@ -945,6 +945,32 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 	@Test
+	public void testIssue275GroupLineTotalsWithOnlyDueDateTypeCode() throws FileNotFoundException, XPathExpressionException, ParseException {
+		// Regression for Factur-X issue 275: these GROUP lines have no price or
+		// quantity, so their imported LineTotalAmount must drive the calculation.
+		// Before the fix, getCalculation() assigned null and threw an NPE.
+		File inputFile = getResourceAsFile("cii/UC11_F202600022_EXTENDED_FX_CII_BT-X-589Only_on_GROUP_Line.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.setInputStream(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+
+		Item firstGroup = findItemById(invoice, "1");
+		assertNotNull(firstGroup);
+		assertEquals("GROUP", firstGroup.getLineStatusReasonCode());
+		LineCalculator firstCalculation = firstGroup.getCalculation();
+		assertEquals(new BigDecimal("90.95"), firstGroup.getLineTotalAmount());
+		assertEquals(new BigDecimal("90.95"), firstCalculation.getItemTotalNetAmount());
+
+		Item secondGroup = findItemById(invoice, "5");
+		assertNotNull(secondGroup);
+		assertEquals("GROUP", secondGroup.getLineStatusReasonCode());
+		LineCalculator secondCalculation = secondGroup.getCalculation();
+		assertEquals(new BigDecimal("121.95"), secondGroup.getLineTotalAmount());
+		assertEquals(new BigDecimal("121.95"), secondCalculation.getItemTotalNetAmount());
+	}
+
+	@Test
 	public void testSubInvoiceLinesNestedImport() throws FileNotFoundException, XPathExpressionException, ParseException {
 		// test import of nested sub invoice lines (GROUP containing GROUP containing DETAIL)
 		File inputFile = getResourceAsFile("subinvoicelines/Extended___SubInvoiceLines_Kaffee_Bundle_Set_Bsp4__.xml");
