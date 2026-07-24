@@ -60,6 +60,7 @@ import org.mustangproject.TradeParty;
 import org.mustangproject.XMLTools;
 import org.mustangproject.Exceptions.StructureException;
 import org.mustangproject.util.NodeMap;
+import org.mustangproject.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -761,6 +762,7 @@ public class ZUGFeRDInvoiceImporter {
 		NodeList headerTradeAgreementNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		String buyerOrderIssuerAssignedID = null;
 		String sellerOrderIssuerAssignedID = null;
+		String contractReferencedAssignedID = null;
 
 		for (int i = 0; i < headerTradeAgreementNodes.getLength(); i++) {
 			// XMLTools.trimOrNull(nodes.item(i)))) {
@@ -794,6 +796,16 @@ public class ZUGFeRDInvoiceImporter {
 							if ((sellerOrderChilds.item(sellerOrderChildIndex).getLocalName() != null)
 								&& (sellerOrderChilds.item(sellerOrderChildIndex).getLocalName().equals("IssuerAssignedID"))) {
 								sellerOrderIssuerAssignedID = XMLTools.trimOrNull(sellerOrderChilds.item(sellerOrderChildIndex));
+							}
+						}
+					}
+
+					if (headerTradeAgreementChilds.item(agreementChildIndex).getLocalName().equals("ContractReferencedDocument")) {
+						NodeList contractReferenceChilds = headerTradeAgreementChilds.item(agreementChildIndex).getChildNodes();
+						for (int index = 0; index < contractReferenceChilds.getLength(); index++) {
+							if ((contractReferenceChilds.item(index).getLocalName() != null)
+								&& (contractReferenceChilds.item(index).getLocalName().equals("IssuerAssignedID"))) {
+								contractReferencedAssignedID = XMLTools.trimOrNull(contractReferenceChilds.item(index));
 							}
 						}
 					}
@@ -1118,6 +1130,10 @@ public class ZUGFeRDInvoiceImporter {
 			if (!s.isEmpty()) {
 				zpp.setDespatchAdviceReferencedDocumentID(s);
 			}
+		}
+
+		if (StringUtils.isNotBlank(contractReferencedAssignedID)) {
+			zpp.setContractReferencedDocument(contractReferencedAssignedID);
 		}
 
 		if (deliveryNoteReferencedDocumentID != null) {
@@ -1470,7 +1486,6 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 		return zpp;
-
 	}
 
 	private Date parseDate(String issueDateString, String datePattern) throws ParseException {
