@@ -31,6 +31,15 @@
                 <ram:Name>PATAT FRITES 10MM 10KG</ram:Name>
             </ram:SpecifiedTradeProduct>
             <ram:SpecifiedLineTradeAgreement>
+	            <ram:SellerOrderReferencedDocument>
+	                <ram:IssuerAssignedID>Verkäufer-Dokument</ram:IssuerAssignedID>
+	            </ram:SellerOrderReferencedDocument>
+	            <ram:BuyerOrderReferencedDocument>
+	                <ram:IssuerAssignedID>Käufer-Dokument</ram:IssuerAssignedID>
+	            </ram:BuyerOrderReferencedDocument>
+	            <ram:ContractReferencedDocument>
+	                <ram:IssuerAssignedID>Vertrags-Dokument</ram:IssuerAssignedID>
+	            </ram:ContractReferencedDocument>
                 <ram:NetPriceProductTradePrice>
                     <ram:ChargeAmount>9.95</ram:ChargeAmount>
                 </ram:NetPriceProductTradePrice>

@@ -101,7 +101,7 @@ public interface IZUGFeRDAllowanceCharge extends IZUGFeRDTradeTax {
 	/**
 	 * @deprecated use getTaxCategoryCode() instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default String getCategoryCode() {
 		return getTaxCategoryCode();
 	}
@@ -109,7 +109,7 @@ public interface IZUGFeRDAllowanceCharge extends IZUGFeRDTradeTax {
 	/**
 	 * @deprecated use getTaxRateApplicablePercent() instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default BigDecimal getTaxPercent() {
 		return getTaxRateApplicablePercent();
 	}

@@ -101,14 +101,14 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	I'd really like to get rid of all those getOwn... methods some time but in this case they are in the interface :-(
 	 */
 	@Override
-	@Deprecated
+	@Deprecated(since = "2.15.1")
 	@JsonIgnore
 	public String getOwnBIC() {
 		return getBIC();
 	}
 
 	@Override
-	@Deprecated
+	@Deprecated(since = "2.15.1")
 	@JsonIgnore
 	public String getOwnIBAN() {
 		return getIBAN();

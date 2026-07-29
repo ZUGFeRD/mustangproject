@@ -181,7 +181,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
 		// Reading ZUGFeRD
 		assertEquals("4711", invoice.getZFItems()[0].getProduct().getSellerAssignedID());
-		assertEquals("9384", invoice.getSellerOrderReferencedDocumentID());
+		assertEquals("9384", invoice.getSellerOrderReferencedDocument().getIssuerAssignedID());
 		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
 
 		IReferencedDocument[] rd=invoice.getZFItems()[0].getAdditionalReferences();
@@ -194,11 +194,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("2025-10-12", sdf.format(invoice.getTenderReferencedDocument().getFormattedIssueDateTime()));
 		assertEquals("sender@test.org", invoice.getSender().getEmail());
 		assertEquals("recipient@test.org", invoice.getRecipient().getEmail());
-		assertEquals("28934", invoice.getBuyerOrderReferencedDocumentID());
-
-
-
-
+		assertEquals("28934", invoice.getBuyerOrderReferencedDocument().getIssuerAssignedID());
 	}
 
 
@@ -899,12 +895,12 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertNull(invoice.getDeliveryAddress());
 		assertNull(invoice.getPayee());
 
-		assertNull(invoice.getBuyerOrderReferencedDocumentID());
-		assertNull(invoice.getSellerOrderReferencedDocumentID());
-		assertNull(invoice.getDespatchAdviceReferencedDocumentID());
-		assertNull(invoice.getInvoiceReferencedDocumentID());
-		assertNull(invoice.getDeliveryNoteReferencedDocumentID());
-		assertNull(invoice.getDeliveryNoteReferencedDocumentDate());
+		assertNull(invoice.getBuyerOrderReferencedDocument());
+		assertNull(invoice.getSellerOrderReferencedDocument());
+		assertNull(invoice.getDespatchAdviceReferencedDocument());
+		assertNull(invoice.getInvoiceReferencedDocuments());
+		assertNull(invoice.getDeliveryNoteReferencedDocument());
+		assertNull(invoice.getDeliveryNoteReferencedDocument());
 	}
 
 	@Test
@@ -1089,6 +1085,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		zii.setInputStream(new FileInputStream(inputFile));
 
 		Invoice invoice = zii.extractInvoice();
+		assertNotNull(invoice.getZFItems()[0].getSellerOrderReferencedDocument());
+		assertNotNull(invoice.getZFItems()[0].getBuyerOrderReferencedDocument());
+		assertNotNull(invoice.getZFItems()[0].getContractReferencedDocument());
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 		zf2p.setProfile(Profiles.getByName("EN16931"));
@@ -1096,6 +1095,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 
 		assertTrue(theXML.contains("issuer-assigned-id_PPg9iTcig5UG0978"));
+		assertTrue(theXML.contains("Verkäufer"));
+		assertTrue(theXML.contains("Käufer"));
+		assertTrue(theXML.contains("Vertrag"));
 	}
 
 	@Test

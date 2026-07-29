@@ -85,6 +85,7 @@ public class Charge extends TradeTax implements IZUGFeRDAllowanceCharge {
 	/**
 	 * @return the sequenceNumeric
 	 */
+	@Override
 	public Integer getSequenceNumeric() {
 		return sequenceNumeric;
 	}
@@ -215,7 +216,8 @@ public class Charge extends TradeTax implements IZUGFeRDAllowanceCharge {
 	/**
 	 * @deprecated use getTaxRateApplicablePercent() instead.
 	 */
-	@Deprecated
+	@SuppressWarnings("deprecation")
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	@JsonIgnore
 	@Override
 	public BigDecimal getTaxPercent() {
@@ -228,7 +230,7 @@ public class Charge extends TradeTax implements IZUGFeRDAllowanceCharge {
 	 * @param percent
 	 * @return
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	public Charge setTaxPercent(BigDecimal percent) {
 		this.setTaxRateApplicablePercent(percent);
 		return this;
@@ -237,7 +239,8 @@ public class Charge extends TradeTax implements IZUGFeRDAllowanceCharge {
 	/**
 	 * @deprecated use getTaxCategoryCode() instead.
 	 */
-	@Deprecated
+	@SuppressWarnings("deprecation")
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	@JsonIgnore
 	@Override
 	public String getCategoryCode() {
@@ -249,7 +252,7 @@ public class Charge extends TradeTax implements IZUGFeRDAllowanceCharge {
 	 * @param taxCategoryCode
 	 * @return
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	public Charge setCategoryCode(String taxCategoryCode) {
 		this.setTaxCategoryCode(taxCategoryCode);
 		return this;

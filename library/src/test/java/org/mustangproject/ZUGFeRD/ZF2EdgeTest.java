@@ -32,13 +32,14 @@ import java.util.GregorianCalendar;
 
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.mustangproject.ReferencedDocument;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ZF2EdgeTest extends MustangReaderTestCase {
-	final String TARGET_PDF = "./target/testout-ZF2newEdge.pdf";
+	private static final String TARGET_PDF = "./target/testout-ZF2newEdge.pdf";
 
 	protected class EdgeProduct implements IZUGFeRDExportableProduct {
 		private String description, name, unit;
@@ -144,68 +145,17 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		return "DE";
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public IReferencedDocument getTenderReferencedDocument() {
-		return new IReferencedDocument() {
-			@Override
-			public String getIssuerAssignedID() {
-				return "983-jk-787";
-			}
-
-			@Override
-			public String getTypeCode() {
-				return "50";
-			}
-
-			@Override
-			public String getReferenceTypeCode() {
-				return "";
-			}
-
-			@Override
-			public Date getFormattedIssueDateTime() {
-				SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
-				try {
-					return sdf.parse("2025-10-12");
-				} catch (ParseException e) {
-					// wont happen, I promise :-)
-				}
-				return null; // wont happen either
-			}
-
-		};
+		return new ReferencedDocument("983-jk-787", "50", null, new Date(2025 - 1900, 10 - 1, 12));
 	}
 
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public IReferencedDocument getObjectIdentifierReferencedDocument() {
-		return new IReferencedDocument() {
-			@Override
-			public String getIssuerAssignedID() {
-				return "gPogKLtac0";
-			}
-
-			@Override
-			public String getTypeCode() {
-				return "130";
-			}
-
-			@Override
-			public String getReferenceTypeCode() {
-				return "";
-			}
-
-			@Override
-			public Date getFormattedIssueDateTime() {
-				SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
-				try {
-					return sdf.parse("2026-01-26");
-				} catch (ParseException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-		};
+		return new ReferencedDocument("gPogKLtac0", "130", null, new Date(2026 - 1900, 1 - 1, 26));
 	}
 
 	@Override
@@ -332,18 +282,13 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	}
 
 	@Override
-	public String getDespatchAdviceReferencedDocumentID() {
-		return "123";
+	public IReferencedDocument getDespatchAdviceReferencedDocument() {
+		return new ReferencedDocument("123");
 	}
 
 	@Override
-	public String getDeliveryNoteReferencedDocumentID() {
-		return "0815";
-	}
-
-	@Override
-	public Date getDeliveryNoteReferencedDocumentDate() {
-		return new GregorianCalendar(2016, Calendar.APRIL, 1).getTime();
+	public IReferencedDocument getDeliveryNoteReferencedDocument() {
+		return new ReferencedDocument("0815");
 	}
 
 	/**
@@ -375,11 +320,9 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 
 		// the writing part
 
-		try  {
-			InputStream SOURCE_PDF = this.getClass()
-				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
+		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
+			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
-			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1();
 			ze.ignorePDFAErrors();
 			ze.load(SOURCE_PDF);
 			ze.setProducer("My Application")
@@ -431,12 +374,9 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		// the writing part
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try (InputStream SOURCE_PDF = this.getClass()
-				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
-
-			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA3().setProducer("My Application")
-					 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).disableFacturX()
-					 .load(SOURCE_PDF)) {
+		try (InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
+				IZUGFeRDExporter ze = new ZUGFeRDExporterFromA3()) {
+			ze.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).disableFacturX().load(SOURCE_PDF);
 			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));

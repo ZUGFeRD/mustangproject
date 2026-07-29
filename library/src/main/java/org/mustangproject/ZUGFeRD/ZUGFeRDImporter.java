@@ -30,8 +30,10 @@ import javax.xml.xpath.XPathFactory;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.Item;
 import org.mustangproject.Product;
+import org.mustangproject.ReferencedDocument;
 import org.mustangproject.SchemedID;
 import org.mustangproject.XMLTools;
+import org.mustangproject.util.NodeMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -661,7 +663,6 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 			for (int i = 0; i < nl.getLength(); i++) {
 				final Node nn = nl.item(i);
 				Node node = null;
-				Node subnode = null;
 				if (nn.getLocalName() != null) {
 					switch (nn.getLocalName()) {
 						case "SpecifiedLineTradeAgreement":
@@ -719,28 +720,10 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 						case "SpecifiedLineTradeDelivery":
 						case "SpecifiedSupplyChainTradeDelivery":
 							node = getNodeByName(nn.getChildNodes(), "BilledQuantity");
-							lineItem.setQuantity(XMLTools.tryBigDecimal(node));
-
-							node = getNodeByName(nn.getChildNodes(), "DeliveryNoteReferencedDocument");
 							if (node != null) {
-								subnode = getNodeByName(node.getChildNodes(), "IssuerAssignedID");
-								if (subnode != null) {
-									lineItem.setDeliveryNoteReferencedDocumentID(XMLTools.getNodeValue(subnode));
-								}
-								subnode = getNodeByName(node.getChildNodes(), "LineID");
-								if (subnode != null) {
-									lineItem.setDeliveryNoteReferencedDocumentLineID(XMLTools.getNodeValue(subnode));
-								}
-								node = getNodeByName(node.getChildNodes(), "FormattedIssueDateTime");
-								if (node != null) {
-									NodeList formattedIssueDateTimeChilds = node.getChildNodes();
-									for (int dateChildIndex = 0; dateChildIndex < formattedIssueDateTimeChilds.getLength(); dateChildIndex++) {
-										if ((formattedIssueDateTimeChilds.item(dateChildIndex).getLocalName() != null)
-											&& (formattedIssueDateTimeChilds.item(dateChildIndex).getLocalName().equals("DateTimeString"))) {
-											lineItem.setDeliveryNoteReferencedDocumentDate(XMLTools.tryDate(formattedIssueDateTimeChilds.item(dateChildIndex)));
-										}
-									}
-								}
+								lineItem.setQuantity(XMLTools.tryBigDecimal(node));
+								new NodeMap(node.getChildNodes()).getNode("DespatchAdviceReferencedDocument").map(ReferencedDocument::fromNode).ifPresent(rd -> lineItem.setDespatchAdviceReferencedDocument(rd));
+								new NodeMap(node.getChildNodes()).getNode("DeliveryNoteReferencedDocument").map(ReferencedDocument::fromNode).ifPresent(rd -> lineItem.setDeliveryNoteReferencedDocument(rd));
 							}
 							break;
 

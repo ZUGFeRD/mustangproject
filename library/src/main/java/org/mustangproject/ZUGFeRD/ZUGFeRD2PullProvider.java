@@ -30,6 +30,7 @@ import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -153,9 +154,8 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml.append("<ram:ID>" + XMLTools.encodeXML(party.getLegalOrganisation().getSchemedID().getID()) + "</ram:ID>");
 				} else {
 					String schemeAttribute = "";
-					if ((party.getLegalOrganisation().getSchemedID().getScheme() != null) && (party.getLegalOrganisation().getSchemedID().getScheme().length() > 0)) {
+					if (party.getLegalOrganisation().getSchemedID().getScheme() != null && !party.getLegalOrganisation().getSchemedID().getScheme().isEmpty()) {
 						schemeAttribute = "schemeID=\"" + XMLTools.encodeXML(party.getLegalOrganisation().getSchemedID().getScheme()) + "\"";
-
 					}
 					xml.append("<ram:ID " + schemeAttribute + ">" + XMLTools.encodeXML(party.getLegalOrganisation().getSchemedID().getID()) + "</ram:ID>");
 				}
@@ -365,8 +365,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 
 		if ((profile == Profiles.getByName("XRechnung")) && (trans.getCashDiscounts() != null) && (trans.getCashDiscounts().length > 0)) {
-			for (IZUGFeRDCashDiscount discount : trans.getCashDiscounts()
-			) {
+			for (IZUGFeRDCashDiscount discount : trans.getCashDiscounts() ) {
 				if (paymentTermsDescription == null) {
 					paymentTermsDescription = "";
 				}
@@ -374,11 +373,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			}
 		} else if (paymentTermsDescription == null
 			&& !DocumentCodeTypeConstants.CORRECTEDINVOICE.equals(trans.getDocumentCode())
-			&& !DocumentCodeTypeConstants.CREDITNOTE.equals(trans.getDocumentCode())
-		) {
-			if (trans.getDueDate() != null) {
-				paymentTermsDescription = "Please remit until " + germanDateFormat.format(trans.getDueDate());
-			}
+			&& !DocumentCodeTypeConstants.CREDITNOTE.equals(trans.getDocumentCode()) ) {
+				if (trans.getDueDate() != null) {
+					paymentTermsDescription = "Please remit until " + germanDateFormat.format(trans.getDueDate());
+				}
 		}
 
 
@@ -495,34 +493,32 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				if (currentItem.getProduct().getCountryOfOrigin() != null) {
 					xml.append("<ram:OriginTradeCountry><ram:ID>" + XMLTools.encodeXML(currentItem.getProduct().getCountryOfOrigin()) + "</ram:ID></ram:OriginTradeCountry>");
 				}
-				xml.append("</ram:SpecifiedTradeProduct>" + "<ram:SpecifiedLineTradeAgreement>");
+				xml.append("</ram:SpecifiedTradeProduct>");
+
+				xml.append("<ram:SpecifiedLineTradeAgreement>");
+				if (currentItem.getSellerOrderReferencedDocument() != null && !currentItem.getSellerOrderReferencedDocument().getAsCII().isEmpty()) {
+					xml.append("<ram:SellerOrderReferencedDocument>"
+						+ currentItem.getSellerOrderReferencedDocument().getAsCII()
+						+ "</ram:SellerOrderReferencedDocument>");
+				}
+				if (currentItem.getBuyerOrderReferencedDocument() != null && !currentItem.getBuyerOrderReferencedDocument().getAsCII().isEmpty()) {
+					xml.append("<ram:BuyerOrderReferencedDocument>"
+						+ currentItem.getBuyerOrderReferencedDocument().getAsCII()
+						+ "</ram:BuyerOrderReferencedDocument>");
+				}
+				if (currentItem.getContractReferencedDocument() != null && !currentItem.getContractReferencedDocument().getAsCII().isEmpty()) {
+					xml.append("<ram:ContractReferencedDocument>"
+						+ currentItem.getContractReferencedDocument().getAsCII()
+						+ "</ram:ContractReferencedDocument>");
+				}
 				if (currentItem.getReferencedDocuments() != null) {
 					for (final IReferencedDocument currentReferencedDocument : currentItem.getReferencedDocuments()) {
-						xml.append("<ram:AdditionalReferencedDocument>" +
-							"<ram:IssuerAssignedID>" + XMLTools.encodeXML(currentReferencedDocument.getIssuerAssignedID()) + "</ram:IssuerAssignedID>" +
-							"<ram:TypeCode>" + XMLTools.encodeXML(currentReferencedDocument.getTypeCode()) + "</ram:TypeCode>");
-						if (currentReferencedDocument.getName() != null) {
-							xml.append("<ram:name>" + XMLTools.encodeXML(currentReferencedDocument.getName()) + "</ram:Name>");
+						if (!currentReferencedDocument.getAsCII().isEmpty()) {
+							xml.append("<ram:AdditionalReferencedDocument>"
+								+ currentReferencedDocument.getAsCII()
+								+ "</ram:AdditionalReferencedDocument>");
 						}
-						if (currentReferencedDocument.getReferenceTypeCode() != null) {
-							xml.append("<ram:ReferenceTypeCode>" + XMLTools.encodeXML(currentReferencedDocument.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>");
-						}
-						if (currentReferencedDocument.getFormattedIssueDateTime() != null) {
-							final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
-							xml.append("<ram:FormattedIssueDateTime><qdt:DateTimeString format=\"102\">" + XMLTools.encodeXML(dateFormat102.format(currentReferencedDocument.getFormattedIssueDateTime())) + "</qdt:DateTimeString></ram:FormattedIssueDateTime>");
-						}
-						xml.append("</ram:AdditionalReferencedDocument>");
 					}
-				}
-				if ((currentItem.getBuyerOrderReferencedDocumentLineID() != null) || (currentItem.getBuyerOrderReferencedDocumentID() != null)) {
-					xml.append("<ram:BuyerOrderReferencedDocument> ");
-					if (currentItem.getBuyerOrderReferencedDocumentID() != null) {
-						xml.append("<ram:IssuerAssignedID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>");
-					}
-					if (currentItem.getBuyerOrderReferencedDocumentLineID() != null) {
-						xml.append("<ram:LineID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentLineID()) + "</ram:LineID>");
-					}
-					xml.append("</ram:BuyerOrderReferencedDocument>");
 				}
 
 				// Per-unit provider for product-level: ActualAmount must be per-unit (BT-147)
@@ -570,32 +566,32 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "\">" + quantityFormat(currentItem.getBasisQuantity()) + "</ram:BasisQuantity>"
 					+ "</ram:NetPriceProductTradePrice>");
 
-                if (currentItem.getLineSeller() != null) {
-                    xml.append("<ram:ItemSellerTradeParty>" + getTradePartyAsXML(currentItem.getLineSeller(), true, false) + "</ram:ItemSellerTradeParty>");
+				if (currentItem.getLineSeller() != null) {
+					xml.append("<ram:ItemSellerTradeParty>" + getTradePartyAsXML(currentItem.getLineSeller(), true, false) + "</ram:ItemSellerTradeParty>");
+				}
 
-                }
 				xml.append("</ram:SpecifiedLineTradeAgreement>"
 					+ "<ram:SpecifiedLineTradeDelivery>"
 					+ "<ram:BilledQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">"
 					+ quantityFormat(currentItem.getQuantity()) + "</ram:BilledQuantity>");
 
-					if (currentItem.getDeliveryNoteReferencedDocumentID() != null && !currentItem.getDeliveryNoteReferencedDocumentID().trim().isEmpty()) {
-						xml.append("<ram:DeliveryNoteReferencedDocument>");
-						xml.append("<ram:IssuerAssignedID>" + XMLTools.encodeXML(currentItem.getDeliveryNoteReferencedDocumentID()) + "</ram:IssuerAssignedID>");
-						if (currentItem.getDeliveryNoteReferencedDocumentLineID() != null && !currentItem.getDeliveryNoteReferencedDocumentLineID().trim().isEmpty()) {
-							xml.append("<ram:LineID>" + XMLTools.encodeXML(currentItem.getDeliveryNoteReferencedDocumentLineID()) + "</ram:LineID>");
-						}
-						if (currentItem.getDeliveryNoteReferencedDocumentDate() != null) {
-							final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
-							xml.append("<ram:FormattedIssueDateTime><qdt:DateTimeString format=\"102\">" + XMLTools.encodeXML(dateFormat102.format(currentItem.getDeliveryNoteReferencedDocumentDate())) + "</qdt:DateTimeString></ram:FormattedIssueDateTime>");
-						}
-						xml.append("</ram:DeliveryNoteReferencedDocument>");
-
+				if (getProfile() == Profiles.getByName("Extended")) {
+					if (currentItem.getDespatchAdviceReferencedDocument() != null && !currentItem.getDespatchAdviceReferencedDocument().getAsCII().isEmpty()) {
+						xml.append("<ram:DespatchAdviceReferencedDocument>");
+						xml.append(currentItem.getDespatchAdviceReferencedDocument().getAsCII());
+						xml.append("</ram:DespatchAdviceReferencedDocument>");
 					}
 
-					xml.append("</ram:SpecifiedLineTradeDelivery>"
-					+ "<ram:SpecifiedLineTradeSettlement>"
-					+ "<ram:ApplicableTradeTax>");
+					if (currentItem.getDeliveryNoteReferencedDocument() != null && !currentItem.getDeliveryNoteReferencedDocument().getAsCII().isEmpty()) {
+						xml.append("<ram:DeliveryNoteReferencedDocument>");
+						xml.append(currentItem.getDeliveryNoteReferencedDocument().getAsCII());
+						xml.append("</ram:DeliveryNoteReferencedDocument>");
+					}
+				}
+
+				xml.append("</ram:SpecifiedLineTradeDelivery>");
+				xml.append("<ram:SpecifiedLineTradeSettlement>");
+				xml.append("<ram:ApplicableTradeTax>");
 				// <CalculatedAmount/>
 				xml.append("<ram:TypeCode>VAT</ram:TypeCode>");
 				if (profile != Profiles.getByName("EN16931") && currentItem.getProduct().getTaxExemptionReason() != null) {
@@ -664,20 +660,14 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "</ram:SpecifiedTradeSettlementLineMonetarySummation>");
 				if (currentItem.getAdditionalReferences() != null) {
 					for (final IReferencedDocument currentReference : currentItem.getAdditionalReferences()) {
-						xml.append("<ram:AdditionalReferencedDocument>" +
-							"<ram:IssuerAssignedID>" + XMLTools.encodeXML(currentReference.getIssuerAssignedID()) + "</ram:IssuerAssignedID>" +
-							"<ram:TypeCode>130</ram:TypeCode>");
-						if (currentReference.getName() != null) {
-							xml.append("<ram:name>" + XMLTools.encodeXML(currentReference.getName()) + "</ram:Name>");
+						if (!currentReference.getAsCII().isEmpty()) {
+							if (currentReference instanceof ReferencedDocument) {
+								((ReferencedDocument) currentReference).setTypeCode("130");
+							}
+							xml.append("<ram:AdditionalReferencedDocument>"
+								+ currentReference.getAsCII()
+								+ "</ram:AdditionalReferencedDocument>");
 						}
-						if (currentReference.getReferenceTypeCode() != null) {
-							xml.append("<ram:ReferenceTypeCode>" + XMLTools.encodeXML(currentReference.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>");
-						}
-						if (currentReference.getFormattedIssueDateTime() != null) {
-							final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
-							xml.append("<ram:FormattedIssueDateTime><qdt:DateTimeString format=\"102\">" + XMLTools.encodeXML(dateFormat102.format(currentReference.getFormattedIssueDateTime())) + "</qdt:DateTimeString></ram:FormattedIssueDateTime>");
-						}
-						xml.append("</ram:AdditionalReferencedDocument>");
 					}
 				}
 				if (currentItem.getAccountingReference() != null && !currentItem.getAccountingReference().trim().isEmpty()) {
@@ -706,22 +696,19 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "</ram:DeliveryTypeCode>"
 				+ "</ram:ApplicableTradeDeliveryTerms>");
 		}
-		if (trans.getSellerOrderReferencedDocumentID() != null && !trans.getSellerOrderReferencedDocumentID().trim().isEmpty()) {
+		if (trans.getSellerOrderReferencedDocument() != null && !trans.getSellerOrderReferencedDocument().getAsCII().isEmpty()) {
 			xml.append("<ram:SellerOrderReferencedDocument>"
-				+ "<ram:IssuerAssignedID>"
-				+ XMLTools.encodeXML(trans.getSellerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
+				+ trans.getSellerOrderReferencedDocument().getAsCII()
 				+ "</ram:SellerOrderReferencedDocument>");
 		}
-		if (trans.getBuyerOrderReferencedDocumentID() != null && !trans.getBuyerOrderReferencedDocumentID().trim().isEmpty()) {
+		if (trans.getBuyerOrderReferencedDocument() != null && !trans.getBuyerOrderReferencedDocument().getAsCII().isEmpty()) {
 			xml.append("<ram:BuyerOrderReferencedDocument>"
-				+ "<ram:IssuerAssignedID>"
-				+ XMLTools.encodeXML(trans.getBuyerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
+				+ trans.getBuyerOrderReferencedDocument().getAsCII()
 				+ "</ram:BuyerOrderReferencedDocument>");
 		}
-		if (trans.getContractReferencedDocument() != null && !trans.getContractReferencedDocument().trim().isEmpty()) {
+		if (trans.getContractReferencedDocument() != null && !trans.getContractReferencedDocument().getAsCII().isEmpty()) {
 			xml.append("<ram:ContractReferencedDocument>"
-				+ "<ram:IssuerAssignedID>"
-				+ XMLTools.encodeXML(trans.getContractReferencedDocument()) + "</ram:IssuerAssignedID>"
+				+ trans.getContractReferencedDocument().getAsCII()
 				+ "</ram:ContractReferencedDocument>");
 		}
 
@@ -733,64 +720,34 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					+ "<ram:IssuerAssignedID>" + f.getFilename() + "</ram:IssuerAssignedID>"
 					+ "<ram:TypeCode>916</ram:TypeCode>"
 					+ "<ram:Name>" + f.getDescription() + "</ram:Name>"
-					+ "<ram:AttachmentBinaryObject mimeCode=\"" + f.getMimetype() + "\"\n"
-					+ "filename=\"" + f.getFilename() + "\">" + documentContent + "</ram:AttachmentBinaryObject>"
+					+ "<ram:AttachmentBinaryObject mimeCode=\"" + f.getMimetype() + "\""
+					+ " filename=\"" + f.getFilename() + "\">" + documentContent + "</ram:AttachmentBinaryObject>"
 					+ "</ram:AdditionalReferencedDocument>");
 			}
 		}
-		if (trans.getObjectIdentifierReferencedDocument() != null) {
-			xml.append("<ram:AdditionalReferencedDocument>"
-				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getObjectIdentifierReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
-				+ "<ram:TypeCode>130</ram:TypeCode>");
-		    String name = trans.getObjectIdentifierReferencedDocument().getName();
-		    if (name != null && !name.isEmpty()) {
-		        xml.append("<ram:Name>" + XMLTools.encodeXML(name) + "</ram:Name>");
-		    }
-		    // NEW: BT-18-1 scheme identifier
-		    String rtc = trans.getObjectIdentifierReferencedDocument().getReferenceTypeCode();
-		    if (rtc != null && !rtc.isEmpty()) {
-		        xml.append("<ram:ReferenceTypeCode>" + XMLTools.encodeXML(rtc) + "</ram:ReferenceTypeCode>");
-		    }
-			if (trans.getObjectIdentifierReferencedDocument().getFormattedIssueDateTime() != null) {
-				xml.append("<ram:FormattedIssueDateTime>" + DATE.qdtFormat(trans.getObjectIdentifierReferencedDocument().getFormattedIssueDateTime()) + "</ram:FormattedIssueDateTime>");
+		if (trans.getObjectIdentifierReferencedDocument() != null && !trans.getObjectIdentifierReferencedDocument().getAsCII().isEmpty()) {
+			if (trans.getObjectIdentifierReferencedDocument() instanceof ReferencedDocument) {
+				((ReferencedDocument) trans.getObjectIdentifierReferencedDocument()).setTypeCode("130");
 			}
-			xml.append("</ram:AdditionalReferencedDocument>");
+			xml.append("<ram:AdditionalReferencedDocument>"
+				+ trans.getObjectIdentifierReferencedDocument().getAsCII()
+				+ "</ram:AdditionalReferencedDocument>");
 		}
-		if (trans.getTenderReferencedDocument() != null) {
-			xml.append("<ram:AdditionalReferencedDocument>"
-				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getTenderReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
-				+ "<ram:TypeCode>50</ram:TypeCode>");
-		    String name = trans.getTenderReferencedDocument().getName();
-		    if (name != null && !name.isEmpty()) {
-		        xml.append("<ram:Name>" + XMLTools.encodeXML(name) + "</ram:Name>");
-		    }
-		    // NEW: BT-18-1 scheme identifier
-		    String rtc = trans.getTenderReferencedDocument().getReferenceTypeCode();
-		    if (rtc != null && !rtc.isEmpty()) {
-		    	xml.append("<ram:ReferenceTypeCode>" + XMLTools.encodeXML(rtc) + "</ram:ReferenceTypeCode>");
-		    }
-			if (trans.getTenderReferencedDocument().getFormattedIssueDateTime() != null) {
-				xml.append("<ram:FormattedIssueDateTime>" + DATE.qdtFormat(trans.getTenderReferencedDocument().getFormattedIssueDateTime()) + "</ram:FormattedIssueDateTime>");
+		if (trans.getTenderReferencedDocument() != null && !trans.getTenderReferencedDocument().getAsCII().isEmpty()) {
+			if (trans.getTenderReferencedDocument() instanceof ReferencedDocument) {
+				((ReferencedDocument) trans.getTenderReferencedDocument()).setTypeCode("50");
 			}
-			xml.append("</ram:AdditionalReferencedDocument>");
+			xml.append("<ram:AdditionalReferencedDocument>"
+				+ trans.getTenderReferencedDocument().getAsCII()
+				+ "</ram:AdditionalReferencedDocument>");
 		}
-		if (trans.getRelatedReferencedDocument() != null) {
-			xml.append("<ram:AdditionalReferencedDocument>"
-				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getRelatedReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
-				+ "<ram:TypeCode>916</ram:TypeCode>");
-		    String name = trans.getRelatedReferencedDocument().getName();
-		    if (name != null && !name.isEmpty()) {
-		        xml.append("<ram:Name>" + XMLTools.encodeXML(name) + "</ram:Name>");
-		    }
-		    // NEW: BT-18-1 scheme identifier
-		    String rtc = trans.getRelatedReferencedDocument().getReferenceTypeCode();
-		    if (rtc != null && !rtc.isEmpty()) {
-		    	xml.append("<ram:ReferenceTypeCode>" + XMLTools.encodeXML(rtc) + "</ram:ReferenceTypeCode>");
-		    }
-			if (trans.getRelatedReferencedDocument().getFormattedIssueDateTime() != null) {
-				xml.append("<ram:FormattedIssueDateTime>" + DATE.qdtFormat(trans.getRelatedReferencedDocument().getFormattedIssueDateTime()) + "</ram:FormattedIssueDateTime>");
+		if (trans.getRelatedReferencedDocument() != null && !trans.getRelatedReferencedDocument().getAsCII().isEmpty()) {
+			if (trans.getRelatedReferencedDocument() instanceof ReferencedDocument) {
+				((ReferencedDocument) trans.getRelatedReferencedDocument()).setTypeCode("916");
 			}
-			xml.append("</ram:AdditionalReferencedDocument>");
+			xml.append("<ram:AdditionalReferencedDocument>"
+				+ trans.getRelatedReferencedDocument().getAsCII()
+				+ "</ram:AdditionalReferencedDocument>");
 		}
 		if (trans.getSpecifiedProcuringProjectID() != null) {
 			xml.append("<ram:SpecifiedProcuringProject>"
@@ -821,20 +778,18 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ "</ram:ActualDeliverySupplyChainEvent>");
 		}
 
-		if (trans.getDespatchAdviceReferencedDocumentID() != null && !trans.getDespatchAdviceReferencedDocumentID().trim().isEmpty()) {
+		if (trans.getDespatchAdviceReferencedDocument() != null && !trans.getDespatchAdviceReferencedDocument().getAsCII().isEmpty()) {
 			xml.append("<ram:DespatchAdviceReferencedDocument>");
-			xml.append("<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getDespatchAdviceReferencedDocumentID()) + "</ram:IssuerAssignedID>");
+			xml.append(trans.getDespatchAdviceReferencedDocument().getAsCII());
 			xml.append("</ram:DespatchAdviceReferencedDocument>");
 		}
 
-		if (trans.getDeliveryNoteReferencedDocumentID() != null && !trans.getDeliveryNoteReferencedDocumentID().trim().isEmpty()) {
-			xml.append("<ram:DeliveryNoteReferencedDocument>");
-			xml.append("<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getDeliveryNoteReferencedDocumentID()) + "</ram:IssuerAssignedID>");
-			if (trans.getDeliveryNoteReferencedDocumentDate() != null) {
-				final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
-				xml.append("<ram:FormattedIssueDateTime><qdt:DateTimeString format=\"102\">" + XMLTools.encodeXML(dateFormat102.format(trans.getDeliveryNoteReferencedDocumentDate())) + "</qdt:DateTimeString></ram:FormattedIssueDateTime>");
+		if (getProfile() == Profiles.getByName("Extended")) {
+			if (trans.getDeliveryNoteReferencedDocument() != null && !trans.getDeliveryNoteReferencedDocument().getAsCII().isEmpty()) {
+				xml.append("<ram:DeliveryNoteReferencedDocument>");
+				xml.append(trans.getDeliveryNoteReferencedDocument().getAsCII());
+				xml.append("</ram:DeliveryNoteReferencedDocument>");
 			}
-			xml.append("</ram:DeliveryNoteReferencedDocument>");
 		}
 
 		xml.append("</ram:ApplicableHeaderTradeDelivery>");
@@ -1139,8 +1094,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml.append(buildPaymentTermsXml());
 		}
 		if (profile == Profiles.getByName("Extended") && trans.getCashDiscounts() != null) {
-			for (IZUGFeRDCashDiscount discount : trans.getCashDiscounts()
-			) {
+			for (IZUGFeRDCashDiscount discount : trans.getCashDiscounts()) {
 				xml.append(discount.getAsCII());
 			}
 		}
@@ -1173,28 +1127,13 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		}
 		xml.append("<ram:DuePayableAmount>" + currencyFormat(calc.getDuePayable()) + "</ram:DuePayableAmount>"
 			+ "</ram:SpecifiedTradeSettlementHeaderMonetarySummation>");
-		if (trans.getInvoiceReferencedDocumentID() != null && !trans.getInvoiceReferencedDocumentID().trim().isEmpty()) {
-			xml.append("<ram:InvoiceReferencedDocument>"
-				+ "<ram:IssuerAssignedID>"
-				+ XMLTools.encodeXML(trans.getInvoiceReferencedDocumentID()) + "</ram:IssuerAssignedID>");
-			if (trans.getInvoiceReferencedIssueDate() != null) {
-				xml.append("<ram:FormattedIssueDateTime>"
-					+ DATE.qdtFormat(trans.getInvoiceReferencedIssueDate())
-					+ "</ram:FormattedIssueDateTime>");
-			}
-			xml.append("</ram:InvoiceReferencedDocument>");
-		}
 		if (trans.getInvoiceReferencedDocuments() != null) {
 			for (ReferencedDocument doc : trans.getInvoiceReferencedDocuments()) {
-				xml.append("<ram:InvoiceReferencedDocument>"
-					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(doc.getIssuerAssignedID()) + "</ram:IssuerAssignedID>");
-				if (doc.getFormattedIssueDateTime() != null) {
-					xml.append("<ram:FormattedIssueDateTime>"
-						+ DATE.qdtFormat(doc.getFormattedIssueDateTime())
-						+ "</ram:FormattedIssueDateTime>");
+				if (!doc.getAsCII().isEmpty()) {
+					xml.append("<ram:InvoiceReferencedDocument>"
+						+ doc.getAsCII()
+						+ "</ram:InvoiceReferencedDocument>");
 				}
-				xml.append("</ram:InvoiceReferencedDocument>");
 			}
 		}
 
@@ -1267,14 +1206,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			// add extended payment terms (except the first one which is already added above)
 			{
 				IZUGFeRDPaymentTerms[] extendedPaymentTerms = trans.getExtendedPaymentTerms();
-				for (int i = 1; i < extendedPaymentTerms.length; i++) {
-					paymentTerms.add(extendedPaymentTerms[i]);
-				}
+				paymentTerms.addAll(Arrays.asList(extendedPaymentTerms));
 			}
 		}
 
 		String paymentTermsXml = "";
-		if (paymentTerms.size() == 0) {
+		if (paymentTerms.isEmpty()) {
 			return "";
 		}
 
@@ -1300,7 +1237,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 			if (trans.getTradeSettlement() != null) {
 				for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
-					if ((payment != null) && (payment instanceof IZUGFeRDTradeSettlementDebit)) {
+					if (payment instanceof IZUGFeRDTradeSettlementDebit) {
 						paymentTermsXml += payment.getPaymentXML();
 					}
 				}

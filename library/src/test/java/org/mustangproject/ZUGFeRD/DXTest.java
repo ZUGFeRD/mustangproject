@@ -46,8 +46,8 @@ import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DXTest extends MustangReaderTestCase {
-	final String TARGET_PDF = "./target/testout-DX.pdf";
-	final String TARGET_XML = "./target/testout-DX.xml";
+	private static final String TARGET_PDF = "./target/testout-DX.pdf";
+	private static final String TARGET_XML = "./target/testout-DX.xml";
 
 	protected class EdgeProduct implements IZUGFeRDExportableProduct {
 		private String description, name, unit;
@@ -280,12 +280,11 @@ public class DXTest extends MustangReaderTestCase {
 
 		// the writing part
 
-		try (InputStream SOURCE_PDF = this.getClass()
-				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
-
-			 DXExporterFromA1 oe = new DXExporterFromA1().setProducer("My Application")
-					 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(1).ignorePDFAErrors()
-					 .load(SOURCE_PDF)) {
+		try (InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
+			 DXExporterFromA1 oe = new DXExporterFromA1()) {
+			oe.setProducer("My Application")
+				.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(1).ignorePDFAErrors()
+				.load(SOURCE_PDF);
 			oe.setTransaction(this);
 			String theXML = new String(oe.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<SCRDMCCBDACIDAMessageStructure"));
@@ -302,12 +301,12 @@ public class DXTest extends MustangReaderTestCase {
 		assertTrue(zi.getUTF8().contains("<ram:ShipToTradeParty>"));
 		assertFalse(zi.getUTF8().contains("EUR"));
 
-		assertEquals(zi.getLineItemList().size(),3);
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_PDF);
 		try {
 			Invoice i = zii.extractInvoice();
 
+			assertEquals(3, i.getZFItems().length);
 			assertEquals(new BigDecimal("400.0000"), i.getZFItems()[1].getQuantity());
 			/* getting the Quantity is more difficult than usual because in OrderX it's
 			called requestedQuantity, not BilledQuantity

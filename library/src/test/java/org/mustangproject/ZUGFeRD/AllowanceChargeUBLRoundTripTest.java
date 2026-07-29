@@ -34,7 +34,6 @@ import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Date;
 
@@ -63,7 +62,13 @@ public class AllowanceChargeUBLRoundTripTest extends ResourceCase {
 		BigDecimal headerAllowanceBasis = new BigDecimal("100.00");
 
 		BigDecimal lineAllowanceAmount = new BigDecimal("2.00");
-		BigDecimal perUnitAllowanceAmount = new BigDecimal("1.00");
+		BigDecimal perUnitAllowanceAmount = new BigDecimal("1.0000");
+
+		Charge charge = new Charge(headerChargeAmount).setReason("Handling").setReasonCode("FC");
+		charge.setTaxRateApplicablePercent(new BigDecimal("19")).setTaxCategoryCode(TaxCategoryCodeTypeConstants.STANDARDRATE);
+
+		Charge allowance = new Allowance().setPercent(headerAllowancePercent).setBasisAmount(headerAllowanceBasis).setReason("Loyalty discount").setReasonCode("95");
+		allowance.setTaxCategoryCode(TaxCategoryCodeTypeConstants.STANDARDRATE).setTaxRateApplicablePercent(new BigDecimal("19"));
 
 		Product product = new Product("Testprodukt", "", "H87", new BigDecimal("19"));
 		// Bug 4 case: per-unit-price allowance, exported under GrossPriceProductTradePrice/AppliedTradeAllowanceCharge (CII)
@@ -85,12 +90,9 @@ public class AllowanceChargeUBLRoundTripTest extends ResourceCase {
 			.setRecipient(new TradeParty("Franz Mueller", "teststr.12", "55232", "Entenhausen", "DE"))
 			.addItem(item)
 			// Bug 2 amount-based case, with reason/reasonCode/taxPercent/categoryCode
-			.addCharge(new Charge(headerChargeAmount).setReason("Handling").setReasonCode("FC")
-				.setTaxPercent(new BigDecimal("19")).setCategoryCode(TaxCategoryCodeTypeConstants.STANDARDRATE))
+			.addCharge(charge)
 			// Bug 2 percent-only case (no ActualAmount at all) - this used to throw NumberFormatException on import
-			.addAllowance(new Allowance().setPercent(headerAllowancePercent).setBasisAmount(headerAllowanceBasis)
-				.setReason("Loyalty discount").setReasonCode("95")
-				.setTaxPercent(new BigDecimal("19")).setCategoryCode(TaxCategoryCodeTypeConstants.STANDARDRATE));
+			.addAllowance(allowance);
 
 		// 1. mustangproject: Invoice -> CII XML
 		ZUGFeRD2PullProvider originalProvider = new ZUGFeRD2PullProvider();
@@ -136,7 +138,7 @@ public class AllowanceChargeUBLRoundTripTest extends ResourceCase {
 		Node headerChargeTax = child(headerCharge, "CategoryTradeTax");
 		assertNotNull(headerChargeTax);
 		assertEquals(TaxCategoryCodeTypeConstants.STANDARDRATE, childText(headerChargeTax, "CategoryCode"));
-		assertDecimalEquals(new BigDecimal("19"), childDecimal(headerChargeTax, "RateApplicablePercent"));
+		assertDecimalEquals(new BigDecimal("19.00"), childDecimal(headerChargeTax, "RateApplicablePercent"));
 
 		// --- header level: percent-only allowance (the case that used to crash on import) ---
 		Node headerAllowance = findByIndicator(headerCharges, false);
@@ -149,7 +151,7 @@ public class AllowanceChargeUBLRoundTripTest extends ResourceCase {
 		Node headerAllowanceTax = child(headerAllowance, "CategoryTradeTax");
 		assertNotNull(headerAllowanceTax);
 		assertEquals(TaxCategoryCodeTypeConstants.STANDARDRATE, childText(headerAllowanceTax, "CategoryCode"));
-		assertDecimalEquals(new BigDecimal("19"), childDecimal(headerAllowanceTax, "RateApplicablePercent"));
+		assertDecimalEquals(new BigDecimal("19.00"), childDecimal(headerAllowanceTax, "RateApplicablePercent"));
 
 		// --- line level: genuine line-level allowance (BT-141 style, direct child of InvoiceLine in UBL) ---
 		NodeList lineAllowances = (NodeList) xpath.evaluate(
@@ -174,7 +176,7 @@ public class AllowanceChargeUBLRoundTripTest extends ResourceCase {
 
 	private static void assertDecimalEquals(BigDecimal expected, BigDecimal actual) {
 		assertNotNull("expected a numeric value but found none", actual);
-		assertTrue("expected " + expected + " but was " + actual, expected.compareTo(actual) == 0);
+		assertEquals("expected " + expected + " but was " + actual, expected, actual);
 	}
 
 	private static Node findByIndicator(NodeList nodes, boolean isCharge) {

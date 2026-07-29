@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 
-import javax.xml.XMLConstants;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -90,71 +89,68 @@ public class ValidationLogVisualizer {
 		return baos.toString(StandardCharsets.UTF_8);
 	}
 
+	@SuppressWarnings("unchecked")
 	public byte[] createPDFBytes(String xmlLogfileContent) {
 
 		// the writing part
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		String result = null;
-
-			/* remove file endings so that tests can also pass after checking
-			   out from git with arbitrary options (which may include CSRF changes)
-			 */
+		/* remove file endings so that tests can also pass after checking
+		   out from git with arbitrary options (which may include CSRF changes)
+		 */
 		try {
-			result = this.toFOP(xmlLogfileContent);
+			String result = this.toFOP(xmlLogfileContent);
+			DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
+
+			Configuration cfg = null;
+			try {
+				cfg = cfgBuilder.build(CLASS_LOADER.getResourceAsStream("fop-config.xconf"));
+			} catch (ConfigurationException e) {
+				throw new RuntimeException(e);
+			}
+
+			FopFactoryBuilder builder = new FopFactoryBuilder(new File(".").toURI(), new ClasspathResolverURIAdapter()).setConfiguration(cfg);
+			// Step 1: Construct a FopFactory by specifying a reference to the configuration file
+			// (reuse if you plan to render multiple documents!)
+
+			FopFactory fopFactory = builder.build();
+
+			fopFactory.getFontManager().setResourceResolver(
+				ResourceResolverFactory.createInternalResourceResolver(
+					new File(".").toURI(),
+					new ClasspathResolverURIAdapter()));
+
+			FOUserAgent userAgent = fopFactory.newFOUserAgent();
+
+			userAgent.getRendererOptions().put("pdf-a-mode", "PDF/A-3b");
+
+			// Step 2: Set up output stream.
+			// Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
+
+			try (OutputStream out = new BufferedOutputStream(baos)) {
+
+				// Step 3: Construct fop with desired output format
+				Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
+
+				// Step 4: Setup JAXP using identity transformer
+				TransformerFactory factory = XMLTools.getTransformerFactory();
+				Transformer transformer = factory.newTransformer(); // identity transformer
+
+				// Step 5: Setup input and output for XSLT transformation
+				// Setup input stream
+				Source src = new StreamSource(new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8)));
+
+				// Resulting SAX events (the generated FO) must be piped through to FOP
+				Result res = new SAXResult(fop.getDefaultHandler());
+
+				// Step 6: Start XSLT transformation and FOP processing
+				transformer.transform(src, res);
+
+			} catch (FOPException | IOException | TransformerException e) {
+				LOGGER.error("Failed to create PDF", e);
+			}
 		} catch ( TransformerException e) {
 			LOGGER.error("Failed to apply FOP", e);
-		}
-		DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-
-		Configuration cfg = null;
-		try {
-			cfg = cfgBuilder.build(CLASS_LOADER.getResourceAsStream("fop-config.xconf"));
-		} catch (ConfigurationException e) {
-			throw new RuntimeException(e);
-		}
-
-		FopFactoryBuilder builder = new FopFactoryBuilder(new File(".").toURI(), new ClasspathResolverURIAdapter()).setConfiguration(cfg);
-// Step 1: Construct a FopFactory by specifying a reference to the configuration file
-// (reuse if you plan to render multiple documents!)
-
-		FopFactory fopFactory = builder.build();
-
-		fopFactory.getFontManager().setResourceResolver(
-			ResourceResolverFactory.createInternalResourceResolver(
-				new File(".").toURI(),
-				new ClasspathResolverURIAdapter()));
-
-		FOUserAgent userAgent = fopFactory.newFOUserAgent();
-
-		userAgent.getRendererOptions().put("pdf-a-mode", "PDF/A-3b");
-
-// Step 2: Set up output stream.
-// Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
-
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try (OutputStream out = new BufferedOutputStream(baos)) {
-
-			// Step 3: Construct fop with desired output format
-			Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, userAgent, out);
-
-			// Step 4: Setup JAXP using identity transformer
-			TransformerFactory factory = TransformerFactory.newInstance();
-
-			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-			Transformer transformer = factory.newTransformer(); // identity transformer
-
-			// Step 5: Setup input and output for XSLT transformation
-			// Setup input stream
-			Source src = new StreamSource(new ByteArrayInputStream(result.getBytes(StandardCharsets.UTF_8)));
-
-			// Resulting SAX events (the generated FO) must be piped through to FOP
-			Result res = new SAXResult(fop.getDefaultHandler());
-
-			// Step 6: Start XSLT transformation and FOP processing
-			transformer.transform(src, res);
-
-		} catch (FOPException | IOException | TransformerException e) {
-			LOGGER.error("Failed to create PDF", e);
 		}
 		return baos.toByteArray();
 	}

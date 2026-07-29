@@ -42,7 +42,6 @@ import org.apache.pdfbox.cos.COSObject;
 import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
-import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
 import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.common.PDMetadata;
@@ -56,7 +55,6 @@ import org.apache.xmpbox.schema.AdobePDFSchema;
 import org.apache.xmpbox.schema.DublinCoreSchema;
 import org.apache.xmpbox.schema.PDFAIdentificationSchema;
 import org.apache.xmpbox.schema.XMPBasicSchema;
-import org.apache.xmpbox.type.ArrayProperty;
 import org.apache.xmpbox.type.BadFieldValueException;
 import org.apache.xmpbox.xml.DomXmpParser;
 import org.apache.xmpbox.xml.XmpParsingException;
@@ -64,7 +62,6 @@ import org.apache.xmpbox.xml.XmpSerializer;
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
 import static org.mustangproject.util.StringUtils.isBlank;
-import static org.mustangproject.util.StringUtils.isNotBlank;
 
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
@@ -563,33 +560,6 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	}
 
 	@Override
-	protected void writeDublinCoreSchema(XMPMetadata xmp) {
-		DublinCoreSchema dc = getDublinCoreSchema(xmp);
-		if (dc.getFormat() == null) {
-			dc.setFormat("application/pdf");
-		}
-		if ((overwrite || dc.getCreators() == null || dc.getCreators().isEmpty()) && creator != null) {
-			dc.addCreator(creator);
-		}
-		if ((overwrite || dc.getDates() == null || dc.getDates().isEmpty()) && creator != null) {
-			dc.addDate(Calendar.getInstance());
-		}
-
-		ArrayProperty titleProperty = dc.getTitleProperty();
-		if (titleProperty != null) {
-			if (overwrite && isNotBlank(title)) {
-				dc.removeProperty(titleProperty);
-				dc.setTitle(title);
-			} else if (titleProperty.getElementsAsString().stream().anyMatch("Untitled"::equalsIgnoreCase)) {
-				// remove unfitting ghostscript default
-				dc.removeProperty(titleProperty);
-			}
-		} else if (isNotBlank(title)) {
-			dc.setTitle(title);
-		}
-	}
-
-	@Override
 	protected DublinCoreSchema getDublinCoreSchema(XMPMetadata xmp) {
 		DublinCoreSchema dc = xmp.getDublinCoreSchema();
 		if (dc != null) {
@@ -624,33 +594,6 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 			}
 		}
 		return xmp.createAndAddXMPBasicSchema();
-	}
-
-	@Override
-	protected void writeDocumentInformation() {
-		String fullProducer = producer + " (via mustangproject.org " + Version.VERSION + ")";
-		PDDocumentInformation info = doc.getDocumentInformation();
-		if (overwrite || info.getCreationDate() == null) {
-			info.setCreationDate(Calendar.getInstance());
-		}
-		if (overwrite || info.getModificationDate() == null) {
-			info.setModificationDate(Calendar.getInstance());
-		}
-		if (overwrite || (isBlank(info.getAuthor()) && isNotBlank(author))) {
-			info.setAuthor(author);
-		}
-		if (overwrite || (isBlank(info.getProducer()) && isNotBlank(fullProducer))) {
-			info.setProducer(fullProducer);
-		}
-		if (overwrite || (isBlank(info.getCreator()) && isNotBlank(creator))) {
-			info.setCreator(creator);
-		}
-		if (overwrite || (isBlank(info.getTitle()) && isNotBlank(title))) {
-			info.setTitle(title);
-		}
-		if (overwrite || (isBlank(info.getSubject()) && isNotBlank(subject))) {
-			info.setSubject(subject);
-		}
 	}
 
 	/**

@@ -346,6 +346,7 @@ public class ZUGFeRDVisualizer {
 		return byteHolder.get();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void toPDFfromFOP(String fopInput, Supplier<OutputStream> outputStreamDelegate, Consumer<OutputStream> consumerDelegate) {
 
 		DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
@@ -358,8 +359,8 @@ public class ZUGFeRDVisualizer {
 		}
 
 		FopFactoryBuilder builder = new FopFactoryBuilder(new File(".").toURI(), new ClasspathResolverURIAdapter()).setConfiguration(cfg);
-// Step 1: Construct a FopFactory by specifying a reference to the configuration file
-// (reuse if you plan to render multiple documents!)
+		// Step 1: Construct a FopFactory by specifying a reference to the configuration file
+		// (reuse if you plan to render multiple documents!)
 
 		FopFactory fopFactory = builder.build(); //FopFactory.newInstance(new File("c:\\Users\\jstaerk\\temp\\fop-config.xconf"));
 
@@ -372,8 +373,8 @@ public class ZUGFeRDVisualizer {
 
 		userAgent.getRendererOptions().put("pdf-a-mode", "PDF/A-3b");
 
-// Step 2: Set up output stream.
-// Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
+		// Step 2: Set up output stream.
+		// Note: Using BufferedOutputStream for performance reasons (helpful with FileOutputStreams).
 
 		try (OutputStream out = new BufferedOutputStream(outputStreamDelegate.get())) {
 

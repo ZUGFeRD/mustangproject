@@ -22,7 +22,6 @@ package org.mustangproject.ZUGFeRD;
 
 import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
 
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Optional;
@@ -100,30 +99,6 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 				xml.append("<ram:BuyerAssignedID>"
 						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>");
 			}
-			// Product-level (GrossPrice / product section): ActualAmount must be per-unit (BT-147)
-			final IZUGFeRDExportableItem itemForProduct = currentItem;
-			IAbsoluteValueProvider perUnitProvider = new IAbsoluteValueProvider() {
-				@Override
-				public BigDecimal getValue() {
-					return itemForProduct.getPrice();
-				}
-				@Override
-				public BigDecimal getQuantity() {
-					return BigDecimal.ONE;
-				}
-			};
-			String allowanceChargeStr = "";
-			if (currentItem.getItemAllowances() != null) {
-				for (final IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
-					allowanceChargeStr += getAllowanceChargeStr(allowance, perUnitProvider);
-				}
-			}
-			if (currentItem.getItemCharges() != null) {
-				for (final IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
-					allowanceChargeStr += getAllowanceChargeStr(charge, perUnitProvider);
-				}
-			}
-
 
 			xml.append("<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>"
 					+ "<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription())
@@ -174,23 +149,20 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 		xml.append(getTradePartyAsXML(trans.getRecipient(), false, false));
 		xml.append("</ram:BuyerTradeParty>");
 
-		if (trans.getSellerOrderReferencedDocumentID() != null) {
+		if (trans.getSellerOrderReferencedDocument() != null && trans.getSellerOrderReferencedDocument().getIssuerAssignedID() != null) {
 			xml.append("<ram:SellerOrderReferencedDocument>"
-					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getSellerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
-					+ "</ram:SellerOrderReferencedDocument>");
+				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getSellerOrderReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
+				+ "</ram:SellerOrderReferencedDocument>");
 		}
-		if (trans.getBuyerOrderReferencedDocumentID() != null) {
+		if (trans.getBuyerOrderReferencedDocument() != null && trans.getBuyerOrderReferencedDocument().getIssuerAssignedID() != null) {
 			xml.append("<ram:BuyerOrderReferencedDocument>"
-					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getBuyerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
-					+ "</ram:BuyerOrderReferencedDocument>");
+				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getBuyerOrderReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
+				+ "</ram:BuyerOrderReferencedDocument>");
 		}
-		if (trans.getContractReferencedDocument() != null) {
+		if (trans.getContractReferencedDocument() != null && trans.getContractReferencedDocument().getIssuerAssignedID() != null) {
 			xml.append("<ram:ContractReferencedDocument>"
-					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getContractReferencedDocument()) + "</ram:IssuerAssignedID>"
-					+ "</ram:ContractReferencedDocument>");
+				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getContractReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
+				+ "</ram:ContractReferencedDocument>");
 		}
 
 		// Additional Documents of XRechnung (Rechnungsbegruendende Unterlagen - BG-24 XRechnung)

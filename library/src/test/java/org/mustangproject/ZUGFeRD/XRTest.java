@@ -163,6 +163,13 @@ public class XRTest extends TestCase {
 
 	public void testIssue830ApplicableHeaderTradeSettlementTax() throws XPathExpressionException, SAXException, IOException, ParserConfigurationException
 	{
+		Charge charge = new Charge(BigDecimal.ONE).setReasonCode("64");
+		charge.setTaxRateApplicablePercent(BigDecimal.valueOf(19));
+		Charge itemAllowance = new Allowance().setReasonCode("64").setTotalAmount(BigDecimal.valueOf(4));
+		itemAllowance.setTaxRateApplicablePercent(BigDecimal.ZERO);
+		Charge invoiceAllowance = new Allowance().setReasonCode("64").setTotalAmount(BigDecimal.valueOf(5));
+		invoiceAllowance.setTaxRateApplicablePercent(BigDecimal.valueOf(19));
+
 		final Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 			.setSender(new TradeParty("Test", "teststr", "55232", "teststadt", "DE").setEmail("sender@example.com").addTaxID("DE4711").addVATID("DE0815")
 				.setContact(new Contact("Hans Test", "+49123456789", "test@example.org"))
@@ -176,14 +183,14 @@ public class XRTest extends TestCase {
 			.addItem(new Item(new Product("Testprodukt2", "", "C62", BigDecimal.ZERO).setTaxCategoryCode("AE").setTaxExemptionReason("Reversecharge process"),
 				BigDecimal.ONE, BigDecimal.ONE))
 			.addItem(new Item(new Product("Testprodukt3", "", "C62", BigDecimal.valueOf(19)).setTaxCategoryCode("S"), BigDecimal.valueOf(9), BigDecimal.ONE)
-				.addCharge(new Charge(BigDecimal.ONE).setReasonCode("64").setTaxPercent(BigDecimal.valueOf(19))))
+				.addCharge(charge))
 			.addItem(new Item(
 				new Product("Testprodukt4", "", "C62", BigDecimal.ZERO).setTaxCategoryCode("AE").setTaxExemptionReason("Reversecharge process"),
 				BigDecimal.TEN, BigDecimal.ONE)
-					.addAllowance(new Allowance().setReasonCode("64").setTotalAmount(BigDecimal.valueOf(4)).setTaxPercent(BigDecimal.ZERO)))
+					.addAllowance(itemAllowance))
 			.setPayee(
 				new TradeParty().setName("VR Factoring GmbH").setID("DE813838785").setLegalOrganisation(new LegalOrganisation("391200LDDFJDMIPPMZ54", "0199")))
-			.addAllowance(new Allowance().setReasonCode("64").setTotalAmount(BigDecimal.valueOf(5)).setTaxPercent(BigDecimal.valueOf(19)));
+			.addAllowance(invoiceAllowance);
 
 		final ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 
@@ -208,7 +215,7 @@ public class XRTest extends TestCase {
 		final String basisAmount0 = xpath
 			.compile("*[local-name()='BasisAmount']/text()")
 			.evaluate(taxNode0);
-		Assertions.assertTrue(BigDecimal.TEN.compareTo(new BigDecimal(basisAmount0)) == 0);
+		Assertions.assertEquals(0, BigDecimal.TEN.compareTo(new BigDecimal(basisAmount0)));
 
 		final Node taxNode1 = tradeTaxes.item(1);
 		final String categoryCode1 = xpath
@@ -218,7 +225,7 @@ public class XRTest extends TestCase {
 		final String basisAmount1 = xpath
 			.compile("*[local-name()='BasisAmount']/text()")
 			.evaluate(taxNode1);
-		Assertions.assertTrue(BigDecimal.valueOf(7).compareTo(new BigDecimal(basisAmount1)) == 0);
+		Assertions.assertEquals(0, BigDecimal.valueOf(7).compareTo(new BigDecimal(basisAmount1)));
 
 		final Node taxNode2 = tradeTaxes.item(2);
 		final String categoryCode2 = xpath
@@ -228,7 +235,7 @@ public class XRTest extends TestCase {
 		final String basisAmount2 = xpath
 			.compile("*[local-name()='BasisAmount']/text()")
 			.evaluate(taxNode2);
-		Assertions.assertTrue(BigDecimal.valueOf(5).compareTo(new BigDecimal(basisAmount2)) == 0);
+		Assertions.assertEquals(0, BigDecimal.valueOf(5).compareTo(new BigDecimal(basisAmount2)));
 	}
 
 	public void testXRExportWithoutStreet() {
@@ -265,7 +272,6 @@ public class XRTest extends TestCase {
 		String number = "123";
 		String amountStr = "1.00";
 		BigDecimal amount = new BigDecimal(amountStr);
-		byte[] b = {12, 13};
 
 		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").setEmail("sender@example.com").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890", "COBADEFXXX").setAccountName("kontoInhaber")))
@@ -349,15 +355,15 @@ public class XRTest extends TestCase {
 		// document-level allowance with category O — must NOT produce RateApplicablePercent (BR-O-06)
 		Allowance allowanceO = new Allowance(new BigDecimal("10.00"));
 		allowanceO.setReason("Discount");
-		allowanceO.setCategoryCode(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE);
-		allowanceO.setTaxPercent(BigDecimal.ZERO);
+		allowanceO.setTaxCategoryCode(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE);
+		allowanceO.setTaxRateApplicablePercent(BigDecimal.ZERO);
 		invoice.addAllowance(allowanceO);
 
 		// document-level allowance with category AE — MUST produce RateApplicablePercent = 0 (BR-AE-06)
 		Allowance allowanceAE = new Allowance(new BigDecimal("5.00"));
 		allowanceAE.setReason("Reverse charge discount");
-		allowanceAE.setCategoryCode(TaxCategoryCodeTypeConstants.REVERSECHARGE);
-		allowanceAE.setTaxPercent(BigDecimal.ZERO);
+		allowanceAE.setTaxCategoryCode(TaxCategoryCodeTypeConstants.REVERSECHARGE);
+		allowanceAE.setTaxRateApplicablePercent(BigDecimal.ZERO);
 		invoice.addAllowance(allowanceAE);
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();

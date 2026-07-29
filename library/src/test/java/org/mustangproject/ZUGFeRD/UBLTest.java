@@ -37,6 +37,7 @@ import org.mustangproject.Contact;
 import org.mustangproject.Invoice;
 import org.mustangproject.Item;
 import org.mustangproject.Product;
+import org.mustangproject.ReferencedDocument;
 import org.mustangproject.TradeParty;
 
 import javax.xml.xpath.XPathExpressionException;
@@ -81,7 +82,7 @@ public class UBLTest extends ResourceCase {
 				.setSender(new TradeParty("Test company", "teststr", "55232", "teststadt", "DE").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890", "COBADEFXXX")))
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
 				.setReferenceNumber("991-01484-64")//leitweg-id
-				.setNumber("123").addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), /*price*/ new BigDecimal("1.0"),  /*qty*/ new BigDecimal("1.0")).addBuyerOrderReferencedDocumentLineID("A12"));
+				.setNumber("123").addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), /*price*/ new BigDecimal("1.0"),  /*qty*/ new BigDecimal("1.0")).setBuyerOrderReferencedDocument(new ReferencedDocument().setLineID("A12")));
 
 
 		try {

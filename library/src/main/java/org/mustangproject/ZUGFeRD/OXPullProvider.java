@@ -150,23 +150,11 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 					+ "<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription())
 					+ "</ram:Description>"
 					+ "</ram:SpecifiedTradeProduct>"
-
 					+ "<ram:SpecifiedLineTradeAgreement>");
-		/*	if (currentItem.getReferencedDocuments() != null) {
-				for (IReferencedDocument currentReferencedDocument : currentItem.getReferencedDocuments()) {
-					xml.append("<ram:AdditionalReferencedDocument>\n" +
-							"<ram:IssuerAssignedID>" + XMLTools.encodeXML(currentReferencedDocument.getIssuerAssignedID()) + "</ram:IssuerAssignedID>\n" +
-							"<ram:TypeCode>" + XMLTools.encodeXML(currentReferencedDocument.getTypeCode()) + "</ram:TypeCode>\n" +
-							"<ram:ReferenceTypeCode>" + XMLTools.encodeXML(currentReferencedDocument.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>\n" +
-							"</ram:AdditionalReferencedDocument>\n");
 
-
-				}
-
-			}*/
-			if (currentItem.getBuyerOrderReferencedDocumentLineID() != null) {
-				xml.append("<ram:BuyerOrderReferencedDocument> \n"
-						+ "<ram:LineID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocumentLineID()) + "</ram:LineID>"
+			if (currentItem.getBuyerOrderReferencedDocument() != null && currentItem.getBuyerOrderReferencedDocument().getLineID() != null) {
+				xml.append("<ram:BuyerOrderReferencedDocument>"
+						+ "<ram:LineID>" + XMLTools.encodeXML(currentItem.getBuyerOrderReferencedDocument().getLineID()) + "</ram:LineID>"
 						+ "</ram:BuyerOrderReferencedDocument>");
 
 			}
@@ -243,23 +231,20 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 		xml.append(getTradePartyAsXML(trans.getRecipient(), false, false));
 		xml.append("</ram:BuyerTradeParty>");
 
-		if (trans.getSellerOrderReferencedDocumentID() != null) {
+		if (trans.getSellerOrderReferencedDocument() != null && trans.getSellerOrderReferencedDocument().getIssuerAssignedID() != null) {
 			xml.append("<ram:SellerOrderReferencedDocument>"
-					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getSellerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
-					+ "</ram:SellerOrderReferencedDocument>");
+				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getSellerOrderReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
+				+ "</ram:SellerOrderReferencedDocument>");
 		}
-		if (trans.getBuyerOrderReferencedDocumentID() != null) {
+		if (trans.getBuyerOrderReferencedDocument() != null && trans.getBuyerOrderReferencedDocument().getIssuerAssignedID() != null) {
 			xml.append("<ram:BuyerOrderReferencedDocument>"
-					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getBuyerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
-					+ "</ram:BuyerOrderReferencedDocument>");
+				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getBuyerOrderReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
+				+ "</ram:BuyerOrderReferencedDocument>");
 		}
-		if (trans.getContractReferencedDocument() != null) {
+		if (trans.getContractReferencedDocument() != null && trans.getContractReferencedDocument().getIssuerAssignedID() != null) {
 			xml.append("<ram:ContractReferencedDocument>"
-					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getContractReferencedDocument()) + "</ram:IssuerAssignedID>"
-					+ "</ram:ContractReferencedDocument>");
+				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getContractReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
+				+ "</ram:ContractReferencedDocument>");
 		}
 
 		// Additional Documents of XRechnung (Rechnungsbegruendende Unterlagen - BG-24 XRechnung)
@@ -317,15 +302,6 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 	//			+ "<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>"
 				+ "<ram:OrderCurrencyCode>" + trans.getCurrency() + "</ram:OrderCurrencyCode>");
 
-		if (trans.getTradeSettlementPayment() != null) {
-			for (final IZUGFeRDTradeSettlementPayment payment : trans.getTradeSettlementPayment()) {
-				if (payment != null) {
-					hasDueDate = true;
-                    break;
-                    //	xml.append(payment.getSettlementXML());
-                }
-			}
-		}
 		if (trans.getTradeSettlement() != null) {
 			for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
 				if (payment != null) {
@@ -337,9 +313,9 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 			}
 		}
 		if (trans.getDocumentCode() != null) {
-  		if ((trans.getDocumentCode().equals(CORRECTEDINVOICE))/*||(trans.getDocumentCode().equals (DocumentCodeTypeConstants.CREDITNOTE))*/) {
-  			hasDueDate = false;
-  		}
+			if (trans.getDocumentCode().equals(CORRECTEDINVOICE) /* ||(trans.getDocumentCode().equals (DocumentCodeTypeConstants.CREDITNOTE))*/) {
+				hasDueDate = false;
+			}
 		}
 
 		final Map<BigDecimal, VATAmount> VATPercentAmountMap = calc.getVATPercentAmountMap();
@@ -412,7 +388,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 							"<ram:CategoryCode>" + VATPercentAmountMap.get(currentTaxPercent).getCategoryCode() + "</ram:CategoryCode>" +
 							"<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>" +
 							"</ram:CategoryTradeTax>" +
-							"</ram:SpecifiedTradeAllowanceCharge>	\n");
+							"</ram:SpecifiedTradeAllowanceCharge>");
 				}
 			}
 		}
@@ -427,7 +403,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 
 			if (trans.getTradeSettlement() != null) {
 				for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
-					if (payment != null && payment instanceof IZUGFeRDTradeSettlementDebit) {
+					if (payment instanceof IZUGFeRDTradeSettlementDebit) {
 		//not in order-x				xml.append(payment.getPaymentXML());
 					}
 				}
@@ -458,27 +434,13 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 				//+ "<ram:TotalPrepaidAmount>" + currencyFormat(calc.getTotalPrepaid()) + "</ram:TotalPrepaidAmount>"
 				//+ "<ram:DuePayableAmount>" + currencyFormat(calc.getGrandTotal().subtract(calc.getTotalPrepaid())) + "</ram:DuePayableAmount>"
 				+ "</ram:SpecifiedTradeSettlementHeaderMonetarySummation>");
-		if (trans.getInvoiceReferencedDocumentID() != null) {
-			xml.append("<ram:InvoiceReferencedDocument>"
-					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getInvoiceReferencedDocumentID()) + "</ram:IssuerAssignedID>");
-			if (trans.getInvoiceReferencedIssueDate() != null) {
-				xml.append("<ram:FormattedIssueDateTime>"
-						+ DATE.qdtFormat(trans.getInvoiceReferencedIssueDate())
-						+ "</ram:FormattedIssueDateTime>");
-			}
-			xml.append("</ram:InvoiceReferencedDocument>");
-		}
 		if (trans.getInvoiceReferencedDocuments() != null) {
 			for (ReferencedDocument doc : trans.getInvoiceReferencedDocuments()) {
 				xml.append("<ram:InvoiceReferencedDocument>"
-						+ "<ram:IssuerAssignedID>"
-						+ XMLTools.encodeXML(doc.getIssuerAssignedID()) + "</ram:IssuerAssignedID>");
-				if (doc.getFormattedIssueDateTime() != null) {
-					xml.append("<ram:FormattedIssueDateTime>"
-							+ DATE.qdtFormat(doc.getFormattedIssueDateTime())
-							+ "</ram:FormattedIssueDateTime>");
-				}
+						+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(doc.getIssuerAssignedID()) + "</ram:IssuerAssignedID>");
+					if (doc.getFormattedIssueDateTime() != null) {
+						xml.append("<ram:FormattedIssueDateTime>" + DATE.qdtFormat(doc.getFormattedIssueDateTime()) + "</ram:FormattedIssueDateTime>");
+					}
 				xml.append("</ram:InvoiceReferencedDocument>");
 			}
 		}
