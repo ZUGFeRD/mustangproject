@@ -106,22 +106,6 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 */
 	protected String creatorTool = "mustangproject";
 
-	/**
-	 * @deprecated author is never set yet
-	 */
-	@Deprecated
-	protected String author;
-	/**
-	 * @deprecated title is never set yet
-	 */
-	@Deprecated
-	protected String title;
-	/**
-	 * @deprecated subject is never set yet
-	 */
-	@Deprecated
-	protected String subject;
-
 	protected PDDocument doc;
 
 	protected int zfVersion = defaultZUGFeRDVersion;
@@ -798,15 +782,10 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 		ArrayProperty titleProperty = dc.getTitleProperty();
 		if (titleProperty != null) {
-			if (overwrite && isNotBlank(title)) {
-				dc.removeProperty(titleProperty);
-				dc.setTitle(title);
-			} else if (titleProperty.getElementsAsString().stream().anyMatch("Untitled"::equalsIgnoreCase)) {
+			if (titleProperty.getElementsAsString().stream().anyMatch("Untitled"::equalsIgnoreCase)) {
 				// remove unfitting ghostscript default
 				dc.removeProperty(titleProperty);
 			}
-		} else if (isNotBlank(title)) {
-			dc.setTitle(title);
 		}
 	}
 
@@ -853,20 +832,11 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		if (overwrite || info.getModificationDate() == null) {
 			info.setModificationDate(Calendar.getInstance());
 		}
-		if (overwrite || (isBlank(info.getAuthor()) && isNotBlank(author))) {
-			info.setAuthor(author);
-		}
 		if (overwrite || (isBlank(info.getProducer()) && isNotBlank(fullProducer))) {
 			info.setProducer(fullProducer);
 		}
 		if (overwrite || (isBlank(info.getCreator()) && isNotBlank(creator))) {
 			info.setCreator(creator);
-		}
-		if (overwrite || (isBlank(info.getTitle()) && isNotBlank(title))) {
-			info.setTitle(title);
-		}
-		if (overwrite || (isBlank(info.getSubject()) && isNotBlank(subject))) {
-			info.setSubject(subject);
 		}
 	}
 

@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.mustangproject.IncludedNote;
 import org.mustangproject.Item;
+import org.mustangproject.ReferencedDocument;
 import org.mustangproject.TradeParty;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -63,17 +64,35 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider {
 	}
 
 	/***
-	 * buyer order reference document id
+	 * buyer order reference document
+	 * @return  the document (defaults to {@code null})
+	 */
+	default ReferencedDocument getBuyerOrderReferencedDocument() {
+		return null;
+	}
+
+	/***
+	 * seller order reference document
 	 * @return  the document id (defaults to {@code null})
 	 */
-	default String getBuyerOrderReferencedDocumentID() {
+	default ReferencedDocument getSellerOrderReferencedDocument() {
+		return null;
+	}
+
+	/***
+	 * contract reference document
+	 * @return  the document id (defaults to {@code null})
+	 */
+	default ReferencedDocument getContractReferencedDocument() {
 		return null;
 	}
 
 	/***
 	 * BT 132 (issue https://github.com/ZUGFeRD/mustangproject/issues/247)
+	 * @deprecated use getBuyerOrderReferencedDocument.getLineID
 	 * @return the line ID of the order (BT-132)
 	 */
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default String getBuyerOrderReferencedDocumentLineID() {
 		return null;
 	}
@@ -86,11 +105,15 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider {
 	 */
 	BigDecimal getPrice();
 
+	/**
+	 * @deprecated use getPrice
+	 */
 	@Override
 	@Deprecated
 	default BigDecimal getValue() {
 		return getPrice();
 	}
+
 	/**
 	 * how many get billed
 	 *
@@ -226,9 +249,10 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider {
 	/**
 	 * get delivery note document ID (per Item - ZUGFeRD EXTENDED)
 	 * rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/IssuerAssignedID
-	 *
+	 * @deprecated use getDeliveryNoteReferencedDocument.getIssuerAssignedID
 	 * @return the ID of the delivery note document
 	 */
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default String getDeliveryNoteReferencedDocumentID() {
 		return null;
 	}
@@ -236,9 +260,10 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider {
 	/**
 	 * get delivery note document date (per Item - ZUGFeRD EXTENDED)
 	 * rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/FormattedIssueDateTime
-	 *
+	 * @deprecated use getDeliveryNoteReferencedDocument.getFormattedIssueDateTime
 	 * @return the date of the delivery note document
 	 */
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default Date getDeliveryNoteReferencedDocumentDate() {
 		return null;
 	}
@@ -246,10 +271,31 @@ public interface IZUGFeRDExportableItem extends IAbsoluteValueProvider {
 	/**
 	 * get delivery note document LineID (per Item - ZUGFeRD EXTENDED)
 	 * rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/LineID
-	 *
+	 * @deprecated use getDeliveryNoteReferencedDocument.getLineID
 	 * @return the LineID of the delivery note document item
 	 */
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default String getDeliveryNoteReferencedDocumentLineID() {
+		return null;
+	}
+
+	/**
+	 * get despatch advice document (per Item - ZUGFeRD EXTENDED)
+	 * rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DespatchAdviceReferencedDocument
+	 *
+	 * @return the ID of the despatch advice document
+	 */
+	default ReferencedDocument getDespatchAdviceReferencedDocument() {
+		return null;
+	}
+
+	/**
+	 * get delivery note document (per Item - ZUGFeRD EXTENDED)
+	 * rsm:SupplyChainTradeTransaction/ram:IncludedSupplyChainTradeLineItem/ram:SpecifiedLineTradeDelivery/ram:DeliveryNoteReferencedDocument/
+	 *
+	 * @return the ID of the delivery note document
+	 */
+	default ReferencedDocument getDeliveryNoteReferencedDocument() {
 		return null;
 	}
 }

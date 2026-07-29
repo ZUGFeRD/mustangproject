@@ -113,7 +113,7 @@ public interface IExportableTransaction {
 		return null;
 	}
 
-	default String getContractReferencedDocument() {
+	default IReferencedDocument getContractReferencedDocument() {
 		return null;
 	}
 
@@ -458,7 +458,7 @@ public interface IExportableTransaction {
 	 *
 	 * @return the ID of the document
 	 */
-	default String getSellerOrderReferencedDocumentID() {
+	default IReferencedDocument getSellerOrderReferencedDocument() {
 		return null;
 	}
 
@@ -468,21 +468,33 @@ public interface IExportableTransaction {
 	 *
 	 * @return the ID of the document
 	 */
-	default String getBuyerOrderReferencedDocumentID() {
+	default IReferencedDocument getBuyerOrderReferencedDocument() {
+		return null;
+	}
+
+	default IReferencedDocument getDespatchAdviceReferencedDocument() {
+		return null;
+	}
+
+	default IReferencedDocument getDeliveryNoteReferencedDocument() {
 		return null;
 	}
 
 	/**
 	 * get the ID of the preceding invoice, which is e.g. to be corrected if this is a correction
-	 *
+	 * @deprecated use getInvoiceReferencedDocument.getIssuerAssignedID
 	 * @return the ID of the document
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default String getInvoiceReferencedDocumentID() {
 		return null;
 	}
 
-	@Deprecated
+	/**
+	 * @deprecated use getInvoiceReferencedDocument.getFormattedIssueDateTime
+	 * @return
+	 */
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default Date getInvoiceReferencedIssueDate() {
 		return null;
 	}
@@ -498,9 +510,10 @@ public interface IExportableTransaction {
 	/**
 	 * get the issue timestamp of the BuyerOrderReferencedDocument, which sits in
 	 * the ApplicableSupplyChainTradeAgreement
-	 *
+	 * @deprecated use getBuyerOrderReferencedDocument.getFormattedIssueDateTime
 	 * @return the IssueDateTime in format CCYY-MM-DDTHH:MM:SS
 	 */
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default Date getBuyerOrderReferencedDocumentIssueDateTime() {
 		return null;
 	}
@@ -593,6 +606,11 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	/**
+	 * @deprecated use
+	 * @return getDespatchAdviceReferencedDocument.getIssuerAssignedID
+	 */
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default String getDespatchAdviceReferencedDocumentID() {
 		return null;
 	}
@@ -600,9 +618,10 @@ public interface IExportableTransaction {
 	/**
 	 * get delivery note document ID
 	 * ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/IssuerAssignedID
-	 *
+	 * @deprecated getDeliveryNoteReferencedDocument.getIssuerAssignedID
 	 * @return the ID of the delivery note document
 	 */
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default String getDeliveryNoteReferencedDocumentID() {
 		return null;
 	}
@@ -610,9 +629,10 @@ public interface IExportableTransaction {
 	/**
 	 * get delivery note document date
 	 * ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/FormattedIssueDateTime
-	 *
+	 * @deprecated use getDeliveryNoteReferenced.getFormattedIssueDateTime
 	 * @return the date of the delivery note document
 	 */
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default Date getDeliveryNoteReferencedDocumentDate() {
 		return null;
 	}

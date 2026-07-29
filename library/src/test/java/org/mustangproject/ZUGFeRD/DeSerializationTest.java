@@ -303,7 +303,7 @@ public class DeSerializationTest extends ResourceCase {
 			assertTrue(theXML.contains(base64));
 
 		} catch (Exception e) {
-			fail("No exception expected");
+			fail(e.getMessage());
 		}
 
 	}
@@ -440,16 +440,16 @@ public class DeSerializationTest extends ResourceCase {
 			SchemedID gln = new SchemedID("0088", "4304171000002");
 
 			SchemedID gtin = new SchemedID("0160", "2001015001325");
-			Item item = new Item(new Product("Testprodukt", "", "H87", new BigDecimal(16)).addGlobalID(gtin).setSellerAssignedID("4711"), price, new BigDecimal(1.0)).setId("a123").addBuyerOrderReferencedDocumentLineID("xxx").addNote("item level 1/1").setDetailedDeliveryPeriod(sdf.parse("2020-01-13"), sdf.parse("2020-01-15"));
+			Item item = new Item(new Product("Testprodukt", "", "H87", new BigDecimal(16)).addGlobalID(gtin).setSellerAssignedID("4711"), price, new BigDecimal(1.0)).setId("a123").setBuyerOrderReferencedDocument(new ReferencedDocument("xxx")).addNote("item level 1/1").setDetailedDeliveryPeriod(sdf.parse("2020-01-13"), sdf.parse("2020-01-15"));
 			Charge itemAllowance = new Allowance(new BigDecimal(0.02)).setReason("item discount");
 			itemAllowance.setTaxRateApplicablePercent(new BigDecimal(16));
 
 			Invoice i = new Invoice().setCurrency("CHF").addNote("document level 1/2").addNote("document level 2/2").setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
-				.setSellerOrderReferencedDocumentID("9384").setBuyerOrderReferencedDocumentID("28934")
+				.setSellerOrderReferencedDocument(new ReferencedDocument("9384")).setBuyerOrderReferencedDocument(new ReferencedDocument("28934"))
 				.setDetailedDeliveryPeriod(new SimpleDateFormat("yyyyMMdd").parse(occurrenceFrom), new SimpleDateFormat("yyyyMMdd").parse(occurrenceTo))
 				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID(taxID).setEmail("sender@test.org").setID(orgID).addVATID("DE0815"))
 				.setDeliveryAddress(new TradeParty("just the other side of the street", "teststr.12a", "55232", "Entenhausen", "DE").addVATID("DE47110"))
-				.setContractReferencedDocument(contractID)
+				.setContractReferencedDocument(new ReferencedDocument(contractID))
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addGlobalID(gln).setEmail("recipient@test.org").addVATID("DE4711")
 					.setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE").setFax("++49555123456")).setAdditionalAddress("Hinterhaus 3"))
 				.addItem(item)
@@ -463,7 +463,7 @@ public class DeSerializationTest extends ResourceCase {
 		} catch (JsonProcessingException | ParseException e) {
 			hasExceptions = true;
 		}
-		assertEquals(newInvoiceFromJSON.getBuyerOrderReferencedDocumentID(), "28934");
+		assertEquals(newInvoiceFromJSON.getBuyerOrderReferencedDocument().getIssuerAssignedID(), "28934");
 		assertFalse(hasExceptions);
 	}
 

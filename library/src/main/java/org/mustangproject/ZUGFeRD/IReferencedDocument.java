@@ -11,6 +11,12 @@ public interface IReferencedDocument {
 	String getIssuerAssignedID();
 
 	/***
+	 * sets a line ID assigned by the sender
+	 * @return String of a lineID
+	 */
+	String getLineID();
+
+	/***
 	 * which type is the document? e.g. "916" for additional invoice related
 	 * @return string of a most likely numeric code
 	 */
@@ -38,4 +44,8 @@ public interface IReferencedDocument {
 	 */
 	Date getFormattedIssueDateTime();
 
+	/***
+	 * @return this particular cash discount as cross industry invoice XML
+	 */
+	String getAsCII();
 }

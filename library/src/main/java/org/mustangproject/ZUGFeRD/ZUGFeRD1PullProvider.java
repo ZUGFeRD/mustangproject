@@ -140,16 +140,16 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 
 		xml.append("</ram:BuyerTradeParty>");
 
-		if (trans.getSellerOrderReferencedDocumentID() != null) {
+		if (trans.getSellerOrderReferencedDocument() != null) {
 			xml.append("<ram:SellerOrderReferencedDocument>"
 					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getSellerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
+					+ XMLTools.encodeXML(trans.getSellerOrderReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
 					+ "</ram:SellerOrderReferencedDocument>");
 		}
-		if (trans.getBuyerOrderReferencedDocumentID() != null) {
+		if (trans.getBuyerOrderReferencedDocument() != null) {
 			xml.append("<ram:BuyerOrderReferencedDocument>"
 					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getBuyerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
+					+ XMLTools.encodeXML(trans.getBuyerOrderReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
 					+ "</ram:BuyerOrderReferencedDocument>");
 		}
 		xml.append("</ram:ApplicableSupplyChainTradeAgreement>"

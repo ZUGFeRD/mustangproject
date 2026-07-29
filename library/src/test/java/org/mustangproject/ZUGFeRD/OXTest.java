@@ -42,9 +42,9 @@ import java.util.GregorianCalendar;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class OXTest extends MustangReaderTestCase {
-	final String TARGET_PDF = "./target/testout-OX.pdf";
-	final String TARGET_PDF_EDGE = "./target/testout-OX-edge.pdf";
-	final String TARGET_XML = "./target/testout-OX.xml";
+	private static final String TARGET_PDF = "./target/testout-OX.pdf";
+	private static final String TARGET_PDF_EDGE = "./target/testout-OX-edge.pdf";
+	private static final String TARGET_XML = "./target/testout-OX.xml";
 
 	protected class EdgeProduct implements IZUGFeRDExportableProduct {
 		private String description, name, unit;

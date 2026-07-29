@@ -27,7 +27,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	private static final HashMap<String, HashMap<String, String>> unitAbbrevs = new HashMap<>();
 
 	protected String unit, name, sellerAssignedID, buyerAssignedID;
-	protected String description = "";
+	protected String description;
 	protected String taxExemptionReason;
 	protected String taxExemptionReasonCode;
 	protected String taxCategoryCode;
