@@ -224,7 +224,7 @@ public class LibraryTest extends ResourceCase {
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");
-		
+
 		assertThat(res).valueByXPath("count(//notice)")
 				.asInt()
 				.isEqualTo(0);

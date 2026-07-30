@@ -138,8 +138,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml.append("<ram:ID>" + XMLTools.encodeXML(party.getID()) + "</ram:ID>");
 		}
 		if ((party.getGlobalIDScheme() != null) && (party.getGlobalID() != null)) {
-			xml.append("<ram:GlobalID schemeID=\"" + XMLTools.encodeXML(party.getGlobalIDScheme()) + "\">"
-				+ XMLTools.encodeXML(party.getGlobalID()) + "</ram:GlobalID>");
+			xml.append("<ram:GlobalID schemeID=\"" + XMLTools.encodeXML(party.getGlobalIDScheme()) + "\">" + XMLTools.encodeXML(party.getGlobalID()) + "</ram:GlobalID>");
 		}
 		if (party.getName() != null && !party.getName().isEmpty()) {
 			xml.append("<ram:Name>" + XMLTools.encodeXML(party.getName()) + "</ram:Name>");
@@ -166,7 +165,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml.append("</ram:SpecifiedLegalOrganization>");
 		}
 
-		if ((party.getContact() != null) && (isSender || profile == Profiles.getByName("EN16931") || profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung"))) {
+		if (party.getContact() != null && (isSender || profile == Profiles.getByName("EN16931") || profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung"))) {
 			String definedTradeContactXML = "";
 			if (party.getContact().getName() != null) {
 				definedTradeContactXML += "<ram:PersonName>"
@@ -490,6 +489,27 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						xml.append("</ram:DesignatedProductClassification>");
 					}
 				}
+				if (profile == Profiles.getByName("Extended") && currentItem.getProduct().getIndividualTradeProductInstances() != null) {
+					for (ITradeProductInstanceType instance : currentItem.getProduct().getIndividualTradeProductInstances()) {
+						xml.append("<ram:IndividualTradeProductInstance>");
+						if (instance.getBatchID() != null && instance.getBatchID().getID() != null) {
+							if (instance.getBatchID().getScheme() != null) {
+								xml.append("<ram:BatchID schemeID=\"" + XMLTools.encodeXML(instance.getBatchID().getScheme()) + "\">" + XMLTools.encodeXML(instance.getBatchID().getID()) + "</ram:BatchID>");
+							} else {
+								xml.append("<ram:BatchID>" + XMLTools.encodeXML(instance.getBatchID().getID()) + "</ram:BatchID>");
+							}
+						}
+						if (instance.getSupplierAssignedSerialID() != null && instance.getSupplierAssignedSerialID().getID() != null) {
+							if (instance.getSupplierAssignedSerialID().getScheme() != null) {
+								xml.append("<ram:SupplierAssignedSerialID schemeID=\"" + XMLTools.encodeXML(instance.getSupplierAssignedSerialID().getScheme()) + "\">" + XMLTools.encodeXML(instance.getSupplierAssignedSerialID().getID()) + "</ram:SupplierAssignedSerialID>");
+							} else {
+								xml.append("<ram:SupplierAssignedSerialID>" + XMLTools.encodeXML(instance.getSupplierAssignedSerialID().getID()) + "</ram:SupplierAssignedSerialID>");
+							}
+						}
+						xml.append("</ram:IndividualTradeProductInstance>");
+					}
+				}
+
 				if (currentItem.getProduct().getCountryOfOrigin() != null) {
 					xml.append("<ram:OriginTradeCountry><ram:ID>" + XMLTools.encodeXML(currentItem.getProduct().getCountryOfOrigin()) + "</ram:ID></ram:OriginTradeCountry>");
 				}

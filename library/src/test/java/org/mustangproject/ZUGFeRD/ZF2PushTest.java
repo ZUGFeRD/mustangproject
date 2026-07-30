@@ -33,6 +33,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mustangproject.*;
+import org.mustangproject.Product.TradeProductInstanceType;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
@@ -693,7 +694,8 @@ public class ZF2PushTest extends TestCase {
 						.setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE").setFax("++49555123456")).setAdditionalAddress("Hinterhaus 3"))
 					.setInvoicer( new TradeParty("Abweichender Rechnungssteller", "Teststr.12", "04711", "Entenhausen", "DE") )
 					.setInvoicee( new TradeParty("Abweichender Rechnungsempfänger", "Teststr.42", "00815", "Entenhausen", "DE") )
-					.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(16)).addGlobalID(gtin).setSellerAssignedID("4711"), price, new BigDecimal(1.0)).setId("a123")
+					.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(16)).addGlobalID(gtin).setSellerAssignedID("4711")
+							.addIndividualTradeProductInstance(new TradeProductInstanceType().setBatchID(new SchemedID().setScheme("xxx").setId("Batch-4711")).setSupplierAssignedSerialID(new SchemedID().setId("4711-0815"))), price, new BigDecimal(1.0)).setId("a123")
 						.addAdditionalReference(dr2)
 						.setBuyerOrderReferencedDocument(dr3)
 						.addNote("item level 1/1")
@@ -771,6 +773,8 @@ public class ZF2PushTest extends TestCase {
 			assertEquals(occurrenceFrom, sdf.format(i.getDetailedDeliveryPeriodFrom()));
 			assertEquals(occurrenceTo, sdf.format(i.getDetailedDeliveryPeriodTo()));
 			assertEquals("2001015001325", i.getZFItems()[0].getProduct().getGlobalID());
+			assertEquals("Batch-4711", i.getZFItems()[0].getProduct().getIndividualTradeProductInstances()[0].getBatchID().getID());
+			assertEquals("4711-0815", i.getZFItems()[0].getProduct().getIndividualTradeProductInstances()[0].getSupplierAssignedSerialID().getID());
 			assertEquals("#11111#2222#xxxx#", i.getZFItems()[0].getAccountingReference());
 			assertEquals(orgID, i.getSender().getID());
 			assertEquals("Verwendungszweck", i.getPaymentReference());

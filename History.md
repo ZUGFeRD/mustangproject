@@ -20,7 +20,7 @@
 - #976 / #797 InvoiceImport: read ContractReferencedDocument/IssuerAssignedID into Invoice.contractReferencedDocument
 - #987 Show only the matching BIC per IBAN in invoice visualization
 - #982 Support TypeCodes 130 and 916 for AdditionalReferencedDocuments
-
+- #1202 Support IndividualTradeProductInstance with BatchID and SupplierAssignedSerialID for EXTENDED Profile
 
 2.24.0
 =======
