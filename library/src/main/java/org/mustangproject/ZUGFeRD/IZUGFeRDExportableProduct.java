@@ -197,4 +197,8 @@ public interface IZUGFeRDExportableProduct {
 	default IDesignatedProductClassification[] getClassifications() {
 		return null;
 	}
+
+	default ITradeProductInstanceType[] getIndividualTradeProductInstances() {
+		return null;
+	}
 }

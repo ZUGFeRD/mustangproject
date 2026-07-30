@@ -6,7 +6,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.mustangproject.ZUGFeRD.ITradeProductInstanceType;
 import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
 import org.mustangproject.util.NodeMap;
@@ -26,6 +28,41 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 public class Product implements IZUGFeRDExportableProduct {
 	private static final HashMap<String, HashMap<String, String>> unitAbbrevs = new HashMap<>();
 
+	public static class TradeProductInstanceType implements ITradeProductInstanceType {
+		private SchemedID batchID;
+		private SchemedID supplierAssignedSerialID;
+
+		/**
+		 * @return the batchID
+		 */
+		public SchemedID getBatchID() {
+			return batchID;
+		}
+
+		/**
+		 * @param batchID the batchID to set
+		 */
+		public TradeProductInstanceType setBatchID(SchemedID batchID) {
+			this.batchID = batchID;
+			return this;
+		}
+
+		/**
+		 * @return the supplierAssignedSerialID
+		 */
+		public SchemedID getSupplierAssignedSerialID() {
+			return supplierAssignedSerialID;
+		}
+
+		/**
+		 * @param supplierAssignedSerialID the supplierAssignedSerialID to set
+		 */
+		public TradeProductInstanceType setSupplierAssignedSerialID(SchemedID supplierAssignedSerialID) {
+			this.supplierAssignedSerialID = supplierAssignedSerialID;
+			return this;
+		}
+	}
+
 	protected String unit, name, sellerAssignedID, buyerAssignedID;
 	protected String description;
 	protected String taxExemptionReason;
@@ -40,6 +77,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	protected ArrayList<Allowance> allowances = new ArrayList<>();
 	protected HashMap<String, String> attributes = new HashMap<>();
 	protected List<IDesignatedProductClassification> classifications = new ArrayList<>();
+	protected List<TradeProductInstanceType> individualTradeProductInstances = new ArrayList<>();
 
 	/***
 	 * default constructor
@@ -83,6 +121,37 @@ public class Product implements IZUGFeRDExportableProduct {
 				}
 				attributes.put(key, value);
 			}
+		});
+
+		nodeMap.getAllNodes("IndividualTradeProductInstance").map(NodeMap::new).forEach(apcNodes -> { // IndividualTradeProductInstance is 0 .. unbounded
+			SchemedID batch = null;
+			Optional<Node> batchNode = apcNodes.getNode("BatchID");
+			if (batchNode.isPresent()) {
+				batch = new SchemedID();
+				batch.setId(batchNode.get().getTextContent());
+				if (batchNode.get().hasAttributes() && batchNode.get().getAttributes().getNamedItem("schemeID") != null) {
+					batch.setScheme(batchNode.get().getAttributes().getNamedItem("schemeID").getNodeValue());
+				}
+			}
+
+			SchemedID serial = null;
+			Optional<Node> serialNode = apcNodes.getNode("SupplierAssignedSerialID");
+			if (serialNode.isPresent()) {
+				serial = new SchemedID();
+				serial.setId(serialNode.get().getTextContent());
+				if (serialNode.get().hasAttributes() && serialNode.get().getAttributes().getNamedItem("schemeID") != null) {
+					serial.setScheme(serialNode.get().getAttributes().getNamedItem("schemeID").getNodeValue());
+				}
+			}
+
+			TradeProductInstanceType instance = new TradeProductInstanceType();
+			instance.setBatchID(batch);
+			instance.setSupplierAssignedSerialID(serial);
+
+			if ( this.individualTradeProductInstances == null ) {
+				this.individualTradeProductInstances = new ArrayList<>();
+			}
+			this.individualTradeProductInstances.add(instance);
 		});
 
 		//UBL
@@ -421,6 +490,42 @@ public class Product implements IZUGFeRDExportableProduct {
 	 */
 	public Product addClassification(IDesignatedProductClassification classification) {
 		this.classifications.add(classification);
+		return this;
+	}
+
+	/**
+	 * @return individualTradeProductInstances
+	 */
+	public ITradeProductInstanceType[] getIndividualTradeProductInstances() {
+		if (individualTradeProductInstances.isEmpty()) {
+			return null;
+		} else {
+			return individualTradeProductInstances.toArray(new ITradeProductInstanceType[0]);
+		}
+	}
+
+	/**
+	 * Replace the current set of {@link TradeProductInstanceType}s with a new set
+	 *
+	 * @param individualTradeProductInstance the new set of individualTradeProductInstance
+	 * @return the modified object
+	 */
+	public Product setIndividualTradeProductInstances(TradeProductInstanceType[] individualTradeProductInstances) {
+		this.individualTradeProductInstances.clear();
+		if (individualTradeProductInstances != null) {
+			this.individualTradeProductInstances.addAll(Arrays.asList(individualTradeProductInstances));
+		}
+		return this;
+	}
+
+	/**
+	 * Add a {@link TradeProductInstanceType} individualTradeProductInstance
+	 *
+	 * @param individualTradeProductInstance the individualTradeProductInstance
+	 * @return the modified object
+	 */
+	public Product addIndividualTradeProductInstance(TradeProductInstanceType individualTradeProductInstance) {
+		this.individualTradeProductInstances.add(individualTradeProductInstance);
 		return this;
 	}
 
