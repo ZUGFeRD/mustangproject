@@ -21,6 +21,12 @@
 - #987 Show only the matching BIC per IBAN in invoice visualization
 - #982 Support TypeCodes 130 and 916 for AdditionalReferencedDocuments
 - #1202 Support IndividualTradeProductInstance with BatchID and SupplierAssignedSerialID for EXTENDED Profile
+- #1205 Refactoring of Invoice's DocumentReferences.
+- #1208 Prevent NPE when generating XML invoice without issue date.
+- #1211 Change to UBL 2.4 and add commandline option for profile and customization ID.
+- #1212 Remove deprecated method IExportableTransaction::getTradeSettlementPayment.
+
+>>>>>>> Stashed changes
 
 2.24.0
 =======
