@@ -134,13 +134,13 @@ public class XMPSchemaPDFAExtensions extends PDFAExtensionSchema {
 			ArrayProperty newSeq = new ArrayProperty(metadata, xmlns_pdfaSchema, prefix_pdfaSchema, PDFASchemaType.PROPERTY, Cardinality.Seq);
 			li.addProperty(newSeq);
 
-			if ((eStandard != null) && (eStandard == EStandard.ORDER_X)) {
+			if (eStandard != null && eStandard == EStandard.ORDER_X) {
 				addProperty(newSeq, "DocumentFileName", "Text", "external", "Name of the embedded XML Order (or related) file");
 				addProperty(newSeq, "DocumentType", "Text", "external", "ORDER, ORDER_RESPONSE, or ORDER_CHANGE");
 				addProperty(newSeq, "Version", "Text", "external", "The actual version of the Order-X XML schema");
 				addProperty(newSeq, "ConformanceLevel", "Text", "external",
 								    "The selected Order-X profile completeness");
-			} else if ((eStandard != null) && (eStandard == EStandard.DELIVER_X)) {
+			} else if (eStandard != null && eStandard == EStandard.DELIVER_X) {
 				// As of late 2022 the Delivery-X standard is not yet published. See specification:
 				// Die digitale Ablösung des Papier-Lieferscheins, Version 1.1, April 2022
 				// Chapter 7.1 XMP-Erweiterungsschema für PDF/A-3

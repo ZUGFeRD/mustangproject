@@ -16,18 +16,25 @@
 
 	<module name="TreeWalker">
 		<!--
+			Annotation Checks: https://checkstyle.sourceforge.io/checks/annotation/index.html
+		 -->
+		<module name="MissingDeprecated"/>
+
+		<!--
 			Imports Checks: https://checkstyle.sourceforge.io/checks/imports/index.html
 		 -->
 		<module name="AvoidStarImport"/>
 		<module name="IllegalImport"/>
 		<module name="RedundantImport"/>
 		<module name="UnusedImports"/>
-		<!-- 
+
+		<!--
 			Block Checks: https://checkstyle.sourceforge.io/checks/blocks/index.html
 		-->
 		<module name="LeftCurly"/>
 		<module name="NeedBraces"/>
 		<module name="RightCurly"/>
+
 		<!--
 			Coding Checks https://checkstyle.sourceforge.io/checks/coding/index.html
 		 -->
@@ -38,6 +45,8 @@
 		<module name="ExplicitInitialization"/>
 		<module name="FallThrough"/>
 		<module name="OneStatementPerLine"/>
+		<module name="StringLiteralEquality"/>
+		<module name="UnnecessaryParentheses"/>
 		<module name="UnnecessarySemicolonAfterOuterTypeDeclaration"/>
 		<module name="UnnecessarySemicolonAfterTypeMemberDeclaration"/>
 		<module name="UnnecessarySemicolonInEnumeration"/>
@@ -50,6 +59,7 @@
 		<module name="SingleSpaceSeparator"/>
 		<module name="WhitespaceAfter"/>
 		<module name="WhitespaceAround"/>
+
 		<!--
 			Design Checks: https://checkstyle.sourceforge.io/checks/design/index.html
 		-->

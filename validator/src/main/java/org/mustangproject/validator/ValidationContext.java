@@ -35,15 +35,13 @@ public class ValidationContext {
 	public void addResultItem(ValidationResultItem vr) throws IrrecoverableValidationError {
 		results.add(vr);
 
-		if ((vr.getSeverity() == ESeverity.fatal) || (vr.getSeverity() == ESeverity.exception)
-				|| (vr.getSeverity() == ESeverity.error)) {
+		if (vr.getSeverity() == ESeverity.fatal || vr.getSeverity() == ESeverity.exception || vr.getSeverity() == ESeverity.error) {
 			isValid = false;
-
 		}
 		if (logger != null) {
-			if ((vr.getSeverity() == ESeverity.fatal) || (vr.getSeverity() == ESeverity.exception)) {
+			if (vr.getSeverity() == ESeverity.fatal || vr.getSeverity() == ESeverity.exception) {
 				logger.error("Fatal Error {}: {}", vr.getSection(), vr.getMessage());
-			} else if ((vr.getSeverity() == ESeverity.error)) {
+			} else if (vr.getSeverity() == ESeverity.error) {
 				logger.error("Error {}: {}", vr.getSection(), vr.getMessage());
 			} else if (vr.getSeverity() == ESeverity.warning) {
 				logger.warn("Warning {}: {}", vr.getSection(), vr.getMessage());
@@ -52,7 +50,7 @@ public class ValidationContext {
 			}
 		}
 
-		if ((vr.getSeverity() == ESeverity.fatal) || (vr.getSeverity() == ESeverity.exception)) {
+		if (vr.getSeverity() == ESeverity.fatal || vr.getSeverity() == ESeverity.exception) {
 			throw new IrrecoverableValidationError(vr.getMessage());
 		}
 

@@ -254,10 +254,9 @@ public class XMLTools extends XMLWriter {
 			if (c >= 0xd800 && c <= 0xdbff && i + 1 < len) {
 				c = ((c - 0xd7c0) << 10) | (s.charAt(++i) & 0x3ff);    // UTF16 decode
 			}
-			if (c < 0x80) {      // ASCII range: test most common case first
-				if (c < 0x20 && (c != '\t' && c != '\r' && c != '\n')) {
-					// Illegal XML character, even encoded. Skip or substitute
-					sb.append("&#xfffd;");   // Unicode replacement character
+			if (c < 0x80) { // ASCII range: test most common case first
+				if (c < 0x20 && c != '\t' && c != '\r' && c != '\n') { // Illegal XML character, even encoded. Skip or substitute
+					sb.append("&#xfffd;"); // Unicode replacement character
 				} else {
 					switch (c) {
 						case '&':
@@ -281,7 +280,7 @@ public class XMLTools extends XMLWriter {
 							sb.append((char) c);
 					}
 				}
-			} else if ((c >= 0xd800 && c <= 0xdfff) || c == 0xfffe || c == 0xffff) {
+			} else if (c >= 0xd800 && c <= 0xdfff || c == 0xfffe || c == 0xffff) {
 				// Illegal XML character, even encoded. Skip or substitute
 				sb.append("&#xfffd;");   // Unicode replacement character
 			} else {
@@ -301,7 +300,7 @@ public class XMLTools extends XMLWriter {
 	public static byte[] removeBOM(byte[] zugferdRaw) {
 		final byte[] zugferdData;
 		// This handles the UTF-8 BOM
-		if ((zugferdRaw[0] == (byte) 0xEF) && (zugferdRaw[1] == (byte) 0xBB) && (zugferdRaw[2] == (byte) 0xBF)) {
+		if (zugferdRaw[0] == (byte) 0xEF && zugferdRaw[1] == (byte) 0xBB && zugferdRaw[2] == (byte) 0xBF) {
 			// I don't like BOMs, lets remove it
 			zugferdData = new byte[zugferdRaw.length - 3];
 			System.arraycopy(zugferdRaw, 3, zugferdData, 0, zugferdRaw.length - 3);

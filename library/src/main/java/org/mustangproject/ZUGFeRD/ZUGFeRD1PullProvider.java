@@ -132,7 +132,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 		// + " <GlobalID schemeID=\"0088\">4000001987658</GlobalID>"
 
 		xml.append(getTradePartyAsXML(trans.getRecipient(), false, false));
-		if ((trans.getOwnVATID() != null) && (trans.getOwnOrganisationName() != null)) {
+		if (trans.getOwnVATID() != null && trans.getOwnOrganisationName() != null) {
 			xml.append("<ram:SpecifiedTaxRegistration><ram:ID schemeID=\"VA\">"
 					+ XMLTools.encodeXML(trans.getOwnVATID()) + "</ram:ID>"
 					+ "</ram:SpecifiedTaxRegistration>");
@@ -180,14 +180,6 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 				+ "<ram:PaymentReference>" + XMLTools.encodeXML(trans.getNumber()) + "</ram:PaymentReference>"
 				+ "<ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>");
 
-		if (trans.getTradeSettlementPayment() != null) {
-			for (final IZUGFeRDTradeSettlementPayment payment : trans.getTradeSettlementPayment()) {
-				if (payment != null) {
-					hasDueDate = true;
-					xml.append(payment.getSettlementXML(getProfile()));
-				}
-			}
-		}
 		if (trans.getTradeSettlement() != null) {
 			for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
 				if (payment != null) {
@@ -225,13 +217,13 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 
 			if (trans.getTradeSettlement() != null) {
 				for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
-					if ((payment != null) && (payment instanceof IZUGFeRDTradeSettlementDebit)) {
+					if (payment instanceof IZUGFeRDTradeSettlementDebit) {
 						xml.append(payment.getPaymentXML());
 					}
 				}
 			}
 
-			if (hasDueDate && (trans.getDueDate() != null)) {
+			if (hasDueDate && trans.getDueDate() != null) {
 				xml.append("<ram:DueDateDateTime>" // $NON-NLS-2$
 						+ DATE.udtFormat(trans.getDueDate())
 						+ "</ram:DueDateDateTime>"); // 20130704

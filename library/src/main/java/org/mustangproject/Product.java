@@ -243,7 +243,7 @@ public class Product implements IZUGFeRDExportableProduct {
 
 	/***
 	 *
-	 * @param taxExemptionReasonCode, https://docs.peppol.eu/poacc/billing/3.0/codelist/vatex/
+	 * @param taxExemptionReasonCode	https://docs.peppol.eu/poacc/billing/3.0/codelist/vatex/
 	 * @return fluent setter
 	 */
 	public Product setTaxExemptionReasonCode(String taxExemptionReasonCode) {

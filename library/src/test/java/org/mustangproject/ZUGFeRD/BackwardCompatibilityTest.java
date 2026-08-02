@@ -72,7 +72,6 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 //			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>EN 16931</zf:ConformanceLevel>") == -1);
 //			assertFalse(pdfContent.indexOf("<pdfaSchema:prefix>zf</pdfaSchema:prefix>") == -1);
 //			assertFalse(pdfContent.indexOf("urn:zugferd:pdfa:CrossIndustryDocument:invoice:2p0#") == -1);
-
 		} catch (IOException e) {
 			fail("IOException should not happen in testZExport");
 		}
@@ -81,13 +80,11 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF_ZF1);
 
 		// Reading ZUGFeRD
-		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
-		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
-		assertEquals(zi.getHolder(), getOwnOrganisationName());
-		assertEquals(zi.getForeignReference(), getNumber());
-
-
+		assertEquals("571.04", zi.getAmount());
+		assertEquals(getTradeSettlement()[0].getOwnBIC(), zi.getBIC());
+		assertEquals(getTradeSettlement()[0].getOwnIBAN(), zi.getIBAN());
+		assertEquals(getOwnOrganisationName(), zi.getHolder());
+		assertEquals(getNumber(), zi.getForeignReference());
 	}
 
 	public void testZF2Export() {
@@ -120,8 +117,8 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 
 		// Reading ZUGFeRD
 		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getTradeSettlementPayment()[0].getOwnBIC());
-		assertEquals(zi.getIBAN(), getTradeSettlementPayment()[0].getOwnIBAN());
+		assertEquals(zi.getBIC(), getTradeSettlement()[0].getOwnBIC());
+		assertEquals(zi.getIBAN(), getTradeSettlement()[0].getOwnIBAN());
 		assertEquals(zi.getHolder(), getOwnOrganisationName());
 		assertEquals(zi.getForeignReference(), getNumber());
 
@@ -157,8 +154,8 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 
 		// Reading ZUGFeRD
 		assertEquals("571.04", zi.getAmount());
-		assertEquals(getTradeSettlementPayment()[0].getOwnBIC(), zi.getBIC());
-		assertEquals(getTradeSettlementPayment()[0].getOwnIBAN(), zi.getIBAN());
+		assertEquals(getTradeSettlement()[0].getOwnBIC(), zi.getBIC());
+		assertEquals(getTradeSettlement()[0].getOwnIBAN(), zi.getIBAN());
 		assertEquals(getOwnOrganisationName(), zi.getHolder());
 		assertEquals(getNumber(), zi.getForeignReference());
 	}
@@ -246,13 +243,11 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 
 		@Override
 		public IZUGFeRDAllowanceCharge[] getItemAllowances() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public IZUGFeRDAllowanceCharge[] getItemCharges() {
-			// TODO Auto-generated method stub
 			return null;
 		}
 	}
@@ -323,9 +318,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 
 	//
 	@Override
-	@Deprecated(forRemoval = true, since = "2.24.1")
-	@SuppressWarnings("deprecation")
-	public IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
+	public IZUGFeRDTradeSettlementPayment[] getTradeSettlement() {
 		Payment P = new Payment();
 		IZUGFeRDTradeSettlementPayment[] allP = new Payment[1];
 		allP[0] = P;
@@ -334,13 +327,11 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 
 	@Override
 	public IZUGFeRDAllowanceCharge[] getZFAllowances() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public IZUGFeRDAllowanceCharge[] getZFCharges() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -360,7 +351,6 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 
 	@Override
 	public IZUGFeRDLogisticsServiceCharge[] getZFLogisticsServiceCharges() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

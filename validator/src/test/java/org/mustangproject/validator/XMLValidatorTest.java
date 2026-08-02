@@ -4,7 +4,6 @@ import java.io.File;
 
 import javax.xml.transform.Source;
 
-import org.junit.Test;
 import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
@@ -183,8 +182,6 @@ public class XMLValidatorTest extends ResourceCase {
 			noException = false;
 		}
 		assertFalse(noException);
-		noException=true;
-
 	}
 
 	public void testZF1XMLValidation() {
@@ -469,7 +466,6 @@ public class XMLValidatorTest extends ResourceCase {
 	public void testSubInvoiceLineHierarchy() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
-		final XPathEngine xpath = new JAXPXPathEngine();
 
 		// test invalid hierarchy: GROUP sum does not match DETAIL children sum
 		// GROUP 01 has LineTotalAmount=999, but children sum to 1050 (600+450)

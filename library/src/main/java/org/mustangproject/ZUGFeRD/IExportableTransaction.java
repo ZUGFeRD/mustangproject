@@ -164,17 +164,6 @@ public interface IExportableTransaction {
 	IZUGFeRDExportableTradeParty getRecipient();
 
 	/**
-	 * the creditors payment informations
-	 *
-	 * @deprecated use getTradeSettlement
-	 * @return an array of IZUGFeRDTradeSettlementPayment
-	 */
-	@Deprecated
-	default IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
-		return null;
-	}
-
-	/**
 	 * the payment information for any payment means
 	 *
 	 * @return an array of IZUGFeRDTradeSettlement

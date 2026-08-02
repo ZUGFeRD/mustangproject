@@ -185,9 +185,8 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		if (!documentPrepared) {
 			prepareDocument();
 		}
-		if ((!fileAttached) && (attachZUGFeRDHeaders)) {
-			throw new IOException(
-					"File must be attached (usually with setTransaction) before perfoming this operation");
+		if (!fileAttached && attachZUGFeRDHeaders) {
+			throw new IOException("File must be attached (usually with setTransaction) before perfoming this operation");
 		}
 		doc.save(ZUGFeRDfilename);
 		if (!disableAutoClose) {
@@ -213,9 +212,8 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		if (!documentPrepared) {
 			prepareDocument();
 		}
-		if ((!fileAttached) && (attachZUGFeRDHeaders)) {
-			throw new IOException(
-					"File must be attached (usually with setTransaction) before perfoming this operation");
+		if (!fileAttached && attachZUGFeRDHeaders) {
+			throw new IOException("File must be attached (usually with setTransaction) before perfoming this operation");
 		}
 		doc.save(output);
 		if (!disableAutoClose) {
@@ -304,7 +302,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 		// AF entry (Array) in catalog with the FileSpec
 		COSBase AFEntry = doc.getDocumentCatalog().getCOSObject().getItem("AF");
-		if ((AFEntry == null)) {
+		if (AFEntry == null) {
 			COSArray cosArray = new COSArray();
 			cosArray.add(fs);
 			doc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
@@ -312,7 +310,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 			COSArray cosArray = (COSArray) AFEntry;
 			cosArray.add(fs);
 			doc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
-		} else if ((AFEntry instanceof COSObject) &&
+		} else if (AFEntry instanceof COSObject &&
 				((COSObject) AFEntry).getObject() instanceof COSArray) {
 			COSArray cosArray = (COSArray) ((COSObject) AFEntry).getObject();
 			cosArray.add(fs);
@@ -483,7 +481,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	@Override
 	protected XMPMetadata getXmpMetadata() throws IOException {
 		PDMetadata meta = doc.getDocumentCatalog().getMetadata();
-		if ((meta != null) && (meta.getLength() > 0)) {
+		if (meta != null && meta.getLength() > 0) {
 			try {
 				DomXmpParser xmpParser = new DomXmpParser();
 				return xmpParser.parse(meta.toByteArray());

@@ -48,7 +48,7 @@ public class FileChecker {
 	}
 
 	public boolean checkForZUGFeRD() {
-		if ((!isPDF) && (!thisRun.shallIgnoreFileExt())) {
+		if (!isPDF && !thisRun.shallIgnoreFileExt()) {
 			return false;
 		}
 		ZUGFeRDImporter zi = new ZUGFeRDImporter();

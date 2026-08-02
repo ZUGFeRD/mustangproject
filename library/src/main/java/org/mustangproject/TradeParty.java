@@ -27,7 +27,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	protected String name, zip, street, location, country, taxScheme;
 	protected String taxID, vatID;
-	protected String ID;
+	protected String id;
 	protected String description;
 	protected String additionalAddress;
 	protected String additionalAddressExtension;
@@ -50,7 +50,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	 *
 	 * @param name of the company
 	 * @param street street and number (use setAdditionalAddress for more parts)
-	 * @param zip postcode of the company
+	 * @param zip post code of the company
 	 * @param location city of the company
 	 * @param country two letter ISO code
 	 */
@@ -191,9 +191,9 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 							List<String> supportedSchemeIDs = Arrays.asList("EM", "0225");
 							for (int URIChildIndex = 0; URIChildIndex < URIchilds.getLength(); URIChildIndex++) {
 								Node currentNode = URIchilds.item(URIChildIndex);
-								if ((currentNode.getLocalName() != null) && (currentNode.getLocalName().equals("URIID")
-										&& (currentNode.getAttributes().getNamedItem("schemeID") != null))
-										&& (supportedSchemeIDs.contains(currentNode.getAttributes().getNamedItem("schemeID").getNodeValue()))) {
+								if (currentNode.getLocalName() != null && currentNode.getLocalName().equals("URIID")
+										&& currentNode.getAttributes().getNamedItem("schemeID") != null
+										&& supportedSchemeIDs.contains(currentNode.getAttributes().getNamedItem("schemeID").getNodeValue())) {
 									setEmail(currentNode.getAttributes().getNamedItem("schemeID").getNodeValue(), currentNode.getTextContent());
 								}
 							}
@@ -203,7 +203,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 							NodeList taxChilds = itemChilds.item(itemChildIndex).getChildNodes();
 							for (int taxChildIndex = 0; taxChildIndex < taxChilds.getLength(); taxChildIndex++) {
 								if (taxChilds.item(taxChildIndex).getLocalName() != null) {
-									if ((taxChilds.item(taxChildIndex).getLocalName().equals("ID"))) {
+									if (taxChilds.item(taxChildIndex).getLocalName().equals("ID")) {
 										if (taxChilds.item(taxChildIndex).getAttributes().getNamedItem("schemeID") != null) {
 											Node firstChild = taxChilds.item(taxChildIndex).getFirstChild();
 											if (firstChild != null) {
@@ -227,45 +227,17 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 
 	@Override
 	public String getID() {
-		return ID;
+		return id;
 	}
 
 	protected void parseFromUBL(NodeList nodes) {
 		if (nodes.getLength() > 0) {
 
 			for (int nodeIndex = 0; nodeIndex < nodes.getLength(); nodeIndex++) {
-				//nodes.item(i).getTextContent())) {
 				Node currentItemNode = nodes.item(nodeIndex);
 
 				if (currentItemNode.getLocalName() != null) {
 					String currentUBLChild = currentItemNode.getLocalName();
-//					if (currentUBLChild.equals("Delivery")) {
-//						NodeList delivery = currentItemNode.getChildNodes();
-//						for (int deliveryIndex = 0; deliveryIndex < delivery.getLength(); deliveryIndex++) {
-//							if (delivery.item(deliveryIndex).getLocalName() != null) {
-//								Node currentNode = delivery.item(deliveryIndex);
-//								if (currentNode.getLocalName().equals("DeliveryLocation")) {
-//									NodeList deliveryLocation = currentNode.getChildNodes();
-//									for (int deliveryLocationIndex = 0; deliveryLocationIndex < deliveryLocation.getLength(); deliveryLocationIndex++) {
-//										if (deliveryLocation.item(deliveryLocationIndex).getLocalName() != null) {
-//											if (deliveryLocation.item(deliveryLocationIndex).getLocalName().equals("ID")) {
-//												//Node currentNode = partyID.item(partyIDIndex);
-//												setID(deliveryLocation.item(deliveryLocationIndex).getTextContent());
-//												if ((deliveryLocation.item(deliveryLocationIndex).getAttributes() != null &&
-//													(deliveryLocation.item(deliveryLocationIndex).getAttributes().getNamedItem("schemeID") != null))
-//												) {
-//													SchemedID sID = new SchemedID().setScheme(deliveryLocation.item(deliveryLocationIndex).getAttributes().getNamedItem("schemeID").getTextContent());
-//													addGlobalID(sID);
-//												}
-//											}
-//										}
-//									}
-//								}
-//
-//							}
-//						}
-//					}
-
 					if (currentUBLChild.equals("Party")) {
 						NodeList party = currentItemNode.getChildNodes();
 						for (int partyIndex = 0; partyIndex < party.getLength(); partyIndex++) {
@@ -287,9 +259,9 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 								if (party.item(partyIndex).getLocalName().equals("EndpointID")) {
 									Node currentNode = party.item(partyIndex);
 									List<String> supportedSchemeIDs = Arrays.asList("EM", "0225");
-									if ((currentNode.getAttributes() != null
-											&& (currentNode.getAttributes().getNamedItem("schemeID") != null))
-											&& (supportedSchemeIDs.contains(currentNode.getAttributes().getNamedItem("schemeID").getNodeValue()))) {
+									if (currentNode.getAttributes() != null
+											&& currentNode.getAttributes().getNamedItem("schemeID") != null
+											&& supportedSchemeIDs.contains(currentNode.getAttributes().getNamedItem("schemeID").getNodeValue())) {
 										setEmail(currentNode.getAttributes().getNamedItem("schemeID").getNodeValue(), currentNode.getTextContent());
 									}
 
@@ -300,9 +272,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 										if (partyID.item(partyIDIndex).getLocalName() != null) {
 											if (partyID.item(partyIDIndex).getLocalName().equals("ID")) {
 												Node currentNode = partyID.item(partyIDIndex);
-												if ((currentNode.getAttributes() != null &&
-													(currentNode.getAttributes().getNamedItem("schemeID") != null))
-												) {
+												if (currentNode.getAttributes() != null && currentNode.getAttributes().getNamedItem("schemeID") != null) {
 													SchemedID sID = new SchemedID().setScheme(currentNode.getAttributes().getNamedItem("schemeID").getTextContent()).setId(currentNode.getTextContent());
 													addGlobalID(sID);
 												} else {
@@ -320,7 +290,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 									for (int partyTaxSchemeIndex = 0; partyTaxSchemeIndex < partyTaxScheme.getLength(); partyTaxSchemeIndex++) {
 										if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName() != null) {
 											if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName().equals("CompanyID")) {
-												CompanyId = (partyTaxScheme.item(partyTaxSchemeIndex).getTextContent());
+												CompanyId = partyTaxScheme.item(partyTaxSchemeIndex).getTextContent();
 											}
 											if (partyTaxScheme.item(partyTaxSchemeIndex).getLocalName().equals("TaxScheme")) {
 												NodeList taxSchemechilds = partyTaxScheme.item(partyTaxSchemeIndex).getChildNodes();
@@ -346,7 +316,6 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 								 UBL only: formally it can have a name as well but BT27 party name *should* be stored in
 								 so overwrite if one exists
 								*/
-
 								if (currentTopElementName.equals("PartyLegalEntity")) {
 									NodeList legal = party.item(partyIndex).getChildNodes();
 									LegalOrganisation lo = null;
@@ -529,7 +498,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	 * @return fluent setter
 	 */
 	public TradeParty setID(String ID) {
-		this.ID = ID;
+		this.id = ID;
 		return this;
 	}
 
@@ -650,6 +619,13 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		return vatID;
 	}
 
+	/*
+	 * required for Jackson
+	 */
+	public String getVatID() {
+		return vatID;
+	}
+
 	public TradeParty setVATID(String VATid) {
 		this.vatID = VATid;
 		return this;
@@ -758,11 +734,6 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	public TradeParty setCountry(String country) {
 		this.country = country;
 		return this;
-	}
-
-
-	public String getVatID() {
-		return vatID;
 	}
 
 	@Override
