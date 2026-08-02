@@ -124,8 +124,7 @@
           <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
         </ram:ApplicableTradeTax>
         <ram:SpecifiedTradePaymentTerms>
-          <ram:Description>Der Betrag in Höhe von EUR 529,87 wird am 20.03.2018 von Ihrem Konto per SEPA-Lastschrift eingezogen.
-          </ram:Description>
+          <ram:Description>Der Betrag in Höhe von EUR 529,87 wird am 20.03.2018 von Ihrem Konto per SEPA-Lastschrift eingezogen.</ram:Description>
           <ram:DirectDebitMandateID>REF A-123</ram:DirectDebitMandateID>
         </ram:SpecifiedTradePaymentTerms>
         <ram:SpecifiedTradeSettlementHeaderMonetarySummation>

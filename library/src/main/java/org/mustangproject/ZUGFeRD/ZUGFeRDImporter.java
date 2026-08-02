@@ -343,18 +343,17 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return the sender's account IBAN code
 	 */
 	public String getIBAN() {
-		if (importedInvoice == null || importedInvoice.getTradeSettlement() == null) {
-			return null;
-		}
-		for (IZUGFeRDTradeSettlement settlement : importedInvoice.getTradeSettlement()) {
-			if (settlement instanceof IZUGFeRDTradeSettlementDebit) {
-				return ((IZUGFeRDTradeSettlementDebit) settlement).getIBAN();
+		if (importedInvoice != null && importedInvoice.getTradeSettlement() != null) {
+			for (IZUGFeRDTradeSettlement settlement : importedInvoice.getTradeSettlement()) {
+				if (settlement instanceof IZUGFeRDTradeSettlementDebit) {
+					return ((IZUGFeRDTradeSettlementDebit) settlement).getIBAN();
+				}
+				if (settlement instanceof IZUGFeRDTradeSettlementPayment) {
+					return ((IZUGFeRDTradeSettlementPayment) settlement).getOwnIBAN();
+				}
 			}
-			if (settlement instanceof IZUGFeRDTradeSettlementPayment) {
-				return ((IZUGFeRDTradeSettlementPayment) settlement).getOwnIBAN();
-			}
 		}
-		return null;
+		return extractString("//*[local-name() = 'PayeePartyCreditorFinancialAccount']/*[local-name() = 'IBANID']");
 	}
 
 
@@ -590,7 +589,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 				for (int j = 0; j < nodes.getLength(); j++) {
 					n = nodes.item(j);
 					final short nodeType = n.getNodeType();
-					if ((nodeType == Node.ELEMENT_NODE) && (n.getLocalName() != null)) {
+					if (nodeType == Node.ELEMENT_NODE && n.getLocalName() != null) {
 						switch (n.getLocalName()) {
 							case "PostcodeCode":
 								address.setPostCodeCode("");
@@ -831,7 +830,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 */
 	private Node getNodeByName(NodeList nl, String name) {
 		for (int i = 0; i < nl.getLength(); i++) {
-			if ((nl.item(i).getLocalName() != null) && (nl.item(i).getLocalName().equals(name))) {
+			if (nl.item(i).getLocalName() != null && nl.item(i).getLocalName().equals(name)) {
 				return nl.item(i);
 			} else if (nl.item(i).getChildNodes().getLength() > 0) {
 				final Node node = getNodeByName(nl.item(i).getChildNodes(), name);

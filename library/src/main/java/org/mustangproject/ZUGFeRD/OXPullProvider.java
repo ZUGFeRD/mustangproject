@@ -191,7 +191,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 					+ "<ram:RateApplicablePercent>"
 					+ vatFormat(currentItem.getProduct().getVATPercent()) + "</ram:RateApplicablePercent>"
 					+ "</ram:ApplicableTradeTax>");
-			if ((currentItem.getDetailedDeliveryPeriodFrom() != null) || (currentItem.getDetailedDeliveryPeriodTo() != null)) {
+			if (currentItem.getDetailedDeliveryPeriodFrom() != null || currentItem.getDetailedDeliveryPeriodTo() != null) {
 				xml.append("<ram:BillingSpecifiedPeriod>");
 				if (currentItem.getDetailedDeliveryPeriodFrom() != null) {
 					xml.append("<ram:StartDateTime>" + DATE.udtFormat(currentItem.getDetailedDeliveryPeriodFrom()) + "</ram:StartDateTime>");
@@ -337,7 +337,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 	 */
 			}
 		}
-		if ((trans.getDetailedDeliveryPeriodFrom() != null) || (trans.getDetailedDeliveryPeriodTo() != null)) {
+		if (trans.getDetailedDeliveryPeriodFrom() != null || trans.getDetailedDeliveryPeriodTo() != null) {
 			xml.append("<ram:BillingSpecifiedPeriod>");
 			if (trans.getDetailedDeliveryPeriodFrom() != null) {
 				xml.append("<ram:StartDateTime>" + DATE.udtFormat(trans.getDetailedDeliveryPeriodFrom()) + "</ram:StartDateTime>");
@@ -350,12 +350,9 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 
 		}
 
-		if ((trans.getZFCharges() != null) && (trans.getZFCharges().length > 0)) {
-
+		if (trans.getZFCharges() != null && trans.getZFCharges().length > 0) {
 			for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
 				if (calc.getChargesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO) != 0) {
-
-
 					xml.append(" <ram:SpecifiedTradeAllowanceCharge>" +
 							"<ram:ChargeIndicator>" +
 							"<udt:Indicator>true</udt:Indicator>" +
@@ -368,13 +365,11 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 							"<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>" +
 							"</ram:CategoryTradeTax>" +
 							"</ram:SpecifiedTradeAllowanceCharge>");
-
 				}
 			}
-
 		}
 
-		if ((trans.getZFAllowances() != null) && (trans.getZFAllowances().length > 0)) {
+		if (trans.getZFAllowances() != null && trans.getZFAllowances().length > 0) {
 			for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
 				if (calc.getAllowancesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO) != 0) {
 					xml.append("<ram:SpecifiedTradeAllowanceCharge>" +
@@ -394,7 +389,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 		}
 
 
-		if ((trans.getPaymentTerms() == null) && ((paymentTermsDescription != null) || (trans.getTradeSettlement() != null) || (hasDueDate))) {
+		if (trans.getPaymentTerms() == null && (paymentTermsDescription != null || trans.getTradeSettlement() != null || hasDueDate)) {
 			xml.append("<ram:SpecifiedTradePaymentTerms>");
 
 			if (paymentTermsDescription != null) {

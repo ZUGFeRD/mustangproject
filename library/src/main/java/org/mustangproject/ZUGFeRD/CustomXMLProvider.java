@@ -39,7 +39,7 @@ public class CustomXMLProvider implements IXMLProvider {
 		 * rsm:CrossIndustry is ZF/FX/XR (CII 2016b),rsm:SCRDMCCBDACIOMessageStructure is Order-X (CIO 2021) and
 		 *  SCRDMCCBDACIDAMessageStructure is Despatch Advice
 		 */
-		if ((!zf.contains("rsm:CrossIndustry")) && (!zf.contains("rsm:SCRDMCCBDACIOMessageStructure")) && (!zf.contains("SCRDMCCBDACIDAMessageStructure"))) {
+		if (!zf.contains("rsm:CrossIndustry") && !zf.contains("rsm:SCRDMCCBDACIOMessageStructure") && !zf.contains("SCRDMCCBDACIDAMessageStructure")) {
 			throw new RuntimeException("ZUGFeRD XML does not contain <rsm:CrossIndustry, <rsm:SCRDMCCBDACIOMessageStructure or SCRDMCCBDACIDAMessageStructure and can thus not be valid");
 		}
 
