@@ -421,9 +421,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if (profile == Profiles.getByName("Extended") && trans.getDocumentName() != null) {
 			xml.append("<ram:Name>" + XMLTools.encodeXML(trans.getDocumentName()) + "</ram:Name>");
 		}
-		xml.append("<ram:TypeCode>" + typecode + "</ram:TypeCode>"
-			+ "<ram:IssueDateTime>" + DATE.udtFormat(trans.getIssueDate()) + "</ram:IssueDateTime>" // date
-			+ buildNotes(trans)
+		xml.append("<ram:TypeCode>" + typecode + "</ram:TypeCode>");
+		if (trans.getIssueDate() != null) {
+			xml.append("<ram:IssueDateTime>" + DATE.udtFormat(trans.getIssueDate()) + "</ram:IssueDateTime>"); // date
+		}
+		xml.append(buildNotes(trans)
 			+ "</rsm:ExchangedDocument>"
 			+ "<rsm:SupplyChainTradeTransaction>");
 		int lineID = 0;
