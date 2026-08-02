@@ -26,7 +26,6 @@
 - #1211 Change to UBL 2.4 and add commandline option for profile and customization ID.
 - #1212 Remove deprecated method IExportableTransaction::getTradeSettlementPayment.
 
->>>>>>> Stashed changes
 
 2.24.0
 =======
