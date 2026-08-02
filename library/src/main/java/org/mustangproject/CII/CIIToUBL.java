@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.Serializable;
 
 import com.helger.commons.error.list.ErrorList;
-import com.helger.en16931.cii2ubl.CIIToUBL23Converter;
-import com.helger.ubl23.UBL23Marshaller;
+import com.helger.en16931.cii2ubl.CIIToUBL24Converter;
+import com.helger.ubl24.UBL24Marshaller;
 
 /***
  * converts a Cross Industry Invoice XML file to a UBL XML file
@@ -30,7 +30,7 @@ public class CIIToUBL {
 	 */
 	public void convert(File input, File output, String profileID, String customizationID) {
 		final ErrorList occurred = new ErrorList();
-		final CIIToUBL23Converter cc = new CIIToUBL23Converter();
+		final CIIToUBL24Converter cc = new CIIToUBL24Converter();
 		if (profileID != null) {
 			cc.setProfileID(profileID);
 		}
@@ -38,10 +38,10 @@ public class CIIToUBL {
 			cc.setCustomizationID(customizationID);
 		}
 		final Serializable aUBL = cc.convertCIItoUBL(input, occurred);
-		if (aUBL instanceof oasis.names.specification.ubl.schema.xsd.invoice_23.InvoiceType) {
-			UBL23Marshaller.invoice().setFormattedOutput(true).write((oasis.names.specification.ubl.schema.xsd.invoice_23.InvoiceType) aUBL, output);
-		} else if (aUBL instanceof oasis.names.specification.ubl.schema.xsd.creditnote_23.CreditNoteType) {
-		   UBL23Marshaller.creditNote().setFormattedOutput(true).write((oasis.names.specification.ubl.schema.xsd.creditnote_23.CreditNoteType) aUBL, output);
+		if (aUBL instanceof oasis.names.specification.ubl.schema.xsd.invoice_24.InvoiceType) {
+			UBL24Marshaller.invoice().setFormattedOutput(true).write((oasis.names.specification.ubl.schema.xsd.invoice_24.InvoiceType) aUBL, output);
+		} else if (aUBL instanceof oasis.names.specification.ubl.schema.xsd.creditnote_24.CreditNoteType) {
+		   UBL24Marshaller.creditNote().setFormattedOutput(true).write((oasis.names.specification.ubl.schema.xsd.creditnote_24.CreditNoteType) aUBL, output);
 		}
 	}
 }
