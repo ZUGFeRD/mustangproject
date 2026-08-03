@@ -2,11 +2,9 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.List;
 
 /***
- * the linecalculator does the math within an item line, and e.g. calculates quantity*price.
+ * the line calculator does the math within an item line, and e.g. calculates quantity*price.
  * @see TransactionCalculator
  */
 public class LineCalculator {
@@ -54,11 +52,6 @@ public class LineCalculator {
 				subtractAllowanceItemTotal(singleCharge);
 			}
 		}
-		if (currentItem.getItemTotalAllowances() != null) {
-			for (final IZUGFeRDAllowanceCharge itemTotalAllowance : currentItem.getItemTotalAllowances()) {
-				addAllowanceItemTotal(itemTotalAllowance.getTotalAmount(itemBasisProvider));
-			}
-		}
 
 		BigDecimal vatPercent = null;
 		if (currentItem.getProduct() != null) {
@@ -70,7 +63,7 @@ public class LineCalculator {
 		BigDecimal multiplicator = vatPercent.divide(BigDecimal.valueOf(100));
 
 		BigDecimal quantity = BigDecimal.ZERO;
-		if ((currentItem != null) && (currentItem.getQuantity() != null)) {
+		if (currentItem != null && currentItem.getQuantity() != null) {
 			quantity = currentItem.getQuantity();
 		}
 
@@ -112,7 +105,12 @@ public class LineCalculator {
 			.subtract(allowanceItemTotal.setScale(2, RoundingMode.HALF_UP))
 			.setScale(2, RoundingMode.HALF_UP);
 		if (BigDecimal.ZERO.setScale(2).equals(itemTotalNetAmount) && "GROUP".equals(currentItem.getLineStatusReasonCode())) {
-			itemTotalNetAmount = currentItem.getLineTotalAmount();
+			// GROUP lines may omit the optional LineTotalAmount. Keep the calculated
+			// zero in that case; assigning null causes the VAT calculation below to fail.
+			BigDecimal groupLineTotalAmount = currentItem.getLineTotalAmount();
+			if (groupLineTotalAmount != null) {
+				itemTotalNetAmount = groupLineTotalAmount;
+			}
 		}
 		itemTotalVATAmount = itemTotalNetAmount.multiply(multiplicator);
 	}

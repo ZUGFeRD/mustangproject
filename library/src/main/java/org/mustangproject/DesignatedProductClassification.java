@@ -58,7 +58,7 @@ public class DesignatedProductClassification implements IDesignatedProductClassi
 	 * Bean constructor for schemed product descriptor
 	 */
 	public DesignatedProductClassification() {
-		classCode = null;// we need this constructor for jackson, i.e. to be able to JSON
+		classCode = null; // we need this constructor for jackson, i.e. to be able to JSON
 	}
 
 	@Override

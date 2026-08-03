@@ -10,6 +10,14 @@ public class SchemedID {
 	protected String scheme;
 	protected String id;
 
+	public SchemedID() {
+	}
+
+	public SchemedID(String scheme, String id) {
+		setScheme(scheme);
+		setId(id);
+	}
+
 	public String getScheme() {
 		return scheme;
 	}
@@ -26,15 +34,6 @@ public class SchemedID {
 	public SchemedID setId(String id) {
 		this.id = id;
 		return this;
-	}
-
-	public SchemedID() {
-
-	}
-
-	public SchemedID(String scheme, String id) {
-		setScheme(scheme);
-		setId(id);
 	}
 
 	@Override

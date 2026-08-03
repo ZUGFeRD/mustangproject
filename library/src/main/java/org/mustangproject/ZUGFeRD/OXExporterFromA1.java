@@ -30,11 +30,66 @@ import org.apache.pdfbox.preflight.parser.PreflightParser;
 import jakarta.activation.DataSource;
 
 public class OXExporterFromA1 extends OXExporterFromA3 {
-	protected boolean ignorePDFAErrors = false;
+
+	public OXExporterFromA1() {
+		setZUGFeRDVersion(ZUGFeRDExporterFromA3.defaultZUGFeRDVersion);
+	}
 
 	@Override
-  public OXExporterFromA1 ignorePDFAErrors() {
+	public OXExporterFromA1 ignorePDFAErrors() {
 		this.ignorePDFAErrors = true;
+		return this;
+	}
+
+	@Override
+	public OXExporterFromA1 setProfile(Profile p) {
+		return (OXExporterFromA1) super.setProfile(p);
+	}
+
+	@Override
+	public OXExporterFromA1 setProfile(String profileName) {
+		return (OXExporterFromA1) super.setProfile(profileName);
+	}
+
+	@Override
+	public OXExporterFromA1 load(String pdfFilename) throws IOException {
+		return (OXExporterFromA1) super.load(pdfFilename);
+	}
+	@Override
+	public OXExporterFromA1 load(byte[] pdfBinary) throws IOException {
+		return (OXExporterFromA1) super.load(pdfBinary);
+	}
+	@Override
+	public OXExporterFromA1 load(InputStream pdfSource) throws IOException {
+		return (OXExporterFromA1) super.load(pdfSource);
+	}
+	@Override
+	public OXExporterFromA1 setCreator(String creator) {
+		return (OXExporterFromA1) super.setCreator(creator);
+	}
+	@Override
+	public OXExporterFromA1 setConformanceLevel(PDFAConformanceLevel newLevel) {
+		return (OXExporterFromA1) super.setConformanceLevel(newLevel);
+	}
+	@Override
+	public OXExporterFromA1 setProducer(String producer) {
+		return (OXExporterFromA1) super.setProducer(producer);
+	}
+	@Override
+	public OXExporterFromA1 setZUGFeRDVersion(int version) {
+		return (OXExporterFromA1) super.setZUGFeRDVersion(version);
+	}
+	@Override
+	public OXExporterFromA1 setXML(byte[] zugferdData) throws IOException {
+		return (OXExporterFromA1) super.setXML(zugferdData);
+	}
+
+	@Override
+	public OXExporterFromA1 disableAutoClose(boolean disableAutoClose) {
+		return (OXExporterFromA1) super.disableAutoClose(disableAutoClose);
+	}
+	public OXExporterFromA1 convertOnly() {
+		setAttachZUGFeRDHeaders(false);
 		return this;
 	}
 
@@ -73,67 +128,10 @@ public class OXExporterFromA1 extends OXExporterFromA3 {
 
 
 	@Override
-  public OXExporterFromA1 setProfile(Profile p) {
-		return (OXExporterFromA1)super.setProfile(p);
-	}
-	@Override
-  public OXExporterFromA1 setProfile(String profileName) {
-		return (OXExporterFromA1)super.setProfile(profileName);
-	}
-
-	@Override
-  public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
+	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
 		if (!ignorePDFAErrors && !isValidA1(dataSource)) {
 			throw new IOException("File is not a valid PDF/A input file");
 		}
 		return true;
 	}
-
-	public OXExporterFromA1() {
-		setZUGFeRDVersion(ZUGFeRDExporterFromA3.DefaultZUGFeRDVersion);
-
-	}
-
-	@Override
-  public OXExporterFromA1 load(String pdfFilename) throws IOException {
-		return (OXExporterFromA1) super.load(pdfFilename);
-	}
-	@Override
-  public OXExporterFromA1 load(byte[] pdfBinary) throws IOException {
-		return (OXExporterFromA1) super.load(pdfBinary);
-	}
-	@Override
-  public OXExporterFromA1 load(InputStream pdfSource) throws IOException{
-		return (OXExporterFromA1) super.load(pdfSource);
-	}
-	@Override
-  public OXExporterFromA1 setCreator(String creator) {
-		return (OXExporterFromA1) super.setCreator(creator);
-	}
-	@Override
-  public OXExporterFromA1 setConformanceLevel(PDFAConformanceLevel newLevel) {
-		return (OXExporterFromA1) super.setConformanceLevel(newLevel);
-	}
-	@Override
-  public OXExporterFromA1 setProducer(String producer){
-		return (OXExporterFromA1) super.setProducer(producer);
-	}
-	@Override
-  public OXExporterFromA1 setZUGFeRDVersion(int version){
-		return (OXExporterFromA1) super.setZUGFeRDVersion(version);
-	}
-	@Override
-  public OXExporterFromA1 setXML(byte[] zugferdData) throws IOException{
-		return (OXExporterFromA1) super.setXML(zugferdData);
-	}
-
-	@Override
-  public OXExporterFromA1 disableAutoClose(boolean disableAutoClose){
-		return (OXExporterFromA1) super.disableAutoClose(disableAutoClose);
-	}
-	public OXExporterFromA1 convertOnly() {
-		setAttachZUGFeRDHeaders(false);
-		return this;
-	}
-
 }

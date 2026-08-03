@@ -30,8 +30,7 @@ package org.mustangproject.ZUGFeRD;
  * */
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date; 
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -114,7 +113,7 @@ public interface IExportableTransaction {
 		return null;
 	}
 
-	default String getContractReferencedDocument() {
+	default IReferencedDocument getContractReferencedDocument() {
 		return null;
 	}
 
@@ -144,11 +143,13 @@ public interface IExportableTransaction {
 		return null;
 	}
 
-	default IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
+	default IZUGFeRDLogisticsServiceCharge[] getZFLogisticsServiceCharges() {
 		return null;
 	}
 
-	default IZUGFeRDCashDiscount[] getCashDiscounts() {	return null; }
+	default IZUGFeRDCashDiscount[] getCashDiscounts() {
+		return null;
+	}
 
 	/***
 	 * @return the invoice line items with the positions
@@ -161,17 +162,6 @@ public interface IExportableTransaction {
 	 * @return the recipient of the invoice
 	 */
 	IZUGFeRDExportableTradeParty getRecipient();
-
-	/**
-	 * the creditors payment informations
-	 *
-	 * @deprecated use getTradeSettlement
-	 * @return an array of IZUGFeRDTradeSettlementPayment
-	 */
-	@Deprecated
-	default IZUGFeRDTradeSettlementPayment[] getTradeSettlementPayment() {
-		return null;
-	}
 
 	/**
 	 * the payment information for any payment means
@@ -234,6 +224,15 @@ public interface IExportableTransaction {
 	 * @return mandatory ID, optional Date
 	 */
 	default IReferencedDocument getObjectIdentifierReferencedDocument() {
+		return null;
+	}
+
+	/**
+	 * Related Documents
+	 *
+	 * @return mandatory ID, optional Date
+	 */
+	default IReferencedDocument getRelatedReferencedDocument() {
 		return null;
 	}
 
@@ -361,7 +360,7 @@ public interface IExportableTransaction {
 	}
 
 	/**
-	 * get the rounding amount 
+	 * get the rounding amount
    * (only to be usef for NL whose currency requires a rounding to 5ct)
 	 *
 	 * @return the Bigdecimal
@@ -373,7 +372,7 @@ public interface IExportableTransaction {
 	/**
 	 * get BuyerReference (BT-10) an identifier assigned by the buyer and used
 	 * for internal routing. Used for the Leitweg-ID.
-	 * 
+	 *
 	 * @return the BuyerReference of this document
 	 */
 	default String getReferenceNumber() {
@@ -448,7 +447,7 @@ public interface IExportableTransaction {
 	 *
 	 * @return the ID of the document
 	 */
-	default String getSellerOrderReferencedDocumentID() {
+	default IReferencedDocument getSellerOrderReferencedDocument() {
 		return null;
 	}
 
@@ -458,41 +457,53 @@ public interface IExportableTransaction {
 	 *
 	 * @return the ID of the document
 	 */
-	default String getBuyerOrderReferencedDocumentID() {
+	default IReferencedDocument getBuyerOrderReferencedDocument() {
+		return null;
+	}
+
+	default IReferencedDocument getDespatchAdviceReferencedDocument() {
+		return null;
+	}
+
+	default IReferencedDocument getDeliveryNoteReferencedDocument() {
 		return null;
 	}
 
 	/**
-	 * get the ID of the preceding invoice, which is e.g. to be corrected if this is
-	 * a correction
-	 *
+	 * get the ID of the preceding invoice, which is e.g. to be corrected if this is a correction
+	 * @deprecated use getInvoiceReferencedDocument.getIssuerAssignedID
 	 * @return the ID of the document
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default String getInvoiceReferencedDocumentID() {
 		return null;
 	}
 
-	@Deprecated
+	/**
+	 * @deprecated use getInvoiceReferencedDocument.getFormattedIssueDateTime
+	 * @return
+	 */
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default Date getInvoiceReferencedIssueDate() {
 		return null;
 	}
-	
+
 	/**
 	 * Getter for BG-3
 	 * @return list of documents
 	 */
-	default ArrayList<ReferencedDocument> getInvoiceReferencedDocuments() {
+	default List<ReferencedDocument> getInvoiceReferencedDocuments() {
 		return null;
 	}
 
 	/**
 	 * get the issue timestamp of the BuyerOrderReferencedDocument, which sits in
 	 * the ApplicableSupplyChainTradeAgreement
-	 *
+	 * @deprecated use getBuyerOrderReferencedDocument.getFormattedIssueDateTime
 	 * @return the IssueDateTime in format CCYY-MM-DDTHH:MM:SS
 	 */
-	default String getBuyerOrderReferencedDocumentIssueDateTime() {
+	@Deprecated(forRemoval = true, since = "2.24.1")
+	default Date getBuyerOrderReferencedDocumentIssueDateTime() {
 		return null;
 	}
 
@@ -584,6 +595,11 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	/**
+	 * @deprecated use
+	 * @return getDespatchAdviceReferencedDocument.getIssuerAssignedID
+	 */
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default String getDespatchAdviceReferencedDocumentID() {
 		return null;
 	}
@@ -591,9 +607,10 @@ public interface IExportableTransaction {
 	/**
 	 * get delivery note document ID
 	 * ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/IssuerAssignedID
-	 *
+	 * @deprecated getDeliveryNoteReferencedDocument.getIssuerAssignedID
 	 * @return the ID of the delivery note document
 	 */
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default String getDeliveryNoteReferencedDocumentID() {
 		return null;
 	}
@@ -601,9 +618,10 @@ public interface IExportableTransaction {
 	/**
 	 * get delivery note document date
 	 * ram:ApplicableHeaderTradeDelivery/ram:DeliveryNoteReferencedDocument/FormattedIssueDateTime
-	 *
+	 * @deprecated use getDeliveryNoteReferenced.getFormattedIssueDateTime
 	 * @return the date of the delivery note document
 	 */
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	default Date getDeliveryNoteReferencedDocumentDate() {
 		return null;
 	}

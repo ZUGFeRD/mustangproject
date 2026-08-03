@@ -28,7 +28,7 @@ public class IExportableTransactionImpl implements IExportableTransaction {
 	private Date dueDate;
 	private IZUGFeRDAllowanceCharge[] zFAllowances;
 	private IZUGFeRDAllowanceCharge[] zFCharges;
-	private IZUGFeRDAllowanceCharge[] zFLogisticsServiceCharges;
+	private IZUGFeRDLogisticsServiceCharge[] zFLogisticsServiceCharges;
 	private IZUGFeRDExportableItem[] zFItems;
 	private IZUGFeRDExportableTradeParty recipient;
 	private IZUGFeRDTradeSettlementPayment[] settlementPayments;
@@ -43,7 +43,6 @@ public class IExportableTransactionImpl implements IExportableTransaction {
 	private String currency;
 	private String paymentTermDescription;
 	private String referenceNumber;
-	private Profile profile;
 
 	@Override
 	public String getNumber() {
@@ -76,7 +75,7 @@ public class IExportableTransactionImpl implements IExportableTransaction {
 	}
 
 	@Override
-	public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
+	public IZUGFeRDLogisticsServiceCharge[] getZFLogisticsServiceCharges() {
 		return zFLogisticsServiceCharges;
 	}
 
@@ -175,7 +174,7 @@ public class IExportableTransactionImpl implements IExportableTransaction {
 		return this;
 	}
 
-	public IExportableTransactionImpl setZFLogisticsServiceCharges(IZUGFeRDAllowanceCharge... zFLogisticsServiceCharges) {
+	public IExportableTransactionImpl setZFLogisticsServiceCharges(IZUGFeRDLogisticsServiceCharge... zFLogisticsServiceCharges) {
 		this.zFLogisticsServiceCharges = zFLogisticsServiceCharges;
 		return this;
 	}

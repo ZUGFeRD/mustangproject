@@ -160,7 +160,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 	}
 
 	@Override
-	public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
+	public IZUGFeRDLogisticsServiceCharge[] getZFLogisticsServiceCharges() {
 		return null;
 		// throw new UnsupportedOperationException("Not supported yet."); //To change
 		// body of generated methods, choose Tools | Templates.

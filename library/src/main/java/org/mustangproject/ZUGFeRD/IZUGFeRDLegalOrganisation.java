@@ -20,17 +20,17 @@ package org.mustangproject.ZUGFeRD;
 
 import org.mustangproject.SchemedID;
 
-public interface IZUGFeRDLegalOrganisation   {
+public interface IZUGFeRDLegalOrganisation {
 
 	/**
 	 *
 	 * @return the scheme attribute of the legal organization=the type of the identification, e.g. 0002=Siren, and its value
 	 */
-	public SchemedID getSchemedID();
+	SchemedID getSchemedID();
 
 	/***
 	 *
 	 * @return the TradingBusinessName of the legal organisation
 	 */
-	public String getTradingBusinessName();
+	String getTradingBusinessName();
 }

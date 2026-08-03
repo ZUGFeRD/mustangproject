@@ -32,8 +32,8 @@ import java.util.Date;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class VATrelatedTest extends ResourceCase  {
-	final String TARGET_PDF_REVERSE = "./target/testout-ReverseCharge.pdf";
-	final String TARGET_PDF_Z = "./target/testout-TaxcodeZ.pdf";
+	private static final String TARGET_PDF_REVERSE = "./target/testout-ReverseCharge.pdf";
+	private static final String TARGET_PDF_Z = "./target/testout-TaxcodeZ.pdf";
 
 	public void testReverseCharge() {
 
@@ -41,10 +41,9 @@ public class VATrelatedTest extends ResourceCase  {
 		String number = "123";
 		String priceStr = "3.00";
 		BigDecimal price = new BigDecimal(priceStr);
-		try {
+		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
-			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1();
 			ze.ignorePDFAErrors().load(SOURCE_PDF);
 			ze.setProfile(Profiles.getByName("Extended"));
 
@@ -53,14 +52,17 @@ public class VATrelatedTest extends ResourceCase  {
 			//					.addItem(new Item(new Product("Testprodukt", "", "H84", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance().setPercent(new BigDecimal(50)))));
 
 			Product p=new Product("Testprodukt", "", "H87", new BigDecimal(19));
+
+			Charge charge = new Charge(new BigDecimal(1)).setReasonCode("ABK").setReason("AReason");
+			charge.setTaxRateApplicablePercent(new BigDecimal(19));
+
 			p.setReverseCharge();
 			Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")
 					.setContact(new Contact("contact testname", "123456", "contact.testemail@example.org").setFax("0911623562")).addVATID("DE0915"))
 				.setNumber(number)
-				.addCharge(new Charge(new BigDecimal(1)).setReasonCode("ABK").setReason("AReason").setTaxPercent(new BigDecimal(19)))
-
+				.addCharge(charge)
 				.addItem(new Item(p, price, new BigDecimal(1.0)));
 			ze.setTransaction(i);
 
@@ -94,10 +96,12 @@ public class VATrelatedTest extends ResourceCase  {
 		String number = "123";
 		String priceStr = "3.00";
 		BigDecimal price = new BigDecimal(priceStr);
-		try {
+		Charge charge = new Charge(new BigDecimal(1)).setReasonCode("ABK").setReason("AReason");
+		charge.setTaxRateApplicablePercent(new BigDecimal(19));
+
+		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
-			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1();
 			ze.ignorePDFAErrors().load(SOURCE_PDF);
 			ze.setProfile(Profiles.getByName("Extended"));
 
@@ -122,7 +126,7 @@ public class VATrelatedTest extends ResourceCase  {
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")
 					.setContact(new Contact("contact testname", "123456", "contact.testemail@example.org").setFax("0911623562")))
 				.setNumber(number)
-				.addCharge(new Charge(new BigDecimal(1)).setReasonCode("ABK").setReason("AReason").setTaxPercent(new BigDecimal(19)))
+				.addCharge(charge)
 
 				.addItem(new Item(p, price, new BigDecimal(1.0)));
 			ze.setTransaction(i);
