@@ -498,12 +498,38 @@ public class XMLValidatorTest extends ResourceCase {
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
 		}
-
-
-
 	}
 
-	public void testRecalc() {
+	public void testRoundingDifferenceIsInTolerance() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("roundingDifferenceIsInTolerance.xml");
+		boolean noExceptions = true;
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			System.out.println(s);
+			Source source = Input.fromString(s).build();
+
+			// must be valid overall
+			String status = xpath.evaluate("/validation/summary/@status", source);
+
+			assertThat(s).valueByXPath("count(//warning)")
+			.asInt()
+			.isEqualTo(1);
+
+			assertEquals("valid", status);
+		} catch (IrrecoverableValidationError e) {
+			noExceptions = false;
+		}
+		assertTrue(noExceptions);
+  }
+
+  public void testRecalc() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
 		final XPathEngine xpath = new JAXPXPathEngine();
