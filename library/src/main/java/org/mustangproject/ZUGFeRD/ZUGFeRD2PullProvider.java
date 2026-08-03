@@ -1095,9 +1095,6 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					if (payment instanceof IZUGFeRDTradeSettlementDebit) {
 						xml.append(payment.getPaymentXML());
 					}
-					if (payment instanceof IZUGFeRDTradeSettlementDebit) {
-						xml.append(payment.getPaymentXML());
-					}
 				}
 			}
 
