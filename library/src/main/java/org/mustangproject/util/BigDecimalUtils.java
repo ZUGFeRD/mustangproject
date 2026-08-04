@@ -10,7 +10,7 @@ public class BigDecimalUtils {
 	 * Calculates the logarithm of 10 for a BigDecimals absolute value and rounds it down.
 	 * i.e. <strong>log10(|x|)</strong>
 	 * Examples:
-	 * log10Floor(0.0) -> 0; 0.0001 -> 0; 9 -> 0; 10.23 -> 1; 999.99 -> 2; -4242 -> 3;
+	 * log10Floor(0.0) -&gt; 0; 0.0001 -&gt; 0; 9 -&gt; 0; 10.23 -&gt; 1; 999.99 -&gt; 2; -4242 -&gt; 3;
 	 * <p>
 	 * It is efficiently calculated by using BigDecimals internal representation in scientific notation.
 	 *
