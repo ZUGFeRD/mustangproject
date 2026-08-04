@@ -198,7 +198,7 @@ public class CashDiscountFacturXTest extends TestCase {
 		assertEquals("20260215", sdf.format(terms[1].getDueDate()));
 		assertEquals("20260216", sdf.format(terms[2].getDueDate()));
 
-		// Backward compat: getPaymentTermDescription() returns the FIRST description
+		// Backward compatibility: getPaymentTermDescription() returns the FIRST description
 		assertEquals("Please remit until 04.03.2018", invoice.getPaymentTermDescription());
 	}
 

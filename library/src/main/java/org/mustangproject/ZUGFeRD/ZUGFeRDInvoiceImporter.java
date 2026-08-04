@@ -805,7 +805,7 @@ public class ZUGFeRDInvoiceImporter {
 					Date ptDueDate = null;
 					for (int paymentTermChildIndex = 0; paymentTermChildIndex < paymentTermChilds.getLength(); paymentTermChildIndex++) {
 						if (paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null && paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("Description")) {
-							zpp.setPaymentTermDescription(paymentTermChilds.item(paymentTermChildIndex).getTextContent());
+							pt.setDescription(paymentTermChilds.item(paymentTermChildIndex).getTextContent());
 						}
 						if (paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null && paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("DueDateDateTime")) {
 							NodeList dueDateChilds = paymentTermChilds.item(paymentTermChildIndex).getChildNodes();
