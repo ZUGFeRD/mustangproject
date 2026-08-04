@@ -185,7 +185,7 @@ public class ZUGFeRDValidator {
 
 					}
 				}
-				if ((optionsRecognized) && (displayXMLValidationOutput)) {
+				if (optionsRecognized && displayXMLValidationOutput) {
 					finalStringResult.append("<xml>");
 					try {
 						xv.validate();

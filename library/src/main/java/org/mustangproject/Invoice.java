@@ -439,6 +439,7 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * usually the order number
+	 * @deprecated	use setBuyerOrderReferencedDocument() / getBuyerOrderReferencedDocument().setIssuerAssignedID()
 	 * @param buyerOrderReferencedDocumentID string with number
 	 * @return fluent setter
 	 */
@@ -471,6 +472,7 @@ public class Invoice implements IExportableTransaction {
 
 	/***
 	 * usually in case of a correction the original invoice number
+	 * @deprecated	use setInvoiceReferencedDocument() / getInvoiceReferencedDocument().setIssuerAssignedID()
 	 * @param invoiceReferencedDocumentID string with number
 	 * @return fluent setter
 	 */
@@ -1026,7 +1028,7 @@ public class Invoice implements IExportableTransaction {
 	 */
 	@JsonIgnore
 	public boolean isValid() {
-		return (dueDate != null) && (sender != null) && (sender.getTaxID() != null) && (sender.getVATID() != null) && (recipient != null);
+		return dueDate != null && sender != null && sender.getTaxID() != null && sender.getVATID() != null && recipient != null;
 		//contact
 		//		this.phone = phone;
 		//		this.email = email;

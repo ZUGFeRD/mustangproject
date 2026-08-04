@@ -116,7 +116,7 @@ public class Item implements IZUGFeRDExportableItem {
 				String basisAmountString = priceAtacNodes.getAsStringOrNull("BaseAmount");
 				String reason = priceAtacNodes.getAsStringOrNull("AllowanceChargeReason");
 				String reasonCode = priceAtacNodes.getAsStringOrNull("AllowanceChargeReasonCode");
-				if ((chargeIndicator != null) && priceAtacNodes.getAsBigDecimal("Amount").isPresent()) {
+				if (chargeIndicator != null && priceAtacNodes.getAsBigDecimal("Amount").isPresent()) {
 					BigDecimal actual = priceAtacNodes.getAsBigDecimal("Amount").get();
 					if (chargeIndicator.equalsIgnoreCase("true")) {
 						Charge izac = new Charge();
@@ -356,12 +356,12 @@ public class Item implements IZUGFeRDExportableItem {
 				String content = null;
 				NodeList includedNodeChilds = item.getChildNodes();
 				for (int issueDateChildIndex = 0; issueDateChildIndex < includedNodeChilds.getLength(); issueDateChildIndex++) {
-					if ((includedNodeChilds.item(issueDateChildIndex).getLocalName() != null)
-						&& (includedNodeChilds.item(issueDateChildIndex).getLocalName().equals("Content"))) {
+					if (includedNodeChilds.item(issueDateChildIndex).getLocalName() != null
+						&& includedNodeChilds.item(issueDateChildIndex).getLocalName().equals("Content")) {
 						content = XMLTools.trimOrNull(includedNodeChilds.item(issueDateChildIndex));
 					}
-					if ((includedNodeChilds.item(issueDateChildIndex).getLocalName() != null)
-						&& (includedNodeChilds.item(issueDateChildIndex).getLocalName().equals("SubjectCode"))) {
+					if (includedNodeChilds.item(issueDateChildIndex).getLocalName() != null
+						&& includedNodeChilds.item(issueDateChildIndex).getLocalName().equals("SubjectCode")) {
 						subjectCode = XMLTools.trimOrNull(includedNodeChilds.item(issueDateChildIndex));
 					}
 				}

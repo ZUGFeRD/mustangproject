@@ -708,6 +708,7 @@ public class ZF2PushTest extends TestCase {
 					.addCashDiscount(new CashDiscount(new BigDecimal(2), 14))
 					.setTenderReferencedDocument(dr1)
 					.setDeliveryDate(sdf.parse("2020-11-02")).setNumber(number).setVATDueDateTypeCode(EventTimeCodeTypeConstants.PAYMENT_DATE)
+					.addInvoiceReferencedDocument(new ReferencedDocument("abc123"))
 					.addInvoiceReferencedDocument(new ReferencedDocument("abcd1234"))
 					.setDeliveryTypeCode("EXW")
 				);
@@ -766,8 +767,9 @@ public class ZF2PushTest extends TestCase {
 			Invoice i = zii.extractInvoice();
 
 			assertEquals("EXW", i.getDeliveryTypeCode());
-			assertEquals(1, i.getInvoiceReferencedDocuments().size());
-			assertEquals("abcd1234", i.getInvoiceReferencedDocuments().get(0).getIssuerAssignedID());
+			assertEquals(2, i.getInvoiceReferencedDocuments().size());
+			assertEquals("abc123", i.getInvoiceReferencedDocuments().get(0).getIssuerAssignedID());
+			assertEquals("abcd1234", i.getInvoiceReferencedDocuments().get(1).getIssuerAssignedID());
 			assertEquals("4304171000002", i.getRecipient().getGlobalID());
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 			assertEquals(occurrenceFrom, sdf.format(i.getDetailedDeliveryPeriodFrom()));

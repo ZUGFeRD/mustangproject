@@ -296,7 +296,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			Invoice invoice = zi.extractInvoice();
 			assertEquals("deliverynote123", invoice.getZFItems()[0].getDeliveryNoteReferencedDocument().getIssuerAssignedID());
 			assertEquals("deliverypos456", invoice.getZFItems()[0].getDeliveryNoteReferencedDocument().getLineID());
-			assertEquals(invoice.getZFItems()[0].getDeliveryNoteReferencedDocument().getFormattedIssueDateTime(), new SimpleDateFormat("dd.MM.yyyy").parse("14.01.2026"));
+			assertEquals(new SimpleDateFormat("dd.MM.yyyy").parse("14.01.2026"), invoice.getZFItems()[0].getDeliveryNoteReferencedDocument().getFormattedIssueDateTime());
 		} catch (ParseException | XPathExpressionException e) {
 			e.printStackTrace();
 		}

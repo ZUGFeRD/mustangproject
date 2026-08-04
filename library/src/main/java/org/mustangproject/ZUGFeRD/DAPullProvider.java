@@ -109,7 +109,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 					+ quantityFormat(currentItem.getQuantity()) + "</ram:DespatchedQuantity>"
 					+ "</ram:SpecifiedLineTradeDelivery>"
 					+ "<ram:SpecifiedLineTradeSettlement>");
-			if ((currentItem.getDetailedDeliveryPeriodFrom() != null) || (currentItem.getDetailedDeliveryPeriodTo() != null)) {
+			if (currentItem.getDetailedDeliveryPeriodFrom() != null || currentItem.getDetailedDeliveryPeriodTo() != null) {
 				xml.append("<ram:BillingSpecifiedPeriod>");
 				if (currentItem.getDetailedDeliveryPeriodFrom() != null) {
 					xml.append("<ram:StartDateTime>" + DATE.udtFormat(currentItem.getDetailedDeliveryPeriodFrom()) + "</ram:StartDateTime>");

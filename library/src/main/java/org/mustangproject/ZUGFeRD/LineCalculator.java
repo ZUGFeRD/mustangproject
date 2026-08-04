@@ -63,7 +63,7 @@ public class LineCalculator {
 		BigDecimal multiplicator = vatPercent.divide(BigDecimal.valueOf(100));
 
 		BigDecimal quantity = BigDecimal.ZERO;
-		if ((currentItem != null) && (currentItem.getQuantity() != null)) {
+		if (currentItem != null && currentItem.getQuantity() != null) {
 			quantity = currentItem.getQuantity();
 		}
 

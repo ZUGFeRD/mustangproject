@@ -98,6 +98,8 @@ public class Main {
 				+ "        --action ubl  convert UN/CEFACT 2016b CII XML to UBL XML\n"
 				+ "                [--source <filename>]: set input XML file\n"
 				+ "                [--out <filename>]: set output XML file\n"
+				+ "                [--profileID <text>]: set profile ID, e.g. 'urn:fdc:peppol.eu:2017:poacc:billing:01:1.0'\n"
+				+ "                [--customizationID <text>]: set customization ID, e.g. 'urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0'\n"
 				+ "        --action upgrade  upgrade ZUGFeRD XML to ZUGFeRD 2 XML\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source <filename>]: set input XML ZUGFeRD 1 file\n"
@@ -135,14 +137,14 @@ public class Main {
 	}
 
 	/**
-	 * Asks the user (repeatedly, if neccessary) on the command line for a String
+	 * Asks the user (repeatedly, if necessary) on the command line for a String
 	 * (offering a defaultValue) conforming to a Regex pattern
 	 *
 	 * @param prompt       the question to be asked to the user
 	 * @param defaultValue the default return value if user hits enter
 	 * @param pattern      a regex of acceptable values
 	 * @return the user answer conforming to pattern
-	 * @throws Exception if pattern not compielable or IOexception on input
+	 * @throws Exception if pattern not compilable or IOexception on input
 	 */
 	protected static String getStringFromUser(String prompt, String defaultValue, String pattern) throws Exception {
 		String input = "";
@@ -154,7 +156,7 @@ public class Main {
 			// for a more sophisticated dialogue maybe https://github.com/mabe02/lanterna/
 			// could be taken into account
 			System.out.print(prompt + " (default: " + defaultValue + ")");
-			if ((!firstInput) && (!pattern.isEmpty())) {
+			if (!firstInput && !pattern.isEmpty()) {
 				System.out.print("\n(allowed pattern: " + pattern + ")");
 
 			}
@@ -298,7 +300,7 @@ public class Main {
 	 * @throws IOException
 	 * @throws TransformerException
 	 */
-	private static void performUBL(String xmlName, String outName) throws IOException {
+	private static void performUBL(String xmlName, String outName, String profileID, String customizationID) throws IOException {
 
 		// Get params from user if not already defined
 		if (xmlName == null) {
@@ -318,7 +320,7 @@ public class Main {
 
 		// All params are good! continue...
 		CIIToUBL c2u = new CIIToUBL();
-		c2u.convert(new File(xmlName), new File(outName));
+		c2u.convert(new File(xmlName), new File(outName), profileID, customizationID);
 		System.out.println("Written to " + outName);
 
 	}
@@ -398,6 +400,8 @@ public class Main {
 			options.addOption(new Option("i", "ignorefileextension", false, "ignore non-matching file extensions"));
 			options.addOption(new Option("l", "listfromstdin", false, "take list of files from commandline"));
 			options.addOption(new Option("log-as-pdf", "log-as-pdf", false, "saving log output to pdf file"));
+			options.addOption(new Option("profileID", "profileID", true, "set profile ID"));
+			options.addOption(new Option("customizationID", "customizationID", true, "set customization ID"));
 
 			boolean optionsRecognized = false;
 			String action = "";
@@ -412,7 +416,7 @@ public class Main {
 				boolean filesFromStdIn = cmd.hasOption("listfromstdin"); // ((Number)cmdLine.getParsedOptionValue("integer-option")).intValue();
 				boolean ignoreFileExt = cmd.hasOption("ignorefileextension");
 				boolean noAttachments = cmd.hasOption("no-additional-attachments");
-				boolean helpRequested = cmd.hasOption("help") || ((action != null) && (action.equals("help")));
+				boolean helpRequested = cmd.hasOption("help") || action != null && action.equals("help");
 				disableFileLogging = cmd.hasOption("disable-file-logging");
 
 				String sourceName = cmd.getOptionValue("source");
@@ -423,6 +427,8 @@ public class Main {
 				boolean noNotices = cmd.hasOption("no-notices");
 				boolean noArithmeticCheck = cmd.hasOption("no-arithmetic-check");
 				boolean LogAsPDF = cmd.hasOption("log-as-pdf");
+				String profileID = cmd.getOptionValue("profileID");
+				String customizationID = cmd.getOptionValue("customizationID");
 
 				String zugferdVersion = cmd.getOptionValue("version");
 				String zugferdProfile = cmd.getOptionValue("profile");
@@ -442,36 +448,36 @@ public class Main {
 				if (helpRequested) {
 					printHelp();
 					optionsRecognized = true;
-				} else if ((action != null) && (action.equals("metrics"))) {
+				} else if (action != null && action.equals("metrics")) {
 					performMetrics(directoryName, filesFromStdIn, ignoreFileExt);
 					optionsRecognized = true;
-				} else if ((action != null) && (action.equals("combine"))) {
+				} else if (action != null && action.equals("combine")) {
 					performCombine(sourceName, sourceXMLName, outName, format, zugferdVersion, zugferdProfile,
 							ignoreFileExt, attachmentFilenames, attachments, noAttachments);
 					optionsRecognized = true;
-				} else if ((action != null) && (action.equals("extract"))) {
+				} else if (action != null && action.equals("extract")) {
 					performExtract(sourceName, outName);
 					optionsRecognized = true;
-				} else if ((action != null) && (action.equals("a3only"))) {
+				} else if (action != null && action.equals("a3only")) {
 					performConvert(sourceName, outName);
 					optionsRecognized = true;
-				} else if ((action != null) && (action.equals("pdf"))) {
+				} else if (action != null && action.equals("pdf")) {
 					performVisualization(sourceName, lang, outName, true);
 					optionsRecognized = true;
-				} else if ((action != null) && (action.equals("visualize"))) {
+				} else if (action != null && action.equals("visualize")) {
 					performVisualization(sourceName, lang, outName, false);
 					optionsRecognized = true;
-				} else if ((action != null) && (action.equals("upgrade"))) {
+				} else if (action != null && action.equals("upgrade")) {
 					performUpgrade(sourceName, outName);
 					optionsRecognized = true;
-				} else if ((action != null) && (action.equals("ubl"))) {
-					performUBL(sourceName, outName);
+				} else if (action != null && action.equals("ubl")) {
+					performUBL(sourceName, outName, profileID, customizationID);
 					optionsRecognized = true;
-				} else if ((action != null) && (action.equals("validate"))) {
+				} else if (action != null && action.equals("validate")) {
 					optionsRecognized = performValidate(sourceName, noNotices, noArithmeticCheck, cmd.getOptionValue("logAppend"), LogAsPDF);
-				} else if ((action != null) && (action.equals("validateExpectValid"))) {
+				} else if (action != null && action.equals("validateExpectValid")) {
 					optionsRecognized = performValidateExpect(true, directoryName, excludedFilenames);
-				} else if ((action != null) && (action.equals("validateExpectInvalid"))) {
+				} else if (action != null && action.equals("validateExpectInvalid")) {
 					optionsRecognized = performValidateExpect(false, directoryName, excludedFilenames);
 				}
 
@@ -501,7 +507,7 @@ public class Main {
 			sourceName = getFilenameFromUser("Source PDF or XML", "invoice.pdf", "pdf|xml", true, false);
 		}
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
-		if ((logAppend != null) && (!logAppend.isEmpty())) {
+		if (logAppend != null && !logAppend.isEmpty()) {
 			zfv.setLogAppend(logAppend);
 		}
 		if (noNotices) {
@@ -689,9 +695,9 @@ public class Main {
 
 			if (zfProfile == null) {
 				try {
-					if ((("zf".equals(format)) && (zfIntVersion == 1)) || ("ox".equals(format))) {
+					if ("zf".equals(format) && zfIntVersion == 1 || "ox".equals(format)) {
 						zfProfile = getStringFromUser("Profile (b)asic, (c)omfort or ex(t)ended", "t", "B|b|C|c|T|t");
-					} else if (("da".equals(format))) {
+					} else if ("da".equals(format)) {
 						zfProfile = getStringFromUser("Profile (p)ilot", "p", "P|p");
 					} else {
 						zfProfile = getStringFromUser(
@@ -721,7 +727,7 @@ public class Main {
 				standard = EStandard.DELIVER_X;
 
 				zfConformanceLevelProfile = Profiles.getByName(standard, "PILOT", 1);
-			} else if (("zf".equals(format) && zfIntVersion == 1) || ("ox".equals(format))) {
+			} else if ("zf".equals(format) && zfIntVersion == 1 || "ox".equals(format)) {
 				if ("ox".equals(format)) {
 					standard = EStandard.ORDER_X;
 				}
@@ -734,7 +740,7 @@ public class Main {
 				} else {
 					throw new Exception(String.format("Unknown ZUGFeRD profile '%s'", zfProfile));
 				}
-			} else if (((format.equals("zf")) && (zfIntVersion == 2)) || (format.equals("fx"))) {
+			} else if (format.equals("zf") && zfIntVersion == 2 || format.equals("fx")) {
 				if (zfProfile.equals("m")) {
 					zfConformanceLevelProfile = Profiles.getByName(standard, "MINIMUM", zfIntVersion);
 				} else if (zfProfile.equals("w")) {

@@ -44,8 +44,7 @@ public class ValidatorFileWalker
 	// Print information about
 	// each type of file.
 	@Override
-	public FileVisitResult visitFile(Path file,
-									 BasicFileAttributes attr) {
+	public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		//get current date time with Date()
 		Date date = new Date();
@@ -53,10 +52,10 @@ public class ValidatorFileWalker
 		if (!expectValid) {
 			expectedString = "invalid";
 		}
-		if ((attr != null) && (attr.isRegularFile())) {
+		if (attr != null && attr.isRegularFile()) {
 			if (matcher.matches(file.getFileName())) {
 				// I could have extended the path matcher but an exclusion list is quite simple
-				if ((excludedFiles == null) || (!Arrays.asList(excludedFiles).contains(file.getFileName().toString()))) {
+				if (excludedFiles == null || !Arrays.asList(excludedFiles).contains(file.getFileName().toString())) {
 
 					String thisResultString = "  valid";
 					try {

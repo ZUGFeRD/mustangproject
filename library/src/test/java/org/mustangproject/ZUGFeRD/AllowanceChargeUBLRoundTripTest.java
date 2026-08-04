@@ -43,7 +43,7 @@ import org.w3c.dom.NodeList;
 
 /***
  * End-to-end round-trip test for AllowanceCharge handling across the real production pipeline:
- * mustangproject CII export -&gt; com.helger.en16931.cii2ubl.CIIToUBL23Converter (UBL) -&gt;
+ * mustangproject CII export -&gt; com.helger.en16931.cii2ubl.CIIToUBL24Converter (UBL) -&gt;
  * ZUGFeRDInvoiceImporter (back into the internal model) -&gt; ZUGFeRD2PullProvider (CII again).
  * <p>
  * This exercises header-level amount-based and percent-only allowances/charges, line-level
@@ -104,11 +104,11 @@ public class AllowanceChargeUBLRoundTripTest extends ResourceCase {
 		ciiFile.deleteOnExit();
 		Files.write(ciiFile.toPath(), originalCiiXml);
 
-		// 2. com.helger.en16931.cii2ubl.CIIToUBL23Converter: CII -> UBL (the real downstream pipeline, not mustang's own UBL exporter)
+		// 2. com.helger.en16931.cii2ubl.CIIToUBL24Converter: CII -> UBL (the real downstream pipeline, not mustang's own UBL exporter)
 		File ublFile = File.createTempFile("AllowanceChargeRoundTrip-", "-ubl.xml");
 		ublFile.deleteOnExit();
 		new CIIToUBL().convert(ciiFile, ublFile);
-		assertTrue("CIIToUBL23Converter should have produced a non-empty UBL file", ublFile.length() > 0);
+		assertTrue("CIIToUBL24Converter should have produced a non-empty UBL file", ublFile.length() > 0);
 
 		// 3. ZUGFeRDInvoiceImporter: UBL -> internal model (this is what Bugs 1-4 were fixed in)
 		ZUGFeRDInvoiceImporter importer = new ZUGFeRDInvoiceImporter(new FileInputStream(ublFile));

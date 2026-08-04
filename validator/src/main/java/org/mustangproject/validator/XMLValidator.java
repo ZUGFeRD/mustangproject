@@ -74,7 +74,6 @@ public class XMLValidator extends Validator {
 			try {
 				zfXML = new String(XMLTools.removeBOM(Files.readAllBytes(Paths.get(filename))), StandardCharsets.UTF_8);
 			} catch (final IOException e) {
-
 				final ValidationResultItem vri = new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(9)
 					.setPart(EPart.fx);
 				try (StringWriter sw = new StringWriter();
@@ -107,7 +106,7 @@ public class XMLValidator extends Validator {
 	 * @return true if semantically identical
 	 */
 	public static boolean matchesURI(String uri1, String uri2) {
-		return (uri1 != null && (uri2 != null && (uri1.equals(uri2) || uri1.startsWith(uri2 + "#"))));
+		return uri1 != null && uri2 != null && (uri1.equals(uri2) || uri1.startsWith(uri2 + "#"));
 	}
 
 
@@ -245,7 +244,7 @@ public class XMLValidator extends Validator {
 					isExtended = contextProfile.contains("extended");
 					isXRechnung = contextProfile.contains("xrechnung");
 
-					if ((isExtended) || (isXRechnung)) {
+					if (isExtended || isXRechnung) {
 						isEN16931 = false; // the uri for extended is urn:cen.eu:en16931:2017#conformant#urn:zugferd.de:2p0:extended and thus contains en16931...
 					}
 					if (isMiniumum) {
