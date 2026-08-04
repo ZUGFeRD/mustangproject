@@ -53,6 +53,7 @@ import org.mustangproject.IncludedNote;
 import org.mustangproject.Invoice;
 import org.mustangproject.Item;
 import org.mustangproject.LogisticsServiceCharge;
+import org.mustangproject.PaymentTerms;
 import org.mustangproject.ReferencedDocument;
 import org.mustangproject.SchemedID;
 import org.mustangproject.TradeParty;
