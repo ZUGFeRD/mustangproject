@@ -504,11 +504,10 @@ public class Product implements IZUGFeRDExportableProduct {
 		}
 	}
 
-	/**
+	/***
 	 * Replace the current set of {@link TradeProductInstanceType}s with a new set
-	 *
-	 * @param individualTradeProductInstance the new set of individualTradeProductInstance
-	 * @return the modified object
+	 * @param individualTradeProductInstances the new set of individualTradeProductInstance
+	 * @return
 	 */
 	public Product setIndividualTradeProductInstances(TradeProductInstanceType[] individualTradeProductInstances) {
 		this.individualTradeProductInstances.clear();

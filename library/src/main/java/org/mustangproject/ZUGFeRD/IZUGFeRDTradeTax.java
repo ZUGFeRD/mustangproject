@@ -23,21 +23,21 @@ import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
 /**
  * The interface for allowances or charges, to be used by the pullprovider
  * @author AlexanderSchmidt
- * <xs:complexType name="TradeTaxType">
- *   <xs:sequence>
- *     <xs:element name="CalculatedAmount" type="udt:AmountType" minOccurs="0"/>
- *     <xs:element name="TypeCode" type="qdt:TaxTypeCodeType"/>
- *     <xs:element name="ExemptionReason" type="udt:TextType" minOccurs="0"/>
- *     <xs:element name="BasisAmount" type="udt:AmountType" minOccurs="0"/>
- *     <xs:element name="LineTotalBasisAmount" type="udt:AmountType" minOccurs="0"/>
- *     <xs:element name="AllowanceChargeBasisAmount" type="udt:AmountType" minOccurs="0"/>
- *     <xs:element name="CategoryCode" type="qdt:TaxCategoryCodeType"/>
- *     <xs:element name="ExemptionReasonCode" type="udt:CodeType" minOccurs="0"/>
- *     <xs:element name="TaxPointDate" type="udt:DateType" minOccurs="0"/>
- *     <xs:element name="DueDateTypeCode" type="qdt:TimeReferenceCodeType" minOccurs="0"/>
- *     <xs:element name="RateApplicablePercent" type="udt:PercentType" minOccurs="0"/>
- *   </xs:sequence>
- * </xs:complexType>
+ * &lt;xs:complexType name="TradeTaxType"&gt;
+ *   &lt;xs:sequence&gt;
+ *     &lt;xs:element name="CalculatedAmount" type="udt:AmountType" minOccurs="0"/&gt;
+ *     &lt;xs:element name="TypeCode" type="qdt:TaxTypeCodeType"/&gt;
+ *     &lt;xs:element name="ExemptionReason" type="udt:TextType" minOccurs="0"/&gt;
+ *     &lt;xs:element name="BasisAmount" type="udt:AmountType" minOccurs="0"/&gt;
+ *     &lt;xs:element name="LineTotalBasisAmount" type="udt:AmountType" minOccurs="0"/&gt;
+ *     &lt;xs:element name="AllowanceChargeBasisAmount" type="udt:AmountType" minOccurs="0"/&gt;
+ *     &lt;xs:element name="CategoryCode" type="qdt:TaxCategoryCodeType"/&gt;
+ *     &lt;xs:element name="ExemptionReasonCode" type="udt:CodeType" minOccurs="0"/&gt;
+ *     &lt;xs:element name="TaxPointDate" type="udt:DateType" minOccurs="0"/&gt;
+ *     &lt;xs:element name="DueDateTypeCode" type="qdt:TimeReferenceCodeType" minOccurs="0"/&gt;
+ *     &lt;xs:element name="RateApplicablePercent" type="udt:PercentType" minOccurs="0"/&gt;
+ *   &lt;/xs:sequence&gt;
+ * &lt;/xs:complexType&gt;
  */
 public interface IZUGFeRDTradeTax {
 
@@ -72,7 +72,7 @@ public interface IZUGFeRDTradeTax {
 	}
 
 	/***
-	 * returns the allowance & charge basis amount
+	 * returns the allowance &amp; charge basis amount
 	 * @return null or the basis
 	 */
 	default BigDecimal getTaxAllowanceChargeBasisAmount() {

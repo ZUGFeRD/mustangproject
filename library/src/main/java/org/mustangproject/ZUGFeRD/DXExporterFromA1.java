@@ -29,8 +29,14 @@ import org.apache.pdfbox.preflight.parser.PreflightParser;
 
 import jakarta.activation.DataSource;
 
+/***
+ * exports a Deliver-X file
+ */
 public class DXExporterFromA1 extends DXExporterFromA3 {
 
+	/***
+	 * constructor
+	 */
 	public DXExporterFromA1() {
 		setZUGFeRDVersion(ZUGFeRDExporterFromA3.defaultZUGFeRDVersion);
 

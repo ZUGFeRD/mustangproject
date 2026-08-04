@@ -2,6 +2,9 @@ package org.mustangproject.validator;
 
 import org.mustangproject.XMLTools;
 
+/***
+ * an entry in a validation result, usually a warning or an error, along with some data like location
+ */
 public class ValidationResultItem {
 	protected String message, location;
 	protected int section = -1;

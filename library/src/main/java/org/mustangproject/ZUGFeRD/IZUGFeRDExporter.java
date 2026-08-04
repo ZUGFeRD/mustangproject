@@ -54,10 +54,10 @@ public interface IZUGFeRDExporter extends Closeable, IExporter {
 	 * @return the generated ZUGFeRDExporter
 	 */
 	IZUGFeRDExporter load(InputStream pdfSource) throws IOException;
-	IZUGFeRDExporter setCreator(String creator);
+	IZUGFeRDExporter setCreator(String creator); // sets the name of the author
 	IZUGFeRDExporter setConformanceLevel(PDFAConformanceLevel newLevel);
 	IZUGFeRDExporter setEnablePDFAttachmentCompression(boolean enablePDFAttachmentCompression);
-	IZUGFeRDExporter setProducer(String producer);
+	IZUGFeRDExporter setProducer(String producer); // set the PDF "producer"
 	IZUGFeRDExporter setZUGFeRDVersion(int version);
 	boolean ensurePDFIsValid(DataSource dataSource) throws IOException;
 	IZUGFeRDExporter setXML(byte[] zugferdData) throws IOException;

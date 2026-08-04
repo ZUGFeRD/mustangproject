@@ -42,8 +42,11 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 	 * the total sum of value added taxes
 	 */
 	protected BigDecimal VATtotal;
-	protected TransactionCalculator tc;
+	protected TransactionCalculator tc; // the object this invoice is calculated wih
 
+	/***
+	 * calculate all sums and products, and taxes
+	 */
 	public void calculate() {
 		tc = new TransactionCalculator(this);
 		grandTotal = tc.getGrandTotal();
@@ -55,6 +58,11 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 			VATtotal = VATtotal.add(vam.getCalculated());
 		}
 	}
+
+	/***
+	 * the total sum of everything, including taxes
+	 * @return a money amount
+	 */
 	public BigDecimal getGrandTotal() {
 		if (grandTotal == null) {
 			calculate();
@@ -72,6 +80,11 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 		grandTotal = grand;
 		return this;
 	}
+
+	/***
+	 * the net amount of all taxable goods
+	 * @return money amount
+	 */
 	public BigDecimal getTaxBasis() {
 		if (taxBasis == null) {
 			calculate();
@@ -90,6 +103,10 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 		return this;
 	}
 
+	/***
+	 * the amount still to be paid
+	 * @return the money amount
+	 */
 	public BigDecimal getDuePayable() {
 		if (duePayable == null) {
 			calculate();
@@ -108,6 +125,10 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 		return this;
 	}
 
+	/***
+	 * the total net amount
+	 * @return the money amount
+	 */
 	public BigDecimal getLineTotalAmount() {
 		if (lineTotalAmount == null) {
 			calculate();

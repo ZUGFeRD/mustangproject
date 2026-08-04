@@ -18,13 +18,13 @@ import java.math.BigDecimal;
 /**
  * The interface for logistic charges, to be used by the pull provider
  *
- * <xs:complexType name="LogisticsServiceChargeType">
- *   <xs:sequence>
- *     <xs:element name="Description" type="udt:TextType"/>
- *     <xs:element name="AppliedAmount" type="udt:AmountType"/>
- *     <xs:element name="AppliedTradeTax" type="ram:TradeTaxType" maxOccurs="unbounded"/>
- *   </xs:sequence>
- * </xs:complexType>
+ * &lt;xs:complexType name="LogisticsServiceChargeType"&gt;
+ *   &lt;xs:sequence&gt;
+ *     &lt;xs:element name="Description" type="udt:TextType"/&gt;
+ *     &lt;xs:element name="AppliedAmount" type="udt:AmountType"/&gt;
+ *     &lt;xs:element name="AppliedTradeTax" type="ram:TradeTaxType" maxOccurs="unbounded"/&gt;
+ *   &lt;/xs:sequence&gt;
+ * &lt;/xs:complexType&gt;
  */
 public interface IZUGFeRDLogisticsServiceCharge extends IZUGFeRDTradeTax {
 

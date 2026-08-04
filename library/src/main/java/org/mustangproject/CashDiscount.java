@@ -69,15 +69,29 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 		return days;
 	}
 
+	/***
+	 * the number this cash discount holds valid
+	 * @param days the number of days
+	 * @return fluent setter
+	 */
 	public CashDiscount setDays(Integer days) {
 		this.days = days;
 		return this;
 	}
 
+	/***
+	 * get the amount upon which the cash discount is applied
+	 * @return money amount
+	 */
 	public BigDecimal getBasisAmount() {
 		return basisAmount;
 	}
 
+	/***
+	 * set the amount on which the cash discount is applied
+	 * @param basisAmount the money amount
+	 * @return fluent setter
+	 */
 	public CashDiscount setBasisAmount(BigDecimal basisAmount) {
 		this.basisAmount = basisAmount;
 		return this;

@@ -40,7 +40,9 @@ import com.helger.schematron.svrl.SVRLMarshaller;
 import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 import com.helger.schematron.xslt.SchematronResourceXSLT;
 
-
+/****
+ * the Validator for the XML part of a Factur-X file, or of a CII or UBL standalone XML file
+ */
 public class XMLValidator extends Validator {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(XMLValidator.class.getCanonicalName()); // log output

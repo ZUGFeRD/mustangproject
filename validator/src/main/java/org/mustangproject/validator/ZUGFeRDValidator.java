@@ -36,6 +36,10 @@ import com.helger.commons.io.stream.StreamHelper;
 import jakarta.xml.bind.DatatypeConverter;
 
 //abstract class
+
+/***
+ * a ZUGFeRD validator consists of a PDF/A and a XML validator
+ */
 public class ZUGFeRDValidator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDValidator.class.getCanonicalName()); // log
 	// output
@@ -43,12 +47,12 @@ public class ZUGFeRDValidator {
 	protected String sha1Checksum;
 	protected boolean pdfValidity;
 	protected boolean displayXMLValidationOutput;
-	protected long startTime;
+	protected long startTime; // we will calculate the duration, for this we need to remember the start time
 	protected boolean optionsRecognized;
 	protected boolean disableNotices;
 	protected boolean disableArithmeticCheck;
 	protected String signature;
-	protected boolean wasCompletelyValid;
+	protected boolean wasCompletelyValid; // overall result
 	protected String logAppend;
 
 	/***

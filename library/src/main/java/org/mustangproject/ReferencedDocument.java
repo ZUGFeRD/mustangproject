@@ -75,7 +75,7 @@ public class ReferencedDocument implements IReferencedDocument {
 
 	/***
 	 * sets an ID assigned by the sender
-	 * @param issuerAssignedID the ID as a string :-)
+	 * @param lineID the ID as a string :-)
 	 */
 	public ReferencedDocument setLineID(String lineID) {
 		this.lineID = lineID;

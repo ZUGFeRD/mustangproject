@@ -68,6 +68,9 @@ import jakarta.activation.FileDataSource;
 
 public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
+	/***
+	 * if the PDF may internally be compressed
+	 */
 	protected boolean compressionEnabled;
 
 	/**

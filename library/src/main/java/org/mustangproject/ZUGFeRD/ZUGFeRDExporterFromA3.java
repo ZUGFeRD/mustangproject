@@ -140,6 +140,10 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	}
 
+	/***
+	 * request to ignore slight PDF/A errors on writing
+	 * @return fluent setter
+	 */
 	public ZUGFeRDExporterFromA3 ignorePDFAErrors() {
 		this.ignorePDFAErrors = true;
 		return this;
@@ -168,6 +172,11 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return xmlProvider;
 	}
 
+	/***
+	 * set the profile from a proper Enum
+	 * @param p the profile
+	 * @return fluent setter
+	 */
 	public ZUGFeRDExporterFromA3 setProfile(Profile p) {
 		this.profile = p;
 		if (xmlProvider != null) {
@@ -176,6 +185,11 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
+	/***
+	 * set the profile from a string, if it can be recognized
+	 * @param profilename
+	 * @return fluent setter
+	 */
 	public ZUGFeRDExporterFromA3 setProfile(String profilename) {
 		this.profile = Profiles.getByName(profilename);
 
@@ -185,6 +199,12 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
+	/***
+	 * adds an additional file to be attached to the PDF
+	 * @param name file name
+	 * @param content file content
+	 * @return fluent setter
+	 */
 	public ZUGFeRDExporterFromA3 addAdditionalFile(String name, byte[] content) {
 		fileAttachments.add(new FileAttachment(name, "text/xml", "Supplement", content).setDescription("ZUGFeRD extension/additional data"));
 		return this;

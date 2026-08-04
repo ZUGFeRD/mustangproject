@@ -14,12 +14,16 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 //abstract class
+
+/****
+ * an entity that can return validation results, e.g. a PDF/A validator or a certain XML validator
+ */
 public abstract class Validator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Validator.class.getCanonicalName()); // log output
 
-	protected ValidationContext context;
+	protected ValidationContext context; // the results and metadata of the validation run performed
 
-	protected boolean autoload = true;
+	protected boolean autoload = true; // load already when filename is set
 
 	protected Validator(ValidationContext ctx) {
 		this.context = ctx;

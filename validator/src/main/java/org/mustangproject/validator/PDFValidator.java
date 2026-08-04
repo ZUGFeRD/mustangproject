@@ -47,6 +47,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+/***
+ *  Validates the PDF/A part of a Factur-X invoice
+ */
 public class PDFValidator extends Validator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PDFValidator.class.getCanonicalName()); // log output
 
@@ -64,6 +67,10 @@ public class PDFValidator extends Validator {
 
 	private String zfXML;
 
+	/***
+	 * constructor
+	 * @param ctx the error list (=context) to adhere to
+	 */
 	public PDFValidator(ValidationContext ctx) {
 		super(ctx);
 	}
@@ -382,11 +389,19 @@ public class PDFValidator extends Validator {
 		this.fileContents = fileContents;
 	}
 
+	/***
+	 * get the XML of the embedded invoice
+	 * @return String with the invoice
+	 */
 	public String getRawXML() {
 		return zfXML;
 
 	}
 
+	/***
+	 * gets the Factur-X authoring tool used to create the file, if recognizable
+	 * @return the name of the tool
+	 */
 	public String getSignature() {
 		return signature;
 	}

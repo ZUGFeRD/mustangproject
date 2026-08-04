@@ -22,11 +22,20 @@ import java.math.BigDecimal;
 
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
 
+/***
+ * in a StatRun, where metrics over a directory is collected, e.g. how many PDFs are ZUGFeRD,
+ * this represents a single file to be checked
+ */
 public class FileChecker {
 	String filename;
 	StatRun thisRun;
 	boolean isPDF;
 
+	/***
+	 * constructor
+	 * @param filename current file name
+	 * @param statistics the result
+	 */
 	public FileChecker(String filename, StatRun statistics) {
 		this.filename = filename;
 		thisRun = statistics;

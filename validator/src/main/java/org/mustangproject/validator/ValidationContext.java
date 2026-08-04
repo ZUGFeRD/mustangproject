@@ -6,9 +6,18 @@ import java.util.Vector;
 
 import org.slf4j.Logger;
 
+/***
+ * the error list, and some recognized metadata, of a file in validation
+ */
 public class ValidationContext {
 	protected Vector<ValidationResultItem> results;
+	/***
+	 * XML added manually to the XML result
+	 */
 	protected String customXML = "";
+	/***
+	 * the slf4j log file object
+	 */
 	protected Logger logger;
 
 	private String format = "CII"; // CII or UBL
@@ -87,6 +96,10 @@ public class ValidationContext {
 		return this;
 	}
 
+	/***
+	 * 1st gen is ZUGFeRD 1, 2nd gen is ZUGFeRD 2 and Factur-X 1
+	 * @return numeric string
+	 */
 	public String getGeneration() {
 		return generation;
 	}
@@ -109,6 +122,10 @@ public class ValidationContext {
 		clearCustomXML();
 	}
 
+	/***
+	 * get the final result
+	 * @return the XML of the result
+	 */
 	public String getXMLResult() {
 		StringBuilder res = new StringBuilder(getCustomXML());
 		if (results != null && !results.isEmpty()) {

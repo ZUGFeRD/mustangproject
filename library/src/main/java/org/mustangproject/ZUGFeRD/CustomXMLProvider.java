@@ -33,6 +33,10 @@ public class CustomXMLProvider implements IXMLProvider {
 		return zugferdData;
 	}
 
+	/***
+	 * the custom XML to be provided
+	 * @param newData the XML in UTF-8
+	 */
 	public void setXML(byte[] newData) {
 		String zf = new String(newData, StandardCharsets.UTF_8);
 		/**

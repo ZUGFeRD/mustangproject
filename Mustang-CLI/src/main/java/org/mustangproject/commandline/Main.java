@@ -57,6 +57,9 @@ import org.mustangproject.ZUGFeRD.ZUGFeRDVisualizer;
 import org.mustangproject.validator.ZUGFeRDValidator;
 import org.slf4j.LoggerFactory;
 
+/***
+ * the Main class of the command line version
+ */
 public class Main {
 	private static org.slf4j.Logger LOGGER; // log output
 
@@ -325,6 +328,9 @@ public class Main {
 
 	}
 
+	/***
+	 * System out the APL
+	 */
 	public static void printLicense() {
 		InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream("LICENSE");
 		System.out.println(convertInputStreamToString(is));

@@ -12,19 +12,19 @@ import java.math.RoundingMode;
 /***
  * Absolute and relative charges for document and item level
  *
- * <xs:complexType name="TradeAllowanceChargeType">
- *   <xs:sequence>
- *     <xs:element name="ChargeIndicator" type="udt:IndicatorType"/>
- *     <xs:element name="SequenceNumeric" type="udt:NumericType" minOccurs="0"/>
- *     <xs:element name="CalculationPercent" type="udt:PercentType" minOccurs="0"/>
- *     <xs:element name="BasisAmount" type="udt:AmountType" minOccurs="0"/>
- *     <xs:element name="BasisQuantity" type="udt:QuantityType" minOccurs="0"/>
- *     <xs:element name="ActualAmount" type="udt:AmountType"/>
- *     <xs:element name="ReasonCode" type="qdt:AllowanceChargeReasonCodeType" minOccurs="0"/>
- *     <xs:element name="Reason" type="udt:TextType" minOccurs="0"/>
- *     <xs:element name="CategoryTradeTax" type="ram:TradeTaxType" minOccurs="0"/>
- *   </xs:sequence>
- * </xs:complexType>
+ * &lt;xs:complexType name="TradeAllowanceChargeType"&gt;
+ *   &lt;xs:sequence&gt;
+ *     &lt;xs:element name="ChargeIndicator" type="udt:IndicatorType"/&gt;
+ *     &lt;xs:element name="SequenceNumeric" type="udt:NumericType" minOccurs="0"/&gt;
+ *     &lt;xs:element name="CalculationPercent" type="udt:PercentType" minOccurs="0"/&gt;
+ *     &lt;xs:element name="BasisAmount" type="udt:AmountType" minOccurs="0"/&gt;
+ *     &lt;xs:element name="BasisQuantity" type="udt:QuantityType" minOccurs="0"/&gt;
+ *     &lt;xs:element name="ActualAmount" type="udt:AmountType"/&gt;
+ *     &lt;xs:element name="ReasonCode" type="qdt:AllowanceChargeReasonCodeType" minOccurs="0"/&gt;
+ *     &lt;xs:element name="Reason" type="udt:TextType" minOccurs="0"/&gt;
+ *     &lt;xs:element name="CategoryTradeTax" type="ram:TradeTaxType" minOccurs="0"/&gt;
+ *   &lt;/xs:sequence&gt;
+ * &lt;/xs:complexType&gt;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
