@@ -184,7 +184,7 @@ public class ReferencedDocument implements IReferencedDocument {
 
 		nodes.getNode("URIID").ifPresent(childNode -> rd.setUriID(childNode.getTextContent()));
 		nodes.getNode("LineID").ifPresent(childNode -> rd.setLineID(childNode.getTextContent()));
-		nodes.getNode("Name").ifPresent(childNode -> rd.setName(childNode.getTextContent()));
+		nodes.getNode("Name", "SalesOrderID").ifPresent(childNode -> rd.setName(childNode.getTextContent()));
 		nodes.getNode("AttachmentBinaryObject").ifPresent(childNode -> rd.setAttachmentBinaryObject(new FileAttachment(childNode.getAttributes().getNamedItem("filename").getNodeValue(), childNode.getAttributes().getNamedItem("mimeCode").getNodeValue(), "Data", Base64.getMimeDecoder().decode(XMLTools.trimOrNull(childNode)))));
 		nodes.getAsNodeMap("FormattedIssueDateTime")
 			.flatMap(fdt -> fdt.getNode("DateTimeString"))
@@ -192,12 +192,18 @@ public class ReferencedDocument implements IReferencedDocument {
 			.map(XMLTools::tryDate)
 			.ifPresent(d -> rd.setFormattedIssueDateTime(d));
 
+		// Try UBL format: IssueDate (direct text content)
+		String issueDateString = nodes.getAsStringOrNull("IssueDate");
+		if (issueDateString != null) {
+			rd.setFormattedIssueDateTime(XMLTools.tryDate(issueDateString));
+		}
+
 		if (nodes.getAsStringOrNull("ID") != null) {
 			// sure sign for UBL: here ReferenceTypeCode is no element but a "schemeID" attribute to ID
 			Node childNode = nodes.getNode("ID").get();
 			if (childNode != null) {
 				Node schemeIDAttr = childNode.getAttributes().getNamedItem("schemeID");
-				if (schemeIDAttr != null) {
+				if (schemeIDAttr != null && schemeIDAttr.getNodeValue() != null && !schemeIDAttr.getNodeValue().trim().isEmpty()) {
 					rd.setReferenceTypeCode(schemeIDAttr.getNodeValue());
 				}
 			}

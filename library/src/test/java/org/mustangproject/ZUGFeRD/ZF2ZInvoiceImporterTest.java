@@ -178,7 +178,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
-		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
 		// Reading ZUGFeRD
 		assertEquals("4711", invoice.getZFItems()[0].getProduct().getSellerAssignedID());
 		assertEquals("9384", invoice.getSellerOrderReferencedDocument().getIssuerAssignedID());
@@ -210,7 +210,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
-		SimpleDateFormat sdf=new SimpleDateFormat("YYYY-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
 		// Reading ZUGFeRD
 		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
 		assertNotNull(invoice.getTenderReferencedDocument().getFormattedIssueDateTime());
@@ -244,6 +244,11 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("90-kl-98798-C1", invoice.getZFItems()[0].getAdditionalReferences()[0].getIssuerAssignedID());
 		assertEquals("AAG", invoice.getZFItems()[0].getAdditionalReferences()[0].getReferenceTypeCode());
 
+		assertNotNull(invoice.getInvoiceReferencedDocuments());
+		assertEquals(1, invoice.getInvoiceReferencedDocuments().size());
+		assertEquals("abc123", invoice.getInvoiceReferencedDocuments().get(0).getIssuerAssignedID());
+		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
+		assertEquals("2018-10-04", sdf.format(invoice.getInvoiceReferencedDocuments().get(0).getFormattedIssueDateTime()));
 	}
 
 	public void testZF1Import() {
