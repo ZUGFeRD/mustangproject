@@ -80,7 +80,7 @@
         <version.org.skyscreamer>2.0-rc1</version.org.skyscreamer>
         <version.org.slf4j>2.0.18</version.org.slf4j><!-- from 2.0.17 -->
         <version.org.verapdf>1.30.2</version.org.verapdf>
-        <version.org.xmlunit>2.12.0</version.org.xmlunit><!-- from 2.10.3 -->
+        <version.org.xmlunit>2.13.0</version.org.xmlunit>
     </properties>
 
     <build>

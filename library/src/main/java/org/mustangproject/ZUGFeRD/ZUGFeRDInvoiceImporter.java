@@ -1003,23 +1003,30 @@ public class ZUGFeRDInvoiceImporter {
 		}
 
 		if (zpp.getDespatchAdviceReferencedDocument() == null) {
-			String s = extractString("//*[local-name()=\"DespatchDocumentReference\"]/*[local-name()=\"ID\"]");
-			if (!s.isEmpty()) {
-				zpp.setDespatchAdviceReferencedDocument(new ReferencedDocument(s));
+			xpr = xpath.compile("//*[local-name()=\"DespatchDocumentReference\"]");
+			NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+			if (nodes != null && nodes.getLength() > 0) {
+				ReferencedDocument doc = ReferencedDocument.fromNode(nodes.item(0));
+				zpp.setDespatchAdviceReferencedDocument(doc);
 			}
 		}
 
-		String invoiceReferencedDocumentID = extractString("//*[local-name()=\"BillingReference\"]/*[local-name()=\"InvoiceDocumentReference\"]/*[local-name()=\"ID\"]");
-		if (!invoiceReferencedDocumentID.isEmpty()) {
-			zpp.addInvoiceReferencedDocument(new ReferencedDocument(invoiceReferencedDocumentID));
-		}
-
-		xpr = xpath.compile("//*[local-name()=\"InvoiceReferencedDocument\"]");
+		// UBL
+		xpr = xpath.compile("//*[local-name()=\"BillingReference\"]/*[local-name()=\"InvoiceDocumentReference\"]|//*[local-name()=\"BillingReference\"]/*[local-name()=\"CreditNoteDocumentReference\"]");
 		NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-
 		if (nodes.getLength() != 0) {
 			for (int i = 0; i < nodes.getLength(); i++) {
+				Node currentItemNode = nodes.item(i);
+				ReferencedDocument doc = ReferencedDocument.fromNode(currentItemNode);
+				zpp.addInvoiceReferencedDocument(doc);
+			}
+		}
 
+		// CII
+		xpr = xpath.compile("//*[local-name()=\"InvoiceReferencedDocument\"]");
+		nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (nodes.getLength() != 0) {
+			for (int i = 0; i < nodes.getLength(); i++) {
 				Node currentItemNode = nodes.item(i);
 				ReferencedDocument doc = ReferencedDocument.fromNode(currentItemNode);
 				zpp.addInvoiceReferencedDocument(doc);
