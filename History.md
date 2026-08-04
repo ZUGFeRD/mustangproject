@@ -1,6 +1,11 @@
 
-2.24.x
+2.25.0
 =======
+2026-08-04
+
+- #1216 ZUGFeRD 2.5.2 and Factur-X 1.09.2
+- #1213 VeraPDF Vulnerabilities CVE-2026-54078 and CVE-2026-54079 
+- #1207 itemTotalNetAmount is null Exception when validating invoices
 - #925  Emit line-level CalculationPercent (BT-138) and BasisAmount (BT-137) for the EN16931 and XRechnung profiles, using the caller-supplied Allowance/Charge basis amount.
 - #1171 Removed deprecated methods Item::getAllowances() Item::getCharges() and their last usage in ZUGFeRD2PullProvider.
 - #228  Support LogisticsServiceCharges (Zuschläge für Versand & Verpackung)
@@ -16,7 +21,6 @@
 - add disableArithmeticCheck() / --no-arithmetic-check option to skip the arithmetic recalculation pass during validation
 - #1167 Upgrade com.fasterxml.jackson.core to 2.22.1 from 2.17.3
 - #1186 Read Item LineTotalAmount from SpecifiedTradeSettlementLineMonetarySummation
-- Some minor dependency upgrades. / Upgrade verapdf from 1.26.5 to 1.30.2.
 - #976 / #797 InvoiceImport: read ContractReferencedDocument/IssuerAssignedID into Invoice.contractReferencedDocument
 - #987 Show only the matching BIC per IBAN in invoice visualization
 - #982 Support TypeCodes 130 and 916 for AdditionalReferencedDocuments
