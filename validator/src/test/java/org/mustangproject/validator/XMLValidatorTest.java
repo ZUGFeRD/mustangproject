@@ -512,7 +512,6 @@ public class XMLValidatorTest extends ResourceCase {
 			xv.validate();
 
 			String s = "<validation>" + xv.getXMLResult() + "</validation>";
-			System.out.println(s);
 			Source source = Input.fromString(s).build();
 
 			// must be valid overall

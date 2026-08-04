@@ -253,7 +253,7 @@ public class XMLValidator extends Validator {
 						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_MINIMUM.xslt";
 					} else if (isBasicWithoutLines) {
 						LOGGER.debug("is Basic/WL");
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/BASIC-WL/FACTUR-X_BASIC-WL.xsd", 18, EPart.fx);
+						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/BASIC-WL/FACTUR-X_BASICWL.xsd", 18, EPart.fx);
 						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_BASIC-WL.xslt";
 					} else if (isBasic) {
 						LOGGER.debug("is Basic");
