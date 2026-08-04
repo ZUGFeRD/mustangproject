@@ -1,17 +1,23 @@
 package org.mustangproject;
 
-import com.fasterxml.jackson.annotation.*;
-import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
-import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
-import org.mustangproject.util.NodeMap;
-import org.w3c.dom.Node;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import org.mustangproject.ZUGFeRD.ITradeProductInstanceType;
+import org.mustangproject.ZUGFeRD.IDesignatedProductClassification;
+import org.mustangproject.ZUGFeRD.IZUGFeRDExportableProduct;
+import org.mustangproject.util.NodeMap;
+import org.w3c.dom.Node;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 /***
  * describes a product, good or service used in an invoice item line
@@ -20,21 +26,58 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 
 public class Product implements IZUGFeRDExportableProduct {
-	protected String unit, name, sellerAssignedID, buyerAssignedID;
-	protected String description = "";
-	protected String taxExemptionReason = null;
-	protected String taxExemptionReasonCode = null;
-	protected String taxCategoryCode = null;
-	protected BigDecimal VATPercent;
-	protected boolean isReverseCharge = false;
-	protected boolean isIntraCommunitySupply = false;
-	protected SchemedID globalId = null;
-	protected String countryOfOrigin = null;
-	protected ArrayList<Charge> charges=new ArrayList<>();
-	protected ArrayList<Allowance> allowances=new ArrayList<>();
-	protected HashMap<String, String> attributes = new HashMap<>();
+	private static final HashMap<String, HashMap<String, String>> unitAbbrevs = new HashMap<>();
 
+	public static class TradeProductInstanceType implements ITradeProductInstanceType {
+		private SchemedID batchID;
+		private SchemedID supplierAssignedSerialID;
+
+		/**
+		 * @return the batchID
+		 */
+		public SchemedID getBatchID() {
+			return batchID;
+		}
+
+		/**
+		 * @param batchID the batchID to set
+		 */
+		public TradeProductInstanceType setBatchID(SchemedID batchID) {
+			this.batchID = batchID;
+			return this;
+		}
+
+		/**
+		 * @return the supplierAssignedSerialID
+		 */
+		public SchemedID getSupplierAssignedSerialID() {
+			return supplierAssignedSerialID;
+		}
+
+		/**
+		 * @param supplierAssignedSerialID the supplierAssignedSerialID to set
+		 */
+		public TradeProductInstanceType setSupplierAssignedSerialID(SchemedID supplierAssignedSerialID) {
+			this.supplierAssignedSerialID = supplierAssignedSerialID;
+			return this;
+		}
+	}
+
+	protected String unit, name, sellerAssignedID, buyerAssignedID;
+	protected String description;
+	protected String taxExemptionReason;
+	protected String taxExemptionReasonCode;
+	protected String taxCategoryCode;
+	protected BigDecimal vatPercent;
+	protected boolean isReverseCharge;
+	protected boolean isIntraCommunitySupply;
+	protected SchemedID globalId;
+	protected String countryOfOrigin;
+	protected ArrayList<Charge> charges = new ArrayList<>();
+	protected ArrayList<Allowance> allowances = new ArrayList<>();
+	protected HashMap<String, String> attributes = new HashMap<>();
 	protected List<IDesignatedProductClassification> classifications = new ArrayList<>();
+	protected List<TradeProductInstanceType> individualTradeProductInstances = new ArrayList<>();
 
 	/***
 	 * default constructor
@@ -47,7 +90,7 @@ public class Product implements IZUGFeRDExportableProduct {
 		this.unit = unit;
 		this.name = name;
 		this.description = description;
-		this.VATPercent = VATPercent;
+		this.vatPercent = VATPercent;
 	}
 
 	public Product(Node node) {
@@ -80,15 +123,46 @@ public class Product implements IZUGFeRDExportableProduct {
 			}
 		});
 
+		nodeMap.getAllNodes("IndividualTradeProductInstance").map(NodeMap::new).forEach(apcNodes -> { // IndividualTradeProductInstance is 0 .. unbounded
+			SchemedID batch = null;
+			Optional<Node> batchNode = apcNodes.getNode("BatchID");
+			if (batchNode.isPresent()) {
+				batch = new SchemedID();
+				batch.setId(batchNode.get().getTextContent());
+				if (batchNode.get().hasAttributes() && batchNode.get().getAttributes().getNamedItem("schemeID") != null) {
+					batch.setScheme(batchNode.get().getAttributes().getNamedItem("schemeID").getNodeValue());
+				}
+			}
+
+			SchemedID serial = null;
+			Optional<Node> serialNode = apcNodes.getNode("SupplierAssignedSerialID");
+			if (serialNode.isPresent()) {
+				serial = new SchemedID();
+				serial.setId(serialNode.get().getTextContent());
+				if (serialNode.get().hasAttributes() && serialNode.get().getAttributes().getNamedItem("schemeID") != null) {
+					serial.setScheme(serialNode.get().getAttributes().getNamedItem("schemeID").getNodeValue());
+				}
+			}
+
+			TradeProductInstanceType instance = new TradeProductInstanceType();
+			instance.setBatchID(batch);
+			instance.setSupplierAssignedSerialID(serial);
+
+			if ( this.individualTradeProductInstances == null ) {
+				this.individualTradeProductInstances = new ArrayList<>();
+			}
+			this.individualTradeProductInstances.add(instance);
+		});
+
 		//UBL
 		nodeMap.getAsNodeMap("AdditionalItemProperty").ifPresent(aipNodes -> {
-			String name = aipNodes.getAsStringOrNull("Name");
-			String val = aipNodes.getAsStringOrNull("Value");
-			if (name != null && val != null) {
+			String propertyName = aipNodes.getAsStringOrNull("Name");
+			String propertyValue = aipNodes.getAsStringOrNull("Value");
+			if (propertyName != null && propertyValue != null) {
 				if (attributes == null) {
 					attributes = new HashMap<>();
 				}
-				attributes.put(name, val);
+				attributes.put(propertyName, propertyValue);
 			}
 		});
 
@@ -169,7 +243,7 @@ public class Product implements IZUGFeRDExportableProduct {
 
 	/***
 	 *
-	 * @param taxExemptionReasonCode, https://docs.peppol.eu/poacc/billing/3.0/codelist/vatex/
+	 * @param taxExemptionReasonCode	https://docs.peppol.eu/poacc/billing/3.0/codelist/vatex/
 	 * @return fluent setter
 	 */
 	public Product setTaxExemptionReasonCode(String taxExemptionReasonCode) {
@@ -249,7 +323,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	 */
 	public Product setReverseCharge() {
 		isReverseCharge = true;
-		if ((getTaxExemptionReason()==null)||(getTaxExemptionReason().isEmpty())) {
+		if (getTaxExemptionReason() == null || getTaxExemptionReason().isEmpty()) {
 			setTaxExemptionReason("Reverse charge");
 		}
 		setVATPercent(BigDecimal.ZERO);
@@ -319,7 +393,7 @@ public class Product implements IZUGFeRDExportableProduct {
 
 	@Override
 	public BigDecimal getVATPercent() {
-		return VATPercent;
+		return vatPercent;
 	}
 
 	/****
@@ -329,9 +403,9 @@ public class Product implements IZUGFeRDExportableProduct {
 	 */
 	public Product setVATPercent(BigDecimal VATPercent) {
 		if (VATPercent == null) {
-			this.VATPercent = BigDecimal.ZERO;
+			this.vatPercent = BigDecimal.ZERO;
 		} else {
-			this.VATPercent = VATPercent;
+			this.vatPercent = VATPercent;
 		}
 		return this;
 	}
@@ -419,6 +493,42 @@ public class Product implements IZUGFeRDExportableProduct {
 		return this;
 	}
 
+	/**
+	 * @return individualTradeProductInstances
+	 */
+	public ITradeProductInstanceType[] getIndividualTradeProductInstances() {
+		if (individualTradeProductInstances.isEmpty()) {
+			return null;
+		} else {
+			return individualTradeProductInstances.toArray(new ITradeProductInstanceType[0]);
+		}
+	}
+
+	/**
+	 * Replace the current set of {@link TradeProductInstanceType}s with a new set
+	 *
+	 * @param individualTradeProductInstance the new set of individualTradeProductInstance
+	 * @return the modified object
+	 */
+	public Product setIndividualTradeProductInstances(TradeProductInstanceType[] individualTradeProductInstances) {
+		this.individualTradeProductInstances.clear();
+		if (individualTradeProductInstances != null) {
+			this.individualTradeProductInstances.addAll(Arrays.asList(individualTradeProductInstances));
+		}
+		return this;
+	}
+
+	/**
+	 * Add a {@link TradeProductInstanceType} individualTradeProductInstance
+	 *
+	 * @param individualTradeProductInstance the individualTradeProductInstance
+	 * @return the modified object
+	 */
+	public Product addIndividualTradeProductInstance(TradeProductInstanceType individualTradeProductInstance) {
+		this.individualTradeProductInstances.add(individualTradeProductInstance);
+		return this;
+	}
+
 	public Product addCharge(Charge e) {
 		charges.add(e);
 		return this;
@@ -434,8 +544,9 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * Jackson courtesy function, please use addCharge if you have the choice
 	 * @return array of or null, if none
 	 */
-	public Product setCharges(ArrayList<Charge> charges) {
-		this.charges=charges;
+	public Product setCharges(List<Charge> charges) {
+		this.charges.clear();
+		this.charges.addAll(charges);
 		return this;
 	}
 
@@ -445,7 +556,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	 */
 	@Override
 	public Charge[] getCharges() {
-		if (charges.size()==0) {
+		if (charges.isEmpty()) {
 			return null;
 		}
 		Charge[] chargeArr = new Charge[charges.size()];
@@ -458,7 +569,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * @return array of or null, if none
 	 */
 	public Allowance[] getAllowances() {
-		if (allowances.size()==0) {
+		if (allowances.isEmpty()) {
 			return null;
 		}
 		Allowance[] allowanceArr = new Allowance[allowances.size()];
@@ -469,13 +580,11 @@ public class Product implements IZUGFeRDExportableProduct {
 	 * Jackson courtesy function, please use addAllowance if you have the choice
 	 * @return array of or null, if none
 	 */
-	public Product setAllowances(ArrayList<Allowance> allowances) {
-		this.allowances=allowances;
+	public Product setAllowances(List<Allowance> allowances) {
+		this.allowances.clear();
+		this.allowances.addAll(allowances);
 		return this;
 	}
-
-
-	private static final HashMap<String, HashMap<String, String>> unitAbbrevs = new HashMap<>();
 
 	static {
 		HashMap<String, String> inner1 = new HashMap<>();
@@ -538,7 +647,7 @@ public class Product implements IZUGFeRDExportableProduct {
 		}
 		if (unitAbbrevs.get(language).containsKey(unitcode)) {
 			return unitAbbrevs.get(language).get(unitcode);
-		} else{
+		} else {
 			return unitcode;
 		}
 	}

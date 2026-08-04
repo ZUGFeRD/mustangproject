@@ -42,7 +42,7 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	}
 
 	/***
-	 * bean contructor
+	 * bean constructor
 	 */
 	public CashDiscount() {
 
@@ -95,8 +95,8 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 		if (basisAmount != null) {
 			s += "    <ram:BasisAmount>" + XMLTools.nDigitFormat(basisAmount, 2) + "</ram:BasisAmount>";
 		}
-		s += "    <ram:CalculationPercent>"+XMLTools.nDigitFormat(percent,3)+"</ram:CalculationPercent>"+
-				"  </ram:ApplicableTradePaymentDiscountTerms>"+
+		s += "    <ram:CalculationPercent>" + XMLTools.nDigitFormat(percent, 3) + "</ram:CalculationPercent>" +
+				"  </ram:ApplicableTradePaymentDiscountTerms>" +
 				"</ram:SpecifiedTradePaymentTerms>";
 		return s;
 	}
@@ -108,6 +108,6 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	 */
 	@JsonIgnore
 	public String getAsXRechnung() {
-		return "#SKONTO#TAGE="+days+"#PROZENT="+XMLTools.nDigitFormat(percent,2)+"#\n";
+		return "#SKONTO#TAGE=" + days + "#PROZENT=" + XMLTools.nDigitFormat(percent, 2) + "#\n";
 	}
 }

@@ -40,8 +40,8 @@ public class UBLDAPullProvider implements IXMLProvider {
 
 	protected IExportableTransaction trans;
 	protected TransactionCalculator calc;
+	protected Profile profile = Profiles.getByName(EStandard.UBL_DESPATCHADVICE, "basic", 1);
 	byte[] ublData;
-	protected Profile profile = Profiles.getByName(EStandard.ubldespatchadvice, "basic", 1);
 
 
 	@Override
@@ -76,7 +76,7 @@ public class UBLDAPullProvider implements IXMLProvider {
 							"    <cbc:ID>" + XMLTools.encodeXML(Integer.toString(i++)) + "</cbc:ID>\n" +
 							"    <cbc:DeliveredQuantity unitCode=\"" + XMLTools.encodeXML(item.getProduct().getUnit()) + "\">" + item.getQuantity() + "</cbc:DeliveredQuantity>\n" +
 							"    <cac:OrderLineReference>\n" +
-							"      <cbc:LineID>" + XMLTools.encodeXML(item.getBuyerOrderReferencedDocumentLineID()) + "</cbc:LineID>\n" +
+							"      <cbc:LineID>" + XMLTools.encodeXML(item.getBuyerOrderReferencedDocument().getLineID()) + "</cbc:LineID>\n" +
 							"    </cac:OrderLineReference>\n" +
 							"    <cac:Item>\n" +
 							"      <cbc:Name>" + XMLTools.encodeXML(item.getProduct().getName()) + "</cbc:Name>\n" +
@@ -124,10 +124,10 @@ public class UBLDAPullProvider implements IXMLProvider {
 		try {
 			final OutputFormat format = OutputFormat.createPrettyPrint();
 			format.setTrimText(false);
-			final XMLWriter writer = new XMLWriter(sw, format);
-			writer.write(document);
-			res = sw.toString().getBytes(StandardCharsets.UTF_8);
-
+			try ( XMLWriter writer = new XMLWriter(sw, format) ) {
+				writer.write(document);
+				res = sw.toString().getBytes(StandardCharsets.UTF_8);
+			}
 		} catch (final IOException e) {
 			LOGGER.error ("Failed to write XML", e);
 		}

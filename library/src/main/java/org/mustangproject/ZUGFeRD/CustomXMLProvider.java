@@ -26,7 +26,7 @@ public class CustomXMLProvider implements IXMLProvider {
 	/***
 	 * the scope=profile this XML data is provided in
 	 */
-	protected Profile profile=Profiles.getByName("EN16931");
+	protected Profile profile = Profiles.getByName("EN16931");
 
 	@Override
 	public byte[] getXML() {
@@ -39,7 +39,7 @@ public class CustomXMLProvider implements IXMLProvider {
 		 * rsm:CrossIndustry is ZF/FX/XR (CII 2016b),rsm:SCRDMCCBDACIOMessageStructure is Order-X (CIO 2021) and
 		 *  SCRDMCCBDACIDAMessageStructure is Despatch Advice
 		 */
-		if ((!zf.contains("rsm:CrossIndustry")) && (!zf.contains("rsm:SCRDMCCBDACIOMessageStructure")) && (!zf.contains("SCRDMCCBDACIDAMessageStructure"))) {
+		if (!zf.contains("rsm:CrossIndustry") && !zf.contains("rsm:SCRDMCCBDACIOMessageStructure") && !zf.contains("SCRDMCCBDACIDAMessageStructure")) {
 			throw new RuntimeException("ZUGFeRD XML does not contain <rsm:CrossIndustry, <rsm:SCRDMCCBDACIOMessageStructure or SCRDMCCBDACIDAMessageStructure and can thus not be valid");
 		}
 
@@ -58,6 +58,6 @@ public class CustomXMLProvider implements IXMLProvider {
 	}
 
 	public void setProfile(Profile level) {
-		profile=level;
+		profile = level;
 	}
 }

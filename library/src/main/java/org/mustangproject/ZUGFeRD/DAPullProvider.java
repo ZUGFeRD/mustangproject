@@ -22,7 +22,6 @@ package org.mustangproject.ZUGFeRD;
 
 import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
 
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Optional;
@@ -37,9 +36,9 @@ import org.mustangproject.XMLTools;
  */
 public class DAPullProvider extends ZUGFeRD2PullProvider {
 
-	protected IExportableTransaction trans;
-	protected Profile profile = Profiles.getByName(EStandard.despatchadvice,"pilot", 1);
-
+	public DAPullProvider() {
+		profile = Profiles.getByName(EStandard.DELIVER_X, "pilot", 1);
+	}
 
 	@Override
 	public void generateXML(IExportableTransaction trans) {
@@ -50,7 +49,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 			typecode = trans.getDocumentCode();
 		}*/
 
-		String testBooleanStr="true";
+		String testBooleanStr = "true";
 		StringBuilder xml = new StringBuilder("<SCRDMCCBDACIDAMessageStructure\n" +
 				"        xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:25\"\n" +
 				"        xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:101\"\n" +
@@ -60,7 +59,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 				// ../Schema/ZUGFeRD1p0.xsd\""
 				+ "<px:ExchangedDocumentContext>"
 				// + "
-				+" <ram:TestIndicator><udt:Indicator>"+testBooleanStr+"</udt:Indicator></ram:TestIndicator>\n"
+				+ "<ram:TestIndicator><udt:Indicator>" + testBooleanStr + "</udt:Indicator></ram:TestIndicator>\n"
 				//
 				+ "<ram:BusinessProcessSpecifiedDocumentContextParameter>"
 				+ "<ram:ID>" + getProfile().getID() + "</ram:ID>"
@@ -87,7 +86,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 			xml.append("<ram:IncludedSupplyChainTradeLineItem>" +
 					"<ram:AssociatedDocumentLineDocument>"
 					+ "<ram:LineID>" + lineID + "</ram:LineID>"
-          + buildItemNotes(currentItem)
+					+ buildItemNotes(currentItem)
 					+ "</ram:AssociatedDocumentLineDocument>"
 
 					+ "<ram:SpecifiedTradeProduct>");
@@ -100,42 +99,17 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 				xml.append("<ram:BuyerAssignedID>"
 						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>");
 			}
-			// Product-level (GrossPrice / product section): ActualAmount must be per-unit (BT-147)
-			final IZUGFeRDExportableItem itemForProduct = currentItem;
-			IAbsoluteValueProvider perUnitProvider = new IAbsoluteValueProvider() {
-				@Override
-				public BigDecimal getValue() {
-					return itemForProduct.getPrice();
-				}
-				@Override
-				public BigDecimal getQuantity() {
-					return BigDecimal.ONE;
-				}
-			};
-			String allowanceChargeStr = "";
-			if (currentItem.getItemAllowances() != null) {
-				for (final IZUGFeRDAllowanceCharge allowance : currentItem.getItemAllowances()) {
-					allowanceChargeStr += getAllowanceChargeStr(allowance, perUnitProvider);
-				}
-			}
-			if (currentItem.getItemCharges() != null) {
-				for (final IZUGFeRDAllowanceCharge charge : currentItem.getItemCharges()) {
-					allowanceChargeStr += getAllowanceChargeStr(charge, perUnitProvider);
-				}
-			}
-
 
 			xml.append("<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>"
 					+ "<ram:Description>" + XMLTools.encodeXML(currentItem.getProduct().getDescription())
 					+ "</ram:Description>"
 					+ "</ram:SpecifiedTradeProduct>"
-
 					+ "<ram:SpecifiedLineTradeDelivery>"
 					+ "<ram:DespatchedQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">"
 					+ quantityFormat(currentItem.getQuantity()) + "</ram:DespatchedQuantity>"
 					+ "</ram:SpecifiedLineTradeDelivery>"
 					+ "<ram:SpecifiedLineTradeSettlement>");
-			if ((currentItem.getDetailedDeliveryPeriodFrom() != null) || (currentItem.getDetailedDeliveryPeriodTo() != null)) {
+			if (currentItem.getDetailedDeliveryPeriodFrom() != null || currentItem.getDetailedDeliveryPeriodTo() != null) {
 				xml.append("<ram:BillingSpecifiedPeriod>");
 				if (currentItem.getDetailedDeliveryPeriodFrom() != null) {
 					xml.append("<ram:StartDateTime>" + DATE.udtFormat(currentItem.getDetailedDeliveryPeriodFrom()) + "</ram:StartDateTime>");
@@ -175,23 +149,20 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 		xml.append(getTradePartyAsXML(trans.getRecipient(), false, false));
 		xml.append("</ram:BuyerTradeParty>");
 
-		if (trans.getSellerOrderReferencedDocumentID() != null) {
+		if (trans.getSellerOrderReferencedDocument() != null && trans.getSellerOrderReferencedDocument().getIssuerAssignedID() != null) {
 			xml.append("<ram:SellerOrderReferencedDocument>"
-					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getSellerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
-					+ "</ram:SellerOrderReferencedDocument>");
+				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getSellerOrderReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
+				+ "</ram:SellerOrderReferencedDocument>");
 		}
-		if (trans.getBuyerOrderReferencedDocumentID() != null) {
+		if (trans.getBuyerOrderReferencedDocument() != null && trans.getBuyerOrderReferencedDocument().getIssuerAssignedID() != null) {
 			xml.append("<ram:BuyerOrderReferencedDocument>"
-					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getBuyerOrderReferencedDocumentID()) + "</ram:IssuerAssignedID>"
-					+ "</ram:BuyerOrderReferencedDocument>");
+				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getBuyerOrderReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
+				+ "</ram:BuyerOrderReferencedDocument>");
 		}
-		if (trans.getContractReferencedDocument() != null) {
+		if (trans.getContractReferencedDocument() != null && trans.getContractReferencedDocument().getIssuerAssignedID() != null) {
 			xml.append("<ram:ContractReferencedDocument>"
-					+ "<ram:IssuerAssignedID>"
-					+ XMLTools.encodeXML(trans.getContractReferencedDocument()) + "</ram:IssuerAssignedID>"
-					+ "</ram:ContractReferencedDocument>");
+				+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(trans.getContractReferencedDocument().getIssuerAssignedID()) + "</ram:IssuerAssignedID>"
+				+ "</ram:ContractReferencedDocument>");
 		}
 
 		// Additional Documents of XRechnung (Rechnungsbegruendende Unterlagen - BG-24 XRechnung)
@@ -227,7 +198,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 		xml.append(" <ram:ActualDespatchSupplyChainEvent>\n" +
 				"                <ram:OccurrenceDateTime>\n" +
 				"                    <udt:DateTimeString\n" +
-				"                            format=\"102\">"+ DATE.udtFormat(trans.getDeliveryDate() )+"</udt:DateTimeString>\n" +
+				"                            format=\"102\">" + DATE.udtFormat(trans.getDeliveryDate() ) + "</udt:DateTimeString>\n" +
 				"                </ram:OccurrenceDateTime>\n" +
 				"            </ram:ActualDespatchSupplyChainEvent>");
 
@@ -285,7 +256,7 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
     Invoice copyWithoutRebateInfo = new Invoice()
         .setOwnOrganisationFullPlaintextInfo(exportableTransaction.getOwnOrganisationFullPlaintextInfo())
         .addNotes(exportableTransaction.getNotesWithSubjectCode());
-    if(exportableTransaction.getNotes() != null) {
+    if (exportableTransaction.getNotes() != null) {
       for (String note : exportableTransaction.getNotes()) {
         copyWithoutRebateInfo.addNote(note);
       }

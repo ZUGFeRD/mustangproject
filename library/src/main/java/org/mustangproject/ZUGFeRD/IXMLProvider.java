@@ -20,11 +20,11 @@ package org.mustangproject.ZUGFeRD;
 
 public interface IXMLProvider {
 
-	public byte[] getXML();
+	byte[] getXML();
 
-	public void generateXML(IExportableTransaction trans);
+	void generateXML(IExportableTransaction trans);
 
-	public void setProfile(Profile p);
+	void setProfile(Profile p);
 
-	public Profile getProfile();
+	Profile getProfile();
 }

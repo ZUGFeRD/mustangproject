@@ -112,7 +112,7 @@ public interface IZUGFeRDExportableContact {
 
 	/**
 	 * returns additional address information which is display in xml tag "LineTwo"
-	 * 
+	 *
 	 * @return additional address information
 	 */
 	default String getAdditionalAddress() {

@@ -45,31 +45,39 @@ public interface IZUGFeRDTradeTax {
 	 * returns the calculated amount
 	 * @return null or the basis
 	 */
-	default BigDecimal getTaxCalculatedAmount() {return null;}
+	default BigDecimal getTaxCalculatedAmount() {
+		return null;
+	}
 
 	/***
 	 * the the reason (text) why this allowance/charge is tax free
 	 * @return the reason text
 	 */
-	public String getTaxExemptionReason();
+	String getTaxExemptionReason();
 
 	/***
 	 * returns a basis the percentage is calculated from
 	 * @return null or the basis
 	 */
-	default BigDecimal getTaxBasisAmount() {return null;}
+	default BigDecimal getTaxBasisAmount() {
+		return null;
+	}
 
 	/***
 	 * returns the line total basis amount
 	 * @return null or the basis
 	 */
-	default BigDecimal getTaxLineTotalBasisAmount() {return null;}
+	default BigDecimal getTaxLineTotalBasisAmount() {
+		return null;
+	}
 
 	/***
 	 * returns the allowance & charge basis amount
 	 * @return null or the basis
 	 */
-	default BigDecimal getTaxAllowanceChargeBasisAmount() {return null;}
+	default BigDecimal getTaxAllowanceChargeBasisAmount() {
+		return null;
+	}
 
 	/***
 	 * the category ID why this has been applied
@@ -83,23 +91,31 @@ public interface IZUGFeRDTradeTax {
 	 * the the reason code why this allowance/charge is tax free
 	 * @return the reason code
 	 */
-	default String getTaxExemptionReasonCode() {return null;}
+	default String getTaxExemptionReasonCode() {
+		return null;
+	}
 
 	/***
-	 * 
+	 *
 	 * @return
 	 */
-	default Date getTaxPointDate() {return null;}
+	default Date getTaxPointDate() {
+		return null;
+	}
 
 	/***
-	 * 
+	 *
 	 * @return
 	 */
-	default String getTaxDueDateTypeCode() {return null;}
+	default String getTaxDueDateTypeCode() {
+		return null;
+	}
 
 	/***
 	 * get the applicable tax percentage for the allowance/charge
 	 * @return the percentage
 	 */
-	default BigDecimal getTaxRateApplicablePercent() {return null;}
+	default BigDecimal getTaxRateApplicablePercent() {
+		return null;
+	}
 }

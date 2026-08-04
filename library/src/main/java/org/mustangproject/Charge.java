@@ -11,7 +11,7 @@ import java.math.RoundingMode;
 
 /***
  * Absolute and relative charges for document and item level
- * 
+ *
  * <xs:complexType name="TradeAllowanceChargeType">
  *   <xs:sequence>
  *     <xs:element name="ChargeIndicator" type="udt:IndicatorType"/>
@@ -85,6 +85,7 @@ public class Charge extends TradeTax implements IZUGFeRDAllowanceCharge {
 	/**
 	 * @return the sequenceNumeric
 	 */
+	@Override
 	public Integer getSequenceNumeric() {
 		return sequenceNumeric;
 	}
@@ -146,11 +147,11 @@ public class Charge extends TradeTax implements IZUGFeRDAllowanceCharge {
 
 	@Override
 	public BigDecimal getTotalAmount(IAbsoluteValueProvider currentItem) {
-		if(totalAmount != null) {
+		if (totalAmount != null) {
 			return totalAmount;
-		} else if (percent!=null) {
-			BigDecimal singlePrice=currentItem.getValue().multiply(BigDecimal.ONE.subtract(getPercent().divide(new BigDecimal(100),  18, RoundingMode.HALF_UP)));
-			BigDecimal singlePriceDiff=currentItem.getValue().subtract(singlePrice);
+		} else if (percent != null) {
+			BigDecimal singlePrice = currentItem.getValue().multiply(BigDecimal.ONE.subtract(getPercent().divide(new BigDecimal(100), 18, RoundingMode.HALF_UP)));
+			BigDecimal singlePriceDiff = currentItem.getValue().subtract(singlePrice);
 			return singlePriceDiff.multiply(currentItem.getQuantity());
 
 		} else {
@@ -159,10 +160,10 @@ public class Charge extends TradeTax implements IZUGFeRDAllowanceCharge {
 	}
 
 	public BigDecimal getTotalAmount() {
-		if (totalAmount!=null) {
+		if (totalAmount != null) {
 			return totalAmount;
 		} else {
-			if (percent==null) {
+			if (percent == null) {
 				throw new RuntimeException("totalAmount must be set");
 			}
 			return null;
@@ -215,7 +216,8 @@ public class Charge extends TradeTax implements IZUGFeRDAllowanceCharge {
 	/**
 	 * @deprecated use getTaxRateApplicablePercent() instead.
 	 */
-	@Deprecated
+	@SuppressWarnings("deprecation")
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	@JsonIgnore
 	@Override
 	public BigDecimal getTaxPercent() {
@@ -228,9 +230,8 @@ public class Charge extends TradeTax implements IZUGFeRDAllowanceCharge {
 	 * @param percent
 	 * @return
 	 */
-	@Deprecated
-	public Charge setTaxPercent(BigDecimal percent)
-	{
+	@Deprecated(forRemoval = true, since = "2.24.1")
+	public Charge setTaxPercent(BigDecimal percent) {
 		this.setTaxRateApplicablePercent(percent);
 		return this;
 	}
@@ -238,7 +239,8 @@ public class Charge extends TradeTax implements IZUGFeRDAllowanceCharge {
 	/**
 	 * @deprecated use getTaxCategoryCode() instead.
 	 */
-	@Deprecated
+	@SuppressWarnings("deprecation")
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	@JsonIgnore
 	@Override
 	public String getCategoryCode() {
@@ -250,9 +252,8 @@ public class Charge extends TradeTax implements IZUGFeRDAllowanceCharge {
 	 * @param taxCategoryCode
 	 * @return
 	 */
-	@Deprecated
-	public Charge setCategoryCode(String taxCategoryCode)
-	{
+	@Deprecated(forRemoval = true, since = "2.24.1")
+	public Charge setCategoryCode(String taxCategoryCode) {
 		this.setTaxCategoryCode(taxCategoryCode);
 		return this;
 	}

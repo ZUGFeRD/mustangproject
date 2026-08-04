@@ -44,6 +44,7 @@ public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge, IZU
 		return reasonCode;
 	}
 
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	@Override
 	public BigDecimal getTaxPercent() {
 		return taxPercent;
@@ -105,7 +106,7 @@ public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge, IZU
 	/**
 	 * @deprecated use getTaxCategoryCode() instead.
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	@Override
 	public String getCategoryCode() {
 		return getTaxCategoryCode();

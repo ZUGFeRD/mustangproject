@@ -1,7 +1,7 @@
-- #1176
 
 2.24.x
 =======
+- #925  Emit line-level CalculationPercent (BT-138) and BasisAmount (BT-137) for the EN16931 and XRechnung profiles, using the caller-supplied Allowance/Charge basis amount.
 - #1171 Removed deprecated methods Item::getAllowances() Item::getCharges() and their last usage in ZUGFeRD2PullProvider.
 - #228  Support LogisticsServiceCharges (Zuschläge für Versand & Verpackung)
 - #1174 Fix UBL AllowanceCharge import, add missing percent/basisAmount aliases, dropped per-unit-price allowances
@@ -14,6 +14,18 @@
 - #1151 'BR-FXEXT-IC-08rev' in ZF 2.5 requires VAT exemption reason text and code for allowances and charges
 - #1145 Document-level allowance with VAT category O emits RateApplicablePercent (violates BR-O-06)
 - add disableArithmeticCheck() / --no-arithmetic-check option to skip the arithmetic recalculation pass during validation
+- #1167 Upgrade com.fasterxml.jackson.core to 2.22.1 from 2.17.3
+- #1186 Read Item LineTotalAmount from SpecifiedTradeSettlementLineMonetarySummation
+- Some minor dependency upgrades. / Upgrade verapdf from 1.26.5 to 1.30.2.
+- #976 / #797 InvoiceImport: read ContractReferencedDocument/IssuerAssignedID into Invoice.contractReferencedDocument
+- #987 Show only the matching BIC per IBAN in invoice visualization
+- #982 Support TypeCodes 130 and 916 for AdditionalReferencedDocuments
+- #1202 Support IndividualTradeProductInstance with BatchID and SupplierAssignedSerialID for EXTENDED Profile
+- #1205 Refactoring of Invoice's DocumentReferences.
+- #1208 Prevent NPE when generating XML invoice without issue date.
+- #1211 Change to UBL 2.4 and add commandline option for profile and customization ID.
+- #1212 Remove deprecated method IExportableTransaction::getTradeSettlementPayment.
+- #1215 Removed duplicate code in ZUGFeRD2PullProvider, which lead to a duplicate DirectDebitMandateID.
 
 
 2.24.0

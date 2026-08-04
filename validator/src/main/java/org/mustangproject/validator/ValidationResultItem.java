@@ -1,26 +1,19 @@
 package org.mustangproject.validator;
 
 import org.mustangproject.XMLTools;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ValidationResultItem {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ValidationResultItem.class.getCanonicalName()); // log output is
-	// ignored for the
-	// time being
-
-	
-	protected String message, location=null;
-	protected int section =-1;
-	protected String id =""; // e.g. "FX-SCH-A-000026"
+	protected String message, location;
+	protected int section = -1;
+	protected String id = ""; // e.g. "FX-SCH-A-000026"
 
 
-	private ESeverity severity=ESeverity.error;
-	private String criterion=null;
+	private ESeverity severity = ESeverity.error;
+	private String criterion;
 
 
-	private String stacktrace=null;
-	private boolean hasBeenOutputted=false;
+	private String stacktrace;
+	private boolean hasBeenOutputted;
 
 
 	private EPart part;
@@ -29,65 +22,65 @@ public class ValidationResultItem {
 	public ValidationResultItem(ESeverity sev, String msg) {
 		setSeverity(sev);
 		setMessage(msg);
-		xt=new XMLTools();
+		xt = new XMLTools();
 	}
 	public ValidationResultItem setMessage(String msg) {
-		message=msg;
+		message = msg;
 		return this;
 	}
 
 	public ValidationResultItem setSection(int sec) {
-		section=sec;
+		section = sec;
 		return this;
-	}	
+	}
 	public ValidationResultItem setLocation(String loc) {
-		location=loc;
+		location = loc;
 		return this;
 	}
 	public ValidationResultItem setPart(EPart loc) {
-		part=loc;
+		part = loc;
 		return this;
 	}
 	public EPart getPart() {
 		return part;
 	}
 	public ValidationResultItem setSeverity(ESeverity sev) {
-		severity=sev;
+		severity = sev;
 		return this;
 	}
 	public ValidationResultItem setStacktrace(String stack) {
-		stacktrace=stack;
+		stacktrace = stack;
 		return this;
 	}
-	
-	
+
+
 	public String getXML() {
-		String tagname="error";
-		if (severity==ESeverity.exception) {
-			tagname="exception";
-		} else if (severity==ESeverity.warning) {
-			tagname="warning";
-		} else if (severity==ESeverity.notice) {
-			tagname="notice";
-		} 
-		String additionalAttributes="";
-		String additionalContents="";
-		if (section!=-1) {
-			additionalAttributes+=" type=\""+section+"\"";
+		String tagname = "error";
+		if (severity == ESeverity.exception) {
+			tagname = "exception";
+		} else if (severity == ESeverity.warning) {
+			tagname = "warning";
+		} else if (severity == ESeverity.notice) {
+			tagname = "notice";
 		}
-		if (location!=null) {
-			additionalAttributes+=" location=\""+xt.escapeAttributeEntities(location)+"\"";
+		String additionalAttributes = "";
+		String additionalContents = "";
+		if (section != -1) {
+			additionalAttributes += " type=\"" + section + "\"";
 		}
-		if (criterion!=null) {
-			additionalAttributes+=" criterion=\""+xt.escapeAttributeEntities(criterion)+"\"";
+		if (location != null) {
+			additionalAttributes += " location=\"" + xt.escapeAttributeEntities(location) + "\"";
 		}
-		if (stacktrace!=null) {
-			additionalContents+="<stacktrace>"+xt.escapeAttributeEntities(stacktrace)+"</stacktrace>";
+		if (criterion != null) {
+			additionalAttributes += " criterion=\"" + xt.escapeAttributeEntities(criterion) + "\"";
 		}
-		hasBeenOutputted=true;
-		return "<"+tagname+additionalAttributes+">"+xt.escapeElementEntities(message+additionalContents)+"</"+tagname+">";
+		if (stacktrace != null) {
+			additionalContents += "<stacktrace>" + xt.escapeAttributeEntities(stacktrace) + "</stacktrace>";
+		}
+		hasBeenOutputted = true;
+		return "<" + tagname + additionalAttributes + ">" + xt.escapeElementEntities(message + additionalContents) + "</" + tagname + ">";
 	}
-	
+
 	public String getXMLOnce() {
 		if (!hasBeenOutputted) {
 			return getXML();
@@ -95,7 +88,7 @@ public class ValidationResultItem {
 			return "";
 		}
 	}
-	
+
 	public ValidationResultItem setCriterion(String test) {
 		 criterion = test;
 		 return this;
@@ -105,7 +98,7 @@ public class ValidationResultItem {
 	}
 
 	public ValidationResultItem setID(String id) {
-		this.id=id;
+		this.id = id;
 		return this;
 	}
 
