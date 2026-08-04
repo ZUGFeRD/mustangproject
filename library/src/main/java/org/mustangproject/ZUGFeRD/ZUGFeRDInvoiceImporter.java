@@ -687,7 +687,9 @@ public class ZUGFeRDInvoiceImporter {
 			for (int di = 0; di < descNodes.getLength(); di++) {
 				String txt = descNodes.item(di).getTextContent();
 				if (txt != null && !txt.trim().isEmpty()) {
-					if (sbDesc.length() > 0) sbDesc.append("\n");
+					if (sbDesc.length() > 0) {
+						sbDesc.append("\n");
+					}
 					sbDesc.append(txt.trim());
 				}
 			}
