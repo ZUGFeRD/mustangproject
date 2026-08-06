@@ -284,4 +284,14 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 			.isEqualTo("valid");
 
 	}
+
+	public void testVAT_O() {
+		File tempFile = getResourceAsFile("valid_with_VAT_O.xml");
+
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+		assertThat(res).valueByXPath("/validation/xml/summary/@status").isEqualTo("invalid");
+	}
 }

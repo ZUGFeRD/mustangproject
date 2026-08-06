@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100"
+        xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100"
+        xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100"
+        xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
+    <rsm:ExchangedDocumentContext>
+        <ram:GuidelineSpecifiedDocumentContextParameter>
+            <ram:ID>urn:cen.eu:en16931:2017</ram:ID>
+        </ram:GuidelineSpecifiedDocumentContextParameter>
+    </rsm:ExchangedDocumentContext>
+    <rsm:ExchangedDocument>
+        <ram:ID>REPRO-1</ram:ID>
+        <ram:TypeCode>380</ram:TypeCode>
+        <ram:IssueDateTime>
+            <udt:DateTimeString format="102">20260805</udt:DateTimeString>
+        </ram:IssueDateTime>
+    </rsm:ExchangedDocument>
+    <rsm:SupplyChainTradeTransaction>
+        <ram:IncludedSupplyChainTradeLineItem>
+            <ram:AssociatedDocumentLineDocument>
+                <ram:LineID>1</ram:LineID>
+            </ram:AssociatedDocumentLineDocument>
+            <ram:SpecifiedTradeProduct>
+                <ram:Name>Repro item</ram:Name>
+            </ram:SpecifiedTradeProduct>
+            <ram:SpecifiedLineTradeAgreement>
+                <ram:NetPriceProductTradePrice>
+                    <ram:ChargeAmount>100.00</ram:ChargeAmount>
+                </ram:NetPriceProductTradePrice>
+            </ram:SpecifiedLineTradeAgreement>
+            <ram:SpecifiedLineTradeDelivery>
+                <ram:BilledQuantity unitCode="C62">1</ram:BilledQuantity>
+            </ram:SpecifiedLineTradeDelivery>
+            <ram:SpecifiedLineTradeSettlement>
+                <ram:ApplicableTradeTax>
+                    <ram:TypeCode>VAT</ram:TypeCode>
+                    <ram:ExemptionReason>Not subject to VAT</ram:ExemptionReason>
+                    <ram:CategoryCode>O</ram:CategoryCode>
+                    <!-- BR-O-05: line-level VAT for category O MUST NOT contain a rate -->
+                </ram:ApplicableTradeTax>
+                <ram:SpecifiedTradeSettlementLineMonetarySummation>
+                    <ram:LineTotalAmount>100.00</ram:LineTotalAmount>
+                </ram:SpecifiedTradeSettlementLineMonetarySummation>
+            </ram:SpecifiedLineTradeSettlement>
+        </ram:IncludedSupplyChainTradeLineItem>
+        <ram:ApplicableHeaderTradeAgreement>
+            <ram:SellerTradeParty>
+                <ram:Name>Seller GmbH</ram:Name>
+                <ram:PostalTradeAddress>
+                    <ram:CountryID>DE</ram:CountryID>
+                </ram:PostalTradeAddress>
+            </ram:SellerTradeParty>
+            <ram:BuyerTradeParty>
+                <ram:Name>Buyer GmbH</ram:Name>
+                <ram:PostalTradeAddress>
+                    <ram:CountryID>DE</ram:CountryID>
+                </ram:PostalTradeAddress>
+            </ram:BuyerTradeParty>
+        </ram:ApplicableHeaderTradeAgreement>
+        <ram:ApplicableHeaderTradeDelivery/>
+        <ram:ApplicableHeaderTradeSettlement>
+            <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
+            <ram:ApplicableTradeTax>
+                <ram:CalculatedAmount>0.00</ram:CalculatedAmount>
+                <ram:TypeCode>VAT</ram:TypeCode>
+                <ram:ExemptionReason>Not subject to VAT</ram:ExemptionReason>
+                <ram:BasisAmount>100.00</ram:BasisAmount>
+                <ram:CategoryCode>O</ram:CategoryCode>
+                <!-- BR-DE-14: header VAT breakdown MUST contain a rate (0.00) even for category O -->
+                <ram:RateApplicablePercent>0.00</ram:RateApplicablePercent>
+            </ram:ApplicableTradeTax>
+            <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+                <ram:LineTotalAmount>100.00</ram:LineTotalAmount>
+                <ram:TaxBasisTotalAmount>100.00</ram:TaxBasisTotalAmount>
+                <ram:TaxTotalAmount currencyID="EUR">0.00</ram:TaxTotalAmount>
+                <ram:GrandTotalAmount>100.00</ram:GrandTotalAmount>
+                <ram:DuePayableAmount>100.00</ram:DuePayableAmount>
+            </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+        </ram:ApplicableHeaderTradeSettlement>
+    </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>
