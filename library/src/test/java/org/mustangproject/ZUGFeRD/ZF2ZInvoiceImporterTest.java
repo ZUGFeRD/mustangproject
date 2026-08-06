@@ -195,7 +195,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 
 	public void testPDFA4Import() {
-		File PDFA4inputFile = getResourceAsFile("pdfa4-EXTENDED_Fremdwaehrung_wdis_fx.pdf");
+		File PDFA4inputFile = getResourceAsFile("EXTENDED_Fremdwaehrung_wdis_fx-pdfa4.pdf");
 
 		boolean hasExceptions = false;
 		CalculatedInvoice invoice = new CalculatedInvoice();
