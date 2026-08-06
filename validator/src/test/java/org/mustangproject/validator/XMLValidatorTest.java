@@ -547,4 +547,25 @@ public class XMLValidatorTest extends ResourceCase {
 			// ignore, will be in XML output anyway
 		}
 	}
+
+  public void testVAT_O() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("valid_with_VAT_O.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("invalid", content);
+			assertThat(s).valueByXPath("count(//warning)").asInt().isEqualTo(1);
+		} catch (final IrrecoverableValidationError e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
 }

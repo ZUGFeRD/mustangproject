@@ -168,7 +168,6 @@ public class Item implements IZUGFeRDExportableItem {
 			.forEach(this::addAdditionalReference);
 
 		// ubl
-
 		itemMap.getAsNodeMap("OrderLineReference")
 			// ubl
 			.flatMap(bordNodes -> bordNodes.getAsString("LineID"))
@@ -399,8 +398,8 @@ public class Item implements IZUGFeRDExportableItem {
 				String taxCategoryCode = taxChildMap.getAsStringOrNull("CategoryCode");
 				BigDecimal rateApplicablePercent = taxChildMap.getAsBigDecimal("RateApplicablePercent", "ApplicablePercent").orElse(null);
 
-				if (taxCategoryCode != null && rateApplicablePercent != null && taxCategoryCode.equals(this.product.taxCategoryCode) && rateApplicablePercent.compareTo(this.product.getVATPercent()) == 0) {
-					// If product Exemption not already set (i.e. by per line-item exemption fields, set it from VAT Breakdown
+				if (taxCategoryCode != null && rateApplicablePercent != null && taxCategoryCode.equals(this.product.taxCategoryCode) && (this.product.getVATPercent() == null || rateApplicablePercent.compareTo(this.product.getVATPercent()) == 0)) {
+					// If product Exempt not already set (i.e. by per line-item exempt fields, set it from VAT Breakdown
 					if (this.product.getTaxExemptionReason() == null) {
 						this.product.setTaxExemptionReason(taxChildMap.getAsStringOrNull("ExemptionReason"));
 					}
