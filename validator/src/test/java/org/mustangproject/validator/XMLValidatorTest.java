@@ -4,7 +4,6 @@ import java.io.File;
 
 import javax.xml.transform.Source;
 
-import org.junit.Test;
 import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
@@ -183,8 +182,6 @@ public class XMLValidatorTest extends ResourceCase {
 			noException = false;
 		}
 		assertFalse(noException);
-		noException=true;
-
 	}
 
 	public void testZF1XMLValidation() {
@@ -307,6 +304,34 @@ public class XMLValidatorTest extends ResourceCase {
 			assertThat(s).valueByXPath("count(//warning)")
 				.asInt()
 				.isEqualTo(4);
+
+		} catch (final IrrecoverableValidationError e) {
+			// ignore, will be in XML output anyway
+		}
+
+	}
+
+	public void testDisableArithmeticCheck() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		xv.disableArithmeticCheck();
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("invalidArithmetics.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("valid", content);
+			assertThat(s).valueByXPath("count(//warning)")
+				.asInt()
+				.isLessThan(4);
+			assertThat(s).valueByXPath("count(//warning[contains(text(),\"Arithmetical issue\")])")
+				.asInt()
+				.isEqualTo(0);
 
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
@@ -441,7 +466,6 @@ public class XMLValidatorTest extends ResourceCase {
 	public void testSubInvoiceLineHierarchy() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
-		final XPathEngine xpath = new JAXPXPathEngine();
 
 		// test invalid hierarchy: GROUP sum does not match DETAIL children sum
 		// GROUP 01 has LineTotalAmount=999, but children sum to 1050 (600+450)
@@ -467,7 +491,6 @@ public class XMLValidatorTest extends ResourceCase {
 			xv.validate();
 
 			String s = "<validation>" + xv.getXMLResult() + "</validation>";
-			// hierarchy mismatch should produce at least one warning
 			assertThat(s).valueByXPath("count(//warning)")
 				.asInt()
 				.isEqualTo(0);
@@ -475,9 +498,74 @@ public class XMLValidatorTest extends ResourceCase {
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
 		}
-
-
-
 	}
 
+	public void testRoundingDifferenceIsInTolerance() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("roundingDifferenceIsInTolerance.xml");
+		boolean noExceptions = true;
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+
+			// must be valid overall
+			String status = xpath.evaluate("/validation/summary/@status", source);
+
+			assertThat(s).valueByXPath("count(//warning)")
+			.asInt()
+			.isEqualTo(1);
+
+			assertEquals("valid", status);
+		} catch (IrrecoverableValidationError e) {
+			noExceptions = false;
+		}
+		assertTrue(noExceptions);
+  }
+
+  public void testRecalc() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("XRechnung_internalRecalcBug.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s="<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("valid", content);
+			assertThat(s).valueByXPath("count(//warning)").asInt().isEqualTo(1);
+		} catch (final IrrecoverableValidationError e) {
+			// ignore, will be in XML output anyway
+		}
+	}
+
+  public void testVAT_O() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("valid_with_VAT_O.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("invalid", content);
+			assertThat(s).valueByXPath("count(//warning)").asInt().isEqualTo(1);
+		} catch (final IrrecoverableValidationError e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
 }

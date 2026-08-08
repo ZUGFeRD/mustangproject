@@ -60,8 +60,7 @@ public class VATAmount {
 		this.dueDateTypeCode = dueDateTypeCode;
 	}
 
-	public VATAmount(BigDecimal basis, BigDecimal calculated, String categoryCode, String dueDateTypeCode, BigDecimal applicablePercent)
-	{
+	public VATAmount(BigDecimal basis, BigDecimal calculated, String categoryCode, String dueDateTypeCode, BigDecimal applicablePercent) {
 		super();
 		this.basis = basis;
 		this.calculated = calculated;
@@ -116,27 +115,6 @@ public class VATAmount {
 		return this;
 	}
 
-	/**
-	 *
-	 * @deprecated Use {@link #getCategoryCode() instead}
-	 * @return String with category code
-	 */
-	@Deprecated
-	public String getDocumentCode() {
-		return categoryCode;
-	}
-
-	/**
-     * @param documentCode as String
-	 * @deprecated Use {@link #setCategoryCode(String)} instead
-	 * @return fluent setter
-	 */
-	@Deprecated
-	public VATAmount setDocumentCode(String documentCode) {
-		this.categoryCode = documentCode;
-		return this;
-	}
-
 	public String getCategoryCode() {
 		return categoryCode;
 	}
@@ -157,7 +135,7 @@ public class VATAmount {
 
 	public VATAmount add(VATAmount v) {
 		return new VATAmount(basis.add(v.getBasis()), calculated.add(v.getCalculated()), this.categoryCode, this.dueDateTypeCode)
-			.setVatExemptionReasonCode(v.getVatExemptionReasonCode() != null ? v.getVatExemptionReasonCode(): this.vatExemptionReasonCode);
+			.setVatExemptionReasonCode(v.getVatExemptionReasonCode() != null ? v.getVatExemptionReasonCode() : this.vatExemptionReasonCode);
 
 	}
 

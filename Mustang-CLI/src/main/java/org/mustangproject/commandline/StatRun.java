@@ -20,11 +20,14 @@ package org.mustangproject.commandline;
 
 import java.math.BigDecimal;
 
+/***
+ * recursive check through directories on how many files are e.g. ZUGFeRD
+ */
 public class StatRun {
-	private int pdfCount = 0;
-	private int horseCount = 0;
-	private int fileCount = 0;
-	private int dirCount = 0;
+	private int pdfCount;
+	private int horseCount;
+	private int fileCount;
+	private int dirCount;
 	private BigDecimal total = BigDecimal.ZERO;
 	private boolean checkFileExt = true;
 
@@ -32,6 +35,10 @@ public class StatRun {
 		checkFileExt = false;
 	}
 
+	/***
+	 * in some cases, files need to be checked, even if they lack PDF or XML file extensions
+	 * @return
+	 */
 	public boolean shallIgnoreFileExt() {
 		return !checkFileExt;
 	}
@@ -52,6 +59,10 @@ public class StatRun {
 		dirCount++;
 	}
 
+	/***
+	 * how many files were parsed
+	 * @return the number
+	 */
 	public int getFileCount() {
 		return fileCount;
 	}
@@ -64,6 +75,10 @@ public class StatRun {
 		return horseCount;
 	}
 
+	/***
+	 * how many (sub) directories were parsed
+	 * @return the number
+	 */
 	public int getDirCount() {
 		return dirCount;
 	}
@@ -74,11 +89,9 @@ public class StatRun {
 	 * @return english string with linefeeds detailling number of files, directories, number of pdfs and of zugferd files
 	 */
 	public String getSummaryLine() {
-
 		return "\r\n===================================================================\r\n" + String.format(
 				"Files:\t%d\tDirs:\t%d\tPDF:\t%d\tZUGFeRD:\t%d\tTotal:\t%s\r\n",
 				getFileCount(), getDirCount(), getPDFCount(), getZUGFeRDCount(), total.toString());
-
 	}
 
 	/**
@@ -91,8 +104,7 @@ public class StatRun {
 	}
 
 	public void incTotal(BigDecimal delta) {
-		total=total.add(delta);
-		
+		total = total.add(delta);
 	}
 
 

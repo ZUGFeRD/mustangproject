@@ -97,7 +97,7 @@ public interface IZUGFeRDExportableTradeParty {
 	 * @return String the email, or null
 	 */
 	default String getEmail() {
-		if ((getUriUniversalCommunicationIDScheme()!=null)&&(getUriUniversalCommunicationIDScheme().equals("EM"))) {
+		if (getUriUniversalCommunicationIDScheme() != null && getUriUniversalCommunicationIDScheme().equals("EM")) {
 			return getUriUniversalCommunicationID();
 		}
 		return null;
@@ -121,7 +121,9 @@ public interface IZUGFeRDExportableTradeParty {
 	/**
 	 * @return description, e.g. if it's a small company
 	 */
-	default String getDescription() { return null; }
+	default String getDescription() {
+		return null;
+	}
 
 	/**
 	 * Postal code of the recipient

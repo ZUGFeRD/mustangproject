@@ -19,6 +19,10 @@ import org.mustangproject.validator.ZUGFeRDValidator;
 
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
+/***
+ * like the statrun for metrics, this is used to recursively check directories if
+ * the present einvoice files are valid or not
+ */
 public class ValidatorFileWalker
 	extends SimpleFileVisitor<Path> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ValidatorFileWalker.class.getCanonicalName()); // log
@@ -37,6 +41,10 @@ public class ValidatorFileWalker
 
 	}
 
+	/***
+	 * returns the overall result
+	 * @return true if no errors
+	 */
 	public boolean getResult() {
 		return allValid;
 	}
@@ -44,8 +52,7 @@ public class ValidatorFileWalker
 	// Print information about
 	// each type of file.
 	@Override
-	public FileVisitResult visitFile(Path file,
-									 BasicFileAttributes attr) {
+	public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		//get current date time with Date()
 		Date date = new Date();
@@ -53,10 +60,10 @@ public class ValidatorFileWalker
 		if (!expectValid) {
 			expectedString = "invalid";
 		}
-		if ((attr != null) && (attr.isRegularFile())) {
+		if (attr != null && attr.isRegularFile()) {
 			if (matcher.matches(file.getFileName())) {
 				// I could have extended the path matcher but an exclusion list is quite simple
-				if ((excludedFiles == null) || (!Arrays.asList(excludedFiles).contains(file.getFileName().toString()))) {
+				if (excludedFiles == null || !Arrays.asList(excludedFiles).contains(file.getFileName().toString())) {
 
 					String thisResultString = "  valid";
 					try {

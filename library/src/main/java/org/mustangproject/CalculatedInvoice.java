@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.TransactionCalculator;
 import org.mustangproject.ZUGFeRD.VATAmount;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -22,45 +20,55 @@ import java.math.BigDecimal;
  */
 public class CalculatedInvoice extends Invoice implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+
 	/***
 	 * de factor the total net amount
 	 */
-	protected BigDecimal lineTotalAmount=null;
+	protected BigDecimal lineTotalAmount;
 	/**
 	 * still to be paid
 	 */
-	protected BigDecimal duePayable=null;
+	protected BigDecimal duePayable;
 	/**
 	 * originally to be paid (without prepayments)
 	 */
-	protected BigDecimal grandTotal=null;
+	protected BigDecimal grandTotal;
 	/**
 	 * the net amount upon which value added taxes are applied
 	 */
-	protected BigDecimal taxBasis=null;
+	protected BigDecimal taxBasis;
 	/**
 	 * the total sum of value added taxes
 	 */
-	protected BigDecimal VATtotal=null;
-	/**
+	protected BigDecimal VATtotal;
+  /**
 	 * the total sum of value added taxes in accounting currency
 	 */
 	private BigDecimal VATTotalInAccountingCurrency;
-	protected TransactionCalculator tc=null;
+	protected TransactionCalculator tc; // the object this invoice is calculated wih
 
-    public void calculate() {
-		tc=new TransactionCalculator(this);
-        grandTotal=tc.getGrandTotal();
-		lineTotalAmount=tc.getValue();
-		duePayable=tc.getDuePayable();
-		taxBasis= tc.getTaxBasis();
-		VATtotal=BigDecimal.ZERO;
+	/***
+	 * calculate all sums and products, and taxes
+	 */
+	public void calculate() {
+		tc = new TransactionCalculator(this);
+		grandTotal = tc.getGrandTotal();
+		lineTotalAmount = tc.getValue();
+		duePayable = tc.getDuePayable();
+		taxBasis = tc.getTaxBasis();
+		VATtotal = BigDecimal.ZERO;
 		for (VATAmount vam:getCalculation().getTaxDetails()) {
-			VATtotal=VATtotal.add(vam.getCalculated());
+			VATtotal = VATtotal.add(vam.getCalculated());
 		}
-    }
+	}
+
+	/***
+	 * the total sum of everything, including taxes
+	 * @return a money amount
+	 */
 	public BigDecimal getGrandTotal() {
-		if (grandTotal==null) {
+		if (grandTotal == null) {
 			calculate();
 		}
 		return grandTotal;
@@ -73,11 +81,16 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 	 * @return fluent setter
 	 */
 	public CalculatedInvoice setGrandTotal(BigDecimal grand) {
-		grandTotal=grand;
+		grandTotal = grand;
 		return this;
 	}
+
+	/***
+	 * the net amount of all taxable goods
+	 * @return money amount
+	 */
 	public BigDecimal getTaxBasis() {
-		if (taxBasis==null) {
+		if (taxBasis == null) {
 			calculate();
 		}
 		return taxBasis;
@@ -90,12 +103,16 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 	 * @return fluent setter
 	 */
 	public CalculatedInvoice setTaxBasis(BigDecimal basis) {
-		taxBasis=basis;
+		taxBasis = basis;
 		return this;
 	}
 
+	/***
+	 * the amount still to be paid
+	 * @return the money amount
+	 */
 	public BigDecimal getDuePayable() {
-		if (duePayable==null) {
+		if (duePayable == null) {
 			calculate();
 		}
 		return duePayable;
@@ -108,12 +125,16 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 	 * @return fluent setter
 	 */
 	public CalculatedInvoice setDuePayable(BigDecimal due) {
-		duePayable=due;
+		duePayable = due;
 		return this;
 	}
 
+	/***
+	 * the total net amount
+	 * @return the money amount
+	 */
 	public BigDecimal getLineTotalAmount() {
-		if (lineTotalAmount==null) {
+		if (lineTotalAmount == null) {
 			calculate();
 		}
 		return lineTotalAmount;
@@ -126,7 +147,7 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 	 * @return fluent setter
 	 */
 	public CalculatedInvoice setVATtotal(BigDecimal parsedValue) {
-		VATtotal=parsedValue;
+		VATtotal = parsedValue;
 		return this;
 	}
 
@@ -135,7 +156,7 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 	 * @return expect a value close to getGrandTotal-LineTotalAmount
 	 */
 	public BigDecimal getVATtotal() {
-		if (VATtotal==null) {
+		if (VATtotal == null) {
 			calculate();
 		}
 		return VATtotal;
@@ -162,7 +183,7 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 	 * @return fluent setter
 	 */
 	public CalculatedInvoice setLineTotalAmount(BigDecimal total) {
-		lineTotalAmount=total;
+		lineTotalAmount = total;
 		return this;
 	}
 

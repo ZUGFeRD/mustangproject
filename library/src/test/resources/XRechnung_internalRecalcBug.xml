@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
+    <rsm:ExchangedDocumentContext>
+        <ram:BusinessProcessSpecifiedDocumentContextParameter>
+            <ram:ID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</ram:ID>
+        </ram:BusinessProcessSpecifiedDocumentContextParameter>
+        <ram:GuidelineSpecifiedDocumentContextParameter>
+            <ram:ID>urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0</ram:ID>
+        </ram:GuidelineSpecifiedDocumentContextParameter>
+    </rsm:ExchangedDocumentContext>
+    <rsm:ExchangedDocument>
+        <ram:ID>inv-4711</ram:ID>
+        <ram:TypeCode>380</ram:TypeCode>
+        <ram:IssueDateTime>
+            <udt:DateTimeString format="102">20260622</udt:DateTimeString>
+        </ram:IssueDateTime>
+        <ram:IncludedNote>
+            <ram:Content>
+                ACME GmbH
+Bei Spiel Straße 10
+DE-12345 Berlin
+
+Web: www.example.de
+E-Mail: mail@example.de
+
+Handelsregister HRB 123456
+Amtsgericht Berlin
+USt-IdNr.: DE123456789
+
+Geschäftsführer:
+- Max Mustermann
+            </ram:Content>
+            <ram:SubjectCode>REG</ram:SubjectCode>
+        </ram:IncludedNote>
+    </rsm:ExchangedDocument>
+    <rsm:SupplyChainTradeTransaction>
+<ram:IncludedSupplyChainTradeLineItem>
+    <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>1</ram:LineID>
+    </ram:AssociatedDocumentLineDocument>
+    <ram:SpecifiedTradeProduct>
+        <ram:Name>
+            Datenmenge
+            Zeitraum: 01.06.2026 - 30.06.2026
+            0.01215200 Euro für 30 Tag(e) pro GB
+        </ram:Name>
+    </ram:SpecifiedTradeProduct>
+    <ram:SpecifiedLineTradeAgreement>
+        <ram:NetPriceProductTradePrice>
+            <ram:ChargeAmount>0.01</ram:ChargeAmount>
+        </ram:NetPriceProductTradePrice>
+    </ram:SpecifiedLineTradeAgreement>
+    <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="E34">1024</ram:BilledQuantity>
+    </ram:SpecifiedLineTradeDelivery>
+    <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+            <ram:TypeCode>VAT</ram:TypeCode>
+            <ram:CategoryCode>AE</ram:CategoryCode>
+            <ram:RateApplicablePercent>0.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+            <ram:StartDateTime>
+                <udt:DateTimeString format="102">20260601</udt:DateTimeString>
+            </ram:StartDateTime>
+            <ram:EndDateTime>
+                <udt:DateTimeString format="102">20260630</udt:DateTimeString>
+            </ram:EndDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+            <ram:LineTotalAmount>12.44</ram:LineTotalAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+    </ram:SpecifiedLineTradeSettlement>
+</ram:IncludedSupplyChainTradeLineItem>
+        <ram:ApplicableHeaderTradeAgreement>
+            <ram:BuyerReference>inv-4711</ram:BuyerReference>
+            <ram:SellerTradeParty>
+                <ram:Name>ACME GmbH</ram:Name>
+                <ram:DefinedTradeContact>
+                    <ram:DepartmentName>ACME GmbH</ram:DepartmentName>
+                    <ram:TelephoneUniversalCommunication>
+                        <ram:CompleteNumber>+4940428990</ram:CompleteNumber>
+                    </ram:TelephoneUniversalCommunication>
+                    <ram:EmailURIUniversalCommunication>
+                        <ram:URIID>mail@example.de</ram:URIID>
+                    </ram:EmailURIUniversalCommunication>
+                </ram:DefinedTradeContact>
+                <ram:PostalTradeAddress>
+                    <ram:PostcodeCode>12345</ram:PostcodeCode>
+                    <ram:LineOne>Bei Spiel Straße 10</ram:LineOne>
+                    <ram:CityName>Berlin</ram:CityName>
+                    <ram:CountryID>DE</ram:CountryID>
+                </ram:PostalTradeAddress>
+                <ram:URIUniversalCommunication>
+                    <ram:URIID schemeID="EM">mail@example.de</ram:URIID>
+                </ram:URIUniversalCommunication>
+                <ram:SpecifiedTaxRegistration>
+                    <ram:ID schemeID="VA">DE123456789</ram:ID>
+                </ram:SpecifiedTaxRegistration>
+            </ram:SellerTradeParty>
+            <ram:BuyerTradeParty>
+                <ram:Name>Customer Inc.</ram:Name>
+                <ram:PostalTradeAddress>
+                    <ram:PostcodeCode>1234</ram:PostcodeCode>
+                    <ram:LineOne>Bei Spiel Straße 42</ram:LineOne>
+                    <ram:CityName>Luxembourg</ram:CityName>
+                    <ram:CountryID>LU</ram:CountryID>
+                </ram:PostalTradeAddress>
+                <ram:URIUniversalCommunication>
+                    <ram:URIID schemeID="EM">info@example.com</ram:URIID>
+                </ram:URIUniversalCommunication>
+                <ram:SpecifiedTaxRegistration>
+                    <ram:ID schemeID="VA">LU123456</ram:ID>
+                </ram:SpecifiedTaxRegistration>
+            </ram:BuyerTradeParty>
+        </ram:ApplicableHeaderTradeAgreement>
+        <ram:ApplicableHeaderTradeDelivery>
+        </ram:ApplicableHeaderTradeDelivery>
+        <ram:ApplicableHeaderTradeSettlement>
+            <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
+            <ram:SpecifiedTradeSettlementPaymentMeans>
+                <ram:TypeCode>30</ram:TypeCode>
+                <ram:PayeePartyCreditorFinancialAccount>
+                    <ram:IBANID>DE22305605914243447775</ram:IBANID>
+                </ram:PayeePartyCreditorFinancialAccount>
+            </ram:SpecifiedTradeSettlementPaymentMeans>
+            <ram:ApplicableTradeTax>
+                <ram:CalculatedAmount>0.00</ram:CalculatedAmount>
+                <ram:TypeCode>VAT</ram:TypeCode><ram:ExemptionReason>Reverse charge</ram:ExemptionReason>
+                <ram:BasisAmount>12.44</ram:BasisAmount>
+                <ram:CategoryCode>AE</ram:CategoryCode>
+                <ram:RateApplicablePercent>0.00</ram:RateApplicablePercent>
+            </ram:ApplicableTradeTax>
+            <ram:SpecifiedTradePaymentTerms>
+                <ram:DueDateDateTime>
+                    <udt:DateTimeString format="102">20260706</udt:DateTimeString>
+                </ram:DueDateDateTime>
+            </ram:SpecifiedTradePaymentTerms>
+            <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+                <ram:LineTotalAmount>12.44</ram:LineTotalAmount>
+                <ram:TaxBasisTotalAmount>12.44</ram:TaxBasisTotalAmount>
+                <ram:TaxTotalAmount currencyID="EUR">0.00</ram:TaxTotalAmount>
+                <ram:GrandTotalAmount>12.44</ram:GrandTotalAmount>
+                <ram:TotalPrepaidAmount>0.00</ram:TotalPrepaidAmount>
+                <ram:DuePayableAmount>12.44</ram:DuePayableAmount>
+            </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+        </ram:ApplicableHeaderTradeSettlement>
+    </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>
+
