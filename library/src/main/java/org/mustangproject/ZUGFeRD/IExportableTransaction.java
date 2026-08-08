@@ -325,7 +325,9 @@ public interface IExportableTransaction {
 	 *
 	 * @return three character currency code for the deviating VAT currency
 	 */
-	default String getTaxCurrency() { return null; }
+	default String getTaxCurrency() {
+		return null;
+	}
 
 	/**
 	 * get payment term descriptional text e.g. Bis zum 22.10.2015 ohne Abzug
