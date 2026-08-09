@@ -1204,6 +1204,9 @@ public class ZF2PushTest extends ResourceCase {
 			fail("IOException should not be raised");
 		} catch (ParseException e) {
 			fail("ParseException should not be raised");
+		}
+	}
+
 	public void testDifferentTaxCurrency() throws XPathExpressionException, ParseException, IOException {
 		File inputFile = getResourceAsFile("Extended_fremdwaehrung.xml");
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
