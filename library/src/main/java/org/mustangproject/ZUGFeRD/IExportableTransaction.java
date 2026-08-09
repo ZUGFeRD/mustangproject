@@ -329,6 +329,14 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	default BigDecimal getTaxConversionRate() {
+		return null;
+	}
+
+	default Date getTaxConversionRateDateTime() {
+		return null;
+	}
+
 	/**
 	 * get payment term descriptional text e.g. Bis zum 22.10.2015 ohne Abzug
 	 *

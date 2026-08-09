@@ -45,7 +45,7 @@ public class CalculatedInvoice extends Invoice implements Serializable {
     /**
 	 * the total sum of value added taxes in accounting currency
 	 */
-	protected BigDecimal VATTotalInAccountingCurrency;
+	protected BigDecimal VATTotalInTaxCurrency;
 	protected TransactionCalculator tc; // the object this invoice is calculated wih
 
 	/***
@@ -58,8 +58,14 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 		duePayable = tc.getDuePayable();
 		taxBasis = tc.getTaxBasis();
 		VATtotal = BigDecimal.ZERO;
-		for (VATAmount vam:getCalculation().getTaxDetails()) {
+		for (VATAmount vam : getCalculation().getTaxDetails()) {
 			VATtotal = VATtotal.add(vam.getCalculated());
+		}
+		if (taxCurrency != null) {
+			VATTotalInTaxCurrency = BigDecimal.ZERO;
+			for (VATAmount vam : getCalculation().getTaxDetails()) {
+				VATTotalInTaxCurrency = VATTotalInTaxCurrency.add(vam.getCalculated());
+			}
 		}
 	}
 
@@ -163,16 +169,16 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 	}
 
 
-	public CalculatedInvoice setVATTotalInAccountingCurrency(BigDecimal parsedValue) {
-		VATTotalInAccountingCurrency = parsedValue;
+	public CalculatedInvoice setVATTotalInTaxCurrency(BigDecimal parsedValue) {
+		VATTotalInTaxCurrency = parsedValue;
 		return this;
 	}
 
 	/**
 	 * @return BT-111 VAT total amount in VAT accounting currency, nullable
 	 */
-	public BigDecimal getVATTotalInAccountingCurrency() {
-		return VATTotalInAccountingCurrency;
+	public BigDecimal getVATTotalInTaxCurrency() {
+		return VATTotalInTaxCurrency;
 	}
 
 

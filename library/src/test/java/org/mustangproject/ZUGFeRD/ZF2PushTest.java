@@ -21,7 +21,11 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -35,9 +39,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mustangproject.*;
 import org.mustangproject.Product.TradeProductInstanceType;
 import org.junit.FixMethodOrder;
+import org.junit.jupiter.api.Test;
 import org.junit.runners.MethodSorters;
-
-import junit.framework.TestCase;
 
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
@@ -45,11 +48,12 @@ import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
 
 import javax.xml.xpath.XPathExpressionException;
 
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ZF2PushTest extends TestCase {
+public class ZF2PushTest extends ResourceCase {
 	private static final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20201121_508.pdf";
 	private static final String TARGET_ALLOWANCESPDF = "./target/testout-ZF2PushAllowances.pdf";
 	private static final String TARGET_CREDITNOTEPDF = "./target/testout-ZF2PushCreditNote.pdf";
@@ -65,6 +69,7 @@ public class ZF2PushTest extends TestCase {
 	private static final String TARGET_INTRACOMMUNITYSUPPLYPDF = "./target/testout-ZF2PushIntraCommunitySupply.pdf";
 	private static final String TARGET_REVERSECHARGEPDF = "./target/testout-ZF2PushReverseCharge.pdf";
 	private static final String TARGET_ALLOWANCES_TAXES = "./target/testout-ZF2PushAllowancesTaxes.pdf";
+	private static final String TARGET_EXTENDED_XML = "./target/testout-Extended_fremdwaehrung.xml";
 
 	public void testPushExport() {
 		/***
@@ -1160,6 +1165,39 @@ public class ZF2PushTest extends TestCase {
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail("IOException should not be raised");
+		}
+	}
+
+	public void testDifferentTaxCurrency() throws XPathExpressionException, ParseException, IOException {
+		File inputFile = getResourceAsFile("Extended_fremdwaehrung.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.doIgnoreCalculationErrors();
+		zii.setInputStream(new FileInputStream(inputFile));
+
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		zii.extractInto(invoice);
+
+		assertNotEquals(invoice.getCurrency(), invoice.getTaxCurrency());
+		assertEquals("GBP", invoice.getCurrency());
+		assertEquals("EUR",invoice.getTaxCurrency());
+		assertEquals(BigDecimal.valueOf(163.16), invoice.getVATtotal());
+		assertEquals(BigDecimal.valueOf(183.14), invoice.getVATTotalInTaxCurrency());
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("Extended"));
+		zf2p.generateXML(invoice);
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+		assertTrue(theXML.contains("TaxCurrencyCode"));
+		assertTrue(theXML.contains("SourceCurrencyCode"));
+		assertTrue(theXML.contains("TargetCurrencyCode"));
+		assertTrue(theXML.contains("ConversionRate"));
+
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_EXTENDED_XML));
+			writer.write(theXML);
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

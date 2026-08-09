@@ -269,20 +269,11 @@ public class ZUGFeRDInvoiceImporter {
 			if (validFilenames.contains(filename)) {
 				containsMeta = true;
 
-				// String embeddedFilename = filePath + filename;
-				// File file = new File(filePath + filename);
-				// System.out.println("Writing " + embeddedFilename);
-				// ByteArrayOutputStream fileBytes=new
-				// ByteArrayOutputStream();
-				// FileOutputStream fos = new FileOutputStream(file);
-
 				try {
 					setRawXML(embeddedFile.toByteArray());
 				} catch (ParseException e) {
 					LOGGER.error("Failed to parse XML", e);
 				}
-				// fos.write(embeddedFile.getByteArray());
-				// fos.close();
 			}
 			if (filename.startsWith("additional_data")) {
 				additionalXMLs.put(filename, embeddedFile.toByteArray());
@@ -564,11 +555,35 @@ public class ZUGFeRDInvoiceImporter {
 				if (zpp.getCurrency() != null && zpp.getCurrency().equalsIgnoreCase(currencyID)) {
 					((CalculatedInvoice) zpp).setVATtotal(new BigDecimal(taxTotalStr));
 				} else if (taxCurrency != null && taxCurrency.equalsIgnoreCase(currencyID)) {
-					((CalculatedInvoice) zpp).setVATTotalInAccountingCurrency(new BigDecimal(taxTotalStr));
+					((CalculatedInvoice) zpp).setVATTotalInTaxCurrency(new BigDecimal(taxTotalStr));
 				} else if (taxTotalNodes.getLength() == 1) {
 					// try to be lenient if the currencyID doesn't match or is missing, yet this is the only value provided
 					//  Might be wrong though.
 					((CalculatedInvoice) zpp).setVATtotal(new BigDecimal(taxTotalStr));
+				}
+			}
+		}
+
+		if (taxCurrency != null) {
+			xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"TaxApplicableTradeCurrencyExchange\"]");
+			NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+			if (nodes.getLength() > 0 ) {
+				NodeList children = nodes.item(0).getChildNodes();
+				for (int index = 0; index < children.getLength(); index++) {
+					Node item = children.item(index);
+					if (item.getLocalName() != null && item.getLocalName().equals("ConversionRate")) {
+						String s = XMLTools.trimOrNull(item);
+						zpp.setTaxConversionRate(new BigDecimal(s));
+					}
+					if (item.getLocalName() != null && item.getLocalName().equals("ConversionRateDateTime")) {
+						NodeList dateTimeChilds = item.getChildNodes();
+						for (int dateChildIndex = 0; dateChildIndex < dateTimeChilds.getLength(); dateChildIndex++) {
+							if (dateTimeChilds.item(dateChildIndex).getLocalName() != null && dateTimeChilds.item(dateChildIndex).getLocalName().equals("DateTimeString")) {
+								String dateString = XMLTools.trimOrNull(dateTimeChilds.item(dateChildIndex));
+								zpp.setTaxConversionRateDateTime(parseDate(dateString, "yyyyMMdd"));
+							}
+						}
+					}
 				}
 			}
 		}
