@@ -103,15 +103,15 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	@JsonIgnore
 	public String getAsCII() {
 		String s = "<ram:SpecifiedTradePaymentTerms>"
-				+ "  <ram:Description>Cash Discount</ram:Description>"
-				+ "  <ram:ApplicableTradePaymentDiscountTerms>"
-				+ "    <ram:BasisPeriodMeasure unitCode=\"DAY\">" + days + "</ram:BasisPeriodMeasure>";
+				+ "<ram:Description>Cash Discount</ram:Description>"
+				+ "<ram:ApplicableTradePaymentDiscountTerms>"
+				+ "<ram:BasisPeriodMeasure unitCode=\"DAY\">" + days + "</ram:BasisPeriodMeasure>";
 		if (basisAmount != null) {
-			s += "    <ram:BasisAmount>" + XMLTools.nDigitFormat(basisAmount, 2) + "</ram:BasisAmount>";
+			s += "<ram:BasisAmount>" + XMLTools.nDigitFormat(basisAmount, 2) + "</ram:BasisAmount>";
 		}
-		s += "    <ram:CalculationPercent>" + XMLTools.nDigitFormat(percent, 3) + "</ram:CalculationPercent>" +
-				"  </ram:ApplicableTradePaymentDiscountTerms>" +
-				"</ram:SpecifiedTradePaymentTerms>";
+		s += "<ram:CalculationPercent>" + XMLTools.nDigitFormat(percent, 3) + "</ram:CalculationPercent>"
+				+ "</ram:ApplicableTradePaymentDiscountTerms>"
+				+ "</ram:SpecifiedTradePaymentTerms>";
 		return s;
 	}
 

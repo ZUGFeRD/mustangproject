@@ -68,8 +68,7 @@ public abstract class Validator {
 			validator.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 			validator.validate(xmlData);
 		} catch (SAXException e) {
-			context.addResultItem(new ValidationResultItem(ESeverity.error, "schema validation fails:" + e)
-					.setSection(section).setPart(part));
+			context.addResultItem(new ValidationResultItem(ESeverity.error, "schema validation fails:" + e).setSection(section).setPart(part));
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
