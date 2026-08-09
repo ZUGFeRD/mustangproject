@@ -50,14 +50,17 @@ public class XMLValidator extends Validator {
 	// ignored for the
 	// time being
 
+	private static final String ZUGEFERD_1_XSLT = "/xslt/ZUGFeRD_1p0.xslt";
+	private static final String EN16931_UBL_SCHEMATRON = "/xslt/en16931schematron/EN16931-UBL-validation.xslt";
+	private static final String OX10_COMFORT_XSLT = "/xslt/OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B_COMFORT.xslt";
+
 	protected String zfXML = "";
 	protected String filename = "";
 	int firedRules;
 	int failedRules;
 	boolean disableNotices;
 	boolean disableArithmeticCheck;
-	ISchematronResource aResSCH;
-
+	boolean disableXRechnungXSDValidation;
 
 	public XMLValidator(ValidationContext ctx) {
 		super(ctx);
@@ -218,9 +221,8 @@ public class XMLValidator extends Validator {
 					isOrderX = true;
 					isBasic = contextProfile.contains("basic");
 					isEN16931 = contextProfile.contains("comfort");
-					isExtended = contextProfile.contains("extended");
 					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B.xsd", 99, EPart.ox);
-					xsltFilename = "/xslt/OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B_COMFORT.xslt";
+					xsltFilename = XMLValidator.OX10_COMFORT_XSLT;
 
 				} else if (root.getLocalName().equalsIgnoreCase("CrossIndustryInvoice")) { // ZUGFeRD 2.0 or Factur-X
 					context.setGeneration("2");
@@ -268,11 +270,12 @@ public class XMLValidator extends Validator {
 					} else if (isXRechnung) {
 						LOGGER.debug("is XRechnung");
 						/*
-						the validation against the XRechnung Schematron will happen below but a
-						XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.xslt=schematron also has to pass
-						* */
-						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
-
+							the validation against the XRechnung Schematron will happen below but a
+							XRechnung is a EN16931 subset so the validation vis a vis FACTUR-X_EN16931.xslt=schematron also has to pass
+						*/
+						if (!disableXRechnungXSDValidation) {
+							validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/EN16931/FACTUR-X_EN16931.xsd", 18, EPart.fx);
+						}
 						XrechnungSeverity = ESeverity.error;
 					} else if (isExtended) {
 						LOGGER.debug("is EXTENDED");
@@ -293,7 +296,7 @@ public class XMLValidator extends Validator {
 					// UBL
 					LOGGER.debug("UBL");
 					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "UBL_21/maindoc/UBL-" + rootLocalName + "-2.1.xsd", 18, EPart.fx);
-					xsltFilename = "/xslt/en16931schematron/EN16931-UBL-validation.xslt";
+					xsltFilename = XMLValidator.EN16931_UBL_SCHEMATRON;
 
 					mainSchematronSectionErrorTypeCode = 24;
 
@@ -330,7 +333,7 @@ public class XMLValidator extends Validator {
 					}
 					validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), "ZF_10/ZUGFeRD1p0.xsd", 18, EPart.fx);
 
-					xsltFilename = "/xslt/ZUGFeRD_1p0.xslt";
+					xsltFilename = XMLValidator.ZUGEFERD_1_XSLT;
 				} else { // unknown document root
 					context.addResultItem(new ValidationResultItem(ESeverity.fatal, "Unsupported root element")
 						.setSection(3).setPart(EPart.fx));
@@ -461,20 +464,15 @@ public class XMLValidator extends Validator {
 
 			// check sub invoice line hierarchy if present
 			checkSubInvoiceLineHierarchy(ci, context);
-
 		} catch ( ArithmeticException e) {
 			try {
 				context.addResultItem(new ValidationResultItem(ESeverity.warning, "Arithmetical issue:" + e.getMessage()).setSection(10));
-
 			} catch (IrrecoverableValidationError ie) {
 				LOGGER.error(ie.getMessage(), ie);
 			}
-		} catch (XPathExpressionException e) {
-			LOGGER.error(e.getMessage(), e);
-		} catch (ParseException e) {
+		} catch (ParseException | XPathExpressionException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
-
 	}
 
 	/***

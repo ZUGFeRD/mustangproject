@@ -354,13 +354,46 @@ public class XMLValidatorTest extends ResourceCase {
 			String content = xpath.evaluate("/validation/summary/@status", source);
 			assertEquals("valid", content);
 
-
 		} catch (IrrecoverableValidationError e) {
-
 			noExceptions = false;
 		}
 		assertTrue(noExceptions);
+	}
 
+	public void testXRValidationUNCEFACT() {
+		XPathEngine xpath = new JAXPXPathEngine();
+
+		boolean noExceptions = true;
+		File tempFile = getResourceAsFile("01.01a-INVOICE_uncefact.xml");
+		try {
+			{
+				ValidationContext ctx = new ValidationContext(null);
+				XMLValidator xv = new XMLValidator(ctx);
+				xv.setFilename(tempFile.getAbsolutePath());
+				xv.disableXRechnungXSDValidation = false;
+				xv.validate();
+
+				String s = xv.getXMLResult();
+				Source source = Input.fromString("<validation>" + s + "</validation>").build();
+				String content = xpath.evaluate("/validation/summary/@status", source);
+				assertEquals("invalid", content);
+			}
+			{
+				ValidationContext ctx = new ValidationContext(null);
+				XMLValidator xv = new XMLValidator(ctx);
+				xv.setFilename(tempFile.getAbsolutePath());
+				xv.disableXRechnungXSDValidation = true;
+				xv.validate();
+
+				String s = xv.getXMLResult();
+				Source source = Input.fromString("<validation>" + s + "</validation>").build();
+				String content = xpath.evaluate("/validation/summary/@status", source);
+				assertEquals("valid", content);
+			}
+		} catch (IrrecoverableValidationError e) {
+			noExceptions = false;
+		}
+		assertTrue(noExceptions);
 	}
 
 	public void testFrenchSchematronValidation() {

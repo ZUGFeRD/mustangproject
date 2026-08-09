@@ -443,7 +443,7 @@ public class ZF2PushTest extends ResourceCase {
 
 
 	/***
-	 * you can activate intra community suppliy on item level
+	 * you can activate intra community supply on item level
 	 */
 	public void testIntraCommunitySupplyItemExport() {
 
@@ -786,6 +786,7 @@ public class ZF2PushTest extends ResourceCase {
 			assertEquals(orgID, i.getSender().getID());
 			assertEquals("Verwendungszweck", i.getPaymentReference());
 			assertEquals("Rechnung", i.getDocumentName());
+			assertNotNull(i.getTenderReferencedDocument().getFormattedIssueDateTime());
 
 			assertEquals("++49555123456",i.getRecipient().getContact().getFax());
 
@@ -1165,6 +1166,44 @@ public class ZF2PushTest extends ResourceCase {
 		} catch (IOException e) {
 			e.printStackTrace();
 			fail("IOException should not be raised");
+		}
+	}
+
+	public void testDuplicateDirectDebit() {
+		String orgname = "Test company";
+		String number = "123";
+		String despatchAdviceReferencedDocumentID = "DESADV-4711";
+		String priceStr = "1.00";
+		BigDecimal price = new BigDecimal(priceStr);
+		BigDecimal qty = new BigDecimal(1.0);
+		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
+			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
+			ze.ignorePDFAErrors().load(SOURCE_PDF);
+			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile("EXTENDED");
+			Invoice i = new Invoice().setIssueDate(new Date()).setDueDate(new Date()).setDetailedDeliveryPeriod(new Date(), new Date()).setDeliveryDate(new Date())
+				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815")
+						.addBankDetails(new BankDetails("DE88200800000970375700", "COBADEFFXXX"))
+						.addDebitDetails(new DirectDebit("DE947009010010001XXXXX", "XY1961-1"))
+						.addDebitDetails(new DirectDebit("DE887115257006200XXXXX", "XY90012")))
+				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE0815"))
+				.setNumber(number)
+				.setDespatchAdviceReferencedDocument(new ReferencedDocument(despatchAdviceReferencedDocumentID))
+				.setDeliveryNoteReferencedDocument(new ReferencedDocument("0815").setFormattedIssueDateTime(new SimpleDateFormat("dd.MM.yyyy").parse("01.04.2016")))
+				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, qty))
+				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, qty))
+				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, qty)).setCreditNote();
+			try {
+				ze.setTransaction(i);
+			} catch ( IllegalStateException e ) {
+				i.getSender().getDebitDetails().remove(1);
+				ze.setTransaction(i);
+			}
+			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
+			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+		} catch (IOException e) {
+			fail("IOException should not be raised");
+		} catch (ParseException e) {
+			fail("ParseException should not be raised");
 		}
 	}
 
