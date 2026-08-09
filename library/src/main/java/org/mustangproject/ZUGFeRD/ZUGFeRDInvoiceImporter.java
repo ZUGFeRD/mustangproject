@@ -269,20 +269,11 @@ public class ZUGFeRDInvoiceImporter {
 			if (validFilenames.contains(filename)) {
 				containsMeta = true;
 
-				// String embeddedFilename = filePath + filename;
-				// File file = new File(filePath + filename);
-				// System.out.println("Writing " + embeddedFilename);
-				// ByteArrayOutputStream fileBytes=new
-				// ByteArrayOutputStream();
-				// FileOutputStream fos = new FileOutputStream(file);
-
 				try {
 					setRawXML(embeddedFile.toByteArray());
 				} catch (ParseException e) {
 					LOGGER.error("Failed to parse XML", e);
 				}
-				// fos.write(embeddedFile.getByteArray());
-				// fos.close();
 			}
 			if (filename.startsWith("additional_data")) {
 				additionalXMLs.put(filename, embeddedFile.toByteArray());
@@ -547,12 +538,53 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
+		String currency = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"InvoiceCurrencyCode\"]|//*[local-name()=\"DocumentCurrencyCode\"]");
+		zpp.setCurrency(currency);
+		String taxCurrency = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"TaxCurrencyCode\"]");
+		zpp.setTaxCurrency(taxCurrency);
+
 		xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"TaxTotalAmount\"]|//*[local-name()=\"TaxTotal\"]/*[local-name()=\"TaxAmount\"]");
 		NodeList taxTotalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-		if (taxTotalNodes.getLength() > 0) {
-			String taxTotalStr = XMLTools.trimOrNull(taxTotalNodes.item(0));
-			if (zpp instanceof CalculatedInvoice && taxTotalStr != null) {
-				((CalculatedInvoice) zpp).setVATtotal(new BigDecimal(taxTotalStr));
+		if (zpp instanceof CalculatedInvoice) {
+			for (int i = 0; i < taxTotalNodes.getLength(); i++) {
+				String taxTotalStr = XMLTools.trimOrNull(taxTotalNodes.item(i));
+				if (taxTotalStr == null) {
+					continue;
+				}
+				String currencyID = XMLTools.trimOrNull(taxTotalNodes.item(i).getAttributes().getNamedItem("currencyID"));
+				if (zpp.getCurrency() != null && zpp.getCurrency().equalsIgnoreCase(currencyID)) {
+					((CalculatedInvoice) zpp).setVATtotal(new BigDecimal(taxTotalStr));
+				} else if (taxCurrency != null && taxCurrency.equalsIgnoreCase(currencyID)) {
+					((CalculatedInvoice) zpp).setVATTotalInTaxCurrency(new BigDecimal(taxTotalStr));
+				} else if (taxTotalNodes.getLength() == 1) {
+					// try to be lenient if the currencyID doesn't match or is missing, yet this is the only value provided
+					//  Might be wrong though.
+					((CalculatedInvoice) zpp).setVATtotal(new BigDecimal(taxTotalStr));
+				}
+			}
+		}
+
+		if (taxCurrency != null) {
+			xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"TaxApplicableTradeCurrencyExchange\"]");
+			NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+			if (nodes.getLength() > 0 ) {
+				NodeList children = nodes.item(0).getChildNodes();
+				for (int index = 0; index < children.getLength(); index++) {
+					Node item = children.item(index);
+					if (item.getLocalName() != null && item.getLocalName().equals("ConversionRate")) {
+						String s = XMLTools.trimOrNull(item);
+						zpp.setTaxConversionRate(new BigDecimal(s));
+					}
+					if (item.getLocalName() != null && item.getLocalName().equals("ConversionRateDateTime")) {
+						NodeList dateTimeChilds = item.getChildNodes();
+						for (int dateChildIndex = 0; dateChildIndex < dateTimeChilds.getLength(); dateChildIndex++) {
+							if (dateTimeChilds.item(dateChildIndex).getLocalName() != null && dateTimeChilds.item(dateChildIndex).getLocalName().equals("DateTimeString")) {
+								String dateString = XMLTools.trimOrNull(dateTimeChilds.item(dateChildIndex));
+								zpp.setTaxConversionRateDateTime(parseDate(dateString, "yyyyMMdd"));
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -766,11 +798,6 @@ public class ZUGFeRDInvoiceImporter {
 			headerTradeAgreementNodesMap.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).filter(rd -> rd.getTypeCode().equals("916")).findFirst().ifPresent(rd -> zpp.setRelatedReferencedDocument(rd));
 		}
 
-
-
-
-		String currency = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"InvoiceCurrencyCode\"]|//*[local-name()=\"DocumentCurrencyCode\"]");
-		zpp.setCurrency(currency);
 
 		// Backward-compatible: keep the first Description as the plain-text paymentTermDescription
 		String paymentTermsDescription = extractString("//*[local-name()=\"SpecifiedTradePaymentTerms\"]/*[local-name()=\"Description\"]|//*[local-name()=\"PaymentTerms\"]/*[local-name()=\"Note\"]");

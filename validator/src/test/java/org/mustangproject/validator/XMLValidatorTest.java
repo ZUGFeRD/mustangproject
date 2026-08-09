@@ -528,7 +528,7 @@ public class XMLValidatorTest extends ResourceCase {
 		assertTrue(noExceptions);
   }
 
-  public void testRecalc() {
+	public void testRecalc() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
 		final XPathEngine xpath = new JAXPXPathEngine();
@@ -548,7 +548,7 @@ public class XMLValidatorTest extends ResourceCase {
 		}
 	}
 
-  public void testVAT_O() {
+	public void testVAT_O() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
 		final XPathEngine xpath = new JAXPXPathEngine();
@@ -563,6 +563,28 @@ public class XMLValidatorTest extends ResourceCase {
 			String content = xpath.evaluate("/validation/summary/@status", source);
 			assertEquals("invalid", content);
 			assertThat(s).valueByXPath("count(//warning)").asInt().isEqualTo(1);
+		} catch (final IrrecoverableValidationError e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
+
+	public void testEnhancedFremdwaehrung() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = new File("../library/target/testout-Extended_fremdwaehrung.xml");
+		try {
+			xv.disableNotices = true;
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("valid", content);
+			assertThat(s).valueByXPath("count(//warning)").asInt().isEqualTo(0);
 		} catch (final IrrecoverableValidationError e) {
 			e.printStackTrace();
 			fail(e.getMessage());
