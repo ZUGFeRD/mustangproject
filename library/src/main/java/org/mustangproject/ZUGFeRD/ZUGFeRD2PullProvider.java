@@ -30,7 +30,6 @@ import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -818,6 +817,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if (trans.getPaymentReference() != null && getProfile() != Profiles.getByName("Minimum")) {
 			xml.append("<ram:PaymentReference>" + XMLTools.encodeXML(trans.getPaymentReference()) + "</ram:PaymentReference>");
 		}
+		if (trans.getTaxCurrency() != null) {
+			xml.append("<ram:TaxCurrencyCode>" + trans.getTaxCurrency() + "</ram:TaxCurrencyCode>");
+		}
 		xml.append("<ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>");
 
 		if (this.trans.getInvoicer() != null && getProfile() == Profiles.getByName("Extended")) {
@@ -834,6 +836,20 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			xml.append("<ram:PayeeTradeParty>" +
 				getTradePartyPayeeAsXML(this.trans.getPayee()) +
 				"</ram:PayeeTradeParty>");
+		}
+
+		if ((profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung")) && this.trans.getTaxCurrency() != null) {
+			xml.append("<ram:TaxApplicableTradeCurrencyExchange>");
+			xml.append("<ram:SourceCurrencyCode>" + trans.getCurrency() + "</ram:SourceCurrencyCode>");
+			xml.append("<ram:TargetCurrencyCode>" + trans.getTaxCurrency() + "</ram:TargetCurrencyCode>");
+			if (trans.getTaxConversionRate() != null) {
+				xml.append("<ram:ConversionRate>" + XMLTools.nDigitFormat(trans.getTaxConversionRate(), 5) + "</ram:ConversionRate>");
+			}
+			if (trans.getTaxConversionRateDateTime() != null) {
+				final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
+				xml.append("<ram:ConversionRateDateTime><udt:DateTimeString format=\"102\">" + XMLTools.encodeXML(dateFormat102.format(trans.getTaxConversionRateDateTime())) + "</udt:DateTimeString></ram:ConversionRateDateTime>");
+			}
+			xml.append("</ram:TaxApplicableTradeCurrencyExchange>");
 		}
 
 		if (trans.getTradeSettlement() != null) {
@@ -1120,17 +1136,16 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				+ allowanceTotalLine);
 		}
 		xml.append("<ram:TaxBasisTotalAmount>" + currencyFormat(calc.getTaxBasis()) + "</ram:TaxBasisTotalAmount>"
-			// //
-			// currencyID=\"EUR\"
 			+ "<ram:TaxTotalAmount currencyID=\"" + trans.getCurrency() + "\">"
 			+ currencyFormat(calc.getGrandTotal().subtract(calc.getTaxBasis())) + "</ram:TaxTotalAmount>");
+		if (trans.getTaxCurrency() != null && trans.getTaxConversionRate() != null) {
+			xml.append("<ram:TaxTotalAmount currencyID=\"" + trans.getTaxCurrency() + "\">" + currencyFormat(calc.getGrandTotal().subtract(calc.getTaxBasis()).multiply(trans.getTaxConversionRate())) + "</ram:TaxTotalAmount>");
+		}
 		if (trans.getRoundingAmount() != null) {
 			xml.append("<ram:RoundingAmount>" + currencyFormat(trans.getRoundingAmount()) + "</ram:RoundingAmount>");
 		}
 
 		xml.append("<ram:GrandTotalAmount>" + currencyFormat(calc.getGrandTotal()) + "</ram:GrandTotalAmount>");
-		// //
-		// currencyID=\"EUR\"
 		if (getProfile() != Profiles.getByName("Minimum")) {
 			xml.append("<ram:TotalPrepaidAmount>" + currencyFormat(calc.getTotalPrepaid()) + "</ram:TotalPrepaidAmount>");
 		}
@@ -1214,8 +1229,14 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 			// add extended payment terms (except the first one which is already added above)
 			{
+				int index = 0;
 				IZUGFeRDPaymentTerms[] extendedPaymentTerms = trans.getExtendedPaymentTerms();
-				paymentTerms.addAll(Arrays.asList(extendedPaymentTerms));
+				for (IZUGFeRDPaymentTerms izpt : extendedPaymentTerms) {
+					if ( index > 0) {
+						paymentTerms.add(izpt);
+					}
+					index ++;
+				}
 			}
 		}
 

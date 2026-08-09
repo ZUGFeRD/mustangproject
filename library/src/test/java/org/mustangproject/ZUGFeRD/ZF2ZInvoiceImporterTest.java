@@ -27,11 +27,7 @@ import org.mustangproject.*;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import javax.xml.xpath.XPathExpressionException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -195,6 +191,29 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("sender@test.org", invoice.getSender().getEmail());
 		assertEquals("recipient@test.org", invoice.getRecipient().getEmail());
 		assertEquals("28934", invoice.getBuyerOrderReferencedDocument().getIssuerAssignedID());
+	}
+
+
+	public void testPDFA4Import() {
+		File PDFA4inputFile = getResourceAsFile("EXTENDED_Fremdwaehrung_wdis_fx-pdfa4.pdf");
+
+		boolean hasExceptions = false;
+		CalculatedInvoice invoice = new CalculatedInvoice();
+		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
+		try {
+
+			FileInputStream FIS=new FileInputStream(PDFA4inputFile);
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(FIS);
+			zii.extractInto(invoice);
+			assertEquals("2025-12-14", sdf.format(invoice.getDueDate()));
+		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
+			hasExceptions = true;
+		}
+		assertFalse(hasExceptions);
+		// Reading ZUGFeRD
+		assertEquals("CO-123/V2A", invoice.getZFItems()[0].getProduct().getSellerAssignedID());
+		assertEquals("2025-12-01", sdf.format(invoice.getIssueDate()));
+		assertEquals(new BigDecimal("521.91"), invoice.getDuePayable());
 	}
 
 

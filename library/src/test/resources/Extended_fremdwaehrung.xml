@@ -131,10 +131,10 @@ costs, losses or damages could normally have been foreseen.-->
 				<ram:SellerAssignedID>CO-123/V2A</ram:SellerAssignedID>
 				<ram:BuyerAssignedID>Toolbox 0815</ram:BuyerAssignedID>
 				<ram:Name>Stahlcoil</ram:Name>
-                <ram:ApplicableProductCharacteristic>
-                    <ram:Description>LeoID</ram:Description>
-                    <ram:Value>704310.0105636504</ram:Value>
-                </ram:ApplicableProductCharacteristic>
+				<ram:ApplicableProductCharacteristic>
+					<ram:Description>LeoID</ram:Description>
+					<ram:Value>704310.0105636504</ram:Value>
+				</ram:ApplicableProductCharacteristic>
 				<ram:OriginTradeCountry>
 					<ram:ID>DE</ram:ID>
 				</ram:OriginTradeCountry>
@@ -176,6 +176,7 @@ costs, losses or damages could normally have been foreseen.-->
 					<ram:ChargeIndicator>
 						<udt:Indicator>false</udt:Indicator>
 					</ram:ChargeIndicator>
+					<ram:CalculationPercent>5</ram:CalculationPercent>
 					<ram:BasisAmount>1000</ram:BasisAmount>
 					<ram:ActualAmount>50</ram:ActualAmount>
 					<ram:ReasonCode>70</ram:ReasonCode>
@@ -187,15 +188,28 @@ costs, losses or damages could normally have been foreseen.-->
 			</ram:SpecifiedLineTradeSettlement>
 		</ram:IncludedSupplyChainTradeLineItem>
 		<ram:ApplicableHeaderTradeAgreement>
+			<ram:BuyerReference>Test</ram:BuyerReference>
 			<ram:SellerTradeParty>
 				<ram:ID>12345676</ram:ID>
 				<ram:Name>Rohstoff AG Salzgitter</ram:Name>
+				<ram:DefinedTradeContact>
+					<ram:PersonName>Max Mustermann</ram:PersonName>
+					<ram:TelephoneUniversalCommunication>
+						<ram:CompleteNumber>+49 1234-5678</ram:CompleteNumber>
+					</ram:TelephoneUniversalCommunication>
+					<ram:EmailURIUniversalCommunication>
+						<ram:URIID>seller@email.de</ram:URIID>
+					</ram:EmailURIUniversalCommunication>
+				</ram:DefinedTradeContact>
 				<ram:PostalTradeAddress>
 					<ram:PostcodeCode>38226</ram:PostcodeCode>
 					<ram:LineOne>Marktstr. 153</ram:LineOne>
 					<ram:CityName>Salzgitter</ram:CityName>
 					<ram:CountryID>DE</ram:CountryID>
 				</ram:PostalTradeAddress>
+				<ram:URIUniversalCommunication>
+					<ram:URIID schemeID="EM">seller@email.de</ram:URIID>
+				</ram:URIUniversalCommunication>
 				<ram:SpecifiedTaxRegistration>
 					<ram:ID schemeID="VA">DE123456789</ram:ID>
 				</ram:SpecifiedTaxRegistration>
@@ -203,6 +217,11 @@ costs, losses or damages could normally have been foreseen.-->
 			<ram:BuyerTradeParty>
 				<ram:ID>75969813</ram:ID>
 				<ram:Name>Metallbau Leipzig GmbH &amp; Co. KG</ram:Name>
+				<ram:DefinedTradeContact>
+					<ram:EmailURIUniversalCommunication>
+						<ram:URIID>buyer@email.de</ram:URIID>
+					</ram:EmailURIUniversalCommunication>
+				</ram:DefinedTradeContact>
 				<ram:PostalTradeAddress>
 					<ram:PostcodeCode>12345</ram:PostcodeCode>
 					<ram:LineOne>Pappelallee 15</ram:LineOne>
@@ -212,6 +231,7 @@ costs, losses or damages could normally have been foreseen.-->
 				</ram:PostalTradeAddress>
 				<ram:URIUniversalCommunication>
 					<ram:URIID schemeID="0204">04 0 11 000 - 12345 12345 - 35</ram:URIID>
+					<ram:URIID schemeID="EM">buyer@email.de</ram:URIID>
 				</ram:URIUniversalCommunication>
 			</ram:BuyerTradeParty>
 			<ram:SellerTaxRepresentativeTradeParty>
@@ -325,12 +345,6 @@ costs, losses or damages could normally have been foreseen.-->
 				<ram:Description>Zahlbar ohne Abschlag bis </ram:Description>
 				<ram:DueDateDateTime>
 					<udt:DateTimeString format="102">20241201</udt:DateTimeString>
-				</ram:DueDateDateTime>
-			</ram:SpecifiedTradePaymentTerms>
-			<ram:SpecifiedTradePaymentTerms>
-				<ram:Description>Zahlbar mit 2% Skonto bis</ram:Description>
-				<ram:DueDateDateTime>
-					<udt:DateTimeString format="102">20241120</udt:DateTimeString>
 				</ram:DueDateDateTime>
 			</ram:SpecifiedTradePaymentTerms>
 			<ram:SpecifiedTradeSettlementHeaderMonetarySummation>
