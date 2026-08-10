@@ -859,14 +859,24 @@ public class ZF2PushTest extends ResourceCase {
 		String priceStr = "3.00";
 		BigDecimal price = new BigDecimal(priceStr);
 
-		Charge charge = new Charge().setPercent(new BigDecimal(50)).setBasisAmount(price).setReasonCode("ABK").setReason("Verschiedenes");
-		charge.setTaxRateApplicablePercent(new BigDecimal(19));
+		Charge charge = new Charge()
+			.setPercent(new BigDecimal(50))
+			.setBasisAmount(price)
+			.setReasonCode("ABK")
+			.setReason("Verschiedenes")
+			.setTaxRateApplicablePercent(new BigDecimal(19));
 
-		Charge allowance = new Allowance().setPercent(new BigDecimal(50)).setReasonCode("95").setReason("Mengenrabatt");
-		allowance.setTaxRateApplicablePercent(new BigDecimal(19));
+		Allowance allowance = new Allowance()
+			.setPercent(new BigDecimal(50))
+			.setReasonCode("95")
+			.setReason("Mengenrabatt")
+			.setTaxRateApplicablePercent(new BigDecimal(19));
 
-		LogisticsServiceCharge logisticsServiceCharge = new LogisticsServiceCharge().setDescription("Frachtkosten").setAppliedAmount(BigDecimal.valueOf(25));
-		logisticsServiceCharge.setTaxRateApplicablePercent(new BigDecimal(19));
+		LogisticsServiceCharge logisticsServiceCharge = new LogisticsServiceCharge()
+			.setDescription("Frachtkosten")
+			.setAppliedAmount(BigDecimal.valueOf(25))
+			.setTaxRateApplicablePercent(new BigDecimal(19));
+
 		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 			ze.ignorePDFAErrors().load(SOURCE_PDF);
@@ -1130,20 +1140,20 @@ public class ZF2PushTest extends ResourceCase {
 			.setNumber(number)
 			.addItem(new org.mustangproject.Item(new org.mustangproject.Product("Test item", "", "C62", java.math.BigDecimal.ZERO).setIntraCommunitySupply(), itemAmount, new java.math.BigDecimal("1.0")));
 
-		Allowance allowance1 = new Allowance(new BigDecimal("10.00"));
-		allowance1.setReason("Discount");
-		allowance1.setTaxCategoryCode(TaxCategoryCodeTypeConstants.INTRACOMMUNITY);
-		allowance1.setTaxRateApplicablePercent(BigDecimal.ZERO);
-		allowance1.setTaxExemptionReasonCode("VATEX-EU-IC");
-		allowance1.setTaxExemptionReason(invoice.getZFItems()[0].getProduct().getTaxExemptionReason());
+		Allowance allowance1 = new Allowance(new BigDecimal("10.00"))
+			.setReason("Discount")
+			.setTaxCategoryCode(TaxCategoryCodeTypeConstants.INTRACOMMUNITY)
+			.setTaxRateApplicablePercent(BigDecimal.ZERO)
+			.setTaxExemptionReasonCode("VATEX-EU-IC")
+			.setTaxExemptionReason(invoice.getZFItems()[0].getProduct().getTaxExemptionReason());
 		invoice.addAllowance(allowance1);
 
-		Allowance allowance2 = new Allowance(new BigDecimal("5.00"));
-		allowance2.setReason("another discount");
-		allowance2.setTaxCategoryCode(TaxCategoryCodeTypeConstants.INTRACOMMUNITY);
-		allowance2.setTaxRateApplicablePercent(BigDecimal.ZERO);
-		allowance2.setTaxExemptionReasonCode("VATEX-EU-IC");
-		allowance2.setTaxExemptionReason(invoice.getZFItems()[0].getProduct().getTaxExemptionReason());
+		Allowance allowance2 = new Allowance(new BigDecimal("5.00"))
+			.setReason("another discount")
+			.setTaxCategoryCode(TaxCategoryCodeTypeConstants.INTRACOMMUNITY)
+			.setTaxRateApplicablePercent(BigDecimal.ZERO)
+			.setTaxExemptionReasonCode("VATEX-EU-IC")
+			.setTaxExemptionReason(invoice.getZFItems()[0].getProduct().getTaxExemptionReason());
 		invoice.addAllowance(allowance2);
 
 		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {

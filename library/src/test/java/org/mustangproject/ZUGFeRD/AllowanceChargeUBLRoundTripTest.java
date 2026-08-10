@@ -64,11 +64,19 @@ public class AllowanceChargeUBLRoundTripTest extends ResourceCase {
 		BigDecimal lineAllowanceAmount = new BigDecimal("2.00");
 		BigDecimal perUnitAllowanceAmount = new BigDecimal("1.0000");
 
-		Charge charge = new Charge(headerChargeAmount).setReason("Handling").setReasonCode("FC");
-		charge.setTaxRateApplicablePercent(new BigDecimal("19")).setTaxCategoryCode(TaxCategoryCodeTypeConstants.STANDARDRATE);
+		Charge charge = new Charge(headerChargeAmount)
+			.setReason("Handling")
+			.setReasonCode("FC")
+			.setTaxRateApplicablePercent(new BigDecimal("19"))
+			.setTaxCategoryCode(TaxCategoryCodeTypeConstants.STANDARDRATE);
 
-		Charge allowance = new Allowance().setPercent(headerAllowancePercent).setBasisAmount(headerAllowanceBasis).setReason("Loyalty discount").setReasonCode("95");
-		allowance.setTaxCategoryCode(TaxCategoryCodeTypeConstants.STANDARDRATE).setTaxRateApplicablePercent(new BigDecimal("19"));
+		Allowance allowance = new Allowance()
+			.setPercent(headerAllowancePercent)
+			.setBasisAmount(headerAllowanceBasis)
+			.setReason("Loyalty discount")
+			.setReasonCode("95")
+			.setTaxCategoryCode(TaxCategoryCodeTypeConstants.STANDARDRATE)
+			.setTaxRateApplicablePercent(new BigDecimal("19"));
 
 		Product product = new Product("Testprodukt", "", "H87", new BigDecimal("19"));
 		// Bug 4 case: per-unit-price allowance, exported under GrossPriceProductTradePrice/AppliedTradeAllowanceCharge (CII)
