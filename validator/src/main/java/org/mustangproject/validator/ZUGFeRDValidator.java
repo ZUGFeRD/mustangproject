@@ -29,7 +29,6 @@ import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import com.helger.commons.io.stream.StreamHelper;
@@ -37,6 +36,10 @@ import com.helger.commons.io.stream.StreamHelper;
 import jakarta.xml.bind.DatatypeConverter;
 
 //abstract class
+
+/***
+ * a ZUGFeRD validator consists of a PDF/A and a XML validator
+ */
 public class ZUGFeRDValidator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDValidator.class.getCanonicalName()); // log
 	// output
@@ -44,12 +47,13 @@ public class ZUGFeRDValidator {
 	protected String sha1Checksum;
 	protected boolean pdfValidity;
 	protected boolean displayXMLValidationOutput;
-	protected long startTime;
+	protected long startTime; // we will calculate the duration, for this we need to remember the start time
 	protected boolean optionsRecognized;
-	protected boolean disableNotices = false;
-	protected String Signature;
-	protected boolean wasCompletelyValid = false;
-	protected String logAppend = null;
+	protected boolean disableNotices;
+	protected boolean disableArithmeticCheck;
+	protected String signature;
+	protected boolean wasCompletelyValid; // overall result
+	protected String logAppend;
 
 	/***
 	 * within the validation it turned out something in the options was wrong, e.g.
@@ -90,7 +94,7 @@ public class ZUGFeRDValidator {
 		SimpleDateFormat isoDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
 		startTime = Calendar.getInstance().getTimeInMillis();
-		context.setFilename(contextFilename);// fallback to provided name
+		context.setFilename(contextFilename); // fallback to provided name
 		finalStringResult.append("<validation filename='").append(contextFilename).append("' datetime='").append(isoDF.format(date)).append("'>");
 
 		boolean isPDF = false;
@@ -121,6 +125,9 @@ public class ZUGFeRDValidator {
 				XMLValidator xv = new XMLValidator(context);
 				if (disableNotices) {
 					xv.disableNotices();
+				}
+				if (disableArithmeticCheck) {
+					xv.disableArithmeticCheck();
 				}
 				isPDF = ByteArraySearcher.startsWith(content, new byte[]{'%', 'P', 'D', 'F'});
 				if (isPDF) {
@@ -156,8 +163,8 @@ public class ZUGFeRDValidator {
 						InputSource is = new InputSource(new StringReader(xmlAsString));
 						Document doc = db.parse(is);
 
-						Element root = doc.getDocumentElement();
-						isXML = true;//no exception so far
+						doc.getDocumentElement();
+						isXML = true; //no exception so far
 
 					} catch (Exception ex) {
 						// probably no xml file, sth like SAXParseException content not allowed in prolog
@@ -182,7 +189,7 @@ public class ZUGFeRDValidator {
 
 					}
 				}
-				if ((optionsRecognized) && (displayXMLValidationOutput)) {
+				if (optionsRecognized && displayXMLValidationOutput) {
 					finalStringResult.append("<xml>");
 					try {
 						xv.validate();
@@ -272,8 +279,8 @@ public class ZUGFeRDValidator {
 		finalStringResult.append(pdfv.getXMLResult());
 		pdfValidity = context.isValid();
 
-		Signature = context.getSignature();
-		context.clear();// clear sets valid to true again
+		signature = context.getSignature();
+		context.clear(); // clear sets valid to true again
 		if (pdfv.getRawXML() != null) {
 			xv.setStringContent(pdfv.getRawXML());
 			displayXMLValidationOutput = true;
@@ -320,9 +327,9 @@ public class ZUGFeRDValidator {
 
 
 		LOGGER.info("Parsed PDF:" + pdfResult + " XML:" + (xmlValidity ? "valid" : "invalid")
-			+ " Signature:" + Signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
+			+ " Signature:" + signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
 			+ " Version:" + context.getGeneration() + " Took:" + duration + "ms Errors:[" + context.getCSVResult()
-			+ "] ErrorIDs: [" + context.getCSVIDResult()  + "]" + toBeAppended);
+			+ "] ErrorIDs: [" + context.getCSVIDResult() + "]" + toBeAppended);
 		wasCompletelyValid = xmlValidity;
 		return sw.toString();
 	}
@@ -332,6 +339,13 @@ public class ZUGFeRDValidator {
 	 */
 	public void disableNotices() {
 		disableNotices = true;
+	}
+
+	/***
+	 * don't perform the arithmetic recalculation check in the validation report
+	 */
+	public void disableArithmeticCheck() {
+		disableArithmeticCheck = true;
 	}
 
 	/**

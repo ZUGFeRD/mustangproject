@@ -6,16 +6,26 @@ import java.util.Vector;
 
 import org.slf4j.Logger;
 
+/***
+ * the error list, and some recognized metadata, of a file in validation
+ */
 public class ValidationContext {
 	protected Vector<ValidationResultItem> results;
+	/***
+	 * XML added manually to the XML result
+	 */
 	protected String customXML = "";
-	private String format = "CII";// CII or UBL
-	private String generation = null; // generation 1 is ZF1, gen 2 is ZF2, XRechnung, Factur-X or UBL
-	private String profile = null;
-	private String signature = null;
-	private boolean isValid = true;
-	private boolean hasPDF = false;
+	/***
+	 * the slf4j log file object
+	 */
 	protected Logger logger;
+
+	private String format = "CII"; // CII or UBL
+	private String generation; // generation 1 is ZF1, gen 2 is ZF2, XRechnung, Factur-X or UBL
+	private String profile;
+	private String signature;
+	private boolean isValid = true;
+	private boolean hasPDF;
 	private String filename;
 
 	public ValidationContext(Logger log) {
@@ -24,7 +34,7 @@ public class ValidationContext {
 	}
 
 	public void setHasPDF() {
-		hasPDF=true;
+		hasPDF = true;
 	}
 
 	public boolean hasPDF() {
@@ -34,15 +44,13 @@ public class ValidationContext {
 	public void addResultItem(ValidationResultItem vr) throws IrrecoverableValidationError {
 		results.add(vr);
 
-		if ((vr.getSeverity() == ESeverity.fatal) || (vr.getSeverity() == ESeverity.exception)
-				|| (vr.getSeverity() == ESeverity.error)) {
+		if (vr.getSeverity() == ESeverity.fatal || vr.getSeverity() == ESeverity.exception || vr.getSeverity() == ESeverity.error) {
 			isValid = false;
-
 		}
 		if (logger != null) {
-			if ((vr.getSeverity() == ESeverity.fatal) || (vr.getSeverity() == ESeverity.exception)) {
+			if (vr.getSeverity() == ESeverity.fatal || vr.getSeverity() == ESeverity.exception) {
 				logger.error("Fatal Error {}: {}", vr.getSection(), vr.getMessage());
-			} else if ((vr.getSeverity() == ESeverity.error)) {
+			} else if (vr.getSeverity() == ESeverity.error) {
 				logger.error("Error {}: {}", vr.getSection(), vr.getMessage());
 			} else if (vr.getSeverity() == ESeverity.warning) {
 				logger.warn("Warning {}: {}", vr.getSection(), vr.getMessage());
@@ -51,7 +59,7 @@ public class ValidationContext {
 			}
 		}
 
-		if ((vr.getSeverity() == ESeverity.fatal) || (vr.getSeverity() == ESeverity.exception)) {
+		if (vr.getSeverity() == ESeverity.fatal || vr.getSeverity() == ESeverity.exception) {
 			throw new IrrecoverableValidationError(vr.getMessage());
 		}
 
@@ -60,7 +68,7 @@ public class ValidationContext {
 	public void clearCustomXML() {
 		customXML = "";
 	}
-	
+
 	public void addCustomXML(String XML) {
 		customXML += XML;
 	}
@@ -70,7 +78,7 @@ public class ValidationContext {
 	}
 
 	public void setFormat(String format) {
-		this.format=format;
+		this.format = format;
 	}
 
 	public ValidationContext setGeneration(String version) {
@@ -88,6 +96,10 @@ public class ValidationContext {
 		return this;
 	}
 
+	/***
+	 * 1st gen is ZUGFeRD 1, 2nd gen is ZUGFeRD 2 and Factur-X 1
+	 * @return numeric string
+	 */
 	public String getGeneration() {
 		return generation;
 	}
@@ -108,12 +120,12 @@ public class ValidationContext {
 		results.clear();
 		isValid = true;
 		clearCustomXML();
-		generation = null;
-		profile = null;
-		signature = null;
-
 	}
 
+	/***
+	 * get the final result
+	 * @return the XML of the result
+	 */
 	public String getXMLResult() {
 		StringBuilder res = new StringBuilder(getCustomXML());
 		if (results != null && !results.isEmpty()) {
@@ -135,7 +147,7 @@ public class ValidationContext {
 	public String getCSVResult() {
 		final ArrayList<String> errorcodes = new ArrayList<>();
 		for (final ValidationResultItem validationResultItem : results) {
-			final String errorCodeStr=Integer.toString(validationResultItem.getSection());
+			final String errorCodeStr = Integer.toString(validationResultItem.getSection());
 			errorcodes.add(errorCodeStr);
 		}
 		return String.join(",", errorcodes);
@@ -149,7 +161,7 @@ public class ValidationContext {
 		final ArrayList<String> errorIDs = new ArrayList<>();
 		for (final ValidationResultItem validationResultItem : results) {
 			if (!validationResultItem.getID().isEmpty()) {
-				final String errorID=validationResultItem.getID();
+				final String errorID = validationResultItem.getID();
 				errorIDs.add(errorID);
 
 			}
@@ -162,10 +174,10 @@ public class ValidationContext {
 	}
 
 	public void setFilename(String filename) {
-		this.filename=filename;
+		this.filename = filename;
 	}
 	public String getFilename() {
-		if (filename==null) {
+		if (filename == null) {
 			return "";
 		} else {
 			return filename;

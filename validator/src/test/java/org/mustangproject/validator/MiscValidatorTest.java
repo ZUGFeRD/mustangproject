@@ -13,24 +13,24 @@ public class MiscValidatorTest extends ResourceCase  {
 		ZUGFeRDValidator zfv=new ZUGFeRDValidator();
 
 		String res=zfv.validate(null);
-    assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" + 
-        "\n" + 
-        "<validation filename=\"\" datetime=\".*?\">\n" + 
-        "  <messages>\n" + 
-        "    <error type=\"10\">Filename not specified</error> \n" + 
-        "  </messages>\n" + 
-        "  <summary status=\"invalid\"/>\n" + 
-        "</validation>\n" + 
+    assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" +
+        "\n" +
+        "<validation filename=\"\" datetime=\".*?\">\n" +
+        "  <messages>\n" +
+        "    <error type=\"10\">Filename not specified</error> \n" +
+        "  </messages>\n" +
+        "  <summary status=\"invalid\"/>\n" +
+        "</validation>\n" +
         ""));
 
 		res=zfv.validate("/dhfkbv/sfjkh");
-		assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" + 
-				"\n" + 
-				"<validation filename=\"sfjkh\" datetime=\".*?\">\n" + 
-				"  <messages>\n" + 
-				"    <error type=\"1\">File not found</error> \n" + 
-				"  </messages>\n" + 
-				"  <summary status=\"invalid\"/>\n" + 
+		assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" +
+				"\n" +
+				"<validation filename=\"sfjkh\" datetime=\".*?\">\n" +
+				"  <messages>\n" +
+				"    <error type=\"1\">File not found</error> \n" +
+				"  </messages>\n" +
+				"  <summary status=\"invalid\"/>\n" +
 				"</validation>\n"));
 
 		boolean noExceptionOccurred=true;
@@ -43,17 +43,17 @@ public class MiscValidatorTest extends ResourceCase  {
 		assertTrue(noExceptionOccurred);
 
 		res=zfv.validate(tempFile.getAbsolutePath());
-		assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" + 
-				"\n" + 
-				"<validation filename=\".*\" datetime=\".*\">\n" + 
-				"  <messages>\n" + 
-				"    <error type=\"5\">File too small</error> \n" + 
-				"  </messages>\n" + 
-				"  <summary status=\"invalid\"/>\n" + 
-				"</validation>\n" + 
+		assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" +
+				"\n" +
+				"<validation filename=\".*\" datetime=\".*\">\n" +
+				"  <messages>\n" +
+				"    <error type=\"5\">File too small</error> \n" +
+				"  </messages>\n" +
+				"  <summary status=\"invalid\"/>\n" +
+				"</validation>\n" +
 				""));
-		
-		
+
+
 		String fileContent = "ladhvkdbfk  wkhfbkhdhkb svbkfsvbksfbvk sdvsdvbksjdvbkfdsv sdvbskdvbsjhkvbfskh dvbskfvbkfsbvke"
 				+ "ladhvkdbfk  wkhfbkhdhkb svbkfsvbksfbvk sdvsdvbksjdvbkfdsv sdvbskdvbsjhkvbfskh dvbskfvbkfsbvke";
 		noExceptionOccurred=true;
@@ -66,23 +66,23 @@ public class MiscValidatorTest extends ResourceCase  {
 			noExceptionOccurred=false;
 		}
 		assertTrue(noExceptionOccurred);
- 
 
-		res=zfv.validate(tempFile.getAbsolutePath());
-		assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" + 
-				"\n" + 
-				"<validation filename=\".*\" datetime=\".*\">\n" + 
-				"  <messages>\n" + 
-				"    <exception type=\"8\">File does not look like PDF nor XML \\(contains neither %PDF nor &lt;\\?xml\\)</exception> \n" + 
-				"  </messages>\n" + 
-				"  <summary status=\"invalid\"/>\n" + 
-				"</validation>\n" + 
+
+		res = zfv.validate(tempFile.getAbsolutePath());
+		assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" +
+				"\n" +
+				"<validation filename=\".*\" datetime=\".*\">\n" +
+				"  <messages>\n" +
+				"    <exception type=\"8\">File does not look like PDF nor XML \\(contains neither %PDF nor &lt;\\?xml\\)</exception> \n" +
+				"  </messages>\n" +
+				"  <summary status=\"invalid\"/>\n" +
+				"</validation>\n" +
 				""));
 
-		
+
 		// clean up
 		tempFile.delete();
-		
+
 	}
-	
+
 }

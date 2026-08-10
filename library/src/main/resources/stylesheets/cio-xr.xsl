@@ -1179,9 +1179,9 @@
          <xsl:apply-templates mode="BT-85" select="./ram:AccountName"/>
          <xr:Payment_service_provider_identifier>
             <xsl:attribute name="xr:id" select="'BT-86'"/>
-            <xsl:attribute name="xr:src" select="'/rsm:SCRDMCCBDACIOMessageStructure/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeeSpecifiedCreditorFinancialInstitution/ram:BICID'"/>            
+            <xsl:attribute name="xr:src" select="'../ram:PayeeSpecifiedCreditorFinancialInstitution/ram:BICID'"/>            
             <xsl:call-template name="distinct-bt-86">
-               <xsl:with-param name="bic-values" select="distinct-values(/rsm:SCRDMCCBDACIOMessageStructure/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:SpecifiedTradeSettlementPaymentMeans/ram:PayeeSpecifiedCreditorFinancialInstitution/ram:BICID)"/>
+               <xsl:with-param name="bic-values" select="distinct-values(../ram:PayeeSpecifiedCreditorFinancialInstitution/ram:BICID)"/>
             </xsl:call-template>
          </xr:Payment_service_provider_identifier>
       </xsl:variable>

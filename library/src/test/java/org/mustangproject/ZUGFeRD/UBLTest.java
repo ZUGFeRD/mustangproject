@@ -1,4 +1,3 @@
-
 /**
  * *********************************************************************
  * <p>
@@ -38,6 +37,7 @@ import org.mustangproject.Contact;
 import org.mustangproject.Invoice;
 import org.mustangproject.Item;
 import org.mustangproject.Product;
+import org.mustangproject.ReferencedDocument;
 import org.mustangproject.TradeParty;
 
 import javax.xml.xpath.XPathExpressionException;
@@ -45,11 +45,11 @@ import javax.xml.xpath.XPathExpressionException;
 public class UBLTest extends ResourceCase {
 	final String TARGET_XML = "./target/testout-1Lieferschein.xml";
 
-  public UBLTest() {
-  }
+	public UBLTest() {
+	}
 
-  @Test
-  @Order(2)
+	@Test
+	@Order(2)
 	public void testUBLBasic() {
 
 		// the writing part
@@ -61,7 +61,7 @@ public class UBLTest extends ResourceCase {
 		String result = null;
 		try {
 			final File tempFile = File.createTempFile("ZUGFeRD-UBL-", "-test");
-			c2u.convert(input, tempFile);
+			c2u.convert(input, tempFile, "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0", "urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0");
 			expected = ResourceUtilities.readFile(StandardCharsets.UTF_8, expectedFile.getAbsolutePath());
 			result = ResourceUtilities.readFile(StandardCharsets.UTF_8, tempFile.getAbsolutePath());
 		} catch (final IOException e) {
@@ -73,8 +73,8 @@ public class UBLTest extends ResourceCase {
 		Assertions.assertThat(result).isXmlEqualTo(expected);
 	}
 
-  @Test
-  @Order(1)
+	@Test
+	@Order(1)
 	public void test1Lieferschein() {
 
 		final EinLieferscheinExporter oe = new EinLieferscheinExporter();
@@ -82,7 +82,7 @@ public class UBLTest extends ResourceCase {
 				.setSender(new TradeParty("Test company", "teststr", "55232", "teststadt", "DE").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890", "COBADEFXXX")))
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
 				.setReferenceNumber("991-01484-64")//leitweg-id
-				.setNumber("123").addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), /*price*/ new BigDecimal("1.0"),  /*qty*/ new BigDecimal("1.0")).addBuyerOrderReferencedDocumentLineID("A12"));
+				.setNumber("123").addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), /*price*/ new BigDecimal("1.0"),  /*qty*/ new BigDecimal("1.0")).setBuyerOrderReferencedDocument(new ReferencedDocument().setLineID("A12")));
 
 
 		try {

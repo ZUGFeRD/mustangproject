@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -106,7 +105,7 @@ public class NodeMap {
 	 * @return the text content of the matching node, converted to BigDecimal
 	 */
 	public Optional<BigDecimal> getAsBigDecimal(String... localNames) {
-		return getNode(localNames).map(Node::getTextContent).map(s->{
+		return getNode(localNames).map(Node::getTextContent).map(s -> {
 			try {
 				return new BigDecimal(s.trim());
 			} catch (NumberFormatException e) {

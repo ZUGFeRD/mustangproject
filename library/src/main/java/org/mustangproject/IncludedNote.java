@@ -9,10 +9,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class IncludedNote {
-	private String content;
-
-	private SubjectCode subjectCode;
-
 	private static final String INCLUDE_START = "<ram:IncludedNote>";
 	private static final String INCLUDE_END = "</ram:IncludedNote>";
 	private static final String CONTENT_START = "<ram:Content>";
@@ -20,16 +16,19 @@ public class IncludedNote {
 	private static final String SUBJECT_CODE_START = "<ram:SubjectCode>";
 	private static final String SUBJECT_CODE_END = "</ram:SubjectCode>";
 
-	public IncludedNote(String content, SubjectCode subjectCode) {
-		this.content = content;
-		this.subjectCode = subjectCode;
-	}
+	private String content;
+
+	private SubjectCode subjectCode;
 
 	/**
 	 * bean constructor
 	 */
 	public IncludedNote() {
+	}
 
+	public IncludedNote(String content, SubjectCode subjectCode) {
+		this.content = content;
+		this.subjectCode = subjectCode;
 	}
 
 	public static IncludedNote generalNote(String content) {
@@ -63,23 +62,23 @@ public class IncludedNote {
 	public static IncludedNote discountBonusNote(String content) {
 		return new IncludedNote(content, SubjectCode.AAK);
 	}
-	
+
 	public static IncludedNote paymentTermNote(String content) {
 		return new IncludedNote(content, SubjectCode.AAB);
 	}
-	
+
 	public static IncludedNote paymentDetailRemittanceInformationNote(String content) {
 		return new IncludedNote(content, SubjectCode.PMD);
 	}
-	
+
 	public static IncludedNote additionalInformationNote(String content) {
 		return new IncludedNote(content, SubjectCode.ACB);
 	}
-	
+
 	public static IncludedNote invoiceInstructionNote(String content) {
 		return new IncludedNote(content, SubjectCode.INV);
 	}
-	
+
 	public static IncludedNote unspecifiedNote(String content) {
 		return new IncludedNote(content, null);
 	}

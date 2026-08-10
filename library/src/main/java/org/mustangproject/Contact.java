@@ -49,7 +49,7 @@ public class Contact implements IZUGFeRDExportableContact {
 	/**
 	 * the fax number of the contact person
 	 */
-	protected String fax = null;
+	protected String fax;
 
 	/***
 	 * default constructor.
@@ -119,7 +119,7 @@ public class Contact implements IZUGFeRDExportableContact {
 
 					List<String> nameElements = Arrays.asList("PersonName"/*CII*/, "Name"/*UBL*/);
 					if (localName != null && nameElements.contains(localName)
-						&& currentItemNode.getFirstChild()!=null) {
+						&& currentItemNode.getFirstChild() != null) {
 							setName(currentItemNode.getFirstChild().getNodeValue());
 						}
 

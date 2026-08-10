@@ -18,11 +18,11 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	/**
 	 * BIC, I believe it's optional
 	 */
-	protected String BIC = null;
+	protected String BIC;
 	/**
 	 * the "name" of the bank account (holder)
 	 */
-	protected String accountName = null;
+	protected String accountName;
 	/**
 	 * payment means code
 	 */
@@ -101,14 +101,14 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	I'd really like to get rid of all those getOwn... methods some time but in this case they are in the interface :-(
 	 */
 	@Override
-	@Deprecated
+	@Deprecated(since = "2.15.1")
 	@JsonIgnore
 	public String getOwnBIC() {
 		return getBIC();
 	}
 
 	@Override
-	@Deprecated
+	@Deprecated(since = "2.15.1")
 	@JsonIgnore
 	public String getOwnIBAN() {
 		return getIBAN();
@@ -143,7 +143,9 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	}
 
 	@Override
-	public String getPaymentMeansCode() { return paymentMeansCode; }
+	public String getPaymentMeansCode() {
+		return paymentMeansCode;
+	}
 
 	/**
 	 * set payment means information
@@ -157,5 +159,7 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	}
 
 	@Override
-	public String getPaymentMeansInformation() { return paymentMeansInformation; }
+	public String getPaymentMeansInformation() {
+		return paymentMeansInformation;
+	}
 }

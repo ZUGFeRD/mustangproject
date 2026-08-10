@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Factur-X release metadata
+     Version: 1.09.2
+     Release date: 2026-08-04
+     Effective date: 2026-09-01
+-->
 <codedb>
   <cl id="1">
     <enumeration value="urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended"/>
@@ -2631,6 +2636,10 @@
     <enumeration value="0242"/>
     <enumeration value="0243"/>
     <enumeration value="0244"/>
+    <enumeration value="0245"/>
+    <enumeration value="0246"/>
+    <enumeration value="0247"/>
+    <enumeration value="0248"/>
   </cl>
   <cl id="15">
     <enumeration value="10"/>

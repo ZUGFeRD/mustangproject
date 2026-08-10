@@ -29,8 +29,8 @@ public class XMLUpgrader {
 
 	static final ClassLoader CLASS_LOADER = XMLUpgrader.class.getClassLoader();
 	private static final String RESOURCE_PATH = "";
-	private TransformerFactory mFactory = null;
-	private Templates mXsltTemplate = null;
+	private TransformerFactory mFactory;
+	private Templates mXsltTemplate;
 
 	public XMLUpgrader() {
 		mFactory = XMLTools.getTransformerFactory();
