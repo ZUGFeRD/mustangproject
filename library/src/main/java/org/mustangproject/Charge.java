@@ -28,7 +28,7 @@ import java.math.RoundingMode;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class Charge extends TradeTax implements IZUGFeRDAllowanceCharge {
+public class Charge extends TradeTax<Charge> implements IZUGFeRDAllowanceCharge {
 
 	protected Integer sequenceNumeric;
 

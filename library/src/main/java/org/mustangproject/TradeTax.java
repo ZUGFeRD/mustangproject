@@ -23,8 +23,15 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDTradeTax;
  *     &lt;xs:element name="RateApplicablePercent" type="udt:PercentType" minOccurs="0"/&gt;
  *   &lt;/xs:sequence&gt;
  * &lt;/xs:complexType&gt;
+ * <p>The class is parameterized with its own concrete subtype (&quot;recursive generics&quot; or
+ * curiously recurring template pattern) so that the fluid setters declared here already
+ * return the subtype and no covariant overrides are needed in the subclasses, e.g.
+ * <code>class Charge extends TradeTax&lt;Charge&gt</code> makes
+ * <code>setTaxBasisAmount(..)</code> return a <code>Charge</code></p>
+ *
+ * @param <T> the concrete subtype returned by the fluid setters
  */
-public class TradeTax implements IZUGFeRDTradeTax {
+public abstract class TradeTax<T extends TradeTax<T>> implements IZUGFeRDTradeTax {
 	/**
 	 * the value
 	 */
@@ -77,6 +84,14 @@ public class TradeTax implements IZUGFeRDTradeTax {
 
 
 	/**
+	 * this instance, typed as the concrete subclass, for the fluid setters
+	 */
+	@SuppressWarnings("unchecked")
+	protected T self() {
+		return (T) this;
+	}
+
+	/**
 	 * @return the taxCalculatedAmount
 	 */
 	@Override
@@ -87,9 +102,9 @@ public class TradeTax implements IZUGFeRDTradeTax {
 	/**
 	 * @param taxCalculatedAmount the taxCalculatedAmount to set
 	 */
-	public TradeTax setTaxCalculatedAmount(BigDecimal taxCalculatedAmount) {
+	public T setTaxCalculatedAmount(BigDecimal taxCalculatedAmount) {
 		this.taxCalculatedAmount = taxCalculatedAmount;
-		return this;
+		return self();
 	}
 
 	/**
@@ -103,9 +118,9 @@ public class TradeTax implements IZUGFeRDTradeTax {
 	/**
 	 * @param taxExemptionReason the taxExemptionReason to set
 	 */
-	public TradeTax setTaxExemptionReason(String taxExemptionReason) {
+	public T setTaxExemptionReason(String taxExemptionReason) {
 		this.taxExemptionReason = taxExemptionReason;
-		return this;
+		return self();
 	}
 
 	/**
@@ -119,9 +134,9 @@ public class TradeTax implements IZUGFeRDTradeTax {
 	/**
 	 * @param taxBasisAmount the taxBasisAmount to set
 	 */
-	public TradeTax setTaxBasisAmount(BigDecimal taxBasisAmount) {
+	public T setTaxBasisAmount(BigDecimal taxBasisAmount) {
 		this.taxBasisAmount = taxBasisAmount;
-		return this;
+		return self();
 	}
 
 	/**
@@ -135,9 +150,9 @@ public class TradeTax implements IZUGFeRDTradeTax {
 	/**
 	 * @param taxLineTotalBasisAmount the taxLineTotalBasisAmount to set
 	 */
-	public TradeTax setTaxLineTotalBasisAmount(BigDecimal taxLineTotalBasisAmount) {
+	public T setTaxLineTotalBasisAmount(BigDecimal taxLineTotalBasisAmount) {
 		this.taxLineTotalBasisAmount = taxLineTotalBasisAmount;
-		return this;
+		return self();
 	}
 
 	/**
@@ -151,9 +166,9 @@ public class TradeTax implements IZUGFeRDTradeTax {
 	/**
 	 * @param taxAllowanceChargeBasisAmount the taxAllowanceChargeBasisAmount to set
 	 */
-	public TradeTax setTaxAllowanceChargeBasisAmount(BigDecimal taxAllowanceChargeBasisAmount) {
+	public T setTaxAllowanceChargeBasisAmount(BigDecimal taxAllowanceChargeBasisAmount) {
 		this.taxAllowanceChargeBasisAmount = taxAllowanceChargeBasisAmount;
-		return this;
+		return self();
 	}
 
 	/**
@@ -170,9 +185,9 @@ public class TradeTax implements IZUGFeRDTradeTax {
 	/**
 	 * @param taxCategoryCode the taxCategoryCode to set
 	 */
-	public TradeTax setTaxCategoryCode(String taxCategoryCode) {
+	public T setTaxCategoryCode(String taxCategoryCode) {
 		this.taxCategoryCode = taxCategoryCode;
-		return this;
+		return self();
 	}
 
 	/**
@@ -186,9 +201,9 @@ public class TradeTax implements IZUGFeRDTradeTax {
 	/**
 	 * @param taxExemptionReasonCode the taxExemptionReasonCode to set
 	 */
-	public TradeTax setTaxExemptionReasonCode(String taxExemptionReasonCode) {
+	public T setTaxExemptionReasonCode(String taxExemptionReasonCode) {
 		this.taxExemptionReasonCode = taxExemptionReasonCode;
-		return this;
+		return self();
 	}
 
 	/**
@@ -202,9 +217,9 @@ public class TradeTax implements IZUGFeRDTradeTax {
 	/**
 	 * @param taxPointDate the taxPointDate to set
 	 */
-	public TradeTax setTaxPointDate(Date taxPointDate) {
+	public T setTaxPointDate(Date taxPointDate) {
 		this.taxPointDate = taxPointDate;
-		return this;
+		return self();
 	}
 
 	/**
@@ -218,9 +233,9 @@ public class TradeTax implements IZUGFeRDTradeTax {
 	/**
 	 * @param taxDueDateTypeCode the taxDueDateTypeCode to set
 	 */
-	public TradeTax setTaxDueDateTypeCode(String taxDueDateTypeCode) {
+	public T setTaxDueDateTypeCode(String taxDueDateTypeCode) {
 		this.taxDueDateTypeCode = taxDueDateTypeCode;
-		return this;
+		return self();
 	}
 
 	/**
@@ -234,8 +249,8 @@ public class TradeTax implements IZUGFeRDTradeTax {
 	/**
 	 * @param taxRateApplicablePercent the taxRateApplicablePercent to set
 	 */
-	public TradeTax setTaxRateApplicablePercent(BigDecimal taxRateApplicablePercent) {
+	public T setTaxRateApplicablePercent(BigDecimal taxRateApplicablePercent) {
 		this.taxRateApplicablePercent = taxRateApplicablePercent;
-		return this;
+		return self();
 	}
 }

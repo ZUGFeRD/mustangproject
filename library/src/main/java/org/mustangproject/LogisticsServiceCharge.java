@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class LogisticsServiceCharge extends TradeTax implements IZUGFeRDLogisticsServiceCharge {
+public class LogisticsServiceCharge extends TradeTax<LogisticsServiceCharge> implements IZUGFeRDLogisticsServiceCharge {
 
 	/**
 	 * the description
