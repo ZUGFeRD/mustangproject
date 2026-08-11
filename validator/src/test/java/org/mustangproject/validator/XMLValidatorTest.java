@@ -1,9 +1,16 @@
 package org.mustangproject.validator;
 
 import java.io.File;
+import java.net.URL;
+import java.util.Arrays;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
+import javax.xml.validation.SchemaFactory;
 
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
@@ -621,6 +628,36 @@ public class XMLValidatorTest extends ResourceCase {
 		} catch (final IrrecoverableValidationError e) {
 			e.printStackTrace();
 			fail(e.getMessage());
+		}
+	}
+
+	public void testZFSchemas() {
+		String currentZFVersionDir = "ZF_250";
+
+		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		sf.setErrorHandler(new ErrorHandler() {
+			@Override
+			public void warning(SAXParseException e) throws SAXException {
+				fail(e.getMessage());
+			}
+
+			@Override
+			public void fatalError(SAXParseException e) throws SAXException {
+				fail(e.getMessage());
+			}
+
+			@Override
+			public void error(SAXParseException e) throws SAXException {
+				fail(e.getMessage());
+			}
+		});
+		try {
+			for ( String schema : Arrays.asList("/BASIC/FACTUR-X_BASIC.xsd", "/BASIC-WL/FACTUR-X_BASICWL.xsd", "/MINIMUM/FACTUR-X_MINIMUM.xsd", "/EN16931/FACTUR-X_EN16931.xsd", "/EXTENDED/FACTUR-X_EXTENDED.xsd") ) {
+				URL schemaFile = Thread.currentThread().getContextClassLoader().getResource("schema/" + currentZFVersionDir + schema);
+				sf.newSchema(schemaFile);
+			}
+		} catch (SAXException e1) {
+			fail(e1.getMessage());
 		}
 	}
 }
