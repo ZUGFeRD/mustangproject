@@ -1,3 +1,7 @@
+2.25.1
+=======
+- Upgrade CEN EN16931 Schematron from v1.3.15 to v1.3.16
+
 
 2.25.0
 =======
