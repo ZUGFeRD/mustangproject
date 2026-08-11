@@ -541,8 +541,9 @@ public class ZUGFeRDInvoiceImporter {
 		String currency = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"InvoiceCurrencyCode\"]|//*[local-name()=\"DocumentCurrencyCode\"]");
 		zpp.setCurrency(currency);
 		String taxCurrency = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"TaxCurrencyCode\"]");
-		zpp.setTaxCurrency(taxCurrency);
-
+		if (!taxCurrency.isEmpty()) {
+			zpp.setTaxCurrency(taxCurrency);
+		}
 		xpr = xpath.compile("//*[local-name()=\"SpecifiedTradeSettlementHeaderMonetarySummation\"]/*[local-name()=\"TaxTotalAmount\"]|//*[local-name()=\"TaxTotal\"]/*[local-name()=\"TaxAmount\"]");
 		NodeList taxTotalNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (zpp instanceof CalculatedInvoice) {

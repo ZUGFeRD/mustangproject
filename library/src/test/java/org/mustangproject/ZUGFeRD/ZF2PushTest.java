@@ -25,6 +25,7 @@ import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +40,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mustangproject.*;
 import org.mustangproject.Product.TradeProductInstanceType;
 import org.junit.FixMethodOrder;
-import org.junit.jupiter.api.Test;
 import org.junit.runners.MethodSorters;
 
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
@@ -70,6 +70,7 @@ public class ZF2PushTest extends ResourceCase {
 	private static final String TARGET_REVERSECHARGEPDF = "./target/testout-ZF2PushReverseCharge.pdf";
 	private static final String TARGET_ALLOWANCES_TAXES = "./target/testout-ZF2PushAllowancesTaxes.pdf";
 	private static final String TARGET_EXTENDED_XML = "./target/testout-Extended_fremdwaehrung.xml";
+	private static final String TARGET_LINETOTAL_4DECIMALS_XML = "./target/testout-line-total-4-decimals.xml";
 
 	public void testPushExport() {
 		/***
@@ -1243,6 +1244,31 @@ public class ZF2PushTest extends ResourceCase {
 
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_EXTENDED_XML));
+			writer.write(theXML);
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void testLineTotalAmount() throws XPathExpressionException, ParseException, FileNotFoundException {
+		File inputFile = getResourceAsFile("line-total-4-decimals.xml");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.doIgnoreCalculationErrors();
+		zii.setInputStream(new FileInputStream(inputFile));
+
+		Invoice invoice = zii.extractInvoice();
+		assertEquals(new BigDecimal("47.0504"), invoice.getZFItems()[0].getLineTotalAmount());
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("EN16931"));
+		zf2p.generateXML(invoice);
+
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+		assertTrue(theXML.contains(">47.05<"));
+
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_LINETOTAL_4DECIMALS_XML));
 			writer.write(theXML);
 			writer.close();
 		} catch (IOException e) {
