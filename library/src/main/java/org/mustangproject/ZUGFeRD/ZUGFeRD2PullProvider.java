@@ -50,6 +50,8 @@ import org.mustangproject.ReferencedDocument;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
+import org.mustangproject.util.StringUtils;
+
 import static org.mustangproject.util.StringUtils.isNotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -817,7 +819,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if (trans.getPaymentReference() != null && getProfile() != Profiles.getByName("Minimum")) {
 			xml.append("<ram:PaymentReference>" + XMLTools.encodeXML(trans.getPaymentReference()) + "</ram:PaymentReference>");
 		}
-		if (trans.getTaxCurrency() != null) {
+		if (StringUtils.isNotBlank(trans.getTaxCurrency())) {
 			xml.append("<ram:TaxCurrencyCode>" + trans.getTaxCurrency() + "</ram:TaxCurrencyCode>");
 		}
 		xml.append("<ram:InvoiceCurrencyCode>" + trans.getCurrency() + "</ram:InvoiceCurrencyCode>");
@@ -838,7 +840,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				"</ram:PayeeTradeParty>");
 		}
 
-		if ((profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung")) && this.trans.getTaxCurrency() != null) {
+		if ((profile == Profiles.getByName("Extended") || profile == Profiles.getByName("XRechnung")) && StringUtils.isNotBlank(this.trans.getTaxCurrency())) {
 			xml.append("<ram:TaxApplicableTradeCurrencyExchange>");
 			xml.append("<ram:SourceCurrencyCode>" + trans.getCurrency() + "</ram:SourceCurrencyCode>");
 			xml.append("<ram:TargetCurrencyCode>" + trans.getTaxCurrency() + "</ram:TargetCurrencyCode>");

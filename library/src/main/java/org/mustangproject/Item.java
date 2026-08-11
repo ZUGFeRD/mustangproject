@@ -1,6 +1,7 @@
 package org.mustangproject;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -299,7 +300,7 @@ public class Item implements IZUGFeRDExportableItem {
 			}
 			icnm.getAsNodeMap("SpecifiedTradeSettlementLineMonetarySummation")
 				.flatMap(cnm -> cnm.getAsBigDecimal("LineTotalAmount"))
-				.ifPresent(lineTotal -> setLineTotalAmount(lineTotal.setScale(2)));
+				.ifPresent(lineTotal -> setLineTotalAmount(lineTotal.setScale(Math.max(2, lineTotal.scale()), RoundingMode.HALF_UP)));
 
 			icnm.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).forEach(this::addAdditionalReference);
 
