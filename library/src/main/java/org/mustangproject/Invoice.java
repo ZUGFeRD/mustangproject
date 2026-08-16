@@ -56,7 +56,7 @@ public class Invoice implements IExportableTransaction {
 	protected String documentName, documentCode, number, ownOrganisationFullPlaintextInfo, referenceNumber, shipToOrganisationID, shipToOrganisationName, shipToStreet, shipToZIP, shipToLocation, shipToCountry, ownForeignOrganisationID, ownOrganisationName, currency, paymentTermDescription;
 	protected String deliveryTypeCode;
 	protected Date issueDate, dueDate, deliveryDate;
-	protected TradeParty sender, recipient, deliveryAddress, endCustomerDeliveryAddress, payee, invoicer, invoicee;
+	protected TradeParty sender, recipient, deliveryAddress, endCustomerDeliveryAddress, payee, invoicer, invoicee, taxRepresentative;
 	protected ArrayList<CashDiscount> cashDiscounts;
 	@JsonDeserialize(contentAs = Item.class)
 	protected List<IZUGFeRDExportableItem> zfItems;
@@ -987,6 +987,22 @@ public class Invoice implements IExportableTransaction {
 	 */
 	public Invoice setPayee(TradeParty payee) {
 		this.payee = payee;
+		return this;
+	}
+
+	@Override
+	public TradeParty getTaxRepresentative() {
+		return this.taxRepresentative;
+	}
+
+	/***
+	 * seller's tax representative (BG-11), to be used when the seller invoices
+	 * under the VAT ID of a fiscal representative in another member state
+	 * @param taxRepresentative the seller's fiscal representative
+	 * @return fluent setter
+	 */
+	public Invoice setTaxRepresentative(TradeParty taxRepresentative) {
+		this.taxRepresentative = taxRepresentative;
 		return this;
 	}
 
