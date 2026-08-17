@@ -1,6 +1,7 @@
 2.25.1
 =======
 - Upgrade CEN EN16931 Schematron from v1.3.15 to v1.3.16
+- #1233 Add Seller tax representative (BG-11) to CII profiles, excluding Minimum
 
 
 2.25.0
