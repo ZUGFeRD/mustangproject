@@ -707,6 +707,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		xml.append("<ram:SellerTradeParty>" + getTradePartyAsXML(trans.getSender(), true, false) + "</ram:SellerTradeParty>");
 		xml.append("<ram:BuyerTradeParty>" + getTradePartyAsXML(trans.getRecipient(), false, false) + "</ram:BuyerTradeParty>");
 
+		// seller's fiscal representative (BG-11), an EN16931 element carried by every profile except Minimum
+		if (trans.getTaxRepresentative() != null && getProfile() != Profiles.getByName("Minimum")) {
+			xml.append("<ram:SellerTaxRepresentativeTradeParty>" + getTradePartyAsXML(trans.getTaxRepresentative(), false, false) + "</ram:SellerTaxRepresentativeTradeParty>");
+		}
+
 		if (trans.getDeliveryTypeCode() != null && getProfile() == Profiles.getByName("Extended")) {
 			xml.append("<ram:ApplicableTradeDeliveryTerms>"
 				+ "<ram:DeliveryTypeCode>"

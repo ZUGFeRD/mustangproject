@@ -564,6 +564,17 @@ public interface IExportableTransaction {
 	}
 
 	/***
+	 * seller's tax representative (BG-11), used when the seller invoices under the
+	 * VAT ID of a fiscal representative in another member state,
+	 * ram:SellerTaxRepresentativeTradeParty (only supported for zf2)
+	 *
+	 * @return the IZUGFeRDExportableTradeParty tax representative of the seller, or null if none
+	 */
+	default IZUGFeRDExportableTradeParty getTaxRepresentative() {
+		return null;
+	}
+
+	/***
 	 * invoicer / invoice sender, if different from seller, ram:InvoicerTradeParty
 	 *
 	 * @return the IZUGFeRDExportableTradeParty invoice sender, if different from seller

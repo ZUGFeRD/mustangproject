@@ -385,6 +385,65 @@ public class XRTest extends TestCase {
 			.isEqualTo(1);
 	}
 
+	public void testSellerTaxRepresentative() {
+		// BG-11: seller's fiscal representative, used e.g. for intra-community supplies
+		// from a warehouse in another member state.
+		TradeParty recipient = new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE");
+		Invoice i = createInvoice(recipient)
+			.setTaxRepresentative(new TradeParty("Fiskalvertreter B.V.", "Voorbeeldstraat 1", "1011 AB", "Amsterdam", "NL")
+				.addVATID("NL123456789B01"))
+			// a following element in the same aggregate, to assert schema ordering
+			.setContractReferencedDocument(new ReferencedDocument("contract-4711"));
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(i);
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+
+		// the party is present with name, address and its own VAT ID (BT-62/63/66/67/69)
+		assertThat(theXML).valueByXPath("count(//*[local-name()='SellerTaxRepresentativeTradeParty'])")
+			.asInt().isEqualTo(1);
+		assertThat(theXML).valueByXPath("//*[local-name()='SellerTaxRepresentativeTradeParty']/*[local-name()='Name']")
+			.isEqualTo("Fiskalvertreter B.V.");
+		assertThat(theXML).valueByXPath("//*[local-name()='SellerTaxRepresentativeTradeParty']/*[local-name()='PostalTradeAddress']/*[local-name()='CountryID']")
+			.isEqualTo("NL");
+		assertThat(theXML).valueByXPath("//*[local-name()='SellerTaxRepresentativeTradeParty']/*[local-name()='SpecifiedTaxRegistration']/*[local-name()='ID'][@schemeID='VA']")
+			.isEqualTo("NL123456789B01");
+
+		// schema ordering (HeaderTradeAgreementType): after BuyerTradeParty, before ContractReferencedDocument
+		assertThat(theXML).valueByXPath("count(//*[local-name()='SellerTaxRepresentativeTradeParty']/preceding-sibling::*[local-name()='BuyerTradeParty'])")
+			.asInt().isEqualTo(1);
+		assertThat(theXML).valueByXPath("count(//*[local-name()='SellerTaxRepresentativeTradeParty']/following-sibling::*[local-name()='ContractReferencedDocument'])")
+			.asInt().isEqualTo(1);
+	}
+
+	public void testSellerTaxRepresentativeSuppressedInMinimum() {
+		// BG-11 is carried by every profile except Minimum (Basic/BasicWL/EN16931/Extended all
+		// declare and validate SellerTaxRepresentativeTradeParty), so it must be dropped only for Minimum.
+		TradeParty representative = new TradeParty("Fiskalvertreter B.V.", "Voorbeeldstraat 1", "1011 AB", "Amsterdam", "NL")
+			.addVATID("NL123456789B01");
+
+		// Minimum: element must not be emitted
+		Invoice min = createInvoice(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
+			.setTaxRepresentative(representative);
+		ZUGFeRD2PullProvider minProvider = new ZUGFeRD2PullProvider();
+		minProvider.setProfile(Profiles.getByName("Minimum"));
+		minProvider.generateXML(min);
+		assertThat(new String(minProvider.getXML(), StandardCharsets.UTF_8))
+			.valueByXPath("count(//*[local-name()='SellerTaxRepresentativeTradeParty'])")
+			.asInt().isEqualTo(0);
+
+		// Basic: element is part of the profile and must be emitted
+		Invoice basic = createInvoice(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
+			.setTaxRepresentative(representative);
+		ZUGFeRD2PullProvider basicProvider = new ZUGFeRD2PullProvider();
+		basicProvider.setProfile(Profiles.getByName("Basic"));
+		basicProvider.generateXML(basic);
+		assertThat(new String(basicProvider.getXML(), StandardCharsets.UTF_8))
+			.valueByXPath("count(//*[local-name()='SellerTaxRepresentativeTradeParty'])")
+			.asInt().isEqualTo(1);
+	}
+
 	private org.mustangproject.Invoice createInvoice(TradeParty recipient) {
 		String orgname = "Test company";
 		String number = "123";
