@@ -229,7 +229,7 @@ public class ReferencedDocument implements IReferencedDocument {
 			xml.append("<ram:TypeCode>" + XMLTools.encodeXML(this.getTypeCode()) + "</ram:TypeCode>");
 		}
 		if (StringUtils.isNotBlank(this.getName())) {
-			xml.append("<ram:name>" + XMLTools.encodeXML(this.getName()) + "</ram:Name>");
+			xml.append("<ram:Name>" + XMLTools.encodeXML(this.getName()) + "</ram:Name>");
 		}
 		if (this.getAttachmentBinaryObject() != null) {
 			FileAttachment f = this.getAttachmentBinaryObject();
