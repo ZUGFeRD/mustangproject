@@ -1,12 +1,13 @@
-2.25.1
+2.26.0
 =======
 - Upgrade CEN EN16931 Schematron from v1.3.15 to v1.3.16
 - #1233 Add Seller tax representative (BG-11) to CII profiles, excluding Minimum
 - Import and Export TaxCurrencyCode (BT-6) and corresponding TaxTotalAmount (BT-111)
 - #1225: fix fluent API for subclasses of TradeTax (Charge, Allowance, LogisticsServiceCharge)
 - Modify valid version array in PDFValidator, add "3p0"
-- Allow import of invoices with a LineTotalAmount having more than 2 decimals.
+- #1228 Allow import of invoices with a LineTotalAmount having more than 2 decimals. #1231
 - #1229 ZF_250 XSDs contain ten dangling schemaLocation references
+- #1219 #1223 #1220 Prevent NPE in Item.enrichProductFromVATBreakdown for VAT category "O".
 
 
 
