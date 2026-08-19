@@ -28,8 +28,7 @@ public class ZUGFeRDExporterFromA3Test {
 	public void testPrepareDocumentPreservesUntouchedMetadata() throws Exception {
 		byte[] pdfBytes = createPdfWithPresetMetadata();
 
-        try (ZUGFeRDExporterFromA3 exporter = new ZUGFeRDExporterFromA3())
-        {
+        try (ZUGFeRDExporterFromA3 exporter = new ZUGFeRDExporterFromA3()) {
             exporter.load(pdfBytes);
             // test override behaviour
             exporter.overwrite = false;

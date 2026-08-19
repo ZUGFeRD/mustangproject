@@ -5,25 +5,24 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class MiscValidatorTest extends ResourceCase  {
-
+public class MiscValidatorTest extends ResourceCase {
 
 	public void testInvalidFileValidation() {
 
-		ZUGFeRDValidator zfv=new ZUGFeRDValidator();
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
 
-		String res=zfv.validate(null);
-    assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" +
-        "\n" +
-        "<validation filename=\"\" datetime=\".*?\">\n" +
-        "  <messages>\n" +
-        "    <error type=\"10\">Filename not specified</error> \n" +
-        "  </messages>\n" +
-        "  <summary status=\"invalid\"/>\n" +
-        "</validation>\n" +
-        ""));
+		String res = zfv.validate(null);
+		assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" +
+	        "\n" +
+	        "<validation filename=\"\" datetime=\".*?\">\n" +
+	        "  <messages>\n" +
+	        "    <error type=\"10\">Filename not specified</error> \n" +
+	        "  </messages>\n" +
+	        "  <summary status=\"invalid\"/>\n" +
+	        "</validation>\n" +
+	        ""));
 
-		res=zfv.validate("/dhfkbv/sfjkh");
+		res = zfv.validate("/dhfkbv/sfjkh");
 		assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" +
 				"\n" +
 				"<validation filename=\"sfjkh\" datetime=\".*?\">\n" +
@@ -33,16 +32,16 @@ public class MiscValidatorTest extends ResourceCase  {
 				"  <summary status=\"invalid\"/>\n" +
 				"</validation>\n"));
 
-		boolean noExceptionOccurred=true;
-		File tempFile=null;
+		boolean noExceptionOccurred = true;
+		File tempFile = null;
 		try {
 			tempFile = File.createTempFile("hello", ".tmp");
 		} catch (IOException e) {
-			noExceptionOccurred=true;
+			noExceptionOccurred = true;
 		}
 		assertTrue(noExceptionOccurred);
 
-		res=zfv.validate(tempFile.getAbsolutePath());
+		res = zfv.validate(tempFile.getAbsolutePath());
 		assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" +
 				"\n" +
 				"<validation filename=\".*\" datetime=\".*\">\n" +
@@ -56,14 +55,14 @@ public class MiscValidatorTest extends ResourceCase  {
 
 		String fileContent = "ladhvkdbfk  wkhfbkhdhkb svbkfsvbksfbvk sdvsdvbksjdvbkfdsv sdvbskdvbsjhkvbfskh dvbskfvbkfsbvke"
 				+ "ladhvkdbfk  wkhfbkhdhkb svbkfsvbksfbvk sdvsdvbksjdvbkfdsv sdvbskdvbsjhkvbfskh dvbskfvbkfsbvke";
-		noExceptionOccurred=true;
+		noExceptionOccurred = true;
 	    BufferedWriter writer;
 		try {
 			writer = new BufferedWriter(new FileWriter(tempFile));
 		    writer.write(fileContent);
 		    writer.close();
 		} catch (IOException e) {
-			noExceptionOccurred=false;
+			noExceptionOccurred = false;
 		}
 		assertTrue(noExceptionOccurred);
 

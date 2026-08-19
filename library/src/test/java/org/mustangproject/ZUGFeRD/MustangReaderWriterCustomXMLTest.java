@@ -321,7 +321,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			zea1.setProducer("My Application")
 					.setCreator("Test")
 					.setZUGFeRDVersion(1)
-					.setProfile(Profiles.getByName("BASIC",1))
+					.setProfile(Profiles.getByName("BASIC", 1))
 					.load(SOURCE_PDF);
 			/* we have much more information than just in the basic profile (comfort or extended) but it's perfectly valid to provide more information, just not less. */
 			String ownZUGFeRDXML = "<rsm:CrossIndustryDocument xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:12\" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:15\" xmlns:rsm=\"urn:ferd:CrossIndustryDocument:invoice:1p0\">\n"
@@ -465,8 +465,8 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 			zea1.export(baos);
 			zea1.close();
 			String pdfContent = baos.toString(StandardCharsets.UTF_8);
-			assertFalse(pdfContent.indexOf("(via mustangproject.org") == -1);
-			assertFalse(pdfContent.indexOf("<zf:ConformanceLevel>BASIC</zf:ConformanceLevel>") == -1);
+			assertNotEquals(-1, pdfContent.indexOf("(via mustangproject.org"));
+			assertNotEquals(-1, pdfContent.indexOf("<zf:ConformanceLevel>BASIC</zf:ConformanceLevel>"));
 
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -25,7 +25,7 @@ public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge, IZU
 	private String reason;
 	private String reasonCode;
 	private BigDecimal taxPercent;
-	private boolean isCharge=true;
+	private boolean isCharge = true;
 	private String taxExemptionReason;
 	private String taxExemptionReasonCode;
 

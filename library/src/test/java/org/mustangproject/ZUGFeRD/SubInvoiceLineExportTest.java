@@ -1,15 +1,23 @@
 package org.mustangproject.ZUGFeRD;
 
-import org.junit.jupiter.api.Test;
-import org.mustangproject.*;
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.mustangproject.Contact;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
+import org.mustangproject.TradeParty;
+
 
 public class SubInvoiceLineExportTest {
 
@@ -82,14 +90,14 @@ public class SubInvoiceLineExportTest {
 			.addItem(group01);
 
 		// -- Export to PDF with EXTENDED profile --
-		try (InputStream sourcePDF = this.getClass()
-			.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
-			 ZUGFeRDExporterFromA3 exporter = new ZUGFeRDExporterFromA3()
-				 .setProducer("Mustang SubInvoiceLine Test")
+		try (InputStream sourcePDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
+			 ZUGFeRDExporterFromA3 exporter = new ZUGFeRDExporterFromA3() ) {
+
+			exporter.setProducer("Mustang SubInvoiceLine Test")
 				 .setCreator("Test")
 				 .setZUGFeRDVersion(2)
 				 .setProfile("EXTENDED")
-				 .load(sourcePDF)) {
+				 .load(sourcePDF);
 
 			exporter.setTransaction(invoice);
 

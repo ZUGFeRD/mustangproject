@@ -220,7 +220,7 @@ public class LibraryTest extends ResourceCase {
 				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+				.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");
@@ -245,7 +245,7 @@ public class LibraryTest extends ResourceCase {
 				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+				.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");
@@ -273,7 +273,7 @@ public class LibraryTest extends ResourceCase {
 				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+				.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");
@@ -296,7 +296,7 @@ public class LibraryTest extends ResourceCase {
 				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+				.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");
@@ -319,7 +319,7 @@ public class LibraryTest extends ResourceCase {
 				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+				.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");

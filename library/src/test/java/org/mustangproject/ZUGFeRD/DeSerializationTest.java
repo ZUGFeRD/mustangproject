@@ -21,12 +21,7 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-import org.mustangproject.*;
-import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +34,24 @@ import java.util.Date;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import org.mustangproject.Allowance;
+import org.mustangproject.BankDetails;
+import org.mustangproject.CalculatedInvoice;
+import org.mustangproject.CashDiscount;
+import org.mustangproject.Charge;
+import org.mustangproject.Contact;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
+import org.mustangproject.ReferencedDocument;
+import org.mustangproject.SchemedID;
+import org.mustangproject.TradeParty;
+import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -337,7 +349,7 @@ public class DeSerializationTest extends ResourceCase {
 	}
 	public void testNulledAttachments() {
 
-		String json="{\n" +
+		String json = "{\n" +
 			"  \"number\": \"471102\",\n" +
 			"  \"currency\": \"EUR\",\n" +
 			"  \"issueDate\": \"2018-03-04T00:00:00.000+01:00\",\n" +
@@ -361,7 +373,7 @@ public class DeSerializationTest extends ResourceCase {
 			"    \"location\": \"Frankfurt\",\n" +
 			"    \"country\": \"DE\"\n" +
 			"  },\n" +
-			"\"additionalReferencedDocuments\":null,"+
+			"\"additionalReferencedDocuments\":null," +
 			"  \"zfitems\": [\n" +
 			"    {\n" +
 			"      \"price\": 9.9,\n" +
@@ -388,23 +400,23 @@ public class DeSerializationTest extends ResourceCase {
 			"  ]\n" +
 			"}\n";
 		ObjectMapper mapper = new ObjectMapper();
-		boolean exceptions=false;
+		boolean exceptions = false;
 		try {
 			mapper.readValue(json, Invoice.class);
 		} catch (JsonProcessingException e) {
-			exceptions=true;
+			exceptions = true;
 		}
 		assertFalse(exceptions);
 	}
 
 	public void testItemAllowances() {
 
-		String json="{\"number\":\"123\",\"currency\":\"EUR\",\"issueDate\":1738935176399,\"dueDate\":1738935176399,\"sender\":{\"name\":\"Test company\",\"zip\":\"55232\",\"street\":\"teststr\",\"location\":\"teststadt\",\"country\":\"DE\",\"taxID\":\"4711\",\"vatID\":\"DE0815\",\"vatid\":\"DE0815\"},\"recipient\":{\"name\":\"Franz Müller\",\"zip\":\"55232\",\"street\":\"teststr.12\",\"location\":\"Entenhausen\",\"country\":\"DE\",\"contact\":{\"name\":\"contact testname\",\"phone\":\"123456\",\"email\":\"contact.testemail@example.org\",\"fax\":\"0911623562\"}},\"zfitems\":[{\"price\":3.00,\"quantity\":1,\"basisQuantity\":1,\"product\":{\"unit\":\"C62\",\"name\":\"Testprodukt\",\"taxCategoryCode\":\"S\",\"vatpercent\":19,\"reverseCharge\":false,\"intraCommunitySupply\":false},\"itemAllowances\":[{\"totalAmount\":0.1,\"categoryCode\":\"S\"}],\"value\":3.00},{\"price\":3.00,\"quantity\":1,\"basisQuantity\":1,\"product\":{\"unit\":\"C62\",\"name\":\"Testprodukt\",\"taxCategoryCode\":\"S\",\"vatpercent\":19,\"reverseCharge\":false,\"intraCommunitySupply\":false},\"itemAllowances\":[{\"percent\":50,\"taxPercent\":0,\"categoryCode\":\"S\"}],\"value\":3.00},{\"price\":3.00,\"quantity\":2,\"basisQuantity\":1,\"product\":{\"unit\":\"C62\",\"name\":\"Testprodukt\",\"taxCategoryCode\":\"S\",\"vatpercent\":19,\"reverseCharge\":false,\"intraCommunitySupply\":false},\"itemCharges\":[{\"totalAmount\":1,\"reason\":\"AnotherReason\",\"reasonCode\":\"ABK\",\"categoryCode\":\"S\"}],\"value\":3.00},{\"price\":3.00,\"quantity\":1,\"basisQuantity\":1,\"product\":{\"unit\":\"C62\",\"name\":\"Testprodukt\",\"taxCategoryCode\":\"S\",\"vatpercent\":19,\"reverseCharge\":false,\"intraCommunitySupply\":false},\"itemAllowances\":[{\"totalAmount\":1,\"categoryCode\":\"S\"}],\"itemCharges\":[{\"totalAmount\":1,\"categoryCode\":\"S\"}],\"value\":3.00}],\"ownStreet\":\"teststr\",\"ownCountry\":\"DE\",\"zfcharges\":[{\"totalAmount\":1,\"taxRateApplicablePercent\":19,\"reason\":\"AReason\",\"reasonCode\":\"ABK\",\"categoryCode\":\"S\"}],\"ownLocation\":\"teststadt\",\"ownTaxID\":\"4711\",\"ownZIP\":\"55232\",\"ownVATID\":\"DE0815\",\"valid\":true}";
+		String json = "{\"number\":\"123\",\"currency\":\"EUR\",\"issueDate\":1738935176399,\"dueDate\":1738935176399,\"sender\":{\"name\":\"Test company\",\"zip\":\"55232\",\"street\":\"teststr\",\"location\":\"teststadt\",\"country\":\"DE\",\"taxID\":\"4711\",\"vatID\":\"DE0815\",\"vatid\":\"DE0815\"},\"recipient\":{\"name\":\"Franz Müller\",\"zip\":\"55232\",\"street\":\"teststr.12\",\"location\":\"Entenhausen\",\"country\":\"DE\",\"contact\":{\"name\":\"contact testname\",\"phone\":\"123456\",\"email\":\"contact.testemail@example.org\",\"fax\":\"0911623562\"}},\"zfitems\":[{\"price\":3.00,\"quantity\":1,\"basisQuantity\":1,\"product\":{\"unit\":\"C62\",\"name\":\"Testprodukt\",\"taxCategoryCode\":\"S\",\"vatpercent\":19,\"reverseCharge\":false,\"intraCommunitySupply\":false},\"itemAllowances\":[{\"totalAmount\":0.1,\"categoryCode\":\"S\"}],\"value\":3.00},{\"price\":3.00,\"quantity\":1,\"basisQuantity\":1,\"product\":{\"unit\":\"C62\",\"name\":\"Testprodukt\",\"taxCategoryCode\":\"S\",\"vatpercent\":19,\"reverseCharge\":false,\"intraCommunitySupply\":false},\"itemAllowances\":[{\"percent\":50,\"taxPercent\":0,\"categoryCode\":\"S\"}],\"value\":3.00},{\"price\":3.00,\"quantity\":2,\"basisQuantity\":1,\"product\":{\"unit\":\"C62\",\"name\":\"Testprodukt\",\"taxCategoryCode\":\"S\",\"vatpercent\":19,\"reverseCharge\":false,\"intraCommunitySupply\":false},\"itemCharges\":[{\"totalAmount\":1,\"reason\":\"AnotherReason\",\"reasonCode\":\"ABK\",\"categoryCode\":\"S\"}],\"value\":3.00},{\"price\":3.00,\"quantity\":1,\"basisQuantity\":1,\"product\":{\"unit\":\"C62\",\"name\":\"Testprodukt\",\"taxCategoryCode\":\"S\",\"vatpercent\":19,\"reverseCharge\":false,\"intraCommunitySupply\":false},\"itemAllowances\":[{\"totalAmount\":1,\"categoryCode\":\"S\"}],\"itemCharges\":[{\"totalAmount\":1,\"categoryCode\":\"S\"}],\"value\":3.00}],\"ownStreet\":\"teststr\",\"ownCountry\":\"DE\",\"zfcharges\":[{\"totalAmount\":1,\"taxRateApplicablePercent\":19,\"reason\":\"AReason\",\"reasonCode\":\"ABK\",\"categoryCode\":\"S\"}],\"ownLocation\":\"teststadt\",\"ownTaxID\":\"4711\",\"ownZIP\":\"55232\",\"ownVATID\":\"DE0815\",\"valid\":true}";
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			Invoice newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
-			TransactionCalculator tc=new TransactionCalculator(newInvoiceFromJSON);
-			assertEquals(new BigDecimal("18.33"),tc.getGrandTotal());
+			TransactionCalculator tc = new TransactionCalculator(newInvoiceFromJSON);
+			assertEquals(new BigDecimal("18.33"), tc.getGrandTotal());
 
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
@@ -470,16 +482,16 @@ public class DeSerializationTest extends ResourceCase {
 	public void testFromJSON() throws JsonProcessingException {
 		String globalID = "4000001123452";
 		String globalIDScheme = "0088";
-		String itemDeliveryFrom="2022-01-28T23:00:00.000+00:00";
-		String itemDeliveryTo="2022-01-30T23:00:00.000+00:00";
+		String itemDeliveryFrom = "2022-01-28T23:00:00.000+00:00";
+		String itemDeliveryTo = "2022-01-30T23:00:00.000+00:00";
 
-		String json="{\"number\":\"123\",\"buyerOrderReferencedDocumentID\":\"28934\",\"currency\":\"CHF\",\"issueDate\":1752744199178,\"dueDate\":1752744199178,\"deliveryDate\":1604271600000,\"sender\":{\"name\":\"Test company\",\"zip\":\"55232\",\"street\":\"teststr\",\"location\":\"teststadt\",\"country\":\"DE\",\"taxID\":\"9990815\",\"vatID\":\"DE0815\",\"id\":\"0009845\",\"globalID\":\""+globalID+"\",\"globalIDScheme\":\""+globalIDScheme+"\",\"email\":\"sender@test.org\",\"vatid\":\"DE0815\"},\"recipient\":{\"name\":\"Franz Müller\",\"zip\":\"55232\",\"street\":\"teststr.12\",\"location\":\"Entenhausen\",\"country\":\"DE\",\"vatID\":\"DE4711\",\"additionalAddress\":\"Hinterhaus 3\",\"contact\":{\"name\":\"Franz Müller\",\"phone\":\"01779999999\",\"email\":\"franz@mueller.de\",\"zip\":\"55232\",\"street\":\"teststr. 12\",\"location\":\"Entenhausen\",\"country\":\"DE\",\"fax\":\"++49555123456\"},\"globalID\":\"4304171000002\",\"globalIDScheme\":\"0088\",\"email\":\"recipient@test.org\",\"vatid\":\"DE4711\"},\"deliveryAddress\":{\"name\":\"just the other side of the street\",\"zip\":\"55232\",\"street\":\"teststr.12a\",\"location\":\"Entenhausen\",\"country\":\"DE\",\"vatID\":\"DE47110\",\"vatid\":\"DE47110\"},\"cashDiscounts\":[{\"percent\":2,\"days\":14}],\"notes\":[\"document level 1/2\",\"document level 2/2\"],\"sellerOrderReferencedDocumentID\":\"9384\",\"contractReferencedDocument\":\"376zreurzu0983\",\"valid\":true,\"vatdueDateTypeCode\":\"72\",\"zfitems\":[{\"price\":1.00,\"quantity\":1,\"basisQuantity\":1,\"detailedDeliveryPeriodFrom\":\""+itemDeliveryFrom+"\",\"detailedDeliveryPeriodTo\":\""+itemDeliveryTo+"\",\"id\":\"a123\",\"buyerOrderReferencedDocumentLineID\":\"xxx\",\"product\":{\"unit\":\"H87\",\"name\":\"Testprodukt\",\"sellerAssignedID\":\"4711\",\"taxCategoryCode\":\"S\",\"globalID\":\"2001015001325\",\"globalIDScheme\":\"0160\",\"intraCommunitySupply\":false,\"reverseCharge\":false,\"vatpercent\":16},\"notes\":[\"item level 1/1\"],\"notesWithSubjectCode\":[{\"content\":\"item level 1/1\"}],\"itemAllowances\":[{\"totalAmount\":0.0200000000000000004163336342344337026588618755340576171875,\"taxPercent\":16,\"reason\":\"item discount\",\"categoryCode\":\"S\"}],\"value\":1.00}],\"ownVATID\":\"DE0815\",\"detailedDeliveryPeriodFrom\":1601503200000,\"detailedDeliveryPeriodTo\":1601848800000,\"ownTaxID\":\"9990815\",\"ownZIP\":\"55232\",\"ownLocation\":\"teststadt\",\"zfallowances\":[{\"totalAmount\":0.200000000000000011102230246251565404236316680908203125,\"taxPercent\":16,\"reason\":\"discount\",\"categoryCode\":\"S\"}],\"ownStreet\":\"teststr\",\"zfcharges\":[{\"totalAmount\":0.5,\"taxPercent\":16,\"reason\":\"quick delivery charge\",\"categoryCode\":\"S\"}],\"ownCountry\":\"DE\"}";
+		String json = "{\"number\":\"123\",\"buyerOrderReferencedDocumentID\":\"28934\",\"currency\":\"CHF\",\"issueDate\":1752744199178,\"dueDate\":1752744199178,\"deliveryDate\":1604271600000,\"sender\":{\"name\":\"Test company\",\"zip\":\"55232\",\"street\":\"teststr\",\"location\":\"teststadt\",\"country\":\"DE\",\"taxID\":\"9990815\",\"vatID\":\"DE0815\",\"id\":\"0009845\",\"globalID\":\"" + globalID + "\",\"globalIDScheme\":\"" + globalIDScheme + "\",\"email\":\"sender@test.org\",\"vatid\":\"DE0815\"},\"recipient\":{\"name\":\"Franz Müller\",\"zip\":\"55232\",\"street\":\"teststr.12\",\"location\":\"Entenhausen\",\"country\":\"DE\",\"vatID\":\"DE4711\",\"additionalAddress\":\"Hinterhaus 3\",\"contact\":{\"name\":\"Franz Müller\",\"phone\":\"01779999999\",\"email\":\"franz@mueller.de\",\"zip\":\"55232\",\"street\":\"teststr. 12\",\"location\":\"Entenhausen\",\"country\":\"DE\",\"fax\":\"++49555123456\"},\"globalID\":\"4304171000002\",\"globalIDScheme\":\"0088\",\"email\":\"recipient@test.org\",\"vatid\":\"DE4711\"},\"deliveryAddress\":{\"name\":\"just the other side of the street\",\"zip\":\"55232\",\"street\":\"teststr.12a\",\"location\":\"Entenhausen\",\"country\":\"DE\",\"vatID\":\"DE47110\",\"vatid\":\"DE47110\"},\"cashDiscounts\":[{\"percent\":2,\"days\":14}],\"notes\":[\"document level 1/2\",\"document level 2/2\"],\"sellerOrderReferencedDocumentID\":\"9384\",\"contractReferencedDocument\":\"376zreurzu0983\",\"valid\":true,\"vatdueDateTypeCode\":\"72\",\"zfitems\":[{\"price\":1.00,\"quantity\":1,\"basisQuantity\":1,\"detailedDeliveryPeriodFrom\":\"" + itemDeliveryFrom + "\",\"detailedDeliveryPeriodTo\":\"" + itemDeliveryTo + "\",\"id\":\"a123\",\"buyerOrderReferencedDocumentLineID\":\"xxx\",\"product\":{\"unit\":\"H87\",\"name\":\"Testprodukt\",\"sellerAssignedID\":\"4711\",\"taxCategoryCode\":\"S\",\"globalID\":\"2001015001325\",\"globalIDScheme\":\"0160\",\"intraCommunitySupply\":false,\"reverseCharge\":false,\"vatpercent\":16},\"notes\":[\"item level 1/1\"],\"notesWithSubjectCode\":[{\"content\":\"item level 1/1\"}],\"itemAllowances\":[{\"totalAmount\":0.0200000000000000004163336342344337026588618755340576171875,\"taxPercent\":16,\"reason\":\"item discount\",\"categoryCode\":\"S\"}],\"value\":1.00}],\"ownVATID\":\"DE0815\",\"detailedDeliveryPeriodFrom\":1601503200000,\"detailedDeliveryPeriodTo\":1601848800000,\"ownTaxID\":\"9990815\",\"ownZIP\":\"55232\",\"ownLocation\":\"teststadt\",\"zfallowances\":[{\"totalAmount\":0.200000000000000011102230246251565404236316680908203125,\"taxPercent\":16,\"reason\":\"discount\",\"categoryCode\":\"S\"}],\"ownStreet\":\"teststr\",\"zfcharges\":[{\"totalAmount\":0.5,\"taxPercent\":16,\"reason\":\"quick delivery charge\",\"categoryCode\":\"S\"}],\"ownCountry\":\"DE\"}";
 
 		ObjectMapper mapper = new ObjectMapper();
 		Invoice fromJSON = mapper.readValue(json, Invoice.class);
 		assertEquals(globalID, fromJSON.getSender().getGlobalID());
 		assertEquals(globalIDScheme, fromJSON.getSender().getGlobalIDScheme());
-		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		assertEquals("2022-01-28", sdf.format(fromJSON.getZFItems()[0].getDetailedDeliveryPeriodFrom()));
 		assertEquals("2022-01-30", sdf.format(fromJSON.getZFItems()[0].getDetailedDeliveryPeriodTo()));
 		assertEquals("sender@test.org", fromJSON.getSender().getEmail());
@@ -489,24 +501,24 @@ public class DeSerializationTest extends ResourceCase {
 		String globalID = "4000001123452";
 		String globalIDScheme = "0088";
 
-		String json="{\"number\":\"471102\",\"currency\":\"EUR\",\"issueDate\":\"2018-03-04T00:00:00.000+01:00\",\"dueDate\":\"2018-03-04T00:00:00.000+01:00\",\"deliveryDate\":\"2018-03-04T00:00:00.000+01:00\",\"sender\":{\"name\":\"Lieferant GmbH\",\"zip\":\"80333\",\"street\":\"Lieferantenstraße 20\",\"location\":\"München\",\"country\":\"DE\",\"taxID\":\"201/113/40209\",\"vatID\":\"DE123456789\",\"globalID\":\"4000001123452\",\"globalIDScheme\":\"0088\"},\"recipient\":{\"name\":\"Kunden AG Mitte\",\"zip\":\"69876\",\"street\":\"Kundenstraße 15\",\"location\":\"Frankfurt\",\"country\":\"DE\"},\"zfitems\":[{\"price\":9.9,\"quantity\":20,\"product\":{\"unit\":\"H87\",\"name\":\"Trennblätter A4\",\"description\":\"\",\"vatpercent\":19,\"taxCategoryCode\":\"S\"},\"itemCharges\":[{\"totalAmount\":1,\"taxPercent\":19,\"reason\":\"Invoice line charge reason\",\"categoryCode\":\"S\"}]},{\"price\":5.5,\"quantity\":50,\"product\":{\"unit\":\"H87\",\"name\":\"Joghurt Banane\",\"description\":\"\",\"vatpercent\":7,\"taxCategoryCode\":\"S\"}}]}";
+		String json = "{\"number\":\"471102\",\"currency\":\"EUR\",\"issueDate\":\"2018-03-04T00:00:00.000+01:00\",\"dueDate\":\"2018-03-04T00:00:00.000+01:00\",\"deliveryDate\":\"2018-03-04T00:00:00.000+01:00\",\"sender\":{\"name\":\"Lieferant GmbH\",\"zip\":\"80333\",\"street\":\"Lieferantenstraße 20\",\"location\":\"München\",\"country\":\"DE\",\"taxID\":\"201/113/40209\",\"vatID\":\"DE123456789\",\"globalID\":\"4000001123452\",\"globalIDScheme\":\"0088\"},\"recipient\":{\"name\":\"Kunden AG Mitte\",\"zip\":\"69876\",\"street\":\"Kundenstraße 15\",\"location\":\"Frankfurt\",\"country\":\"DE\"},\"zfitems\":[{\"price\":9.9,\"quantity\":20,\"product\":{\"unit\":\"H87\",\"name\":\"Trennblätter A4\",\"description\":\"\",\"vatpercent\":19,\"taxCategoryCode\":\"S\"},\"itemCharges\":[{\"totalAmount\":1,\"taxPercent\":19,\"reason\":\"Invoice line charge reason\",\"categoryCode\":\"S\"}]},{\"price\":5.5,\"quantity\":50,\"product\":{\"unit\":\"H87\",\"name\":\"Joghurt Banane\",\"description\":\"\",\"vatpercent\":7,\"taxCategoryCode\":\"S\"}}]}";
 
 		ObjectMapper mapper = new ObjectMapper();
 		Invoice fromJSON = mapper.readValue(json, Invoice.class);
 		assertEquals(globalID, fromJSON.getSender().getGlobalID());
 		assertEquals(globalIDScheme, fromJSON.getSender().getGlobalIDScheme());
-		TransactionCalculator tc=new TransactionCalculator(fromJSON);
+		TransactionCalculator tc = new TransactionCalculator(fromJSON);
 		assertEquals(new BigDecimal("531.06"), tc.getDuePayable());
 	}
 
 	public void testGrossFromJSON() throws JsonProcessingException {
 
-		String json="{  \"documentCode\": \"380\",  \"number\": \"123\",  \"currency\": \"EUR\",  \"paymentTermDescription\": \"Please remit until 28.07.2025\",  \"issueDate\": 1753653600000,  \"dueDate\": 1753653600000,  \"sender\": {    \"name\": \"Test company\",    \"zip\": \"55232\",    \"street\": \"teststr\",    \"location\": \"teststadt\",    \"country\": \"DE\",    \"taxID\": \"4711\",    \"vatID\": \"DE0815\",    \"vatid\": \"DE0815\"  },  \"recipient\": {    \"name\": \"Franz Müller\",    \"zip\": \"55232\",    \"street\": \"teststr.12\",    \"location\": \"Entenhausen\",    \"country\": \"DE\",    \"contact\": {      \"name\": \"contact testname\",      \"phone\": \"123456\",      \"email\": \"contact.testemail@example.org\",      \"fax\": \"0911623562\"    }  },  \"totalPrepaidAmount\": 0.00,  \"lineTotalAmount\": 29.00,  \"duePayable\": 34.51,  \"grandTotal\": 34.51,  \"taxBasis\": 29.00,  \"valid\": true,  \"zfitems\": [    {      \"price\": 3.0000,      \"quantity\": 10.0000,      \"basisQuantity\": 1.0000,      \"id\": \"1\",      \"product\": {        \"unit\": \"H87\",        \"name\": \"Testprodukt\",        \"taxCategoryCode\": \"S\",        \"allowances\": [          {            \"totalAmount\": 0.1000,            \"categoryCode\": \"S\"          }        ],        \"vatpercent\": 19.00,        \"intraCommunitySupply\": false,        \"reverseCharge\": false      },      \"value\": 3.0000    }  ],  \"ownVATID\": \"DE0815\",  \"ownTaxID\": \"4711\",  \"ownLocation\": \"teststadt\",  \"ownZIP\": \"55232\",  \"ownCountry\": \"DE\",  \"ownStreet\": \"teststr\"}";
+		String json = "{  \"documentCode\": \"380\",  \"number\": \"123\",  \"currency\": \"EUR\",  \"paymentTermDescription\": \"Please remit until 28.07.2025\",  \"issueDate\": 1753653600000,  \"dueDate\": 1753653600000,  \"sender\": {    \"name\": \"Test company\",    \"zip\": \"55232\",    \"street\": \"teststr\",    \"location\": \"teststadt\",    \"country\": \"DE\",    \"taxID\": \"4711\",    \"vatID\": \"DE0815\",    \"vatid\": \"DE0815\"  },  \"recipient\": {    \"name\": \"Franz Müller\",    \"zip\": \"55232\",    \"street\": \"teststr.12\",    \"location\": \"Entenhausen\",    \"country\": \"DE\",    \"contact\": {      \"name\": \"contact testname\",      \"phone\": \"123456\",      \"email\": \"contact.testemail@example.org\",      \"fax\": \"0911623562\"    }  },  \"totalPrepaidAmount\": 0.00,  \"lineTotalAmount\": 29.00,  \"duePayable\": 34.51,  \"grandTotal\": 34.51,  \"taxBasis\": 29.00,  \"valid\": true,  \"zfitems\": [    {      \"price\": 3.0000,      \"quantity\": 10.0000,      \"basisQuantity\": 1.0000,      \"id\": \"1\",      \"product\": {        \"unit\": \"H87\",        \"name\": \"Testprodukt\",        \"taxCategoryCode\": \"S\",        \"allowances\": [          {            \"totalAmount\": 0.1000,            \"categoryCode\": \"S\"          }        ],        \"vatpercent\": 19.00,        \"intraCommunitySupply\": false,        \"reverseCharge\": false      },      \"value\": 3.0000    }  ],  \"ownVATID\": \"DE0815\",  \"ownTaxID\": \"4711\",  \"ownLocation\": \"teststadt\",  \"ownZIP\": \"55232\",  \"ownCountry\": \"DE\",  \"ownStreet\": \"teststr\"}";
 
 		ObjectMapper mapper = new ObjectMapper();
 		CalculatedInvoice fromJSON = mapper.readValue(json, CalculatedInvoice.class);
 		fromJSON.calculate();
-		assertEquals(new BigDecimal("34.51"),fromJSON.getDuePayable());
+		assertEquals(new BigDecimal("34.51"), fromJSON.getDuePayable());
 	}
 
 	public void testDueDateRoundtrip() throws JsonProcessingException {

@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
@@ -65,7 +64,6 @@ public abstract class Validator {
 		Source xmlData = new StreamSource(new ByteArrayInputStream(xmlRawData));
 		try {
 			javax.xml.validation.Validator validator = XMLTools.getValidator(schemaFile);
-			validator.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 			validator.validate(xmlData);
 		} catch (SAXException e) {
 			context.addResultItem(new ValidationResultItem(ESeverity.error, "schema validation fails:" + e).setSection(section).setPart(part));

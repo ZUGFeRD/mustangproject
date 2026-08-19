@@ -58,7 +58,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 		// the writing part
 		try (InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20190610_507blanko.pdf");
 			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA1()) {
-			ze.setZUGFeRDVersion(1).setProfile(Profiles.getByName("Extended",1)).load(SOURCE_PDF);
+			ze.setZUGFeRDVersion(1).setProfile(Profiles.getByName("Extended", 1)).load(SOURCE_PDF);
 			ze.setTransaction(this);
 			ze.disableAutoClose(true);
 			ze.export(TARGET_PDF_ZF1);
@@ -207,15 +207,15 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 	}
 
 	class Item implements IZUGFeRDExportableItem {
-		public Item(BigDecimal price, BigDecimal quantity, Product product) {
+		private BigDecimal price, quantity;
+		private Product product;
+
+		Item(BigDecimal price, BigDecimal quantity, Product product) {
 			super();
 			this.price = price;
 			this.quantity = quantity;
 			this.product = product;
 		}
-
-		private BigDecimal price, quantity;
-		private Product product;
 
 		public BigDecimal getPrice() {
 			return price;
@@ -253,17 +253,16 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 	}
 
 	class Product implements IZUGFeRDExportableProduct {
-		public Product(String description, String name, String unit, BigDecimal vATPercent) {
+		private String description, name, unit;
+		private BigDecimal vatPercent;
+
+		Product(String description, String name, String unit, BigDecimal vATPercent) {
 			super();
 			this.description = description;
 			this.name = name;
 			this.unit = unit;
 			vatPercent = vATPercent;
 		}
-
-		private String description, name, unit;
-
-		private BigDecimal vatPercent;
 
 		public String getDescription() {
 			return description;
@@ -307,12 +306,12 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 
 	@Override
 	public IZUGFeRDExportableTradeParty getRecipient() {
-		return new TradeParty("name","street","zip","city","DE");
+		return new TradeParty("name", "street", "zip", "city", "DE");
 	}
 
 	@Override
 	public IZUGFeRDExportableTradeParty getSender() {
-		return new TradeParty("Bei Spiel GmbH","street","zip","city","DE");
+		return new TradeParty("Bei Spiel GmbH", "street", "zip", "city", "DE");
 	}
 
 

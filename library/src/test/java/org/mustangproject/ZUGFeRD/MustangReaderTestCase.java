@@ -18,16 +18,15 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import junit.framework.TestCase;
-
 import java.math.BigDecimal;
+
+import junit.framework.TestCase;
 
 public abstract class MustangReaderTestCase extends TestCase implements IExportableTransaction {
 
 	public MustangReaderTestCase(String testName) {
 		super(testName);
 	}
-	
 
 	@Override
 	public IZUGFeRDTradeSettlement[] getTradeSettlement() {
@@ -160,6 +159,10 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 
 	protected class Item implements IZUGFeRDExportableItem {
 
+		private BigDecimal price, quantity, basisQuantity;
+		private IZUGFeRDExportableProduct product;
+		private String addReference;
+
 		public Item(BigDecimal price, BigDecimal quantity, IZUGFeRDExportableProduct product) {
 			super();
 			this.price = price;
@@ -168,10 +171,6 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 			this.basisQuantity = BigDecimal.ONE;
 		}
 
-		private BigDecimal price, quantity, basisQuantity;
-		private IZUGFeRDExportableProduct product;
-		private String addReference=null;
-		
 		public String getAdditionalReferencedDocumentID() {
 			return addReference;
 		}
@@ -229,7 +228,7 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 		public void setAddReference(String addReference) {
 			this.addReference = addReference;
 		}
-		
+
 
 	}
 

@@ -19,19 +19,25 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-import org.mustangproject.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import org.mustangproject.Charge;
+import org.mustangproject.Contact;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
+import org.mustangproject.TradeParty;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class VATrelatedTest extends ResourceCase  {
+public class VATrelatedTest extends ResourceCase {
 	private static final String TARGET_PDF_REVERSE = "./target/testout-ReverseCharge.pdf";
 	private static final String TARGET_PDF_Z = "./target/testout-TaxcodeZ.pdf";
 
@@ -48,22 +54,26 @@ public class VATrelatedTest extends ResourceCase  {
 			ze.setProfile(Profiles.getByName("Extended"));
 
 			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile("extended");
-			//	ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(orgname,"teststr", "55232","teststadt","DE")).setOwnTaxID("4711").setOwnVATID("DE0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number)
-			//					.addItem(new Item(new Product("Testprodukt", "", "H84", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance().setPercent(new BigDecimal(50)))));
 
-			Product p=new Product("Testprodukt", "", "H87", new BigDecimal(19));
+			Product p1 = new Product("Testprodukt 1", "", "H87", new BigDecimal(19));
+			p1.setReverseCharge();
+
+			Product p2 = new Product("Testprodukt 2", "", "H87", new BigDecimal(19));
+			p2.setIntraCommunitySupply();
 
 			Charge charge = new Charge(new BigDecimal(1)).setReasonCode("ABK").setReason("AReason");
 			charge.setTaxRateApplicablePercent(new BigDecimal(19));
 
-			p.setReverseCharge();
 			Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")
 					.setContact(new Contact("contact testname", "123456", "contact.testemail@example.org").setFax("0911623562")).addVATID("DE0915"))
+				.setDeliveryAddress(new TradeParty("XXXLutz", "Löwenzahnstraße 6", "4600", "Wels", "AT"))
+				.setShipToCountry("AT")
 				.setNumber(number)
 				.addCharge(charge)
-				.addItem(new Item(p, price, new BigDecimal(1.0)));
+				.addItem(new Item(p1, price, new BigDecimal(1.0)))
+				.addItem(new Item(p2, price, new BigDecimal(1.0)));
 			ze.setTransaction(i);
 
 
@@ -81,12 +91,12 @@ public class VATrelatedTest extends ResourceCase  {
 			assertTrue(zi.getUTF8().contains("0911623562")); // fax number
 
 			// Reading ZUGFeRD
-			assertEquals("4.19", zi.getAmount());
+			assertEquals("7.19", zi.getAmount());
 			assertEquals(orgname, zi.getHolder());
 			assertEquals(number, zi.getForeignReference());
 			assertEquals(zi.getVersion(), 2);
 		} catch (Exception e) {
-			fail("Exception "+e.getMessage()+" should not be raised");
+			fail("Exception " + e.getMessage() + " should not be raised");
 		}
 	}
 
@@ -112,14 +122,13 @@ public class VATrelatedTest extends ResourceCase  {
 			Product p;
 
 			ObjectMapper mapper = new ObjectMapper();
-			String json="{\n" +
+			String json = "{\n" +
 				"        \"unit\": \"H87\",\n" +
 				"        \"name\": \"Joghurt Banane\",\n" +
 				"        \"description\": \"\",\n" +
-
 				"        \"taxCategoryCode\": \"Z\"\n" +
-				"      }";// 				"        \"vatpercent\": 0,\n" + missing, #979
-			p=mapper.readValue(json, Product.class);
+				"      }"; // 				"        \"vatpercent\": 0,\n" + missing, #979
+			p = mapper.readValue(json, Product.class);
 
 			Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
@@ -136,7 +145,7 @@ public class VATrelatedTest extends ResourceCase  {
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(TARGET_PDF_Z);
 		} catch (IOException e) {
-			fail("IOException "+e.getMessage()+" should not be raised");
+			fail("IOException " + e.getMessage() + " should not be raised");
 		}
 
 		try {

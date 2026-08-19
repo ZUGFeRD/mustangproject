@@ -20,12 +20,15 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.mustangproject.util.StringUtils.isBlank;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -61,7 +64,6 @@ import org.apache.xmpbox.xml.XmpParsingException;
 import org.apache.xmpbox.xml.XmpSerializer;
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
-import static org.mustangproject.util.StringUtils.isBlank;
 
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
@@ -116,7 +118,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	public OXExporterFromA3 load(String pdfFilename) throws IOException {
 
 		ensurePDFIsValid(new FileDataSource(pdfFilename));
-		try (FileInputStream pdf = new FileInputStream(pdfFilename)) {
+		try (InputStream pdf = Files.newInputStream(Path.of(pdfFilename))) {
 			return load(readAllBytes(pdf));
 		}
 	}
@@ -612,8 +614,6 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 				intent.setRegistryName("http://www.color.org");
 				doc.getDocumentCatalog().addOutputIntent(intent);
 			}
-		} catch (IOException e) {
-			throw e;
 		}
 	}
 

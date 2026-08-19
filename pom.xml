@@ -58,6 +58,7 @@
         <version.org.apache.maven.plugins.maven-source-plugin>3.3.1</version.org.apache.maven.plugins.maven-source-plugin>
         <version.org.apache.maven.plugins.maven-surefire-plugin>3.5.3</version.org.apache.maven.plugins.maven-surefire-plugin>
         <version.org.apache.maven.plugins.maven-toolchains-plugin>3.1.0</version.org.apache.maven.plugins.maven-toolchains-plugin>
+        <version.org.apache.maven.plugins.maben-checkstyle-plugin>3.6.0</version.org.apache.maven.plugins.maben-checkstyle-plugin>
         <version.org.apache.maven.scm>1.9.5</version.org.apache.maven.scm>
         <version.org.codehaus.mojo>1.0.0</version.org.codehaus.mojo>
         <version.com.helger.maven>8.0.0</version.com.helger.maven>
@@ -81,6 +82,7 @@
         <version.org.slf4j>2.0.18</version.org.slf4j><!-- from 2.0.17 -->
         <version.org.verapdf>1.30.2</version.org.verapdf>
         <version.org.xmlunit>2.13.0</version.org.xmlunit>
+        <version.com.puppycrawl.tools.checkstyle>10.26.1</version.com.puppycrawl.tools.checkstyle>
     </properties>
 
     <build>
@@ -158,11 +160,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>${version.org.apache.maven.plugins.maben-checkstyle-plugin}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${version.com.puppycrawl.tools.checkstyle}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>verify-style</id>
-                        <phase>process-classes</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
@@ -170,6 +178,7 @@
                 </executions>
                 <configuration>
                     <configLocation>checkstyle.xml</configLocation>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
                 </configuration>
             </plugin>
         </plugins>

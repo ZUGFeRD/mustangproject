@@ -33,7 +33,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentNameDictionary;
@@ -157,7 +156,7 @@ public class ZUGFeRDInvoiceImporter {
 		byte[] pdfSignature = {'%', 'P', 'D', 'F'};
 		if (count == 4 && Arrays.equals(pad, pdfSignature)) { // we have a pdf
 
-			try (PDDocument doc = Loader.loadPDF(IOUtils.toByteArray(pdfStream))) {
+			try (PDDocument doc = Loader.loadPDF(pdfStream.readAllBytes())) {
 				// PDDocumentInformation info = doc.getDocumentInformation();
 				final PDDocumentNameDictionary names = new PDDocumentNameDictionary(doc.getDocumentCatalog());
 				//start

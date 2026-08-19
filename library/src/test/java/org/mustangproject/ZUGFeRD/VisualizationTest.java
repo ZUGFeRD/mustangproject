@@ -31,13 +31,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class VisualizationTest extends ResourceCase {
 
-	final String TARGET_PDF_CII = "./target/testout-Visualization-cii.pdf";
-	final String TARGET_PDF_UBL = "./target/testout-Visualization-cii.pdf";
+	private static final String TARGET_PDF_CII = "./target/testout-Visualization-cii.pdf";
+	private static final String TARGET_PDF_UBL = "./target/testout-Visualization-cii.pdf";
 
 	public void testCIIVisualizationBasic() {
 		this.runZUGFeRDVisualization("factur-x.xml", "factur-x-vis.fr.html", Language.FR);
@@ -94,7 +94,7 @@ public class VisualizationTest extends ResourceCase {
 		try {
 			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
 			result = zvi.visualize(CIIinputFile.getAbsolutePath(), lang);
-			Files.write(Paths.get("./target/testout-" + resultFileName), result.getBytes(StandardCharsets.UTF_8));
+			Files.write(Path.of("./target/testout-" + resultFileName), result.getBytes(StandardCharsets.UTF_8));
 
 			File expectedResult = getResourceAsFile(resultFileName);
 			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8)
@@ -111,7 +111,7 @@ public class VisualizationTest extends ResourceCase {
 		} catch (ParserConfigurationException e) {
 			fail("ParserConfigurationException should not happen: " + e.getMessage());
 		}
-		
+
 		assertNotNull(result);
         /* remove file endings so that tests can also pass after checking
 		   out from git with arbitrary options (which may include CSRF changes)
@@ -139,8 +139,8 @@ public class VisualizationTest extends ResourceCase {
 		}
 
 		try {
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
-			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), "<rdf:li>de</rdf:li>".getBytes()));
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Path.of(TARGET_PDF_CII)), "<rdf:li>de</rdf:li>".getBytes()));
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}
@@ -159,8 +159,8 @@ public class VisualizationTest extends ResourceCase {
 		}
 
 		try {
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
-			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), "<rdf:li>en</rdf:li>".getBytes()));
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Path.of(TARGET_PDF_CII)), "<rdf:li>en</rdf:li>".getBytes()));
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}
@@ -179,8 +179,8 @@ public class VisualizationTest extends ResourceCase {
 		}
 
 		try {
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
-			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), "<rdf:li>fr</rdf:li>".getBytes()));
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Path.of(TARGET_PDF_CII)), "<rdf:li>fr</rdf:li>".getBytes()));
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}
@@ -191,10 +191,6 @@ public class VisualizationTest extends ResourceCase {
 		File UBLinputFile = getResourceAsFile("ubl/01.01a-INVOICE.ubl.xml");
 
 		// the writing part
-		String sourceFilename = "factur-x.xml";
-
-		String expected = null;
-		String result = null;
 		try {
 			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
 			zvi.toPDF(UBLinputFile.getAbsolutePath(), TARGET_PDF_UBL);
@@ -206,7 +202,7 @@ public class VisualizationTest extends ResourceCase {
 
 
 		try {
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}
@@ -217,10 +213,6 @@ public class VisualizationTest extends ResourceCase {
 		File UBLinputFile = getResourceAsFile("ubl/UBL-CreditNote-2.1-Example.ubl.xml");
 
 		// the writing part
-		String sourceFilename = "factur-x.xml";
-
-		String expected = null;
-		String result = null;
 		try {
 			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
 			zvi.toPDF(UBLinputFile.getAbsolutePath(), TARGET_PDF_UBL);
@@ -232,7 +224,7 @@ public class VisualizationTest extends ResourceCase {
 
 
 		try {
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}
