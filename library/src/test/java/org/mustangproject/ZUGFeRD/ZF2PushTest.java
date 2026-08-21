@@ -911,7 +911,6 @@ public class ZF2PushTest extends ResourceCase {
 						.addLogisticServiceCharge(logisticsServiceCharge)
 			);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
-			System.out.println(theXML);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(TARGET_RELATIVECHARGESALLOWANCESPDF);
 		} catch (IOException e) {
