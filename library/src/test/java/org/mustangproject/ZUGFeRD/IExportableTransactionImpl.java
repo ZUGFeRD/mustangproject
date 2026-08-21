@@ -228,7 +228,7 @@ public class IExportableTransactionImpl implements IExportableTransaction {
 		this.deliveryDate = deliveryDate;
 		return this;
 	}
-	
+
 	public IExportableTransactionImpl setCurrency(String currency) {
 		this.currency = currency;
 		return this;

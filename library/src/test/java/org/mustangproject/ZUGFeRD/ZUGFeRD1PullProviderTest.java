@@ -1,5 +1,16 @@
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mustangproject.BankDetails;
@@ -7,12 +18,6 @@ import org.mustangproject.Invoice;
 import org.mustangproject.Item;
 import org.mustangproject.Product;
 import org.mustangproject.TradeParty;
-
-import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ZUGFeRD1PullProviderTest {
 

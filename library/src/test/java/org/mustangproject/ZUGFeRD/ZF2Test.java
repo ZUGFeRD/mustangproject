@@ -41,6 +41,14 @@ import org.mustangproject.Invoice;
 public class ZF2Test extends MustangReaderTestCase {
 	private static final String TARGET_PDF = "./target/testout-ZF2new.pdf";
 
+	/**
+	 * Create the test case
+	 *
+	 * @param testName name of the test case
+	 */
+	public ZF2Test(String testName) {
+		super(testName);
+	}
 
 	@Override
 	public Date getDeliveryDate() {
@@ -104,7 +112,7 @@ public class ZF2Test extends MustangReaderTestCase {
 		final Product designProduct = new Product("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung", "HUR",
 			new BigDecimal("7.000000"));
 		final Product balloonProduct = new Product("", "Bestellerweiterung für E&F Umbau", "C62",
-			new BigDecimal("19.000000"));// test for issue 103
+			new BigDecimal("19.000000")); // test for issue 103
 		final Product airProduct = new Product("", "Heiße Luft pro Liter", "LTR", new BigDecimal("19.000000"));
 
 		allItems[0] = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
@@ -137,15 +145,6 @@ public class ZF2Test extends MustangReaderTestCase {
 	@Override
 	public String getReferenceNumber() {
 		return "AB321";
-	}
-
-	/**
-	 * Create the test case
-	 *
-	 * @param testName name of the test case
-	 */
-	public ZF2Test(String testName) {
-		super(testName);
 	}
 
 	/**

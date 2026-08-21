@@ -22,7 +22,6 @@ package org.mustangproject.ZUGFeRD;
 
 import com.helger.commons.io.stream.StreamHelper;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.io.IOUtils;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -60,14 +59,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.EnumMap;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -155,7 +154,7 @@ public class ZUGFeRDVisualizer {
 		throws IOException, TransformerException, ParserConfigurationException {
 		initTemplates(lang);
 
-		String fileContent = new String(IOUtils.toByteArray(inputXml), StandardCharsets.UTF_8);
+		String fileContent = new String(inputXml.readAllBytes(), StandardCharsets.UTF_8);
 		EStandard thestandard = findOutStandardFromRootNode(new ByteArrayInputStream(fileContent.getBytes(StandardCharsets.UTF_8)));
 		ByteArrayOutputStream htmlOutput = new ByteArrayOutputStream();
 
@@ -302,8 +301,8 @@ public class ZUGFeRDVisualizer {
 
 		toPDFfromFOP(fopInput, () -> {
 				try {
-					return new FileOutputStream(pdfFilename);
-				} catch (FileNotFoundException e) {
+					return Files.newOutputStream(Path.of(pdfFilename));
+				} catch (IOException e) {
 					LOGGER.error("Failed to create PDF", e);
 				}
 			return null;

@@ -35,6 +35,7 @@ public class Product implements IZUGFeRDExportableProduct {
 		/**
 		 * @return the batchID
 		 */
+		@Override
 		public SchemedID getBatchID() {
 			return batchID;
 		}
@@ -50,6 +51,7 @@ public class Product implements IZUGFeRDExportableProduct {
 		/**
 		 * @return the supplierAssignedSerialID
 		 */
+		@Override
 		public SchemedID getSupplierAssignedSerialID() {
 			return supplierAssignedSerialID;
 		}
@@ -496,6 +498,7 @@ public class Product implements IZUGFeRDExportableProduct {
 	/**
 	 * @return individualTradeProductInstances
 	 */
+	@Override
 	public ITradeProductInstanceType[] getIndividualTradeProductInstances() {
 		if (individualTradeProductInstances.isEmpty()) {
 			return null;

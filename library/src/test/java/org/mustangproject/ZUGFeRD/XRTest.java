@@ -21,39 +21,54 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import junit.framework.TestCase;
-import org.mustangproject.*;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.junit.FixMethodOrder;
-import org.junit.jupiter.api.Assertions;
-import org.junit.runners.MethodSorters;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import static org.xmlunit.assertj.XmlAssert.assertThat;
+
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.xmlunit.assertj.XmlAssert.assertThat;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.junit.FixMethodOrder;
+import org.junit.jupiter.api.Assertions;
+import org.junit.runners.MethodSorters;
+import org.mustangproject.Allowance;
+import org.mustangproject.BankDetails;
+import org.mustangproject.CashDiscount;
+import org.mustangproject.Charge;
+import org.mustangproject.Contact;
+import org.mustangproject.FileAttachment;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.LegalOrganisation;
+import org.mustangproject.Product;
+import org.mustangproject.ReferencedDocument;
+import org.mustangproject.TradeParty;
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import junit.framework.TestCase;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class XRTest extends TestCase {
-	final String TARGET_XML = "./target/testout-XR.xml";
-	final String TARGET_EDGE_XML = "./target/testout-XR-Edge.xml";
+	private static final String TARGET_XML = "./target/testout-XR.xml";
+	private static final String TARGET_EDGE_XML = "./target/testout-XR-Edge.xml";
 
 	public void testXRExport() {
 
@@ -70,8 +85,8 @@ public class XRTest extends TestCase {
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
-		assertTrue(theXML.contains("<ram:ID>" + sellerID + "</ram:ID>"));// must be possible without scheme #
-		assertTrue(theXML.contains("<ram:ID>" + legalOrgID + "</ram:ID>"));// must be possible without scheme #
+		assertTrue(theXML.contains("<ram:ID>" + sellerID + "</ram:ID>")); // must be possible without scheme #
+		assertTrue(theXML.contains("<ram:ID>" + legalOrgID + "</ram:ID>")); // must be possible without scheme #
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
 			.asInt()
 			.isEqualTo(1); //2 errors are OK because there is a known bug
@@ -81,7 +96,7 @@ public class XRTest extends TestCase {
 			.asDouble()
 			.isEqualTo(1);
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML));
+			BufferedWriter writer = Files.newBufferedWriter(Path.of(TARGET_XML));
 			writer.write(theXML);
 			writer.close();
 		} catch (IOException e) {
@@ -101,7 +116,7 @@ public class XRTest extends TestCase {
 		BigDecimal amount = new BigDecimal(amountStr);
 		byte[] b = {12, 13};
 
-		FileAttachment fe1 = new FileAttachment("one.pdf", "application/pdf", "Alternative", b,"Beschreibung");
+		FileAttachment fe1 = new FileAttachment("one.pdf", "application/pdf", "Alternative", b, "Beschreibung");
 		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").setEmail("sender@example.com").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890", "COBADEFXXX").setAccountName("kontoInhaber")))
 			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setEmail("recipient@sample.org"))
@@ -124,7 +139,7 @@ public class XRTest extends TestCase {
 		assertTrue(theXML.contains("#SKONTO#"));
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
 			.asInt()
-			.isEqualTo(1); //2 errors are OK because there is a known bug
+			.isEqualTo(1); // 2 errors are OK because there is a known bug
 
 		assertThat(theXML).valueByXPath("count(//*[local-name()='PayeeTradeParty'])")
 			.asInt()
@@ -134,7 +149,7 @@ public class XRTest extends TestCase {
 			.asDouble()
 			.isEqualTo(1);
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_EDGE_XML));
+			BufferedWriter writer = Files.newBufferedWriter(Path.of(TARGET_EDGE_XML));
 			writer.write(theXML);
 			writer.close();
 		} catch (IOException e) {
@@ -157,12 +172,11 @@ public class XRTest extends TestCase {
 		assertEquals(attachedFiles.length, 1);
 
 		assertTrue(Arrays.equals(attachedFiles[0].getData(), b));
-		assertEquals("Beschreibung",attachedFiles[0].getDescription());
+		assertEquals("Beschreibung", attachedFiles[0].getDescription());
 
 	}
 
-	public void testIssue830ApplicableHeaderTradeSettlementTax() throws XPathExpressionException, SAXException, IOException, ParserConfigurationException
-	{
+	public void testIssue830ApplicableHeaderTradeSettlementTax() throws XPathExpressionException, SAXException, IOException, ParserConfigurationException {
 		Charge charge = new Charge(BigDecimal.ONE).setReasonCode("64");
 		charge.setTaxRateApplicablePercent(BigDecimal.valueOf(19));
 		Charge itemAllowance = new Allowance().setReasonCode("64").setTotalAmount(BigDecimal.valueOf(4));
@@ -258,7 +272,7 @@ public class XRTest extends TestCase {
 			.asDouble()
 			.isEqualTo(1);
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML));
+			BufferedWriter writer = Files.newBufferedWriter(Path.of(TARGET_XML));
 			writer.write(theXML);
 			writer.close();
 		} catch (IOException e) {

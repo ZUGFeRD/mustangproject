@@ -21,22 +21,28 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import junit.framework.TestCase;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-import org.mustangproject.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+import org.mustangproject.BankDetails;
+import org.mustangproject.Contact;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
+import org.mustangproject.TradeParty;
+
+import junit.framework.TestCase;
+
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PreValidationTest extends TestCase {
-	final String TARGET_PDF = "./target/testout-Preval.pdf";
-	final String SOURCE_PDF = "/veraPDFtestsuite6-7-11-t01-fail-a.pdf";
+	private static final String TARGET_PDF = "./target/testout-Preval.pdf";
+	private static final String SOURCE_PDF = "/veraPDFtestsuite6-7-11-t01-fail-a.pdf";
 
 	public void testFailIgnore() {
 
@@ -44,9 +50,9 @@ public class PreValidationTest extends TestCase {
 
 
 		boolean hasEx = false;
-		try (InputStream source = this.getClass()
-			.getResourceAsStream(SOURCE_PDF)) {
-			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1().setProducer("My Application")
+		try (InputStream source = this.getClass().getResourceAsStream(SOURCE_PDF);
+			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
+			ze.setProducer("My Application")
 				.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2)
 				.load(source);
 			ze.setTransaction(createInvoice());
@@ -57,9 +63,8 @@ public class PreValidationTest extends TestCase {
 		}
 		assertTrue(hasEx);
 		hasEx = false;
-		try (InputStream source = this.getClass()
-			.getResourceAsStream(SOURCE_PDF)) {
-			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1();
+		try (InputStream source = this.getClass().getResourceAsStream(SOURCE_PDF);
+			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
 			ze.ignorePDFAErrors().load(source);
 
 			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).

@@ -41,6 +41,15 @@ import junit.framework.TestSuite;
 public class ZF2EdgeTest extends MustangReaderTestCase {
 	private static final String TARGET_PDF = "./target/testout-ZF2newEdge.pdf";
 
+	/**
+	 * Create the test case
+	 *
+	 * @param testName name of the test case
+	 */
+	public ZF2EdgeTest(String testName) {
+		super(testName);
+	}
+
 	protected class EdgeProduct implements IZUGFeRDExportableProduct {
 		private String description, name, unit;
 
@@ -218,11 +227,11 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		Item[] allItems = new Item[3];
 		EdgeProduct designProduct = new EdgeProduct("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung",
 				"HUR");
-		EdgeProduct balloonProduct = new EdgeProduct("", "Bestellerweiterung für E&F Umbau", "C62");// test for issue
+		EdgeProduct balloonProduct = new EdgeProduct("", "Bestellerweiterung für E&F Umbau", "C62"); // test for issue
 		// 103
 		EdgeProduct airProduct = new EdgeProduct("", "Heiße Luft pro Liter", "LTR");
 
-		Item design=new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
+		Item design = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
 		design.setAddReference("1825");
 		design.setBasisQuantity(new BigDecimal(100));
 		allItems[0] = design;
@@ -247,7 +256,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 						14, // anzahl tage
 						"DAYS");
 
-		Date due  = null;
+		Date due = null;
 		try {
 			due = new SimpleDateFormat("yyyyMMdd").parse("20220228");
 		} catch (ParseException e) {
@@ -256,7 +265,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		}
 		return new PaymentTerms(
 				"14 Tage 2% Skonto, 30 Tage rein netto",
-				due,// fälligkeitsdatum
+				due, // fälligkeitsdatum
 				paymentDiscountTerms //PaymentDiscountTerms
 			);
 	}
@@ -289,15 +298,6 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	@Override
 	public IReferencedDocument getDeliveryNoteReferencedDocument() {
 		return new ReferencedDocument("0815");
-	}
-
-	/**
-	 * Create the test case
-	 *
-	 * @param testName name of the test case
-	 */
-	public ZF2EdgeTest(String testName) {
-		super(testName);
 	}
 
 	/**
@@ -338,7 +338,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
-		String resultXML=zi.getUTF8();
+		String resultXML = zi.getUTF8();
 		assertTrue(resultXML.contains("<ram:TypeCode>54</ram:TypeCode>"));
 		assertTrue(resultXML.contains("<ram:Information>Credit Card</ram:Information>"));
 		assertTrue(resultXML.contains("<ram:ShipToTradeParty>"));
@@ -347,7 +347,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		assertTrue(resultXML.contains("<ram:DirectDebitMandateID>DE99XX12345</ram:DirectDebitMandateID>"));
 		assertTrue(resultXML.contains("<ram:DueDateDateTime>"));
 		assertFalse(resultXML.contains("EUR"));
-		assertTrue(resultXML.contains("USD"));//currency should be USD, test for #150
+		assertTrue(resultXML.contains("USD")); //currency should be USD, test for #150
 		assertTrue(resultXML.contains("<ram:DespatchAdviceReferencedDocument>"));
 		assertTrue(resultXML.contains("<ram:IssuerAssignedID>123</ram:IssuerAssignedID>"));
 
@@ -394,7 +394,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		protected int periodMeasure;
 		protected String periodCode;
 
-		public PaymentDiscountTerms(BigDecimal percent, Date baseDate, int periodMeasure, String periodCode) {
+		PaymentDiscountTerms(BigDecimal percent, Date baseDate, int periodMeasure, String periodCode) {
 			this.percent = percent;
 			this.baseDate = baseDate;
 			this.periodMeasure = periodMeasure;
@@ -427,7 +427,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		protected Date duedate;
 		protected IZUGFeRDPaymentDiscountTerms disco;
 
-		public PaymentTerms(String description, Date duedate, IZUGFeRDPaymentDiscountTerms disco) {
+		PaymentTerms(String description, Date duedate, IZUGFeRDPaymentDiscountTerms disco) {
 			this.description = description;
 			this.duedate = duedate;
 			this.disco = disco;

@@ -45,11 +45,10 @@ public class InvoicingPeriodTestCase {
 		}
 	}
 
-	private Date date(String toParse){
+	private Date date(String toParse) {
 		try {
 			return ZUGFeRDDateFormat.DATE.getFormatter().parse(toParse);
-		}
-		catch (final ParseException e) {
+		} catch (final ParseException e) {
 			return null;
 		}
 	}

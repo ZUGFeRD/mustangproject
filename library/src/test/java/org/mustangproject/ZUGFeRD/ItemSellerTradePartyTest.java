@@ -100,6 +100,5 @@ public class ItemSellerTradePartyTest {
                 .nodesByXPath("(//*[local-name()='IncludedSupplyChainTradeLineItem'])[2]" +
                         "//*[local-name()='SpecifiedLineTradeAgreement']" +
                         "/*[local-name()='ItemSellerTradeParty']").isEmpty();
-     
     }
 }

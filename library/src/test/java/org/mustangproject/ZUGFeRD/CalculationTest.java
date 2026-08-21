@@ -4,18 +4,26 @@ import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.valueOf;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
-import org.junit.Test;
-import org.mustangproject.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.xml.xpath.XPathExpressionException;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.xml.xpath.XPathExpressionException;
+
+import org.junit.Test;
+import org.mustangproject.Allowance;
+import org.mustangproject.Charge;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
+import org.mustangproject.TradeParty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /***
  * tests the linecalculator and transactioncalculator classes
@@ -125,7 +133,7 @@ public class CalculationTest extends ResourceCase {
 		invoice.addCharge(new Charge(new BigDecimal(15)).setReasonCode("ZZZ").setReason("Frachtkosten"));
 
 		TransactionCalculator calculator = new TransactionCalculator(invoice);
-		assertEquals(valueOf(286.62).stripTrailingZeros(), calculator.getTotal());// interestingly, EN16931-1 has 286.63 here?
+		assertEquals(valueOf(286.62).stripTrailingZeros(), calculator.getTotal()); // interestingly, EN16931-1 has 286.63 here?
 		assertEquals(valueOf(272.96).stripTrailingZeros(), calculator.getTaxBasis()); // and 272.97 here
 		assertEquals(valueOf(337.45).stripTrailingZeros(), calculator.getDuePayable()); // and 337.46 here???
 	}
@@ -285,7 +293,7 @@ public class CalculationTest extends ResourceCase {
 		/* item */
 		Product product;
 		Item item;
-		BigDecimal amount=new BigDecimal("10.00");
+		BigDecimal amount = new BigDecimal("10.00");
 
 		product = new Product("AAA", "", "H87", BigDecimal.ZERO).setSellerAssignedID("1AAA");
 		product.addCharge(new Charge(amount).setReasonCode("ZZZ").setReason("Zuschlag"));
@@ -351,7 +359,7 @@ public class CalculationTest extends ResourceCase {
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertThat(theXML).valueByXPath("//*[local-name()='ActualAmount']")
 			.asString()
-			.isEqualTo("0.55");// test for issue #917
+			.isEqualTo("0.55"); // test for issue #917
 
 
 		TransactionCalculator calculator = new TransactionCalculator(invoice);
@@ -382,7 +390,7 @@ public class CalculationTest extends ResourceCase {
 		invoice.setSender(sender);
 
 		/* trade party (recipient) */
-		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " " + "", "Testweg 5", "11111", "Testung", "DE");
+		TradeParty recipient = new TradeParty("Teston GmbH Zentrale ", "Testweg 5", "11111", "Testung", "DE");
 		recipient.setID("111111");
 		recipient.addVATID("DE111111111");
 		invoice.setRecipient(recipient);
@@ -408,7 +416,7 @@ public class CalculationTest extends ResourceCase {
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertThat(theXML).valueByXPath("//*[local-name()='ActualAmount']")
 			.asString()
-			.isEqualTo("0.55");// test for issue #917
+			.isEqualTo("0.55"); // test for issue #917
 
 
 		TransactionCalculator calculator = new TransactionCalculator(invoice);

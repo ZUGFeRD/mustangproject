@@ -16,9 +16,9 @@ public class ZUGFeRD2PullProviderFactoryTest {
 
 	static class TestTransactionCalculator extends TransactionCalculator {
 
-		private boolean called = false;
+		private boolean called;
 
-		public TestTransactionCalculator(IExportableTransaction trans) {
+		TestTransactionCalculator(IExportableTransaction trans) {
 			super(trans);
 		}
 
