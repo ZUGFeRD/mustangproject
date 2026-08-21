@@ -8,7 +8,7 @@
 - #1228 Allow import of invoices with a LineTotalAmount having more than 2 decimals. #1231
 - #1229 ZF_250 XSDs contain ten dangling schemaLocation references
 - #1219 #1223 #1220 Prevent NPE in Item.enrichProductFromVATBreakdown for VAT category "O".
-
+- Support TypeCode and ValueMeasure for ApplicableProductCharacteristic on EXTENDED profile.
 
 
 2.25.0

@@ -48,6 +48,7 @@ import org.mustangproject.BankDetails;
 import org.mustangproject.CalculatedInvoice;
 import org.mustangproject.CashDiscount;
 import org.mustangproject.Charge;
+import org.mustangproject.ClassCode;
 import org.mustangproject.Contact;
 import org.mustangproject.DirectDebit;
 import org.mustangproject.Invoice;
@@ -55,6 +56,7 @@ import org.mustangproject.Item;
 import org.mustangproject.LogisticsServiceCharge;
 import org.mustangproject.Product;
 import org.mustangproject.Product.TradeProductInstanceType;
+import org.mustangproject.ProductCharacteristicType;
 import org.mustangproject.ReferencedDocument;
 import org.mustangproject.SchemedID;
 import org.mustangproject.TradeParty;
@@ -891,6 +893,8 @@ public class ZF2PushTest extends ResourceCase {
 			.setAppliedAmount(BigDecimal.valueOf(25))
 			.setTaxRateApplicablePercent(new BigDecimal(19));
 
+		ProductCharacteristicType pc = new ProductCharacteristicType(new ClassCode("6313", "AAA")).setDescription("Nettogewicht").setValueMeasure(new BigDecimal("100.00")).setUnitCode("KGM");
+
 		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 			ze.ignorePDFAErrors().load(SOURCE_PDF);
@@ -901,12 +905,13 @@ public class ZF2PushTest extends ResourceCase {
 				.setNumber(number)
 				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
 				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
-				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
+				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)).addCharacteristic(pc), price, new BigDecimal(1.0)))
 						.addCharge(charge)
 						.addAllowance(allowance)
 						.addLogisticServiceCharge(logisticsServiceCharge)
 			);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
+			System.out.println(theXML);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(TARGET_RELATIVECHARGESALLOWANCESPDF);
 		} catch (IOException e) {
@@ -1052,7 +1057,7 @@ public class ZF2PushTest extends ResourceCase {
 		BigDecimal qty = new BigDecimal(1.0);
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
-		zf2p.setProfile( Profiles.getByName( "XRechnung" ) );
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
 
 		Invoice i = new Invoice().setIssueDate(new Date()).setDueDate(new Date()).setDetailedDeliveryPeriod(new Date(), new Date()).setDeliveryDate(new Date())
 			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815").addBankDetails(new BankDetails("DE88200800000970375700", "COBADEFFXXX")))

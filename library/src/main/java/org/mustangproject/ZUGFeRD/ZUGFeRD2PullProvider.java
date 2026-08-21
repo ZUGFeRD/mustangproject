@@ -466,12 +466,40 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 
 				if (currentItem.getProduct().getAttributes() != null) {
-					for (Entry<String, String> entry : currentItem.getProduct().getAttributes().entrySet()) {
-						xml.append("<ram:ApplicableProductCharacteristic>" +
-							"<ram:Description>" + XMLTools.encodeXML(entry.getKey()) + "</ram:Description>" +
-							"<ram:Value>" + XMLTools.encodeXML(entry.getValue()) + "</ram:Value>" +
-							"</ram:ApplicableProductCharacteristic>");
+					xml.append("<ram:ApplicableProductCharacteristic>");
+					if (profile == Profiles.getByName("Extended")) {
+						for (IProductCharacteristicType entry : currentItem.getProduct().getCharacteristics()) {
+							if (entry.getTypeCode() != null) {
+								xml.append("<ram:TypeCode");
+								if (entry.getTypeCode().getListID() != null) {
+									xml.append(" listID=\"" + XMLTools.encodeXML(entry.getTypeCode().getListID()) + "\"");
+								}
+								if (entry.getTypeCode().getListVersionID() != null) {
+									xml.append(" listVersionID=\"" + XMLTools.encodeXML(entry.getTypeCode().getListVersionID()) + "\"");
+								}
+								xml.append(">" + XMLTools.encodeXML(entry.getTypeCode().getCode()) + "</ram:TypeCode>");
+							}
+							if (StringUtils.isNotBlank(entry.getDescription())) {
+								xml.append("<ram:Description>" + XMLTools.encodeXML(entry.getDescription()) + "</ram:Description>");
+							}
+							if (entry.getValueMeasure() != null) {
+								if (StringUtils.isBlank(entry.getUnitCode())) {
+									xml.append("<ram:ValueMeasure>" + entry.getValueMeasure() + "</ram:ValueMeasure>");
+								} else {
+									xml.append("<ram:ValueMeasure unitCode=\"" + entry.getUnitCode() + "\">" + entry.getValueMeasure() + "</ram:ValueMeasure>");
+								}
+							}
+							if (StringUtils.isNotBlank(entry.getValue())) {
+								xml.append("<ram:Value>" + XMLTools.encodeXML(entry.getValue()) + "</ram:Value>");
+							}
+						}
+					} else {
+						for (Entry<String, String> entry : currentItem.getProduct().getAttributes().entrySet()) {
+							xml.append("<ram:Description>" + XMLTools.encodeXML(entry.getKey()) + "</ram:Description>"
+										+ "<ram:Value>" + XMLTools.encodeXML(entry.getValue()) + "</ram:Value>");
+						}
 					}
+					xml.append("</ram:ApplicableProductCharacteristic>");
 				}
 				if (currentItem.getProduct().getClassifications() != null) {
 					for (IDesignatedProductClassification classification : currentItem.getProduct().getClassifications()) {
@@ -588,11 +616,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml.append("<ram:ItemSellerTradeParty>" + getTradePartyAsXML(currentItem.getLineSeller(), true, false) + "</ram:ItemSellerTradeParty>");
 				}
 
-				xml.append("</ram:SpecifiedLineTradeAgreement>"
-					+ "<ram:SpecifiedLineTradeDelivery>"
-					+ "<ram:BilledQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">"
-					+ quantityFormat(currentItem.getQuantity()) + "</ram:BilledQuantity>");
-
+				xml.append("</ram:SpecifiedLineTradeAgreement>");
+				xml.append("<ram:SpecifiedLineTradeDelivery>");
+				if (currentItem.getQuantity() != null) {
+					xml.append("<ram:BilledQuantity unitCode=\"" + XMLTools.encodeXML(currentItem.getProduct().getUnit()) + "\">" + quantityFormat(currentItem.getQuantity()) + "</ram:BilledQuantity>");
+				}
 				if (getProfile() == Profiles.getByName("Extended")) {
 					if (currentItem.getDespatchAdviceReferencedDocument() != null && !currentItem.getDespatchAdviceReferencedDocument().getAsCII().isEmpty()) {
 						xml.append("<ram:DespatchAdviceReferencedDocument>");
