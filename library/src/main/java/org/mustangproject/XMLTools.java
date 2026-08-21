@@ -8,14 +8,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.io.IOUtils;
-import org.dom4j.io.XMLWriter;
-import org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
-
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,6 +17,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+
+import org.dom4j.io.XMLWriter;
+import org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat;
+import org.w3c.dom.Node;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.SAXParseException;
 
 public class XMLTools extends XMLWriter {
 	@Override
@@ -89,6 +90,22 @@ public class XMLTools extends XMLWriter {
 
 	public static Validator getValidator(URL schemaFile) throws SAXException {
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		schemaFactory.setErrorHandler(new ErrorHandler() {
+			@Override
+			public void warning(SAXParseException e) throws SAXException {
+				throw e;
+			}
+
+			@Override
+			public void fatalError(SAXParseException e) throws SAXException {
+				throw e;
+			}
+
+			@Override
+			public void error(SAXParseException e) throws SAXException {
+				throw e;
+			}
+		});
 		try {
 			schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
 		} catch (SAXNotSupportedException | SAXNotRecognizedException e) {
@@ -312,7 +329,7 @@ public class XMLTools extends XMLWriter {
 
 	public static byte[] getBytesFromStream(InputStream fileinput) throws IOException {
 		// Stream closing responsibility is with the caller
-		return IOUtils.toByteArray(fileinput);
+		return fileinput.readAllBytes();
 	}
 
 
