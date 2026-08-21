@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -59,6 +60,7 @@ import org.mustangproject.TradeParty;
 import org.mustangproject.XMLTools;
 import org.mustangproject.Exceptions.StructureException;
 import org.mustangproject.util.NodeMap;
+import org.mustangproject.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -795,7 +797,7 @@ public class ZUGFeRDInvoiceImporter {
 			headerTradeAgreementNodesMap.getNode("ContractReferencedDocument").map(ReferencedDocument::fromNode).ifPresent(rd -> zpp.setContractReferencedDocument(rd));
 			headerTradeAgreementNodesMap.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).filter(rd -> rd.getTypeCode().equals("50")).findFirst().ifPresent(rd -> zpp.setTenderReferencedDocument(rd));
 			headerTradeAgreementNodesMap.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).filter(rd -> rd.getTypeCode().equals("130")).findFirst().ifPresent(rd -> zpp.setObjectIdentifierReferencedDocument(rd));
-			headerTradeAgreementNodesMap.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).filter(rd -> rd.getTypeCode().equals("916")).findFirst().ifPresent(rd -> zpp.setRelatedReferencedDocument(rd));
+			headerTradeAgreementNodesMap.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).filter(rd -> rd.getTypeCode().equals("916")).filter(rd -> !isPlainEmbeddedAttachment(rd)).findFirst().ifPresent(rd -> zpp.setRelatedReferencedDocument(rd));
 		}
 
 
@@ -1399,6 +1401,32 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 		return zpp;
+	}
+
+	/**
+	 * Whether this TypeCode-916 element is a BG-24 supporting document that the AttachmentBinaryObject /
+	 * EmbeddedDocumentBinaryObject scan already imports as an additionalReferencedDocument
+	 * (Invoice#embedFileInXML). Importing it into relatedReferencedDocument as well would make
+	 * ZUGFeRD2PullProvider write the very same element - payload included - a second time.
+	 *
+	 * Reported only when the FileAttachment can carry every value the element holds, so that dropping the
+	 * second copy cannot change what is written. The FileAttachment branch of the writer emits BT-122 from
+	 * the FILENAME, the type code, BT-123 from the description and BT-125 from the mime type + payload:
+	 *
+	 * - an element whose IssuerAssignedID differs from AttachmentBinaryObject/@filename (both are allowed
+	 *   to differ) would come back re-labelled with the filename, so it is kept;
+	 * - so is one declaring URIID, LineID, ReferenceTypeCode or FormattedIssueDateTime, which that branch
+	 *   cannot express at all.
+	 *
+	 * Writing a document twice is recoverable, losing a field the source declared is not.
+	 */
+	private static boolean isPlainEmbeddedAttachment(ReferencedDocument rd) {
+		return rd.getAttachmentBinaryObject() != null
+			&& Objects.equals(rd.getIssuerAssignedID(), rd.getAttachmentBinaryObject().getFilename())
+			&& StringUtils.isBlank(rd.getUriID())
+			&& StringUtils.isBlank(rd.getLineID())
+			&& StringUtils.isBlank(rd.getReferenceTypeCode())
+			&& rd.getFormattedIssueDateTime() == null;
 	}
 
 	private Date parseDate(String issueDateString, String datePattern) throws ParseException {
