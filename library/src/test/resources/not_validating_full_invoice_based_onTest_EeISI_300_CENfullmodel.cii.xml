@@ -32,7 +32,7 @@
                 </ram:IncludedNote>
             </ram:AssociatedDocumentLineDocument>
             <ram:SpecifiedTradeProduct>
-                <ram:GlobalID>Item standar identifier</ram:GlobalID>
+                <ram:GlobalID>Item standard identifier</ram:GlobalID>
                 <ram:SellerAssignedID>Item seller's identifier</ram:SellerAssignedID>
                 <ram:BuyerAssignedID>Item buyer's identifier</ram:BuyerAssignedID>
                 <ram:Name>Item name</ram:Name>

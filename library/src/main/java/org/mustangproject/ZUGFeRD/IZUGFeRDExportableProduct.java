@@ -170,6 +170,9 @@ public interface IZUGFeRDExportableProduct {
 	    return null;
 	}
 
+	default IProductCharacteristicType[] getCharacteristics() {
+	    return null;
+	}
 
 	/**
 	 * product level discounts (AppliedTradeAllowanceCharge, will change net price)
