@@ -466,9 +466,9 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				}
 
 				if (currentItem.getProduct().getAttributes() != null) {
-					xml.append("<ram:ApplicableProductCharacteristic>");
 					if (profile == Profiles.getByName("Extended")) {
 						for (IProductCharacteristicType entry : currentItem.getProduct().getCharacteristics()) {
+							xml.append("<ram:ApplicableProductCharacteristic>");
 							if (entry.getTypeCode() != null) {
 								xml.append("<ram:TypeCode");
 								if (entry.getTypeCode().getListID() != null) {
@@ -492,14 +492,16 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 							if (StringUtils.isNotBlank(entry.getValue())) {
 								xml.append("<ram:Value>" + XMLTools.encodeXML(entry.getValue()) + "</ram:Value>");
 							}
+							xml.append("</ram:ApplicableProductCharacteristic>");
 						}
 					} else {
 						for (Entry<String, String> entry : currentItem.getProduct().getAttributes().entrySet()) {
+							xml.append("<ram:ApplicableProductCharacteristic>");
 							xml.append("<ram:Description>" + XMLTools.encodeXML(entry.getKey()) + "</ram:Description>"
 										+ "<ram:Value>" + XMLTools.encodeXML(entry.getValue()) + "</ram:Value>");
+							xml.append("</ram:ApplicableProductCharacteristic>");
 						}
 					}
-					xml.append("</ram:ApplicableProductCharacteristic>");
 				}
 				if (currentItem.getProduct().getClassifications() != null) {
 					for (IDesignatedProductClassification classification : currentItem.getProduct().getClassifications()) {
