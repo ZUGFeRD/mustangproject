@@ -8,7 +8,8 @@
 - #1228 Allow import of invoices with a LineTotalAmount having more than 2 decimals. #1231
 - #1229 ZF_250 XSDs contain ten dangling schemaLocation references
 - #1219 #1223 #1220 Prevent NPE in Item.enrichProductFromVATBreakdown for VAT category "O".
-- Support TypeCode and ValueMeasure for ApplicableProductCharacteristic on EXTENDED profile.
+- #1243 Support TypeCode and ValueMeasure for ApplicableProductCharacteristic on EXTENDED profile.
+- Upgrade com.fasterxml.jackson.core to 2.22.2 from 2.22.1
 
 
 2.25.0
