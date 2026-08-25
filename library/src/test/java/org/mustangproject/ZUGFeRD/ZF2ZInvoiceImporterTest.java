@@ -1153,4 +1153,16 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			assertTrue(theXML.contains("<ram:Value>BO</ram:Value>"));
 		}
 	}
+
+	@Test
+	public void testAppliedTradeAllowanceCharge() throws XPathExpressionException, ParseException, IOException {
+		File inputFile = getResourceAsFile("cii/X19_01_Warenrechnung_fx.pdf");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.doIgnoreCalculationErrors();
+		zii.setInputStream(Files.newInputStream(inputFile.toPath(), StandardOpenOption.READ));
+
+		Invoice invoice = zii.extractInvoice();
+
+		assertEquals(2, invoice.getZFItems()[1].getProduct().getAllowances().length );
+	}
 }
