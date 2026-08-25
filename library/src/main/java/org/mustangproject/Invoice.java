@@ -91,6 +91,8 @@ public class Invoice implements IExportableTransaction {
 	private BigDecimal roundingAmount;
 	private String paymentReference; // Remittance information / Verwendungszweck, BT-83
 	private String businessProcessId;
+	private String accountingReference; // „Buyer accounting reference“ / „Buchungsreferenz“
+
 
 	public Invoice() {
 		zfItems = new ArrayList<>();
@@ -1482,4 +1484,13 @@ public class Invoice implements IExportableTransaction {
   		return businessProcessId;
 	}
 
+	public Invoice setAccountingReference(String id) {
+  		this.accountingReference = id;
+  		return this;
+	}
+
+	@Override
+	public String getAccountingReference() {
+  		return accountingReference;
+	}
 }

@@ -1198,6 +1198,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 			}
 		}
 
+		if (StringUtils.isNotBlank(trans.getAccountingReference())) {
+			xml.append("<ram:ReceivableSpecifiedTradeAccountingAccount>"
+				+ "<ram:ID>" + XMLTools.encodeXML(trans.getAccountingReference()) + "</ram:ID>"
+				+ "</ram:ReceivableSpecifiedTradeAccountingAccount>");
+		}
+
 		xml.append("</ram:ApplicableHeaderTradeSettlement>");
 		// + "<IncludedSupplyChainTradeLineItem>"
 		// + "<AssociatedDocumentLineDocument>"

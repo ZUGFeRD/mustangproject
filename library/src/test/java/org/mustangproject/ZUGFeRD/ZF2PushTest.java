@@ -732,6 +732,7 @@ public class ZF2PushTest extends ResourceCase {
 					.addInvoiceReferencedDocument(new ReferencedDocument("abc123"))
 					.addInvoiceReferencedDocument(new ReferencedDocument("abcd1234"))
 					.setDeliveryTypeCode("EXW")
+					.setAccountingReference("20260825201500")
 				);
 			} catch (ParseException e) {
 				e.printStackTrace();
@@ -752,6 +753,7 @@ public class ZF2PushTest extends ResourceCase {
 		assertTrue(zi.getUTF8().contains("Hinterhaus"));
 		assertThat(zi.getUTF8()).valueByXPath("//*[local-name()='BuyerTradeParty']/*[local-name()='GlobalID'][@schemeID=0088]").asString().isEqualTo("4304171000002");
 		assertThat(zi.getUTF8()).valueByXPath("//*[local-name()='SpecifiedTradeProduct']/*[local-name()='GlobalID'][@schemeID=0160]").asString().isEqualTo("2001015001325");
+		assertThat(zi.getUTF8()).valueByXPath("//*[local-name()='ApplicableHeaderTradeSettlement']/*[local-name()='ReceivableSpecifiedTradeAccountingAccount']/*[local-name()='ID']").asString().isEqualTo("20260825201500");
 		assertTrue(zi.getUTF8().contains("2001015001325"));
 		assertTrue(zi.getUTF8().contains("4304171000002"));
 		assertTrue(zi.getUTF8().contains("0088"));
