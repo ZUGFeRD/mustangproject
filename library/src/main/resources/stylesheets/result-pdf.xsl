@@ -181,6 +181,8 @@
                                         select="$result_color"/>
                     </xsl:call-template>
                     <fo:block>Validierungsergebnisse im Detail:</fo:block>
+                    <fo:block>Ausgeführte Regeln: <xsl:value-of select="/validation/xml/info/rules/fired"/></fo:block>
+                    <fo:block>devon fehlgeschlagen: <xsl:value-of select="/validation/xml/info/rules/failed"/></fo:block>
                     <fo:table>
                         <fo:table-column border-style="solid"/>
                         <fo:table-column border-style="solid"/>
