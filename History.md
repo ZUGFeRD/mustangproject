@@ -1,5 +1,7 @@
 2.26.0
 =======
+2026-08-25
+
 - Upgrade CEN EN16931 Schematron from v1.3.15 to v1.3.16
 - #1233 Add Seller tax representative (BG-11) to CII profiles, excluding Minimum
 - Import and Export TaxCurrencyCode (BT-6) and corresponding TaxTotalAmount (BT-111)
