@@ -692,8 +692,7 @@ public interface IExportableTransaction {
 
 	/**
 	 * BT-23 Business process identifier
-	 * /rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/
-	 *   ram:BusinessProcessSpecifiedDocumentContextParameter/ram:ID
+	 * /rsm:CrossIndustryInvoice/rsm:ExchangedDocumentContext/ram:BusinessProcessSpecifiedDocumentContextParameter/ram:ID
 	 *
 	 * @return business process ID (e.g. "B1" or a URN) or null if not provided
 	 */
@@ -701,4 +700,12 @@ public interface IExportableTransaction {
 		return null;
 	}
 
+	/**
+	 * BT-19 Buyer accounting reference
+	 * /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:ReceivableSpecifiedTradeAccountingAccount/ram:ID
+	 * @return buyer accounting reference or null if not provided
+	 */
+	default String getAccountingReference() {
+  		return null;
+	}
 }
