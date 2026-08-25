@@ -18,6 +18,9 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD.model;
 
+/***
+ * a class with predefined type codes
+ */
 public class DocumentCodeTypeConstants {
 	/***
 	 * default invoice typecode

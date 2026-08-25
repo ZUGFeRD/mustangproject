@@ -227,8 +227,8 @@ public class Charge extends TradeTax<Charge> implements IZUGFeRDAllowanceCharge 
 	/**
 	 * set the taxRateApplicablePercent.
 	 * @deprecated use setTaxRateApplicablePercent(BigDecimal) instead.
-	 * @param percent
-	 * @return
+	 * @param percent the percent value as bigdecimal
+	 * @return fluent setter
 	 */
 	@Deprecated(forRemoval = true, since = "2.24.1")
 	public Charge setTaxPercent(BigDecimal percent) {
@@ -250,7 +250,7 @@ public class Charge extends TradeTax<Charge> implements IZUGFeRDAllowanceCharge 
 	/**
 	 * @deprecated use setTaxCategoryCode(String) instead.
 	 * @param taxCategoryCode
-	 * @return
+	 * @return fluent setter
 	 */
 	@Deprecated(forRemoval = true, since = "2.24.1")
 	public Charge setCategoryCode(String taxCategoryCode) {

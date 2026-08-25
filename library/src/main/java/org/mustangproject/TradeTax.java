@@ -26,7 +26,7 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDTradeTax;
  * <p>The class is parameterized with its own concrete subtype (&quot;recursive generics&quot; or
  * curiously recurring template pattern) so that the fluid setters declared here already
  * return the subtype and no covariant overrides are needed in the subclasses, e.g.
- * <code>class Charge extends TradeTax&lt;Charge&gt</code> makes
+ * <code>class Charge extends TradeTax&lt;Charge&gt;</code> makes
  * <code>setTaxBasisAmount(..)</code> return a <code>Charge</code></p>
  *
  * @param <T> the concrete subtype returned by the fluid setters
@@ -101,6 +101,7 @@ public abstract class TradeTax<T extends TradeTax<T>> implements IZUGFeRDTradeTa
 
 	/**
 	 * @param taxCalculatedAmount the taxCalculatedAmount to set
+	 * @return fluent setter
 	 */
 	public T setTaxCalculatedAmount(BigDecimal taxCalculatedAmount) {
 		this.taxCalculatedAmount = taxCalculatedAmount;
@@ -117,6 +118,7 @@ public abstract class TradeTax<T extends TradeTax<T>> implements IZUGFeRDTradeTa
 
 	/**
 	 * @param taxExemptionReason the taxExemptionReason to set
+	 * @return fluent setter
 	 */
 	public T setTaxExemptionReason(String taxExemptionReason) {
 		this.taxExemptionReason = taxExemptionReason;
@@ -133,6 +135,7 @@ public abstract class TradeTax<T extends TradeTax<T>> implements IZUGFeRDTradeTa
 
 	/**
 	 * @param taxBasisAmount the taxBasisAmount to set
+	 * @return fluent setter
 	 */
 	public T setTaxBasisAmount(BigDecimal taxBasisAmount) {
 		this.taxBasisAmount = taxBasisAmount;

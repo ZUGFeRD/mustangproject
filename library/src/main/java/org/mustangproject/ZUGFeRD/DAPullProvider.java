@@ -32,7 +32,7 @@ import org.mustangproject.Invoice;
 import org.mustangproject.XMLTools;
 
 /***
- *
+ * a UN/CEFACT cross industry delivery advice (CIDA) pullprovider (for Deliver-X)
  */
 public class DAPullProvider extends ZUGFeRD2PullProvider {
 

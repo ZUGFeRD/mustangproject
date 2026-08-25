@@ -54,13 +54,38 @@ public interface IZUGFeRDExporter extends Closeable, IExporter {
 	 * @return the generated ZUGFeRDExporter
 	 */
 	IZUGFeRDExporter load(InputStream pdfSource) throws IOException;
-	IZUGFeRDExporter setCreator(String creator); // sets the name of the author
+
+	/***
+	 * sets the name of the author
+	 * @param creator
+	 * @return fluent setter
+	 */
+	IZUGFeRDExporter setCreator(String creator);
 	IZUGFeRDExporter setConformanceLevel(PDFAConformanceLevel newLevel);
 	IZUGFeRDExporter setEnablePDFAttachmentCompression(boolean enablePDFAttachmentCompression);
-	IZUGFeRDExporter setProducer(String producer); // set the PDF "producer"
+
+	/***
+	 * set the PDF "producer" application attribute
+	 * @param producer
+	 * @return fluent setter
+	 */
+	IZUGFeRDExporter setProducer(String producer);
 	IZUGFeRDExporter setZUGFeRDVersion(int version);
 	boolean ensurePDFIsValid(DataSource dataSource) throws IOException;
+
+	/***
+	 * Allow to manually specify XML to attach to the PDF/A file
+	 * @param zugferdData XML
+	 * @return fluent setter
+	 * @throws IOException
+	 */
 	IZUGFeRDExporter setXML(byte[] zugferdData) throws IOException;
+
+	/***
+	 * by default (and intention), a ZUGFeRD-2 file will be written with
+	 * Factur-X namespace. This function allows to use the deprecated ZUGFeRD namespace.
+	 * @return fluent setter
+	 */
 	IZUGFeRDExporter disableFacturX();
 	IZUGFeRDExporter setProfile(Profile zugferdConformanceLevel);
 	String getNamespaceForVersion(int ver);

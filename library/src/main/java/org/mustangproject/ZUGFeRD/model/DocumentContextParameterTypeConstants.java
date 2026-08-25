@@ -18,6 +18,9 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD.model;
 
+/***
+ * a class for ZUGFeRD 1 metadata constants
+ */
 public class DocumentContextParameterTypeConstants {
 	/***
 	 * the URN of the guideline ID of a ZUGFeRD 1 basic profile

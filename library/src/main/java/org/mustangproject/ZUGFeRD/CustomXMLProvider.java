@@ -20,6 +20,10 @@ package org.mustangproject.ZUGFeRD;
 
 import java.nio.charset.StandardCharsets;
 
+/***
+ * a stub to allow people to inject custom XML
+ * (into PDF/A files as Factur-X/ZUGFeRD) instead of using the generated one
+ */
 public class CustomXMLProvider implements IXMLProvider {
 
 	protected byte[] zugferdData;

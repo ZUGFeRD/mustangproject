@@ -36,8 +36,8 @@ public final class ByteArraySearcher {
 
 	/***
 	 * check if a string or any substring of haystack matches (case sensitive) needle
-	 * @param haystack
-	 * @param needle
+	 * @param haystack the bytes in which to search
+	 * @param needle the pattern to search
 	 * @return true, if haystack contains needle
 	 */
 	public static boolean contains(byte[] haystack, byte[] needle) {

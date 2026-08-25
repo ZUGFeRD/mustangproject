@@ -3,6 +3,10 @@ package org.mustangproject.util;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/***
+ * Some utilities to handle "floats", i.e. BigDecimals
+ * despite them having arbitrary precision
+ */
 public class BigDecimalUtils {
 
 

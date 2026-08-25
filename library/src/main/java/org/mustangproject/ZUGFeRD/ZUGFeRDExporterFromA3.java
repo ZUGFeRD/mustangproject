@@ -187,7 +187,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	/***
 	 * set the profile from a string, if it can be recognized
-	 * @param profilename
+	 * @param profilename a string like EN16931 or EXTENDED
 	 * @return fluent setter
 	 */
 	public ZUGFeRDExporterFromA3 setProfile(String profilename) {
@@ -538,6 +538,11 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
+	/***
+	 * Add most of the required Factur-X/ZUGFeRD XMPs into the PDF/A file
+	 * @param attachHeaders
+	 * @return fluent setter
+	 */
 	protected ZUGFeRDExporterFromA3 setAttachZUGFeRDHeaders(boolean attachHeaders) {
 		this.attachZUGFeRDHeaders = attachHeaders;
 		return this;
@@ -719,6 +724,12 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return XMPMetadata.createXMPMetadata();
 	}
 
+	/***
+	 * preparative step to actually write XMP
+	 * @param xmpMetadata
+	 * @return XML string
+	 * @throws TransformerException
+	 */
 	protected byte[] serializeXmpMetadata(XMPMetadata xmpMetadata) throws TransformerException {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		new XmpSerializer().serialize(xmpMetadata, buffer, true); // see https://github.com/ZUGFeRD/mustangproject/issues/44

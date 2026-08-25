@@ -68,6 +68,9 @@ import org.mustangproject.FileAttachment;
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
 
+/***
+ * This is a Deliver-X exporter for PDF/A3-docs
+ */
 public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 	/***
@@ -87,6 +90,9 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 
 	private boolean attachZUGFeRDHeaders = true;
 
+	/***
+	 * constructor :-)
+	 */
 	public DXExporterFromA3() {
 		super();
 	}
