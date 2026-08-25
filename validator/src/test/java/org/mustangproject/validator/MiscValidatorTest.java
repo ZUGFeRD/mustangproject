@@ -1,12 +1,16 @@
 package org.mustangproject.validator;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 public class MiscValidatorTest extends ResourceCase {
 
+	@Test
 	public void testInvalidFileValidation() {
 
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();

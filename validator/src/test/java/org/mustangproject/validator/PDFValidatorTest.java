@@ -1,8 +1,14 @@
 package org.mustangproject.validator;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
+import org.junit.jupiter.api.Test;
 
 public class PDFValidatorTest extends ResourceCase {
+
+	@Test
 	public void testPDFPotentialA3SourceValidation() {
 		final ValidationContext vc = new ValidationContext(null);
 		final PDFValidator pv = new PDFValidator(vc);
@@ -45,6 +51,7 @@ public class PDFValidatorTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testPDFValidation() {
 		final ValidationContext vc = new ValidationContext(null);
 		final PDFValidator pv = new PDFValidator(vc);
@@ -99,6 +106,7 @@ public class PDFValidatorTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testPDFXMLValidation() {
 /*@todo		try {
 			final ValidationContext vc = new ValidationContext(null);
@@ -140,6 +148,7 @@ public class PDFValidatorTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testXMPValidation() {
 
 		final ValidationContext vc = new ValidationContext(null);

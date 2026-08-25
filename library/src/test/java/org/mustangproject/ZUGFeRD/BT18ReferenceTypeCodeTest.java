@@ -1,6 +1,6 @@
 package org.mustangproject.ZUGFeRD;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 import org.mustangproject.Invoice;
 import org.mustangproject.Item;
 import org.mustangproject.Product;
@@ -11,14 +11,16 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
-public class BT18ReferenceTypeCodeTest extends TestCase {
+public class BT18ReferenceTypeCodeTest {
 
     /**
      * Ensures BT-18-1 (scheme identifier) is serialized as ram:ReferenceTypeCode
      * inside ram:AdditionalReferencedDocument (TypeCode=130).
      */
+    @Test
     public void testBT18ReferenceTypeCodeIsWrittenWhenSet() {
         // Minimal invoice (XRechnung profile => CII output)
         Invoice i = new Invoice()

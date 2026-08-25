@@ -20,6 +20,12 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,8 +41,10 @@ import java.util.Date;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.BankDetails;
 import org.mustangproject.Contact;
 import org.mustangproject.Invoice;
@@ -46,7 +54,9 @@ import org.mustangproject.ReferencedDocument;
 import org.mustangproject.TradeParty;
 import org.mustangproject.CII.CIIToUBL;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UBLTest extends ResourceCase {
+
 	private static final String TARGET_XML = "./target/testout-1Lieferschein.xml";
 
 	@Test
@@ -101,6 +111,7 @@ public class UBLTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testEdgeInvoiceImportUBL() throws IOException {
 
 		File UBLinputFile = getResourceAsFile("ubl/01.01a-INVOICE.ubl.xml");
@@ -123,6 +134,7 @@ public class UBLTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testEdgeInvoiceImportUBL2() throws IOException {
 		File UBLinputFile = getResourceAsFile("ubl/04.01a-INVOICE_ubl.xml");
 		boolean hasExceptions = false;

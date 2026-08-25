@@ -21,13 +21,17 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.BankDetails;
 import org.mustangproject.Contact;
 import org.mustangproject.Invoice;
@@ -35,15 +39,12 @@ import org.mustangproject.Item;
 import org.mustangproject.Product;
 import org.mustangproject.TradeParty;
 
-import junit.framework.TestCase;
-
-
-
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class PreValidationTest extends TestCase {
+@TestMethodOrder(MethodOrderer.MethodName.class)
+public class PreValidationTest {
 	private static final String TARGET_PDF = "./target/testout-Preval.pdf";
 	private static final String SOURCE_PDF = "/veraPDFtestsuite6-7-11-t01-fail-a.pdf";
 
+	@Test
 	public void testFailIgnore() {
 
 		// the writing part

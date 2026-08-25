@@ -1,5 +1,7 @@
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.valueOf;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
@@ -15,7 +17,7 @@ import java.util.Date;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mustangproject.Allowance;
 import org.mustangproject.Charge;
 import org.mustangproject.Invoice;

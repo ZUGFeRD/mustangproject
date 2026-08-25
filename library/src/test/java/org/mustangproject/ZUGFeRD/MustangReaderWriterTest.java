@@ -18,7 +18,12 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -45,24 +50,13 @@ import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.PDFAIdentificationSchema;
 import org.apache.xmpbox.xml.DomXmpParser;
 import org.apache.xmpbox.xml.XmpParsingException;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.ZUGFeRD.model.DocumentContextParameterTypeConstants;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class MustangReaderWriterTest extends MustangReaderTestCase {
-
-	/**
-	 * Create the test case
-	 *
-	 * @param testName name of the test case
-	 */
-	public MustangReaderWriterTest(String testName) {
-		super(testName);
-	}
 
 	@Override
 	public Date getDeliveryDate() {
@@ -185,12 +179,6 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		return "AB321";
 	}
 
-	/**
-	 * @return the suite of tests being tested
-	 */
-	public static Test suite() {
-		return new TestSuite(MustangReaderWriterTest.class);
-	}
 
 	// //////// TESTS
 	// //////////////////////////////////////////////////////////////////////////////////////////
@@ -201,6 +189,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 	 * to run before testZExport
 	 */
 
+	@Test
 	public void testAImport() {
 		InputStream inputStream = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
@@ -221,6 +210,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		assertEquals("12345", zi.getSellerTradePartyAddress().getPostcodeCode());
 	}
 
+	@Test
 	public void testForeignImport() {
 		InputStream inputStream = this.getClass().getResourceAsStream("/zugferd_invoice.pdf");
 		ZUGFeRDImporter zi = new ZUGFeRDImporter();
@@ -309,6 +299,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 	}
 
 
+	@Test
 	public void testMigratePDFA1ToA3() throws IOException {
 // just make sure there is no Exception
 		InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20171118_506blanko.pdf");
@@ -320,6 +311,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		checkPdfA3B(tempFile);
 	}
 
+	@Test
 	public void testMigratePDFA1ToA3Stream() throws IOException {
 		// just make sure there is no Exception
 		InputStream SOURCE_PDF = this.getClass()
@@ -358,6 +350,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 	 * importer test (which is probably redundant). As only Name Ascending is
 	 * supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
 	 */
+	@Test
 	public void testZExport() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506new.pdf";
@@ -402,6 +395,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 	 * Quick and dirty copy of testZExport to check if v1 files contain
 	 * the correct profile string when the comfort profile is selected.
 	 */
+	@Test
 	public void testZExportv1Profile() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506new.pdf";
@@ -431,6 +425,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 	}
 
 
+	@Test
 	public void testFXExport() throws Exception {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506fx.pdf";
@@ -493,6 +488,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		}
 	}
 
+	@Test
 	public void testExceptionOnPDF14() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505new.pdf";

@@ -1,6 +1,6 @@
 package org.mustangproject.ZUGFeRD;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 import org.mustangproject.Invoice;
 import org.mustangproject.Item;
 import org.mustangproject.Product;
@@ -11,9 +11,10 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
-public class BT123ReferencedDocumentNameTest extends TestCase {
+public class BT123ReferencedDocumentNameTest {
 
 	/**
 	 * BT-123 (supporting document description) used to be written as
@@ -23,6 +24,7 @@ public class BT123ReferencedDocumentNameTest extends TestCase {
 	 * NullPointerException without a message. Any invoice with a named referenced document (e.g. an
 	 * attached PDF) was therefore unwritable.
 	 */
+	@Test
 	public void testReferencedDocumentNameIsWellformed() {
 		Invoice i = new Invoice()
 			.setIssueDate(new Date())

@@ -21,6 +21,11 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -35,30 +40,20 @@ import java.util.GregorianCalendar;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.BankDetails;
 import org.mustangproject.Contact;
 import org.mustangproject.Invoice;
 import org.mustangproject.TradeParty;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class OXTest extends MustangReaderTestCase {
 	private static final String TARGET_PDF = "./target/testout-OX.pdf";
 	private static final String TARGET_PDF_EDGE = "./target/testout-OX-edge.pdf";
 	private static final String TARGET_XML = "./target/testout-OX.xml";
 
-	/**
-	 * Create the test case
-	 *
-	 * @param testName name of the test case
-	 */
-	public OXTest(String testName) {
-		super(testName);
-	}
 
 	protected class EdgeProduct implements IZUGFeRDExportableProduct {
 		private String description, name, unit;
@@ -262,12 +257,6 @@ public class OXTest extends MustangReaderTestCase {
 		return "AB321";
 	}
 
-	/**
-	 * @return the suite of tests being tested
-	 */
-	public static Test suite() {
-		return new TestSuite(OXTest.class);
-	}
 
 	// //////// TESTS
 	// //////////////////////////////////////////////////////////////////////////////////////////
@@ -278,6 +267,7 @@ public class OXTest extends MustangReaderTestCase {
 	 * metadata, writes to @{code ./target/testout-*} and then imports to check the
 	 * values.
 	 */
+	@Test
 	public void testOXExport() {
 
 		// the writing part
@@ -329,6 +319,7 @@ public class OXTest extends MustangReaderTestCase {
 
 	}
 
+	@Test
 	public void testOXEdgeExport() {
 
 		// the writing part

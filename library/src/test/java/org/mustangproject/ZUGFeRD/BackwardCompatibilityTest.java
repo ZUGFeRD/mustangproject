@@ -18,6 +18,8 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.ByteArrayOutputStream;
@@ -29,7 +31,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 import org.mustangproject.TradeParty;
 
 /***
@@ -38,7 +40,7 @@ import org.mustangproject.TradeParty;
  * @author jstaerk
  *
  */
-public class BackwardCompatibilityTest extends TestCase implements IExportableTransaction {
+public class BackwardCompatibilityTest implements IExportableTransaction {
 
 	private static final String TARGET_PDF_ZF1 = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506zf1.pdf";
 	private static final String TARGET_PDF_ZF2 = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506zf2.pdf";
@@ -52,6 +54,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 	 * importer test (which is probably redundant). As only Name Ascending is
 	 * supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
 	 */
+	@Test
 	public void testZF1Export() {
 
 
@@ -87,6 +90,7 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 		assertEquals(getNumber(), zi.getForeignReference());
 	}
 
+	@Test
 	public void testZF2Export() {
 
 
@@ -124,6 +128,8 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 
 
 	}
+
+	@Test
 	public void testFXExport() {
 
 		// the writing part
@@ -303,7 +309,6 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 	}
 
 
-
 	@Override
 	public IZUGFeRDExportableTradeParty getRecipient() {
 		return new TradeParty("name", "street", "zip", "city", "DE");
@@ -370,7 +375,6 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 	}
 
 
-
 	public String getOwnBIC() {
 		return "COBADEFFXXX";
 	}
@@ -425,8 +429,6 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 	public String getOwnZIP() {
 		return "12345";
 	}
-
-
 
 
 }

@@ -21,6 +21,14 @@
 package org.mustangproject.ZUGFeRD;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -65,7 +73,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
-
+	@Test
 	public void testInvoiceImport() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2new.pdf");
@@ -117,6 +125,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 
+	@Test
 	public void testInvoiceImportUBL() {
 
 		boolean hasExceptions = false;
@@ -177,6 +186,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testEdgeInvoiceImport() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushEdge.pdf");
@@ -207,6 +217,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 
+	@Test
 	public void testPDFA4Import() throws IOException {
 		File PDFA4inputFile = getResourceAsFile("EXTENDED_Fremdwaehrung_wdis_fx-pdfa4.pdf");
 
@@ -229,6 +240,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 
+	@Test
 	public void testBT17InvoiceImport() throws IOException {
 		boolean hasExceptions = false;
 		Invoice invoice = null;
@@ -258,6 +270,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testBT128InvoiceImport() throws IOException {
 		boolean hasExceptions = false;
 		Invoice invoice = null;
@@ -281,6 +294,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("2018-10-04", sdf.format(invoice.getInvoiceReferencedDocuments().get(0).getFormattedIssueDateTime()));
 	}
 
+	@Test
 	public void testZF1Import() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-MustangGnuaccountingBeispielRE-20171118_506zf1.pdf");
@@ -324,6 +338,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		// name street location zip country, contact name phone email, total amount
 	}
 
+	@Test
 	public void testSpecifiedLogisticsChargeCashDiscountImport() throws IOException {
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
 		File expectedResult = getResourceAsFile("cii/extended_warenrechnung_based_doublecashdiscount.xml");
@@ -344,6 +359,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals(new BigDecimal("518.99"), tc.getGrandTotal());
 	}
 
+	@Test
 	public void testItemAllowancesChargesImport() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushItemChargesAllowances.pdf");
@@ -360,6 +376,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals(new BigDecimal("18.33"), tc.getGrandTotal());
 	}
 
+	@Test
 	public void testIBANImport() throws IOException {
 		File CIIinputFile = getResourceAsFile("cii/lastschrift_iban_bug.xml");
 		try {
@@ -374,6 +391,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testBasisQuantityImport() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2newEdge.pdf");
@@ -391,6 +409,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 
+	@Test
 	public void testAllowancesChargesImport() {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushChargesAllowances.pdf");
@@ -408,6 +427,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testXRImport() {
 		boolean hasExceptions = false;
 
@@ -445,7 +465,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("Kleinunternehmer", invoice.getZFItems()[0].getProduct().getTaxExemptionReason());
 
 		assertEquals(1, invoice.getTradeSettlement().length);
-		assertTrue(invoice.getTradeSettlement()[0] instanceof IZUGFeRDTradeSettlementPayment);
+		assertInstanceOf(IZUGFeRDTradeSettlementPayment.class, invoice.getTradeSettlement()[0]);
 		IZUGFeRDTradeSettlementPayment paym = (IZUGFeRDTradeSettlementPayment) invoice.getTradeSettlement()[0];
 		assertEquals("DE12500105170648489890", paym.getOwnIBAN());
 		assertEquals("COBADEFXXX", paym.getOwnBIC());
@@ -458,6 +478,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	/**
 	 * testing if other files embedded in pdf additionally to the invoice can be read correctly
 	 */
+	@Test
 	public void testDetach() {
 		byte[] fileA = null;
 		byte[] fileB = null;
@@ -476,12 +497,13 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		byte[] b = {12, 13}; // the sample data that was used to write the files
 
 		assertTrue(facturXFound);
-		assertTrue(Arrays.equals(fileA, b));
+		assertArrayEquals(b, fileA);
 		assertEquals(2, fileA.length);
-		assertTrue(Arrays.equals(fileB, b));
+		assertArrayEquals(b, fileB);
 		assertEquals(2, fileB.length);
 	}
 
+	@Test
 	public void testImportDebit() {
 		File CIIinputFile = getResourceAsFile("cii/minimalDebit.xml");
 		try {
@@ -510,6 +532,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		return Date.from(startOfDay.atZone(tz).toInstant());
 	}
 
+	@Test
 	public void testImportAllowances() {
 		try {
 			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("./target/testout-ZF2PushItemChargesAllowances.pdf");
@@ -687,6 +710,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testImportMinimum() {
 		File CIIinputFile = getResourceAsFile("cii/facturFrMinimum.xml");
 		try {
@@ -703,6 +727,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testImportUBLCreditnote() { // Confirm some basics also work with UBL credit notes
 		File CIIinputFile = getResourceAsFile("ubl/UBL-CreditNote-2.1-Example.ubl.xml");
 		try {
@@ -721,6 +746,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testImportUBLPeriods() { // Confirm some basics also work with UBL credit notes
 		File ublinputFile = getResourceAsFile("ubl/periods.ubl.xml");
 		try {
@@ -844,6 +870,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals(new Date(2022 - 1900, Calendar.AUGUST, 31), invoice.getZFItems()[0].getDetailedDeliveryPeriodTo());
 	}
 
+	@Test
 	public void testImportPositionIncludedNotes() throws XPathExpressionException, ParseException, IOException {
 		File inputFile = getResourceAsFile("ZTESTZUGFERD_1_INVDSS_012015738820PDF-1.pdf");
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(Files.newInputStream(inputFile.toPath(), StandardOpenOption.READ));

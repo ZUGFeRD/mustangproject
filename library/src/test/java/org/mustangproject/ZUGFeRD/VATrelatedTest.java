@@ -19,14 +19,19 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.Charge;
 import org.mustangproject.Contact;
 import org.mustangproject.Invoice;
@@ -36,11 +41,12 @@ import org.mustangproject.TradeParty;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class VATrelatedTest extends ResourceCase {
 	private static final String TARGET_PDF_REVERSE = "./target/testout-ReverseCharge.pdf";
 	private static final String TARGET_PDF_Z = "./target/testout-TaxcodeZ.pdf";
 
+	@Test
 	public void testReverseCharge() {
 
 		String orgname = "Test company";
@@ -100,6 +106,7 @@ public class VATrelatedTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testTaxcodeZ() {
 
 		String orgname = "Test company";

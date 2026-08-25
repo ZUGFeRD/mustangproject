@@ -21,7 +21,12 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 import java.io.BufferedWriter;
@@ -41,8 +46,9 @@ import java.util.Date;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.Allowance;
 import org.mustangproject.BankDetails;
 import org.mustangproject.CalculatedInvoice;
@@ -66,8 +72,7 @@ import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class ZF2PushTest extends ResourceCase {
 	private static final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20201121_508.pdf";
 	private static final String TARGET_ALLOWANCESPDF = "./target/testout-ZF2PushAllowances.pdf";
@@ -87,6 +92,7 @@ public class ZF2PushTest extends ResourceCase {
 	private static final String TARGET_EXTENDED_XML = "./target/testout-Extended_fremdwaehrung.xml";
 	private static final String TARGET_LINETOTAL_4DECIMALS_XML = "./target/testout-line-total-4-decimals.xml";
 
+	@Test
 	public void testPushExport() {
 		/*
 		  This writes to a filename like an official sample, please consider when changing (probably better not?)
@@ -154,6 +160,7 @@ public class ZF2PushTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testAttachmentsExport() {
 
 		String orgname = "Test company";
@@ -219,6 +226,7 @@ public class ZF2PushTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testBankTransferExport() {
 
 		String orgname = "Test company";
@@ -253,6 +261,8 @@ public class ZF2PushTest extends ResourceCase {
 			fail("IOException should not be raised");
 		}
 	}
+
+	@Test
 	public void testGross() {
 
 		String orgname = "Test company";
@@ -307,12 +317,12 @@ public class ZF2PushTest extends ResourceCase {
 			assertEquals(new BigDecimal("34.51"), ci.getDuePayable());
 
 
-
 		} catch (Exception e) {
 			fail("Exception should not be raised");
 		}
 	}
 
+	@Test
 	public void testItemChargesAllowancesExport() {
 
 		String orgname = "Test company";
@@ -373,6 +383,7 @@ public class ZF2PushTest extends ResourceCase {
 	 * for the EN16931 and XRechnung profiles, using the caller-supplied values, and must appear
 	 * before ActualAmount.
 	 */
+	@Test
 	public void testItemAllowanceChargePercentBasisExport() {
 		Invoice invoice = new Invoice().setNumber("1").setIssueDate(new Date()).setDueDate(new Date())
 			.setSender(new TradeParty("Seller", "Street", "12345", "City", "DE").addVATID("DE123456789"))
@@ -393,18 +404,18 @@ public class ZF2PushTest extends ResourceCase {
 			pp.generateXML(invoice);
 			String theXML = new String(pp.getXML(), StandardCharsets.UTF_8);
 
-			assertTrue(profileName + ": missing line-level allowance CalculationPercent",
-				theXML.contains("<ram:CalculationPercent>10.00</ram:CalculationPercent>"));
-			assertTrue(profileName + ": missing line-level charge CalculationPercent",
-				theXML.contains("<ram:CalculationPercent>5.00</ram:CalculationPercent>"));
-			assertTrue(profileName + ": BasisAmount must use the caller-supplied value, not a derivation",
-				theXML.contains("<ram:BasisAmount>400.00</ram:BasisAmount>"));
+			assertTrue(theXML.contains("<ram:CalculationPercent>10.00</ram:CalculationPercent>"),
+				profileName + ": missing line-level allowance CalculationPercent");
+			assertTrue(theXML.contains("<ram:CalculationPercent>5.00</ram:CalculationPercent>"),
+				profileName + ": missing line-level charge CalculationPercent");
+			assertTrue(theXML.contains("<ram:BasisAmount>400.00</ram:BasisAmount>"),
+				profileName + ": BasisAmount must use the caller-supplied value, not a derivation");
 
 			int percentIdx = theXML.indexOf("<ram:CalculationPercent>10.00");
 			int basisIdx = theXML.indexOf("<ram:BasisAmount>400.00", percentIdx);
 			int actualIdx = theXML.indexOf("<ram:ActualAmount>40.00", percentIdx);
-			assertTrue(profileName + ": CalculationPercent/BasisAmount must precede ActualAmount",
-				percentIdx >= 0 && basisIdx > percentIdx && actualIdx > basisIdx);
+			assertTrue(percentIdx >= 0 && basisIdx > percentIdx && actualIdx > basisIdx,
+				profileName + ": CalculationPercent/BasisAmount must precede ActualAmount");
 		}
 	}
 
@@ -412,6 +423,7 @@ public class ZF2PushTest extends ResourceCase {
 	/***
 	 * A line-level allowance without percent/basis must not emit empty CalculationPercent/BasisAmount.
 	 */
+	@Test
 	public void testItemAllowanceWithoutPercentBasisExport() {
 		Invoice invoice = new Invoice().setNumber("1").setIssueDate(new Date()).setDueDate(new Date())
 			.setSender(new TradeParty("Seller", "Street", "12345", "City", "DE").addVATID("DE123456789"))
@@ -428,10 +440,10 @@ public class ZF2PushTest extends ResourceCase {
 		int end = theXML.indexOf("</ram:SpecifiedTradeAllowanceCharge>", start);
 		String allowanceCharge = theXML.substring(start, end);
 		assertTrue(allowanceCharge.contains("<ram:ActualAmount>40.00</ram:ActualAmount>"));
-		assertFalse("no CalculationPercent expected when percent is unset",
-			allowanceCharge.contains("<ram:CalculationPercent>"));
-		assertFalse("no BasisAmount expected in the item allowance when basis is unset",
-			allowanceCharge.contains("<ram:BasisAmount>"));
+		assertFalse(allowanceCharge.contains("<ram:CalculationPercent>"),
+			"no CalculationPercent expected when percent is unset");
+		assertFalse(allowanceCharge.contains("<ram:BasisAmount>"),
+			"no BasisAmount expected in the item allowance when basis is unset");
 	}
 
 
@@ -439,6 +451,7 @@ public class ZF2PushTest extends ResourceCase {
 	 * When a line-level allowance has a percent but no explicit basis, BasisAmount (BT-137) is
 	 * derived from the line subtotal (price/basisQuantity * quantity) for the EN16931 profile.
 	 */
+	@Test
 	public void testItemAllowancePercentOnlyDerivesBasisExport() {
 		Invoice invoice = new Invoice().setNumber("1").setIssueDate(new Date()).setDueDate(new Date())
 			.setSender(new TradeParty("Seller", "Street", "12345", "City", "DE").addVATID("DE123456789"))
@@ -465,6 +478,7 @@ public class ZF2PushTest extends ResourceCase {
 	/***
 	 * you can activate intra community supply on item level
 	 */
+	@Test
 	public void testIntraCommunitySupplyItemExport() {
 
 		String orgname = "Test company";
@@ -518,6 +532,7 @@ public class ZF2PushTest extends ResourceCase {
 	 * or manually, in which case the transaction needs a delivery address outside DE, and the items a 0 tax with reason K and reason code
 	 */
 
+	@Test
 	public void testIntraCommunitySupplyManualExport() {
 
 		String orgname = "Test company";
@@ -571,6 +586,7 @@ public class ZF2PushTest extends ResourceCase {
 	}
 
 
+	@Test
 	public void testReverseChargeExport() {
 
 		String orgname = "Test company";
@@ -620,6 +636,7 @@ public class ZF2PushTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testChargesAllowancesExport() {
 
 		String orgname = "Test company";
@@ -673,6 +690,7 @@ public class ZF2PushTest extends ResourceCase {
 	/***
 	 * test the edge cases of the invoice class
 	 */
+	@Test
 	public void testPushEdge() {
 		String occurrenceFrom = "20201001";
 		String occurrenceTo = "20201005";
@@ -824,6 +842,7 @@ public class ZF2PushTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testAllowancesExport() {
 
 		String orgname = "Test company";
@@ -874,6 +893,7 @@ public class ZF2PushTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testRelativeChargesAllowancesExport() {
 
 		String orgname = "Test company";
@@ -943,6 +963,7 @@ public class ZF2PushTest extends ResourceCase {
 	 * quantities have to be negative!
 	 * official example: zugferd_2p1_EXTENDED_Rechnungskorrektur.pdf
 	 */
+	@Test
 	public void testCorrectionExport() {
 
 		String orgname = "Test company";
@@ -992,6 +1013,7 @@ public class ZF2PushTest extends ResourceCase {
 	 * along with a documentation in chapter 7.1.6 (where they also tackle
 	 * negative TypeCode 380 invoices)
 	 */
+	@Test
 	public void testCreditNoteExport() {
 
 		String orgname = "Test company";
@@ -1055,6 +1077,7 @@ public class ZF2PushTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testEmptyDocumentReference() {
 		String orgname = "Test company";
 		String number = "123";
@@ -1112,6 +1135,7 @@ public class ZF2PushTest extends ResourceCase {
 	/**
 	 * Verify that BT-X-96 & BT-X-97 Line Item ApplicableTradeTax ExemptionReason& Exemption Reason Code is not written for EN16931-profile exports.
 	 */
+	@Test
 	public void testExemptionReasonNotWrittenToLineLevelForEN16931Profile() {
 		String orgname = "Test company";
 		String number = "123";
@@ -1150,6 +1174,7 @@ public class ZF2PushTest extends ResourceCase {
 		assertThat(theXML).valueByXPath("//*[local-name()='SpecifiedLineTradeSettlement']/*[local-name()='ApplicableTradeTax']/*[local-name()='ExemptionReasonCode']").asString().isEqualTo(exemptionReasonCode);
 	}
 
+	@Test
 	public void testDocumentLevelAllowanceVatRateByCategory() {
 		TradeParty sender = new TradeParty("Test Seller", "Seller Street 1", "10000", "Test City", "DE").setID("SELLER-001").addTaxID("4711").addVATID("DE0815");
 		TradeParty recipient = new TradeParty("Test Buyer", "Buyer Street 1", "10000", "Test City", "FR").addVATID("FR555444333222111");
@@ -1203,6 +1228,7 @@ public class ZF2PushTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testDuplicateDirectDebit() {
 		String orgname = "Test company";
 		String number = "123";
@@ -1241,6 +1267,7 @@ public class ZF2PushTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testDifferentTaxCurrency() throws XPathExpressionException, ParseException, IOException {
 		File inputFile = getResourceAsFile("Extended_fremdwaehrung.xml");
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
@@ -1274,6 +1301,7 @@ public class ZF2PushTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testLineTotalAmount() throws XPathExpressionException, ParseException, IOException {
 		File inputFile = getResourceAsFile("line-total-4-decimals.xml");
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();

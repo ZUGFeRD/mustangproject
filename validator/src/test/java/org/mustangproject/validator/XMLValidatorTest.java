@@ -8,7 +8,7 @@ import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.validation.SchemaFactory;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Test;
 import org.mustangproject.ZUGFeRD.Version;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -17,10 +17,15 @@ import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 public class XMLValidatorTest extends ResourceCase {
 
+	@Test
 	public void testZF2XMLValidation() {
 		// ignored for the
 		// time being
@@ -192,6 +197,7 @@ public class XMLValidatorTest extends ResourceCase {
 		assertFalse(noException);
 	}
 
+	@Test
 	public void testZF1XMLValidation() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -217,6 +223,7 @@ public class XMLValidatorTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testXRCIIPeppolFailureValidation() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -247,6 +254,7 @@ public class XMLValidatorTest extends ResourceCase {
 		assertTrue(noExceptions);
 	}
 
+	@Test
 	public void testXRValidation() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -275,6 +283,7 @@ public class XMLValidatorTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testXRSchemaValidation() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -295,6 +304,7 @@ public class XMLValidatorTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testArithmetics() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -319,6 +329,7 @@ public class XMLValidatorTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testDisableArithmeticCheck() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -347,6 +358,7 @@ public class XMLValidatorTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testXRValidationUBL() {
 		ValidationContext ctx = new ValidationContext(null);
 		XMLValidator xv = new XMLValidator(ctx);
@@ -368,6 +380,7 @@ public class XMLValidatorTest extends ResourceCase {
 		assertTrue(noExceptions);
 	}
 
+	@Test
 	public void testXRValidationUNCEFACT() {
 		XPathEngine xpath = new JAXPXPathEngine();
 
@@ -404,6 +417,7 @@ public class XMLValidatorTest extends ResourceCase {
 		assertTrue(noExceptions);
 	}
 
+	@Test
 	public void testFrenchSchematronValidation() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -432,6 +446,7 @@ public class XMLValidatorTest extends ResourceCase {
 	}
 
 
+	@Test
 	public void testUBLValidation() {
 		ValidationContext ctx = new ValidationContext(null);
 		XMLValidator xv = new XMLValidator(ctx);
@@ -472,6 +487,7 @@ public class XMLValidatorTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testBRDEC23Regression() {
 		// Regression test: BR-DEC-23 must fire for XRechnung CII invoices whose
 		// LineTotalAmount (BT-131) has more than 2 decimal places.
@@ -504,6 +520,7 @@ public class XMLValidatorTest extends ResourceCase {
 		assertTrue(noExceptions);
 	}
 
+	@Test
 	public void testSubInvoiceLineHierarchy() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -541,6 +558,7 @@ public class XMLValidatorTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testRoundingDifferenceIsInTolerance() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -569,6 +587,7 @@ public class XMLValidatorTest extends ResourceCase {
 		assertTrue(noExceptions);
   }
 
+	@Test
 	public void testRecalc() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -589,6 +608,7 @@ public class XMLValidatorTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testVAT_O() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -610,6 +630,7 @@ public class XMLValidatorTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testEnhancedFremdwaehrung() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -632,7 +653,7 @@ public class XMLValidatorTest extends ResourceCase {
 		}
 	}
 
-	@Ignore
+	@Test
 	public void testZFSchemas() {
 		String currentZFVersionDir = "ZF_250";
 
@@ -663,6 +684,7 @@ public class XMLValidatorTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testLineTotalAmount() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);

@@ -18,30 +18,15 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.math.BigDecimal;
+import org.junit.jupiter.api.Test;
 import org.mustangproject.XMLTools;
 
-public class BaseTest extends TestCase {
-	/**
-	 * Create the test case
-	 *
-	 * @param testName name of the test case
-	 */
-	public BaseTest(String testName) {
-		super(testName);
-	}
+public class BaseTest {
 
-	/**
-	 * @return the suite of tests being tested
-	 */
-	public static Test suite() {
-		return new TestSuite(BaseTest.class);
-	}
-
+	@Test
 	public void testCorrectDigits() {
 		assertEquals("0.00", XMLTools.nDigitFormat(BigDecimal.ZERO, 2));
 		assertEquals("-1.10", XMLTools.nDigitFormat(new BigDecimal("-1.10"), 2));

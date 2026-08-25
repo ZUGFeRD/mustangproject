@@ -18,13 +18,12 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.Invoice;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.ByteArrayOutputStream;
@@ -36,27 +35,12 @@ import java.text.SimpleDateFormat;
 
 import javax.xml.xpath.XPathExpressionException;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MustangReaderWriterCustomXMLTest extends TestCase {
-	/**
-	 * Create the test case
-	 *
-	 * @param testName name of the test case
-	 */
-	public MustangReaderWriterCustomXMLTest(String testName) {
-
-		super(testName);
-	}
-
-	/**
-	 * @return the suite of tests being tested
-	 */
-	public static Test suite() {
-		return new TestSuite(MustangReaderWriterCustomXMLTest.class);
-	}
+@TestMethodOrder(MethodOrderer.MethodName.class)
+public class MustangReaderWriterCustomXMLTest {
 
 	// //////// TESTS
 	// //////////////////////////////////////////////////////////////////////////////////////////
+	@Test
 	public void testCustomZF2Export() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20171118_506custom.pdf";
@@ -310,6 +294,7 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 	 * importer test (which is probably redundant). As only Name Ascending is
 	 * supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
 	 */
+	@Test
 	public void testCustomZF1Export() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505custom.pdf";

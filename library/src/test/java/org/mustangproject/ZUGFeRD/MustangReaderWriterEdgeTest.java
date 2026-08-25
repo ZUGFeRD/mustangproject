@@ -18,6 +18,11 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,13 +40,11 @@ import org.apache.pdfbox.pdmodel.common.PDMetadata;
 import org.apache.xmpbox.XMPMetadata;
 import org.apache.xmpbox.schema.PDFAIdentificationSchema;
 import org.apache.xmpbox.xml.DomXmpParser;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 	protected class EasyRecipientTradeParty extends RecipientTradeParty {
 		// Not testing extended profile here, lineThree not possible
@@ -51,14 +54,6 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 		}
 	}
 
-	/**
-	 * Create the test case
-	 *
-	 * @param testName name of the test case
-	 */
-	public MustangReaderWriterEdgeTest(String testName) {
-		super(testName);
-	}
 
 	@Override
 	public Date getDeliveryDate() {
@@ -175,12 +170,6 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 		return "AB321";
 	}
 
-	/**
-	 * @return the suite of tests being tested
-	 */
-	public static Test suite() {
-		return new TestSuite(MustangReaderWriterEdgeTest.class);
-	}
 
 	// //////// TESTS //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -190,6 +179,7 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 	 * testZExport
 	 */
 
+	@Test
 	public void testAImport() {
 		InputStream inputStream = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505.pdf");
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
@@ -211,6 +201,7 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 	 * It would not make sense to have it run before the less complex importer test (which is probably redundant).
 	 * As only Name Ascending is supported for Test Unit sequence, I renamed the Exporter Test test-Z-Export
 	 */
+	@Test
 	public void testEdgeExport() {
 
 		final String TARGET_PDF = "./target/testout-MustangGnuaccountingBeispielRE-20170509_505newEdge.pdf";
@@ -241,6 +232,7 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 	 * This test is based on #testEdgeExport but test only that the PDFIdentificationSchema is present and identifies
 	 * the pdf as PDF/A-3 conformant.
 	 */
+	@Test
 	public void testEdgeExportIsPDFA3() throws Exception {
 
 		final String SOURCE_PDF = "/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf";
@@ -252,21 +244,21 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 		// now check the contents
 		PDDocument doc = Loader.loadPDF(new File(TARGET_PDF));
 		PDMetadata meta = doc.getDocumentCatalog().getMetadata();
-		assertNotNull("The pdf must contain XMPMetadata", meta);
+		assertNotNull(meta, "The pdf must contain XMPMetadata");
 
 		byte[] xmpBytes = meta.toByteArray();
-		assertNotNull("The xmp metadata stream must not be null", xmpBytes);
+		assertNotNull(xmpBytes, "The xmp metadata stream must not be null");
 
 		DomXmpParser xmpParser = new DomXmpParser();
 		XMPMetadata xmp = xmpParser.parse(xmpBytes);
 
 		PDFAIdentificationSchema pdfai = xmp.getPDFAIdentificationSchema();
-		assertNotNull("The pdf must contain a PDFIdentificationSchema", pdfai);
+		assertNotNull(pdfai, "The pdf must contain a PDFIdentificationSchema");
 
-		assertTrue("The PDF/A conformance must be A, B or U",
-				   Arrays.asList("A", "B", "U", "a", "b", "u").contains(pdfai.getConformance()));
+		assertTrue(Arrays.asList("A", "B", "U", "a", "b", "u").contains(pdfai.getConformance()),
+			"The PDF/A conformance must be A, B or U");
 
-		assertEquals("The PDF/A must be 3", (Integer) 3, pdfai.getPart());
+		assertEquals((Integer) 3, pdfai.getPart(), "The PDF/A must be 3");
 	}
 
 	private void setupPdfUnderTest(String sourcePath, String targetPath) {

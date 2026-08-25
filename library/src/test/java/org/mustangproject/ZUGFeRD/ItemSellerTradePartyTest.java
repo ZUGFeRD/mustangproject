@@ -1,6 +1,6 @@
 package org.mustangproject.ZUGFeRD;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mustangproject.Invoice;
 import org.mustangproject.Item;
 import org.mustangproject.Product;

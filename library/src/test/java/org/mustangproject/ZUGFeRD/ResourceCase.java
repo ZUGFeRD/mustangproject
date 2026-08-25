@@ -8,14 +8,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import junit.framework.TestCase;
-
-@Ignore
-public class ResourceCase extends TestCase {
+public class ResourceCase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCase.class.getCanonicalName()); // log output is
 
 	public static File getResourceAsFile(String resourcePath) {

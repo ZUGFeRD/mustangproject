@@ -21,6 +21,11 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 import java.io.BufferedWriter;
@@ -31,7 +36,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -41,8 +45,9 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.Allowance;
 import org.mustangproject.BankDetails;
 import org.mustangproject.CashDiscount;
@@ -61,14 +66,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import junit.framework.TestCase;
-
-
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class XRTest extends TestCase {
+@TestMethodOrder(MethodOrderer.MethodName.class)
+public class XRTest {
 	private static final String TARGET_XML = "./target/testout-XR.xml";
 	private static final String TARGET_EDGE_XML = "./target/testout-XR-Edge.xml";
 
+	@Test
 	public void testXRExport() {
 
 		// the writing part
@@ -105,6 +108,7 @@ public class XRTest extends TestCase {
 	}
 
 
+	@Test
 	public void testXREdgeExport() {
 
 		// the writing part
@@ -170,11 +174,12 @@ public class XRTest extends TestCase {
 		assertNotNull(attachedFiles);
 		assertEquals(1, attachedFiles.length);
 
-		assertTrue(Arrays.equals(attachedFiles[0].getData(), b));
+		assertArrayEquals(b, attachedFiles[0].getData());
 		assertEquals("Beschreibung", attachedFiles[0].getDescription());
 
 	}
 
+	@Test
 	public void testIssue830ApplicableHeaderTradeSettlementTax() throws XPathExpressionException, SAXException, IOException, ParserConfigurationException {
 		Charge charge = new Charge(BigDecimal.ONE).setReasonCode("64");
 		charge.setTaxRateApplicablePercent(BigDecimal.valueOf(19));
@@ -251,6 +256,7 @@ public class XRTest extends TestCase {
 		assertEquals(0, BigDecimal.valueOf(5).compareTo(new BigDecimal(basisAmount2)));
 	}
 
+	@Test
 	public void testXRExportWithoutStreet() {
 
 		// the writing part
@@ -280,6 +286,7 @@ public class XRTest extends TestCase {
 
 	}
 
+	@Test
 	public void testTaxExemptionReasonIssue() {
 		String orgname = "Test company";
 		String number = "123";
@@ -297,7 +304,6 @@ public class XRTest extends TestCase {
 			.setPayee( new TradeParty().setName("VR Factoring GmbH").setID("DE813838785").setLegalOrganisation(new LegalOrganisation("391200LDDFJDMIPPMZ54", "0199")));
 
 
-
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 
 		zf2p.setProfile(Profiles.getByName("XRechnung"));
@@ -309,6 +315,7 @@ public class XRTest extends TestCase {
 	}
 
 
+	@Test
 	public void testApplicablePercentInUntaxedService() {
 
 		// the writing part
@@ -347,6 +354,7 @@ public class XRTest extends TestCase {
 	 * BR-O-06: a document-level allowance with VAT category O must not carry RateApplicablePercent.
 	 * BR-AE-06: a document-level allowance with VAT category AE must carry RateApplicablePercent = 0.
 	 */
+	@Test
 	public void testDocumentLevelAllowanceVatRateByCategory() {
 		TradeParty recipient = new TradeParty("Test Buyer", "Buyer Street 1", "10000", "Test City", "DE");
 		String orgname = "Test Seller";
@@ -398,6 +406,7 @@ public class XRTest extends TestCase {
 			.isEqualTo(1);
 	}
 
+	@Test
 	public void testSellerTaxRepresentative() {
 		// BG-11: seller's fiscal representative, used e.g. for intra-community supplies
 		// from a warehouse in another member state.
@@ -430,6 +439,7 @@ public class XRTest extends TestCase {
 			.asInt().isEqualTo(1);
 	}
 
+	@Test
 	public void testSellerTaxRepresentativeSuppressedInMinimum() {
 		// BG-11 is carried by every profile except Minimum (Basic/BasicWL/EN16931/Extended all
 		// declare and validate SellerTaxRepresentativeTradeParty), so it must be dropped only for Minimum.
