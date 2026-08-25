@@ -116,11 +116,11 @@ public class BackwardCompatibilityTest extends TestCase implements IExportableTr
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF_ZF2);
 
 		// Reading ZUGFeRD
-		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), getTradeSettlement()[0].getOwnBIC());
-		assertEquals(zi.getIBAN(), getTradeSettlement()[0].getOwnIBAN());
-		assertEquals(zi.getHolder(), getOwnOrganisationName());
-		assertEquals(zi.getForeignReference(), getNumber());
+		assertEquals("571.04", zi.getAmount());
+		assertEquals(getTradeSettlement()[0].getOwnBIC(), zi.getBIC());
+		assertEquals(getTradeSettlement()[0].getOwnIBAN(), zi.getIBAN());
+		assertEquals(getOwnOrganisationName(), zi.getHolder());
+		assertEquals(getNumber(), zi.getForeignReference());
 
 
 	}

@@ -131,7 +131,7 @@ public class PDFAWriteTest extends ResourceCase {
 				.setRecipient(recipient)
 				.setReferenceNumber("991-01484-64") //leitweg-id
 				// not using any VAT, this is also a test of zero-rated goods:
-				.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal(1.0)));
+				.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal("1.0")));
 	}
 
 }

@@ -195,13 +195,13 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
 
 		// Reading ZUGFeRD
-		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), "COBADEFFXXX");
-		assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
-		assertEquals(zi.getHolder(), getOwnOrganisationName());
-		assertEquals(zi.getDueDate(), "20170530");
-		assertEquals(zi.getForeignReference(), getNumber());
-		assertEquals(zi.getDocumentCode(), "380");
+		assertEquals("571.04", zi.getAmount());
+		assertEquals("COBADEFFXXX", zi.getBIC());
+		assertEquals("DE88 2008 0000 0970 3757 00", zi.getIBAN());
+		assertEquals(getOwnOrganisationName(), zi.getHolder());
+		assertEquals("20170530", zi.getDueDate());
+		assertEquals(getNumber(), zi.getForeignReference());
+		assertEquals("380", zi.getDocumentCode());
 
 	}
 
@@ -226,10 +226,10 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 		assertEquals("571.04", zi.getAmount());
 		assertEquals("COBADEFFXXX", zi.getBIC());
 		assertEquals("DE88 2008 0000 0970 3757 00", zi.getIBAN());
-		assertEquals(zi.getHolder(), getOwnOrganisationName());
-		assertEquals(zi.getForeignReference(), getNumber());
+		assertEquals(getOwnOrganisationName(), zi.getHolder());
+		assertEquals(getNumber(), zi.getForeignReference());
 		try {
-			assertEquals(zi.getVersion(), 1);
+			assertEquals(1, zi.getVersion());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -270,12 +270,13 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 	}
 
 	private void setupPdfUnderTest(String sourcePath, String targetPath) {
-		try (InputStream inputStream = this.getClass().getResourceAsStream(sourcePath)) {
-			ZUGFeRDExporterFromA3 ze = new ZUGFeRDExporterFromA3()
-					 .setProducer("My Application")
-					 .setCreator(System.getProperty("user.name"))
-				 	 .setZUGFeRDVersion(1)
-					 .load(inputStream);
+		try (InputStream inputStream = this.getClass().getResourceAsStream(sourcePath);
+			 ZUGFeRDExporterFromA3 ze = new ZUGFeRDExporterFromA3()) {
+			ze
+				.setProducer("My Application")
+				.setCreator(System.getProperty("user.name"))
+				.setZUGFeRDVersion(1)
+				.load(inputStream);
 			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryDocument"));

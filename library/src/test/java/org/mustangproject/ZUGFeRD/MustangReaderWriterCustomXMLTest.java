@@ -287,11 +287,11 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
 		// Reading ZUGFeRD
-		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), "COBADEFFXXX");
-		assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
-		assertEquals(zi.getHolder(), "Bei Spiel GmbH");
-		assertEquals(zi.getForeignReference(), "RE-20171118/506");
+		assertEquals("571.04", zi.getAmount());
+		assertEquals("COBADEFFXXX", zi.getBIC());
+		assertEquals("DE88 2008 0000 0970 3757 00", zi.getIBAN());
+		assertEquals("Bei Spiel GmbH", zi.getHolder());
+		assertEquals("RE-20171118/506", zi.getForeignReference());
 		try {
 			Invoice invoice = zi.extractInvoice();
 			assertEquals("deliverynote123", invoice.getZFItems()[0].getDeliveryNoteReferencedDocument().getIssuerAssignedID());
@@ -476,11 +476,11 @@ public class MustangReaderWriterCustomXMLTest extends TestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
 		// Reading ZUGFeRD
-		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), "COBADEFFXXX");
-		assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
-		assertEquals(zi.getHolder(), "Bei Spiel GmbH");
-		assertEquals(zi.getForeignReference(), "RE-20170509/505");
+		assertEquals("571.04", zi.getAmount());
+		assertEquals("COBADEFFXXX", zi.getBIC());
+		assertEquals("DE88 2008 0000 0970 3757 00", zi.getIBAN());
+		assertEquals("Bei Spiel GmbH", zi.getHolder());
+		assertEquals("RE-20170509/505", zi.getForeignReference());
 	}
 
 }

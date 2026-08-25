@@ -97,8 +97,7 @@ public class VisualizationTest extends ResourceCase {
 			Files.write(Path.of("./target/testout-" + resultFileName), result.getBytes(StandardCharsets.UTF_8));
 
 			File expectedResult = getResourceAsFile(resultFileName);
-			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8)
-				;
+			expected = Files.readString(expectedResult.toPath());
 
 		} catch (UnsupportedOperationException e) {
 			fail("UnsupportedOperationException should not happen: " + e.getMessage());

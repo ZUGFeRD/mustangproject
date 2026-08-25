@@ -57,9 +57,9 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 
 			ze.setZUGFeRDVersion(2).setProfile(Profiles.getByName("Minimum")).load(SOURCE_PDF);
 
-			/***
-			 * this is a classical example of a french invoice (very low profile, siret number) and an attempt to answer stackoverflow (!)
-			 * https://stackoverflow.com/questions/72450066/creating-a-min-basic-and-basic-wl-factur-x-using-mustang
+			/*
+			  this is a classical example of a french invoice (very low profile, siret number) and an attempt to answer stackoverflow (!)
+			  https://stackoverflow.com/questions/72450066/creating-a-min-basic-and-basic-wl-factur-x-using-mustang
 			 */
 
 			TradeParty recipient = new TradeParty().setName("Client").setCountry("FR");
@@ -112,9 +112,9 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 
 			ze.setZUGFeRDVersion(2).setProfile(Profiles.getByName("Minimum")).load(SOURCE_PDF);
 
-			/***
-			 * this is a classical example of a french invoice (very low profile, siret number) and an attempt to answer stackoverflow (!)
-			 * https://stackoverflow.com/questions/72450066/creating-a-min-basic-and-basic-wl-factur-x-using-mustang
+			/*
+			  this is a classical example of a french invoice (very low profile, siret number) and an attempt to answer stackoverflow (!)
+			  https://stackoverflow.com/questions/72450066/creating-a-min-basic-and-basic-wl-factur-x-using-mustang
 			 */
 
 			TradeParty recipient = new TradeParty().setName("Client").setCountry("FR");

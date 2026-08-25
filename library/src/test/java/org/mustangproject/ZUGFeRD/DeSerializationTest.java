@@ -63,15 +63,15 @@ public class DeSerializationTest extends ResourceCase {
 				.setSender(new TradeParty("some org", "teststr", "55232", "teststadt", "DE").addTaxID("taxID").addBankDetails(new BankDetails("DE3600000123456", "ABCDEFG1001").setAccountName("Donald Duck")).setEmail("info@company.com").addVATID("DE0815"))
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE4711").setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE")))
 				.setNumber("0185")
-				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal("1"), new BigDecimal(1.0)));
+				.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal("1"), new BigDecimal("1.0")));
 		String jsonArray = mapper.writeValueAsString(i);
 
 		// [{"stringValue":"a","intValue":1,"booleanValue":true},
 		// {"stringValue":"bc","intValue":3,"booleanValue":false}]
 
 		Invoice fromJSON = mapper.readValue(jsonArray, Invoice.class);
-		assertEquals(fromJSON.getNumber(), i.getNumber());
-		assertEquals(fromJSON.getZFItems().length, i.getZFItems().length);
+		assertEquals(i.getNumber(), fromJSON.getNumber());
+		assertEquals(i.getZFItems().length, fromJSON.getZFItems().length);
 		assertEquals("info@company.com", fromJSON.getSender().getEmail());
 		assertEquals("info@company.com", fromJSON.getSender().getUriUniversalCommunicationID());
 
@@ -106,7 +106,7 @@ public class DeSerializationTest extends ResourceCase {
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
 		try {
-			zii.fromXML(new String(Files.readAllBytes(inputCII.toPath()), StandardCharsets.UTF_8));
+			zii.fromXML(Files.readString(inputCII.toPath()));
 
 		} catch (IOException | ParseException e) {
 			hasExceptions = true;
@@ -199,15 +199,15 @@ public class DeSerializationTest extends ResourceCase {
 			"  ]\n" +
 			"}", Invoice.class);
 		TransactionCalculator tc = new TransactionCalculator(fromJSON);
-		assertEquals(tc.getGrandTotal(), new BigDecimal("234.43"));
-		assertEquals(fromJSON.getNumber(), fromJSON.getNumber());
+		assertEquals(new BigDecimal("234.43"), tc.getGrandTotal());
+		assertEquals("471102", fromJSON.getNumber());
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 		zf2p.setProfile(Profiles.getByName("XRechnung"));
 		zf2p.generateXML(fromJSON);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 
-		assertEquals(fromJSON.getZFItems().length, fromJSON.getZFItems().length);
+		assertEquals(1, fromJSON.getZFItems().length);
 		assertTrue(theXML.contains("20170303"));
 		assertTrue(theXML.contains("20170304"));
 
@@ -221,7 +221,7 @@ public class DeSerializationTest extends ResourceCase {
 		String exText = null;
 
 		try {
-			zii.fromXML(new String(Files.readAllBytes(inputUBL.toPath()), StandardCharsets.UTF_8));
+			zii.fromXML(Files.readString(inputUBL.toPath()));
 			ObjectMapper mapper = new ObjectMapper();
 			zii.extractInto(i);
 			String json = mapper.writeValueAsString(i);
@@ -230,7 +230,7 @@ public class DeSerializationTest extends ResourceCase {
 			assertEquals("181301674", i.getNumber());
 			assertEquals(newInvoiceFromJSON.getNumber(), i.getNumber());
 			assertEquals(newInvoiceFromJSON.getAdditionalReferencedDocuments()[0].getFilename(), i.getAdditionalReferencedDocuments()[0].getFilename());
-			assertEquals(newInvoiceFromJSON.getAdditionalReferencedDocuments().length, 2);
+			assertEquals(2, newInvoiceFromJSON.getAdditionalReferencedDocuments().length);
 
 
 		} catch (IOException | ParseException | XPathExpressionException e) {
@@ -329,7 +329,7 @@ public class DeSerializationTest extends ResourceCase {
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
 		zii.doIgnoreCalculationErrors();
 		try {
-			zii.fromXML(new String(Files.readAllBytes(inputCII.toPath()), StandardCharsets.UTF_8));
+			zii.fromXML(Files.readString(inputCII.toPath()));
 			ObjectMapper mapper = new ObjectMapper();
 			zii.extractInto(i);
 			String json = mapper.writeValueAsString(i);
@@ -438,22 +438,21 @@ public class DeSerializationTest extends ResourceCase {
 
 		BigDecimal price = new BigDecimal(priceStr);
 
-		Charge charge = new Charge(new BigDecimal(0.5)).setReason("quick delivery charge");
+		Charge charge = new Charge(new BigDecimal("0.5")).setReason("quick delivery charge");
 		charge.setTaxRateApplicablePercent(new BigDecimal(16));
 
-		Charge allowance = new Allowance(new BigDecimal(0.2)).setReason("discount");
+		Allowance allowance = new Allowance(new BigDecimal("0.2")).setReason("discount");
 		allowance.setTaxRateApplicablePercent(new BigDecimal(16));
 
 		Invoice newInvoiceFromJSON = null;
 		boolean hasExceptions = false;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		String json = "";
 		try {
 			SchemedID gln = new SchemedID("0088", "4304171000002");
 
 			SchemedID gtin = new SchemedID("0160", "2001015001325");
-			Item item = new Item(new Product("Testprodukt", "", "H87", new BigDecimal(16)).addGlobalID(gtin).setSellerAssignedID("4711"), price, new BigDecimal(1.0)).setId("a123").setBuyerOrderReferencedDocument(new ReferencedDocument("xxx")).addNote("item level 1/1").setDetailedDeliveryPeriod(sdf.parse("2020-01-13"), sdf.parse("2020-01-15"));
-			Charge itemAllowance = new Allowance(new BigDecimal(0.02)).setReason("item discount");
+			Item item = new Item(new Product("Testprodukt", "", "H87", new BigDecimal(16)).addGlobalID(gtin).setSellerAssignedID("4711"), price, new BigDecimal("1.0")).setId("a123").setBuyerOrderReferencedDocument(new ReferencedDocument("xxx")).addNote("item level 1/1").setDetailedDeliveryPeriod(sdf.parse("2020-01-13"), sdf.parse("2020-01-15"));
+			Allowance itemAllowance = new Allowance(new BigDecimal("0.02")).setReason("item discount");
 			itemAllowance.setTaxRateApplicablePercent(new BigDecimal(16));
 
 			Invoice i = new Invoice().setCurrency("CHF").addNote("document level 1/2").addNote("document level 2/2").setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
@@ -470,12 +469,12 @@ public class DeSerializationTest extends ResourceCase {
 				.addCashDiscount(new CashDiscount(new BigDecimal(2), 14))
 				.setDeliveryDate(sdf.parse("2020-11-02")).setNumber(number).setVATDueDateTypeCode(EventTimeCodeTypeConstants.PAYMENT_DATE);
 			ObjectMapper mapper = new ObjectMapper();
-			json = mapper.writeValueAsString(i);
+			String json = mapper.writeValueAsString(i);
 			newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
 		} catch (JsonProcessingException | ParseException e) {
 			hasExceptions = true;
 		}
-		assertEquals(newInvoiceFromJSON.getBuyerOrderReferencedDocument().getIssuerAssignedID(), "28934");
+		assertEquals("28934", newInvoiceFromJSON.getBuyerOrderReferencedDocument().getIssuerAssignedID());
 		assertFalse(hasExceptions);
 	}
 
@@ -577,7 +576,7 @@ public class DeSerializationTest extends ResourceCase {
 	}
 
 
-	public void testDirectDebit() throws JsonProcessingException {
+	public void testDirectDebit() {
 
 		ObjectMapper mapper = new ObjectMapper();
 

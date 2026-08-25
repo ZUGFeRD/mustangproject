@@ -249,7 +249,7 @@ public class LibraryTest extends ResourceCase {
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");
-		/** end of errors due to version mismatch*/
+		/* end of errors due to version mismatch*/
 
 
 		assertThat(res).valueByXPath("count(//notice)")
@@ -277,7 +277,7 @@ public class LibraryTest extends ResourceCase {
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");
-		/** end of errors due to version mismatch*/
+		/* end of errors due to version mismatch*/
 
 
 		assertThat(res).valueByXPath("count(//notice)")
@@ -300,7 +300,7 @@ public class LibraryTest extends ResourceCase {
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");
-		/** end of errors due to version mismatch*/
+		/* end of errors due to version mismatch*/
 
 
 		assertThat(res).valueByXPath("count(//notice)")
@@ -323,7 +323,7 @@ public class LibraryTest extends ResourceCase {
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");
-		/** end of errors due to version mismatch*/
+		/* end of errors due to version mismatch*/
 
 
 		assertThat(res).valueByXPath("count(//notice)")

@@ -307,7 +307,7 @@ public class OXTest extends MustangReaderTestCase {
 
 		// Now also check the "invoice"Importer
 		assertEquals("496.00", zi.getAmount());
-		assertEquals(zi.getHolder(), getOwnOrganisationName());
+		assertEquals(getOwnOrganisationName(), zi.getHolder());
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_PDF);
 		try {
 			Invoice i = zii.extractInvoice();
@@ -361,7 +361,7 @@ public class OXTest extends MustangReaderTestCase {
 
 		// Now also check the "invoice"Importer
 		assertEquals("2.00", zi.getAmount());
-		assertEquals(zi.getHolder(), "Test company");
+		assertEquals("Test company", zi.getHolder());
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_PDF_EDGE);
 		try {
 			Invoice i = zii.extractInvoice();

@@ -157,14 +157,14 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	@SuppressWarnings("deprecation")
 	@Override
 	public IReferencedDocument getTenderReferencedDocument() {
-		return new ReferencedDocument("983-jk-787", "50", null, new Date(2025 - 1900, 10 - 1, 12));
+		return new ReferencedDocument("983-jk-787", "50", null, new Date(2025 - 1900, Calendar.OCTOBER, 12));
 	}
 
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public IReferencedDocument getObjectIdentifierReferencedDocument() {
-		return new ReferencedDocument("gPogKLtac0", "130", null, new Date(2026 - 1900, 1 - 1, 26));
+		return new ReferencedDocument("gPogKLtac0", "130", null, new Date(2026 - 1900, Calendar.JANUARY, 26));
 	}
 
 	@Override
@@ -353,10 +353,10 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 
 		// Reading ZUGFeRD
 		assertEquals("337.60", zi.getAmount());
-		assertEquals(zi.getHolder(), getOwnOrganisationName());
-		assertEquals(zi.getForeignReference(), getNumber());
+		assertEquals(getOwnOrganisationName(), zi.getHolder());
+		assertEquals(getNumber(), zi.getForeignReference());
 		try {
-			assertEquals(zi.getVersion(), 2);
+			assertEquals(2, zi.getVersion());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

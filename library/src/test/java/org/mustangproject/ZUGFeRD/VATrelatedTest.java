@@ -72,8 +72,8 @@ public class VATrelatedTest extends ResourceCase {
 				.setShipToCountry("AT")
 				.setNumber(number)
 				.addCharge(charge)
-				.addItem(new Item(p1, price, new BigDecimal(1.0)))
-				.addItem(new Item(p2, price, new BigDecimal(1.0)));
+				.addItem(new Item(p1, price, new BigDecimal("1.0")))
+				.addItem(new Item(p2, price, new BigDecimal("1.0")));
 			ze.setTransaction(i);
 
 
@@ -94,7 +94,7 @@ public class VATrelatedTest extends ResourceCase {
 			assertEquals("7.19", zi.getAmount());
 			assertEquals(orgname, zi.getHolder());
 			assertEquals(number, zi.getForeignReference());
-			assertEquals(zi.getVersion(), 2);
+			assertEquals(2, zi.getVersion());
 		} catch (Exception e) {
 			fail("Exception " + e.getMessage() + " should not be raised");
 		}
@@ -137,7 +137,7 @@ public class VATrelatedTest extends ResourceCase {
 				.setNumber(number)
 				.addCharge(charge)
 
-				.addItem(new Item(p, price, new BigDecimal(1.0)));
+				.addItem(new Item(p, price, new BigDecimal("1.0")));
 			ze.setTransaction(i);
 
 
@@ -158,7 +158,7 @@ public class VATrelatedTest extends ResourceCase {
 			assertEquals("4.19", zi.getAmount());
 			assertEquals(orgname, zi.getHolder());
 			assertEquals(number, zi.getForeignReference());
-			assertEquals(zi.getVersion(), 2);
+			assertEquals(2, zi.getVersion());
 		} catch (Exception e) {
 			fail("Exception should not be raised");
 		}

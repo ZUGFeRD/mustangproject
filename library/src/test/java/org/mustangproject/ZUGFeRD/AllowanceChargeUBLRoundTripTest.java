@@ -188,7 +188,7 @@ public class AllowanceChargeUBLRoundTripTest extends ResourceCase {
 	}
 
 	private static Node findByIndicator(NodeList nodes, boolean isCharge) {
-		String expected = isCharge ? "true" : "false";
+		String expected = Boolean.toString(isCharge);
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node candidate = nodes.item(i);
 			Node indicatorParent = child(candidate, "ChargeIndicator");

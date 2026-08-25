@@ -106,10 +106,9 @@ public class UBLTest extends ResourceCase {
 		File UBLinputFile = getResourceAsFile("ubl/01.01a-INVOICE.ubl.xml");
 		boolean hasExceptions = false;
 
-		ZUGFeRDInvoiceImporter zii = null;
 		Invoice invoice = null;
 		try {
-			zii = new ZUGFeRDInvoiceImporter(Files.newInputStream(UBLinputFile.toPath(), StandardOpenOption.READ));
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(Files.newInputStream(UBLinputFile.toPath(), StandardOpenOption.READ));
 			invoice = zii.extractInvoice();
 		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
 			hasExceptions = true;
@@ -128,10 +127,9 @@ public class UBLTest extends ResourceCase {
 		File UBLinputFile = getResourceAsFile("ubl/04.01a-INVOICE_ubl.xml");
 		boolean hasExceptions = false;
 
-		ZUGFeRDInvoiceImporter zii = null;
 		Invoice invoice = null;
 		try {
-			zii = new ZUGFeRDInvoiceImporter(Files.newInputStream(UBLinputFile.toPath(), StandardOpenOption.READ));
+			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(Files.newInputStream(UBLinputFile.toPath(), StandardOpenOption.READ));
 			invoice = zii.extractInvoice();
 		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
 			e.printStackTrace();

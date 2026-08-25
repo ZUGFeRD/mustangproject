@@ -206,19 +206,19 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(inputStream);
 
 		// Reading ZUGFeRD
-		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), "COBADEFFXXX");
-		assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
-		assertEquals(zi.getHolder(), getOwnOrganisationName());
-		assertEquals(zi.getForeignReference(), "RE-20170509/505");
-		assertEquals(zi.getBankName(), "Commerzbank");
-		assertEquals(zi.getSellerTradePartyAddress().getCityName(), "Stadthausen");
-		assertEquals(zi.getSellerTradePartyAddress().getCountryID(), "DE");
-		assertEquals(zi.getSellerTradePartyAddress().getCountrySubDivisionName(), null);
-		assertEquals(zi.getSellerTradePartyAddress().getLineOne(), "Ecke 12");
-		assertEquals(zi.getSellerTradePartyAddress().getLineThree(), null);
-		assertEquals(zi.getSellerTradePartyAddress().getLineTwo(), null);
-		assertEquals(zi.getSellerTradePartyAddress().getPostcodeCode(), "12345");
+		assertEquals("571.04", zi.getAmount());
+		assertEquals("COBADEFFXXX", zi.getBIC());
+		assertEquals("DE88 2008 0000 0970 3757 00", zi.getIBAN());
+		assertEquals(getOwnOrganisationName(), zi.getHolder());
+		assertEquals("RE-20170509/505", zi.getForeignReference());
+		assertEquals("Commerzbank", zi.getBankName());
+		assertEquals("Stadthausen", zi.getSellerTradePartyAddress().getCityName());
+		assertEquals("DE", zi.getSellerTradePartyAddress().getCountryID());
+		assertNull(zi.getSellerTradePartyAddress().getCountrySubDivisionName());
+		assertEquals("Ecke 12", zi.getSellerTradePartyAddress().getLineOne());
+		assertNull(zi.getSellerTradePartyAddress().getLineThree());
+		assertNull(zi.getSellerTradePartyAddress().getLineTwo());
+		assertEquals("12345", zi.getSellerTradePartyAddress().getPostcodeCode());
 	}
 
 	public void testForeignImport() {
@@ -343,8 +343,8 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 			exportXMPMetadata.read(xmpBytes);
 			final XMPMetadata xmp = new DomXmpParser().parse(xmpBytes);
 			PDFAIdentificationSchema pdfaid = xmp.getPDFAIdentificationSchema();
-			assertEquals(pdfaid.getPart().intValue(), 3);
-			assertEquals(pdfaid.getConformance(), "U");
+			assertEquals(3, pdfaid.getPart().intValue());
+			assertEquals("U", pdfaid.getConformance());
 		} catch (XmpParsingException e) {
 			throw new IllegalStateException("Failed to read PDF", e);
 		}
@@ -390,12 +390,12 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
 
 		// Reading ZUGFeRD
-		assertEquals(zi.getAmount(), "571.04");
-		assertEquals(zi.getBIC(), "COBADEFFXXX");
-		assertEquals(zi.getReference(), getReferenceNumber());
-		assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
-		assertEquals(zi.getHolder(), getOwnOrganisationName());
-		assertEquals(zi.getForeignReference(), getNumber());
+		assertEquals("571.04", zi.getAmount());
+		assertEquals("COBADEFFXXX", zi.getBIC());
+		assertEquals(getReferenceNumber(), zi.getReference());
+		assertEquals("DE88 2008 0000 0970 3757 00", zi.getIBAN());
+		assertEquals(getOwnOrganisationName(), zi.getHolder());
+		assertEquals(getNumber(), zi.getForeignReference());
 	}
 
 	/**
@@ -489,8 +489,7 @@ public class MustangReaderWriterTest extends MustangReaderTestCase {
 				return null;
 			}
 			PDEmbeddedFile embeddedFile = fileSpec.getEmbeddedFile();
-			String xmlContent = new String(embeddedFile.toByteArray(), StandardCharsets.UTF_8);
-			return xmlContent;
+			return new String(embeddedFile.toByteArray(), StandardCharsets.UTF_8);
 		}
 	}
 

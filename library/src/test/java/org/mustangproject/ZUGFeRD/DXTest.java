@@ -303,7 +303,7 @@ public class DXTest extends MustangReaderTestCase {
 		assertTrue(zi.getUTF8().contains("<ram:ShipToTradeParty>"));
 		assertFalse(zi.getUTF8().contains("EUR"));
 
-		assertEquals(zi.getHolder(), getOwnOrganisationName());
+		assertEquals(getOwnOrganisationName(), zi.getHolder());
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_PDF);
 		try {
 			Invoice i = zii.extractInvoice();
@@ -371,7 +371,7 @@ public class DXTest extends MustangReaderTestCase {
 					.setReferenceNumber("991-01484-64")//leitweg-id
 					// not using any VAT, this is also a test of zero-rated goods:
 					.setNumber(number)
-					.addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "P75", BigDecimal.ZERO), amount, new BigDecimal(1.0))).addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "P85", BigDecimal.ZERO), amount, new BigDecimal(1.0)));
+					.addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "P75", BigDecimal.ZERO), amount, new BigDecimal("1.0"))).addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "P85", BigDecimal.ZERO), amount, new BigDecimal("1.0")));
 		} catch (ParseException e) {
 			e.printStackTrace();
 			return null;

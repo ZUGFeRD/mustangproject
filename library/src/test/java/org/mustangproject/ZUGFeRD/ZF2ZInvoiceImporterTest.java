@@ -39,6 +39,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -125,7 +126,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		Invoice invoice = null;
 		try {
-			String xml = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8).replace("\r", "").replace("\n", "");
+			String xml = Files.readString(expectedResult.toPath()).replace("\r", "").replace("\n", "");
 
 			zii.fromXML(xml);
 
@@ -188,7 +189,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
-		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		// Reading ZUGFeRD
 		assertEquals("4711", invoice.getZFItems()[0].getProduct().getSellerAssignedID());
 		assertEquals("9384", invoice.getSellerOrderReferencedDocument().getIssuerAssignedID());
@@ -211,7 +212,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		boolean hasExceptions = false;
 		CalculatedInvoice invoice = new CalculatedInvoice();
-		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			InputStream is = Files.newInputStream(PDFA4inputFile.toPath(), StandardOpenOption.READ);
 			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(is);
@@ -240,7 +241,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
-		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		// Reading ZUGFeRD
 		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
 		assertNotNull(invoice.getTenderReferencedDocument().getFormattedIssueDateTime());
@@ -276,7 +277,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertNotNull(invoice.getInvoiceReferencedDocuments());
 		assertEquals(1, invoice.getInvoiceReferencedDocuments().size());
 		assertEquals("abc123", invoice.getInvoiceReferencedDocuments().get(0).getIssuerAssignedID());
-		SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		assertEquals("2018-10-04", sdf.format(invoice.getInvoiceReferencedDocuments().get(0).getFormattedIssueDateTime()));
 	}
 
@@ -414,7 +415,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		int version = -1;
 		try {
-			zii.fromXML(new String(Files.readAllBytes(Path.of("./target/testout-XR-Edge.xml")), StandardCharsets.UTF_8));
+			zii.fromXML(Files.readString(Path.of("./target/testout-XR-Edge.xml")));
 			version = zii.getVersion();
 		} catch (IOException e) {
 			hasExceptions = true;
@@ -434,8 +435,8 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		TransactionCalculator tc = new TransactionCalculator(invoice);
 		assertEquals(new BigDecimal("1.00"), tc.getGrandTotal());
-		assertEquals(invoice.getCashDiscounts().length, 2);
-		assertEquals(version, 2);
+		assertEquals(2, invoice.getCashDiscounts().length);
+		assertEquals(2, version);
 		assertEquals(0, new BigDecimal("1").compareTo(invoice.getZFItems()[0].getQuantity()));
 		LineCalculator lc = invoice.getZFItems()[0].getCalculation();
 		assertEquals(0, new BigDecimal("1").compareTo(lc.getItemTotalNetAmount()));
@@ -476,9 +477,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		assertTrue(facturXFound);
 		assertTrue(Arrays.equals(fileA, b));
-		assertEquals(fileA.length, 2);
+		assertEquals(2, fileA.length);
 		assertTrue(Arrays.equals(fileB, b));
-		assertEquals(fileB.length, 2);
+		assertEquals(2, fileB.length);
 	}
 
 	public void testImportDebit() {
@@ -528,7 +529,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 				"  \"documentCode\" : \"380\",\n" +
 				"  \"number\" : \"123\",\n" +
 				"  \"currency\" : \"EUR\",\n" +
-				"  \"paymentTermDescription\" : " + expectedPaymentTermDesciption + ",\n" +
+				"  \"paymentTermDescription\" : \"" + expectedPaymentTermDesciption + "\",\n" +
 				"  \"issueDate\" : " + expectedIssueDate + ",\n" +
 				"  \"dueDate\" : " + expectedDueDate + ",\n" +
 				"  \"deliveryDate\" : " + expectedIssueDate + ",\n" +
@@ -755,22 +756,20 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		CalculatedInvoice invoice = new CalculatedInvoice();
 		importer.extractInto(invoice);
 
-		boolean isBD = invoice.getTotalPrepaidAmount() instanceof BigDecimal;
+		boolean isBD = invoice.getTotalPrepaidAmount() != null;
 		assertTrue(isBD);
 		BigDecimal expectedPrepaid = new BigDecimal(50);
 		BigDecimal expectedLineTotal = new BigDecimal("180.76");
 		BigDecimal expectedDue = new BigDecimal("147.65");
 		BigDecimal expectedTax = new BigDecimal("20.16");
-		if (isBD) {
-			BigDecimal amread = invoice.getTotalPrepaidAmount();
-			BigDecimal importedLineTotal = invoice.getLineTotalAmount();
-			BigDecimal importedDuePayable = invoice.getDuePayable();
-			BigDecimal importedTaxAmount = invoice.getVATtotal();
-			assertEquals(0, amread.compareTo(expectedPrepaid));
-			assertEquals(0, importedLineTotal.compareTo(expectedLineTotal));
-			assertEquals(0, importedDuePayable.compareTo(expectedDue));
-			assertEquals(0, importedTaxAmount.compareTo(expectedTax));
-		}
+		BigDecimal amread = invoice.getTotalPrepaidAmount();
+		BigDecimal importedLineTotal = invoice.getLineTotalAmount();
+		BigDecimal importedDuePayable = invoice.getDuePayable();
+		BigDecimal importedTaxAmount = invoice.getVATtotal();
+		assertEquals(0, amread.compareTo(expectedPrepaid));
+		assertEquals(0, importedLineTotal.compareTo(expectedLineTotal));
+		assertEquals(0, importedDuePayable.compareTo(expectedDue));
+		assertEquals(0, importedTaxAmount.compareTo(expectedTax));
 	}
 
 
@@ -841,8 +840,8 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		CalculatedInvoice invoice = new CalculatedInvoice();
 		zii.extractInto(invoice);
 		assertEquals(3, invoice.getZFItems().length);
-		assertEquals(new Date(2022 - 1900, 8 - 1, 29), invoice.getZFItems()[0].getDetailedDeliveryPeriodFrom());
-		assertEquals(new Date(2022 - 1900, 8 - 1, 31), invoice.getZFItems()[0].getDetailedDeliveryPeriodTo());
+		assertEquals(new Date(2022 - 1900, Calendar.AUGUST, 29), invoice.getZFItems()[0].getDetailedDeliveryPeriodFrom());
+		assertEquals(new Date(2022 - 1900, Calendar.AUGUST, 31), invoice.getZFItems()[0].getDetailedDeliveryPeriodTo());
 	}
 
 	public void testImportPositionIncludedNotes() throws XPathExpressionException, ParseException, IOException {
@@ -1038,7 +1037,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 	private Item findItemById(Invoice invoice, String id) {
 		for (IZUGFeRDExportableItem item : invoice.getZFItems()) {
-			if (item instanceof Item && id.equals(((Item) item).getId())) {
+			if (item instanceof Item && id.equals(item.getId())) {
 				return (Item) item;
 			}
 		}

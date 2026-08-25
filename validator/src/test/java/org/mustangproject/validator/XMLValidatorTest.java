@@ -80,7 +80,6 @@ public class XMLValidatorTest extends ResourceCase {
 			noException = false; //after corrected dependencies no longer expecting a exception here
 		}
 		assertTrue(noException);
-		noException = true; // moving on...
 		assertTrue(xv.getXMLResult().contains("<error type=\"25\""));
 		ctx.clear();
 
@@ -95,10 +94,9 @@ public class XMLValidatorTest extends ResourceCase {
 			noException = false;
 		}
 		assertTrue(noException);
-		noException = true; // moving on...
 
-		final String res = xv.getXMLResult();
-		/*OutputStream os = null;
+		/*final String res = xv.getXMLResult();
+		OutputStream os = null;
 		try {
 			os = new FileOutputStream(new File("return.xml"));
 			os.write(res.getBytes(), 0, res.length());
@@ -110,11 +108,11 @@ public class XMLValidatorTest extends ResourceCase {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}*/
+		}
 
 		content = "<validation>" + res + "</validation>";
 
-		/*assertThat(content).valueByXPath("count(//error)")
+		assertThat(content).valueByXPath("count(//error)")
 				.asInt()
 				.isGreaterThan(0); //1 error has to be there, 2 are OK because there is a known bug in FX/ZF
 
@@ -131,7 +129,7 @@ public class XMLValidatorTest extends ResourceCase {
 
 			xv.setFilename(tempFile.getAbsolutePath());
 			xv.validate();
-			assertEquals(true, xv.getXMLResult().contains("valid") && !xv.getXMLResult().contains("invalid"));
+			assertTrue(xv.getXMLResult().contains("valid") && !xv.getXMLResult().contains("invalid"));
 
 			assertTrue(xv.getXMLResult().contains("<validator version=\"" + Version.VERSION + "\">"));
 
@@ -139,7 +137,7 @@ public class XMLValidatorTest extends ResourceCase {
 			tempFile = getResourceAsFile("ZUGFeRD-invoice_rabatte_3_abschlag_duepayableamount.xml");
 			xv.setFilename(tempFile.getAbsolutePath());
 			xv.validate();
-			assertEquals(true, xv.getXMLResult().contains("valid") && !xv.getXMLResult().contains("invalid"));
+			assertTrue(xv.getXMLResult().contains("valid") && !xv.getXMLResult().contains("invalid"));
 
 			ctx.clear();
 			tempFile = getResourceAsFile("valid_Avoir_FR_type380_minimum_factur-x.xml");
@@ -165,7 +163,7 @@ public class XMLValidatorTest extends ResourceCase {
 			tempFile = getResourceAsFile("attributeBasedXMP_zugferd_2p0_EN16931_Einfach_corrected.xml");
 			xv.setFilename(tempFile.getAbsolutePath());
 			xv.validate();
-			assertEquals(true, xv.getXMLResult().contains("valid") && !xv.getXMLResult().contains("invalid"));
+			assertTrue(xv.getXMLResult().contains("valid") && !xv.getXMLResult().contains("invalid"));
 
 			ctx.clear();
 			tempFile = getResourceAsFile("validZREtestZugferd.xml");
@@ -180,7 +178,6 @@ public class XMLValidatorTest extends ResourceCase {
 			noException = false;
 		}
 		assertTrue(noException);
-		noException = true; // moving on...
 
 		try {
 			ctx.clear();
@@ -202,17 +199,17 @@ public class XMLValidatorTest extends ResourceCase {
 		try {
 			xv.setFilename(tempFile.getAbsolutePath());
 			xv.validate();
-			assertEquals(true, xv.getXMLResult().contains("valid") && !xv.getXMLResult().contains("invalid"));
+			assertTrue(xv.getXMLResult().contains("valid") && !xv.getXMLResult().contains("invalid"));
 
 			tempFile = getResourceAsFile("invalidV1ExtraTags.xml");
 			xv.setFilename(tempFile.getAbsolutePath());
 			xv.validate();
-			assertEquals(true, xv.getXMLResult().contains("invalid"));
+			assertTrue(xv.getXMLResult().contains("invalid"));
 
 			tempFile = getResourceAsFile("invalidV1TooMinimal.xml");
 			xv.setFilename(tempFile.getAbsolutePath());
 			xv.validate();
-			assertEquals(true, xv.getXMLResult().contains("<error type=\"26\""));
+			assertTrue(xv.getXMLResult().contains("<error type=\"26\""));
 
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
@@ -642,17 +639,17 @@ public class XMLValidatorTest extends ResourceCase {
 		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		sf.setErrorHandler(new ErrorHandler() {
 			@Override
-			public void warning(SAXParseException e) throws SAXException {
+			public void warning(SAXParseException e) {
 				fail(e.getMessage());
 			}
 
 			@Override
-			public void fatalError(SAXParseException e) throws SAXException {
+			public void fatalError(SAXParseException e) {
 				fail(e.getMessage());
 			}
 
 			@Override
-			public void error(SAXParseException e) throws SAXException {
+			public void error(SAXParseException e) {
 				fail(e.getMessage());
 			}
 		});

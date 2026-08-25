@@ -87,7 +87,7 @@ public class CalculationTest extends ResourceCase {
 
 	@Test
 	public void testAllowanceAndChargeEx4() {
-		/** numbers from en16931 example 4 */
+		// numbers from en16931 example 4
 		SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
 
 		Invoice invoice = new Invoice();
@@ -106,7 +106,7 @@ public class CalculationTest extends ResourceCase {
 		invoice.setSender(sender);
 
 		/* trade party (recipient) */
-		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " " + "", "Testweg 5", "11111", "Testung", "DE");
+		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " ", "Testweg 5", "11111", "Testung", "DE");
 		invoice.setRecipient(recipient);
 
 		/* item */
@@ -140,10 +140,10 @@ public class CalculationTest extends ResourceCase {
 
 	@Test
 	public void testLineCalculatorForeignCurrencyExample() {
-/*** xml of official fx sample with allowances and charges
- *  10x100 with 10% and 50€ item discount =850€
- *  +8,75 charges on document level=858,75, +19%VAT=1021,91
- *  prepaid 500->due payable=521,91
+/* xml of official fx sample with allowances and charges
+   10x100 with 10% and 50€ item discount =850€
+   +8,75 charges on document level=858,75, +19%VAT=1021,91
+   prepaid 500->due payable=521,91
  */
 		File inputCII = getResourceAsFile("Extended_fremdwaehrung.xml");
 
@@ -175,8 +175,8 @@ public class CalculationTest extends ResourceCase {
 		SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
 
 		BigDecimal sales_tax_percent1 = new BigDecimal(16);
-		BigDecimal total_increase_percent = new BigDecimal(0.80);
-		BigDecimal total_discount_percent = new BigDecimal(2.00);
+		BigDecimal total_increase_percent = new BigDecimal("0.80");
+		BigDecimal total_discount_percent = new BigDecimal("2.00");
 
 
 		/* invoice (1st part) */
@@ -200,7 +200,7 @@ public class CalculationTest extends ResourceCase {
 		invoice.setSender(sender);
 
 		/* trade party (recipient) */
-		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " " + "", "Testweg 5", "11111", "Testung", "DE");
+		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " ", "Testweg 5", "11111", "Testung", "DE");
 		recipient.setID("111111");
 		recipient.addVATID("DE111111111");
 		invoice.setRecipient(recipient);
@@ -210,7 +210,7 @@ public class CalculationTest extends ResourceCase {
 		Item item;
 
 		product = new Product("AAA", "", "H87", sales_tax_percent1).setSellerAssignedID("1AAA");
-		item = new Item(product, new BigDecimal("4.750"), new BigDecimal(5.00));
+		item = new Item(product, new BigDecimal("4.750"), new BigDecimal("5.00"));
 
 		// set values for additional charge and discount used for next lines
 		BigDecimal item_increase = BigDecimal.ZERO;
@@ -231,19 +231,19 @@ public class CalculationTest extends ResourceCase {
 
 
 		product = new Product("BBB", "", "H87", sales_tax_percent1).setSellerAssignedID("2BBB");
-		item = new Item(product, new BigDecimal("5.750"), new BigDecimal(4.00));
+		item = new Item(product, new BigDecimal("5.750"), new BigDecimal("4.00"));
 		invoice.addItem(item);
 
 		product = new Product("CCC", "", "H87", sales_tax_percent1).setSellerAssignedID("3CCC");
-		item = new Item(product, new BigDecimal("6.750"), new BigDecimal(3.00));
+		item = new Item(product, new BigDecimal("6.750"), new BigDecimal("3.00"));
 		invoice.addItem(item);
 
 		product = new Product("DDD", "", "H87", sales_tax_percent1).setSellerAssignedID("4DDD");
-		item = new Item(product, new BigDecimal("7.750"), new BigDecimal(2.00));
+		item = new Item(product, new BigDecimal("7.750"), new BigDecimal("2.00"));
 		invoice.addItem(item);
 
 		product = new Product("EEE", "", "H87", sales_tax_percent1).setSellerAssignedID("5EEE");
-		item = new Item(product, new BigDecimal("8.750"), new BigDecimal(1.00));
+		item = new Item(product, new BigDecimal("8.750"), new BigDecimal("1.00"));
 		invoice.addItem(item);
 
 
@@ -285,7 +285,7 @@ public class CalculationTest extends ResourceCase {
 		invoice.setSender(sender);
 
 		/* trade party (recipient) */
-		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " " + "", "Testweg 5", "11111", "Testung", "DE");
+		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " ", "Testweg 5", "11111", "Testung", "DE");
 		recipient.setID("111111");
 		recipient.addVATID("DE111111111");
 		invoice.setRecipient(recipient);
@@ -297,12 +297,12 @@ public class CalculationTest extends ResourceCase {
 
 		product = new Product("AAA", "", "H87", BigDecimal.ZERO).setSellerAssignedID("1AAA");
 		product.addCharge(new Charge(amount).setReasonCode("ZZZ").setReason("Zuschlag"));
-		product.addAllowance((Allowance) new Allowance(amount).setReasonCode("95").setReason("Rabatt"));
-		item = new Item(product, new BigDecimal("4.750"), new BigDecimal(1.00));
+		product.addAllowance(new Allowance(amount).setReasonCode("95").setReason("Rabatt"));
+		item = new Item(product, new BigDecimal("4.750"), new BigDecimal("1.00"));
 
 		// set values for additional charge and discount used for next lines
 			item.addCharge(new Charge(amount).setReasonCode("ZZZ").setReason("Zuschlag"));
-			item.addAllowance((Allowance) new Allowance(amount).setReasonCode("95").setReason("Rabatt"));
+			item.addAllowance(new Allowance(amount).setReasonCode("95").setReason("Rabatt"));
 		invoice.addItem(item);
 
 		TransactionCalculator calculator = new TransactionCalculator(invoice);
@@ -311,8 +311,8 @@ public class CalculationTest extends ResourceCase {
 
 	@Test
 	public void testSimpleItemPercentAllowance() {
-		/***
-		 * a product with net 1.10 and qty 5 and relative item allowance of 10% should return 5 as line and grand total
+		/*
+		  a product with net 1.10 and qty 5 and relative item allowance of 10% should return 5 as line and grand total
 		 */
 		SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -333,7 +333,7 @@ public class CalculationTest extends ResourceCase {
 		invoice.setSender(sender);
 
 		/* trade party (recipient) */
-		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " " + "", "Testweg 5", "11111", "Testung", "DE");
+		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " ", "Testweg 5", "11111", "Testung", "DE");
 		recipient.setID("111111");
 		recipient.addVATID("DE111111111");
 		invoice.setRecipient(recipient);
@@ -343,7 +343,7 @@ public class CalculationTest extends ResourceCase {
 		Item item;
 
 		product = new Product("AAA", "", "H87", BigDecimal.ZERO);
-		item = new Item(product, new BigDecimal("1.10"), new BigDecimal(5.00));
+		item = new Item(product, new BigDecimal("1.10"), new BigDecimal("5.00"));
 
 		Charge allowance = new Allowance().setPercent(new BigDecimal(10));
 		allowance.setTaxRateApplicablePercent(BigDecimal.ZERO);
@@ -368,8 +368,8 @@ public class CalculationTest extends ResourceCase {
 
 	@Test
 	public void testSimpleItemPercentCharge() {
-		/***
-		 * a product with net 1.10 and qty 5 and relative item allowance of 10% should return 5 as line and grand total
+		/*
+		  a product with net 1.10 and qty 5 and relative item allowance of 10% should return 5 as line and grand total
 		 */
 		SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -400,7 +400,7 @@ public class CalculationTest extends ResourceCase {
 		Item item;
 
 		product = new Product("AAA", "", "H87", BigDecimal.ZERO);
-		item = new Item(product, new BigDecimal("1.10"), new BigDecimal(5.00));
+		item = new Item(product, new BigDecimal("1.10"), new BigDecimal("5.00"));
 
 		Charge charge = new Charge().setPercent(new BigDecimal(10));
 		charge.setTaxRateApplicablePercent(BigDecimal.ZERO);
@@ -439,9 +439,9 @@ public class CalculationTest extends ResourceCase {
 			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
 			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
 			.setNumber(number)
-			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
-			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
-			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
+			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal("1.0")))
+			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal("1.0")))
+			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal("1.0")))
 			.addCharge(charge);
 		// 9+50%=>13,50 expected net
 		//		.addAllowance(new Allowance().setPercent(new BigDecimal(50)).setTaxPercent(new BigDecimal(19)).setReason("Mengenrabatt"))
@@ -467,9 +467,9 @@ public class CalculationTest extends ResourceCase {
 			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
 			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
 			.setNumber(number)
-			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
-			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
-			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal(1.0)))
+			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal("1.0")))
+			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal("1.0")))
+			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal("1.0")))
 			.addAllowance(allowance);
 		// 9-50%=>4,50 expected net
 		//		.addAllowance(new Allowance().setPercent(new BigDecimal(50)).setTaxPercent(new BigDecimal(19)).setReason("Mengenrabatt"))
@@ -481,8 +481,8 @@ public class CalculationTest extends ResourceCase {
 
 	@Test
 	public void testSimpleItemTotalAllowance() {
-		/***
-		 * a product with net 1 and qty 5 and absolute _item_ allowance of 1 should return 4 as line total, and grand total
+		/*
+		  a product with net 1 and qty 5 and absolute _item_ allowance of 1 should return 4 as line total, and grand total
 		 */
 		SimpleDateFormat sqlDate = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -503,7 +503,7 @@ public class CalculationTest extends ResourceCase {
 		invoice.setSender(sender);
 
 		/* trade party (recipient) */
-		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " " + "", "Testweg 5", "11111", "Testung", "DE");
+		TradeParty recipient = new TradeParty("Teston GmbH" + " " + "Zentrale" + " ", "Testweg 5", "11111", "Testung", "DE");
 		recipient.setID("111111");
 		recipient.addVATID("DE111111111");
 		invoice.setRecipient(recipient);
@@ -513,7 +513,7 @@ public class CalculationTest extends ResourceCase {
 		Item item;
 
 		product = new Product("AAA", "", "H87", BigDecimal.ZERO);
-		item = new Item(product, new BigDecimal("1.00"), new BigDecimal(5.00));
+		item = new Item(product, new BigDecimal("1.00"), new BigDecimal("5.00"));
 
 		Charge allowance = new Allowance(new BigDecimal(1));
 		allowance.setTaxRateApplicablePercent(BigDecimal.ZERO);
@@ -531,7 +531,7 @@ public class CalculationTest extends ResourceCase {
 		// Correct: net price = 90, line total = 5 * 90 = 450
 		// Bug A would give: delta = 10*5 = 50, price = 50, total = 5*50 = 250
 		Product product = new Product("Test", "", "H87", BigDecimal.ZERO);
-		product.addAllowance((Allowance) new Allowance().setPercent(new BigDecimal(10)));
+		product.addAllowance(new Allowance().setPercent(new BigDecimal(10)));
 		Item item = new Item(product, new BigDecimal("100.00"), new BigDecimal("5"));
 
 		LineCalculator lc = item.getCalculation();
@@ -561,7 +561,7 @@ public class CalculationTest extends ResourceCase {
 		// Net price = 100 - 10 = 90 (per 10 units)
 		// Line total = 50 * 90 / 10 = 450
 		Product product = new Product("Test", "", "H87", BigDecimal.ZERO);
-		product.addAllowance((Allowance) new Allowance().setPercent(new BigDecimal(10)));
+		product.addAllowance(new Allowance().setPercent(new BigDecimal(10)));
 		Item item = new Item(product, new BigDecimal("100.00"), new BigDecimal("50"));
 		item.setBasisQuantity(new BigDecimal("10"));
 

@@ -9,7 +9,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 	public void testPDFValidation() {
 		File tempFile = getResourceAsFile("invalidPDF.pdf");
-		/**used to be Rule	Status
+		/*used to be Rule	Status
 		 Specification: ISO 19005-3:2012, Clause: 6.2.11.4, Test number: 4
 		 If the FontDescriptor dictionary of an embedded CID font contains a CIDSet stream, then it shall identify all CIDs which are present in the font program, regardless of whether a CID in the font is referenced or used by the PDF or not.	Failed
 		 2 occurrences	Hide
@@ -81,7 +81,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 	public void testPDFValidationInputStream() {
 		byte[] fileBytes = getResourceAsByteArray("invalidPDF.pdf");
-		/**used to be Rule  Status
+		/*used to be Rule  Status
 		 Specification: ISO 19005-3:2012, Clause: 6.2.11.4, Test number: 4
 		 If the FontDescriptor dictionary of an embedded CID font contains a CIDSet stream, then it shall identify all CIDs which are present in the font program, regardless of whether a CID in the font is referenced or used by the PDF or not. Failed
 		 2 occurrences  Hide

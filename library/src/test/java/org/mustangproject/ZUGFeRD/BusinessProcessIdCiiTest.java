@@ -24,7 +24,7 @@ import org.mustangproject.TradeParty;
 public class BusinessProcessIdCiiTest {
 
     @Test
-    void xrechnung_nonRegression_defaultBusinessProcessId_isStillEmitted() throws Exception {
+    void xrechnung_nonRegression_defaultBusinessProcessId_isStillEmitted() {
         // ===== GIVEN: A minimal invoice (as provided) WITHOUT setting businessProcessId =====
 
         TradeParty buyer = new TradeParty("Client X", "3 rue C", "33000", "Bordeaux", "FR");
@@ -66,7 +66,7 @@ public class BusinessProcessIdCiiTest {
     }
 
     @Test
-    void whenBusinessProcessIdIsSet_itIsEmitted_inExtendedProfile() throws Exception {
+    void whenBusinessProcessIdIsSet_itIsEmitted_inExtendedProfile() {
         // ===== GIVEN: The same minimal invoice, but WITH an explicit businessProcessId =====
 
         TradeParty buyer = new TradeParty("Client X", "3 rue C", "33000", "Bordeaux", "FR");
