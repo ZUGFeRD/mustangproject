@@ -26,6 +26,7 @@ import org.mustangproject.CalculatedInvoice;
 import org.mustangproject.XMLTools;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
 import org.mustangproject.ZUGFeRD.LineCalculator;
+import org.mustangproject.ZUGFeRD.Version;
 import org.mustangproject.ZUGFeRD.ZUGFeRDInvoiceImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -440,7 +441,7 @@ public class XMLValidator extends Validator {
 	private String getInfoXml(long endTime, long startXMLTime) {
 		String generation = context.getGeneration() != null ? context.getGeneration() : "invalid";
 		String profile = context.getProfile() != null ? context.getProfile() : "invalid";
-		String validatorVersion = XMLValidator.class.getPackage().getImplementationVersion();
+		String validatorVersion = Version.VERSION;
 		long duration = endTime - startXMLTime;
 
 		return String.format(
