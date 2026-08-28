@@ -184,6 +184,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                         <manifestSections>
                             <manifestSection>

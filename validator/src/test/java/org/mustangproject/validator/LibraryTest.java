@@ -2,6 +2,8 @@ package org.mustangproject.validator;
 
 import java.io.File;
 
+import org.mustangproject.ZUGFeRD.ZUGFeRD2PullProvider;
+
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 public class LibraryTest extends ResourceCase {
@@ -379,5 +381,11 @@ public class LibraryTest extends ResourceCase {
 		assertThat(res).valueByXPath("count(//warning)")
 			.asInt()
 			.isEqualTo(0);
+	}
+
+	public void testVersion() {
+		assertNotNull(ZUGFeRD2PullProvider.class.getPackage().getImplementationTitle());
+		assertNotNull(ZUGFeRD2PullProvider.class.getPackage().getImplementationVersion());
+		assertNotNull(ZUGFeRD2PullProvider.class.getPackage().getImplementationVendor());
 	}
 }

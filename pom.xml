@@ -6,6 +6,9 @@
     <version>2.25.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Mustang</name>
+    <organization>
+    	<name>Mustangproject</name>
+    </organization>
 
     <modules>
         <module>library</module>

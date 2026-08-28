@@ -50,6 +50,7 @@ import org.mustangproject.ZUGFeRD.Profile;
 import org.mustangproject.ZUGFeRD.Profiles;
 import org.mustangproject.ZUGFeRD.ValidationLogVisualizer;
 import org.mustangproject.ZUGFeRD.XMLUpgrader;
+import org.mustangproject.ZUGFeRD.ZUGFeRD2PullProvider;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromA1;
 import org.mustangproject.ZUGFeRD.ZUGFeRDExporterFromPDFA;
 import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
@@ -134,7 +135,7 @@ public class Main {
 	}
 
 	private static void printHelp() {
-		System.out.println("Mustangproject.org " + org.mustangproject.ZUGFeRD.Version.VERSION + " \r\n"
+		System.out.println("Mustangproject.org " + ZUGFeRD2PullProvider.class.getPackage().getImplementationVersion() + " \r\n"
 				+ "A Apache Public License tool for e-invoices with\r\n"
 				+ "ZUGFeRD Metadata (http://www.zugferd.org)\r\n" + "\r\n" + getUsage() + "\r\n");
 	}
