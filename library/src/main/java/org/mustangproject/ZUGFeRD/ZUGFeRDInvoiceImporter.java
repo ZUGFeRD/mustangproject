@@ -56,6 +56,7 @@ import org.mustangproject.LogisticsServiceCharge;
 import org.mustangproject.PaymentTerms;
 import org.mustangproject.ReferencedDocument;
 import org.mustangproject.SchemedID;
+import org.mustangproject.SubjectCode;
 import org.mustangproject.TradeParty;
 import org.mustangproject.XMLTools;
 import org.mustangproject.Exceptions.StructureException;
