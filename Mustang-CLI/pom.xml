@@ -96,7 +96,6 @@
                     <argLine>-Duser.timezone=UTC</argLine>
                 </configuration>
             </plugin>
-            <!-- allow getImplementationVersion for the pom.xml -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -104,7 +103,6 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                     </archive>

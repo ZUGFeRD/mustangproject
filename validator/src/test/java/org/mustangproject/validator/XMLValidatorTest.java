@@ -9,6 +9,7 @@ import javax.xml.transform.Source;
 import javax.xml.validation.SchemaFactory;
 
 import org.junit.Ignore;
+import org.mustangproject.ZUGFeRD.Version;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -131,6 +132,8 @@ public class XMLValidatorTest extends ResourceCase {
 			xv.setFilename(tempFile.getAbsolutePath());
 			xv.validate();
 			assertEquals(true, xv.getXMLResult().contains("valid") && !xv.getXMLResult().contains("invalid"));
+
+			assertTrue(xv.getXMLResult().contains("<validator version=\"" + Version.VERSION + "\">"));
 
 			ctx.clear();
 			tempFile = getResourceAsFile("ZUGFeRD-invoice_rabatte_3_abschlag_duepayableamount.xml");
