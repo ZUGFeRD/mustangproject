@@ -46,6 +46,7 @@
         <!-- Skip error check for javadoc -->
         <maven.compiler.release>11</maven.compiler.release>
         <maven.deploy.skip>true</maven.deploy.skip><!-- do deploy to maven central, parent project does not and inherits -->
+        <filtered.resource>org/mustangproject/ZUGFeRD/version.properties</filtered.resource>
     </properties>
     <dependencies>
         <!-- compile dependencies -->
@@ -151,6 +152,24 @@
         </dependency>
     </dependencies>
     <build>
+        <resources>
+            <resource>
+                <!-- filtered to resolve ${project.version}, see Version.java -->
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>${filtered.resource}</include>
+                </includes>
+            </resource>
+            <resource>
+                <!-- everything else must not be filtered, there are binaries (fonts, icc color profiles) -->
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>${filtered.resource}</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
