@@ -18,6 +18,9 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD.model;
 
+/***
+ * Some codes for date and time usage in XML
+ */
 public class DateTimeTypeConstants {
 	/***
 	 * the id of the yyyymmdd - Date format

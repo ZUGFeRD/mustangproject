@@ -159,7 +159,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
-			.isEqualTo("invalid");// expect to be valid because XR notices are, well, only notices
+			.isEqualTo("invalid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 			.asString()
 			.isEqualTo("invalid");
@@ -182,7 +182,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 			.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
-			.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+			.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 			.asString()
 			.isEqualTo("valid");
@@ -205,7 +205,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 			.isEqualTo(1);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
-			.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+			.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 			.asString()
 			.isEqualTo("valid");
@@ -226,10 +226,10 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 			.isEqualTo(1); // 12 notices RE XRechnung 3.0
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
-			.isEqualTo("invalid");// expect to be valid
+			.isEqualTo("invalid"); // expect to be valid
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 			.asString()
-			.isEqualTo("invalid");// expect to be valid
+			.isEqualTo("invalid"); // expect to be valid
 
 
 	}
@@ -255,7 +255,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 			.isEqualTo(9); // 9 notices RE XRechnung 3.0
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
-			.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+			.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 			.asString()
 			.isEqualTo("valid");
@@ -278,10 +278,20 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 			.isEqualTo(9); // 9 notices RE XRechnung 3.0
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
-			.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+			.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 			.asString()
 			.isEqualTo("valid");
 
+	}
+
+	public void testVAT_O() {
+		File tempFile = getResourceAsFile("valid_with_VAT_O.xml");
+
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+		assertThat(res).valueByXPath("/validation/xml/summary/@status").isEqualTo("invalid");
 	}
 }

@@ -220,11 +220,11 @@ public class LibraryTest extends ResourceCase {
 				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+				.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");
-		
+
 		assertThat(res).valueByXPath("count(//notice)")
 				.asInt()
 				.isEqualTo(0);
@@ -245,7 +245,7 @@ public class LibraryTest extends ResourceCase {
 				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+				.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");
@@ -273,7 +273,7 @@ public class LibraryTest extends ResourceCase {
 				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+				.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");
@@ -296,7 +296,7 @@ public class LibraryTest extends ResourceCase {
 				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+				.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");
@@ -319,7 +319,7 @@ public class LibraryTest extends ResourceCase {
 				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("valid");// expect to be valid because XR notices are, well, only notices
+				.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
 				.isEqualTo("valid");
@@ -356,4 +356,28 @@ public class LibraryTest extends ResourceCase {
 			.isEqualTo(0);
 	}
 
+	public void testAllowancesTaxes() {
+		File tempFile = new File("../library/target/testout-ZF2PushAllowancesTaxes.pdf");
+		assertTrue(tempFile.exists());
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+
+		String res = zfv.validate(tempFile.getAbsolutePath());
+
+		assertThat(res).valueByXPath("/validation/pdf/summary/@status")
+			.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+			.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.isEqualTo("valid");
+
+		assertThat(res).valueByXPath("count(//error)")
+			.asInt()
+			.isEqualTo(0);
+
+		assertThat(res).valueByXPath("count(//warning)")
+			.asInt()
+			.isEqualTo(0);
+	}
 }

@@ -32,7 +32,7 @@
                 </ram:IncludedNote>
             </ram:AssociatedDocumentLineDocument>
             <ram:SpecifiedTradeProduct>
-                <ram:GlobalID>Item standar identifier</ram:GlobalID>
+                <ram:GlobalID>Item standard identifier</ram:GlobalID>
                 <ram:SellerAssignedID>Item seller's identifier</ram:SellerAssignedID>
                 <ram:BuyerAssignedID>Item buyer's identifier</ram:BuyerAssignedID>
                 <ram:Name>Item name</ram:Name>
@@ -111,6 +111,11 @@
                 <ram:SpecifiedTradeSettlementLineMonetarySummation>
                     <ram:LineTotalAmount>1000.00</ram:LineTotalAmount>
                 </ram:SpecifiedTradeSettlementLineMonetarySummation>
+                <ram:AdditionalReferencedDocument>
+                    <ram:IssuerAssignedID>Price/sales catalogue response</ram:IssuerAssignedID>
+                    <ram:TypeCode>50</ram:TypeCode>
+                    <ram:ReferenceTypeCode />
+                </ram:AdditionalReferencedDocument>
                 <ram:AdditionalReferencedDocument>
                     <ram:IssuerAssignedID>Line object identifier</ram:IssuerAssignedID>
                     <ram:TypeCode>130</ram:TypeCode>

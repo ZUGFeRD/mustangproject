@@ -38,5 +38,7 @@ public interface IDesignatedProductClassification {
 	 *
 	 * @return the name or {@code null} if not set
 	 */
-	default String getClassName() { return null; }
+	default String getClassName() {
+		return null;
+	}
 }

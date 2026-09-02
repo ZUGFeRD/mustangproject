@@ -20,26 +20,34 @@ package org.mustangproject.ZUGFeRD;
 
 import java.nio.charset.StandardCharsets;
 
+/***
+ * a stub to allow people to inject custom XML
+ * (into PDF/A files as Factur-X/ZUGFeRD) instead of using the generated one
+ */
 public class CustomXMLProvider implements IXMLProvider {
 
 	protected byte[] zugferdData;
 	/***
 	 * the scope=profile this XML data is provided in
 	 */
-	protected Profile profile=Profiles.getByName("EN16931");
+	protected Profile profile = Profiles.getByName("EN16931");
 
 	@Override
 	public byte[] getXML() {
 		return zugferdData;
 	}
 
+	/***
+	 * the custom XML to be provided
+	 * @param newData the XML in UTF-8
+	 */
 	public void setXML(byte[] newData) {
 		String zf = new String(newData, StandardCharsets.UTF_8);
 		/**
 		 * rsm:CrossIndustry is ZF/FX/XR (CII 2016b),rsm:SCRDMCCBDACIOMessageStructure is Order-X (CIO 2021) and
 		 *  SCRDMCCBDACIDAMessageStructure is Despatch Advice
 		 */
-		if ((!zf.contains("rsm:CrossIndustry")) && (!zf.contains("rsm:SCRDMCCBDACIOMessageStructure")) && (!zf.contains("SCRDMCCBDACIDAMessageStructure"))) {
+		if (!zf.contains("rsm:CrossIndustry") && !zf.contains("rsm:SCRDMCCBDACIOMessageStructure") && !zf.contains("SCRDMCCBDACIDAMessageStructure")) {
 			throw new RuntimeException("ZUGFeRD XML does not contain <rsm:CrossIndustry, <rsm:SCRDMCCBDACIOMessageStructure or SCRDMCCBDACIDAMessageStructure and can thus not be valid");
 		}
 
@@ -58,6 +66,6 @@ public class CustomXMLProvider implements IXMLProvider {
 	}
 
 	public void setProfile(Profile level) {
-		profile=level;
+		profile = level;
 	}
 }

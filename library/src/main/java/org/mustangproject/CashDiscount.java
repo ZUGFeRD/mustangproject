@@ -42,7 +42,7 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	}
 
 	/***
-	 * bean contructor
+	 * bean constructor
 	 */
 	public CashDiscount() {
 
@@ -69,15 +69,29 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 		return days;
 	}
 
+	/***
+	 * the number this cash discount holds valid
+	 * @param days the number of days
+	 * @return fluent setter
+	 */
 	public CashDiscount setDays(Integer days) {
 		this.days = days;
 		return this;
 	}
 
+	/***
+	 * get the amount upon which the cash discount is applied
+	 * @return money amount
+	 */
 	public BigDecimal getBasisAmount() {
 		return basisAmount;
 	}
 
+	/***
+	 * set the amount on which the cash discount is applied
+	 * @param basisAmount the money amount
+	 * @return fluent setter
+	 */
 	public CashDiscount setBasisAmount(BigDecimal basisAmount) {
 		this.basisAmount = basisAmount;
 		return this;
@@ -89,15 +103,15 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	@JsonIgnore
 	public String getAsCII() {
 		String s = "<ram:SpecifiedTradePaymentTerms>"
-				+ "  <ram:Description>Cash Discount</ram:Description>"
-				+ "  <ram:ApplicableTradePaymentDiscountTerms>"
-				+ "    <ram:BasisPeriodMeasure unitCode=\"DAY\">" + days + "</ram:BasisPeriodMeasure>";
+				+ "<ram:Description>Cash Discount</ram:Description>"
+				+ "<ram:ApplicableTradePaymentDiscountTerms>"
+				+ "<ram:BasisPeriodMeasure unitCode=\"DAY\">" + days + "</ram:BasisPeriodMeasure>";
 		if (basisAmount != null) {
-			s += "    <ram:BasisAmount>" + XMLTools.nDigitFormat(basisAmount, 2) + "</ram:BasisAmount>";
+			s += "<ram:BasisAmount>" + XMLTools.nDigitFormat(basisAmount, 2) + "</ram:BasisAmount>";
 		}
-		s += "    <ram:CalculationPercent>"+XMLTools.nDigitFormat(percent,3)+"</ram:CalculationPercent>"+
-				"  </ram:ApplicableTradePaymentDiscountTerms>"+
-				"</ram:SpecifiedTradePaymentTerms>";
+		s += "<ram:CalculationPercent>" + XMLTools.nDigitFormat(percent, 3) + "</ram:CalculationPercent>"
+				+ "</ram:ApplicableTradePaymentDiscountTerms>"
+				+ "</ram:SpecifiedTradePaymentTerms>";
 		return s;
 	}
 
@@ -108,6 +122,6 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	 */
 	@JsonIgnore
 	public String getAsXRechnung() {
-		return "#SKONTO#TAGE="+days+"#PROZENT="+XMLTools.nDigitFormat(percent,2)+"#\n";
+		return "#SKONTO#TAGE=" + days + "#PROZENT=" + XMLTools.nDigitFormat(percent, 2) + "#\n";
 	}
 }

@@ -3,7 +3,7 @@ package org.mustangproject.ZUGFeRD;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.text.ParseException;
 
 import org.mustangproject.XMLTools;
@@ -29,7 +29,7 @@ public class XRechnungImporter extends ZUGFeRDImporter {
 		super();
 
 		try {
-			setRawXML(Files.readAllBytes(Paths.get(filename)));
+			setRawXML(Files.readAllBytes(Path.of(filename)));
 			containsMeta = true;
 		} catch (final IOException | ParseException e) {
       		LOGGER.error ("Failed to set raw XML", e);

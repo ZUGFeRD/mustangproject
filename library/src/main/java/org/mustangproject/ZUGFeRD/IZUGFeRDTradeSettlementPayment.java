@@ -19,6 +19,10 @@
 package org.mustangproject.ZUGFeRD;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.mustangproject.XMLTools;
 
 public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement {
@@ -42,7 +46,6 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 		return null;
 	}
 
-
 	/**
 	 * IBAN of the sender
 	 *
@@ -57,50 +60,57 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 	 *
 	 * @return the name of the account holder (if not identical to sender)
 	 */
-	default String getAccountName() { return null; }
+	default String getAccountName() {
+		return null;
+	}
 
 	/***
 	 * @return payment means code (BT-81 / UNTDID 4461)
 	 */
-	default String getPaymentMeansCode() { return null; };
+	default String getPaymentMeansCode() {
+		return null;
+	}
 
 	/***
 	 * @return payment means description (BT-82) (optional)
 	 */
-	default String getPaymentMeansInformation() { return null; };
+	default String getPaymentMeansInformation() {
+		return null;
+	}
 
 
 	@Override
 	@JsonIgnore
-  default String getSettlementXML() {
-		String accountNameStr="";
-		if (getAccountName()!=null) {
-			accountNameStr="<ram:AccountName>" + XMLTools.encodeXML(getAccountName()) + "</ram:AccountName>";
-
+	default String getSettlementXML(Profile profile) {
+		List<Profile> basicProfiles = Arrays.asList(Profiles.getByName("Basic", 1), Profiles.getByName("BasicWL", 2), Profiles.getByName("Basic", 2));
+		String accountNameStr = "";
+		if (getAccountName() != null) {
+			accountNameStr = "<ram:AccountName>" + XMLTools.encodeXML(getAccountName()) + "</ram:AccountName>";
 		}
 
 		String xml = "<ram:SpecifiedTradeSettlementPaymentMeans>"
-				+ "<ram:TypeCode>" + XMLTools.encodeXML(getPaymentMeansCode()) + "</ram:TypeCode>"
-				+ "<ram:Information>" + XMLTools.encodeXML(getPaymentMeansInformation()) + "</ram:Information>";
+				+ "<ram:TypeCode>" + XMLTools.encodeXML(getPaymentMeansCode()) + "</ram:TypeCode>";
+		if (!basicProfiles.contains(profile) && getOwnBIC() != null) {
+			xml += "<ram:Information>" + XMLTools.encodeXML(getPaymentMeansInformation()) + "</ram:Information>";
+		}
 		if (getOwnIBAN() != null) {
 			xml += "<ram:PayeePartyCreditorFinancialAccount>"
 				+ "<ram:IBANID>" + XMLTools.encodeXML(getOwnIBAN()) + "</ram:IBANID>"
 				+ accountNameStr
 				+ "</ram:PayeePartyCreditorFinancialAccount>";
 		}
-		if (getOwnBIC()!=null) {
-			xml+= "<ram:PayeeSpecifiedCreditorFinancialInstitution>"
+		if (!basicProfiles.contains(profile) && getOwnBIC() != null) {
+			xml += "<ram:PayeeSpecifiedCreditorFinancialInstitution>"
 					+ "<ram:BICID>" + XMLTools.encodeXML(getOwnBIC()) + "</ram:BICID>"
 					// + " <ram:Name>"+trans.getOwnBankName()+"</ram:Name>"
 					//
 					+ "</ram:PayeeSpecifiedCreditorFinancialInstitution>";
-
 		}
-		xml+= "</ram:SpecifiedTradeSettlementPaymentMeans>";
+		xml += "</ram:SpecifiedTradeSettlementPaymentMeans>";
 		return xml;
 	}
-	
-	
+
+
 	/* I'd love to implement getPaymentXML() and put <ram:DueDateDateTime> there because this is where it belongs
 	 * unfortunately, the due date is part of the transaction which is not accessible here :-(
 	 */

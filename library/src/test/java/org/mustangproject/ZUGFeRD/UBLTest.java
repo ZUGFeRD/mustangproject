@@ -1,4 +1,3 @@
-
 /**
  * *********************************************************************
  * <p>
@@ -21,35 +20,37 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.util.Date;
+
+import javax.xml.xpath.XPathExpressionException;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.mustangproject.BankDetails;
-import org.mustangproject.CII.CIIToUBL;
 import org.mustangproject.Contact;
 import org.mustangproject.Invoice;
 import org.mustangproject.Item;
 import org.mustangproject.Product;
+import org.mustangproject.ReferencedDocument;
 import org.mustangproject.TradeParty;
-
-import javax.xml.xpath.XPathExpressionException;
+import org.mustangproject.CII.CIIToUBL;
 
 public class UBLTest extends ResourceCase {
-	final String TARGET_XML = "./target/testout-1Lieferschein.xml";
+	private static final String TARGET_XML = "./target/testout-1Lieferschein.xml";
 
-  public UBLTest() {
-  }
-
-  @Test
-  @Order(2)
+	@Test
+	@Order(2)
 	public void testUBLBasic() {
 
 		// the writing part
@@ -60,10 +61,10 @@ public class UBLTest extends ResourceCase {
 		String expected = null;
 		String result = null;
 		try {
-			final File tempFile = File.createTempFile("ZUGFeRD-UBL-", "-test");
-			c2u.convert(input, tempFile);
+			final Path tempFile = Files.createTempFile("ZUGFeRD-UBL-", "-test");
+			c2u.convert(input, tempFile.toFile(), "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0", "urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0");
 			expected = ResourceUtilities.readFile(StandardCharsets.UTF_8, expectedFile.getAbsolutePath());
-			result = ResourceUtilities.readFile(StandardCharsets.UTF_8, tempFile.getAbsolutePath());
+			result = ResourceUtilities.readFile(StandardCharsets.UTF_8, tempFile.toString());
 		} catch (final IOException e) {
 			fail("Exception should not happen: " + e.getMessage());
 		}
@@ -73,8 +74,8 @@ public class UBLTest extends ResourceCase {
 		Assertions.assertThat(result).isXmlEqualTo(expected);
 	}
 
-  @Test
-  @Order(1)
+	@Test
+	@Order(1)
 	public void test1Lieferschein() {
 
 		final EinLieferscheinExporter oe = new EinLieferscheinExporter();
@@ -82,17 +83,17 @@ public class UBLTest extends ResourceCase {
 				.setSender(new TradeParty("Test company", "teststr", "55232", "teststadt", "DE").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890", "COBADEFXXX")))
 				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
 				.setReferenceNumber("991-01484-64")//leitweg-id
-				.setNumber("123").addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), /*price*/ new BigDecimal("1.0"),  /*qty*/ new BigDecimal("1.0")).addBuyerOrderReferencedDocumentLineID("A12"));
+				.setNumber("123").addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), /*price*/ new BigDecimal("1.0"),  /*qty*/ new BigDecimal("1.0")).setBuyerOrderReferencedDocument(new ReferencedDocument().setLineID("A12")));
 
 
 		try {
 			oe.setTransaction(i);
-			final ByteArrayOutputStream baos=new ByteArrayOutputStream();
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			oe.export(baos);
 
 			final String theXML = baos.toString(StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<DespatchAdvice"));
-			Files.write(Paths.get(TARGET_XML), theXML.getBytes(StandardCharsets.UTF_8));
+			Files.write(Path.of(TARGET_XML), theXML.getBytes(StandardCharsets.UTF_8));
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -100,7 +101,7 @@ public class UBLTest extends ResourceCase {
 
 	}
 
-	public void testEdgeInvoiceImportUBL() {
+	public void testEdgeInvoiceImportUBL() throws IOException {
 
 		File UBLinputFile = getResourceAsFile("ubl/01.01a-INVOICE.ubl.xml");
 		boolean hasExceptions = false;
@@ -108,7 +109,7 @@ public class UBLTest extends ResourceCase {
 		ZUGFeRDInvoiceImporter zii = null;
 		Invoice invoice = null;
 		try {
-			zii = new ZUGFeRDInvoiceImporter(new FileInputStream(UBLinputFile));
+			zii = new ZUGFeRDInvoiceImporter(Files.newInputStream(UBLinputFile.toPath(), StandardOpenOption.READ));
 			invoice = zii.extractInvoice();
 		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
 			hasExceptions = true;
@@ -123,14 +124,14 @@ public class UBLTest extends ResourceCase {
 
 	}
 
-	public void testEdgeInvoiceImportUBL2() {
+	public void testEdgeInvoiceImportUBL2() throws IOException {
 		File UBLinputFile = getResourceAsFile("ubl/04.01a-INVOICE_ubl.xml");
 		boolean hasExceptions = false;
 
 		ZUGFeRDInvoiceImporter zii = null;
 		Invoice invoice = null;
 		try {
-			zii = new ZUGFeRDInvoiceImporter(new FileInputStream(UBLinputFile));
+			zii = new ZUGFeRDInvoiceImporter(Files.newInputStream(UBLinputFile.toPath(), StandardOpenOption.READ));
 			invoice = zii.extractInvoice();
 		} catch (XPathExpressionException | ParseException | FileNotFoundException e) {
 			e.printStackTrace();

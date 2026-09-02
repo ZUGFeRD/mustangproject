@@ -23,8 +23,8 @@ import java.io.OutputStream;
 
 public interface IExporter {
 
-	public IExporter setTransaction(IExportableTransaction trans) throws IOException;
-	public void export(String ZUGFeRDfilename) throws IOException;
-	public void export(OutputStream output) throws IOException;
+	IExporter setTransaction(IExportableTransaction trans) throws IOException;
+	void export(String ZUGFeRDfilename) throws IOException;
+	void export(OutputStream output) throws IOException;
 
 }

@@ -32,13 +32,23 @@ import java.util.GregorianCalendar;
 
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
+import org.mustangproject.ReferencedDocument;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ZF2EdgeTest extends MustangReaderTestCase {
-	final String TARGET_PDF = "./target/testout-ZF2newEdge.pdf";
+	private static final String TARGET_PDF = "./target/testout-ZF2newEdge.pdf";
+
+	/**
+	 * Create the test case
+	 *
+	 * @param testName name of the test case
+	 */
+	public ZF2EdgeTest(String testName) {
+		super(testName);
+	}
 
 	protected class EdgeProduct implements IZUGFeRDExportableProduct {
 		private String description, name, unit;
@@ -144,68 +154,17 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		return "DE";
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public IReferencedDocument getTenderReferencedDocument() {
-		return new IReferencedDocument() {
-			@Override
-			public String getIssuerAssignedID() {
-				return "983-jk-787";
-			}
-
-			@Override
-			public String getTypeCode() {
-				return "50";
-			}
-
-			@Override
-			public String getReferenceTypeCode() {
-				return "";
-			}
-
-			@Override
-			public Date getFormattedIssueDateTime() {
-				SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
-				try {
-					return sdf.parse("2025-10-12");
-				} catch (ParseException e) {
-					// wont happen, I promise :-)
-				}
-				return null; // wont happen either
-			}
-
-		};
+		return new ReferencedDocument("983-jk-787", "50", null, new Date(2025 - 1900, 10 - 1, 12));
 	}
 
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public IReferencedDocument getObjectIdentifierReferencedDocument() {
-		return new IReferencedDocument() {
-			@Override
-			public String getIssuerAssignedID() {
-				return "gPogKLtac0";
-			}
-
-			@Override
-			public String getTypeCode() {
-				return "130";
-			}
-
-			@Override
-			public String getReferenceTypeCode() {
-				return "";
-			}
-
-			@Override
-			public Date getFormattedIssueDateTime() {
-				SimpleDateFormat sdf=new SimpleDateFormat("YYYY-mm-dd");
-				try {
-					return sdf.parse("2026-01-26");
-				} catch (ParseException e) {
-					throw new RuntimeException(e);
-				}
-			}
-
-		};
+		return new ReferencedDocument("gPogKLtac0", "130", null, new Date(2026 - 1900, 1 - 1, 26));
 	}
 
 	@Override
@@ -268,11 +227,11 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		Item[] allItems = new Item[3];
 		EdgeProduct designProduct = new EdgeProduct("", "Künstlerische Gestaltung (Stunde): Einer Beispielrechnung",
 				"HUR");
-		EdgeProduct balloonProduct = new EdgeProduct("", "Bestellerweiterung für E&F Umbau", "C62");// test for issue
+		EdgeProduct balloonProduct = new EdgeProduct("", "Bestellerweiterung für E&F Umbau", "C62"); // test for issue
 		// 103
 		EdgeProduct airProduct = new EdgeProduct("", "Heiße Luft pro Liter", "LTR");
 
-		Item design=new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
+		Item design = new Item(new BigDecimal("160"), new BigDecimal("1"), designProduct);
 		design.setAddReference("1825");
 		design.setBasisQuantity(new BigDecimal(100));
 		allItems[0] = design;
@@ -297,7 +256,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 						14, // anzahl tage
 						"DAYS");
 
-		Date due  = null;
+		Date due = null;
 		try {
 			due = new SimpleDateFormat("yyyyMMdd").parse("20220228");
 		} catch (ParseException e) {
@@ -306,7 +265,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		}
 		return new PaymentTerms(
 				"14 Tage 2% Skonto, 30 Tage rein netto",
-				due,// fälligkeitsdatum
+				due, // fälligkeitsdatum
 				paymentDiscountTerms //PaymentDiscountTerms
 			);
 	}
@@ -322,7 +281,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	}
 
 	@Override
-	public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
+	public IZUGFeRDLogisticsServiceCharge[] getZFLogisticsServiceCharges() {
 		return null;
 	}
 
@@ -332,27 +291,13 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 	}
 
 	@Override
-	public String getDespatchAdviceReferencedDocumentID() {
-		return "123";
+	public IReferencedDocument getDespatchAdviceReferencedDocument() {
+		return new ReferencedDocument("123");
 	}
 
 	@Override
-	public String getDeliveryNoteReferencedDocumentID() {
-		return "0815";
-	}
-
-	@Override
-	public Date getDeliveryNoteReferencedDocumentDate() {
-		return new GregorianCalendar(2016, Calendar.APRIL, 1).getTime();
-	}
-
-	/**
-	 * Create the test case
-	 *
-	 * @param testName name of the test case
-	 */
-	public ZF2EdgeTest(String testName) {
-		super(testName);
+	public IReferencedDocument getDeliveryNoteReferencedDocument() {
+		return new ReferencedDocument("0815");
 	}
 
 	/**
@@ -375,11 +320,9 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 
 		// the writing part
 
-		try  {
-			InputStream SOURCE_PDF = this.getClass()
-				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
+		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
+			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
-			ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1();
 			ze.ignorePDFAErrors();
 			ze.load(SOURCE_PDF);
 			ze.setProducer("My Application")
@@ -395,7 +338,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 
 		// now check the contents (like MustangReaderTest)
 		ZUGFeRDImporter zi = new ZUGFeRDImporter(TARGET_PDF);
-		String resultXML=zi.getUTF8();
+		String resultXML = zi.getUTF8();
 		assertTrue(resultXML.contains("<ram:TypeCode>54</ram:TypeCode>"));
 		assertTrue(resultXML.contains("<ram:Information>Credit Card</ram:Information>"));
 		assertTrue(resultXML.contains("<ram:ShipToTradeParty>"));
@@ -404,7 +347,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		assertTrue(resultXML.contains("<ram:DirectDebitMandateID>DE99XX12345</ram:DirectDebitMandateID>"));
 		assertTrue(resultXML.contains("<ram:DueDateDateTime>"));
 		assertFalse(resultXML.contains("EUR"));
-		assertTrue(resultXML.contains("USD"));//currency should be USD, test for #150
+		assertTrue(resultXML.contains("USD")); //currency should be USD, test for #150
 		assertTrue(resultXML.contains("<ram:DespatchAdviceReferencedDocument>"));
 		assertTrue(resultXML.contains("<ram:IssuerAssignedID>123</ram:IssuerAssignedID>"));
 
@@ -431,12 +374,9 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		// the writing part
 
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try (InputStream SOURCE_PDF = this.getClass()
-				.getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
-
-			 IZUGFeRDExporter ze = new ZUGFeRDExporterFromA3().setProducer("My Application")
-					 .setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).disableFacturX()
-					 .load(SOURCE_PDF)) {
+		try (InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505PDFA3.pdf");
+				IZUGFeRDExporter ze = new ZUGFeRDExporterFromA3()) {
+			ze.setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).disableFacturX().load(SOURCE_PDF);
 			ze.setTransaction(this);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
@@ -454,7 +394,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		protected int periodMeasure;
 		protected String periodCode;
 
-		public PaymentDiscountTerms(BigDecimal percent, Date baseDate, int periodMeasure, String periodCode) {
+		PaymentDiscountTerms(BigDecimal percent, Date baseDate, int periodMeasure, String periodCode) {
 			this.percent = percent;
 			this.baseDate = baseDate;
 			this.periodMeasure = periodMeasure;
@@ -487,7 +427,7 @@ public class ZF2EdgeTest extends MustangReaderTestCase {
 		protected Date duedate;
 		protected IZUGFeRDPaymentDiscountTerms disco;
 
-		public PaymentTerms(String description, Date duedate, IZUGFeRDPaymentDiscountTerms disco) {
+		PaymentTerms(String description, Date duedate, IZUGFeRDPaymentDiscountTerms disco) {
 			this.description = description;
 			this.duedate = duedate;
 			this.disco = disco;

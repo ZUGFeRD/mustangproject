@@ -14,25 +14,21 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilder;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
-import org.mustangproject.ZUGFeRD.ValidationLogVisualizer;
 import org.mustangproject.util.ByteArraySearcher;
 import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 import com.helger.commons.io.stream.StreamHelper;
@@ -40,6 +36,10 @@ import com.helger.commons.io.stream.StreamHelper;
 import jakarta.xml.bind.DatatypeConverter;
 
 //abstract class
+
+/***
+ * a ZUGFeRD validator consists of a PDF/A and a XML validator
+ */
 public class ZUGFeRDValidator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDValidator.class.getCanonicalName()); // log
 	// output
@@ -47,14 +47,13 @@ public class ZUGFeRDValidator {
 	protected String sha1Checksum;
 	protected boolean pdfValidity;
 	protected boolean displayXMLValidationOutput;
-	protected long startTime;
+	protected long startTime; // we will calculate the duration, for this we need to remember the start time
 	protected boolean optionsRecognized;
-	protected boolean disableNotices = false;
-	protected String Signature;
-	protected boolean wasCompletelyValid = false;
-
-	protected boolean includePDFReportVisualization = false;
-	protected String logAppend = null;
+	protected boolean disableNotices;
+	protected boolean disableArithmeticCheck;
+	protected String signature;
+	protected boolean wasCompletelyValid; // overall result
+	protected String logAppend;
 
 	/***
 	 * within the validation it turned out something in the options was wrong, e.g.
@@ -81,15 +80,22 @@ public class ZUGFeRDValidator {
 
 	}
 
+	/***
+	 * Get access to the ValidationContext used.
+	 * @return	the validation context
+	 */
+	public ValidationContext getContext() {
+		return context;
+	}
+
 	private String internalValidate(String contextFilename, InputStream inputStream, long inputLength) {
 		context.clear();
-		StringBuilder firstPassXMLResult = new StringBuilder(); // this is the XML result
-		StringBuilder secondPassXMLResult; // the XML result with base64 encoded PDF of the visualization of the XML result
+		StringBuilder finalStringResult = new StringBuilder();
 		SimpleDateFormat isoDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
 		startTime = Calendar.getInstance().getTimeInMillis();
-		context.setFilename(contextFilename);// fallback to provided name
-		firstPassXMLResult.append("<validation filename='").append(contextFilename).append("' datetime='").append(isoDF.format(date)).append("'>");
+		context.setFilename(contextFilename); // fallback to provided name
+		finalStringResult.append("<validation filename='").append(contextFilename).append("' datetime='").append(isoDF.format(date)).append("'>");
 
 		boolean isPDF = false;
 		byte[] content = null;
@@ -120,6 +126,9 @@ public class ZUGFeRDValidator {
 				if (disableNotices) {
 					xv.disableNotices();
 				}
+				if (disableArithmeticCheck) {
+					xv.disableArithmeticCheck();
+				}
 				isPDF = ByteArraySearcher.startsWith(content, new byte[]{'%', 'P', 'D', 'F'});
 				if (isPDF) {
 					// Avoid reading again from file
@@ -127,7 +136,7 @@ public class ZUGFeRDValidator {
 
 					context.setHasPDF();
 					optionsRecognized = true;
-					firstPassXMLResult.append("<pdf>");
+					finalStringResult.append("<pdf>");
 					try {
 						pdfv.validate();
 
@@ -135,12 +144,12 @@ public class ZUGFeRDValidator {
 
 						// Validate PDF
 
-						getPdfValidationResults(firstPassXMLResult, pdfv, xv);
+						getPdfValidationResults(finalStringResult, pdfv, xv);
 					} catch (IrrecoverableValidationError irx) {
 						LOGGER.info(irx.getMessage());
 					}
 
-					firstPassXMLResult.append("</pdf>\n");
+					finalStringResult.append("</pdf>\n");
 
 					context.clearCustomXML();
 				} else {
@@ -154,8 +163,8 @@ public class ZUGFeRDValidator {
 						InputSource is = new InputSource(new StringReader(xmlAsString));
 						Document doc = db.parse(is);
 
-						Element root = doc.getDocumentElement();
-						isXML = true;//no exception so far
+						doc.getDocumentElement();
+						isXML = true; //no exception so far
 
 					} catch (Exception ex) {
 						// probably no xml file, sth like SAXParseException content not allowed in prolog
@@ -180,15 +189,15 @@ public class ZUGFeRDValidator {
 
 					}
 				}
-				if ((optionsRecognized) && (displayXMLValidationOutput)) {
-					firstPassXMLResult.append("<xml>");
+				if (optionsRecognized && displayXMLValidationOutput) {
+					finalStringResult.append("<xml>");
 					try {
 						xv.validate();
 					} catch (IrrecoverableValidationError irx) {
 						LOGGER.error("XML validation threw an exception ", irx);
 					}
-					firstPassXMLResult.append(xv.getXMLResult());
-					firstPassXMLResult.append("</xml>");
+					finalStringResult.append(xv.getXMLResult());
+					finalStringResult.append("</xml>");
 					context.clearCustomXML();
 				}
 
@@ -197,22 +206,12 @@ public class ZUGFeRDValidator {
 			LOGGER.info(irx.getMessage());
 			context.setInvalid();
 		} finally {
-			firstPassXMLResult.append(context.getXMLResult());
-			secondPassXMLResult = new StringBuilder(firstPassXMLResult);
-			firstPassXMLResult.append("</validation>");
+			finalStringResult.append(context.getXMLResult());
+			finalStringResult.append("</validation>");
 
 		}
 
-		if (includePDFReportVisualization) {
-			ValidationLogVisualizer vlvi = new ValidationLogVisualizer();
-			byte[] pdfReport = vlvi.toPDF(firstPassXMLResult.toString());
-			secondPassXMLResult.append("<pdfreport>" + Base64.getEncoder().encodeToString(pdfReport) + "</pdfreport></validation>");
-			return formatOutput(secondPassXMLResult, isPDF);
-
-		} else {
-			return formatOutput(firstPassXMLResult, isPDF);
-
-		}
+		return formatOutput(finalStringResult, isPDF);
 	}
 
 	/***
@@ -280,8 +279,8 @@ public class ZUGFeRDValidator {
 		finalStringResult.append(pdfv.getXMLResult());
 		pdfValidity = context.isValid();
 
-		Signature = context.getSignature();
-		context.clear();// clear sets valid to true again
+		signature = context.getSignature();
+		context.clear(); // clear sets valid to true again
 		if (pdfv.getRawXML() != null) {
 			xv.setStringContent(pdfv.getRawXML());
 			displayXMLValidationOutput = true;
@@ -328,7 +327,7 @@ public class ZUGFeRDValidator {
 
 
 		LOGGER.info("Parsed PDF:" + pdfResult + " XML:" + (xmlValidity ? "valid" : "invalid")
-			+ " Signature:" + Signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
+			+ " Signature:" + signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
 			+ " Version:" + context.getGeneration() + " Took:" + duration + "ms Errors:[" + context.getCSVResult()
 			+ "] ErrorIDs: [" + context.getCSVIDResult() + "]" + toBeAppended);
 		wasCompletelyValid = xmlValidity;
@@ -340,6 +339,13 @@ public class ZUGFeRDValidator {
 	 */
 	public void disableNotices() {
 		disableNotices = true;
+	}
+
+	/***
+	 * don't perform the arithmetic recalculation check in the validation report
+	 */
+	public void disableArithmeticCheck() {
+		disableArithmeticCheck = true;
 	}
 
 	/**
@@ -367,16 +373,6 @@ public class ZUGFeRDValidator {
 		} else {
 			return DatatypeConverter.printHexBinary(sha1.digest());
 		}
-	}
-
-	/***
-	 * adds a tag pdfreport with a base64 encoded pdf visualizing the validation report
-	 * @param includePDFReportVisualization true to add
-	 * @return fluent setter
-	 */
-	public ZUGFeRDValidator setIncludePDFReportVisualization(boolean includePDFReportVisualization) {
-		this.includePDFReportVisualization = includePDFReportVisualization;
-		return this;
 	}
 
 }

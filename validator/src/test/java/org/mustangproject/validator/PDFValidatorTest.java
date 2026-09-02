@@ -2,12 +2,7 @@ package org.mustangproject.validator;
 
 import java.io.File;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class PDFValidatorTest extends ResourceCase {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDValidator.class.getCanonicalName()); // log
-
 	public void testPDFPotentialA3SourceValidation() {
 		final ValidationContext vc = new ValidationContext(null);
 		final PDFValidator pv = new PDFValidator(vc);
@@ -49,13 +44,14 @@ public class PDFValidatorTest extends ResourceCase {
 		}
 
 	}
+
 	public void testPDFValidation() {
 		final ValidationContext vc = new ValidationContext(null);
 		final PDFValidator pv = new PDFValidator(vc);
 
 		try {
 
-			byte [] contents = getResourceAsByteArray("XMLinvalidV2PDF.pdf");// need a more invalid file here
+			byte [] contents = getResourceAsByteArray("XMLinvalidV2PDF.pdf"); // need a more invalid file here
 
 			pv.setFilenameAndContents("XMLinvalidV2PDF.pdf", contents);
 			pv.validate();
@@ -105,8 +101,8 @@ public class PDFValidatorTest extends ResourceCase {
 	}
 
 	public void testPDFXMLValidation() {
-		final ValidationContext vc = new ValidationContext(null);
 /*@todo		try {
+			final ValidationContext vc = new ValidationContext(null);
 			final PDFValidator pv = new PDFValidator(vc);
 			// need a more
 			// invalid file here
@@ -167,7 +163,7 @@ public class PDFValidatorTest extends ResourceCase {
 			pv.validate();
 			actual = pv.getXMLResult();
 
-			assertEquals(false, actual.contains("<error"));// issue 18: "ConformanceLevel not found" should not be
+			assertEquals(false, actual.contains("<error")); // issue 18: "ConformanceLevel not found" should not be
 															// reported since it's actually there
 
 			contents = getResourceAsByteArray("invalidXMP-ParseError.pdf");
@@ -176,7 +172,7 @@ public class PDFValidatorTest extends ResourceCase {
 			vc.clear();
 			pv.validate();
 			actual = pv.getXMLResult();
-			
+
 			assertEquals(true, actual
 					.contains("<error type=\"28\">XMP Metadata: Could not parse XMP metadata (XML invalid)</error>"));
 

@@ -1,20 +1,21 @@
 package org.mustangproject;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import org.mustangproject.ZUGFeRD.*;
+import org.mustangproject.ZUGFeRD.IZUGFeRDLegalOrganisation;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /***
- * A organisation, i.e. usually a company
+ * A organization, i.e. usually a company
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class LegalOrganisation implements IZUGFeRDLegalOrganisation {
 
-	protected SchemedID schemedID = null;
-	protected String tradingBusinessName = null;
+	protected SchemedID schemedID;
+	protected String tradingBusinessName;
 
 	public LegalOrganisation() {
 	}
@@ -40,7 +41,7 @@ public class LegalOrganisation implements IZUGFeRDLegalOrganisation {
 		if (nodes.getLength() > 0) {
 		/*
 			will parse sth like
-			<ram:SpecifiedLegalOrganization>  
+			<ram:SpecifiedLegalOrganization>
 				<ram:ID schemeID="0002">4711</ram:ID>
 				<ram:TradingBusinessName>Test GmbH &amp; Co.KG</ram:TradingBusinessName>
 			</ram:SpecifiedLegalOrganization>
@@ -48,13 +49,13 @@ public class LegalOrganisation implements IZUGFeRDLegalOrganisation {
 			for (int nodeIndex = 0; nodeIndex < nodes.getLength(); nodeIndex++) {
 				Node currentItemNode = nodes.item(nodeIndex);
 				if (currentItemNode.getLocalName() != null) {
-					if (currentItemNode.getLocalName().equals("GlobalID")) {
+					if (currentItemNode.getLocalName().equals("ID")) {
 						if (currentItemNode.getAttributes().getNamedItem("schemeID") != null) {
 							SchemedID gid = new SchemedID().setScheme(currentItemNode.getAttributes().getNamedItem("schemeID").getNodeValue()).setId(currentItemNode.getTextContent());
 							this.setSchemedID(gid);
 						}
 					}
-					if ((currentItemNode.getLocalName().equals("TradingBusinessName")) && (currentItemNode.getFirstChild() != null)) {
+					if (currentItemNode.getLocalName().equals("TradingBusinessName") && currentItemNode.getFirstChild() != null) {
 						setTradingBusinessName(currentItemNode.getFirstChild().getNodeValue());
 					}
 				}

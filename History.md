@@ -1,7 +1,63 @@
+- #1244 Import all GrossPriceProductTradePrice/AppliedTradeAllowanceCharge elements.
+- #1248 Support ReceivableSpecifiedTradeAccountingAccount (BT-19).
+- #1255 Add rules fired / failed to PDF validation result from xml.
+
+
+2.26.0
+=======
+2026-08-25
+
+- Upgrade CEN EN16931 Schematron from v1.3.15 to v1.3.16
+- #1233 Add Seller tax representative (BG-11) to CII profiles, excluding Minimum
+- Import and Export TaxCurrencyCode (BT-6) and corresponding TaxTotalAmount (BT-111)
+- #1225: fix fluent API for subclasses of TradeTax (Charge, Allowance, LogisticsServiceCharge)
+- Modify valid version array in PDFValidator, add "3p0"
+- #1228 Allow import of invoices with a LineTotalAmount having more than 2 decimals. #1231
+- #1229 ZF_250 XSDs contain ten dangling schemaLocation references
+- #1219 #1223 #1220 Prevent NPE in Item.enrichProductFromVATBreakdown for VAT category "O".
+- #1243 Support TypeCode and ValueMeasure for ApplicableProductCharacteristic on EXTENDED profile.
+- Upgrade com.fasterxml.jackson.core to 2.22.2 from 2.22.1
+
+
+2.25.0
+=======
+2026-08-04
+
+- #1216 ZUGFeRD 2.5.2 and Factur-X 1.09.2
+- #1213 VeraPDF Vulnerabilities CVE-2026-54078 and CVE-2026-54079 
+- #1207 itemTotalNetAmount is null Exception when validating invoices
+- #925  Emit line-level CalculationPercent (BT-138) and BasisAmount (BT-137) for the EN16931 and XRechnung profiles, using the caller-supplied Allowance/Charge basis amount.
+- #1171 Removed deprecated methods Item::getAllowances() Item::getCharges() and their last usage in ZUGFeRD2PullProvider.
+- #228  Support LogisticsServiceCharges (Zuschläge für Versand & Verpackung)
+- #1174 Fix UBL AllowanceCharge import, add missing percent/basisAmount aliases, dropped per-unit-price allowances
+- #1163 Make doRecalculateItemPricesFromLineTotals() use more than the fixed scale of 4.
+- #1162 Skip the elements "Information" and "PayeeSpecifiedCreditorFinancialInstitution" for basic profiles.
+- #1134 Fix: Trade party universal communication id not imported when scheme is not "email address" (EM) but "electronic address" (0225).
+- #1150 Remove [D].[M].[Y] after Rechnungsdatum in HTML visualization
+- #996  Omit ExemptionReason written to line item level for profile EN16931, some validators raise a warning or even an error
+- #1097 Invoice importer: LegalOrganization id not imported (wrong node name 'GlobalID' instead of 'ID' used)
+- #1151 'BR-FXEXT-IC-08rev' in ZF 2.5 requires VAT exemption reason text and code for allowances and charges
+- #1145 Document-level allowance with VAT category O emits RateApplicablePercent (violates BR-O-06)
+- add disableArithmeticCheck() / --no-arithmetic-check option to skip the arithmetic recalculation pass during validation
+- #1167 Upgrade com.fasterxml.jackson.core to 2.22.1 from 2.17.3
+- #1186 Read Item LineTotalAmount from SpecifiedTradeSettlementLineMonetarySummation
+- #976 / #797 InvoiceImport: read ContractReferencedDocument/IssuerAssignedID into Invoice.contractReferencedDocument
+- #987 Show only the matching BIC per IBAN in invoice visualization
+- #982 Support TypeCodes 130 and 916 for AdditionalReferencedDocuments
+- #1202 Support IndividualTradeProductInstance with BatchID and SupplierAssignedSerialID for EXTENDED Profile
+- #1205 Refactoring of Invoice's DocumentReferences.
+- #1208 Prevent NPE when generating XML invoice without issue date.
+- #1211 Change to UBL 2.4 and add commandline option for profile and customization ID.
+- #1212 Remove deprecated method IExportableTransaction::getTradeSettlementPayment.
+- #1215 Removed duplicate code in ZUGFeRD2PullProvider, which lead to a duplicate DirectDebitMandateID.
+- #956 Import all SpecifiedTradePaymentTerms blocks, not just the last one.
+
+
 2.24.0
 =======
 2026-06-11
 
+- #1143 LineID may not be written empty in DeliveryNoteReferencedDocument
 - #1141 ZUGFeRD 2.5/Factur-X 1.09
 - #1127'Fix possible StringIndexOutOfBoundsException when extracting XMP.'
 - #1133 incorrect warning in Subinvoiceline calculation
@@ -149,7 +205,7 @@ corrections
 - support parsing of BT-90 CreditorReferenceID
 - #871 schema validation does not ignore external entities
 - #868 Fix wrong version in History.md
-- #729 Updates about SpecifiedTradeSettlementHeaderMonetarySummation and SpecifiedTradeSettlementPaymentMeans. **Breaking Change:** The hardcoded values of ram:TypeCode (58) and ram:Information ("SEPA credit transfer") in the getSettlementXML() method of the IZUGFeRDTradeSettlementPayment interface have been removed. Starting with this version, any code utilizing this interface must explicitly set the corresponding attributes.
+- #729 Updates about SpecifiedTradeSettlementHeaderMonetarySummation and SpecifiedTradeSettlementPaymentMeans
 - #863 LineCalculator throws NPE if product is null (since 2.17.0)
 - #731 Got a broken translation key when visualizing XML into PDF (xr:Business_process_type)
 - #865 Add sevdesk signature to PDF creators
@@ -250,7 +306,7 @@ corrections
 - #679 validation of a XR does not ignore whitespace
 - #681 IBAN assigned to invoice sender not recipient on direct debit
 - #689 incorrect element order when both charge reason and reasoncode are specified
-- be able to set detailedDeliveryPeriodFrom, detailedDeliverDeliveryPeriodTo MS188
+- be able to set detailedDeliveryPeriodFrom, detailedDeliveryPeriodTo MS188
 - updated verapdf from 1.26.1 to 1.26.2
 - cashDiscount JSON now corrently ignores values for cii and xr methods 
 

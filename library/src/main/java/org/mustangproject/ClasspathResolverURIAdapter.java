@@ -8,6 +8,9 @@ import org.apache.fop.apps.io.ResourceResolverFactory;
 import org.apache.xmlgraphics.io.Resource;
 import org.apache.xmlgraphics.io.ResourceResolver;
 
+/***
+ * FOP needs something like a base path
+ */
 public class ClasspathResolverURIAdapter implements ResourceResolver {
 
 	private final ResourceResolver wrapped;

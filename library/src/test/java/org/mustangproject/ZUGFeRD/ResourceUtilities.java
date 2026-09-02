@@ -16,12 +16,17 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +46,7 @@ public class ResourceUtilities {
 	 * @throws IOException if the file cannot be read
 	 */
 	public static String readFile(Charset encoding, String path) throws IOException {
-		byte[] content = Files.readAllBytes(Paths.get(path));
+		byte[] content = Files.readAllBytes(Path.of(path));
 		return new String(content, encoding);
 	}
 
@@ -50,12 +55,12 @@ public class ResourceUtilities {
 	 * @param encoding the charset used in the file
 	 * @param path the path to the file
 	 * @param content the contents of the file
-	 * @throws FileNotFoundException if the file cannot be found
+	 * @throws IOException if the file cannot be found
 	 */
-	public static void saveFile(Charset encoding, String path, String content) throws FileNotFoundException {
+	public static void saveFile(Charset encoding, String path, String content) throws IOException {
 
 		// resources will be released automatically
-		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(path)), encoding), true)) {
+		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(Files.newOutputStream(Path.of(path)), encoding), true)) {
 			out.println(content);
 		}
 	}
@@ -104,7 +109,7 @@ public class ResourceUtilities {
 	 * @throws IOException if no absolute Path could be created.
 	 */
 	public static String getTestOutput(String relativeFilePath) throws IOException {
-		File tempFile = File.createTempFile(relativeFilePath, null);
+		File tempFile = Files.createTempFile(relativeFilePath, null).toFile();
 		tempFile.deleteOnExit();
 		return tempFile.getAbsolutePath();
 	}
@@ -132,7 +137,7 @@ public class ResourceUtilities {
 		} catch (URISyntaxException ex) {
 			LOGGER.error("Failed to parse URI", ex);
 		}
-		return new File(filepath);
+		return Path.of(filepath).toFile();
 	}
 
 	/**
@@ -149,8 +154,8 @@ public class ResourceUtilities {
 	}
 
 	public static File getTempTestDirectory() {
-		File tempDir = new File(ResourceUtilities.getTestOutputFolder() + "temp");
-		tempDir.mkdir(); //if it already exist no problem
+		File tempDir = Path.of(ResourceUtilities.getTestOutputFolder() + "temp").toFile();
+		tempDir.mkdir(); // if it already exist no problem
 		return tempDir;
 	}
 
@@ -176,12 +181,14 @@ public class ResourceUtilities {
 					sb.append(u.getUserInfo());
 					sb.append('@');
 				}
-				boolean needBrackets = ((u.getHost().indexOf(':') >= 0) && !u.getHost().startsWith("[") && !u.getHost().endsWith("]"));
-				if (needBrackets)
+				boolean needBrackets = u.getHost().indexOf(':') >= 0 && !u.getHost().startsWith("[") && !u.getHost().endsWith("]");
+				if (needBrackets) {
 					sb.append('[');
+				}
 				sb.append(u.getHost());
-				if (needBrackets)
+				if (needBrackets) {
 					sb.append(']');
+				}
 				if (u.getPort() != -1) {
 					sb.append(':');
 					sb.append(u.getPort());
@@ -192,8 +199,9 @@ public class ResourceUtilities {
 			} else {
 				sb.append("//");
 			}
-			if (u.getRawPath() != null)
+			if (u.getRawPath() != null) {
 				sb.append(u.getRawPath());
+			}
 			if (u.getRawQuery() != null) {
 				sb.append('?');
 				sb.append(u.getRawQuery());
@@ -210,8 +218,5 @@ public class ResourceUtilities {
       LOGGER.error("Failed to parse URI", ex);
 		}
 		return ret;
-	}
-
-	private ResourceUtilities() {
 	}
 }

@@ -23,14 +23,13 @@ import org.mustangproject.XMLTools;
 public interface IZUGFeRDTradeSettlementDebit extends IZUGFeRDTradeSettlement {
 
 	@Override
-	default String getSettlementXML() {
+	default String getSettlementXML(Profile profile) {
 		String xml = "<ram:SpecifiedTradeSettlementPaymentMeans>"
 				+ "<ram:TypeCode>" + XMLTools.encodeXML(getPaymentMeansCode()) + "</ram:TypeCode>"
 				+ "<ram:Information>" + XMLTools.encodeXML(getPaymentMeansInformation()) + "</ram:Information>"
 				+ "<ram:PayerPartyDebtorFinancialAccount>"
 				+ "<ram:IBANID>" + XMLTools.encodeXML(getIBAN()) + "</ram:IBANID>"
 				+ "</ram:PayerPartyDebtorFinancialAccount>";
-		
 		xml += "</ram:SpecifiedTradeSettlementPaymentMeans>";
 		return xml;
 	}

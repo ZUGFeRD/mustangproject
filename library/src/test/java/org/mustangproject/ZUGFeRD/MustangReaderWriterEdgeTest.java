@@ -18,18 +18,6 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.common.PDMetadata;
-import org.apache.xmpbox.XMPMetadata;
-import org.apache.xmpbox.schema.PDFAIdentificationSchema;
-import org.apache.xmpbox.xml.DomXmpParser;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,9 +29,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.common.PDMetadata;
+import org.apache.xmpbox.XMPMetadata;
+import org.apache.xmpbox.schema.PDFAIdentificationSchema;
+import org.apache.xmpbox.xml.DomXmpParser;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
-	protected class EasyRecipientTradeParty extends RecipientTradeParty  {
+	protected class EasyRecipientTradeParty extends RecipientTradeParty {
 		// Not testing extended profile here, lineThree not possible
 		@Override
 		public String getAdditionalAddressExtension() {
@@ -51,6 +51,14 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 		}
 	}
 
+	/**
+	 * Create the test case
+	 *
+	 * @param testName name of the test case
+	 */
+	public MustangReaderWriterEdgeTest(String testName) {
+		super(testName);
+	}
 
 	@Override
 	public Date getDeliveryDate() {
@@ -96,7 +104,6 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 	@Override
 	public IZUGFeRDExportableTradeParty getSender() {
 		return new SenderTradeParty();
-		
 	}
 
 	@Override
@@ -159,23 +166,13 @@ public class MustangReaderWriterEdgeTest extends MustangReaderTestCase {
 	}
 
 	@Override
-	public IZUGFeRDAllowanceCharge[] getZFLogisticsServiceCharges() {
+	public IZUGFeRDLogisticsServiceCharge[] getZFLogisticsServiceCharges() {
 		return null;
 	}
 
 	@Override
 	public String getReferenceNumber() {
 		return "AB321";
-	}
-
-
-	/**
-	 * Create the test case
-	 *
-	 * @param testName name of the test case
-	 */
-	public MustangReaderWriterEdgeTest(String testName) {
-		super(testName);
 	}
 
 	/**

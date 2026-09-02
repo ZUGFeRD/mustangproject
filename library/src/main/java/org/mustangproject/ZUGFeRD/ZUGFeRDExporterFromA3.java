@@ -72,49 +72,27 @@ import org.apache.xmpbox.xml.XmpParsingException;
 import org.apache.xmpbox.xml.XmpSerializer;
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
+import static org.mustangproject.util.StringUtils.isBlank;
+import static org.mustangproject.util.StringUtils.isNotBlank;
 
 import jakarta.activation.DataSource;
 import jakarta.activation.FileDataSource;
 
 public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporter {
-
+	public static final int defaultZUGFeRDVersion = 2;
 	private static final String XML_DESCRIPTION = "Invoice metadata conforming to ZUGFeRD standard (https://www.ferd-net.de/en/standards/zugferd/factur-x)";
 
-	private boolean isFacturX = true;
-	
-	public static final int DefaultZUGFeRDVersion = 2;
-	protected boolean ignorePDFAErrors = false;
+	protected boolean ignorePDFAErrors;
 
-	public ZUGFeRDExporterFromA3 ignorePDFAErrors() {
-		this.ignorePDFAErrors = true;
-		return this;
-	}
-
-	protected PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
-	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<>();
-
-	/**
-	 * This flag controls whether or not the metadata is overwritten, or kind of merged.
-	 * The merging probably needs to be overhauled, but for my purpose it was good enough.
-	 */
-	protected boolean overwrite = true;
-
-	private boolean disableAutoClose;
-	private boolean fileAttached = false;
-	private Profile profile = null;
-	protected boolean documentPrepared = false;
-
-	/** Defines whether attachments to the PDF should be using FLATE compression */
-	private boolean compressionEnabled = false;
-
+	protected boolean documentPrepared;
 	/**
 	 * Data (XML invoice) to be added to the ZUGFeRD PDF. It may be externally set,
 	 * in which case passing a IZUGFeRDExportableTransaction is not necessary. By
 	 * default it is null meaning the caller needs to pass a
 	 * IZUGFeRDExportableTransaction for the XML to be populated.
 	 */
-	protected PDMetadata metadata = null;
-	protected XMPMetadata xmp = null;
+	protected PDMetadata metadata;
+	protected XMPMetadata xmp;
 	/**
 	 * Producer attribute for PDF
 	 */
@@ -128,31 +106,56 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 */
 	protected String creatorTool = "mustangproject";
 
-	/**
-	 * @deprecated author is never set yet
-	 */
-	@Deprecated
-	protected String author;
-	/**
-	 * @deprecated title is never set yet
-	 */
-	@Deprecated
-	protected String title;
-	/**
-	 * @deprecated subject is never set yet
-	 */
-	@Deprecated
-	protected String subject;
-
 	protected PDDocument doc;
 
-	protected int ZFVersion = DefaultZUGFeRDVersion;
-	private boolean attachZUGFeRDHeaders = true;
-
+	protected int zfVersion = defaultZUGFeRDVersion;
 
 	// Specific metaData version in case of XRechnung. We need it to be settable
 	// by the caller if necessary.
-	protected String XRechnungVersion = null; // Default XRechnung as of late 2021 is 2p0
+	protected String xRechnungVersion; // Default XRechnung as of late 2021 is 2p0
+
+	protected PDFAConformanceLevel conformanceLevel = PDFAConformanceLevel.UNICODE;
+
+	protected ArrayList<FileAttachment> fileAttachments = new ArrayList<>();
+
+	/**
+	 * This flag controls whether or not the metadata is overwritten, or kind of merged.
+	 * The merging probably needs to be overhauled, but for my purpose it was good enough.
+	 */
+	protected boolean overwrite = true;
+
+	private boolean isFacturX = true;
+	private boolean disableAutoClose;
+	private boolean fileAttached;
+	private Profile profile;
+
+	/** Defines whether attachments to the PDF should be using FLATE compression */
+	private boolean compressionEnabled;
+
+	/** Defines whether the PDF itself should be compressed or not */
+	private CompressParameters pdfCompression = CompressParameters.NO_COMPRESSION;
+
+	private boolean attachZUGFeRDHeaders = true;
+
+	public ZUGFeRDExporterFromA3() {
+		super();
+		setZUGFeRDVersion(ZUGFeRDExporterFromA3.defaultZUGFeRDVersion);
+
+	}
+
+	/***
+	 * request to ignore slight PDF/A errors on writing
+	 * @return fluent setter
+	 */
+	public ZUGFeRDExporterFromA3 ignorePDFAErrors() {
+		this.ignorePDFAErrors = true;
+		return this;
+	}
+
+	public ZUGFeRDExporterFromA3 setOverwrite(boolean overwrite) {
+		this.overwrite = overwrite;
+		return this;
+	}
 
 	/**
 	 * Makes A PDF/A3a-compliant document from a PDF-A1 compliant document (on the
@@ -172,6 +175,11 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return xmlProvider;
 	}
 
+	/***
+	 * set the profile from a proper Enum
+	 * @param p the profile
+	 * @return fluent setter
+	 */
 	public ZUGFeRDExporterFromA3 setProfile(Profile p) {
 		this.profile = p;
 		if (xmlProvider != null) {
@@ -180,6 +188,11 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
+	/***
+	 * set the profile from a string, if it can be recognized
+	 * @param profilename a string like EN16931 or EXTENDED
+	 * @return fluent setter
+	 */
 	public ZUGFeRDExporterFromA3 setProfile(String profilename) {
 		this.profile = Profiles.getByName(profilename);
 
@@ -189,6 +202,12 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
+	/***
+	 * adds an additional file to be attached to the PDF
+	 * @param name file name
+	 * @param content file content
+	 * @return fluent setter
+	 */
 	public ZUGFeRDExporterFromA3 addAdditionalFile(String name, byte[] content) {
 		fileAttachments.add(new FileAttachment(name, "text/xml", "Supplement", content).setDescription("ZUGFeRD extension/additional data"));
 		return this;
@@ -268,7 +287,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * @param XRechnungVersion the XRechnung version
 	 */
 	public void setXRechnungSpecificVersion(String XRechnungVersion) {
-		this.XRechnungVersion = XRechnungVersion;
+		this.xRechnungVersion = XRechnungVersion;
 	}
 
 
@@ -293,12 +312,6 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
-	public ZUGFeRDExporterFromA3() {
-		super();
-		setZUGFeRDVersion(ZUGFeRDExporterFromA3.DefaultZUGFeRDVersion);
-
-	}
-
 	public void attachFile(FileAttachment file) {
 		fileAttachments.add(file);
 	}
@@ -318,11 +331,10 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		if (!documentPrepared) {
 			prepareDocument();
 		}
-		if ((!fileAttached) && (attachZUGFeRDHeaders)) {
-			throw new IOException(
-				"File must be attached (usually with setTransaction) before perfoming this operation");
+		if (!fileAttached && attachZUGFeRDHeaders) {
+			throw new IOException("File must be attached (usually with setTransaction) before perfoming this operation");
 		}
-		doc.save(ZUGFeRDfilename, CompressParameters.NO_COMPRESSION);
+		doc.save(ZUGFeRDfilename, this.pdfCompression);
 		if (!disableAutoClose) {
 			close();
 		}
@@ -346,11 +358,10 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		if (!documentPrepared) {
 			prepareDocument();
 		}
-		if ((!fileAttached) && (attachZUGFeRDHeaders)) {
-			throw new IOException(
-				"File must be attached (usually with setTransaction) before perfoming this operation");
+		if (!fileAttached && attachZUGFeRDHeaders) {
+			throw new IOException("File must be attached (usually with setTransaction) before perfoming this operation");
 		}
-		doc.save(output, CompressParameters.NO_COMPRESSION);
+		doc.save(output, this.pdfCompression);
 		if (!disableAutoClose) {
 			close();
 		}
@@ -426,9 +437,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 		Map<String, PDComplexFileSpecification> oldNamesMap = efTree.getNames();
 		if (oldNamesMap != null) {
-			for (String key : oldNamesMap.keySet()) {
-				namesMap.put(key, oldNamesMap.get(key));
-			}
+			namesMap.putAll(oldNamesMap);
 		}
 		namesMap.put(filename, fs);
 		efTree.setNames(namesMap);
@@ -438,7 +447,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 		// AF entry (Array) in catalog with the FileSpec
 		COSBase AFEntry = doc.getDocumentCatalog().getCOSObject().getItem("AF");
-		if ((AFEntry == null)) {
+		if (AFEntry == null) {
 			COSArray cosArray = new COSArray();
 			cosArray.add(fs);
 			doc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
@@ -446,7 +455,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 			COSArray cosArray = (COSArray) AFEntry;
 			cosArray.add(fs);
 			doc.getDocumentCatalog().getCOSObject().setItem("AF", cosArray);
-		} else if ((AFEntry instanceof COSObject) &&
+		} else if (AFEntry instanceof COSObject &&
 			((COSObject) AFEntry).getObject() instanceof COSArray) {
 			COSArray cosArray = (COSArray) ((COSObject) AFEntry).getObject();
 			cosArray.add(fs);
@@ -516,6 +525,15 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
+	@Override
+	public IZUGFeRDExporter setEnablePDFCompression(boolean pdfCompressionEnabled) {
+		if (pdfCompressionEnabled) {
+			this.pdfCompression = CompressParameters.DEFAULT_COMPRESSION;
+		} else {
+			this.pdfCompression = CompressParameters.NO_COMPRESSION;
+		}
+		return this;
+	}
 
 	public ZUGFeRDExporterFromA3 setCreator(String creator) {
 		this.creator = creator;
@@ -532,6 +550,11 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
+	/***
+	 * Add most of the required Factur-X/ZUGFeRD XMPs into the PDF/A file
+	 * @param attachHeaders
+	 * @return fluent setter
+	 */
 	protected ZUGFeRDExporterFromA3 setAttachZUGFeRDHeaders(boolean attachHeaders) {
 		this.attachZUGFeRDHeaders = attachHeaders;
 		return this;
@@ -550,21 +573,20 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		String metaDataVersion = null; // default will be used
 
 		// The XRechnung version may be settable from outside.
-		if ((this.XRechnungVersion != null) && (this.profile != null) &&
-			this.profile.getName().equalsIgnoreCase(Profiles.getByName("XRECHNUNG").getName())) {
-			metaDataVersion = this.XRechnungVersion;
+		if (this.xRechnungVersion != null && this.profile != null && this.profile == Profiles.getByName("XRECHNUNG")) {
+			metaDataVersion = this.xRechnungVersion;
 		}
 
 		if (attachZUGFeRDHeaders) {
-			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, ZFVersion, isFacturX, xmlProvider.getProfile(),
-				getNamespaceForVersion(ZFVersion), getPrefixForVersion(ZFVersion),
-				getFilenameForVersion(ZFVersion, xmlProvider.getProfile()), metaDataVersion);
+			XMPSchemaZugferd zf = new XMPSchemaZugferd(metadata, zfVersion, isFacturX, xmlProvider.getProfile(),
+				getNamespaceForVersion(zfVersion), getPrefixForVersion(zfVersion),
+				getFilenameForVersion(zfVersion, xmlProvider.getProfile()), metaDataVersion);
 
 			metadata.addSchema(zf);
 		}
 
-		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(this, metadata, ZFVersion, attachZUGFeRDHeaders);
-		pdfaex.setZUGFeRDVersion(ZFVersion);
+		XMPSchemaPDFAExtensions pdfaex = new XMPSchemaPDFAExtensions(this, metadata, zfVersion, attachZUGFeRDHeaders);
+		pdfaex.setZUGFeRDVersion(zfVersion);
 		metadata.addSchema(pdfaex);
 	}
 
@@ -591,7 +613,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 						removeCIDSetFromPDResources(cidSet, xr);
 					}
 				}
-				
+
 				// Check for fonts in document-resources:
 				removeCIDSetFromPDResources(cidSet, res);
 			}
@@ -600,31 +622,29 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	private void removeCIDSetFromPDResources(COSName cidSet, PDResources res) throws IOException {
 		for (COSName fontName : res.getFontNames()) {
-			try {
-				PDFont pdFont = res.getFont(fontName);
-				if (pdFont instanceof PDType0Font) {
-					PDType0Font typedFont = (PDType0Font) pdFont;
+			PDFont pdFont = res.getFont(fontName);
+			if (pdFont instanceof PDType0Font) {
+				PDType0Font typedFont = (PDType0Font) pdFont;
 
-					if (typedFont.getDescendantFont() instanceof PDCIDFontType2) {
-						@SuppressWarnings("unused")
-						PDCIDFontType2 f = (PDCIDFontType2) typedFont.getDescendantFont();
-						PDFontDescriptor fontDescriptor = pdFont.getFontDescriptor();
-
-						fontDescriptor.getCOSObject().removeItem(cidSet);
-					}
+				if (typedFont.getDescendantFont() instanceof PDCIDFontType2) {
+					PDFontDescriptor fontDescriptor = pdFont.getFontDescriptor();
+					fontDescriptor.getCOSObject().removeItem(cidSet);
 				}
-			} catch (IOException e) {
-				throw e;
 			}
 			// do stuff with the font
 		}
 	}
-	
+
 	protected void prepareDocument() throws IOException {
 
 		PDDocumentCatalog cat = doc.getDocumentCatalog();
-		metadata = new PDMetadata(doc);
-		cat.setMetadata(metadata);
+		PDMetadata existingMetadata = cat.getMetadata();
+		if (overwrite || existingMetadata == null || existingMetadata.getLength() == 0) {
+			metadata = new PDMetadata(doc);
+			cat.setMetadata(metadata);
+		} else {
+			metadata = existingMetadata;
+		}
 
 		removeCidSet(doc);
 		xmp = getXmpMetadata();
@@ -672,15 +692,14 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	public IExporter prepare() throws IOException {
 		prepareDocument();
 		xmlProvider.generateXML(trans);
-		String filename = getFilenameForVersion(ZFVersion, xmlProvider.getProfile());
+		String filename = getFilenameForVersion(zfVersion, xmlProvider.getProfile());
 
 		String relationship = "Alternative";
 		// ZUGFeRD 2.1.1 Technical Supplement | Part A | 2.2.2. Data Relationship
 		// See documentation ZUGFeRD211_EN/Documentation/ZUGFeRD-2.1.1 - Specification_TA_Part-A.pdf
 		// https://www.ferd-net.de/standards/zugferd-2.1.1/index.html
-		if ((this.profile != null) && (ZFVersion >= 2)) {
-			if (this.profile.getName().equalsIgnoreCase(Profiles.getByName("MINIMUM").getName()) ||
-				this.profile.getName().equalsIgnoreCase(Profiles.getByName("BASICWL").getName())) {
+		if (this.profile != null && zfVersion >= 2) {
+			if (this.profile == Profiles.getByName("MINIMUM") || this.profile == Profiles.getByName("BASICWL")) {
 				relationship = "Data";
 			}
 		}
@@ -705,7 +724,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	protected XMPMetadata getXmpMetadata()
 		throws IOException {
 		PDMetadata meta = doc.getDocumentCatalog().getMetadata();
-		if ((meta != null) && (meta.getLength() > 0)) {
+		if (meta != null && meta.getLength() > 0) {
 			try {
 				DomXmpParser xmpParser = new DomXmpParser();
 				xmpParser.setStrictParsing(false);
@@ -717,6 +736,12 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return XMPMetadata.createXMPMetadata();
 	}
 
+	/***
+	 * preparative step to actually write XMP
+	 * @param xmpMetadata
+	 * @return XML string
+	 * @throws TransformerException
+	 */
 	protected byte[] serializeXmpMetadata(XMPMetadata xmpMetadata) throws TransformerException {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		new XmpSerializer().serialize(xmpMetadata, buffer, true); // see https://github.com/ZUGFeRD/mustangproject/issues/44
@@ -731,8 +756,9 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 */
 	protected void writeAdobePDFSchema(XMPMetadata xmp) {
 		AdobePDFSchema pdf = getAdobePDFSchema(xmp);
-		if (overwrite || isEmpty(pdf.getProducer()))
+		if (overwrite || isBlank(pdf.getProducer())) {
 			pdf.setProducer(producer);
+		}
 	}
 
 	/**
@@ -744,17 +770,19 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 */
 	protected AdobePDFSchema getAdobePDFSchema(XMPMetadata xmp) {
 		AdobePDFSchema pdf = xmp.getAdobePDFSchema();
-		if (pdf != null)
-			if (overwrite)
+		if (pdf != null) {
+			if (overwrite) {
 				xmp.removeSchema(pdf);
-			else
+			} else {
 				return pdf;
+			}
+		}
 		return xmp.createAndAddAdobePDFSchema();
 	}
 
 	protected void writePDFAIdentificationSchema(XMPMetadata xmp) {
 		PDFAIdentificationSchema pdfaid = getPDFAIdentificationSchema(xmp);
-		if (overwrite || isEmpty(pdfaid.getConformance())) {
+		if (overwrite || isBlank(pdfaid.getConformance())) {
 			try {
 				pdfaid.setConformance(conformanceLevel.getLetter());
 			} catch (BadFieldValueException ex) {
@@ -769,82 +797,86 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	protected PDFAIdentificationSchema getPDFAIdentificationSchema(XMPMetadata xmp) {
 		PDFAIdentificationSchema pdfaid = xmp.getPDFAIdentificationSchema();
-		if (pdfaid != null)
-			if (overwrite)
+		if (pdfaid != null) {
+			if (overwrite) {
 				xmp.removeSchema(pdfaid);
-			else
+			} else {
 				return pdfaid;
+			}
+		}
 		return xmp.createAndAddPDFAIdentificationSchema();
 	}
 
 	protected void writeDublinCoreSchema(XMPMetadata xmp) {
 		DublinCoreSchema dc = getDublinCoreSchema(xmp);
-		if (dc.getFormat() == null)
+		if (dc.getFormat() == null) {
 			dc.setFormat("application/pdf");
-		if ((overwrite || dc.getCreators() == null || dc.getCreators().isEmpty()) && creator != null)
+		}
+		if ((overwrite || dc.getCreators() == null || dc.getCreators().isEmpty()) && creator != null) {
 			dc.addCreator(creator);
-		if ((overwrite || dc.getDates() == null || dc.getDates().isEmpty()) && creator != null)
+		}
+		if ((overwrite || dc.getDates() == null || dc.getDates().isEmpty()) && creator != null) {
 			dc.addDate(Calendar.getInstance());
+		}
 
 		ArrayProperty titleProperty = dc.getTitleProperty();
 		if (titleProperty != null) {
-			if (overwrite && !isEmpty(title)) {
-				dc.removeProperty(titleProperty);
-				dc.setTitle(title);
-			} else if (titleProperty.getElementsAsString().stream().anyMatch("Untitled"::equalsIgnoreCase)) {
+			if (titleProperty.getElementsAsString().stream().anyMatch("Untitled"::equalsIgnoreCase)) {
 				// remove unfitting ghostscript default
 				dc.removeProperty(titleProperty);
 			}
-		} else if (!isEmpty(title)) {
-			dc.setTitle(title);
 		}
 	}
 
 	protected DublinCoreSchema getDublinCoreSchema(XMPMetadata xmp) {
 		DublinCoreSchema dc = xmp.getDublinCoreSchema();
-		if (dc != null)
-			if (overwrite)
+		if (dc != null) {
+			if (overwrite) {
 				xmp.removeSchema(dc);
-			else
+			} else {
 				return dc;
+			}
+		}
 		return xmp.createAndAddDublinCoreSchema();
 	}
 
 	protected void writeXMLBasicSchema(XMPMetadata xmp) {
 		XMPBasicSchema xsb = getXmpBasicSchema(xmp);
-		if (overwrite || isEmpty(xsb.getCreatorTool()) || "UnknownApplication".equals(xsb.getCreatorTool()))
+		if (overwrite || isBlank(xsb.getCreatorTool()) || "UnknownApplication".equals(xsb.getCreatorTool())) {
 			xsb.setCreatorTool(creatorTool);
-		if (overwrite || xsb.getCreateDate() == null)
+		}
+		if (overwrite || xsb.getCreateDate() == null) {
 			xsb.setCreateDate(Calendar.getInstance());
+		}
 	}
 
 	protected XMPBasicSchema getXmpBasicSchema(XMPMetadata xmp) {
 		XMPBasicSchema xsb = xmp.getXMPBasicSchema();
-		if (xsb != null)
-			if (overwrite)
+		if (xsb != null) {
+			if (overwrite) {
 				xmp.removeSchema(xsb);
-			else
+			} else {
 				return xsb;
+			}
+		}
 		return xmp.createAndAddXMPBasicSchema();
 	}
 
 	protected void writeDocumentInformation() {
 		String fullProducer = producer + " (via mustangproject.org " + Version.VERSION + ")";
 		PDDocumentInformation info = doc.getDocumentInformation();
-		if (overwrite || info.getCreationDate() == null)
+		if (overwrite || info.getCreationDate() == null) {
 			info.setCreationDate(Calendar.getInstance());
-		if (overwrite || info.getModificationDate() == null)
+		}
+		if (overwrite || info.getModificationDate() == null) {
 			info.setModificationDate(Calendar.getInstance());
-		if (overwrite || (isEmpty(info.getAuthor()) && !isEmpty(author)))
-			info.setAuthor(author);
-		if (overwrite || (isEmpty(info.getProducer()) && !isEmpty(fullProducer)))
+		}
+		if (overwrite || isBlank(info.getProducer()) && isNotBlank(fullProducer)) {
 			info.setProducer(fullProducer);
-		if (overwrite || (isEmpty(info.getCreator()) && !isEmpty(creator)))
+		}
+		if (overwrite || isBlank(info.getCreator()) && isNotBlank(creator)) {
 			info.setCreator(creator);
-		if (overwrite || (isEmpty(info.getTitle()) && !isEmpty(title)))
-			info.setTitle(title);
-		if (overwrite || (isEmpty(info.getSubject()) && !isEmpty(subject)))
-			info.setSubject(subject);
+		}
 	}
 
 	/**
@@ -852,14 +884,12 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 *
 	 * @throws IOException if the ICC file cannot be read or attached to doc
 	 */
-	protected void addSRGBOutputIntend()
-		throws IOException {
+	protected void addSRGBOutputIntend() throws IOException {
 		if (!doc.getDocumentCatalog().getOutputIntents().isEmpty()) {
 			return;
 		}
 
-		try {
-			InputStream colorProfile = Thread.currentThread().getContextClassLoader().getResourceAsStream("sRGB.icc");
+		try (InputStream colorProfile = Thread.currentThread().getContextClassLoader().getResourceAsStream("sRGB.icc")) {
 			if (colorProfile != null) {
 				PDOutputIntent intent = new PDOutputIntent(doc, colorProfile);
 				intent.setInfo("sRGB IEC61966-2.1");
@@ -868,8 +898,6 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 				intent.setRegistryName("http://www.color.org");
 				doc.getDocumentCatalog().addOutputIntent(intent);
 			}
-		} catch (IOException e) {
-			throw e;
 		}
 	}
 
@@ -917,12 +945,12 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	}
 
 	public ZUGFeRDExporterFromA3 setZUGFeRDVersion(EStandard est, int version) {
-		this.ZFVersion = version;
-		if ((version < 1) || (version > 2)) {
+		this.zfVersion = version;
+		if (version < 1 || version > 2) {
 			throw new IllegalArgumentException("Version not supported");
 		}
 		int generation = version;
-		if ((est == EStandard.facturx) && (version == 1)) {
+		if (est == EStandard.FACTUR_X && version == 1) {
 			generation = 2;
 		}
 		if (generation == 1) {
@@ -940,7 +968,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 
 	@Override
 	public ZUGFeRDExporterFromA3 setZUGFeRDVersion(int version) {
-		this.ZFVersion = version;
+		this.zfVersion = version;
 		if (version == 1) {
 			ZUGFeRD1PullProvider z1p = new ZUGFeRD1PullProvider();
 			disableFacturX();
@@ -953,15 +981,5 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		}
 
 		return this;
-	}
-
-	/**
-	 * Utility method inspired by apache commons-lang3 StringUtils.
-	 *
-	 * @param string the string to test
-	 * @return true if the string is null or empty
-	 */
-	private boolean isEmpty(String string) {
-		return string == null || string.isEmpty();
 	}
 }

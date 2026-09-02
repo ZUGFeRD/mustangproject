@@ -8,14 +8,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.io.IOUtils;
-import org.dom4j.io.XMLWriter;
-import org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
-
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,6 +17,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
+
+import org.dom4j.io.XMLWriter;
+import org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat;
+import org.w3c.dom.Node;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.SAXParseException;
 
 public class XMLTools extends XMLWriter {
 	@Override
@@ -87,9 +88,24 @@ public class XMLTools extends XMLWriter {
 		return dbf.newDocumentBuilder();
 	}
 
-	public static Validator getValidator(URL schemaFile) throws SAXException
-	{
+	public static Validator getValidator(URL schemaFile) throws SAXException {
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		schemaFactory.setErrorHandler(new ErrorHandler() {
+			@Override
+			public void warning(SAXParseException e) throws SAXException {
+				throw e;
+			}
+
+			@Override
+			public void fatalError(SAXParseException e) throws SAXException {
+				throw e;
+			}
+
+			@Override
+			public void error(SAXParseException e) throws SAXException {
+				throw e;
+			}
+		});
 		try {
 			schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
 		} catch (SAXNotSupportedException | SAXNotRecognizedException e) {
@@ -106,8 +122,7 @@ public class XMLTools extends XMLWriter {
 		return validator;
 	}
 
-	public static TransformerFactory getTransformerFactory()
-	{
+	public static TransformerFactory getTransformerFactory() {
 		TransformerFactory factory = new net.sf.saxon.TransformerFactoryImpl();
 		try {
 			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -192,11 +207,11 @@ public class XMLTools extends XMLWriter {
 	 * @return value as String with decimals in the specified range
 	 */
 	public static String nDigitFormatDecimalRange(BigDecimal value, int maxDecimals, int minDecimals) {
-		if ((maxDecimals<minDecimals)||(maxDecimals<0)||(minDecimals<0)) {
+		if (maxDecimals < minDecimals || maxDecimals < 0 || minDecimals < 0) {
 			throw new IllegalArgumentException("Invalid scale range provided");
 		}
-		int curDecimals=maxDecimals;
-		while  ( (curDecimals>minDecimals) && (value.setScale(curDecimals, RoundingMode.HALF_UP).compareTo(value.setScale(curDecimals-1, RoundingMode.HALF_UP))==0)) {
+		int curDecimals = maxDecimals;
+		while (curDecimals > minDecimals && value.setScale(curDecimals, RoundingMode.HALF_UP).compareTo(value.setScale(curDecimals - 1, RoundingMode.HALF_UP)) == 0) {
 			 curDecimals--;
 		}
 		return value.setScale(curDecimals, RoundingMode.HALF_UP).toPlainString();
@@ -224,7 +239,7 @@ public class XMLTools extends XMLWriter {
 	 */
 	public static Date tryDate(String toParse) {
 		SimpleDateFormat formatter = null;
-		if (toParse==null) {
+		if (toParse == null) {
 			return null;
 		}
 		if (toParse.contains("-")) {
@@ -256,10 +271,9 @@ public class XMLTools extends XMLWriter {
 			if (c >= 0xd800 && c <= 0xdbff && i + 1 < len) {
 				c = ((c - 0xd7c0) << 10) | (s.charAt(++i) & 0x3ff);    // UTF16 decode
 			}
-			if (c < 0x80) {      // ASCII range: test most common case first
-				if (c < 0x20 && (c != '\t' && c != '\r' && c != '\n')) {
-					// Illegal XML character, even encoded. Skip or substitute
-					sb.append("&#xfffd;");   // Unicode replacement character
+			if (c < 0x80) { // ASCII range: test most common case first
+				if (c < 0x20 && c != '\t' && c != '\r' && c != '\n') { // Illegal XML character, even encoded. Skip or substitute
+					sb.append("&#xfffd;"); // Unicode replacement character
 				} else {
 					switch (c) {
 						case '&':
@@ -283,7 +297,7 @@ public class XMLTools extends XMLWriter {
 							sb.append((char) c);
 					}
 				}
-			} else if ((c >= 0xd800 && c <= 0xdfff) || c == 0xfffe || c == 0xffff) {
+			} else if (c >= 0xd800 && c <= 0xdfff || c == 0xfffe || c == 0xffff) {
 				// Illegal XML character, even encoded. Skip or substitute
 				sb.append("&#xfffd;");   // Unicode replacement character
 			} else {
@@ -302,8 +316,8 @@ public class XMLTools extends XMLWriter {
 	 */
 	public static byte[] removeBOM(byte[] zugferdRaw) {
 		final byte[] zugferdData;
-		// This handles the UTF-8 BOM 
-		if ((zugferdRaw[0] == (byte) 0xEF) && (zugferdRaw[1] == (byte) 0xBB) && (zugferdRaw[2] == (byte) 0xBF)) {
+		// This handles the UTF-8 BOM
+		if (zugferdRaw[0] == (byte) 0xEF && zugferdRaw[1] == (byte) 0xBB && zugferdRaw[2] == (byte) 0xBF) {
 			// I don't like BOMs, lets remove it
 			zugferdData = new byte[zugferdRaw.length - 3];
 			System.arraycopy(zugferdRaw, 3, zugferdData, 0, zugferdRaw.length - 3);
@@ -315,7 +329,7 @@ public class XMLTools extends XMLWriter {
 
 	public static byte[] getBytesFromStream(InputStream fileinput) throws IOException {
 		// Stream closing responsibility is with the caller
-		return IOUtils.toByteArray(fileinput);
+		return fileinput.readAllBytes();
 	}
 
 

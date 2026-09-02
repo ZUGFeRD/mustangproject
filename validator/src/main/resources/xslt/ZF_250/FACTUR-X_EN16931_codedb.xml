@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Factur-X release metadata
+     Version: 1.09.2
+     Release date: 2026-08-04
+     Effective date: 2026-09-01
+-->
 <codedb>
   <cl id="1">
     <enumeration value="urn:cen.eu:en16931:2017"/>

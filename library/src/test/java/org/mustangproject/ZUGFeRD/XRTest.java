@@ -21,40 +21,54 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import junit.framework.TestCase;
-import org.mustangproject.*;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.junit.FixMethodOrder;
-import org.junit.jupiter.api.Assertions;
-import org.junit.runners.MethodSorters;
+import static org.xmlunit.assertj.XmlAssert.assertThat;
+
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Date;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
-import static org.xmlunit.assertj.XmlAssert.assertThat;
+import org.junit.FixMethodOrder;
+import org.junit.jupiter.api.Assertions;
+import org.junit.runners.MethodSorters;
+import org.mustangproject.Allowance;
+import org.mustangproject.BankDetails;
+import org.mustangproject.CashDiscount;
+import org.mustangproject.Charge;
+import org.mustangproject.Contact;
+import org.mustangproject.FileAttachment;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.LegalOrganisation;
+import org.mustangproject.Product;
+import org.mustangproject.ReferencedDocument;
+import org.mustangproject.TradeParty;
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import junit.framework.TestCase;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class XRTest extends TestCase {
-	final String TARGET_XML = "./target/testout-XR.xml";
-	final String TARGET_EDGE_XML = "./target/testout-XR-Edge.xml";
+	private static final String TARGET_XML = "./target/testout-XR.xml";
+	private static final String TARGET_EDGE_XML = "./target/testout-XR-Edge.xml";
 
 	public void testXRExport() {
 
@@ -71,8 +85,8 @@ public class XRTest extends TestCase {
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
-		assertTrue(theXML.contains("<ram:ID>" + sellerID + "</ram:ID>"));// must be possible without scheme #
-		assertTrue(theXML.contains("<ram:ID>" + legalOrgID + "</ram:ID>"));// must be possible without scheme #
+		assertTrue(theXML.contains("<ram:ID>" + sellerID + "</ram:ID>")); // must be possible without scheme #
+		assertTrue(theXML.contains("<ram:ID>" + legalOrgID + "</ram:ID>")); // must be possible without scheme #
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
 			.asInt()
 			.isEqualTo(1); //2 errors are OK because there is a known bug
@@ -82,7 +96,7 @@ public class XRTest extends TestCase {
 			.asDouble()
 			.isEqualTo(1);
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML));
+			BufferedWriter writer = Files.newBufferedWriter(Path.of(TARGET_XML));
 			writer.write(theXML);
 			writer.close();
 		} catch (IOException e) {
@@ -102,7 +116,7 @@ public class XRTest extends TestCase {
 		BigDecimal amount = new BigDecimal(amountStr);
 		byte[] b = {12, 13};
 
-		FileAttachment fe1 = new FileAttachment("one.pdf", "application/pdf", "Alternative", b,"Beschreibung");
+		FileAttachment fe1 = new FileAttachment("one.pdf", "application/pdf", "Alternative", b, "Beschreibung");
 		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").setEmail("sender@example.com").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890", "COBADEFXXX").setAccountName("kontoInhaber")))
 			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").setEmail("recipient@sample.org"))
@@ -125,7 +139,7 @@ public class XRTest extends TestCase {
 		assertTrue(theXML.contains("#SKONTO#"));
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
 			.asInt()
-			.isEqualTo(1); //2 errors are OK because there is a known bug
+			.isEqualTo(1); // 2 errors are OK because there is a known bug
 
 		assertThat(theXML).valueByXPath("count(//*[local-name()='PayeeTradeParty'])")
 			.asInt()
@@ -135,7 +149,7 @@ public class XRTest extends TestCase {
 			.asDouble()
 			.isEqualTo(1);
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_EDGE_XML));
+			BufferedWriter writer = Files.newBufferedWriter(Path.of(TARGET_EDGE_XML));
 			writer.write(theXML);
 			writer.close();
 		} catch (IOException e) {
@@ -158,12 +172,18 @@ public class XRTest extends TestCase {
 		assertEquals(attachedFiles.length, 1);
 
 		assertTrue(Arrays.equals(attachedFiles[0].getData(), b));
-		assertEquals("Beschreibung",attachedFiles[0].getDescription());
+		assertEquals("Beschreibung", attachedFiles[0].getDescription());
 
 	}
 
-	public void testIssue830ApplicableHeaderTradeSettlementTax() throws XPathExpressionException, SAXException, IOException, ParserConfigurationException
-	{
+	public void testIssue830ApplicableHeaderTradeSettlementTax() throws XPathExpressionException, SAXException, IOException, ParserConfigurationException {
+		Charge charge = new Charge(BigDecimal.ONE).setReasonCode("64");
+		charge.setTaxRateApplicablePercent(BigDecimal.valueOf(19));
+		Charge itemAllowance = new Allowance().setReasonCode("64").setTotalAmount(BigDecimal.valueOf(4));
+		itemAllowance.setTaxRateApplicablePercent(BigDecimal.ZERO);
+		Charge invoiceAllowance = new Allowance().setReasonCode("64").setTotalAmount(BigDecimal.valueOf(5));
+		invoiceAllowance.setTaxRateApplicablePercent(BigDecimal.valueOf(19));
+
 		final Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 			.setSender(new TradeParty("Test", "teststr", "55232", "teststadt", "DE").setEmail("sender@example.com").addTaxID("DE4711").addVATID("DE0815")
 				.setContact(new Contact("Hans Test", "+49123456789", "test@example.org"))
@@ -177,14 +197,14 @@ public class XRTest extends TestCase {
 			.addItem(new Item(new Product("Testprodukt2", "", "C62", BigDecimal.ZERO).setTaxCategoryCode("AE").setTaxExemptionReason("Reversecharge process"),
 				BigDecimal.ONE, BigDecimal.ONE))
 			.addItem(new Item(new Product("Testprodukt3", "", "C62", BigDecimal.valueOf(19)).setTaxCategoryCode("S"), BigDecimal.valueOf(9), BigDecimal.ONE)
-				.addCharge(new Charge(BigDecimal.ONE).setReasonCode("64").setTaxPercent(BigDecimal.valueOf(19))))
+				.addCharge(charge))
 			.addItem(new Item(
 				new Product("Testprodukt4", "", "C62", BigDecimal.ZERO).setTaxCategoryCode("AE").setTaxExemptionReason("Reversecharge process"),
 				BigDecimal.TEN, BigDecimal.ONE)
-					.addAllowance(new Allowance().setReasonCode("64").setTotalAmount(BigDecimal.valueOf(4)).setTaxPercent(BigDecimal.ZERO)))
+					.addAllowance(itemAllowance))
 			.setPayee(
 				new TradeParty().setName("VR Factoring GmbH").setID("DE813838785").setLegalOrganisation(new LegalOrganisation("391200LDDFJDMIPPMZ54", "0199")))
-			.addAllowance(new Allowance().setReasonCode("64").setTotalAmount(BigDecimal.valueOf(5)).setTaxPercent(BigDecimal.valueOf(19)));
+			.addAllowance(invoiceAllowance);
 
 		final ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 
@@ -209,7 +229,7 @@ public class XRTest extends TestCase {
 		final String basisAmount0 = xpath
 			.compile("*[local-name()='BasisAmount']/text()")
 			.evaluate(taxNode0);
-		Assertions.assertTrue(BigDecimal.TEN.compareTo(new BigDecimal(basisAmount0)) == 0);
+		Assertions.assertEquals(0, BigDecimal.TEN.compareTo(new BigDecimal(basisAmount0)));
 
 		final Node taxNode1 = tradeTaxes.item(1);
 		final String categoryCode1 = xpath
@@ -219,7 +239,7 @@ public class XRTest extends TestCase {
 		final String basisAmount1 = xpath
 			.compile("*[local-name()='BasisAmount']/text()")
 			.evaluate(taxNode1);
-		Assertions.assertTrue(BigDecimal.valueOf(7).compareTo(new BigDecimal(basisAmount1)) == 0);
+		Assertions.assertEquals(0, BigDecimal.valueOf(7).compareTo(new BigDecimal(basisAmount1)));
 
 		final Node taxNode2 = tradeTaxes.item(2);
 		final String categoryCode2 = xpath
@@ -229,9 +249,9 @@ public class XRTest extends TestCase {
 		final String basisAmount2 = xpath
 			.compile("*[local-name()='BasisAmount']/text()")
 			.evaluate(taxNode2);
-		Assertions.assertTrue(BigDecimal.valueOf(5).compareTo(new BigDecimal(basisAmount2)) == 0);
+		Assertions.assertEquals(0, BigDecimal.valueOf(5).compareTo(new BigDecimal(basisAmount2)));
 	}
-	
+
 	public void testXRExportWithoutStreet() {
 
 		// the writing part
@@ -252,7 +272,7 @@ public class XRTest extends TestCase {
 			.asDouble()
 			.isEqualTo(1);
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(TARGET_XML));
+			BufferedWriter writer = Files.newBufferedWriter(Path.of(TARGET_XML));
 			writer.write(theXML);
 			writer.close();
 		} catch (IOException e) {
@@ -260,13 +280,12 @@ public class XRTest extends TestCase {
 		}
 
 	}
-	
+
 	public void testTaxExemptionReasonIssue() {
 		String orgname = "Test company";
 		String number = "123";
 		String amountStr = "1.00";
 		BigDecimal amount = new BigDecimal(amountStr);
-		byte[] b = {12, 13};
 
 		Invoice i = new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
 			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").setEmail("sender@example.com").addTaxID("DE4711").addVATID("DE0815").setContact(new Contact("Hans Test", "+49123456789", "test@example.org")).addBankDetails(new BankDetails("DE12500105170648489890", "COBADEFXXX").setAccountName("kontoInhaber")))
@@ -289,7 +308,7 @@ public class XRTest extends TestCase {
 			.asInt()
 			.isEqualTo(2);
 	}
-	
+
 
 	public void testApplicablePercentInUntaxedService() {
 
@@ -323,6 +342,120 @@ public class XRTest extends TestCase {
 		assertThat(theXML).valueByXPath("count(//*[local-name()='ExemptionReason'])")
 			.asInt()
 			.isEqualTo(2);
+	}
+
+	/**
+	 * BR-O-06: a document-level allowance with VAT category O must not carry RateApplicablePercent.
+	 * BR-AE-06: a document-level allowance with VAT category AE must carry RateApplicablePercent = 0.
+	 */
+	public void testDocumentLevelAllowanceVatRateByCategory() {
+		TradeParty recipient = new TradeParty("Test Buyer", "Buyer Street 1", "10000", "Test City", "DE");
+		String orgname = "Test Seller";
+		String number = "INV-BR-O-06";
+		BigDecimal itemAmount = new BigDecimal("100.00");
+
+		Invoice invoice = new Invoice()
+			.setDueDate(new java.util.Date()).setIssueDate(new java.util.Date()).setDeliveryDate(new java.util.Date())
+			.setSender(new TradeParty(orgname, "Seller Street 1", "10000", "Test City", "DE")
+				.setID("SELLER-001").addTaxID("DE000000000"))
+			.setRecipient(recipient)
+			.setNumber(number)
+			.addItem(new org.mustangproject.Item(
+				new org.mustangproject.Product("Test item", "", "C62", java.math.BigDecimal.ZERO)
+					.setTaxCategoryCode(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)
+					.setTaxExemptionReason("Not subject to VAT"),
+				itemAmount, new java.math.BigDecimal("1.0")));
+
+		// document-level allowance with category O — must NOT produce RateApplicablePercent (BR-O-06)
+		Allowance allowanceO = new Allowance(new BigDecimal("10.00"));
+		allowanceO.setReason("Discount");
+		allowanceO.setTaxCategoryCode(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE);
+		allowanceO.setTaxRateApplicablePercent(BigDecimal.ZERO);
+		invoice.addAllowance(allowanceO);
+
+		// document-level allowance with category AE — MUST produce RateApplicablePercent = 0 (BR-AE-06)
+		Allowance allowanceAE = new Allowance(new BigDecimal("5.00"));
+		allowanceAE.setReason("Reverse charge discount");
+		allowanceAE.setTaxCategoryCode(TaxCategoryCodeTypeConstants.REVERSECHARGE);
+		allowanceAE.setTaxRateApplicablePercent(BigDecimal.ZERO);
+		invoice.addAllowance(allowanceAE);
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("EN16931"));
+		zf2p.generateXML(invoice);
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+
+		// Count RateApplicablePercent inside SpecifiedTradeAllowanceCharge nodes only
+		assertThat(theXML)
+			// The O-category allowance CategoryTradeTax must have no RateApplicablePercent
+			.valueByXPath("count(//*[local-name()='SpecifiedTradeAllowanceCharge'][.//*[local-name()='CategoryCode' and text()='O']]//*[local-name()='RateApplicablePercent'])")
+			.asInt()
+			.isEqualTo(0);
+
+		// The AE-category allowance CategoryTradeTax must have exactly one RateApplicablePercent
+		assertThat(theXML)
+			.valueByXPath("count(//*[local-name()='SpecifiedTradeAllowanceCharge'][.//*[local-name()='CategoryCode' and text()='AE']]//*[local-name()='RateApplicablePercent'])")
+			.asInt()
+			.isEqualTo(1);
+	}
+
+	public void testSellerTaxRepresentative() {
+		// BG-11: seller's fiscal representative, used e.g. for intra-community supplies
+		// from a warehouse in another member state.
+		TradeParty recipient = new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE");
+		Invoice i = createInvoice(recipient)
+			.setTaxRepresentative(new TradeParty("Fiskalvertreter B.V.", "Voorbeeldstraat 1", "1011 AB", "Amsterdam", "NL")
+				.addVATID("NL123456789B01"))
+			// a following element in the same aggregate, to assert schema ordering
+			.setContractReferencedDocument(new ReferencedDocument("contract-4711"));
+
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(i);
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+
+		// the party is present with name, address and its own VAT ID (BT-62/63/66/67/69)
+		assertThat(theXML).valueByXPath("count(//*[local-name()='SellerTaxRepresentativeTradeParty'])")
+			.asInt().isEqualTo(1);
+		assertThat(theXML).valueByXPath("//*[local-name()='SellerTaxRepresentativeTradeParty']/*[local-name()='Name']")
+			.isEqualTo("Fiskalvertreter B.V.");
+		assertThat(theXML).valueByXPath("//*[local-name()='SellerTaxRepresentativeTradeParty']/*[local-name()='PostalTradeAddress']/*[local-name()='CountryID']")
+			.isEqualTo("NL");
+		assertThat(theXML).valueByXPath("//*[local-name()='SellerTaxRepresentativeTradeParty']/*[local-name()='SpecifiedTaxRegistration']/*[local-name()='ID'][@schemeID='VA']")
+			.isEqualTo("NL123456789B01");
+
+		// schema ordering (HeaderTradeAgreementType): after BuyerTradeParty, before ContractReferencedDocument
+		assertThat(theXML).valueByXPath("count(//*[local-name()='SellerTaxRepresentativeTradeParty']/preceding-sibling::*[local-name()='BuyerTradeParty'])")
+			.asInt().isEqualTo(1);
+		assertThat(theXML).valueByXPath("count(//*[local-name()='SellerTaxRepresentativeTradeParty']/following-sibling::*[local-name()='ContractReferencedDocument'])")
+			.asInt().isEqualTo(1);
+	}
+
+	public void testSellerTaxRepresentativeSuppressedInMinimum() {
+		// BG-11 is carried by every profile except Minimum (Basic/BasicWL/EN16931/Extended all
+		// declare and validate SellerTaxRepresentativeTradeParty), so it must be dropped only for Minimum.
+		TradeParty representative = new TradeParty("Fiskalvertreter B.V.", "Voorbeeldstraat 1", "1011 AB", "Amsterdam", "NL")
+			.addVATID("NL123456789B01");
+
+		// Minimum: element must not be emitted
+		Invoice min = createInvoice(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
+			.setTaxRepresentative(representative);
+		ZUGFeRD2PullProvider minProvider = new ZUGFeRD2PullProvider();
+		minProvider.setProfile(Profiles.getByName("Minimum"));
+		minProvider.generateXML(min);
+		assertThat(new String(minProvider.getXML(), StandardCharsets.UTF_8))
+			.valueByXPath("count(//*[local-name()='SellerTaxRepresentativeTradeParty'])")
+			.asInt().isEqualTo(0);
+
+		// Basic: element is part of the profile and must be emitted
+		Invoice basic = createInvoice(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
+			.setTaxRepresentative(representative);
+		ZUGFeRD2PullProvider basicProvider = new ZUGFeRD2PullProvider();
+		basicProvider.setProfile(Profiles.getByName("Basic"));
+		basicProvider.generateXML(basic);
+		assertThat(new String(basicProvider.getXML(), StandardCharsets.UTF_8))
+			.valueByXPath("count(//*[local-name()='SellerTaxRepresentativeTradeParty'])")
+			.asInt().isEqualTo(1);
 	}
 
 	private org.mustangproject.Invoice createInvoice(TradeParty recipient) {

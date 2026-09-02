@@ -1,10 +1,18 @@
 package org.mustangproject.validator;
 
 import java.io.File;
+import java.net.URL;
+import java.util.Arrays;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
+import javax.xml.validation.SchemaFactory;
 
-import org.junit.Test;
+import org.junit.Ignore;
+import org.mustangproject.ZUGFeRD.Version;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
@@ -72,7 +80,7 @@ public class XMLValidatorTest extends ResourceCase {
 			noException = false; //after corrected dependencies no longer expecting a exception here
 		}
 		assertTrue(noException);
-		noException=true;// moving on...
+		noException = true; // moving on...
 		assertTrue(xv.getXMLResult().contains("<error type=\"25\""));
 		ctx.clear();
 
@@ -87,7 +95,7 @@ public class XMLValidatorTest extends ResourceCase {
 			noException = false;
 		}
 		assertTrue(noException);
-		noException=true;// moving on...
+		noException = true; // moving on...
 
 		final String res = xv.getXMLResult();
 		/*OutputStream os = null;
@@ -124,6 +132,8 @@ public class XMLValidatorTest extends ResourceCase {
 			xv.setFilename(tempFile.getAbsolutePath());
 			xv.validate();
 			assertEquals(true, xv.getXMLResult().contains("valid") && !xv.getXMLResult().contains("invalid"));
+
+			assertTrue(xv.getXMLResult().contains("<validator version=\"" + Version.VERSION + "\">"));
 
 			ctx.clear();
 			tempFile = getResourceAsFile("ZUGFeRD-invoice_rabatte_3_abschlag_duepayableamount.xml");
@@ -170,7 +180,7 @@ public class XMLValidatorTest extends ResourceCase {
 			noException = false;
 		}
 		assertTrue(noException);
-		noException=true;// moving on...
+		noException = true; // moving on...
 
 		try {
 			ctx.clear();
@@ -183,8 +193,6 @@ public class XMLValidatorTest extends ResourceCase {
 			noException = false;
 		}
 		assertFalse(noException);
-		noException=true;
-
 	}
 
 	public void testZF1XMLValidation() {
@@ -300,13 +308,41 @@ public class XMLValidatorTest extends ResourceCase {
 			xv.setFilename(tempFile.getAbsolutePath());
 			xv.validate();
 
-			String s="<validation>" + xv.getXMLResult() + "</validation>";
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
 			Source source = Input.fromString(s).build();
 			String content = xpath.evaluate("/validation/summary/@status", source);
 			assertEquals("valid", content);
 			assertThat(s).valueByXPath("count(//warning)")
 				.asInt()
 				.isEqualTo(4);
+
+		} catch (final IrrecoverableValidationError e) {
+			// ignore, will be in XML output anyway
+		}
+
+	}
+
+	public void testDisableArithmeticCheck() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		xv.disableArithmeticCheck();
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("invalidArithmetics.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("valid", content);
+			assertThat(s).valueByXPath("count(//warning)")
+				.asInt()
+				.isLessThan(4);
+			assertThat(s).valueByXPath("count(//warning[contains(text(),\"Arithmetical issue\")])")
+				.asInt()
+				.isEqualTo(0);
 
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
@@ -329,13 +365,46 @@ public class XMLValidatorTest extends ResourceCase {
 			String content = xpath.evaluate("/validation/summary/@status", source);
 			assertEquals("valid", content);
 
-
 		} catch (IrrecoverableValidationError e) {
-
 			noExceptions = false;
 		}
 		assertTrue(noExceptions);
+	}
 
+	public void testXRValidationUNCEFACT() {
+		XPathEngine xpath = new JAXPXPathEngine();
+
+		boolean noExceptions = true;
+		File tempFile = getResourceAsFile("01.01a-INVOICE_uncefact.xml");
+		try {
+			{
+				ValidationContext ctx = new ValidationContext(null);
+				XMLValidator xv = new XMLValidator(ctx);
+				xv.setFilename(tempFile.getAbsolutePath());
+				xv.disableXRechnungXSDValidation = false;
+				xv.validate();
+
+				String s = xv.getXMLResult();
+				Source source = Input.fromString("<validation>" + s + "</validation>").build();
+				String content = xpath.evaluate("/validation/summary/@status", source);
+				assertEquals("invalid", content);
+			}
+			{
+				ValidationContext ctx = new ValidationContext(null);
+				XMLValidator xv = new XMLValidator(ctx);
+				xv.setFilename(tempFile.getAbsolutePath());
+				xv.disableXRechnungXSDValidation = true;
+				xv.validate();
+
+				String s = xv.getXMLResult();
+				Source source = Input.fromString("<validation>" + s + "</validation>").build();
+				String content = xpath.evaluate("/validation/summary/@status", source);
+				assertEquals("valid", content);
+			}
+		} catch (IrrecoverableValidationError e) {
+			noExceptions = false;
+		}
+		assertTrue(noExceptions);
 	}
 
 	public void testFrenchSchematronValidation() {
@@ -441,7 +510,6 @@ public class XMLValidatorTest extends ResourceCase {
 	public void testSubInvoiceLineHierarchy() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
-		final XPathEngine xpath = new JAXPXPathEngine();
 
 		// test invalid hierarchy: GROUP sum does not match DETAIL children sum
 		// GROUP 01 has LineTotalAmount=999, but children sum to 1050 (600+450)
@@ -467,7 +535,6 @@ public class XMLValidatorTest extends ResourceCase {
 			xv.validate();
 
 			String s = "<validation>" + xv.getXMLResult() + "</validation>";
-			// hierarchy mismatch should produce at least one warning
 			assertThat(s).valueByXPath("count(//warning)")
 				.asInt()
 				.isEqualTo(0);
@@ -475,9 +542,149 @@ public class XMLValidatorTest extends ResourceCase {
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
 		}
-
-
-
 	}
 
+	public void testRoundingDifferenceIsInTolerance() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("roundingDifferenceIsInTolerance.xml");
+		boolean noExceptions = true;
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+
+			// must be valid overall
+			String status = xpath.evaluate("/validation/summary/@status", source);
+
+			assertThat(s).valueByXPath("count(//warning)")
+			.asInt()
+			.isEqualTo(1);
+
+			assertEquals("valid", status);
+		} catch (IrrecoverableValidationError e) {
+			noExceptions = false;
+		}
+		assertTrue(noExceptions);
+  }
+
+	public void testRecalc() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("XRechnung_internalRecalcBug.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("valid", content);
+			assertThat(s).valueByXPath("count(//warning)").asInt().isEqualTo(1);
+		} catch (final IrrecoverableValidationError e) {
+			// ignore, will be in XML output anyway
+		}
+	}
+
+	public void testVAT_O() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = getResourceAsFile("valid_with_VAT_O.xml");
+		try {
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("invalid", content);
+			assertThat(s).valueByXPath("count(//warning)").asInt().isEqualTo(1);
+		} catch (final IrrecoverableValidationError e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
+
+	public void testEnhancedFremdwaehrung() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = new File("../library/target/testout-Extended_fremdwaehrung.xml");
+		try {
+			xv.disableNotices = true;
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("valid", content);
+			assertThat(s).valueByXPath("count(//warning)").asInt().isEqualTo(0);
+		} catch (final IrrecoverableValidationError e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
+
+	@Ignore
+	public void testZFSchemas() {
+		String currentZFVersionDir = "ZF_250";
+
+		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		sf.setErrorHandler(new ErrorHandler() {
+			@Override
+			public void warning(SAXParseException e) throws SAXException {
+				fail(e.getMessage());
+			}
+
+			@Override
+			public void fatalError(SAXParseException e) throws SAXException {
+				fail(e.getMessage());
+			}
+
+			@Override
+			public void error(SAXParseException e) throws SAXException {
+				fail(e.getMessage());
+			}
+		});
+		try {
+			for ( String schema : Arrays.asList("/BASIC/FACTUR-X_BASIC.xsd", "/BASIC-WL/FACTUR-X_BASICWL.xsd", "/MINIMUM/FACTUR-X_MINIMUM.xsd", "/EN16931/FACTUR-X_EN16931.xsd", "/EXTENDED/FACTUR-X_EXTENDED.xsd") ) {
+				URL schemaFile = Thread.currentThread().getContextClassLoader().getResource("schema/" + currentZFVersionDir + schema);
+				sf.newSchema(schemaFile);
+			}
+		} catch (SAXException e1) {
+			fail(e1.getMessage());
+		}
+	}
+
+	public void testLineTotalAmount() {
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		File tempFile = new File("../library/target/testout-line-total-4-decimals.xml");
+		try {
+			xv.disableNotices = true;
+			xv.setFilename(tempFile.getAbsolutePath());
+			xv.validate();
+
+			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+			Source source = Input.fromString(s).build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("valid", content);
+			assertThat(s).valueByXPath("count(//warning)").asInt().isEqualTo(1);
+		} catch (final IrrecoverableValidationError e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
 }

@@ -20,36 +20,36 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-public class EinLieferscheinExporter implements IExporter  {
+public class EinLieferscheinExporter implements IExporter {
 	IXMLProvider xmlProvider;
 	IExportableTransaction trans;
 
 	public EinLieferscheinExporter() {
-		xmlProvider=new UBLDAPullProvider();
+		xmlProvider = new UBLDAPullProvider();
 	}
 
 
 	@Override
 	public IExporter setTransaction(IExportableTransaction trans) throws IOException {
-		this.trans=trans;
+		this.trans = trans;
 		return this;
 	}
 
 	@Override
 	public void export(String ZUGFeRDfilename) throws IOException {
-		export(new FileOutputStream(new File(ZUGFeRDfilename)));
+		export(Files.newOutputStream(Path.of(ZUGFeRDfilename)));
 
 	}
 
 	@Override
 	public void export(OutputStream output) throws IOException {
 		xmlProvider.generateXML(trans);
-		byte[] bytes=xmlProvider.getXML();
+		byte[] bytes = xmlProvider.getXML();
 		output.write(bytes, 0, bytes.length);
 	}
 }

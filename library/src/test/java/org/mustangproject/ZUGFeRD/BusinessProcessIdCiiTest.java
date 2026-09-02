@@ -1,18 +1,16 @@
 package org.mustangproject.ZUGFeRD;
 
-import org.junit.jupiter.api.Test;
-import org.mustangproject.ZUGFeRD.Profiles;
-import org.mustangproject.ZUGFeRD.ZUGFeRD2PullProvider;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.mustangproject.Invoice;
-import org.mustangproject.Item;
-import org.mustangproject.Product;
-import org.mustangproject.TradeParty;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
+import org.mustangproject.TradeParty;
 
 /**
  * Unit tests for BT-23 (BusinessProcessSpecifiedDocumentContextParameter/ID) emission in CII output.

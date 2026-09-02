@@ -58,12 +58,28 @@ public class ClassCode {
 		this(listID, code, null);
 	}
 
+	/**
+	 * A UNTDID 7143 schemed classification code
+	 *
+	 * @param code the classification code
+	 */
+	public ClassCode(String code) {
+		this(null, code, null);
+	}
+
 	/***
 	 * bean constructor
 	 */
 	public ClassCode() {
 	}
 
+	/***
+	 * Set the listID for the scheme
+	 * @param listID the scheme
+	 */
+	public void setListID(String listID) {
+		this.listID = listID;
+	}
 
 	/***
 	 * Set the version for the scheme returned by {@link #getListID()}
