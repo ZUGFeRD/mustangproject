@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
  * EN16931 CII validation XSLT enforces for rule BR-CL-08.
  *
  * <p><strong>Architectural Decision Note:</strong> This test reads the XSLT file from the
- * {@code validator} module via a relative file path. This was an active decision to keep this 
- * code-list conformance test in the {@code library} module's normal tests, rather than muddying 
- * the {@code validator} module with a test that only depends on the order of operations and is 
+ * {@code validator} module via a relative file path. This was an active decision to keep this
+ * code-list conformance test in the {@code library} module's normal tests, rather than muddying
+ * the {@code validator} module with a test that only depends on the order of operations and is
  * conceptually a library concern.
  *
  * <p>If the XSLT is updated, this test will fail if {@link SubjectCode} has drifted, making
@@ -41,9 +41,9 @@ public class SubjectCodeListSyncTest extends TestCase {
         if (!xsltFile.exists()) {
             xsltFile = new File("validator/src/main/resources/xslt/en16931schematron/EN16931-CII-validation.xslt");
         }
-        
+
         assertTrue("Could not find XSLT file at " + xsltFile.getAbsolutePath(), xsltFile.exists());
-        
+
         String xslt = new String(Files.readAllBytes(xsltFile.toPath()), StandardCharsets.UTF_8);
 
         // Locate the ram:SubjectCode template block
@@ -71,15 +71,7 @@ public class SubjectCodeListSyncTest extends TestCase {
         Set<String> inNormativeNotEnum = new TreeSet<>(normativeCodes);
         inNormativeNotEnum.removeAll(enumCodes);
 
-        assertTrue(
-            "SubjectCode enum contains codes NOT in the normative BR-CL-08 list (would cause validation failures): "
-                + inEnumNotNormative,
-            inEnumNotNormative.isEmpty()
-        );
-        assertTrue(
-            "SubjectCode enum is MISSING codes from the normative BR-CL-08 list (BT-21 cannot use these codes): "
-                + inNormativeNotEnum,
-            inNormativeNotEnum.isEmpty()
-        );
+        assertTrue("SubjectCode enum contains codes NOT in the normative BR-CL-08 list (would cause validation failures): " + inEnumNotNormative, inEnumNotNormative.isEmpty());
+        assertTrue("SubjectCode enum is MISSING codes from the normative BR-CL-08 list (BT-21 cannot use these codes): " + inNormativeNotEnum, inNormativeNotEnum.isEmpty());
     }
 }

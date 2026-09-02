@@ -37,7 +37,9 @@ import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.xpath.XPathExpressionException;
 
@@ -51,6 +53,7 @@ import org.mustangproject.Charge;
 import org.mustangproject.ClassCode;
 import org.mustangproject.Contact;
 import org.mustangproject.DirectDebit;
+import org.mustangproject.IncludedNote;
 import org.mustangproject.Invoice;
 import org.mustangproject.Item;
 import org.mustangproject.LogisticsServiceCharge;
@@ -59,6 +62,7 @@ import org.mustangproject.Product.TradeProductInstanceType;
 import org.mustangproject.ProductCharacteristicType;
 import org.mustangproject.ReferencedDocument;
 import org.mustangproject.SchemedID;
+import org.mustangproject.SubjectCode;
 import org.mustangproject.TradeParty;
 import org.mustangproject.ZUGFeRD.model.DocumentCodeTypeConstants;
 import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
@@ -1074,7 +1078,7 @@ public class ZF2PushTest extends ResourceCase {
 			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addVATID("DE0815"))
 			.setNumber(number)
 			.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, qty))
-			.addNotes(java.util.Arrays.asList(
+			.addNotes(Arrays.asList(
 				// PMT: was already in enum but missing from the switch (bug fix)
 				new IncludedNote("Payment note", SubjectCode.PMT),
 				// ZZZ: newly added code (enum expansion)
