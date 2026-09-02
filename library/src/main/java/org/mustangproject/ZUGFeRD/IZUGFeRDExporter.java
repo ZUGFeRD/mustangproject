@@ -63,6 +63,7 @@ public interface IZUGFeRDExporter extends Closeable, IExporter {
 	IZUGFeRDExporter setCreator(String creator);
 	IZUGFeRDExporter setConformanceLevel(PDFAConformanceLevel newLevel);
 	IZUGFeRDExporter setEnablePDFAttachmentCompression(boolean enablePDFAttachmentCompression);
+	IZUGFeRDExporter setEnablePDFCompression(boolean enablePDFCompression);
 
 	/***
 	 * set the PDF "producer" application attribute

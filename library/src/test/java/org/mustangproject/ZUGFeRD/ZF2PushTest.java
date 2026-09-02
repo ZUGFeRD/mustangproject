@@ -116,6 +116,7 @@ public class ZF2PushTest extends ResourceCase {
 				.setRoundingAmount(new BigDecimal("1"))
 			);
 
+			ze.setEnablePDFCompression(true);
 			ze.export(TARGET_PDF);
 		} catch (IOException | ParseException e) {
 			fail("Exception should not be raised");
@@ -181,6 +182,9 @@ public class ZF2PushTest extends ResourceCase {
 			);
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
+
+			ze.setEnablePDFCompression(true);
+			ze.setEnablePDFAttachmentCompression(true);
 			ze.export(TARGET_ATTACHMENTSPDF);
 		} catch (IOException e) {
 			fail("IOException should not be raised");
