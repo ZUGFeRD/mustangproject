@@ -1,6 +1,6 @@
 package org.mustangproject.ZUGFeRD;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 import org.mustangproject.FileAttachment;
 import org.mustangproject.Invoice;
 import org.mustangproject.Item;
@@ -13,9 +13,11 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
-public class BG24AttachmentRoundTripTest extends TestCase {
+public class BG24AttachmentRoundTripTest {
 
 	private Invoice createInvoice() {
 		return new Invoice()
@@ -54,6 +56,7 @@ public class BG24AttachmentRoundTripTest extends TestCase {
 	 * ZUGFeRD2PullProvider writes both, so every import/export round trip duplicated the attachment —
 	 * and each further round trip added another copy.
 	 */
+	@Test
 	public void testEmbeddedAttachmentIsNotDuplicatedOnRoundTrip() throws Exception {
 		Invoice i = createInvoice();
 		i.embedFileInXML(new FileAttachment("attachment.pdf", "application/pdf", "Data",
@@ -83,6 +86,7 @@ public class BG24AttachmentRoundTripTest extends TestCase {
 	 * relatedReferencedDocument, because the FileAttachment branch of the writer cannot express that date -
 	 * writing the document twice is recoverable, losing a declared field is not.
 	 */
+	@Test
 	public void testEmbeddedAttachmentWithExtraMetadataIsKept() throws Exception {
 		Invoice i = createInvoice();
 		Date issueDate = new SimpleDateFormat("yyyyMMdd").parse("20260722");
@@ -103,6 +107,7 @@ public class BG24AttachmentRoundTripTest extends TestCase {
 	 * branch of the writer rebuilds BT-122 from the filename, so such an element must keep going into
 	 * relatedReferencedDocument - otherwise the reference would silently come back re-labelled.
 	 */
+	@Test
 	public void testEmbeddedAttachmentWithOwnIssuerAssignedIdIsKept() throws Exception {
 		Invoice i = createInvoice();
 		ReferencedDocument rd = new ReferencedDocument("SUPPORT-DOC-4711");
@@ -120,6 +125,7 @@ public class BG24AttachmentRoundTripTest extends TestCase {
 	 * A 916 reference WITHOUT a binary is not a BG-24 attachment and nothing else carries it, so it
 	 * must still reach relatedReferencedDocument and survive the round trip.
 	 */
+	@Test
 	public void testReferenceWithoutBinaryStillRoundTrips() throws Exception {
 		Invoice i = createInvoice();
 		i.setRelatedReferencedDocument(new ReferencedDocument("related-document-id"));

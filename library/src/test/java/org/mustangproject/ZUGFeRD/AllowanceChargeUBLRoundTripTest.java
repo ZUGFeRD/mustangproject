@@ -18,6 +18,11 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 import org.mustangproject.Allowance;
 import org.mustangproject.CII.CIIToUBL;
 import org.mustangproject.Charge;
@@ -52,6 +57,7 @@ import org.w3c.dom.NodeList;
  */
 public class AllowanceChargeUBLRoundTripTest extends ResourceCase {
 
+	@Test
 	public void testHeaderAndLineAllowanceChargeSurviveCIIToUBLToCIIRoundTrip() throws Exception {
 
 		BigDecimal price = new BigDecimal("100.00");
@@ -116,7 +122,7 @@ public class AllowanceChargeUBLRoundTripTest extends ResourceCase {
 		File ublFile = File.createTempFile("AllowanceChargeRoundTrip-", "-ubl.xml");
 		ublFile.deleteOnExit();
 		new CIIToUBL().convert(ciiFile, ublFile);
-		assertTrue("CIIToUBL24Converter should have produced a non-empty UBL file", ublFile.length() > 0);
+		assertTrue(ublFile.length() > 0, "CIIToUBL24Converter should have produced a non-empty UBL file");
 
 		// 3. ZUGFeRDInvoiceImporter: UBL -> internal model (this is what Bugs 1-4 were fixed in)
 		ZUGFeRDInvoiceImporter importer = new ZUGFeRDInvoiceImporter(new FileInputStream(ublFile));
@@ -139,7 +145,7 @@ public class AllowanceChargeUBLRoundTripTest extends ResourceCase {
 			"//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"SpecifiedTradeAllowanceCharge\"]",
 			finalDoc, XPathConstants.NODESET);
 		Node headerCharge = findByIndicator(headerCharges, true);
-		assertNotNull("header charge (amount-based) should survive the round trip", headerCharge);
+		assertNotNull(headerCharge, "header charge (amount-based) should survive the round trip");
 		assertDecimalEquals(headerChargeAmount, childDecimal(headerCharge, "ActualAmount"));
 		assertEquals("Handling", childText(headerCharge, "Reason"));
 		assertEquals("FC", childText(headerCharge, "ReasonCode"));
@@ -150,10 +156,10 @@ public class AllowanceChargeUBLRoundTripTest extends ResourceCase {
 
 		// --- header level: percent-only allowance (the case that used to crash on import) ---
 		Node headerAllowance = findByIndicator(headerCharges, false);
-		assertNotNull("header allowance (percent-only) should survive the round trip", headerAllowance);
+		assertNotNull(headerAllowance, "header allowance (percent-only) should survive the round trip");
 		assertDecimalEquals(headerAllowancePercent, childDecimal(headerAllowance, "CalculationPercent"));
 		assertDecimalEquals(headerAllowanceBasis, childDecimal(headerAllowance, "BasisAmount"));
-		assertNotNull("ActualAmount must have been computed from percent+basis, not crashed", childDecimal(headerAllowance, "ActualAmount"));
+		assertNotNull(childDecimal(headerAllowance, "ActualAmount"), "ActualAmount must have been computed from percent+basis, not crashed");
 		assertEquals("Loyalty discount", childText(headerAllowance, "Reason"));
 		assertEquals("95", childText(headerAllowance, "ReasonCode"));
 		Node headerAllowanceTax = child(headerAllowance, "CategoryTradeTax");
@@ -183,12 +189,12 @@ public class AllowanceChargeUBLRoundTripTest extends ResourceCase {
 	}
 
 	private static void assertDecimalEquals(BigDecimal expected, BigDecimal actual) {
-		assertNotNull("expected a numeric value but found none", actual);
-		assertEquals("expected " + expected + " but was " + actual, expected, actual);
+		assertNotNull(actual, "expected a numeric value but found none");
+		assertEquals(expected, actual, "expected " + expected + " but was " + actual);
 	}
 
 	private static Node findByIndicator(NodeList nodes, boolean isCharge) {
-		String expected = isCharge ? "true" : "false";
+		String expected = Boolean.toString(isCharge);
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node candidate = nodes.item(i);
 			Node indicatorParent = child(candidate, "ChargeIndicator");

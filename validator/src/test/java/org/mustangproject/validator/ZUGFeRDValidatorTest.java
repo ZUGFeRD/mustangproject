@@ -2,14 +2,16 @@ package org.mustangproject.validator;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import org.junit.jupiter.api.Test;
 
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 public class ZUGFeRDValidatorTest extends ResourceCase {
 
+	@Test
 	public void testPDFValidation() {
 		File tempFile = getResourceAsFile("invalidPDF.pdf");
-		/**used to be Rule	Status
+		/*used to be Rule	Status
 		 Specification: ISO 19005-3:2012, Clause: 6.2.11.4, Test number: 4
 		 If the FontDescriptor dictionary of an embedded CID font contains a CIDSet stream, then it shall identify all CIDs which are present in the font program, regardless of whether a CID in the font is referenced or used by the PDF or not.	Failed
 		 2 occurrences	Hide
@@ -79,9 +81,10 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testPDFValidationInputStream() {
 		byte[] fileBytes = getResourceAsByteArray("invalidPDF.pdf");
-		/**used to be Rule  Status
+		/*used to be Rule  Status
 		 Specification: ISO 19005-3:2012, Clause: 6.2.11.4, Test number: 4
 		 If the FontDescriptor dictionary of an embedded CID font contains a CIDSet stream, then it shall identify all CIDs which are present in the font program, regardless of whether a CID in the font is referenced or used by the PDF or not. Failed
 		 2 occurrences  Hide
@@ -132,6 +135,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testPDFA3AValidation() {
 		File tempFile = getResourceAsFile("zugferd_2p1_EXTENDED_PDFA-3A.pdf");
 
@@ -147,6 +151,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 	 * the XMLValidatorTests only cover the <xml></xml> part, this one includes the root element and
 	 * the global <summary></summary> part as well
 	 */
+	@Test
 	public void testV1XMLValidation() {
 		File tempFile = getResourceAsFile("invalidV1addition.xml");
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
@@ -166,6 +171,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testXR23Validation() {
 		File tempFile = getResourceAsFile("validXRV23.xml");
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
@@ -190,6 +196,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testXR30Validation() {
 
 		File tempFile = getResourceAsFile("validXRV30.xml");
@@ -238,6 +245,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 	 * the XMLValidatorTests only cover the <xml></xml> part, this one includes the root element and
 	 * the global <summary></summary> part as well
 	 */
+	@Test
 	public void testXMLValidation() {
 		File tempFile = getResourceAsFile("validV2.xml");
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
@@ -261,6 +269,8 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 			.isEqualTo("valid");
 
 	}
+
+	@Test
 	public void testXMLFRValidation() {
 		File tempFile = getResourceAsFile("validV2FR.xml");
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
@@ -285,6 +295,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 	}
 
+	@Test
 	public void testVAT_O() {
 		File tempFile = getResourceAsFile("valid_with_VAT_O.xml");
 

@@ -21,6 +21,7 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 import java.io.BufferedWriter;
@@ -31,8 +32,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.BankDetails;
 import org.mustangproject.Contact;
 import org.mustangproject.Invoice;
@@ -41,13 +43,11 @@ import org.mustangproject.LegalOrganisation;
 import org.mustangproject.Product;
 import org.mustangproject.TradeParty;
 
-import junit.framework.TestCase;
-
-
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class FXTest extends TestCase {
+@TestMethodOrder(MethodOrderer.MethodName.class)
+public class FXTest {
 	private static final String TARGET_XML = "./target/testout-FX.xml";
 
+	@Test
 	public void testFXExport() {
 
 		// test creating factur-x invoices to french authorities, i.e. with SIRET number
@@ -91,7 +91,7 @@ public class FXTest extends TestCase {
 				.setRecipient(recipient)
 				.setReferenceNumber("991-01484-64") // leitweg-id
 				// not using any VAT, this is also a test of zero-rated goods:
-				.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal(1.0)));
+				.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal("1.0")));
 	}
 
 }

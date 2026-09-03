@@ -20,13 +20,7 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 
-import junit.framework.TestCase;
-
-public abstract class MustangReaderTestCase extends TestCase implements IExportableTransaction {
-
-	public MustangReaderTestCase(String testName) {
-		super(testName);
-	}
+public abstract class MustangReaderTestCase implements IExportableTransaction {
 
 	@Override
 	public IZUGFeRDTradeSettlement[] getTradeSettlement() {
@@ -98,8 +92,6 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 
 	protected class SenderContact implements IZUGFeRDExportableContact {
 
-
-
 		@Override
 		public String getName() {
 			return "Ingmar N. Fo";
@@ -118,7 +110,6 @@ public abstract class MustangReaderTestCase extends TestCase implements IExporta
 	}
 
 	protected class SenderTradeParty implements IZUGFeRDExportableTradeParty {
-
 
 		@Override
 		public String getName() {

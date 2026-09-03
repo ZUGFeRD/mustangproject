@@ -20,11 +20,15 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.junit.jupiter.api.Test;
 import org.mustangproject.BankDetails;
 import org.mustangproject.Invoice;
 import org.mustangproject.Item;
@@ -32,7 +36,6 @@ import org.mustangproject.LegalOrganisation;
 import org.mustangproject.Product;
 import org.mustangproject.TradeParty;
 
-import junit.framework.TestCase;
 
 /***
  * This is a test to confirm the minimum steps to implement a interface are still sufficient
@@ -40,11 +43,12 @@ import junit.framework.TestCase;
  * @author jstaerk
  *
  */
-public class ProfilesMinimumBasicWLTest extends TestCase {
+public class ProfilesMinimumBasicWLTest {
 
 	private static final String TARGET_PDF_FX_MINIMUM_INV = "./target/testout-Minimum-INV.pdf";
 	private static final String TARGET_PDF_FX_MINIMUM_CN = "./target/testout-Minimum-CN.pdf";
 
+	@Test
 	public void testMinimumCreditNote() {
 		String ownNumber = "NUMFACTURE";
 		String ownBIC = "COBADEFFXXX";
@@ -57,9 +61,9 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 
 			ze.setZUGFeRDVersion(2).setProfile(Profiles.getByName("Minimum")).load(SOURCE_PDF);
 
-			/***
-			 * this is a classical example of a french invoice (very low profile, siret number) and an attempt to answer stackoverflow (!)
-			 * https://stackoverflow.com/questions/72450066/creating-a-min-basic-and-basic-wl-factur-x-using-mustang
+			/*
+			  this is a classical example of a french invoice (very low profile, siret number) and an attempt to answer stackoverflow (!)
+			  https://stackoverflow.com/questions/72450066/creating-a-min-basic-and-basic-wl-factur-x-using-mustang
 			 */
 
 			TradeParty recipient = new TradeParty().setName("Client").setCountry("FR");
@@ -101,6 +105,7 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 	}
 
 
+	@Test
 	public void testMinimumInvoice() {
 		String ownNumber = "NUMFACTURE";
 		String ownIBAN = "DE88200800000970375700";
@@ -112,9 +117,9 @@ public class ProfilesMinimumBasicWLTest extends TestCase {
 
 			ze.setZUGFeRDVersion(2).setProfile(Profiles.getByName("Minimum")).load(SOURCE_PDF);
 
-			/***
-			 * this is a classical example of a french invoice (very low profile, siret number) and an attempt to answer stackoverflow (!)
-			 * https://stackoverflow.com/questions/72450066/creating-a-min-basic-and-basic-wl-factur-x-using-mustang
+			/*
+			  this is a classical example of a french invoice (very low profile, siret number) and an attempt to answer stackoverflow (!)
+			  https://stackoverflow.com/questions/72450066/creating-a-min-basic-and-basic-wl-factur-x-using-mustang
 			 */
 
 			TradeParty recipient = new TradeParty().setName("Client").setCountry("FR");
