@@ -1128,8 +1128,8 @@ public class ZF2PushTest extends ResourceCase {
 		}
 
 		List<IncludedNote> notes = read.getNotesWithSubjectCode();
-		assertNotNull("Notes list should not be null", notes);
-		assertEquals("Expected 3 header notes", 3, notes.size());
+		assertNotNull(notes, "Notes list should not be null");
+		assertEquals(3, notes.size(), "Expected 3 header notes");
 
 		assertEquals(SubjectCode.PMT, notes.get(0).getSubjectCode());
 		assertEquals("Payment note", notes.get(0).getContent());
@@ -1141,7 +1141,7 @@ public class ZF2PushTest extends ResourceCase {
 		assertEquals("General note", notes.get(2).getContent());
 	}
 
-  @Test
+	@Test
 	public void testEmptyDocumentReference() {
 		String orgname = "Test company";
 		String number = "123";
