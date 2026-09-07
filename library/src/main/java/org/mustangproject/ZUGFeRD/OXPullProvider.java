@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.mustangproject.EStandard;
 import org.mustangproject.FileAttachment;
@@ -319,10 +320,10 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 		}
 
 		final Map<BigDecimal, VATAmount> VATPercentAmountMap = calc.getVATPercentAmountMap();
-		for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-			final VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
-			if (amount != null) {
-			  /*final String amountCategoryCode = amount.getCategoryCode();
+		for (final Entry<BigDecimal, VATAmount> currentTaxPercent : VATPercentAmountMap.entrySet()) {
+			if (currentTaxPercent.getValue() != null) {
+			  /*
+			    final String amountCategoryCode = amount.getCategoryCode();
 				final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(amountCategoryCode);
 				xml.append("<ram:ApplicableTradeTax>\n"
 						+ "<ram:CalculatedAmount>" + currencyFormat(amount.getCalculated())
@@ -334,7 +335,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 						+ "<ram:RateApplicablePercent>"
 						+ vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>\n" + "</ram:ApplicableTradeTax>\n");
 
-	 */
+			   */
 			}
 		}
 		if (trans.getDetailedDeliveryPeriodFrom() != null || trans.getDetailedDeliveryPeriodTo() != null) {
@@ -351,18 +352,18 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 		}
 
 		if (trans.getZFCharges() != null && trans.getZFCharges().length > 0) {
-			for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-				if (calc.getChargesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO) != 0) {
+			for (final Entry<BigDecimal, VATAmount> currentTaxPercent : VATPercentAmountMap.entrySet()) {
+				if (calc.getChargesForPercent(currentTaxPercent.getKey()).compareTo(BigDecimal.ZERO) != 0) {
 					xml.append(" <ram:SpecifiedTradeAllowanceCharge>" +
 							"<ram:ChargeIndicator>" +
 							"<udt:Indicator>true</udt:Indicator>" +
 							"</ram:ChargeIndicator>" +
-							"<ram:ActualAmount>" + currencyFormat(calc.getChargesForPercent(currentTaxPercent)) + "</ram:ActualAmount>" +
-							"<ram:Reason>" + XMLTools.encodeXML(calc.getChargeReasonForPercent(currentTaxPercent)) + "</ram:Reason>" +
+							"<ram:ActualAmount>" + currencyFormat(calc.getChargesForPercent(currentTaxPercent.getKey())) + "</ram:ActualAmount>" +
+							"<ram:Reason>" + XMLTools.encodeXML(calc.getChargeReasonForPercent(currentTaxPercent.getKey())) + "</ram:Reason>" +
 							"<ram:CategoryTradeTax>" +
 							"<ram:TypeCode>VAT</ram:TypeCode>" +
-							"<ram:CategoryCode>" + VATPercentAmountMap.get(currentTaxPercent).getCategoryCode() + "</ram:CategoryCode>" +
-							"<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>" +
+							"<ram:CategoryCode>" + currentTaxPercent.getValue().getCategoryCode() + "</ram:CategoryCode>" +
+							"<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent.getKey()) + "</ram:RateApplicablePercent>" +
 							"</ram:CategoryTradeTax>" +
 							"</ram:SpecifiedTradeAllowanceCharge>");
 				}
@@ -370,18 +371,18 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 		}
 
 		if (trans.getZFAllowances() != null && trans.getZFAllowances().length > 0) {
-			for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-				if (calc.getAllowancesForPercent(currentTaxPercent).compareTo(BigDecimal.ZERO) != 0) {
+			for (final Entry<BigDecimal, VATAmount> currentTaxPercent : VATPercentAmountMap.entrySet()) {
+				if (calc.getAllowancesForPercent(currentTaxPercent.getKey()).compareTo(BigDecimal.ZERO) != 0) {
 					xml.append("<ram:SpecifiedTradeAllowanceCharge>" +
 							"<ram:ChargeIndicator>" +
 							"<udt:Indicator>false</udt:Indicator>" +
 							"</ram:ChargeIndicator>" +
-							"<ram:ActualAmount>" + currencyFormat(calc.getAllowancesForPercent(currentTaxPercent)) + "</ram:ActualAmount>" +
-							"<ram:Reason>" + XMLTools.encodeXML(calc.getAllowanceReasonForPercent(currentTaxPercent)) + "</ram:Reason>" +
+							"<ram:ActualAmount>" + currencyFormat(calc.getAllowancesForPercent(currentTaxPercent.getKey())) + "</ram:ActualAmount>" +
+							"<ram:Reason>" + XMLTools.encodeXML(calc.getAllowanceReasonForPercent(currentTaxPercent.getKey())) + "</ram:Reason>" +
 							"<ram:CategoryTradeTax>" +
 							"<ram:TypeCode>VAT</ram:TypeCode>" +
-							"<ram:CategoryCode>" + VATPercentAmountMap.get(currentTaxPercent).getCategoryCode() + "</ram:CategoryCode>" +
-							"<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent) + "</ram:RateApplicablePercent>" +
+							"<ram:CategoryCode>" + currentTaxPercent.getValue().getCategoryCode() + "</ram:CategoryCode>" +
+							"<ram:RateApplicablePercent>" + vatFormat(currentTaxPercent.getKey()) + "</ram:RateApplicablePercent>" +
 							"</ram:CategoryTradeTax>" +
 							"</ram:SpecifiedTradeAllowanceCharge>");
 				}

@@ -661,6 +661,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	 *
 	 * @return String the description, e.g. if it's a vat exempt company
 	 */
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -806,6 +807,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	 * e.g. which floor (if LineTwo=setAdditionalAddress has already been used e.g. for which building)
 	 * @return lineThree
 	 */
+	@Override
 	public String getAdditionalAddressExtension() {
 		return this.additionalAddressExtension;
 	}

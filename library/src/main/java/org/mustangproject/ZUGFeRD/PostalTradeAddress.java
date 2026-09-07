@@ -8,7 +8,7 @@ public class PostalTradeAddress implements IZUGFeRDExportablePostalTradeAddress 
 	private String lineThree;
 	private String cityName;
 	private String countryID;
-	private String CountrySubDivisionName;
+	private String countrySubDivisionName;
 
 	public void setPostCodeCode(String postCodeCode) {
 		this.postCodeCode = postCodeCode;
@@ -35,7 +35,7 @@ public class PostalTradeAddress implements IZUGFeRDExportablePostalTradeAddress 
 	}
 
 	public void setCountrySubDivisionName(String countrySubDivisionName) {
-		CountrySubDivisionName = countrySubDivisionName;
+		this.countrySubDivisionName = countrySubDivisionName;
 	}
 
 	@Override
@@ -70,6 +70,6 @@ public class PostalTradeAddress implements IZUGFeRDExportablePostalTradeAddress 
 
 	@Override
 	public String getCountrySubDivisionName() {
-		return this.CountrySubDivisionName;
+		return this.countrySubDivisionName;
 	}
 }

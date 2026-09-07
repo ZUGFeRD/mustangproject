@@ -46,7 +46,7 @@ public class CalculatedInvoice extends Invoice implements Serializable {
 	 * the total sum of value added taxes in accounting currency
 	 */
 	protected BigDecimal VATTotalInTaxCurrency;
-	protected TransactionCalculator tc; // the object this invoice is calculated wih
+	protected transient TransactionCalculator tc; // the object this invoice is calculated with
 
 	/***
 	 * calculate all sums and products, and taxes

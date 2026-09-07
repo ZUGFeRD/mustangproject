@@ -15,7 +15,7 @@ public class FileAttachment {
 
 
 	/***
-	 * bean contructor
+	 * bean constructor
 	 */
 	public FileAttachment() {
 

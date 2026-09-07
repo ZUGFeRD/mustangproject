@@ -57,7 +57,6 @@ public class CustomXMLProvider implements IXMLProvider {
 	@Override
 	public void generateXML(IExportableTransaction trans) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override

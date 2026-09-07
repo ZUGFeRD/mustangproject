@@ -61,10 +61,14 @@ final class ByteArrayDataSource implements DataSource {
 
 // Try to create an API similar to the 2.x one
 final class PreflightParserHelper {
-	private static File createTmpFile (final InputStream input) throws IOException {
+	private PreflightParserHelper() {
+		// to avoid instantiation
+	}
+
+	private static File createTmpFile(final InputStream input) throws IOException {
 		FileOutputStream fos = null;
 		try {
-			final File tmpFile = File.createTempFile ("mustang-pdf", ".pdf");
+			final File tmpFile = File.createTempFile("mustang-pdf", ".pdf");
 			tmpFile.deleteOnExit ();
 			fos = new FileOutputStream (tmpFile);
 			IOUtils.copy (input, fos);
@@ -78,8 +82,4 @@ final class PreflightParserHelper {
 	public static PreflightParser createPreflightParser (final DataSource dataSource) throws IOException {
 		return new PreflightParser (createTmpFile (dataSource.getInputStream ()));
 	}
-}
-
-final class PDFBoxUpdateMitigation {
-	// Dummy for the name only
 }

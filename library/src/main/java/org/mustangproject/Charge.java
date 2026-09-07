@@ -216,7 +216,6 @@ public class Charge extends TradeTax<Charge> implements IZUGFeRDAllowanceCharge 
 	/**
 	 * @deprecated use getTaxRateApplicablePercent() instead.
 	 */
-	@SuppressWarnings("deprecation")
 	@Deprecated(forRemoval = true, since = "2.24.1")
 	@JsonIgnore
 	@Override
@@ -239,7 +238,6 @@ public class Charge extends TradeTax<Charge> implements IZUGFeRDAllowanceCharge 
 	/**
 	 * @deprecated use getTaxCategoryCode() instead.
 	 */
-	@SuppressWarnings("deprecation")
 	@Deprecated(forRemoval = true, since = "2.24.1")
 	@JsonIgnore
 	@Override
