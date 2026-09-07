@@ -21,6 +21,11 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 import java.io.BufferedWriter;
@@ -31,7 +36,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -41,9 +45,9 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.FixMethodOrder;
-import org.junit.jupiter.api.Assertions;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.Allowance;
 import org.mustangproject.BankDetails;
 import org.mustangproject.CashDiscount;
@@ -62,14 +66,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import junit.framework.TestCase;
-
-
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class XRTest extends TestCase {
+@TestMethodOrder(MethodOrderer.MethodName.class)
+public class XRTest {
 	private static final String TARGET_XML = "./target/testout-XR.xml";
 	private static final String TARGET_EDGE_XML = "./target/testout-XR-Edge.xml";
 
+	@Test
 	public void testXRExport() {
 
 		// the writing part
@@ -106,6 +108,7 @@ public class XRTest extends TestCase {
 	}
 
 
+	@Test
 	public void testXREdgeExport() {
 
 		// the writing part
@@ -125,7 +128,7 @@ public class XRTest extends TestCase {
 			.addCashDiscount(new CashDiscount(new BigDecimal(3), 14))
 			.setReferenceNumber("991-01484-64")//leitweg-id
 			// not using any VAT, this is also a test of zero-rated goods:
-			.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO).setTaxExemptionReason("Kleinunternehmer"), amount, new BigDecimal(1.0)))
+			.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO).setTaxExemptionReason("Kleinunternehmer"), amount, new BigDecimal("1.0")))
 			.setPayee(new TradeParty().setName("VR Factoring GmbH").setID("DE813838785").setLegalOrganisation(new LegalOrganisation("391200LDDFJDMIPPMZ54", "0199")))
 			.embedFileInXML(fe1);
 
@@ -169,13 +172,14 @@ public class XRTest extends TestCase {
 		}
 		FileAttachment[] attachedFiles = readInvoice.getAdditionalReferencedDocuments();
 		assertNotNull(attachedFiles);
-		assertEquals(attachedFiles.length, 1);
+		assertEquals(1, attachedFiles.length);
 
-		assertTrue(Arrays.equals(attachedFiles[0].getData(), b));
+		assertArrayEquals(b, attachedFiles[0].getData());
 		assertEquals("Beschreibung", attachedFiles[0].getDescription());
 
 	}
 
+	@Test
 	public void testIssue830ApplicableHeaderTradeSettlementTax() throws XPathExpressionException, SAXException, IOException, ParserConfigurationException {
 		Charge charge = new Charge(BigDecimal.ONE).setReasonCode("64");
 		charge.setTaxRateApplicablePercent(BigDecimal.valueOf(19));
@@ -220,38 +224,39 @@ public class XRTest extends TestCase {
 			.compile("//*[local-name()='ApplicableHeaderTradeSettlement']/*[local-name()='ApplicableTradeTax']")
 			.evaluate(doc, XPathConstants.NODESET);
 
-		Assertions.assertEquals(3, tradeTaxes.getLength());
+		assertEquals(3, tradeTaxes.getLength());
 		final Node taxNode0 = tradeTaxes.item(0);
 		final String categoryCode0 = xpath
 			.compile("*[local-name()='CategoryCode']/text()")
 			.evaluate(taxNode0);
-		Assertions.assertEquals("E", categoryCode0);
+		assertEquals("E", categoryCode0);
 		final String basisAmount0 = xpath
 			.compile("*[local-name()='BasisAmount']/text()")
 			.evaluate(taxNode0);
-		Assertions.assertEquals(0, BigDecimal.TEN.compareTo(new BigDecimal(basisAmount0)));
+		assertEquals(0, BigDecimal.TEN.compareTo(new BigDecimal(basisAmount0)));
 
 		final Node taxNode1 = tradeTaxes.item(1);
 		final String categoryCode1 = xpath
 			.compile("*[local-name()='CategoryCode']/text()")
 			.evaluate(taxNode1);
-		Assertions.assertEquals("AE", categoryCode1);
+		assertEquals("AE", categoryCode1);
 		final String basisAmount1 = xpath
 			.compile("*[local-name()='BasisAmount']/text()")
 			.evaluate(taxNode1);
-		Assertions.assertEquals(0, BigDecimal.valueOf(7).compareTo(new BigDecimal(basisAmount1)));
+		assertEquals(0, BigDecimal.valueOf(7).compareTo(new BigDecimal(basisAmount1)));
 
 		final Node taxNode2 = tradeTaxes.item(2);
 		final String categoryCode2 = xpath
 			.compile("*[local-name()='CategoryCode']/text()")
 			.evaluate(taxNode2);
-		Assertions.assertEquals("S", categoryCode2);
+		assertEquals("S", categoryCode2);
 		final String basisAmount2 = xpath
 			.compile("*[local-name()='BasisAmount']/text()")
 			.evaluate(taxNode2);
-		Assertions.assertEquals(0, BigDecimal.valueOf(5).compareTo(new BigDecimal(basisAmount2)));
+		assertEquals(0, BigDecimal.valueOf(5).compareTo(new BigDecimal(basisAmount2)));
 	}
 
+	@Test
 	public void testXRExportWithoutStreet() {
 
 		// the writing part
@@ -281,6 +286,7 @@ public class XRTest extends TestCase {
 
 	}
 
+	@Test
 	public void testTaxExemptionReasonIssue() {
 		String orgname = "Test company";
 		String number = "123";
@@ -293,10 +299,9 @@ public class XRTest extends TestCase {
 			.setReferenceNumber("991-01484-64")//leitweg-id
 			// not using any VAT, this is also a test of zero-rated goods:
 			.setNumber(number)
-				.addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO).setTaxCategoryCode("E").setTaxExemptionReason("Kleinunternehmer"), amount, new BigDecimal(1.0)))
-				.addItem(new Item(new Product("Testprodukt2", "", "C62", BigDecimal.ZERO).setTaxCategoryCode("S"), amount, new BigDecimal(1.0)))
+				.addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO).setTaxCategoryCode("E").setTaxExemptionReason("Kleinunternehmer"), amount, new BigDecimal("1.0")))
+				.addItem(new Item(new Product("Testprodukt2", "", "C62", BigDecimal.ZERO).setTaxCategoryCode("S"), amount, new BigDecimal("1.0")))
 			.setPayee( new TradeParty().setName("VR Factoring GmbH").setID("DE813838785").setLegalOrganisation(new LegalOrganisation("391200LDDFJDMIPPMZ54", "0199")));
-
 
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
@@ -310,6 +315,7 @@ public class XRTest extends TestCase {
 	}
 
 
+	@Test
 	public void testApplicablePercentInUntaxedService() {
 
 		// the writing part
@@ -323,7 +329,7 @@ public class XRTest extends TestCase {
 			.setRecipient(recipient)
 			.setReferenceNumber("991-01484-64")//leitweg-id
 			// not using any VAT, this is also a test of zero-rated goods:
-			.setNumber(number).addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "C62", java.math.BigDecimal.ZERO).setTaxCategoryCode(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE).setTaxExemptionReason("Expemtion reason"), amount, new java.math.BigDecimal(1.0)));
+			.setNumber(number).addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "C62", java.math.BigDecimal.ZERO).setTaxCategoryCode(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE).setTaxExemptionReason("Expemtion reason"), amount, new BigDecimal("1.0")));
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 		zf2p.setProfile(Profiles.getByName("XRechnung"));
@@ -348,6 +354,7 @@ public class XRTest extends TestCase {
 	 * BR-O-06: a document-level allowance with VAT category O must not carry RateApplicablePercent.
 	 * BR-AE-06: a document-level allowance with VAT category AE must carry RateApplicablePercent = 0.
 	 */
+	@Test
 	public void testDocumentLevelAllowanceVatRateByCategory() {
 		TradeParty recipient = new TradeParty("Test Buyer", "Buyer Street 1", "10000", "Test City", "DE");
 		String orgname = "Test Seller";
@@ -399,6 +406,7 @@ public class XRTest extends TestCase {
 			.isEqualTo(1);
 	}
 
+	@Test
 	public void testSellerTaxRepresentative() {
 		// BG-11: seller's fiscal representative, used e.g. for intra-community supplies
 		// from a warehouse in another member state.
@@ -431,6 +439,7 @@ public class XRTest extends TestCase {
 			.asInt().isEqualTo(1);
 	}
 
+	@Test
 	public void testSellerTaxRepresentativeSuppressedInMinimum() {
 		// BG-11 is carried by every profile except Minimum (Basic/BasicWL/EN16931/Extended all
 		// declare and validate SellerTaxRepresentativeTradeParty), so it must be dropped only for Minimum.
@@ -468,7 +477,7 @@ public class XRTest extends TestCase {
 			.setRecipient(recipient)
 			.setReferenceNumber("991-01484-64")//leitweg-id
 			// not using any VAT, this is also a test of zero-rated goods:
-			.setNumber(number).addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "C62", java.math.BigDecimal.ZERO), amount, new java.math.BigDecimal(1.0)));
+			.setNumber(number).addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "C62", java.math.BigDecimal.ZERO), amount, new BigDecimal("1.0")));
 	}
 
 }

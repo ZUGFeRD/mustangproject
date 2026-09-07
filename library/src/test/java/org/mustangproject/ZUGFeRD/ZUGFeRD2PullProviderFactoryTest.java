@@ -49,7 +49,7 @@ public class ZUGFeRD2PullProviderFactoryTest {
 	}
 
 	@Test
-	void customCalculatorIsUsed() throws Exception {
+	void customCalculatorIsUsed() {
 
 		TradeParty buyer = new TradeParty("Client X", "3 rue C", "33000", "Bordeaux", "FR");
 		TradeParty seller = new TradeParty("Mairie A", "1 rue A", "75001", "Paris", "FR");

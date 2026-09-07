@@ -20,9 +20,16 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import javax.xml.parsers.ParserConfigurationException;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.ZUGFeRD.ZUGFeRDVisualizer.Language;
 import org.mustangproject.util.ByteArraySearcher;
 
@@ -33,20 +40,23 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class VisualizationTest extends ResourceCase {
 
 	private static final String TARGET_PDF_CII = "./target/testout-Visualization-cii.pdf";
 	private static final String TARGET_PDF_UBL = "./target/testout-Visualization-cii.pdf";
 
+	@Test
 	public void testCIIVisualizationBasic() {
 		this.runZUGFeRDVisualization("factur-x.xml", "factur-x-vis.fr.html", Language.FR);
 	}
 
+	@Test
 	public void testCIIVisualizationExtended() {
 		this.runZUGFeRDVisualization("factur-x-extended.xml", "factur-x-vis-extended.de.html", Language.DE);
 	}
 
+	@Test
 	public void testCIIVisualizationMultiplePaymentMeansBIC() {
 		File CIIinputFile = getResourceAsFile("multiple-payment-means.cii.xml");
 		String result = null;
@@ -78,10 +88,12 @@ public class VisualizationTest extends ResourceCase {
 		assertTrue(result.contains("SOLADEST600"));
 	}
 
+	@Test
 	public void testUBLCreditNoteVisualizationBasic() {
 		this.runZUGFeRDVisualization("ubl-creditnote.xml", "factur-x-vis-ubl-creditnote.en.html", Language.EN);
 	}
 
+	@Test
 	public void testUBLVisualizationBasic() {
 		this.runZUGFeRDVisualization("ubl/01.01a-INVOICE.ubl.xml", "factur-x-vis-ubl.en.html", Language.EN);
 	}
@@ -97,8 +109,7 @@ public class VisualizationTest extends ResourceCase {
 			Files.write(Path.of("./target/testout-" + resultFileName), result.getBytes(StandardCharsets.UTF_8));
 
 			File expectedResult = getResourceAsFile(resultFileName);
-			expected = new String(Files.readAllBytes(expectedResult.toPath()), StandardCharsets.UTF_8)
-				;
+			expected = Files.readString(expectedResult.toPath());
 
 		} catch (UnsupportedOperationException e) {
 			fail("UnsupportedOperationException should not happen: " + e.getMessage());
@@ -126,6 +137,7 @@ public class VisualizationTest extends ResourceCase {
 	}
 
 
+	@Test
 	public void testPDFVisualizationCII() {
 		File CIIinputFile = getResourceAsFile("cii/01.01a-INVOICE.cii.xml");
 
@@ -146,6 +158,7 @@ public class VisualizationTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testPDFVisualizationCIIEnglish() {
 		File CIIinputFile = getResourceAsFile("cii/01.01a-INVOICE.cii.xml");
 
@@ -166,6 +179,7 @@ public class VisualizationTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testPDFVisualizationCIIFrench() {
 		File CIIinputFile = getResourceAsFile("cii/01.01a-INVOICE.cii.xml");
 
@@ -186,6 +200,7 @@ public class VisualizationTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testPDFVisualizationUBL() {
 
 		File UBLinputFile = getResourceAsFile("ubl/01.01a-INVOICE.ubl.xml");
@@ -208,6 +223,7 @@ public class VisualizationTest extends ResourceCase {
 		}
 	}
 
+	@Test
 	public void testPDFVisualizationUBLCreditNote() {
 
 		File UBLinputFile = getResourceAsFile("ubl/UBL-CreditNote-2.1-Example.ubl.xml");

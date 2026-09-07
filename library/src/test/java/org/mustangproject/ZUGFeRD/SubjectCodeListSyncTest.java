@@ -1,11 +1,10 @@
 package org.mustangproject.ZUGFeRD;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 import org.mustangproject.SubjectCode;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,6 +12,8 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Asserts that {@link SubjectCode} contains exactly the same set of codes that the bundled
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
  * <p>If the XSLT is updated, this test will fail if {@link SubjectCode} has drifted, making
  * the discrepancy immediately visible.
  */
-public class SubjectCodeListSyncTest extends TestCase {
+public class SubjectCodeListSyncTest {
 
     private static final String XSLT_FILE_PATH = "../validator/src/main/resources/xslt/en16931schematron/EN16931-CII-validation.xslt";
 
@@ -35,6 +36,7 @@ public class SubjectCodeListSyncTest extends TestCase {
      * Extracts the BR-CL-08 token list from the XSLT by finding the template that matches
      * {@code ram:SubjectCode} and then parsing the {@code contains(' ... ')} expression in it.
      */
+	@Test
     public void testSubjectCodeEnumMatchesBrCl08() throws Exception {
         File xsltFile = new File(XSLT_FILE_PATH);
         // Fallback for IDEs running from the project root instead of the library module root
@@ -42,21 +44,21 @@ public class SubjectCodeListSyncTest extends TestCase {
             xsltFile = new File("validator/src/main/resources/xslt/en16931schematron/EN16931-CII-validation.xslt");
         }
 
-        assertTrue("Could not find XSLT file at " + xsltFile.getAbsolutePath(), xsltFile.exists());
+        assertTrue(xsltFile.exists(), "Could not find XSLT file at " + xsltFile.getAbsolutePath());
 
-        String xslt = new String(Files.readAllBytes(xsltFile.toPath()), StandardCharsets.UTF_8);
+        String xslt = Files.readString(xsltFile.toPath());
 
         // Locate the ram:SubjectCode template block
         int templateIdx = xslt.indexOf("match=\"ram:SubjectCode\"");
-        assertTrue("Could not find ram:SubjectCode template in XSLT", templateIdx >= 0);
+        assertTrue(templateIdx >= 0, "Could not find ram:SubjectCode template in XSLT");
 
         // Within that block, find the contains(' AAA ... ZZZ ') token list
         int afterTemplate = xslt.indexOf("contains('", templateIdx);
-        assertTrue("Could not find contains(' ... ') expression after ram:SubjectCode template", afterTemplate >= 0);
+        assertTrue(afterTemplate >= 0, "Could not find contains(' ... ') expression after ram:SubjectCode template");
 
         Pattern tokenListPattern = Pattern.compile("contains\\('\\s+([^']+?)\\s+',");
         Matcher m = tokenListPattern.matcher(xslt.substring(afterTemplate, afterTemplate + 50000));
-        assertTrue("Could not parse token list from BR-CL-08 rule", m.find());
+        assertTrue(m.find(), "Could not parse token list from BR-CL-08 rule");
 
         String tokenString = m.group(1).trim();
         Set<String> normativeCodes = new HashSet<>(Arrays.asList(tokenString.split("\\s+")));
@@ -71,7 +73,7 @@ public class SubjectCodeListSyncTest extends TestCase {
         Set<String> inNormativeNotEnum = new TreeSet<>(normativeCodes);
         inNormativeNotEnum.removeAll(enumCodes);
 
-        assertTrue("SubjectCode enum contains codes NOT in the normative BR-CL-08 list (would cause validation failures): " + inEnumNotNormative, inEnumNotNormative.isEmpty());
-        assertTrue("SubjectCode enum is MISSING codes from the normative BR-CL-08 list (BT-21 cannot use these codes): " + inNormativeNotEnum, inNormativeNotEnum.isEmpty());
+        assertTrue(inEnumNotNormative.isEmpty(), "SubjectCode enum contains codes NOT in the normative BR-CL-08 list (would cause validation failures): " + inEnumNotNormative);
+        assertTrue(inNormativeNotEnum.isEmpty(), "SubjectCode enum is MISSING codes from the normative BR-CL-08 list (BT-21 cannot use these codes): " + inNormativeNotEnum);
     }
 }

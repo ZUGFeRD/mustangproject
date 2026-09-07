@@ -1,8 +1,8 @@
 package org.mustangproject.ZUGFeRD;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -11,10 +11,11 @@ import java.util.Date;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mustangproject.Invoice;
 
 public class InvoicingPeriodTestCase {
+
 	@Test
 	public void readBillingSpecification() throws IOException {
 		final String file = ResourceUtilities.readFile(Charset.defaultCharset(), "src/test/resources/factur-x_invoicingPeriod.xml");
