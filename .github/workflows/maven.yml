@@ -19,4 +19,4 @@ jobs:
         java-version: '11'
         cache: 'maven' #cache/restore any dependencies to improve the workflow execution time
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B verify --file pom.xml

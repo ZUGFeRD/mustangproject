@@ -49,6 +49,7 @@
          -->
         <version.org.apache.maven.plugins.maven-compiler-plugin>3.13.0</version.org.apache.maven.plugins.maven-compiler-plugin>
         <version.org.apache.maven.plugins.maven-deploy-plugin>3.0.0-M1</version.org.apache.maven.plugins.maven-deploy-plugin>
+        <version.org.apache.maven.plugins.maven-failsafe-plugin>3.5.3</version.org.apache.maven.plugins.maven-failsafe-plugin>
         <version.org.apache.maven.plugins.maven-gpg-plugin>1.6</version.org.apache.maven.plugins.maven-gpg-plugin>
         <version.org.apache.maven.plugins.maven-jar-plugin>3.4.2</version.org.apache.maven.plugins.maven-jar-plugin>
         <version.org.apache.maven.plugins.maven-javadoc-plugin>3.0.1</version.org.apache.maven.plugins.maven-javadoc-plugin>
