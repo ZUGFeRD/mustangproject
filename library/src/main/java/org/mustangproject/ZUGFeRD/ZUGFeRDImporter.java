@@ -34,6 +34,7 @@ import org.mustangproject.ReferencedDocument;
 import org.mustangproject.SchemedID;
 import org.mustangproject.XMLTools;
 import org.mustangproject.util.NodeMap;
+import org.mustangproject.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -282,12 +283,17 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return the Taxpoint Date
 	 */
 	public String getTaxPointDate() {
+		String s;
 		try {
-			return extractString("//*[local-name() = 'ActualDeliverySupplyChainEvent']//*[local-name() = 'OccurrenceDateTime']//*[local-name() = 'DateTimeString']");
+			s = extractString("//*[local-name() = 'ApplicableHeaderTradeSettlement']//*[local-name() = 'ApplicableTradeTax']//*[local-name() = 'TaxPointDate']//*[local-name() = 'DateString']");
+			if (StringUtils.isBlank(s)) {
+				s = extractString("//*[local-name() = 'ActualDeliverySupplyChainEvent']//*[local-name() = 'OccurrenceDateTime']//*[local-name() = 'DateTimeString']");
+			}
 		} catch (final Exception e) {
 			// Exception was already logged
-			return "";
+			s = "";
 		}
+		return s;
 	}
 
 	/**

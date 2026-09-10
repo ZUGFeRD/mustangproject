@@ -1190,4 +1190,31 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		assertEquals(2, invoice.getZFItems()[1].getProduct().getAllowances().length );
 	}
+
+	@Test
+	public void BT7ImporterReproducer() throws IOException, ParseException, XPathExpressionException {
+		String xml = String.join("\n",
+				"<rsm:CrossIndustryInvoice",
+				" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\"",
+				" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100\"",
+				" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100\">",
+				"<rsm:ExchangedDocument><ram:ID>BT7-DEMO</ram:ID>",
+				"<ram:IssueDateTime><udt:DateTimeString format=\"102\">20260618</udt:DateTimeString></ram:IssueDateTime>",
+				"</rsm:ExchangedDocument><rsm:SupplyChainTradeTransaction>",
+				"<ram:ApplicableHeaderTradeDelivery><ram:ActualDeliverySupplyChainEvent>",
+				"<ram:OccurrenceDateTime><udt:DateTimeString format=\"102\">20260617</udt:DateTimeString></ram:OccurrenceDateTime>",
+				"</ram:ActualDeliverySupplyChainEvent></ram:ApplicableHeaderTradeDelivery>",
+				"<ram:ApplicableHeaderTradeSettlement><ram:ApplicableTradeTax>",
+				"<ram:TaxPointDate><udt:DateString format=\"102\">20260616</udt:DateString></ram:TaxPointDate>",
+				"</ram:ApplicableTradeTax></ram:ApplicableHeaderTradeSettlement>",
+				"</rsm:SupplyChainTradeTransaction></rsm:CrossIndustryInvoice>");
+		ZUGFeRDImporter importer = new ZUGFeRDImporter();
+		importer.setRawXML(xml.getBytes(StandardCharsets.UTF_8), false);
+		Invoice invoice = importer.extractInvoice();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		assertEquals("2026-06-16", sdf.format(invoice.getTaxPointDate()));
+		assertEquals("20260616", importer.getTaxPointDate());
+		assertEquals("2026-06-17", sdf.format(invoice.getDeliveryDate()));
+	}
 }
