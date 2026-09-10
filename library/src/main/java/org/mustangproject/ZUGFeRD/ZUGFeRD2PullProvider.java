@@ -920,6 +920,12 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					if (displayExemptionReason && amount.getVatExemptionReasonCode() != null) {
 						exemptionReasonCodeXML = "<ram:ExemptionReasonCode>" + XMLTools.encodeXML(amount.getVatExemptionReasonCode()) + "</ram:ExemptionReasonCode>";
 					}
+					String taxPointDateXML = "";
+					if (getProfile() == Profiles.getByName("EN16931") || getProfile() == Profiles.getByName("EXTENDED")) {
+						if (taxPointDate != null) {
+							taxPointDateXML = "<ram:TaxPointDate><udt:DateString format=\"102\">" + dateFormat102.format(taxPointDate) + "</udt:DateString></ram:TaxPointDate>";
+						}
+					}
 
 					xml.append("<ram:ApplicableTradeTax>"
 						+ "<ram:CalculatedAmount>" + currencyFormat(amount.getCalculated())
@@ -929,7 +935,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ "<ram:BasisAmount>" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>" // currencyID=\"EUR\"
 						+ "<ram:CategoryCode>" + amountCategoryCode + "</ram:CategoryCode>"
 						+ exemptionReasonCodeXML
-						+ (taxPointDate != null ? "<ram:TaxPointDate><udt:DateString format=\"102\">" + dateFormat102.format(taxPointDate) + "</udt:DateString></ram:TaxPointDate>" : "")
+						+ taxPointDateXML
 						+ (amountDueDateTypeCode != null ? "<ram:DueDateTypeCode>" + amountDueDateTypeCode + "</ram:DueDateTypeCode>" : ""));
 					xml.append("<ram:RateApplicablePercent>"
 						+ vatFormat(amount.getApplicablePercent()) + "</ram:RateApplicablePercent>");
