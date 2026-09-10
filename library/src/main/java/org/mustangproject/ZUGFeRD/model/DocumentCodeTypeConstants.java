@@ -26,16 +26,25 @@ public class DocumentCodeTypeConstants {
 	 * default invoice typecode
 	 */
 	public static final String INVOICE = "380";
+
 	/***
 	 * typecode of a credit note, with reference to an invoice.
 	 * Used in all(?) non-german legislations like france to correct a invoice
 	 */
 	public static final String CREDITNOTE = "381";
 	public static final String DEBITNOTE = "84";
+
 	/***
 	 * typecode for a german corrective invoice (negative qtys)
 	 */
 	public static final String CORRECTEDINVOICE = "384";
 	public static final String SELFBILLING = "389";
 	public static final String PARTIAL_BILLING = "326";
+
+	/***
+	 * Special typecodes for France
+	 */
+	public static final String SELFBILLING_CREDITNOTE = "261"; // Self billed credit note (not accepted by CHORUSPRO) (=381 + 389)
+	public static final String PREPAYMENT_INVOICE = "386"; // Prepayment invoice
+	public static final String INVOICE_INFORMATION = "751"; // Invoice information for accounting purposes (not accepted by CHORUSPRO)
 }

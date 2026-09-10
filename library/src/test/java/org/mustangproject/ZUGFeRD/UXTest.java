@@ -19,13 +19,16 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
-import junit.framework.TestCase;
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class UXTest extends TestCase {
+@TestMethodOrder(MethodOrderer.MethodName.class)
+public class UXTest {
+
 	final String TARGET_PDF = "./target/testout-UX.pdf";
+
+	@Test
 	public void testShortExport() {
 
 		// the writing part

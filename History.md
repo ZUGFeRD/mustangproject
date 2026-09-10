@@ -1,3 +1,8 @@
+- #1244 Import all GrossPriceProductTradePrice/AppliedTradeAllowanceCharge elements.
+- #1248 Support ReceivableSpecifiedTradeAccountingAccount (BT-19).
+- #1255 Add rules fired / failed to PDF validation result from xml.
+
+
 2.26.0
 =======
 2026-08-25

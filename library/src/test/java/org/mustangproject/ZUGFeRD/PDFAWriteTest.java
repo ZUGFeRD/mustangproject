@@ -21,6 +21,8 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,8 +31,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.BankDetails;
 import org.mustangproject.Contact;
 import org.mustangproject.Invoice;
@@ -38,14 +41,14 @@ import org.mustangproject.Item;
 import org.mustangproject.Product;
 import org.mustangproject.TradeParty;
 
-
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class PDFAWriteTest extends ResourceCase {
 	private static final String TARGET_PDF_FROM_A1 = "./target/testout-PDFA3FromA3.pdf";
 	private static final String TARGET_PDF_FROM_A3 = "./target/testout-PDFA3FromA3.pdf";
 	private static final String TARGET_PDF_FROM_A3_UNKNOWN = "./target/testout-PDFA3FromUnkownA3.pdf";
 	private static final String TARGET_PDF_FROM_A1_UNKNOWN = "./target/testout-PDFA3FromUnkownA1.pdf";
 
+	@Test
 	public void testA1KnownExport() {
 		// test creating factur-x invoices to french authorities, i.e. with SIRET number
 		// the writing part
@@ -65,6 +68,7 @@ public class PDFAWriteTest extends ResourceCase {
 		assertEquals(0, exceptions);
 	}
 
+	@Test
 	public void testA3KnownExport() {
 		TradeParty recipient = new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE");
 
@@ -82,6 +86,7 @@ public class PDFAWriteTest extends ResourceCase {
 		assertEquals(0, exceptions);
 	}
 
+	@Test
 	public void testA3UnknownExport() {
 		// test creating factur-x invoices to french authorities, i.e. with SIRET number
 		// the writing part
@@ -101,6 +106,7 @@ public class PDFAWriteTest extends ResourceCase {
 		assertEquals(0, exceptions);
 	}
 
+	@Test
 	public void testA3UnknownExportFromA1() {
 		// test creating factur-x invoices to french authorities, i.e. with SIRET number
 		// the writing part
@@ -131,7 +137,7 @@ public class PDFAWriteTest extends ResourceCase {
 				.setRecipient(recipient)
 				.setReferenceNumber("991-01484-64") //leitweg-id
 				// not using any VAT, this is also a test of zero-rated goods:
-				.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal(1.0)));
+				.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO), amount, new BigDecimal("1.0")));
 	}
 
 }

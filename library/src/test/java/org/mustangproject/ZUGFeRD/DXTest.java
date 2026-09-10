@@ -19,6 +19,10 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 import java.io.BufferedWriter;
@@ -37,28 +41,18 @@ import java.util.GregorianCalendar;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.EStandard;
 import org.mustangproject.Invoice;
 import org.mustangproject.TradeParty;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class DXTest extends MustangReaderTestCase {
 	private static final String TARGET_PDF = "./target/testout-DX.pdf";
 	private static final String TARGET_XML = "./target/testout-DX.xml";
 
-	/**
-	 * Create the test case
-	 *
-	 * @param testName name of the test case
-	 */
-	public DXTest(String testName) {
-		super(testName);
-	}
 
 	protected class EdgeProduct implements IZUGFeRDExportableProduct {
 		private String description, name, unit;
@@ -262,12 +256,6 @@ public class DXTest extends MustangReaderTestCase {
 		return "AB321";
 	}
 
-	/**
-	 * @return the suite of tests being tested
-	 */
-	public static Test suite() {
-		return new TestSuite(DXTest.class);
-	}
 
 	// //////// TESTS
 	// //////////////////////////////////////////////////////////////////////////////////////////
@@ -278,6 +266,7 @@ public class DXTest extends MustangReaderTestCase {
 	 * metadata, writes to @{code ./target/testout-*} and then imports to check the
 	 * values.
 	 */
+	@Test
 	public void testDXExport() {
 
 		// the writing part
@@ -303,7 +292,7 @@ public class DXTest extends MustangReaderTestCase {
 		assertTrue(zi.getUTF8().contains("<ram:ShipToTradeParty>"));
 		assertFalse(zi.getUTF8().contains("EUR"));
 
-		assertEquals(zi.getHolder(), getOwnOrganisationName());
+		assertEquals(getOwnOrganisationName(), zi.getHolder());
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(TARGET_PDF);
 		try {
 			Invoice i = zii.extractInvoice();
@@ -326,6 +315,7 @@ public class DXTest extends MustangReaderTestCase {
 
 	}
 
+	@Test
 	public void testDAGeneration() {
 
 		// the writing part
@@ -354,8 +344,8 @@ public class DXTest extends MustangReaderTestCase {
 				.isEqualToIgnoringWhitespace("20210426");
 
 
-
 	}
+
 	private Invoice createDA(TradeParty recipient) {
 		String orgname = "Test company";
 		String number = "123";
@@ -371,7 +361,7 @@ public class DXTest extends MustangReaderTestCase {
 					.setReferenceNumber("991-01484-64")//leitweg-id
 					// not using any VAT, this is also a test of zero-rated goods:
 					.setNumber(number)
-					.addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "P75", BigDecimal.ZERO), amount, new BigDecimal(1.0))).addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "P85", BigDecimal.ZERO), amount, new BigDecimal(1.0)));
+					.addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "P75", BigDecimal.ZERO), amount, new BigDecimal("1.0"))).addItem(new org.mustangproject.Item(new org.mustangproject.Product("Testprodukt", "", "P85", BigDecimal.ZERO), amount, new BigDecimal("1.0")));
 		} catch (ParseException e) {
 			e.printStackTrace();
 			return null;

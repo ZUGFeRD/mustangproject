@@ -21,6 +21,11 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -30,25 +35,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.Invoice;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class ZF2Test extends MustangReaderTestCase {
 	private static final String TARGET_PDF = "./target/testout-ZF2new.pdf";
 
-	/**
-	 * Create the test case
-	 *
-	 * @param testName name of the test case
-	 */
-	public ZF2Test(String testName) {
-		super(testName);
-	}
 
 	@Override
 	public Date getDeliveryDate() {
@@ -147,12 +142,6 @@ public class ZF2Test extends MustangReaderTestCase {
 		return "AB321";
 	}
 
-	/**
-	 * @return the suite of tests being tested
-	 */
-	public static Test suite() {
-		return new TestSuite(ZF2Test.class);
-	}
 
 	// //////// TESTS
 	// //////////////////////////////////////////////////////////////////////////////////////////
@@ -163,6 +152,7 @@ public class ZF2Test extends MustangReaderTestCase {
 	 * metadata, writes to @{code ./target/testout-*} and then imports to check the
 	 * values.
 	 */
+	@Test
 	public void testExport() {
 		try {
 			// the writing part
@@ -187,59 +177,59 @@ public class ZF2Test extends MustangReaderTestCase {
 			assertTrue(zi.getUTF8().contains("<ram:DueDateDateTime>"));
 
 			// Reading ZUGFeRD
-			assertEquals(zi.getAmount(), "571.04");
-			assertEquals(zi.getInvoiceID(), "RE-20170509/505");
-			assertEquals(zi.getZUGFeRDProfil(), "COMFORT");
-			assertEquals(zi.getInvoiceCurrencyCode(), "EUR");
-			assertEquals(zi.getIssuerAssignedID(), "");
-			assertEquals(zi.getIssueDate(), "20170509");
-			assertEquals(zi.getTaxPointDate(), "20170507");
-			assertEquals(zi.getPaymentTerms(), "Zahlbar ohne Abzug bis zum 30.05.2017");
-			assertEquals(zi.getLineTotalAmount(), "496.00");
-			assertEquals(zi.getTaxBasisTotalAmount(), "496.00");
-			assertEquals(zi.getTaxTotalAmount(), "75.04");
-			assertEquals(zi.getRoundingAmount(), "");
-			assertEquals(zi.getPaidAmount(), "0.00");
-			assertEquals(zi.getBuyerTradePartyName(), "Theodor Est");
-			assertEquals(zi.getBuyerTradePartyGlobalID(), "");
-			assertEquals(zi.getSellerTradePartyGlobalID(), "");
-			assertEquals(zi.getBuyerTradePartyID(), "DE999999999");
-			assertEquals(zi.getBuyertradePartySpecifiedTaxRegistrationID(), "DE999999999");
-			assertEquals(zi.getIncludedNote(), "");
-			assertEquals(zi.getHolder(), getOwnOrganisationName());
-			assertEquals(zi.getDocumentCode(), "380");
-			assertEquals(zi.getReference(), "AB321");
-			assertEquals(zi.getAmount(), "571.04");
-			assertEquals(zi.getBIC(), "COBADEFFXXX");
-			assertEquals(zi.getIBAN(), "DE88 2008 0000 0970 3757 00");
-			assertEquals(zi.getHolder(), getOwnOrganisationName());
-			assertEquals(zi.getForeignReference(), getNumber());
-			assertEquals(zi.getBuyerTradePartyAddress().getPostcodeCode(), "88802");
-			assertEquals(zi.getBuyerTradePartyAddress().getLineOne(), "Bahnstr. 42");
-			assertEquals(zi.getBuyerTradePartyAddress().getLineTwo(), "Hinterhaus");
-			assertEquals(zi.getBuyerTradePartyAddress().getLineThree(), "Zweiter Stock");
-			assertEquals(zi.getBuyerTradePartyAddress().getCountrySubDivisionName(), null);
-			assertEquals(zi.getBuyerTradePartyAddress().getCountryID(), "DE");
-			assertEquals(zi.getBuyerTradePartyAddress().getCityName(), "Spielkreis");
-			assertEquals(zi.getSellerTradePartyAddress().getPostcodeCode(), "12345");
-			assertEquals(zi.getSellerTradePartyAddress().getLineOne(), "Ecke 12");
-			assertEquals(zi.getSellerTradePartyAddress().getLineTwo(), null);
-			assertEquals(zi.getSellerTradePartyAddress().getLineThree(), null);
-			assertEquals(zi.getSellerTradePartyAddress().getCountrySubDivisionName(), null);
-			assertEquals(zi.getSellerTradePartyAddress().getCountryID(), "DE");
-			assertEquals(zi.getSellerTradePartyAddress().getCityName(), "Stadthausen");
+			assertEquals("571.04", zi.getAmount());
+			assertEquals("RE-20170509/505", zi.getInvoiceID());
+			assertEquals("COMFORT", zi.getZUGFeRDProfil());
+			assertEquals("EUR", zi.getInvoiceCurrencyCode());
+			assertEquals("", zi.getIssuerAssignedID());
+			assertEquals("20170509", zi.getIssueDate());
+			assertEquals("20170507", zi.getTaxPointDate());
+			assertEquals("Zahlbar ohne Abzug bis zum 30.05.2017", zi.getPaymentTerms());
+			assertEquals("496.00", zi.getLineTotalAmount());
+			assertEquals("496.00", zi.getTaxBasisTotalAmount());
+			assertEquals("75.04", zi.getTaxTotalAmount());
+			assertEquals("", zi.getRoundingAmount());
+			assertEquals("0.00", zi.getPaidAmount());
+			assertEquals("Theodor Est", zi.getBuyerTradePartyName());
+			assertEquals("", zi.getBuyerTradePartyGlobalID());
+			assertEquals("", zi.getSellerTradePartyGlobalID());
+			assertEquals("DE999999999", zi.getBuyerTradePartyID());
+			assertEquals("DE999999999", zi.getBuyertradePartySpecifiedTaxRegistrationID());
+			assertEquals("", zi.getIncludedNote());
+			assertEquals(getOwnOrganisationName(), zi.getHolder());
+			assertEquals("380", zi.getDocumentCode());
+			assertEquals("AB321", zi.getReference());
+			assertEquals("571.04", zi.getAmount());
+			assertEquals("COBADEFFXXX", zi.getBIC());
+			assertEquals("DE88 2008 0000 0970 3757 00", zi.getIBAN());
+			assertEquals(getOwnOrganisationName(), zi.getHolder());
+			assertEquals(getNumber(), zi.getForeignReference());
+			assertEquals("88802", zi.getBuyerTradePartyAddress().getPostcodeCode());
+			assertEquals("Bahnstr. 42", zi.getBuyerTradePartyAddress().getLineOne());
+			assertEquals("Hinterhaus", zi.getBuyerTradePartyAddress().getLineTwo());
+			assertEquals("Zweiter Stock", zi.getBuyerTradePartyAddress().getLineThree());
+			assertNull(zi.getBuyerTradePartyAddress().getCountrySubDivisionName());
+			assertEquals("DE", zi.getBuyerTradePartyAddress().getCountryID());
+			assertEquals("Spielkreis", zi.getBuyerTradePartyAddress().getCityName());
+			assertEquals("12345", zi.getSellerTradePartyAddress().getPostcodeCode());
+			assertEquals("Ecke 12", zi.getSellerTradePartyAddress().getLineOne());
+			assertNull(zi.getSellerTradePartyAddress().getLineTwo());
+			assertNull(zi.getSellerTradePartyAddress().getLineThree());
+			assertNull(zi.getSellerTradePartyAddress().getCountrySubDivisionName());
+			assertEquals("DE", zi.getSellerTradePartyAddress().getCountryID());
+			assertEquals("Stadthausen", zi.getSellerTradePartyAddress().getCityName());
 
 			Invoice invoice = zi.extractInvoice();
 			assertEquals("1", invoice.getZFItems()[0].getId());
-			assertEquals(null, invoice.getZFItems()[0].getProduct().getBuyerAssignedID());
-			assertEquals(null, invoice.getZFItems()[0].getProduct().getSellerAssignedID());
+			assertNull(invoice.getZFItems()[0].getProduct().getBuyerAssignedID());
+			assertNull(invoice.getZFItems()[0].getProduct().getSellerAssignedID());
 			assertEquals("160.00", invoice.getZFItems()[0].getLineTotalAmount().toString());
 			assertEquals("1.0000", invoice.getZFItems()[0].getQuantity().toString());
 			assertEquals("7.00", invoice.getZFItems()[0].getProduct().getVATPercent().toString());
 			assertEquals("Künstlerische Gestaltung (Stunde): Einer Beispielrechnung", invoice.getZFItems()[0].getProduct().getName());
-			assertEquals(null, invoice.getZFItems()[0].getProduct().getDescription());
+			assertNull(invoice.getZFItems()[0].getProduct().getDescription());
 
-			assertEquals(zi.getVersion(), 2);
+			assertEquals(2, zi.getVersion());
 		} catch ( Exception e ) {
 			fail(e.getMessage());
 		}
@@ -251,6 +241,7 @@ public class ZF2Test extends MustangReaderTestCase {
 	 * metadata, writes to @{code ./target/testout-*} and then imports to check the
 	 * values.
 	 */
+	@Test
 	public void testImport() {
 		// now check the contents (like MustangReaderTest)
 		final ZUGFeRDImporter zi = new ZUGFeRDImporter("src/test/resources/MustangBeispiel20221026.pdf");
@@ -279,29 +270,29 @@ public class ZF2Test extends MustangReaderTestCase {
 		assertEquals("RE1001", zi.getForeignReference());
 		assertEquals("54321", zi.getBuyerTradePartyAddress().getPostcodeCode());
 		assertEquals("Feldstraße 34", zi.getBuyerTradePartyAddress().getLineOne());
-		assertEquals(null, zi.getBuyerTradePartyAddress().getLineTwo());
-		assertEquals(null, zi.getBuyerTradePartyAddress().getLineThree());
-		assertEquals(null, zi.getBuyerTradePartyAddress().getCountrySubDivisionName());
+		assertNull(zi.getBuyerTradePartyAddress().getLineTwo());
+		assertNull(zi.getBuyerTradePartyAddress().getLineThree());
+		assertNull(zi.getBuyerTradePartyAddress().getCountrySubDivisionName());
 		assertEquals("DE", zi.getBuyerTradePartyAddress().getCountryID());
 		assertEquals("Hithausen", zi.getBuyerTradePartyAddress().getCityName());
 		assertEquals("Beispiel Lager AG", zi.getDeliveryTradePartyName());
 		assertEquals("54321", zi.getDeliveryTradePartyAddress().getPostcodeCode());
 		assertEquals("Feldstraße 39", zi.getDeliveryTradePartyAddress().getLineOne());
-		assertEquals(null, zi.getDeliveryTradePartyAddress().getLineTwo());
-		assertEquals(null, zi.getDeliveryTradePartyAddress().getLineThree());
-		assertEquals(null, zi.getDeliveryTradePartyAddress().getCountrySubDivisionName());
+		assertNull(zi.getDeliveryTradePartyAddress().getLineTwo());
+		assertNull(zi.getDeliveryTradePartyAddress().getLineThree());
+		assertNull(zi.getDeliveryTradePartyAddress().getCountrySubDivisionName());
 		assertEquals("DE", zi.getDeliveryTradePartyAddress().getCountryID());
 		assertEquals("Hithausen", zi.getDeliveryTradePartyAddress().getCityName());
 		assertEquals("08155", zi.getSellerTradePartyAddress().getPostcodeCode());
 		assertEquals("Somestreet 42", zi.getSellerTradePartyAddress().getLineOne());
-		assertEquals(null, zi.getSellerTradePartyAddress().getLineTwo());
-		assertEquals(null, zi.getSellerTradePartyAddress().getLineThree());
-		assertEquals(null, zi.getSellerTradePartyAddress().getCountrySubDivisionName());
+		assertNull(zi.getSellerTradePartyAddress().getLineTwo());
+		assertNull(zi.getSellerTradePartyAddress().getLineThree());
+		assertNull(zi.getSellerTradePartyAddress().getCountrySubDivisionName());
 		assertEquals("DE", zi.getSellerTradePartyAddress().getCountryID());
 		assertEquals("Some city", zi.getSellerTradePartyAddress().getCityName());
 
 		try {
-			assertEquals(zi.getVersion(), 2);
+			assertEquals(2, zi.getVersion());
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

@@ -71,6 +71,12 @@
             <version>${version.org.junit}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${version.org.junit}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
     <build>
@@ -96,7 +102,28 @@
                     <argLine>-Duser.timezone=UTC</argLine>
                 </configuration>
             </plugin>
-            <!-- allow getImplementationVersion for the pom.xml -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${version.org.apache.maven.plugins.maven-failsafe-plugin}</version>
+                <configuration>
+                    <runOrder>alphabetical</runOrder>
+                    <argLine>-Duser.timezone=UTC</argLine>
+                    <systemPropertyVariables>
+                        <!-- exact path of the shaded jar -->
+                        <cli.jar>${project.build.directory}/${project.build.finalName}.jar</cli.jar>
+                    </systemPropertyVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <!-- IT invokes the shaded jar, so it has to run after the package phase -->
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -104,7 +131,6 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                     </archive>

@@ -1,12 +1,16 @@
 package org.mustangproject.validator;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 public class MiscValidatorTest extends ResourceCase {
 
+	@Test
 	public void testInvalidFileValidation() {
 
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
@@ -19,8 +23,7 @@ public class MiscValidatorTest extends ResourceCase {
 	        "    <error type=\"10\">Filename not specified</error> \n" +
 	        "  </messages>\n" +
 	        "  <summary status=\"invalid\"/>\n" +
-	        "</validation>\n" +
-	        ""));
+	        "</validation>\n"));
 
 		res = zfv.validate("/dhfkbv/sfjkh");
 		assertTrue(res.matches("<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?>\n" +
@@ -37,7 +40,7 @@ public class MiscValidatorTest extends ResourceCase {
 		try {
 			tempFile = File.createTempFile("hello", ".tmp");
 		} catch (IOException e) {
-			noExceptionOccurred = true;
+			noExceptionOccurred = false;
 		}
 		assertTrue(noExceptionOccurred);
 
@@ -49,13 +52,12 @@ public class MiscValidatorTest extends ResourceCase {
 				"    <error type=\"5\">File too small</error> \n" +
 				"  </messages>\n" +
 				"  <summary status=\"invalid\"/>\n" +
-				"</validation>\n" +
-				""));
+				"</validation>\n"));
 
 
 		String fileContent = "ladhvkdbfk  wkhfbkhdhkb svbkfsvbksfbvk sdvsdvbksjdvbkfdsv sdvbskdvbsjhkvbfskh dvbskfvbkfsbvke"
 				+ "ladhvkdbfk  wkhfbkhdhkb svbkfsvbksfbvk sdvsdvbksjdvbkfdsv sdvbskdvbsjhkvbfskh dvbskfvbkfsbvke";
-		noExceptionOccurred = true;
+
 	    BufferedWriter writer;
 		try {
 			writer = new BufferedWriter(new FileWriter(tempFile));
@@ -75,8 +77,7 @@ public class MiscValidatorTest extends ResourceCase {
 				"    <exception type=\"8\">File does not look like PDF nor XML \\(contains neither %PDF nor &lt;\\?xml\\)</exception> \n" +
 				"  </messages>\n" +
 				"  <summary status=\"invalid\"/>\n" +
-				"</validation>\n" +
-				""));
+				"</validation>\n"));
 
 
 		// clean up

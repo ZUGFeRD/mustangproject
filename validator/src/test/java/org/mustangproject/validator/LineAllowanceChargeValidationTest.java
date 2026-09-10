@@ -1,5 +1,8 @@
 package org.mustangproject.validator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -8,6 +11,7 @@ import java.util.Date;
 
 import javax.xml.transform.Source;
 
+import org.junit.jupiter.api.Test;
 import org.mustangproject.Allowance;
 import org.mustangproject.BankDetails;
 import org.mustangproject.Charge;
@@ -22,14 +26,13 @@ import org.xmlunit.builder.Input;
 import org.xmlunit.xpath.JAXPXPathEngine;
 import org.xmlunit.xpath.XPathEngine;
 
-import junit.framework.TestCase;
 
 /**
  * End-to-end integration test for #925: a generated EN16931/XRechnung invoice carrying a
  * line-level allowance and charge with CalculationPercent (BT-138) / BasisAmount (BT-137) must
  * (a) contain those elements at line level and (b) still pass Schematron/EN16931 validation.
  */
-public class LineAllowanceChargeValidationTest extends TestCase {
+public class LineAllowanceChargeValidationTest {
 
 	private String generate(String profileName) {
 		Invoice invoice = new Invoice()
@@ -71,23 +74,24 @@ public class LineAllowanceChargeValidationTest extends TestCase {
 		return xv.getXMLResult();
 	}
 
+	@Test
 	public void testLineAllowanceChargePercentBasisValidates() throws Exception {
 		final XPathEngine xpath = new JAXPXPathEngine();
 		for (String profileName : new String[]{"EN16931", "XRechnung"}) {
 			String xml = generate(profileName);
 
-			assertTrue(profileName + ": expected line-level CalculationPercent 10.00",
-				xml.contains("<ram:CalculationPercent>10.00</ram:CalculationPercent>"));
-			assertTrue(profileName + ": expected line-level CalculationPercent 5.00",
-				xml.contains("<ram:CalculationPercent>5.00</ram:CalculationPercent>"));
-			assertTrue(profileName + ": expected caller-supplied line-level BasisAmount 1000.00",
-				xml.contains("<ram:BasisAmount>1000.00</ram:BasisAmount>"));
+			assertTrue(xml.contains("<ram:CalculationPercent>10.00</ram:CalculationPercent>"),
+				profileName + ": expected line-level CalculationPercent 10.00");
+			assertTrue(xml.contains("<ram:CalculationPercent>5.00</ram:CalculationPercent>"),
+				profileName + ": expected line-level CalculationPercent 5.00");
+			assertTrue(xml.contains("<ram:BasisAmount>1000.00</ram:BasisAmount>"),
+				profileName + ": expected caller-supplied line-level BasisAmount 1000.00");
 
 			String result = validate(xml);
 			Source source = Input.fromString("<validation>" + result + "</validation>").build();
 			String status = xpath.evaluate("/validation/summary/@status", source);
-			assertEquals(profileName + ": Schematron validation must remain valid.\n" + result,
-				"valid", status);
+			assertEquals("valid", status,
+				profileName + ": Schematron validation must remain valid.\n" + result);
 		}
 	}
 }

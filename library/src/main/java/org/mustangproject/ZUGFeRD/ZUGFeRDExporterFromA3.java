@@ -132,6 +132,9 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	/** Defines whether attachments to the PDF should be using FLATE compression */
 	private boolean compressionEnabled;
 
+	/** Defines whether the PDF itself should be compressed or not */
+	private CompressParameters pdfCompression = CompressParameters.NO_COMPRESSION;
+
 	private boolean attachZUGFeRDHeaders = true;
 
 	public ZUGFeRDExporterFromA3() {
@@ -331,7 +334,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		if (!fileAttached && attachZUGFeRDHeaders) {
 			throw new IOException("File must be attached (usually with setTransaction) before perfoming this operation");
 		}
-		doc.save(ZUGFeRDfilename, CompressParameters.NO_COMPRESSION);
+		doc.save(ZUGFeRDfilename, this.pdfCompression);
 		if (!disableAutoClose) {
 			close();
 		}
@@ -358,7 +361,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		if (!fileAttached && attachZUGFeRDHeaders) {
 			throw new IOException("File must be attached (usually with setTransaction) before perfoming this operation");
 		}
-		doc.save(output, CompressParameters.NO_COMPRESSION);
+		doc.save(output, this.pdfCompression);
 		if (!disableAutoClose) {
 			close();
 		}
@@ -522,6 +525,15 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
+	@Override
+	public IZUGFeRDExporter setEnablePDFCompression(boolean pdfCompressionEnabled) {
+		if (pdfCompressionEnabled) {
+			this.pdfCompression = CompressParameters.DEFAULT_COMPRESSION;
+		} else {
+			this.pdfCompression = CompressParameters.NO_COMPRESSION;
+		}
+		return this;
+	}
 
 	public ZUGFeRDExporterFromA3 setCreator(String creator) {
 		this.creator = creator;
