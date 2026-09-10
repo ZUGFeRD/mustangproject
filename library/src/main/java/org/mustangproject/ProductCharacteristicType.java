@@ -90,6 +90,7 @@ public class ProductCharacteristicType implements IProductCharacteristicType {
 	/**
 	 * @return the unitCode
 	 */
+	@Override
 	public String getUnitCode() {
 		return unitCode;
 	}
@@ -107,6 +108,7 @@ public class ProductCharacteristicType implements IProductCharacteristicType {
 	/**
 	 * @return the valueMeasure
 	 */
+	@Override
 	public BigDecimal getValueMeasure() {
 		return valueMeasure;
 	}
@@ -124,6 +126,7 @@ public class ProductCharacteristicType implements IProductCharacteristicType {
 	/**
 	 * @return the value
 	 */
+	@Override
 	public String getValue() {
 		return value;
 	}

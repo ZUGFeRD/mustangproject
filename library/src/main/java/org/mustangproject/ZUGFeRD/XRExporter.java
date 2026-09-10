@@ -29,10 +29,6 @@ public class XRExporter implements IExporter {
 	IXMLProvider xmlProvider;
 	IExportableTransaction trans;
 
-	public XRExporter() {
-	}
-
-
 	@Override
 	public IExporter setTransaction(IExportableTransaction trans) throws IOException {
 		this.trans = trans;

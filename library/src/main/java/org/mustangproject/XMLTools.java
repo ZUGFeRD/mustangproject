@@ -269,7 +269,8 @@ public class XMLTools extends XMLWriter {
 		for (int i = 0; i < len; i++) {
 			int c = s.charAt(i);
 			if (c >= 0xd800 && c <= 0xdbff && i + 1 < len) {
-				c = ((c - 0xd7c0) << 10) | (s.charAt(++i) & 0x3ff);    // UTF16 decode
+				i++;
+				c = ((c - 0xd7c0) << 10) | (s.charAt(i) & 0x3ff);    // UTF16 decode
 			}
 			if (c < 0x80) { // ASCII range: test most common case first
 				if (c < 0x20 && c != '\t' && c != '\r' && c != '\n') { // Illegal XML character, even encoded. Skip or substitute

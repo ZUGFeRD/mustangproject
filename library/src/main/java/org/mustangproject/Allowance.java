@@ -166,7 +166,6 @@ public class Allowance extends Charge {
 	/**
 	 * @deprecated use setTaxRateApplicablePercent(BigDecimal) instead.
 	 */
-	@SuppressWarnings("deprecation")
 	@Deprecated(forRemoval = true, since = "2.24.1")
 	@Override
 	public Allowance setTaxPercent(BigDecimal percent) {
@@ -177,7 +176,6 @@ public class Allowance extends Charge {
 	/**
 	 * @deprecated use setTaxCategoryCode(String) instead.
 	 */
-	@SuppressWarnings("deprecation")
 	@Deprecated(forRemoval = true, since = "2.24.1")
 	@Override
 	public Allowance setCategoryCode(String taxCategoryCode) {

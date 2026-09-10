@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.mustangproject.XMLTools;
 
@@ -189,21 +190,20 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 		}
 
 		final HashMap<BigDecimal, VATAmount> VATPercentAmountMap = calc.getVATPercentAmountMap();
-		for (final BigDecimal currentTaxPercent : VATPercentAmountMap.keySet()) {
-			final VATAmount amount = VATPercentAmountMap.get(currentTaxPercent);
-			if (amount != null) {
-				final String amountCategoryCode = amount.getCategoryCode();
-				final String amountDueDateTypeCode = amount.getDueDateTypeCode();
+		for (final Entry<BigDecimal, VATAmount> currentTaxPercent : VATPercentAmountMap.entrySet()) {
+			if (currentTaxPercent.getValue() != null) {
+				final String amountCategoryCode = currentTaxPercent.getValue().getCategoryCode();
+				final String amountDueDateTypeCode = currentTaxPercent.getValue().getDueDateTypeCode();
 				final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(amountCategoryCode);
 				xml.append("<ram:ApplicableTradeTax>"
-						+ "<ram:CalculatedAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(amount.getCalculated())
+						+ "<ram:CalculatedAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(currentTaxPercent.getValue().getCalculated())
 						+ "</ram:CalculatedAmount>" //currencyID=\"EUR\"
 						+ "<ram:TypeCode>VAT</ram:TypeCode>"
 						+ (displayExemptionReason ? exemptionReason : "")
-						+ "<ram:BasisAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(amount.getBasis()) + "</ram:BasisAmount>" // currencyID=\"EUR\"
-						+ "<ram:CategoryCode>" + amount.getCategoryCode() + "</ram:CategoryCode>"
+						+ "<ram:BasisAmount currencyID=\"" + trans.getCurrency() + "\">" + currencyFormat(currentTaxPercent.getValue().getBasis()) + "</ram:BasisAmount>" // currencyID=\"EUR\"
+						+ "<ram:CategoryCode>" + currentTaxPercent.getValue().getCategoryCode() + "</ram:CategoryCode>"
 						+ (amountDueDateTypeCode != null ? "<ram:DueDateTypeCode>" + amountDueDateTypeCode + "</ram:DueDateTypeCode>" : "")
-						+ "<ram:ApplicablePercent>" + vatFormat(currentTaxPercent)
+						+ "<ram:ApplicablePercent>" + vatFormat(currentTaxPercent.getKey())
 						+ "</ram:ApplicablePercent></ram:ApplicableTradeTax>");
 			}
 		}
@@ -228,7 +228,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 			}
 			xml.append("</ram:SpecifiedTradePaymentTerms>");
 		} else {
-			xml.append(buildPaymentTermsXml());
+			xml.append(buildAlternatePaymentTermsXml());
 		}
 
 		xml.append("<ram:SpecifiedTradeSettlementMonetarySummation>"
@@ -347,7 +347,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 		zugferdData = XMLTools.removeBOM(zugferdRaw);
 	}
 
-	private String buildPaymentTermsXml() {
+	private String buildAlternatePaymentTermsXml() {
 		final IZUGFeRDPaymentTerms[] paymentTerms = trans.getExtendedPaymentTerms();
 
 		String paymentTermsXml = "";
