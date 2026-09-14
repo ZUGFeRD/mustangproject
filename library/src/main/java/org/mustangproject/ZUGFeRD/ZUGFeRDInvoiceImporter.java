@@ -224,7 +224,7 @@ public class ZUGFeRDInvoiceImporter {
 	}
 
 	/***
-	 * do not raise ParseExceptions even if the reproduced invoice total does not match the given value
+	 * do not raise ArithmeticException even if the reproduced invoice total does not match the given value
 	 */
 	public void doIgnoreCalculationErrors() {
 		ignoreCalculationErrors = true;
