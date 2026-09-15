@@ -181,6 +181,11 @@
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${version.org.apache.maven.plugins.maven-resources-plugin}</version>
+            </plugin>
         </plugins>
     </build>
 

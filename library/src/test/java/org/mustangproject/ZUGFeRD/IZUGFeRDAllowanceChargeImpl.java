@@ -20,7 +20,7 @@ package org.mustangproject.ZUGFeRD;
 
 import java.math.BigDecimal;
 
-public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge, IZUGFeRDTradeTax {
+public class IZUGFeRDAllowanceChargeImpl implements IZUGFeRDAllowanceCharge {
 	private BigDecimal totalAmount;
 	private String reason;
 	private String reasonCode;
