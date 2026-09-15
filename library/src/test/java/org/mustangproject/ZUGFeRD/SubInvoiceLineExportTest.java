@@ -191,7 +191,7 @@ public class SubInvoiceLineExportTest {
 		// GROUP line 01: parent, LineTotalAmount = sum of DETAIL children = 1050
 		Item group01 = new Item(
 			new Product("Hardware bundle", "", "H87"),
-			new BigDecimal("1050.00"),
+			new BigDecimal("200.00"),
 			new BigDecimal("1.0000")
 		);
 		group01.setId("01");
