@@ -36,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -71,6 +72,8 @@ public class XRTest {
 	private static final String TARGET_XML = "./target/testout-XR.xml";
 	private static final String TARGET_EDGE_XML = "./target/testout-XR-Edge.xml";
 
+	private final SimpleDateFormat sdfISO = new SimpleDateFormat("yyyy-MM-dd");
+
 	@Test
 	public void testXRExport() {
 
@@ -91,12 +94,12 @@ public class XRTest {
 		assertTrue(theXML.contains("<ram:ID>" + legalOrgID + "</ram:ID>")); // must be possible without scheme #
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
 			.asInt()
-			.isEqualTo(1); //2 errors are OK because there is a known bug
-
+			.isEqualTo(1);
 
 		assertThat(theXML).valueByXPath("//*[local-name()='DuePayableAmount']")
 			.asDouble()
 			.isEqualTo(1);
+
 		try {
 			BufferedWriter writer = Files.newBufferedWriter(Path.of(TARGET_XML));
 			writer.write(theXML);
@@ -109,8 +112,7 @@ public class XRTest {
 
 
 	@Test
-	public void testXREdgeExport() {
-
+	public void testXREdgeExport() throws ParseException {
 		// the writing part
 
 		String orgname = "Test company";
@@ -130,6 +132,7 @@ public class XRTest {
 			// not using any VAT, this is also a test of zero-rated goods:
 			.setNumber(number).addItem(new Item(new Product("Testprodukt", "", "C62", BigDecimal.ZERO).setTaxExemptionReason("Kleinunternehmer"), amount, new BigDecimal("1.0")))
 			.setPayee(new TradeParty().setName("VR Factoring GmbH").setID("DE813838785").setLegalOrganisation(new LegalOrganisation("391200LDDFJDMIPPMZ54", "0199")))
+			.setTaxPointDate(sdfISO.parse("2020-11-09"))
 			.embedFileInXML(fe1);
 
 
@@ -142,15 +145,20 @@ public class XRTest {
 		assertTrue(theXML.contains("#SKONTO#"));
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
 			.asInt()
-			.isEqualTo(1); // 2 errors are OK because there is a known bug
+			.isEqualTo(1);
 
 		assertThat(theXML).valueByXPath("count(//*[local-name()='PayeeTradeParty'])")
+			.asInt()
+			.isEqualTo(1);
+
+		assertThat(theXML).valueByXPath("count(//*[local-name()='TaxPointDate'])")
 			.asInt()
 			.isEqualTo(1);
 
 		assertThat(theXML).valueByXPath("//*[local-name()='DuePayableAmount']")
 			.asDouble()
 			.isEqualTo(1);
+
 		try {
 			BufferedWriter writer = Files.newBufferedWriter(Path.of(TARGET_EDGE_XML));
 			writer.write(theXML);

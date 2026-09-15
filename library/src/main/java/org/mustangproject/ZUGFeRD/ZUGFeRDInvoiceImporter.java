@@ -1074,8 +1074,8 @@ public class ZUGFeRDInvoiceImporter {
 
 		xpr = xpath.compile("//*[local-name() = 'ApplicableHeaderTradeSettlement']//*[local-name() = 'ApplicableTradeTax']//*[local-name() = 'TaxPointDate']//*[local-name() = 'DateString']");
 		NodeList docTaxNodesTaxPointDate = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-		for (int i = 0; i < docTaxNodesTaxPointDate.getLength(); i++) {
-			String dueDateString = XMLTools.trimOrNull(docTaxNodesTaxPointDate.item(i));
+		if (docTaxNodesTaxPointDate.getLength() > 0) {
+			String dueDateString = XMLTools.trimOrNull(docTaxNodesTaxPointDate.item(0));
 			dueDate = parseDate(dueDateString, "yyyyMMdd");
 			zpp.setTaxPointDate(dueDate);
 		}

@@ -153,6 +153,10 @@ public class ZF2PushTest extends ResourceCase {
 		assertEquals("EUR", zi.getInvoiceCurrencyCode());
 		assertTrue(zi.getUTF8().contains("AB321"));
 
+		assertThat(zi.getUTF8()).valueByXPath("count(//*[local-name()='TaxPointDate'])")
+			.asInt()
+			.isEqualTo(1);
+
 		// Reading ZUGFeRD
 		assertEquals("571.04", zi.getAmount());
 		assertEquals("Max Mustermann", zi.getHolder());

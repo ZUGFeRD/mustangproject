@@ -34,7 +34,6 @@ import org.mustangproject.ReferencedDocument;
 import org.mustangproject.SchemedID;
 import org.mustangproject.XMLTools;
 import org.mustangproject.util.NodeMap;
-import org.mustangproject.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -42,6 +41,8 @@ import org.w3c.dom.NodeList;
 
 public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDImporter.class);
+
+	private final SimpleDateFormat sdf102 = new SimpleDateFormat("yyyyMMdd");
 
 	public ZUGFeRDImporter() {
 		super();
@@ -280,20 +281,35 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	}
 
 	/**
-	 * @return the Taxpoint Date
+	 * Returns the Delivery Date.
+	 * @return the delivery date
 	 */
-	public String getTaxPointDate() {
-		String s;
+	public String getDeliveryDate() {
 		try {
-			s = extractString("//*[local-name() = 'ApplicableHeaderTradeSettlement']//*[local-name() = 'ApplicableTradeTax']//*[local-name() = 'TaxPointDate']//*[local-name() = 'DateString']");
-			if (StringUtils.isBlank(s)) {
-				s = extractString("//*[local-name() = 'ActualDeliverySupplyChainEvent']//*[local-name() = 'OccurrenceDateTime']//*[local-name() = 'DateTimeString']");
-			}
+			return extractString("//*[local-name() = 'ActualDeliverySupplyChainEvent']//*[local-name() = 'OccurrenceDateTime']//*[local-name() = 'DateTimeString']");
 		} catch (final Exception e) {
 			// Exception was already logged
-			s = "";
+			return "";
 		}
-		return s;
+	}
+
+	/**
+	 * Returns the Delivery Date, not as supposed the dedicated Taxpoint Date.
+	 * In many cases the delivery date is used as the tax date.
+	 * ZUGFeRDImport::getdeliveryDate() should be used preferably to get the delivery date.
+	 * For getting the TaxPointDate use ZUGFeRDInvoiceImporter.extractInvoice() followed by Invoice::getTaxPointDate().
+	 * Subject to be changed in the future.
+	 * @deprecated Subject to be changed in the future, use ZUGFeRDImport::getdeliveryDate() to get the delivery date
+	 * @return the delivery date
+	 */
+	@Deprecated(since = "2.26.2")
+	public String getTaxPointDate() {
+		try {
+			return extractString("//*[local-name() = 'ActualDeliverySupplyChainEvent']//*[local-name() = 'OccurrenceDateTime']//*[local-name() = 'DateTimeString']");
+		} catch (final Exception e) {
+			// Exception was already logged
+			return "";
+		}
 	}
 
 	/**
@@ -390,8 +406,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return when the payment is due
 	 */
 	public String getDueDate() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		return sdf.format(importedInvoice.getDueDate());
+		return sdf102.format(importedInvoice.getDueDate());
 	}
 
 
@@ -434,8 +449,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return the Issue Date()
 	 */
 	public String getIssueDate() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		return sdf.format(importedInvoice.getIssueDate());
+		return sdf102.format(importedInvoice.getIssueDate());
 	}
 
 	public Date getDetailedDeliveryPeriodFrom() {

@@ -2,6 +2,7 @@ package org.mustangproject.validator;
 
 import java.io.File;
 import org.junit.jupiter.api.Test;
+import org.mustangproject.ZUGFeRD.ZUGFeRDImporter;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
@@ -12,10 +13,10 @@ public class LibraryTest extends ResourceCase {
 	public void testLibraryPush() {
 		File tempFile = new File("../library/target/testout-MustangGnuaccountingBeispielRE-20201121_508.pdf");
 		assertTrue(tempFile.exists());
+
 		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
 
 		String res = zfv.validate(tempFile.getAbsolutePath());
-
 
 		assertThat(res).valueByXPath("/validation/pdf/summary/@status")
 				.isEqualTo("valid");
@@ -25,6 +26,8 @@ public class LibraryTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.isEqualTo("valid");
+
+
 		tempFile = new File("../library/target/testout-ZF2PushCorrection.pdf");
 		assertTrue(tempFile.exists());
 
