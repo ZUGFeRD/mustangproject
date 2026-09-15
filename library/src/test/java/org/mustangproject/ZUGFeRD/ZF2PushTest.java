@@ -114,7 +114,7 @@ public class ZF2PushTest extends ResourceCase {
 			ze.ignorePDFAErrors();
 			ze.load(SOURCE_PDF);
 			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2);
-			ze.setTransaction(new Invoice().setDueDate(sdf.parse("2020-12-12")).setIssueDate(sdf.parse("2020-11-21")).setDeliveryDate(sdf.parse("2020-11-10"))
+			ze.setTransaction(new Invoice().setDueDate(sdf.parse("2020-12-12")).setIssueDate(sdf.parse("2020-11-21")).setDeliveryDate(sdf.parse("2020-11-10")).setTaxPointDate(sdf.parse("2020-11-09"))
 				.setSender(new TradeParty(orgname, "Ecke 12", "12345", "Stadthausen", "DE").addBankDetails(new BankDetails("DE88200800000970375700", "COBADEFFXXX").setAccountName("Max Mustermann")).addVATID("DE136695976"))
 				.setRecipient(new TradeParty("Theodor Est", "Bahnstr. 42", "88802", "Spielkreis", "DE")
 					.setContact(new Contact("Ingmar N. Fo", "(555) 23 78-23", "info@localhost.local")).setID("2"))
@@ -152,6 +152,10 @@ public class ZF2PushTest extends ResourceCase {
 
 		assertEquals("EUR", zi.getInvoiceCurrencyCode());
 		assertTrue(zi.getUTF8().contains("AB321"));
+
+		assertThat(zi.getUTF8()).valueByXPath("count(//*[local-name()='TaxPointDate'])")
+			.asInt()
+			.isEqualTo(1);
 
 		// Reading ZUGFeRD
 		assertEquals("571.04", zi.getAmount());
