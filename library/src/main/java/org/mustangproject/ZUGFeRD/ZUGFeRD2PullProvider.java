@@ -638,27 +638,34 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 				xml.append("</ram:SpecifiedLineTradeDelivery>");
 				xml.append("<ram:SpecifiedLineTradeSettlement>");
-				xml.append("<ram:ApplicableTradeTax>");
-				// <CalculatedAmount/>
-				xml.append("<ram:TypeCode>VAT</ram:TypeCode>");
-				if (profile != Profiles.getByName("EN16931") && currentItem.getProduct().getTaxExemptionReason() != null) {
-					xml.append("<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>");
-				}
-				xml.append("<ram:CategoryCode>" + currentItem.getProduct().getTaxCategoryCode() + "</ram:CategoryCode>");
-				if (profile != Profiles.getByName("EN16931") && currentItem.getProduct().getTaxExemptionReasonCode() != null) {
-					xml.append("<ram:ExemptionReasonCode>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReasonCode()) + "</ram:ExemptionReasonCode>");
-				}
-				BigDecimal vatValue;
-				if (currentItem.getProduct().getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.ZEROTAXPRODUCTS)) {
-					vatValue = BigDecimal.ZERO;
-				} else {
-					vatValue = currentItem.getProduct().getVATPercent();
-				}
+				if ((getProfile() != Profiles.getByName("Extended")) || (currentItem.getProduct().getVATPercent()!=null)) {
+					/**
+					 * VAT percent *can* be null (not 0) in extended
+					 * if and on a parent item which has subitems with mixed VAT rates #1275
+					 */
+					xml.append("<ram:ApplicableTradeTax>");
+					// <CalculatedAmount/>
+					xml.append("<ram:TypeCode>VAT</ram:TypeCode>");
+					if (profile != Profiles.getByName("EN16931") && currentItem.getProduct().getTaxExemptionReason() != null) {
+						xml.append("<ram:ExemptionReason>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReason()) + "</ram:ExemptionReason>");
+					}
+					xml.append("<ram:CategoryCode>" + currentItem.getProduct().getTaxCategoryCode() + "</ram:CategoryCode>");
+					if (profile != Profiles.getByName("EN16931") && currentItem.getProduct().getTaxExemptionReasonCode() != null) {
+						xml.append("<ram:ExemptionReasonCode>" + XMLTools.encodeXML(currentItem.getProduct().getTaxExemptionReasonCode()) + "</ram:ExemptionReasonCode>");
+					}
+					BigDecimal vatValue;
+					if (currentItem.getProduct().getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.ZEROTAXPRODUCTS)) {
+						vatValue = BigDecimal.ZERO;
+					} else {
+						vatValue = currentItem.getProduct().getVATPercent();
+					}
 
-				if (!currentItem.getProduct().getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE) ) {
-					xml.append("<ram:RateApplicablePercent>" + vatFormat(vatValue) + "</ram:RateApplicablePercent>");
+					if (!currentItem.getProduct().getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE) ) {
+						xml.append("<ram:RateApplicablePercent>" + vatFormat(vatValue) + "</ram:RateApplicablePercent>");
+					}
+					xml.append("</ram:ApplicableTradeTax>");
+
 				}
-				xml.append("</ram:ApplicableTradeTax>");
 
 				if (currentItem.getDetailedDeliveryPeriodFrom() != null || currentItem.getDetailedDeliveryPeriodTo() != null) {
 					xml.append("<ram:BillingSpecifiedPeriod>");

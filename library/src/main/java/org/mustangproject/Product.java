@@ -97,6 +97,18 @@ public class Product implements IZUGFeRDExportableProduct {
 		this.vatPercent = VATPercent;
 	}
 
+	/***
+	 * special constructor for parent items without VAT (because of child items with diverging VAT)
+	 * @param name product short name
+	 * @param description product long name
+	 * @param unit a two/three letter UN/ECE rec 20 unit code, e.g. "C62" for piece
+	 */
+	public Product(String name, String description, String unit) {
+		this.unit = unit;
+		this.name = name;
+		this.description = description;
+	}
+
 	public Product(Node node) {
 		NodeMap nodeMap = new NodeMap(node);
 
