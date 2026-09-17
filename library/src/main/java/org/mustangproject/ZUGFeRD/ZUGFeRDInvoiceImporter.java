@@ -110,14 +110,29 @@ public class ZUGFeRDInvoiceImporter {
 		//constructor for extending classes
 	}
 
+	/***
+	 * Can through an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
+	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} followed by {@link ZUGFeRDInvoiceImporter#setPDFFilename(String)}.
+	 * @param pdfFilename	the PDF file name
+	 */
 	public ZUGFeRDInvoiceImporter(String pdfFilename) {
 		setPDFFilename(pdfFilename);
 	}
 
+	/***
+	 * Can through an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
+	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} followed by {@link ZUGFeRDInvoiceImporter#setInputStream(InputStream)}.
+	 * @param pdfStream	InputStream to the PDF file
+	 */
 	public ZUGFeRDInvoiceImporter(InputStream pdfStream) {
 		setInputStream(pdfStream);
 	}
 
+	/***
+	 * Can through an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
+	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} before calling this method.
+	 * @param pdfFilename	the PDF file name
+	 */
 	public void setPDFFilename(String pdfFilename) {
 		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
 			extractLowLevel(bis);
@@ -127,6 +142,11 @@ public class ZUGFeRDInvoiceImporter {
 		}
 	}
 
+	/***
+	 * Can through an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
+	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} before calling this method.
+	 * @param pdfStream	InputStream to the PDF file
+	 */
 	public void setInputStream(InputStream pdfStream) {
 		try {
 			extractLowLevel(pdfStream);
