@@ -7,7 +7,7 @@
 - #1257 Support for the latest 4451 codelist.
 - #1263 Migrate tests to JUnit5.
 - #1265 / #1269 Support a TaxPointDate (BT-7).
-
+- #1260 Skip unparseable #SKONTO# payment terms instead of aborting the whole import.
 
 
 2.26.0
