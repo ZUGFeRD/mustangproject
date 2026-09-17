@@ -1,6 +1,12 @@
 - #1244 Import all GrossPriceProductTradePrice/AppliedTradeAllowanceCharge elements.
-- #1248 Support ReceivableSpecifiedTradeAccountingAccount (BT-19).
-- #1255 Add rules fired / failed to PDF validation result from xml.
+- #1247 Support the passing of CompressParameters.
+- #1248 / #1250 Support ReceivableSpecifiedTradeAccountingAccount (BT-19).
+- #1252 Add rules fired / failed to PDF validation result from xml.
+- #1253 Add more DocumentCodeTypeConstants values.
+- #1255 Fix Version without using templating plugin, replace non-working references to implementation version.
+- #1257 Support for the latest 4451 codelist.
+- #1263 Migrate tests to JUnit5.
+- #1265 / #1269 Support a TaxPointDate (BT-7).
 - #1260 Skip unparseable #SKONTO# payment terms instead of aborting the whole import.
 
 
