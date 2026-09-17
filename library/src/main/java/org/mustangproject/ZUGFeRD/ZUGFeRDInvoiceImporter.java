@@ -1316,16 +1316,20 @@ public class ZUGFeRDInvoiceImporter {
 						Pattern pattern = Pattern.compile("#TAGE=(.*?)#", Pattern.CASE_INSENSITIVE);
 						Matcher matcher = pattern.matcher(currentLine);
 						boolean daysFound = matcher.find();
-						String days = matcher.group(1);
+						String days = daysFound ? matcher.group(1) : null;
 						pattern = Pattern.compile("#PROZENT=(.*?)#", Pattern.CASE_INSENSITIVE);
 						matcher = pattern.matcher(currentLine);
 						boolean percentFound = matcher.find();
-						String percent = matcher.group(1);
+						String percent = percentFound ? matcher.group(1) : null;
 
 						if (daysFound && percentFound) {
-							cd.setDays(Integer.valueOf(days));
-							cd.setPercent(new BigDecimal(percent));
-							zpp.addCashDiscount(cd);
+							try {
+								cd.setDays(Integer.valueOf(days));
+								cd.setPercent(new BigDecimal(percent));
+								zpp.addCashDiscount(cd);
+							} catch (NumberFormatException e) {
+								// markers present but their values are not numeric: could not parse skonto
+							}
 						} //else : could not parse skonto
 
 

@@ -1,6 +1,7 @@
 - #1244 Import all GrossPriceProductTradePrice/AppliedTradeAllowanceCharge elements.
 - #1248 Support ReceivableSpecifiedTradeAccountingAccount (BT-19).
 - #1255 Add rules fired / failed to PDF validation result from xml.
+- #1260 Skip unparseable #SKONTO# payment terms instead of aborting the whole import.
 
 
 2.26.0
