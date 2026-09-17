@@ -28,6 +28,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import org.mustangproject.FileAttachment;
+import org.mustangproject.Invoice;
 import org.mustangproject.Item;
 import org.mustangproject.Product;
 import org.mustangproject.ReferencedDocument;
@@ -296,10 +297,10 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	/**
 	 * Returns the Delivery Date, not as supposed the dedicated Taxpoint Date.
 	 * In many cases the delivery date is used as the tax date.
-	 * ZUGFeRDImport::getdeliveryDate() should be used preferably to get the delivery date.
-	 * For getting the TaxPointDate use ZUGFeRDInvoiceImporter.extractInvoice() followed by Invoice::getTaxPointDate().
+	 * {@link  #getDeliveryDate()} should be used preferably to get the delivery date.
+	 * For getting the TaxPointDate use {@link ZUGFeRDInvoiceImporter#extractInvoice()} followed by {@link Invoice#getTaxPointDate()}.
 	 * Subject to be changed in the future.
-	 * @deprecated Subject to be changed in the future, use ZUGFeRDImport::getdeliveryDate() to get the delivery date
+	 * @deprecated Subject to be changed in the future, use {@link #getDeliveryDate()} to get the delivery date
 	 * @return the delivery date
 	 */
 	@Deprecated(since = "2.26.2")
