@@ -1072,14 +1072,20 @@ public class ZUGFeRDInvoiceImporter {
 		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"ApplicableTradeTax\"]");
 		NodeList docTaxNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
+		xpr = xpath.compile("//*[local-name() = 'ApplicableHeaderTradeSettlement']//*[local-name() = 'ApplicableTradeTax']//*[local-name() = 'TaxPointDate']//*[local-name() = 'DateString']");
+		NodeList docTaxNodesTaxPointDate = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (docTaxNodesTaxPointDate.getLength() > 0) {
+			String dueDateString = XMLTools.trimOrNull(docTaxNodesTaxPointDate.item(0));
+			dueDate = parseDate(dueDateString, "yyyyMMdd");
+			zpp.setTaxPointDate(dueDate);
+		}
+
 		if (nodes.getLength() != 0) {
 			for (int i = 0; i < nodes.getLength(); i++) {
-
 				Node currentItemNode = nodes.item(i);
 				Item it = new Item(currentItemNode.getChildNodes(), recalcPrice);
 				it.enrichProductFromVATBreakdown(docTaxNodes);
 				zpp.addItem(it);
-
 			}
 
 			// now handling base64 encoded attachments AttachmentBinaryObject=CII, EmbeddedDocumentBinaryObject=UBL

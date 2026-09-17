@@ -28,6 +28,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import org.mustangproject.FileAttachment;
+import org.mustangproject.Invoice;
 import org.mustangproject.Item;
 import org.mustangproject.Product;
 import org.mustangproject.ReferencedDocument;
@@ -41,6 +42,8 @@ import org.w3c.dom.NodeList;
 
 public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ZUGFeRDImporter.class);
+
+	private final SimpleDateFormat sdf102 = new SimpleDateFormat("yyyyMMdd");
 
 	public ZUGFeRDImporter() {
 		super();
@@ -279,8 +282,28 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	}
 
 	/**
-	 * @return the Taxpoint Date
+	 * Returns the Delivery Date.
+	 * @return the delivery date
 	 */
+	public String getDeliveryDate() {
+		try {
+			return extractString("//*[local-name() = 'ActualDeliverySupplyChainEvent']//*[local-name() = 'OccurrenceDateTime']//*[local-name() = 'DateTimeString']");
+		} catch (final Exception e) {
+			// Exception was already logged
+			return "";
+		}
+	}
+
+	/**
+	 * Returns the Delivery Date, not as supposed the dedicated Taxpoint Date.
+	 * In many cases the delivery date is used as the tax date.
+	 * {@link  #getDeliveryDate()} should be used preferably to get the delivery date.
+	 * For getting the TaxPointDate use {@link ZUGFeRDInvoiceImporter#extractInvoice()} followed by {@link Invoice#getTaxPointDate()}.
+	 * Subject to be changed in the future.
+	 * @deprecated Subject to be changed in the future, use {@link #getDeliveryDate()} to get the delivery date
+	 * @return the delivery date
+	 */
+	@Deprecated(since = "2.26.2")
 	public String getTaxPointDate() {
 		try {
 			return extractString("//*[local-name() = 'ActualDeliverySupplyChainEvent']//*[local-name() = 'OccurrenceDateTime']//*[local-name() = 'DateTimeString']");
@@ -384,8 +407,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return when the payment is due
 	 */
 	public String getDueDate() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		return sdf.format(importedInvoice.getDueDate());
+		return sdf102.format(importedInvoice.getDueDate());
 	}
 
 
@@ -428,8 +450,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @return the Issue Date()
 	 */
 	public String getIssueDate() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		return sdf.format(importedInvoice.getIssueDate());
+		return sdf102.format(importedInvoice.getIssueDate());
 	}
 
 	public Date getDetailedDeliveryPeriodFrom() {

@@ -71,6 +71,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * used for this import, testout-ZF2New.pdf
  */
 public class ZF2ZInvoiceImporterTest extends ResourceCase {
+	private final SimpleDateFormat sdfISO = new SimpleDateFormat("yyyy-MM-dd");
+	private final SimpleDateFormat sdfGerman = new SimpleDateFormat("dd.MM.yyyy");
 
 	@Test
 	public void testInvoiceImport() {
@@ -98,10 +100,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("RE-20170509/505", invoice.getNumber());
 		assertEquals("Zahlbar ohne Abzug bis zum 30.05.2017", invoice.getPaymentTermDescription());
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		assertEquals("2017-05-09", sdf.format(invoice.getIssueDate()));
-		assertEquals("2017-05-07", sdf.format(invoice.getDeliveryDate()));
-		assertEquals("2017-05-30", sdf.format(invoice.getDueDate()));
+		assertEquals("2017-05-09", sdfISO.format(invoice.getIssueDate()));
+		assertEquals("2017-05-07", sdfISO.format(invoice.getDeliveryDate()));
+		assertEquals("2017-05-30", sdfISO.format(invoice.getDueDate()));
 
 		assertEquals("Bahnstr. 42", invoice.getRecipient().getStreet());
 		assertEquals("Hinterhaus", invoice.getRecipient().getAdditionalAddress());
@@ -157,10 +158,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("7", invoice.getZFItems()[0].getProduct().getVATPercent().toString());
 		assertEquals("RE-20170509/505", invoice.getNumber());
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		assertEquals("2017-05-09", sdf.format(invoice.getIssueDate()));
-		assertEquals("2017-05-07", sdf.format(invoice.getDeliveryDate()));
-		assertEquals("2017-05-30", sdf.format(invoice.getDueDate()));
+		assertEquals("2017-05-09", sdfISO.format(invoice.getIssueDate()));
+		assertEquals("2017-05-07", sdfISO.format(invoice.getDeliveryDate()));
+		assertEquals("2017-05-30", sdfISO.format(invoice.getDueDate()));
 
 		assertEquals("Bahnstr. 42", invoice.getRecipient().getStreet());
 		assertEquals("Hinterhaus", invoice.getRecipient().getAdditionalAddress());
@@ -198,7 +198,6 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		// Reading ZUGFeRD
 		assertEquals("4711", invoice.getZFItems()[0].getProduct().getSellerAssignedID());
 		assertEquals("9384", invoice.getSellerOrderReferencedDocument().getIssuerAssignedID());
@@ -209,7 +208,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("AAG", rd[0].getReferenceTypeCode());
 
 		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
-		assertEquals("2025-10-12", sdf.format(invoice.getTenderReferencedDocument().getFormattedIssueDateTime()));
+		assertEquals("2025-10-12", sdfISO.format(invoice.getTenderReferencedDocument().getFormattedIssueDateTime()));
 		assertEquals("sender@test.org", invoice.getSender().getEmail());
 		assertEquals("recipient@test.org", invoice.getRecipient().getEmail());
 		assertEquals("28934", invoice.getBuyerOrderReferencedDocument().getIssuerAssignedID());
@@ -222,19 +221,18 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		boolean hasExceptions = false;
 		CalculatedInvoice invoice = new CalculatedInvoice();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			InputStream is = Files.newInputStream(PDFA4inputFile.toPath(), StandardOpenOption.READ);
 			ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter(is);
 			zii.extractInto(invoice);
-			assertEquals("2025-12-14", sdf.format(invoice.getDueDate()));
+			assertEquals("2025-12-14", sdfISO.format(invoice.getDueDate()));
 		} catch (XPathExpressionException | ParseException e) {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
 		// Reading ZUGFeRD
 		assertEquals("CO-123/V2A", invoice.getZFItems()[0].getProduct().getSellerAssignedID());
-		assertEquals("2025-12-01", sdf.format(invoice.getIssueDate()));
+		assertEquals("2025-12-01", sdfISO.format(invoice.getIssueDate()));
 		assertEquals(new BigDecimal("521.91"), invoice.getDuePayable());
 	}
 
@@ -252,11 +250,10 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		// Reading ZUGFeRD
 		assertEquals("90-kl-98798-C", invoice.getTenderReferencedDocument().getIssuerAssignedID());
 		assertNotNull(invoice.getTenderReferencedDocument().getFormattedIssueDateTime());
-		assertEquals("2025-10-12", sdf.format(invoice.getTenderReferencedDocument().getFormattedIssueDateTime()));
+		assertEquals("2025-10-12", sdfISO.format(invoice.getTenderReferencedDocument().getFormattedIssueDateTime()));
 		try {
 			zii.setInputStream(Files.newInputStream(getResourceAsFile("cii/bt17-response_1760553749128.cii.xml").toPath(), StandardOpenOption.READ));
 			invoice = zii.extractInvoice();
@@ -289,8 +286,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertNotNull(invoice.getInvoiceReferencedDocuments());
 		assertEquals(1, invoice.getInvoiceReferencedDocuments().size());
 		assertEquals("abc123", invoice.getInvoiceReferencedDocuments().get(0).getIssuerAssignedID());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		assertEquals("2018-10-04", sdf.format(invoice.getInvoiceReferencedDocuments().get(0).getFormattedIssueDateTime()));
+		assertEquals("2018-10-04", sdfISO.format(invoice.getInvoiceReferencedDocuments().get(0).getFormattedIssueDateTime()));
 	}
 
 	@Test
@@ -317,9 +313,8 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("7.00", invoice.getZFItems()[0].getProduct().getVATPercent().toString());
 		assertEquals("RE-20190610/507", invoice.getNumber());
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		assertEquals("2019-06-10", sdf.format(invoice.getIssueDate()));
-		assertEquals("2019-07-01", sdf.format(invoice.getDueDate()));
+		assertEquals("2019-06-10", sdfISO.format(invoice.getIssueDate()));
+		assertEquals("2019-07-01", sdfISO.format(invoice.getDueDate()));
 
 		assertEquals("street", invoice.getRecipient().getStreet());
 		assertEquals("zip", invoice.getRecipient().getZIP());
@@ -539,13 +534,12 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			ObjectMapper mapper = new ObjectMapper();
 
 			String jsonArray = mapper.writeValueAsString(i);
-			SimpleDateFormat german = new SimpleDateFormat("dd.MM.yyyy");
 			Date now = new Date();
 			Date morning = atStartOfDay(now);
 
 			String expectedDueDate = String.valueOf(morning.toInstant().getEpochSecond() * 1000);
 			String expectedIssueDate = String.valueOf(morning.toInstant().getEpochSecond() * 1000);
-			String expectedPaymentTermDesciption = "Please remit until " + german.format(now);
+			String expectedPaymentTermDesciption = "Please remit until " + sdfGerman.format(now);
 
 			JSONAssert.assertEquals("{\n" +
 				"  \"documentCode\" : \"380\",\n" +
@@ -758,10 +752,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			assertEquals("123", i.getNumber());
 			assertEquals("1.48", i.getGrandTotal().toString());
 			assertEquals("0.20", i.getVATtotal().toString());
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-			assertEquals("2020-10-01", sdf.format(i.getDetailedDeliveryPeriodFrom()));
-			assertEquals("2020-10-05", sdf.format(i.getDetailedDeliveryPeriodTo()));
+			assertEquals("2020-10-01", sdfISO.format(i.getDetailedDeliveryPeriodFrom()));
+			assertEquals("2020-10-05", sdfISO.format(i.getDetailedDeliveryPeriodTo()));
 
 		} catch (IOException e) {
 			fail("IOException not expected");
@@ -1189,5 +1182,32 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		Invoice invoice = zii.extractInvoice();
 
 		assertEquals(2, invoice.getZFItems()[1].getProduct().getAllowances().length );
+	}
+
+	@Test
+	public void BT7ImporterReproducer() throws IOException, ParseException, XPathExpressionException {
+		String xml = String.join("\n",
+				"<rsm:CrossIndustryInvoice",
+				" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\"",
+				" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100\"",
+				" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100\">",
+				"<rsm:ExchangedDocument><ram:ID>BT7-DEMO</ram:ID>",
+				"<ram:IssueDateTime><udt:DateTimeString format=\"102\">20260618</udt:DateTimeString></ram:IssueDateTime>",
+				"</rsm:ExchangedDocument><rsm:SupplyChainTradeTransaction>",
+				"<ram:ApplicableHeaderTradeDelivery><ram:ActualDeliverySupplyChainEvent>",
+				"<ram:OccurrenceDateTime><udt:DateTimeString format=\"102\">20260230</udt:DateTimeString></ram:OccurrenceDateTime>",
+				"</ram:ActualDeliverySupplyChainEvent></ram:ApplicableHeaderTradeDelivery>",
+				"<ram:ApplicableHeaderTradeSettlement><ram:ApplicableTradeTax>",
+				"<ram:TaxPointDate><udt:DateString format=\"102\">20260616</udt:DateString></ram:TaxPointDate>",
+				"</ram:ApplicableTradeTax></ram:ApplicableHeaderTradeSettlement>",
+				"</rsm:SupplyChainTradeTransaction></rsm:CrossIndustryInvoice>");
+		ZUGFeRDImporter importer = new ZUGFeRDImporter();
+		importer.setRawXML(xml.getBytes(StandardCharsets.UTF_8), false);
+		Invoice invoice = importer.extractInvoice();
+
+		assertEquals("2026-06-16", sdfISO.format(invoice.getTaxPointDate()));
+		assertEquals("20260230", importer.getTaxPointDate());
+		assertNotNull(invoice.getDeliveryDate());
+		assertEquals("2026-03-02", sdfISO.format(invoice.getDeliveryDate()));
 	}
 }
