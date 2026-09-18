@@ -111,27 +111,30 @@ public class ZUGFeRDInvoiceImporter {
 	}
 
 	/***
-	 * Can through an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
+	 * Can throw an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
 	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} followed by {@link ZUGFeRDInvoiceImporter#setPDFFilename(String)}.
 	 * @param pdfFilename	the PDF file name
+	 * @throws ArithmeticException when calculated total doesn't match the given total
 	 */
 	public ZUGFeRDInvoiceImporter(String pdfFilename) {
 		setPDFFilename(pdfFilename);
 	}
 
 	/***
-	 * Can through an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
-	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} followed by {@link ZUGFeRDInvoiceImporter#setInputStream(InputStream)}.
+	 * Can throw an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
+	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} followed by {@link ZUGFeRDInvoiceImporter#setPDFFilename(String)}.
 	 * @param pdfStream	InputStream to the PDF file
+	 * @throws ArithmeticException when calculated total doesn't match the given total
 	 */
 	public ZUGFeRDInvoiceImporter(InputStream pdfStream) {
 		setInputStream(pdfStream);
 	}
 
 	/***
-	 * Can through an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
-	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} before calling this method.
+	 * Can throw an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
+	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} followed by {@link ZUGFeRDInvoiceImporter#setPDFFilename(String)}.
 	 * @param pdfFilename	the PDF file name
+	 * @throws ArithmeticException when calculated total doesn't match the given total
 	 */
 	public void setPDFFilename(String pdfFilename) {
 		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
@@ -143,9 +146,10 @@ public class ZUGFeRDInvoiceImporter {
 	}
 
 	/***
-	 * Can through an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
-	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} before calling this method.
+	 * Can throw an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
+	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} followed by {@link ZUGFeRDInvoiceImporter#setPDFFilename(String)}.
 	 * @param pdfStream	InputStream to the PDF file
+	 * @throws ArithmeticException when calculated total doesn't match the given total
 	 */
 	public void setInputStream(InputStream pdfStream) {
 		try {
