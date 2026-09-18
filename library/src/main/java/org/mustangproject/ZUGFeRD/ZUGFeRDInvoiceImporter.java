@@ -393,7 +393,7 @@ public class ZUGFeRDInvoiceImporter {
 	 * @param zpp the invoice to be altered
 	 * @return the parsed invoice object
 	 * @throws XPathExpressionException if xpath could not be evaluated
-	 * @throws ParseException if the grand total of the parsed invoice could not be replicated with the new invoice
+	 * @throws ParseException if the invoice xml cannot be parsed, e.g. caused by unparsable date values
 	 * @throws ArithmeticException when calculated total doesn't match the given total
 	 */
 	public Invoice extractInto(Invoice zpp) throws XPathExpressionException, ParseException {
