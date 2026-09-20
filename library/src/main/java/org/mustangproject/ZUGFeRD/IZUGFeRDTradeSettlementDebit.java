@@ -18,18 +18,27 @@
  *********************************************************************** */
 package org.mustangproject.ZUGFeRD;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.mustangproject.XMLTools;
 
 public interface IZUGFeRDTradeSettlementDebit extends IZUGFeRDTradeSettlement {
 
 	@Override
 	default String getSettlementXML(Profile profile) {
+		List<Profile> basicProfiles = Arrays.asList(Profiles.getByName("Basic", 1), Profiles.getByName("BasicWL", 2), Profiles.getByName("Basic", 2));
+
 		String xml = "<ram:SpecifiedTradeSettlementPaymentMeans>"
-				+ "<ram:TypeCode>" + XMLTools.encodeXML(getPaymentMeansCode()) + "</ram:TypeCode>"
-				+ "<ram:Information>" + XMLTools.encodeXML(getPaymentMeansInformation()) + "</ram:Information>"
-				+ "<ram:PayerPartyDebtorFinancialAccount>"
-				+ "<ram:IBANID>" + XMLTools.encodeXML(getIBAN()) + "</ram:IBANID>"
-				+ "</ram:PayerPartyDebtorFinancialAccount>";
+				+ "<ram:TypeCode>" + XMLTools.encodeXML(getPaymentMeansCode()) + "</ram:TypeCode>";
+		if (!basicProfiles.contains(profile) && getPaymentMeansInformation() != null) {
+			xml += "<ram:Information>" + XMLTools.encodeXML(getPaymentMeansInformation()) + "</ram:Information>";
+		}
+		if (getIBAN() != null) {
+			xml	+= "<ram:PayerPartyDebtorFinancialAccount>"
+					+ "<ram:IBANID>" + XMLTools.encodeXML(getIBAN()) + "</ram:IBANID>"
+					+ "</ram:PayerPartyDebtorFinancialAccount>";
+		}
 		xml += "</ram:SpecifiedTradeSettlementPaymentMeans>";
 		return xml;
 	}

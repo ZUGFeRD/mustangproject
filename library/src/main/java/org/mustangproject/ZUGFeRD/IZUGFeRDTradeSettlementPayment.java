@@ -90,7 +90,7 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 
 		String xml = "<ram:SpecifiedTradeSettlementPaymentMeans>"
 				+ "<ram:TypeCode>" + XMLTools.encodeXML(getPaymentMeansCode()) + "</ram:TypeCode>";
-		if (!basicProfiles.contains(profile) && getOwnBIC() != null) {
+		if (!basicProfiles.contains(profile) && getPaymentMeansInformation() != null) {
 			xml += "<ram:Information>" + XMLTools.encodeXML(getPaymentMeansInformation()) + "</ram:Information>";
 		}
 		if (getOwnIBAN() != null) {
@@ -103,17 +103,9 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 			xml += "<ram:PayeeSpecifiedCreditorFinancialInstitution>"
 					+ "<ram:BICID>" + XMLTools.encodeXML(getOwnBIC()) + "</ram:BICID>"
 					// + " <ram:Name>"+trans.getOwnBankName()+"</ram:Name>"
-					//
 					+ "</ram:PayeeSpecifiedCreditorFinancialInstitution>";
 		}
 		xml += "</ram:SpecifiedTradeSettlementPaymentMeans>";
 		return xml;
 	}
-
-
-	/* I'd love to implement getPaymentXML() and put <ram:DueDateDateTime> there because this is where it belongs
-	 * unfortunately, the due date is part of the transaction which is not accessible here :-(
-	 */
-
-
 }
