@@ -49,12 +49,12 @@ public class VisualizationTest extends ResourceCase {
 
 	@Test
 	public void testCIIVisualizationBasic() {
-		this.runZUGFeRDVisualization("factur-x.xml", "factur-x-vis.fr.html", Language.FR);
+		this.runZUGFeRDVisualization(new ZUGFeRDVisualizer(), "factur-x.xml", "factur-x-vis.fr.html", Language.FR);
 	}
 
 	@Test
 	public void testCIIVisualizationExtended() {
-		this.runZUGFeRDVisualization("factur-x-extended.xml", "factur-x-vis-extended.de.html", Language.DE);
+		this.runZUGFeRDVisualization(new ZUGFeRDVisualizer(), "factur-x-extended.xml", "factur-x-vis-extended.de.html", Language.DE);
 	}
 
 	@Test
@@ -91,22 +91,29 @@ public class VisualizationTest extends ResourceCase {
 
 	@Test
 	public void testUBLCreditNoteVisualizationBasic() {
-		this.runZUGFeRDVisualization("ubl-creditnote.xml", "factur-x-vis-ubl-creditnote.en.html", Language.EN);
+		this.runZUGFeRDVisualization(new ZUGFeRDVisualizer(), "ubl-creditnote.xml", "factur-x-vis-ubl-creditnote.en.html", Language.EN);
 	}
 
 	@Test
 	public void testUBLVisualizationBasic() {
-		this.runZUGFeRDVisualization("ubl/01.01a-INVOICE.ubl.xml", "factur-x-vis-ubl.en.html", Language.EN);
+		this.runZUGFeRDVisualization(new ZUGFeRDVisualizer(), "ubl/01.01a-INVOICE.ubl.xml", "factur-x-vis-ubl.en.html", Language.EN);
 	}
 
-	private void runZUGFeRDVisualization(String inputFilename, String resultFileName, Language lang) {
-		File CIIinputFile = getResourceAsFile(inputFilename);
+	@Test
+	public void testVisualizationSameInstance() {
+		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+		this.runZUGFeRDVisualization(zvi, "ubl-creditnote.xml", "factur-x-vis-ubl-creditnote.en.html", Language.EN);
+		this.runZUGFeRDVisualization(zvi, "ubl/01.01a-INVOICE.ubl.xml", "factur-x-vis-ubl.en.html", Language.EN);
+		this.runZUGFeRDVisualization(zvi, "factur-x.xml", "factur-x-vis.fr.html", Language.FR);
+	}
+
+	private void runZUGFeRDVisualization(ZUGFeRDVisualizer zvi, String inputFilename, String resultFileName, Language lang) {
+		File inputFile = getResourceAsFile(inputFilename);
 
 		String expected = null;
 		String result = null;
 		try {
-			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
-			result = zvi.visualize(CIIinputFile.getAbsolutePath(), lang);
+			result = zvi.visualize(inputFile.getAbsolutePath(), lang);
 			Files.write(Path.of("./target/testout-" + resultFileName), result.getBytes(StandardCharsets.UTF_8));
 
 			File expectedResult = getResourceAsFile(resultFileName);
@@ -203,7 +210,6 @@ public class VisualizationTest extends ResourceCase {
 
 	@Test
 	public void testPDFVisualizationUBL() {
-
 		File UBLinputFile = getResourceAsFile("ubl/01.01a-INVOICE.ubl.xml");
 
 		// the writing part
@@ -249,7 +255,6 @@ public class VisualizationTest extends ResourceCase {
 
 	@Test
 	public void testPDFVisualizationSameInstance() {
-
 		File UBLcreditNoteinputFile = getResourceAsFile("ubl/UBL-CreditNote-2.1-Example.ubl.xml");
 		File UBLinputFile = getResourceAsFile("ubl/01.01a-INVOICE.ubl.xml");
 		File CIIinputFile = getResourceAsFile("cii/01.01a-INVOICE.cii.xml");
@@ -257,9 +262,9 @@ public class VisualizationTest extends ResourceCase {
 		// the writing part
 		try {
 			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
-			zvi.toPDF(UBLcreditNoteinputFile.getAbsolutePath(), TARGET_PDF_UBL_CREDIT_NOTE);
-			zvi.toPDF(UBLinputFile.getAbsolutePath(), TARGET_PDF_UBL);
-			zvi.toPDF(CIIinputFile.getAbsolutePath(), TARGET_PDF_CII);
+			zvi.toPDF(UBLcreditNoteinputFile.getAbsolutePath(), TARGET_PDF_UBL_CREDIT_NOTE, Language.DE);
+			zvi.toPDF(UBLinputFile.getAbsolutePath(), TARGET_PDF_UBL, Language.EN);
+			zvi.toPDF(CIIinputFile.getAbsolutePath(), TARGET_PDF_CII, Language.FR);
 		} catch (UnsupportedOperationException e) {
 			fail("UnsupportedOperationException should not happen: " + e.getMessage());
 		} catch (IllegalArgumentException e) {
@@ -269,8 +274,13 @@ public class VisualizationTest extends ResourceCase {
 
 		try {
 			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_UBL_CREDIT_NOTE)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Path.of(TARGET_PDF_UBL_CREDIT_NOTE)), "<rdf:li>de</rdf:li>".getBytes()));
+
 			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_UBL)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Path.of(TARGET_PDF_UBL)), "<rdf:li>en</rdf:li>".getBytes()));
+
 			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Path.of(TARGET_PDF_CII)), "<rdf:li>fr</rdf:li>".getBytes()));
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}
