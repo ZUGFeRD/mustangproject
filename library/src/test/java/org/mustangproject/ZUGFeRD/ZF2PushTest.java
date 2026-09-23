@@ -84,11 +84,13 @@ public class ZF2PushTest extends ResourceCase {
 	private static final String TARGET_CORRECTIONPDF = "./target/testout-ZF2PushCorrection.pdf";
 	private static final String TARGET_ITEMGROSS = "./target/testout-ZF2PushGross.pdf";
 	private static final String TARGET_ITEMCHARGESALLOWANCESPDF = "./target/testout-ZF2PushItemChargesAllowances.pdf";
+	private static final String TARGET_ITEMCHARGESALLOWANCESPDF_FR = "./target/testout-ZF2PushItemChargesAllowances_FR.pdf";
 	private static final String TARGET_CHARGESALLOWANCESPDF = "./target/testout-ZF2PushChargesAllowances.pdf";
 	private static final String TARGET_RELATIVECHARGESALLOWANCESPDF = "./target/testout-ZF2PushRelativeChargesAllowances.pdf";
 	private static final String TARGET_ATTACHMENTSPDF = "./target/testout-ZF2PushAttachments.pdf";
 	private static final String TARGET_BANKPDF = "./target/testout-ZF2PushBank.pdf";
 	private static final String TARGET_PUSHEDGE = "./target/testout-ZF2PushEdge.pdf";
+	private static final String TARGET_PUSHEDGE_FR = "./target/testout-ZF2PushEdge_FR.pdf";
 	private static final String TARGET_INTRACOMMUNITYSUPPLYMANUALPDF = "./target/testout-ZF2PushIntraCommunitySupplyManual.pdf";
 	private static final String TARGET_INTRACOMMUNITYSUPPLYPDF = "./target/testout-ZF2PushIntraCommunitySupply.pdf";
 	private static final String TARGET_REVERSECHARGEPDF = "./target/testout-ZF2PushReverseCharge.pdf";
@@ -343,7 +345,7 @@ public class ZF2PushTest extends ResourceCase {
 		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 			ze.ignorePDFAErrors().load(SOURCE_PDF);
-			ze.setProfile(Profiles.getByName("Extended"));
+			SOURCE_PDF.close();
 			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile("extended");
 			//	ze.setTransaction(new Invoice().setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setSender(new TradeParty(orgname,"teststr", "55232","teststadt","DE")).setOwnTaxID("4711").setOwnVATID("DE0815").setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE")).setNumber(number)
 			//					.addItem(new Item(new Product("Testprodukt", "", "H84", new BigDecimal(19)), amount, new BigDecimal(1.0)).addAllowance(new Allowance().setPercent(new BigDecimal(50)))));
@@ -360,11 +362,21 @@ public class ZF2PushTest extends ResourceCase {
 				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(19)), price, new BigDecimal("1.0")).addCharge(new Charge(new BigDecimal(1)).setReasonCode("ABK").setReason("Yet another reason")).addAllowance(new Allowance(new BigDecimal("1")).setReason("Something completely strange")));
 			ze.setTransaction(i);
 
-
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			ze.export(TARGET_ITEMCHARGESALLOWANCESPDF);
+
+			SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
+			ze.ignorePDFAErrors().load(SOURCE_PDF);
+			SOURCE_PDF.close();
+			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2);
+			ze.setProfile(Profiles.getByName("EXTENDED-CTC-FR"));
+			i.getSender().setCountry("FR");
+			i.getRecipient().setCountry("FR");
+			ze.setTransaction(i);
+			ze.export(TARGET_ITEMCHARGESALLOWANCESPDF_FR);
 		} catch (IOException e) {
+			e.printStackTrace();
 			fail("IOException should not be raised");
 		}
 
@@ -723,57 +735,68 @@ public class ZF2PushTest extends ResourceCase {
 		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
 			InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 			ze.ignorePDFAErrors().load(SOURCE_PDF);
+			SOURCE_PDF.close();
 			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile(Profiles.getByName("extended"));
 
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-			try {
-				SchemedID gtin = new SchemedID("0160", "2001015001325");
-				SchemedID gln = new SchemedID("0088", "4304171000002");
-				ReferencedDocument dr1 = new ReferencedDocument("90-kl-98798-C", sdf.parse("2025-10-12"));
-				ReferencedDocument dr2 = new ReferencedDocument("90-kl-98798-C1", sdf.parse("2025-10-13")).setReferenceTypeCode("AAG");
-				ReferencedDocument dr3 = new ReferencedDocument("orderId").setLineID("xxx");
-				ReferencedDocument dr4 = new ReferencedDocument("deliverynote123", new SimpleDateFormat("dd.MM.yyyy").parse("14.01.2026")).setLineID("deliverypos456");
 
-				ze.setTransaction(new Invoice().setTestIndicator().setCurrency("CHF").addNote("document level 1/2").addNote("document level 2/2").setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setPaymentReference("Verwendungszweck").setDocumentName("Rechnung")
-					.setSellerOrderReferencedDocument(new ReferencedDocument("9384")).setBuyerOrderReferencedDocument(new ReferencedDocument("28934"))
-					.setDetailedDeliveryPeriod(new SimpleDateFormat("yyyyMMdd").parse(occurrenceFrom), new SimpleDateFormat("yyyyMMdd").parse(occurrenceTo))
-					.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID(taxID).setEmail("sender@test.org").setID(orgID).addVATID("DE0815"))
-					.setDeliveryAddress(new TradeParty("just the other side of the street", "teststr.12a", "55232", "Entenhausen", "DE").addVATID("DE47110"))
-					.setEndCustomerDeliveryAddress(new TradeParty("Max Mustermann", "Glückswinkel 42", "98765", "Musterhausen", "DE"))
-					.setContractReferencedDocument(new ReferencedDocument(contractID))
-					.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addGlobalID(gln).setEmail("recipient@test.org").addVATID("DE4711")
-						.setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE").setFax("++49555123456")).setAdditionalAddress("Hinterhaus 3"))
-					.setInvoicer( new TradeParty("Abweichender Rechnungssteller", "Teststr.12", "04711", "Entenhausen", "DE") )
-					.setInvoicee( new TradeParty("Abweichender Rechnungsempfänger", "Teststr.42", "00815", "Entenhausen", "DE") )
-					.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(16)).addGlobalID(gtin).setSellerAssignedID("4711")
-							.addIndividualTradeProductInstance(new TradeProductInstanceType().setBatchID(new SchemedID().setScheme("xxx").setId("Batch-4711")).setSupplierAssignedSerialID(new SchemedID().setId("4711-0815"))), price, new BigDecimal("1.0")).setId("a123")
-						.addAdditionalReference(dr2)
-						.setBuyerOrderReferencedDocument(dr3)
-						.addNote("item level 1/1")
-						.addAllowance(itemAllowance).setDetailedDeliveryPeriod(sdf.parse("2020-01-13"), sdf.parse("2020-01-15"))
-						.setDeliveryNoteReferencedDocument(dr4)
-						.setAccountingReference("#11111#2222#xxxx#")
-					)
-					.addCharge(charge)
-					.addAllowance(allowance)
-					.addCashDiscount(new CashDiscount(new BigDecimal(2), 14))
-					.setTenderReferencedDocument(dr1)
-					.setDeliveryDate(sdf.parse("2020-11-02")).setNumber(number).setVATDueDateTypeCode(EventTimeCodeTypeConstants.PAYMENT_DATE)
-					.addInvoiceReferencedDocument(new ReferencedDocument("abc123"))
-					.addInvoiceReferencedDocument(new ReferencedDocument("abcd1234"))
-					.setDeliveryTypeCode("EXW")
-					.setAccountingReference("20260825201500")
-				);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
+			SchemedID gtin = new SchemedID("0160", "2001015001325");
+			SchemedID gln = new SchemedID("0088", "4304171000002");
+			ReferencedDocument dr1 = new ReferencedDocument("90-kl-98798-C", sdf.parse("2025-10-12"));
+			ReferencedDocument dr2 = new ReferencedDocument("90-kl-98798-C1", sdf.parse("2025-10-13")).setReferenceTypeCode("AAG");
+			ReferencedDocument dr3 = new ReferencedDocument("orderId").setLineID("xxx");
+			ReferencedDocument dr4 = new ReferencedDocument("deliverynote123", new SimpleDateFormat("dd.MM.yyyy").parse("14.01.2026")).setLineID("deliverypos456");
+
+			Invoice i = new Invoice().setTestIndicator().setCurrency("EUR").addNote("document level 1/2").addNote("document level 2/2").setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setPaymentReference("Verwendungszweck").setDocumentName("Rechnung")
+				.setSellerOrderReferencedDocument(new ReferencedDocument("9384")).setBuyerOrderReferencedDocument(new ReferencedDocument("28934"))
+				.setDetailedDeliveryPeriod(new SimpleDateFormat("yyyyMMdd").parse(occurrenceFrom), new SimpleDateFormat("yyyyMMdd").parse(occurrenceTo))
+				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID(taxID).setEmail("sender@test.org").setID(orgID).addVATID("DE0815"))
+				.setDeliveryAddress(new TradeParty("just the other side of the street", "teststr.12a", "55232", "Entenhausen", "DE").addVATID("DE47110"))
+				.setEndCustomerDeliveryAddress(new TradeParty("Max Mustermann", "Glückswinkel 42", "98765", "Musterhausen", "DE"))
+				.setContractReferencedDocument(new ReferencedDocument(contractID))
+				.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE").addGlobalID(gln).setEmail("recipient@test.org").addVATID("DE4711")
+					.setContact(new Contact("Franz Müller", "01779999999", "franz@mueller.de", "teststr. 12", "55232", "Entenhausen", "DE").setFax("++49555123456")).setAdditionalAddress("Hinterhaus 3"))
+				.setInvoicer( new TradeParty("Abweichender Rechnungssteller", "Teststr.12", "04711", "Entenhausen", "DE") )
+				.setInvoicee( new TradeParty("Abweichender Rechnungsempfänger", "Teststr.42", "00815", "Entenhausen", "DE") )
+				.addItem(new Item(new Product("Testprodukt", "", "H87", new BigDecimal(16)).addGlobalID(gtin).setSellerAssignedID("4711")
+						.addIndividualTradeProductInstance(new TradeProductInstanceType().setBatchID(new SchemedID().setScheme("xxx").setId("Batch-4711")).setSupplierAssignedSerialID(new SchemedID().setId("4711-0815"))), price, new BigDecimal("1.0")).setId("a123")
+					.addAdditionalReference(dr2)
+					.setBuyerOrderReferencedDocument(dr3)
+					.addNote("item level 1/1")
+					.addAllowance(itemAllowance).setDetailedDeliveryPeriod(sdf.parse("2020-01-13"), sdf.parse("2020-01-15"))
+					.setDeliveryNoteReferencedDocument(dr4)
+					.setAccountingReference("#11111#2222#xxxx#")
+				)
+				.addCharge(charge)
+				.addAllowance(allowance)
+				.addCashDiscount(new CashDiscount(new BigDecimal(2), 14))
+				.setTenderReferencedDocument(dr1)
+				.setDeliveryDate(sdf.parse("2020-11-02")).setNumber(number).setVATDueDateTypeCode(EventTimeCodeTypeConstants.PAYMENT_DATE)
+				.addInvoiceReferencedDocument(new ReferencedDocument("abc123"))
+				.addInvoiceReferencedDocument(new ReferencedDocument("abcd1234"))
+				.setDeliveryTypeCode("EXW")
+				.setAccountingReference("20260825201500");
+
+			ze.setTransaction(i);
 
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			assertTrue(theXML.contains("<ram:TestIndicator"));
 			ze.export(TARGET_PUSHEDGE);
+
+			SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
+			ze.ignorePDFAErrors().load(SOURCE_PDF);
+			SOURCE_PDF.close();
+			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2);
+			ze.setProfile(Profiles.getByName("EXTENDED-CTC-FR"));
+			i.getSender().setCountry("FR");
+			i.getRecipient().setCountry("FR");
+			ze.setTransaction(i);
+			ze.export(TARGET_PUSHEDGE_FR);
 		} catch (IOException e) {
 			fail("IOException should not be raised");
+		} catch (ParseException e) {
+			fail("ParseException should not be raised");
 		}
 
 		// now check the contents (like MustangReaderTest)
@@ -1224,7 +1247,7 @@ public class ZF2PushTest extends ResourceCase {
 			));
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
-		zf2p.setProfile( Profiles.getByName( "EN16931" ) );
+		zf2p.setProfile(Profiles.getByName("EN16931"));
 
 		// Try EN16931
 		zf2p.generateXML(i);
@@ -1233,7 +1256,7 @@ public class ZF2PushTest extends ResourceCase {
 		assertThat(theXML).doesNotHaveXPath("//*[local-name()='SpecifiedLineTradeSettlement']/*[local-name()='ApplicableTradeTax']/*[local-name()='ExemptionReasonCode']");
 
 		// Try Extended
-		zf2p.setProfile( Profiles.getByName( "Extended" ) );
+		zf2p.setProfile(Profiles.getByName("Extended"));
 		zf2p.generateXML(i);
 		theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		// BT-X-96
@@ -1352,8 +1375,9 @@ public class ZF2PushTest extends ResourceCase {
 		assertEquals(BigDecimal.valueOf(183.14), invoice.getVATTotalInTaxCurrency());
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
-		zf2p.setProfile(Profiles.getByName("Extended"));
+		zf2p.setProfile(Profiles.getByName("EXTENDED"));
 		zf2p.generateXML(invoice);
+
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertTrue(theXML.contains("TaxCurrencyCode"));
 		assertTrue(theXML.contains("SourceCurrencyCode"));

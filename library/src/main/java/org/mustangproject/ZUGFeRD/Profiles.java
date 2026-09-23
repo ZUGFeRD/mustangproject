@@ -20,41 +20,35 @@
  */
 package org.mustangproject.ZUGFeRD;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.mustangproject.EStandard;
 
 public class Profiles {
-	static Map<String, Profile> zf2Map = Stream.of(new Object[][]{
-			{"MINIMUM", new Profile("MINIMUM", "urn:factur-x.eu:1p0:minimum")},
-			{"BASICWL", new Profile("BASICWL", "urn:factur-x.eu:1p0:basicwl")},
-			{"BASIC", new Profile("BASIC", "urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic")},
-			{"EN16931", new Profile("EN16931", "urn:cen.eu:en16931:2017")},
-			{"EXTENDED-CTC-FR", new Profile("EXTENDED-CTC-FR", "urn:cen.eu:en16931:2017#conformant#urn.cpro.gouv.fr:1p0:extended-ctc-fr")},
-			{"EXTENDED", new Profile("EXTENDED", "urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended")},
-			{"XRECHNUNG", new Profile("XRECHNUNG", "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0")} // up next: urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0
+	static final Map<String, Profile> zf1Map = new HashMap<String, Profile>();
+	static final Map<String, Profile> dx1Map = new HashMap<String, Profile>();
+	static final Map<String, Profile> ox1Map = new HashMap<String, Profile>();
+	static final Map<String, Profile> zf2Map = new HashMap<String, Profile>();
+	static {
+		zf1Map.put("BASIC", new Profile("BASIC", "urn:ferd:CrossIndustryDocument:invoice:1p0:basic"));
+		zf1Map.put("COMFORT", new Profile("COMFORT", "urn:ferd:CrossIndustryDocument:invoice:1p0:comfort"));
+		zf1Map.put("EXTENDED", new Profile("EXTENDED", "urn:ferd:CrossIndustryDocument:invoice:1p0:extended"));
 
-	}).collect(Collectors.toMap(data -> (String) data[0], data -> (Profile) data[1]));
-	static Map<String, Profile> zf1Map = Stream.of(new Object[][]{
-			{"BASIC", new Profile("BASIC", "urn:ferd:CrossIndustryDocument:invoice:1p0:basic")},
-			{"COMFORT", new Profile("COMFORT", "urn:ferd:CrossIndustryDocument:invoice:1p0:comfort")},
-			{"EXTENDED", new Profile("EXTENDED", "urn:ferd:CrossIndustryDocument:invoice:1p0:extended")},
+		dx1Map.put("PILOT", new Profile("PILOT", "urn:awv-net.de:CIDA:1.0:pilot"));
 
+		ox1Map.put("BASIC", new Profile("BASIC", "urn:order-x.eu:1p0:basic"));
+		ox1Map.put("COMFORT", new Profile("COMFORT", "urn:order-x.eu:1p0:comfort"));
+		ox1Map.put("EXTENDED", new Profile("EXTENDED", "urn:order-x.eu:1p0:extended"));
 
-	}).collect(Collectors.toMap(data -> (String) data[0], data -> (Profile) data[1]));
-	static Map<String, Profile> ox1Map = Stream.of(new Object[][]{
-			{"BASIC", new Profile("BASIC", "urn:order-x.eu:1p0:basic")},
-			{"COMFORT", new Profile("COMFORT", "urn:order-x.eu:1p0:comfort")},
-			{"EXTENDED", new Profile("EXTENDED", "urn:order-x.eu:1p0:extended")},
-
-
-	}).collect(Collectors.toMap(data -> (String) data[0], data -> (Profile) data[1]));
-	static Map<String, Profile> dx1Map = Stream.of(new Object[][]{
-			{"PILOT", new Profile("PILOT", "urn:awv-net.de:CIDA:1.0:pilot")}
-	}).collect(Collectors.toMap(data -> (String) data[0], data -> (Profile) data[1]));
-
+		zf2Map.put("MINIMUM", new Profile("MINIMUM", "urn:factur-x.eu:1p0:minimum"));
+		zf2Map.put("BASICWL", new Profile("BASICWL", "urn:factur-x.eu:1p0:basicwl"));
+		zf2Map.put("BASIC", new Profile("BASIC", "urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic"));
+		zf2Map.put("EN16931", new Profile("EN16931", "urn:cen.eu:en16931:2017"));
+		zf2Map.put("EXTENDED", new Profile("EXTENDED", "urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended"));
+		zf2Map.put("EXTENDED-CTC-FR", new Profile("EXTENDED-CTC-FR", "urn:cen.eu:en16931:2017#conformant#urn.cpro.gouv.fr:1p0:extended-ctc-fr"));
+		zf2Map.put("XRECHNUNG", new Profile("XRECHNUNG", "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0")); // up next: urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0
+	}
 
 	public static Profile getByName(EStandard standard, String name, int version) {
 		if (standard == EStandard.ORDER_X) {
@@ -77,7 +71,6 @@ public class Profiles {
 				generation = 2;
 			}
 			return getByName(name, generation);
-
 		}
 	}
 
@@ -108,9 +101,7 @@ public class Profiles {
 	 * @return a profile matching the requested name
 	 */
 	public static Profile getByNameDisregardingVersion(String name) {
-		Profile result = null;
-
-		result = zf1Map.get(name.toUpperCase());
+		Profile result = zf1Map.get(name.toUpperCase());
 
 		if (result == null) {
 			result = zf2Map.get(name.toUpperCase());

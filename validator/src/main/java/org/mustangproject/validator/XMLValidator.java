@@ -203,9 +203,10 @@ public class XMLValidator extends Validator {
 				boolean isBasicWithoutLines = false;
 				boolean isEN16931 = false;
 				boolean isExtended = false;
+				boolean isExtendedFR = false;
 				boolean isXRechnung = false;
 				String currentZFVersionDir = "ZF_250";
-				String currentXPZ12VersionDir = "XP_Z12_012";
+				String currentXPZ12VersionDir = "XP_Z12_014";
 				int mainSchematronSectionErrorTypeCode = 4;
 				String xsltFilename = null;
 				boolean runFrenchCiiSchematron = false;
@@ -247,6 +248,7 @@ public class XMLValidator extends Validator {
 						.anyMatch(profile -> matchesURI(contextProfile, profile));
 
 					isExtended = contextProfile.contains("extended");
+					isExtendedFR = contextProfile.contains("extended-ctc-fr");
 					isXRechnung = contextProfile.contains("xrechnung");
 
 					if (isExtended || isXRechnung) {
@@ -281,7 +283,11 @@ public class XMLValidator extends Validator {
 					} else if (isExtended) {
 						LOGGER.debug("is EXTENDED");
 						validateSchema(zfXML.getBytes(StandardCharsets.UTF_8), currentZFVersionDir + "/EXTENDED/FACTUR-X_EXTENDED.xsd", 18, EPart.fx);
-						xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_EXTENDED.xslt";
+						if (isExtendedFR) {
+							xsltFilename = "/xslt/" + currentXPZ12VersionDir + "/EXTENDED-CTC-FR-CII_V1.4.04.xslt";
+						} else {
+							xsltFilename = "/xslt/" + currentZFVersionDir + "/FACTUR-X_EXTENDED.xslt";
+						}
 					}
 
 					// takes around 10 Seconds. //
@@ -391,7 +397,7 @@ public class XMLValidator extends Validator {
 					validateSchematron(zfXML, xsltFilename, mainSchematronSectionErrorTypeCode, ESeverity.error);
 
 					if (runFrenchCiiSchematron) {
-						String xsltFRFilename = "/xslt/" + currentXPZ12VersionDir + "/20260216_BR-FR-Flux2-Schematron-CII_V1.3.0.xsl";
+						String xsltFRFilename = "/xslt/" + currentXPZ12VersionDir + "/BR-FR-Flux2-Schematron-CII_V1.4.04.xslt";
 						validateSchematron(zfXML, xsltFRFilename, mainSchematronSectionErrorTypeCode, ESeverity.error);
 					}
 

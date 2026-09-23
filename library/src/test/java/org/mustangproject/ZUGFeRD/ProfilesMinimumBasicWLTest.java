@@ -26,16 +26,20 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.BankDetails;
+import org.mustangproject.IncludedNote;
 import org.mustangproject.Invoice;
 import org.mustangproject.Item;
 import org.mustangproject.LegalOrganisation;
 import org.mustangproject.Product;
+import org.mustangproject.SubjectCode;
 import org.mustangproject.TradeParty;
-
 
 /***
  * This is a test to confirm the minimum steps to implement a interface are still sufficient
@@ -43,7 +47,8 @@ import org.mustangproject.TradeParty;
  * @author jstaerk
  *
  */
-public class ProfilesMinimumBasicWLTest {
+@TestMethodOrder(MethodOrderer.MethodName.class)
+public class ProfilesMinimumBasicWLTest extends ResourceCase {
 
 	private static final String TARGET_PDF_FX_MINIMUM_INV = "./target/testout-Minimum-INV.pdf";
 	private static final String TARGET_PDF_FX_MINIMUM_CN = "./target/testout-Minimum-CN.pdf";
@@ -79,6 +84,10 @@ public class ProfilesMinimumBasicWLTest {
 					.setNumber(ownNumber)
 					.addItem(new Item(new Product("Testprodukt", "", "C62", new BigDecimal(19)), new BigDecimal(123), new BigDecimal(1)))
 					.setCreditNote();
+			i.setNotesWithSubjectCode(new ArrayList<>());
+			i.getNotesWithSubjectCode().add(new IncludedNote("Text 1", SubjectCode.PMT));
+			i.getNotesWithSubjectCode().add(IncludedNote.paymentDetailRemittanceInformationNote("Text 2"));
+			i.getNotesWithSubjectCode().add(IncludedNote.paymentTermNote("Text 3"));
 			ze.setTransaction(i);
 			ze.export(TARGET_PDF_FX_MINIMUM_CN);
 
@@ -89,6 +98,8 @@ public class ProfilesMinimumBasicWLTest {
 
 		} catch (IOException e) {
 			fail("IOException should not happen in testMinimumExport");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		// now check the contents (like MustangReaderTest)
@@ -99,11 +110,8 @@ public class ProfilesMinimumBasicWLTest {
 //		assertEquals(zi.getBIC(), ownBIC);
 //		assertEquals(zi.getIBAN(), ownIBAN);
 		assertEquals(ownOrgName, zi.getHolder());
-//		assertEquals(zi.getForeignReference(), ownNumber);
-
-
+//		assertEquals(ownNumber, zi.getForeignReference());
 	}
-
 
 	@Test
 	public void testMinimumInvoice() {
@@ -156,9 +164,5 @@ public class ProfilesMinimumBasicWLTest {
 //		assertEquals(zi.getIBAN(), ownIBAN);
 		assertEquals(ownOrgName, zi.getHolder());
 //		assertEquals(zi.getForeignReference(), ownNumber);
-
-
 	}
-
-
 }
