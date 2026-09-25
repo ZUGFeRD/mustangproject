@@ -96,10 +96,10 @@ public class LibraryTest extends ResourceCase {
 				.isEqualTo("valid");
 
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
-				.isEqualTo("invalid");
+				.isEqualTo("valid");
 
 		assertThat(res).valueByXPath("/validation/summary/@status")
-				.isEqualTo("invalid");
+				.isEqualTo("valid");
 
 	}
 
@@ -153,16 +153,16 @@ public class LibraryTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("count(//error)")
 				.asInt()
-				.isEqualTo(9);
+				.isEqualTo(0);
 
 		assertThat(res).valueByXPath("/validation/pdf/summary/@status")
 				.isEqualTo("valid");
 
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
-				.isEqualTo("invalid");
+				.isEqualTo("valid");
 
 		assertThat(res).valueByXPath("/validation/summary/@status")
-				.isEqualTo("invalid");
+				.isEqualTo("valid");
 
 	}
 
@@ -357,13 +357,13 @@ public class LibraryTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("count(//error)")
 				.asInt()
-				.isEqualTo(8);
+				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("invalid");
+				.isEqualTo("valid");
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
-				.isEqualTo("invalid");
+				.isEqualTo("valid");
 
 		assertThat(res).valueByXPath("count(//notice)")
 				.asInt()
@@ -379,13 +379,13 @@ public class LibraryTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("count(//error)")
 				.asInt()
-				.isEqualTo(6);
+				.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("invalid");
+				.isEqualTo("valid");
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 				.asString()
-				.isEqualTo("invalid");
+				.isEqualTo("valid");
 
 		assertThat(res).valueByXPath("count(//notice)")
 				.asInt()

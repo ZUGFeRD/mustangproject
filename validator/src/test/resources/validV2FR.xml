@@ -1,14 +1,29 @@
 <?xml version='1.0' encoding="UTF-8" standalone="yes"?>
 <rsm:CrossIndustryInvoice xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
 	<rsm:ExchangedDocumentContext>
+		<ram:BusinessProcessSpecifiedDocumentContextParameter>
+			<ram:ID>B1</ram:ID>
+		</ram:BusinessProcessSpecifiedDocumentContextParameter>
 		<ram:GuidelineSpecifiedDocumentContextParameter>
-			<ram:ID>urn:cen.eu:en16931:2017</ram:ID>
+			<ram:ID>urn:cen.eu:en16931:2017#conformant#urn.cpro.gouv.fr:1p0:extended-ctc-fr</ram:ID>
 		</ram:GuidelineSpecifiedDocumentContextParameter>
 	</rsm:ExchangedDocumentContext>
 	<rsm:ExchangedDocument>
 		<ram:ID>FAC-20171118-506</ram:ID>
 		<ram:TypeCode>380</ram:TypeCode>
 		<ram:IssueDateTime><udt:DateTimeString format="102">20171118</udt:DateTimeString></ram:IssueDateTime>
+		<ram:IncludedNote>
+			<ram:Content>Text 1</ram:Content>
+			<ram:SubjectCode>PMT</ram:SubjectCode>
+		</ram:IncludedNote>
+		<ram:IncludedNote>
+			<ram:Content>Text 2</ram:Content>
+			<ram:SubjectCode>PMD</ram:SubjectCode>
+		</ram:IncludedNote>
+		<ram:IncludedNote>
+			<ram:Content>Text 3</ram:Content>
+			<ram:SubjectCode>AAB</ram:SubjectCode>
+		</ram:IncludedNote>
 	</rsm:ExchangedDocument>
 	<rsm:SupplyChainTradeTransaction>
 		<ram:IncludedSupplyChainTradeLineItem>
@@ -17,7 +32,6 @@
 			</ram:AssociatedDocumentLineDocument>
 			<ram:SpecifiedTradeProduct>
 				<ram:Name>Prestation graphique</ram:Name>
-				<ram:Description></ram:Description>
 			</ram:SpecifiedTradeProduct>
 			<ram:SpecifiedLineTradeAgreement>
 				<ram:GrossPriceProductTradePrice>
@@ -49,7 +63,6 @@
 			</ram:AssociatedDocumentLineDocument>
 			<ram:SpecifiedTradeProduct>
 				<ram:Name>Ballon decoratif 500 ml</ram:Name>
-				<ram:Description></ram:Description>
 			</ram:SpecifiedTradeProduct>
 			<ram:SpecifiedLineTradeAgreement>
 				<ram:GrossPriceProductTradePrice>
@@ -68,7 +81,7 @@
 				<ram:ApplicableTradeTax>
 					<ram:TypeCode>VAT</ram:TypeCode>
 					<ram:CategoryCode>S</ram:CategoryCode>
-					<ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+					<ram:RateApplicablePercent>20.00</ram:RateApplicablePercent>
 				</ram:ApplicableTradeTax>
 				<ram:SpecifiedTradeSettlementLineMonetarySummation>
 					<ram:LineTotalAmount>316.00</ram:LineTotalAmount>
@@ -81,7 +94,6 @@
 			</ram:AssociatedDocumentLineDocument>
 			<ram:SpecifiedTradeProduct>
 				<ram:Name>Helium par litre</ram:Name>
-				<ram:Description></ram:Description>
 			</ram:SpecifiedTradeProduct>
 			<ram:SpecifiedLineTradeAgreement>
 				<ram:GrossPriceProductTradePrice>
@@ -100,7 +112,7 @@
 				<ram:ApplicableTradeTax>
 					<ram:TypeCode>VAT</ram:TypeCode>
 					<ram:CategoryCode>S</ram:CategoryCode>
-					<ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+					<ram:RateApplicablePercent>20.00</ram:RateApplicablePercent>
 				</ram:ApplicableTradeTax>
 				<ram:SpecifiedTradeSettlementLineMonetarySummation>
 					<ram:LineTotalAmount>20.00</ram:LineTotalAmount>
@@ -110,12 +122,18 @@
 		<ram:ApplicableHeaderTradeAgreement>
 			<ram:SellerTradeParty>
 				<ram:Name>Atelier du Ballon SARL</ram:Name>
+				<ram:SpecifiedLegalOrganization>
+					<ram:ID schemeID="0002">123456789</ram:ID>
+				</ram:SpecifiedLegalOrganization>
 				<ram:PostalTradeAddress>
 					<ram:PostcodeCode>75001</ram:PostcodeCode>
 					<ram:LineOne>1 rue du Louvre</ram:LineOne>
 					<ram:CityName>Paris</ram:CityName>
 					<ram:CountryID>FR</ram:CountryID>
 				</ram:PostalTradeAddress>
+				<ram:URIUniversalCommunication>
+					<ram:URIID schemeID="EM">testemail@example.org</ram:URIID>
+				</ram:URIUniversalCommunication>
 				<ram:SpecifiedTaxRegistration>
 					<ram:ID schemeID="FC">552081317</ram:ID>
 				</ram:SpecifiedTaxRegistration>
@@ -131,6 +149,9 @@
 					<ram:CityName>Lyon</ram:CityName>
 					<ram:CountryID>FR</ram:CountryID>
 				</ram:PostalTradeAddress>
+				<ram:URIUniversalCommunication>
+					<ram:URIID schemeID="EM">testemail@example.org</ram:URIID>
+				</ram:URIUniversalCommunication>
 				<ram:SpecifiedTaxRegistration>
 					<ram:ID schemeID="VA">FR19787878784</ram:ID>
 				</ram:SpecifiedTaxRegistration>
@@ -162,11 +183,11 @@
 				<ram:RateApplicablePercent>7.00</ram:RateApplicablePercent>
 			</ram:ApplicableTradeTax>
 			<ram:ApplicableTradeTax>
-				<ram:CalculatedAmount>63.84</ram:CalculatedAmount>
+				<ram:CalculatedAmount>67.20</ram:CalculatedAmount>
 				<ram:TypeCode>VAT</ram:TypeCode>
 				<ram:BasisAmount>336.00</ram:BasisAmount>
 				<ram:CategoryCode>S</ram:CategoryCode>
-				<ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+				<ram:RateApplicablePercent>20.00</ram:RateApplicablePercent>
 			</ram:ApplicableTradeTax>
 			<ram:SpecifiedTradePaymentTerms>
 				<ram:Description>Paiement sans escompte avant le 09.12.2017</ram:Description>
@@ -177,9 +198,9 @@
 				<ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>
 				<ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>
 				<ram:TaxBasisTotalAmount>496.00</ram:TaxBasisTotalAmount>
-				<ram:TaxTotalAmount currencyID="EUR">75.04</ram:TaxTotalAmount>
-				<ram:GrandTotalAmount>571.04</ram:GrandTotalAmount>
-				<ram:DuePayableAmount>571.04</ram:DuePayableAmount>
+				<ram:TaxTotalAmount currencyID="EUR">78.40</ram:TaxTotalAmount>
+				<ram:GrandTotalAmount>574.40</ram:GrandTotalAmount>
+				<ram:DuePayableAmount>574.40</ram:DuePayableAmount>
 			</ram:SpecifiedTradeSettlementHeaderMonetarySummation>
 		</ram:ApplicableHeaderTradeSettlement>
 	</rsm:SupplyChainTradeTransaction>

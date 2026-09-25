@@ -428,18 +428,19 @@ public class XMLValidatorTest extends ResourceCase {
 			xv.validate();
 
 			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+
 			assertThat(s).valueByXPath("count(//error)")
 				.asInt()
-				.isEqualTo(10);
+				.isEqualTo(0);
 			assertThat(s).valueByXPath("count(//warning)")
 				.asInt()
-				.isEqualTo(3);
+				.isEqualTo(0);
 			assertThat(s).valueByXPath("count(//warning[contains(text(),'XP_Z12_014')])")
 				.asInt()
 				.isEqualTo(0);
 			assertThat(s).valueByXPath("/validation/summary/@status")
 				.asString()
-				.isEqualTo("invalid");
+				.isEqualTo("valid");
 		} catch (final IrrecoverableValidationError e) {
 			fail(e.getMessage());
 		}

@@ -62,6 +62,7 @@ import org.mustangproject.DirectDebit;
 import org.mustangproject.IncludedNote;
 import org.mustangproject.Invoice;
 import org.mustangproject.Item;
+import org.mustangproject.LegalOrganisation;
 import org.mustangproject.LogisticsServiceCharge;
 import org.mustangproject.Product;
 import org.mustangproject.Product.TradeProductInstanceType;
@@ -371,8 +372,37 @@ public class ZF2PushTest extends ResourceCase {
 			SOURCE_PDF.close();
 			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2);
 			ze.setProfile(Profiles.getByName("EXTENDED-CTC-FR"));
-			i.getSender().setCountry("FR");
-			i.getRecipient().setCountry("FR");
+			i.setBusinessProcessId("B1");
+			i.getSender().setCountry("FR").setLegalOrganisation(new LegalOrganisation("123456789", "0002")).addUriUniversalCommunicationID(new SchemedID("EM", "testemail@example.org"));
+			i.getRecipient().setCountry("FR").addUriUniversalCommunicationID(new SchemedID("EM", "testemail@example.org"));
+			i.setNotesWithSubjectCode(new ArrayList<>());
+			i.getNotesWithSubjectCode().add(new IncludedNote("Text 1", SubjectCode.PMT));
+			i.getNotesWithSubjectCode().add(IncludedNote.paymentDetailRemittanceInformationNote("Text 2"));
+			i.getNotesWithSubjectCode().add(IncludedNote.paymentTermNote("Text 3"));
+			if (i.getZFAllowances() != null) {
+				for (IZUGFeRDAllowanceCharge izac : i.getZFAllowances()) {
+					((Allowance) izac).setTaxRateApplicablePercent(new BigDecimal(20));
+				}
+			}
+			if (i.getZFCharges() != null) {
+				for (IZUGFeRDAllowanceCharge izac : i.getZFCharges()) {
+					((Charge) izac).setTaxRateApplicablePercent(new BigDecimal(20));
+				}
+			}
+			for (IZUGFeRDExportableItem izei : i.getZFItems()) {
+				Item item = (Item) izei;
+				item.getProduct().setVATPercent(new BigDecimal(20));
+				if (item.getItemAllowances() != null) {
+					for (IZUGFeRDAllowanceCharge izac : item.getItemAllowances()) {
+						((Allowance) izac).setTaxRateApplicablePercent(new BigDecimal(20));
+					}
+				}
+				if (item.getItemCharges() != null) {
+					for (IZUGFeRDAllowanceCharge izac : item.getItemCharges()) {
+						((Charge) izac).setTaxRateApplicablePercent(new BigDecimal(20));
+					}
+				}
+			}
 			ze.setTransaction(i);
 			ze.export(TARGET_ITEMCHARGESALLOWANCESPDF_FR);
 		} catch (IOException e) {
@@ -789,8 +819,37 @@ public class ZF2PushTest extends ResourceCase {
 			SOURCE_PDF.close();
 			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2);
 			ze.setProfile(Profiles.getByName("EXTENDED-CTC-FR"));
-			i.getSender().setCountry("FR");
-			i.getRecipient().setCountry("FR");
+			i.setBusinessProcessId("B1");
+			i.getSender().setCountry("FR").setLegalOrganisation(new LegalOrganisation("123456789", "0002")).addUriUniversalCommunicationID(new SchemedID("EM", "testemail@example.org"));
+			i.getRecipient().setCountry("FR").addUriUniversalCommunicationID(new SchemedID("EM", "testemail@example.org"));
+			i.setNotesWithSubjectCode(new ArrayList<>());
+			i.getNotesWithSubjectCode().add(new IncludedNote("Text 1", SubjectCode.PMT));
+			i.getNotesWithSubjectCode().add(IncludedNote.paymentDetailRemittanceInformationNote("Text 2"));
+			i.getNotesWithSubjectCode().add(IncludedNote.paymentTermNote("Text 3"));
+			if (i.getZFAllowances() != null) {
+				for (IZUGFeRDAllowanceCharge izac : i.getZFAllowances()) {
+					((Allowance) izac).setTaxRateApplicablePercent(new BigDecimal(20));
+				}
+			}
+			if (i.getZFCharges() != null) {
+				for (IZUGFeRDAllowanceCharge izac : i.getZFCharges()) {
+					((Charge) izac).setTaxRateApplicablePercent(new BigDecimal(20));
+				}
+			}
+			for (IZUGFeRDExportableItem izei : i.getZFItems()) {
+				Item item = (Item) izei;
+				item.getProduct().setVATPercent(new BigDecimal(20));
+				if (item.getItemAllowances() != null) {
+					for (IZUGFeRDAllowanceCharge izac : item.getItemAllowances()) {
+						((Allowance) izac).setTaxRateApplicablePercent(new BigDecimal(20));
+					}
+				}
+				if (item.getItemCharges() != null) {
+					for (IZUGFeRDAllowanceCharge izac : item.getItemCharges()) {
+						((Charge) izac).setTaxRateApplicablePercent(new BigDecimal(20));
+					}
+				}
+			}
 			ze.setTransaction(i);
 			ze.export(TARGET_PUSHEDGE_FR);
 		} catch (IOException e) {

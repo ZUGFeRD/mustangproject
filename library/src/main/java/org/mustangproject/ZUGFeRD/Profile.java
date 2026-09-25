@@ -8,7 +8,7 @@ package org.mustangproject.ZUGFeRD;
  * For the XRechnung at the time being please use Factur-X's XRechnung
  */
 public class Profile {
-	protected String name, id;
+	private final String name, id;
 
 	/***
 	 * Constructor

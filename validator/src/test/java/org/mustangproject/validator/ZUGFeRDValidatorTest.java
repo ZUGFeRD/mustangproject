@@ -279,19 +279,19 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 		assertThat(res).valueByXPath("count(//error)")
 			.asInt()
-			.isEqualTo(10);
+			.isEqualTo(0);
 		assertThat(res).valueByXPath("count(//warning)")
 			.asInt()
-			.isEqualTo(3);
+			.isEqualTo(0);
 		assertThat(res).valueByXPath("count(//notice)")
 			.asInt()
-			.isEqualTo(9); // 9 notices RE XRechnung 3.0
+			.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
-			.isEqualTo("invalid");
+			.isEqualTo("valid");
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 			.asString()
-			.isEqualTo("invalid");
+			.isEqualTo("valid");
 
 	}
 

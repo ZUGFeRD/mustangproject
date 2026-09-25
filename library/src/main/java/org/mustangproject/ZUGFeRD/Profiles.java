@@ -25,11 +25,11 @@ import java.util.Map;
 
 import org.mustangproject.EStandard;
 
-public class Profiles {
-	static final Map<String, Profile> zf1Map = new HashMap<String, Profile>();
-	static final Map<String, Profile> dx1Map = new HashMap<String, Profile>();
-	static final Map<String, Profile> ox1Map = new HashMap<String, Profile>();
-	static final Map<String, Profile> zf2Map = new HashMap<String, Profile>();
+public final class Profiles {
+	private static final Map<String, Profile> zf1Map = new HashMap<String, Profile>();
+	private static final Map<String, Profile> dx1Map = new HashMap<String, Profile>();
+	private static final Map<String, Profile> ox1Map = new HashMap<String, Profile>();
+	private static final Map<String, Profile> zf2Map = new HashMap<String, Profile>();
 	static {
 		zf1Map.put("BASIC", new Profile("BASIC", "urn:ferd:CrossIndustryDocument:invoice:1p0:basic"));
 		zf1Map.put("COMFORT", new Profile("COMFORT", "urn:ferd:CrossIndustryDocument:invoice:1p0:comfort"));
@@ -49,6 +49,10 @@ public class Profiles {
 		zf2Map.put("EXTENDED-CTC-FR", new Profile("EXTENDED-CTC-FR", "urn:cen.eu:en16931:2017#conformant#urn.cpro.gouv.fr:1p0:extended-ctc-fr"));
 		zf2Map.put("XRECHNUNG", new Profile("XRECHNUNG", "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0")); // up next: urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0
 	}
+
+	 private Profiles() {
+		 /* This utility class should not be instantiated */
+	 }
 
 	public static Profile getByName(EStandard standard, String name, int version) {
 		if (standard == EStandard.ORDER_X) {
