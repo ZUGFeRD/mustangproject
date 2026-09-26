@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -248,8 +249,16 @@ public class XMLTools extends XMLWriter {
 		} else {
 			formatter = ZUGFeRDDateFormat.DATE.getFormatter();
 		}
+		// A day the month does not contain, such as 20240231, must not roll
+		// forward. SimpleDateFormat also stops at the first leftover character.
+		formatter.setLenient(false);
+		ParsePosition position = new ParsePosition(0);
 		try {
-			return formatter.parse(toParse);
+			Date parsed = formatter.parse(toParse, position);
+			if (parsed == null || position.getIndex() != toParse.length()) {
+				return null;
+			}
+			return parsed;
 		} catch (final Exception e) {
 			return null;
 		}
