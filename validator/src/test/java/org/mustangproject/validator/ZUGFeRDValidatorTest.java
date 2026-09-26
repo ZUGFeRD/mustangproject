@@ -41,14 +41,14 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 		res = zfv.validate(tempFile.getAbsolutePath());
 		assertThat(res).valueByXPath("/validation/summary/@status")
-			.isEqualTo("invalid");
+			.isEqualTo("valid");
 
 		tempFile = getResourceAsFile("validAvoir_FR_type380_BASICWL.pdf");
 		zfv = new ZUGFeRDValidator();
 
 		res = zfv.validate(tempFile.getAbsolutePath());
 		assertThat(res).valueByXPath("/validation/summary/@status")
-			.isEqualTo("invalid");
+			.isEqualTo("valid");
 
 		tempFile = getResourceAsFile("validXRechnung.pdf");
 		zfv = new ZUGFeRDValidator();
@@ -114,7 +114,7 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 
 		res = zfv.validate(new ByteArrayInputStream(fileBytes), "validAvoir_FR_type380_BASICWL.pdf");
 		assertThat(res).valueByXPath("/validation/summary/@status")
-			.isEqualTo("invalid");
+			.isEqualTo("valid");
 
 		fileBytes = getResourceAsByteArray("validXRechnung.pdf");
 		zfv = new ZUGFeRDValidator();

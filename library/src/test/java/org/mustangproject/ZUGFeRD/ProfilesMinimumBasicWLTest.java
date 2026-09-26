@@ -28,9 +28,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.mustangproject.BankDetails;
 import org.mustangproject.Invoice;
 import org.mustangproject.Item;
@@ -44,8 +42,7 @@ import org.mustangproject.TradeParty;
  * @author jstaerk
  *
  */
-@TestMethodOrder(MethodOrderer.MethodName.class)
-public class ProfilesMinimumBasicWLTest extends ResourceCase {
+public class ProfilesMinimumBasicWLTest {
 
 	private static final String TARGET_PDF_FX_MINIMUM_INV = "./target/testout-Minimum-INV.pdf";
 	private static final String TARGET_PDF_FX_MINIMUM_CN = "./target/testout-Minimum-CN.pdf";
@@ -63,14 +60,19 @@ public class ProfilesMinimumBasicWLTest extends ResourceCase {
 
 			ze.setZUGFeRDVersion(2).setProfile(Profiles.getByName("Minimum")).load(SOURCE_PDF);
 
-			TradeParty recipient = new TradeParty().setName("Client").setCountry("BE");
+			/*
+			  this is a classical example of a french invoice (very low profile, siret number) and an attempt to answer stackoverflow (!)
+			  https://stackoverflow.com/questions/72450066/creating-a-min-basic-and-basic-wl-factur-x-using-mustang
+			 */
+
+			TradeParty recipient = new TradeParty().setName("Client").setCountry("FR");
 			String siret = "0815";
 			String sirenTypeCode = "0002";
 			recipient.setLegalOrganisation(new LegalOrganisation(siret, sirenTypeCode));
 			Invoice i = new Invoice()
 					.setIssueDate(new Date())
 					.setSender(
-							new TradeParty().setName(ownOrgName).setCountry("BE").setVATID("BE555444333222111")
+							new TradeParty().setName(ownOrgName).setCountry("FR").setVATID("FR555444333222111")
 									.addBankDetails(new BankDetails(ownIBAN, ownBIC)))
 					.setRecipient(recipient)
 					.setNumber(ownNumber)
@@ -111,7 +113,12 @@ public class ProfilesMinimumBasicWLTest extends ResourceCase {
 
 			ze.setZUGFeRDVersion(2).setProfile(Profiles.getByName("Minimum")).load(SOURCE_PDF);
 
-			TradeParty recipient = new TradeParty().setName("Client").setCountry("BE");
+			/*
+			  this is a classical example of a french invoice (very low profile, siret number) and an attempt to answer stackoverflow (!)
+			  https://stackoverflow.com/questions/72450066/creating-a-min-basic-and-basic-wl-factur-x-using-mustang
+			 */
+
+			TradeParty recipient = new TradeParty().setName("Client").setCountry("FR");
 			String siret = "0815";
 			String sirenTypeCode = "0002";
 			recipient.setLegalOrganisation(new LegalOrganisation(siret, sirenTypeCode));
@@ -119,7 +126,7 @@ public class ProfilesMinimumBasicWLTest extends ResourceCase {
 					.setIssueDate(new Date())
 					.setDueDate(new Date())
 					.setSender(
-							new TradeParty().setName(ownOrgName).setCountry("BE").setVATID("BE555444333222111")
+							new TradeParty().setName(ownOrgName).setCountry("FR").setVATID("FR555444333222111")
 									.addBankDetails(new BankDetails(ownIBAN)))
 					.setRecipient(recipient)
 					.setNumber(ownNumber).setTotalPrepaidAmount(new BigDecimal("1"))

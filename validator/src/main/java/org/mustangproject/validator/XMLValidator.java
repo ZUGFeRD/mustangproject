@@ -396,7 +396,7 @@ public class XMLValidator extends Validator {
 					// main schematron validation
 					validateSchematron(zfXML, xsltFilename, mainSchematronSectionErrorTypeCode, ESeverity.error);
 
-					if (runFrenchCiiSchematron) {
+					if (isExtendedFR && runFrenchCiiSchematron) {
 						String xsltFRFilename = "/xslt/" + currentXPZ12VersionDir + "/BR-FR-Flux2-Schematron-CII_V1.4.04.xslt";
 						validateSchematron(zfXML, xsltFRFilename, mainSchematronSectionErrorTypeCode, ESeverity.error);
 					}
