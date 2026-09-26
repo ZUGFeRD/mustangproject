@@ -36,7 +36,6 @@ import org.mustangproject.LegalOrganisation;
 import org.mustangproject.Product;
 import org.mustangproject.TradeParty;
 
-
 /***
  * This is a test to confirm the minimum steps to implement a interface are still sufficient
  *
@@ -99,11 +98,8 @@ public class ProfilesMinimumBasicWLTest {
 //		assertEquals(zi.getBIC(), ownBIC);
 //		assertEquals(zi.getIBAN(), ownIBAN);
 		assertEquals(ownOrgName, zi.getHolder());
-//		assertEquals(zi.getForeignReference(), ownNumber);
-
-
+//		assertEquals(ownNumber, zi.getForeignReference());
 	}
-
 
 	@Test
 	public void testMinimumInvoice() {
@@ -156,9 +152,5 @@ public class ProfilesMinimumBasicWLTest {
 //		assertEquals(zi.getIBAN(), ownIBAN);
 		assertEquals(ownOrgName, zi.getHolder());
 //		assertEquals(zi.getForeignReference(), ownNumber);
-
-
 	}
-
-
 }
