@@ -110,14 +110,32 @@ public class ZUGFeRDInvoiceImporter {
 		//constructor for extending classes
 	}
 
+	/***
+	 * Can throw an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
+	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} followed by {@link ZUGFeRDInvoiceImporter#setPDFFilename(String)}.
+	 * @param pdfFilename	the PDF file name
+	 * @throws ArithmeticException when calculated total doesn't match the given total
+	 */
 	public ZUGFeRDInvoiceImporter(String pdfFilename) {
 		setPDFFilename(pdfFilename);
 	}
 
+	/***
+	 * Can throw an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
+	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} followed by {@link ZUGFeRDInvoiceImporter#setInputStream(InputStream)}.
+	 * @param pdfStream	InputStream to the PDF file
+	 * @throws ArithmeticException when calculated total doesn't match the given total
+	 */
 	public ZUGFeRDInvoiceImporter(InputStream pdfStream) {
 		setInputStream(pdfStream);
 	}
 
+	/***
+	 * Can throw an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
+	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} followed by {@link ZUGFeRDInvoiceImporter#setPDFFilename(String)}.
+	 * @param pdfFilename	the PDF file name
+	 * @throws ArithmeticException when calculated total doesn't match the given total
+	 */
 	public void setPDFFilename(String pdfFilename) {
 		try (InputStream bis = Files.newInputStream(Paths.get(pdfFilename), StandardOpenOption.READ)) {
 			extractLowLevel(bis);
@@ -127,6 +145,12 @@ public class ZUGFeRDInvoiceImporter {
 		}
 	}
 
+	/***
+	 * Can throw an {@link ArithmeticException} during the recalculation of the aggregated values comparing them with the given ones.
+	 * To avoid this, call {@link ZUGFeRDInvoiceImporter#ZUGFeRDInvoiceImporter()} first, then {@link ZUGFeRDInvoiceImporter#doIgnoreCalculationErrors()} followed by {@link ZUGFeRDInvoiceImporter#setInputStream(InputStream)}.
+	 * @param pdfStream	InputStream to the PDF file
+	 * @throws ArithmeticException when calculated total doesn't match the given total
+	 */
 	public void setInputStream(InputStream pdfStream) {
 		try {
 			extractLowLevel(pdfStream);
@@ -373,7 +397,8 @@ public class ZUGFeRDInvoiceImporter {
 	 * @param zpp the invoice to be altered
 	 * @return the parsed invoice object
 	 * @throws XPathExpressionException if xpath could not be evaluated
-	 * @throws ParseException if the grand total of the parsed invoice could not be replicated with the new invoice
+	 * @throws ParseException if the invoice xml cannot be parsed, e.g. caused by unparsable date values
+	 * @throws ArithmeticException when calculated total doesn't match the given total
 	 */
 	public Invoice extractInto(Invoice zpp) throws XPathExpressionException, ParseException {
 
@@ -1072,14 +1097,20 @@ public class ZUGFeRDInvoiceImporter {
 		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"ApplicableTradeTax\"]");
 		NodeList docTaxNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
+		xpr = xpath.compile("//*[local-name() = 'ApplicableHeaderTradeSettlement']//*[local-name() = 'ApplicableTradeTax']//*[local-name() = 'TaxPointDate']//*[local-name() = 'DateString']");
+		NodeList docTaxNodesTaxPointDate = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (docTaxNodesTaxPointDate.getLength() > 0) {
+			String dueDateString = XMLTools.trimOrNull(docTaxNodesTaxPointDate.item(0));
+			dueDate = parseDate(dueDateString, "yyyyMMdd");
+			zpp.setTaxPointDate(dueDate);
+		}
+
 		if (nodes.getLength() != 0) {
 			for (int i = 0; i < nodes.getLength(); i++) {
-
 				Node currentItemNode = nodes.item(i);
 				Item it = new Item(currentItemNode.getChildNodes(), recalcPrice);
 				it.enrichProductFromVATBreakdown(docTaxNodes);
 				zpp.addItem(it);
-
 			}
 
 			// now handling base64 encoded attachments AttachmentBinaryObject=CII, EmbeddedDocumentBinaryObject=UBL
@@ -1316,16 +1347,20 @@ public class ZUGFeRDInvoiceImporter {
 						Pattern pattern = Pattern.compile("#TAGE=(.*?)#", Pattern.CASE_INSENSITIVE);
 						Matcher matcher = pattern.matcher(currentLine);
 						boolean daysFound = matcher.find();
-						String days = matcher.group(1);
+						String days = daysFound ? matcher.group(1) : null;
 						pattern = Pattern.compile("#PROZENT=(.*?)#", Pattern.CASE_INSENSITIVE);
 						matcher = pattern.matcher(currentLine);
 						boolean percentFound = matcher.find();
-						String percent = matcher.group(1);
+						String percent = percentFound ? matcher.group(1) : null;
 
 						if (daysFound && percentFound) {
-							cd.setDays(Integer.valueOf(days));
-							cd.setPercent(new BigDecimal(percent));
-							zpp.addCashDiscount(cd);
+							try {
+								cd.setDays(Integer.valueOf(days));
+								cd.setPercent(new BigDecimal(percent));
+								zpp.addCashDiscount(cd);
+							} catch (NumberFormatException e) {
+								// markers present but their values are not numeric: could not parse skonto
+							}
 						} //else : could not parse skonto
 
 

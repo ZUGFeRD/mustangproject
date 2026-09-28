@@ -98,6 +98,7 @@ public class ZUGFeRDVisualizer {
 	private TransformerFactory mFactory;
 	private Templates mXsltXRTemplate;
 	private Templates mXsltUBLTemplate;
+	private Templates mXsltUBLCreditNoteTemplate;
 	private Templates mXsltCIOTemplate;
 	private EnumMap<Language, Templates> mXsltHTMLTemplates;
 	private Templates mXsltPDFTemplate;
@@ -437,11 +438,11 @@ public class ZUGFeRDVisualizer {
 
 	protected void applyUBLCreditNote2XSLT(final InputStream xmlFile, final OutputStream htmlOutStream)
 		throws TransformerException {
-		if (mXsltUBLTemplate == null) {
-			mXsltUBLTemplate = mFactory.newTemplates(
+		if (mXsltUBLCreditNoteTemplate == null) {
+			mXsltUBLCreditNoteTemplate = mFactory.newTemplates(
 				new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/ubl-creditnote-xr.xsl")));
 		}
-		Transformer transformer = mXsltUBLTemplate.newTransformer();
+		Transformer transformer = mXsltUBLCreditNoteTemplate.newTransformer();
 
 		transformer.transform(new StreamSource(xmlFile), new StreamResult(htmlOutStream));
 	}

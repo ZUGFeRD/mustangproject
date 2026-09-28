@@ -303,4 +303,123 @@ public class CashDiscountFacturXTest {
 		assertEquals(new BigDecimal("0.00"), invoice.getCashDiscounts()[1].getPercent());
 		assertEquals(Integer.valueOf(10), invoice.getCashDiscounts()[1].getDays());
 	}
+
+	/**
+	 * Builds a minimal but complete CII invoice whose single SpecifiedTradePaymentTerms
+	 * block carries the given Description. Everything else is held constant so that a
+	 * failure can only come from the #SKONTO# text convention in that Description.
+	 */
+	private static String invoiceWithPaymentTermDescription(String description) {
+		return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+			"<rsm:CrossIndustryInvoice xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\"" +
+			" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100\"" +
+			" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100\">\n" +
+			"  <rsm:ExchangedDocumentContext>\n" +
+			"    <ram:GuidelineSpecifiedDocumentContextParameter>\n" +
+			"      <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended</ram:ID>\n" +
+			"    </ram:GuidelineSpecifiedDocumentContextParameter>\n" +
+			"  </rsm:ExchangedDocumentContext>\n" +
+			"  <rsm:ExchangedDocument>\n" +
+			"    <ram:ID>TEST-1260</ram:ID>\n" +
+			"    <ram:TypeCode>380</ram:TypeCode>\n" +
+			"    <ram:IssueDateTime>\n" +
+			"      <udt:DateTimeString format=\"102\">20251016</udt:DateTimeString>\n" +
+			"    </ram:IssueDateTime>\n" +
+			"  </rsm:ExchangedDocument>\n" +
+			"  <rsm:SupplyChainTradeTransaction>\n" +
+			"    <ram:IncludedSupplyChainTradeLineItem>\n" +
+			"      <ram:AssociatedDocumentLineDocument><ram:LineID>1</ram:LineID></ram:AssociatedDocumentLineDocument>\n" +
+			"      <ram:SpecifiedTradeProduct><ram:Name>Test</ram:Name></ram:SpecifiedTradeProduct>\n" +
+			"      <ram:SpecifiedLineTradeAgreement>\n" +
+			"        <ram:NetPriceProductTradePrice>\n" +
+			"          <ram:ChargeAmount>100.00</ram:ChargeAmount>\n" +
+			"          <ram:BasisQuantity unitCode=\"C62\">1.0000</ram:BasisQuantity>\n" +
+			"        </ram:NetPriceProductTradePrice>\n" +
+			"      </ram:SpecifiedLineTradeAgreement>\n" +
+			"      <ram:SpecifiedLineTradeDelivery><ram:BilledQuantity unitCode=\"C62\">1.0000</ram:BilledQuantity></ram:SpecifiedLineTradeDelivery>\n" +
+			"      <ram:SpecifiedLineTradeSettlement>\n" +
+			"        <ram:ApplicableTradeTax><ram:TypeCode>VAT</ram:TypeCode><ram:CategoryCode>S</ram:CategoryCode><ram:RateApplicablePercent>19.00</ram:RateApplicablePercent></ram:ApplicableTradeTax>\n" +
+			"        <ram:SpecifiedTradeSettlementLineMonetarySummation><ram:LineTotalAmount>100.00</ram:LineTotalAmount></ram:SpecifiedTradeSettlementLineMonetarySummation>\n" +
+			"      </ram:SpecifiedLineTradeSettlement>\n" +
+			"    </ram:IncludedSupplyChainTradeLineItem>\n" +
+			"    <ram:ApplicableHeaderTradeAgreement>\n" +
+			"      <ram:SellerTradeParty><ram:Name>Seller</ram:Name><ram:PostalTradeAddress><ram:PostcodeCode>12345</ram:PostcodeCode><ram:LineOne>Street 1</ram:LineOne><ram:CityName>City</ram:CityName><ram:CountryID>DE</ram:CountryID></ram:PostalTradeAddress><ram:SpecifiedTaxRegistration><ram:ID schemeID=\"VA\">DE123456789</ram:ID></ram:SpecifiedTaxRegistration></ram:SellerTradeParty>\n" +
+			"      <ram:BuyerTradeParty><ram:Name>Buyer</ram:Name><ram:PostalTradeAddress><ram:PostcodeCode>67890</ram:PostcodeCode><ram:LineOne>Road 2</ram:LineOne><ram:CityName>Town</ram:CityName><ram:CountryID>DE</ram:CountryID></ram:PostalTradeAddress></ram:BuyerTradeParty>\n" +
+			"    </ram:ApplicableHeaderTradeAgreement>\n" +
+			"    <ram:ApplicableHeaderTradeDelivery>\n" +
+			"      <ram:ActualDeliverySupplyChainEvent><ram:OccurrenceDateTime><udt:DateTimeString format=\"102\">20251016</udt:DateTimeString></ram:OccurrenceDateTime></ram:ActualDeliverySupplyChainEvent>\n" +
+			"    </ram:ApplicableHeaderTradeDelivery>\n" +
+			"    <ram:ApplicableHeaderTradeSettlement>\n" +
+			"      <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>\n" +
+			"      <ram:ApplicableTradeTax><ram:CalculatedAmount>19.00</ram:CalculatedAmount><ram:TypeCode>VAT</ram:TypeCode><ram:BasisAmount>100.00</ram:BasisAmount><ram:CategoryCode>S</ram:CategoryCode><ram:RateApplicablePercent>19.00</ram:RateApplicablePercent></ram:ApplicableTradeTax>\n" +
+			"      <ram:SpecifiedTradePaymentTerms>\n" +
+			"        <ram:Description>" + description + "</ram:Description>\n" +
+			"        <ram:DueDateDateTime><udt:DateTimeString format=\"102\">20251024</udt:DateTimeString></ram:DueDateDateTime>\n" +
+			"      </ram:SpecifiedTradePaymentTerms>\n" +
+			"      <ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n" +
+			"        <ram:LineTotalAmount>100.00</ram:LineTotalAmount>\n" +
+			"        <ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>\n" +
+			"        <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>\n" +
+			"        <ram:TaxBasisTotalAmount>100.00</ram:TaxBasisTotalAmount>\n" +
+			"        <ram:TaxTotalAmount currencyID=\"EUR\">19.00</ram:TaxTotalAmount>\n" +
+			"        <ram:GrandTotalAmount>119.00</ram:GrandTotalAmount>\n" +
+			"        <ram:TotalPrepaidAmount>0.00</ram:TotalPrepaidAmount>\n" +
+			"        <ram:DuePayableAmount>119.00</ram:DuePayableAmount>\n" +
+			"      </ram:SpecifiedTradeSettlementHeaderMonetarySummation>\n" +
+			"    </ram:ApplicableHeaderTradeSettlement>\n" +
+			"  </rsm:SupplyChainTradeTransaction>\n" +
+			"</rsm:CrossIndustryInvoice>";
+	}
+
+	private static Invoice importInvoiceWithPaymentTermDescription(String description)
+		throws XPathExpressionException, ParseException {
+		InputStream inputStream = new ByteArrayInputStream(
+			invoiceWithPaymentTermDescription(description).getBytes(StandardCharsets.UTF_8));
+		return new ZUGFeRDInvoiceImporter(inputStream).extractInvoice();
+	}
+
+	/**
+	 * https://github.com/ZUGFeRD/mustangproject/issues/1260 —
+	 * the #TAGE= and #PROZENT= markers are present but carry no value. The regex
+	 * matches with an empty group, so Integer.valueOf("") aborts the whole import.
+	 * The surrounding code already states its intent ("else : could not parse skonto"):
+	 * an unparseable skonto line is skipped, the invoice still imports.
+	 */
+	@Test
+	public void testSkontoWithEmptyMarkerValuesIsSkipped() throws XPathExpressionException, ParseException {
+		Invoice invoice = importInvoiceWithPaymentTermDescription("#SKONTO#TAGE=#PROZENT=#");
+
+		assertEquals(0, invoice.getCashDiscounts().length,
+			"An unparseable skonto line must not yield a CashDiscount");
+		assertEquals("TEST-1260", invoice.getNumber(),
+			"The rest of the invoice must still be imported");
+	}
+
+	/**
+	 * https://github.com/ZUGFeRD/mustangproject/issues/1260 —
+	 * second path into the same failure, not covered by the report: when a marker is
+	 * missing altogether, find() returns false, but group(1) is called before the
+	 * daysFound/percentFound check and throws IllegalStateException.
+	 */
+	@Test
+	public void testSkontoWithMissingDaysMarkerIsSkipped() throws XPathExpressionException, ParseException {
+		Invoice invoice = importInvoiceWithPaymentTermDescription("#SKONTO#PROZENT=3.00#");
+
+		assertEquals(0, invoice.getCashDiscounts().length,
+			"A skonto line without #TAGE= must not yield a CashDiscount");
+		assertEquals("TEST-1260", invoice.getNumber(),
+			"The rest of the invoice must still be imported");
+	}
+
+	/**
+	 * Guard against over-correcting: a well-formed skonto line must keep working.
+	 */
+	@Test
+	public void testWellFormedSkontoStillParses() throws XPathExpressionException, ParseException {
+		Invoice invoice = importInvoiceWithPaymentTermDescription("#SKONTO#TAGE=8#PROZENT=3.00#");
+
+		assertEquals(1, invoice.getCashDiscounts().length);
+		assertEquals(Integer.valueOf(8), invoice.getCashDiscounts()[0].getDays());
+		assertEquals(new BigDecimal("3.00"), invoice.getCashDiscounts()[0].getPercent());
+	}
 }

@@ -312,6 +312,16 @@ public interface IExportableTransaction {
 	Date getDeliveryDate();
 
 	/**
+	 * get Value added tax point date
+	 * Umsatzsteuer-Leistungsdatum (auch Datum der Steuerfälligkeit)
+	 *
+	 * @return the tax date
+	 */
+	default Date getTaxPointDate() {
+		return null;
+	}
+
+	/**
 	 * get main invoice currency used on the invoice
 	 *
 	 * @return three character currency of this invoice
