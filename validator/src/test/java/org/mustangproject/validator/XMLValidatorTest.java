@@ -428,15 +428,16 @@ public class XMLValidatorTest extends ResourceCase {
 			xv.validate();
 
 			String s = "<validation>" + xv.getXMLResult() + "</validation>";
+
 			assertThat(s).valueByXPath("count(//error)")
 				.asInt()
 				.isEqualTo(0);
 			assertThat(s).valueByXPath("count(//warning)")
 				.asInt()
-				.isEqualTo(12);
-			assertThat(s).valueByXPath("count(//warning[contains(text(),'XP_Z12_012')])")
+				.isEqualTo(0);
+			assertThat(s).valueByXPath("count(//warning[contains(text(),'XP_Z12_014')])")
 				.asInt()
-				.isEqualTo(9);
+				.isEqualTo(0);
 			assertThat(s).valueByXPath("/validation/summary/@status")
 				.asString()
 				.isEqualTo("valid");

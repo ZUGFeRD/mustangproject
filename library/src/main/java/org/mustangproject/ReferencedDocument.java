@@ -9,6 +9,8 @@ import java.util.Base64;
 import java.util.Date;
 
 import org.mustangproject.ZUGFeRD.IReferencedDocument;
+import org.mustangproject.ZUGFeRD.Profile;
+import org.mustangproject.ZUGFeRD.Profiles;
 import org.mustangproject.util.NodeMap;
 import org.mustangproject.util.StringUtils;
 import org.w3c.dom.Node;
@@ -214,7 +216,7 @@ public class ReferencedDocument implements IReferencedDocument {
 	 * @return this particular ReferencedDocument industry invoice XML
 	 */
 	@JsonIgnore
-	public String getAsCII() {
+	public String getAsCII(Profile profile) {
 		StringBuilder xml = new StringBuilder();
 		if (StringUtils.isNotBlank(this.getIssuerAssignedID())) {
 			xml.append("<ram:IssuerAssignedID>" + XMLTools.encodeXML(this.getIssuerAssignedID()) + "</ram:IssuerAssignedID>" );
@@ -239,7 +241,7 @@ public class ReferencedDocument implements IReferencedDocument {
 		if (StringUtils.isNotBlank(this.getReferenceTypeCode())) {
 			xml.append("<ram:ReferenceTypeCode>" + XMLTools.encodeXML(this.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>");
 		}
-		if (this.getFormattedIssueDateTime() != null) {
+		if (this.getFormattedIssueDateTime() != null && profile != Profiles.getByName("EXTENDED-CTC-FR")) {
 			final SimpleDateFormat dateFormat102 = new SimpleDateFormat("yyyyMMdd");
 			xml.append("<ram:FormattedIssueDateTime><qdt:DateTimeString format=\"102\">" + XMLTools.encodeXML(dateFormat102.format(this.getFormattedIssueDateTime())) + "</qdt:DateTimeString></ram:FormattedIssueDateTime>");
 		}

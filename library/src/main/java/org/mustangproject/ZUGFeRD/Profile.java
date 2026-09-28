@@ -5,14 +5,14 @@ package org.mustangproject.ZUGFeRD;
  * e.g. Factur-X has 6 (Minimum, Basic-WL, Basic, EN16931, Extended, and XRechnung),
  * ZUGFeRD 1 had and Order-X will have three (Basic, Comfort, Extended)
  * and the XRechnung has two (Standard, Extension)
- * For the XRechnung at the time being please use Factur-X's Xrechnung
+ * For the XRechnung at the time being please use Factur-X's XRechnung
  */
 public class Profile {
-	protected String name, id;
+	private final String name, id;
 
 	/***
-	 * Contruct
-	 * @param name human readable name of the profile, also used as basis to detemine the XMP Name
+	 * Constructor
+	 * @param name human readable name of the profile, also used as basis to determine the XMP Name
 	 * @param ID XML Guideline ID
 	 */
 	public Profile(String name, String ID) {
