@@ -640,7 +640,7 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 
 				xml.append("</ram:SpecifiedLineTradeDelivery>");
 				xml.append("<ram:SpecifiedLineTradeSettlement>");
-				if ((getProfile() != Profiles.getByName("Extended")) || (currentItem.getProduct().getVATPercent()!=null)) {
+				if ((currentItem.getProduct().getVATPercent()!=null)||(currentItem.getProduct().getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.ZEROTAXPRODUCTS))) {
 					/**
 					 * VAT percent *can* be null (not 0) in extended
 					 * if and on a parent item which has subitems with mixed VAT rates #1275
@@ -667,6 +667,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					}
 					xml.append("</ram:ApplicableTradeTax>");
 
+ 				} else {
+//					if (getProfile() != Profiles.getByName("Extended")) {
+//						throw new Exception("VAT percent may only be undefined for non-Z rated goods in subinvoice line products");
+//					}
 				}
 
 				if (currentItem.getDetailedDeliveryPeriodFrom() != null || currentItem.getDetailedDeliveryPeriodTo() != null) {
