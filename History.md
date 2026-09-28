@@ -2,6 +2,7 @@
 - #1248 Support ReceivableSpecifiedTradeAccountingAccount (BT-19).
 - #1255 Add rules fired / failed to PDF validation result from xml.
 - #1275
+- #1285
 
 2.26.0
 =======

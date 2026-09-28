@@ -399,11 +399,8 @@ public class XMLValidator extends Validator {
 
 				if ("CII".equals(context.getFormat()) && ("2".equals(context.getGeneration()))) {
 
-					if (isXRechnung) {
-						//additionally validate against CEN, the CEN rules are part of the ZF Schematron anyway
-						validateSchematron(zfXML, "/xslt/en16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
-					}
 					if (isXRechnung || isBasic || isEN16931) {
+						validateSchematron(zfXML, "/xslt/en16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
 						//potentially (basic or EN) or definitely validate against XR
 						if (!disableNotices || XrechnungSeverity != ESeverity.notice) {
 							validateXR(zfXML, XrechnungSeverity);
