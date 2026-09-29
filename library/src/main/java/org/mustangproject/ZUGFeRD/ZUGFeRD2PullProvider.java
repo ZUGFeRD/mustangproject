@@ -970,11 +970,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				for (IZUGFeRDAllowanceCharge charge : trans.getZFCharges()) {
 					final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(charge.getTaxCategoryCode());
 					String exemptionReasonTextXML = "";
-					if (displayExemptionReason && charge.getTaxExemptionReason() != null) {
+					if (profile != Profiles.getByName("EN16931") && displayExemptionReason && charge.getTaxExemptionReason() != null) {
 						exemptionReasonTextXML = "<ram:ExemptionReason>" + XMLTools.encodeXML(charge.getTaxExemptionReason()) + "</ram:ExemptionReason>";
 					}
 					String exemptionReasonCodeXML = "";
-					if (displayExemptionReason && charge.getTaxExemptionReasonCode() != null) {
+					if (profile != Profiles.getByName("EN16931") && displayExemptionReason && charge.getTaxExemptionReasonCode() != null) {
 						exemptionReasonCodeXML = "<ram:ExemptionReasonCode>" + XMLTools.encodeXML(charge.getTaxExemptionReasonCode()) + "</ram:ExemptionReasonCode>";
 					}
 
@@ -1034,11 +1034,11 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 				for (IZUGFeRDAllowanceCharge allowance : trans.getZFAllowances()) {
 					final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(allowance.getTaxCategoryCode());
 					String exemptionReasonTextXML = "";
-					if (displayExemptionReason && allowance.getTaxExemptionReason() != null) {
+					if (profile != Profiles.getByName("EN16931") && displayExemptionReason && allowance.getTaxExemptionReason() != null) {
 						exemptionReasonTextXML = "<ram:ExemptionReason>" + XMLTools.encodeXML(allowance.getTaxExemptionReason()) + "</ram:ExemptionReason>";
 					}
 					String exemptionReasonCodeXML = "";
-					if (displayExemptionReason && allowance.getTaxExemptionReasonCode() != null) {
+					if (profile != Profiles.getByName("EN16931") && displayExemptionReason && allowance.getTaxExemptionReasonCode() != null) {
 						exemptionReasonCodeXML = "<ram:ExemptionReasonCode>" + XMLTools.encodeXML(allowance.getTaxExemptionReasonCode()) + "</ram:ExemptionReasonCode>";
 					}
 

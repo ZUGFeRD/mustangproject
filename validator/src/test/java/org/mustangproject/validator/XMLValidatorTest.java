@@ -707,4 +707,34 @@ public class XMLValidatorTest extends ResourceCase {
 			fail(e.getMessage());
 		}
 	}
+
+	@Test
+	public void testPDFTaxExcemption() {
+		final ValidationContext vc = new ValidationContext(null);
+		final PDFValidator pv = new PDFValidator(vc);
+		final XMLValidator xv = new XMLValidator(vc);
+		final XPathEngine xpath = new JAXPXPathEngine();
+
+		try {
+			File tempFile = new File("../library/target/testout-ZF2PushTaxExemption.pdf");
+			assertTrue(tempFile.exists());
+
+			pv.setFilename(tempFile.getAbsolutePath());
+			pv.validate();
+
+			vc.clear();
+			xv.setStringContent(pv.getRawXML());
+			xv.validate();
+			String actual = vc.getXMLResult();
+
+			String s = "<validation>" + actual + "</validation>";
+			Source source = Input.fromString(s).build();
+			String content = xpath.evaluate("/validation/summary/@status", source);
+			assertEquals("valid", content);
+			assertThat(s).valueByXPath("count(//warning)").asInt().isEqualTo(0);
+		} catch (final IrrecoverableValidationError e) {
+			// ignore, will be in XML output anyway
+			fail(e);
+		}
+	}
 }
