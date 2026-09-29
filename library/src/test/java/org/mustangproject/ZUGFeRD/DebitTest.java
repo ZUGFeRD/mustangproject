@@ -21,37 +21,37 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.mustangproject.*;
-import org.mustangproject.ZUGFeRD.model.EventTimeCodeTypeConstants;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import javax.xml.xpath.XPathExpressionException;
-import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import javax.xml.xpath.XPathExpressionException;
+
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.mustangproject.CalculatedInvoice;
+import org.mustangproject.DirectDebit;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
+import org.mustangproject.ReferencedDocument;
+import org.mustangproject.TradeParty;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class DebitTest extends ResourceCase {
 
 	@Test
 	public void testImport() {
-		File inputCII = getResourceAsFile("factur-x.xml");
 		boolean hasExceptions = false;
 
 		Invoice i = new Invoice();
-		ZUGFeRD2PullProvider ze=new ZUGFeRD2PullProvider();
+		ZUGFeRD2PullProvider ze = new ZUGFeRD2PullProvider();
 		try {
 		 i.setIssueDate(new Date()).setDueDate(new Date()).setDetailedDeliveryPeriod(new Date(), new Date()).setDeliveryDate(new Date())
 			.setSender(new TradeParty("Test", "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815")
