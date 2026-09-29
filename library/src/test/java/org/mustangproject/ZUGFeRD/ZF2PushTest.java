@@ -1309,13 +1309,13 @@ public class ZF2PushTest extends ResourceCase {
 			.addCharge(new Charge(BigDecimal.valueOf(5.00))
 					.setReason("Tip 1")
 					.setTaxCategoryCode("E")
-					.setTaxExemptionReason(exemptionReason)
+					.setTaxExemptionReason("Tip reason")
 					.setTaxExemptionReasonCode(exemptionReasonCode)
 					.setTaxRateApplicablePercent(BigDecimal.ZERO))
 			.addAllowance(new Allowance(BigDecimal.valueOf(42.00))
 					.setReason("Tip 2")
 					.setTaxCategoryCode("E")
-					.setTaxExemptionReason(exemptionReason)
+					.setTaxExemptionReason("Tip reason")
 					.setTaxExemptionReasonCode(exemptionReasonCode)
 					.setTaxRateApplicablePercent(BigDecimal.ZERO));
 
