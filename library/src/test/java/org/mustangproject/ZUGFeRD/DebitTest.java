@@ -85,7 +85,7 @@ public class DebitTest extends ResourceCase {
 			}*/
 			assertEquals(1, ci.getRecipient().getBankDetails().size());
 			assertEquals(0, ci.getSender().getBankDetails().size());
-			assertEquals(59, ci.getRecipient().getBankDetails().get(0).getPaymentMeansCode());
+			assertEquals("59", ci.getRecipient().getBankDetails().get(0).getPaymentMeansCode());
 		} catch (ParseException | XPathExpressionException e) {
 			hasExceptions = true;
 		}
