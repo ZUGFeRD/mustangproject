@@ -47,5 +47,5 @@ public interface IReferencedDocument {
 	/***
 	 * @return this particular cash discount as cross industry invoice XML
 	 */
-	String getAsCII();
+	String getAsCII(Profile profile);
 }
