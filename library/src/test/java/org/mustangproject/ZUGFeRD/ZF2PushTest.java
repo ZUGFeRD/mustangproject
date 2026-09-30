@@ -98,6 +98,7 @@ public class ZF2PushTest extends ResourceCase {
 	private static final String TARGET_ALLOWANCES_TAXES = "./target/testout-ZF2PushAllowancesTaxes.pdf";
 	private static final String TARGET_EXTENDED_XML = "./target/testout-Extended_fremdwaehrung.xml";
 	private static final String TARGET_LINETOTAL_4DECIMALS_XML = "./target/testout-line-total-4-decimals.xml";
+	private static final String TARGET_TAX_EXEMPTION = "./target/testout-ZF2PushTaxExemption.pdf";
 
 	@Test
 	public void testPushExport() {
@@ -1291,6 +1292,7 @@ public class ZF2PushTest extends ResourceCase {
 		String number = "123";
 		final String exemptionReason = "Kleinunternehmer gemäß §19 UStG";
 		final String exemptionReasonCode = "VATEX-EU-I";
+		InputStream SOURCE_PDF = this.getClass().getResourceAsStream("/MustangGnuaccountingBeispielRE-20170509_505blanko.pdf");
 
 		Invoice i = new Invoice().setIssueDate(new Date()).setDueDate(new Date()).setDetailedDeliveryPeriod(new Date(), new Date()).setDeliveryDate(new Date())
 			.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815").addBankDetails(new BankDetails("DE88200800000970375700", "COBADEFFXXX")))
@@ -1303,7 +1305,19 @@ public class ZF2PushTest extends ResourceCase {
 					.setTaxExemptionReasonCode(exemptionReasonCode),
 				new BigDecimal("100.00"),
 				new BigDecimal("1")
-			));
+			))
+			.addCharge(new Charge(BigDecimal.valueOf(5.00))
+					.setReason("Tip 1")
+					.setTaxCategoryCode("E")
+					.setTaxExemptionReason("Tip reason")
+					.setTaxExemptionReasonCode(exemptionReasonCode)
+					.setTaxRateApplicablePercent(BigDecimal.ZERO))
+			.addAllowance(new Allowance(BigDecimal.valueOf(42.00))
+					.setReason("Tip 2")
+					.setTaxCategoryCode("E")
+					.setTaxExemptionReason("Tip reason")
+					.setTaxExemptionReasonCode(exemptionReasonCode)
+					.setTaxRateApplicablePercent(BigDecimal.ZERO));
 
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 		zf2p.setProfile(Profiles.getByName("EN16931"));
@@ -1313,6 +1327,16 @@ public class ZF2PushTest extends ResourceCase {
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		assertThat(theXML).doesNotHaveXPath("//*[local-name()='SpecifiedLineTradeSettlement']/*[local-name()='ApplicableTradeTax']/*[local-name()='ExemptionReason']");
 		assertThat(theXML).doesNotHaveXPath("//*[local-name()='SpecifiedLineTradeSettlement']/*[local-name()='ApplicableTradeTax']/*[local-name()='ExemptionReasonCode']");
+
+		try (ZUGFeRDExporterFromA1 ze = new ZUGFeRDExporterFromA1()) {
+			ze.ignorePDFAErrors().load(SOURCE_PDF);
+			ze.setProducer("My Application").setCreator(System.getProperty("user.name")).setZUGFeRDVersion(2).setProfile(Profiles.getByName("EN16931"));
+			ze.setTransaction(i);
+			ze.export(TARGET_TAX_EXEMPTION);
+		} catch (IOException e) {
+			e.printStackTrace();
+			fail("IOException should not be raised");
+		}
 
 		// Try Extended
 		zf2p.setProfile(Profiles.getByName("Extended"));
