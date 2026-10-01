@@ -55,7 +55,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 	public BigDecimal getGrandTotal() {
 
 		BigDecimal basis = getTaxBasis();
-		return getVATPercentAmountMap().values().stream().map(VATAmount::getCalculated)
+		return getVATAmountList().stream().map(VATAmount::getCalculated)
 			.map(p -> p.setScale(2, RoundingMode.HALF_UP)).reduce(BigDecimal.ZERO, BigDecimal::add).add(basis);
 	}
 
@@ -75,18 +75,19 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 
 
 	/**
-	 * Returns information about every tax that is involved in the current transaction.
+	 * Returns information about every tax that is involved in the current transaction,
+	 * one entry per VAT category code and rate (BG-23).
 	 *
 	 * @return transaction taxes.
 	 */
 	public Set<VATAmount> getTaxDetails() {
-		return getVATPercentAmountMap().entrySet().stream()
-			.map(entry ->
+		return getVATAmountList().stream()
+			.map(vatAmount ->
 				new VATAmount(
-					entry.getValue().getBasis(),
-					entry.getValue().getCalculated(),
-					entry.getValue().getCategoryCode()
-				).setApplicablePercent(entry.getKey())
+					vatAmount.getBasis(),
+					vatAmount.getCalculated(),
+					vatAmount.getCategoryCode()
+				).setApplicablePercent(vatAmount.getApplicablePercent())
 			)
 			.collect(Collectors.toSet());
 	}
