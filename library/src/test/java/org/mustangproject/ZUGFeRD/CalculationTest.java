@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 
 import javax.xml.xpath.XPathExpressionException;
 
@@ -703,6 +704,30 @@ public class CalculationTest extends ResourceCase {
 
 		assertEquals(BigDecimal.ZERO.setScale(2), calculator.getItemTotalNetAmount());
 		assertEquals(0, calculator.getItemTotalVATAmount().compareTo(BigDecimal.ZERO));
+	}
+
+	@Test
+	public void testTaxDetailsSeparateCategoriesWithSameRate() {
+		Invoice i = new Invoice().setCurrency("EUR").setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date())
+			.setSender(new TradeParty("Test company", "teststr", "55232", "teststadt", "DE").addTaxID("4711").addVATID("DE0815"))
+			.setRecipient(new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE"))
+			.setNumber("123")
+			.addItem(new Item(new Product("Standard", "", "H87", new BigDecimal(19)), new BigDecimal("100.00"), BigDecimal.ONE))
+			.addItem(new Item(new Product("Exempt", "", "H87", BigDecimal.ZERO).setTaxCategoryCode("E").setTaxExemptionReason("Exempt"), new BigDecimal("50.00"), BigDecimal.ONE))
+			.addItem(new Item(new Product("Zero rated", "", "H87", BigDecimal.ZERO).setTaxCategoryCode("Z"), new BigDecimal("30.00"), BigDecimal.ONE));
+
+		TransactionCalculator tc = new TransactionCalculator(i);
+		Set<VATAmount> details = tc.getTaxDetails();
+
+		assertEquals(3, details.size());
+		assertEquals(0, new BigDecimal("50.00").compareTo(basisForCategory(details, "E")));
+		assertEquals(0, new BigDecimal("30.00").compareTo(basisForCategory(details, "Z")));
+		assertEquals(0, new BigDecimal("100.00").compareTo(basisForCategory(details, "S")));
+		assertEquals(new BigDecimal("199.00"), tc.getGrandTotal());
+	}
+
+	private static BigDecimal basisForCategory(Set<VATAmount> details, String categoryCode) {
+		return details.stream().filter(d -> categoryCode.equals(d.getCategoryCode())).findFirst().orElseThrow().getBasis();
 	}
 
 }
