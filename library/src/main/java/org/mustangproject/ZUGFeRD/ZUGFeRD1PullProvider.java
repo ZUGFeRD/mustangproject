@@ -52,16 +52,17 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 	public void generateXML(IExportableTransaction trans) {
 		this.trans = trans;
 		this.calc = new TransactionCalculator(trans);
+		paymentTermsDescription = null;
 
 		boolean hasDueDate = false;
 		final SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
 		String exemptionReason = "";
 
 		if (trans.getPaymentTermDescription() != null) {
-			paymentTermsDescription = trans.getPaymentTermDescription();
+			paymentTermsDescription = XMLTools.encodeXML(trans.getPaymentTermDescription());
 		}
 
-		if (paymentTermsDescription == null) {
+		if (paymentTermsDescription == null && trans.getDueDate() != null) {
 			paymentTermsDescription = "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
 
 		}
@@ -209,8 +210,10 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 		}
 
 		if (trans.getPaymentTerms() == null) {
-			xml.append("<ram:SpecifiedTradePaymentTerms>"
-					+ "<ram:Description>" + paymentTermsDescription + "</ram:Description>");
+			xml.append("<ram:SpecifiedTradePaymentTerms>");
+			if (paymentTermsDescription != null) {
+				xml.append("<ram:Description>" + paymentTermsDescription + "</ram:Description>");
+			}
 
 			if (trans.getTradeSettlement() != null) {
 				for (final IZUGFeRDTradeSettlement payment : trans.getTradeSettlement()) {
@@ -364,7 +367,7 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 				throw new IllegalStateException(
 					"if paymentTerms.dueDate is specified, paymentTerms.discountTerms.baseDate has not to be specified");
 			}
-			paymentTermsXml += "<ram:Description>" + pt.getDescription() + "</ram:Description>";
+			paymentTermsXml += "<ram:Description>" + XMLTools.encodeXML(pt.getDescription()) + "</ram:Description>";
 			if (dueDate != null) {
 				paymentTermsXml += "<ram:DueDateDateTime>";
 				paymentTermsXml += DATE.udtFormat(dueDate);
@@ -373,12 +376,6 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 
 			if (discountTerms != null) {
 				paymentTermsXml += "<ram:ApplicableTradePaymentDiscountTerms>";
-				final String currency = trans.getCurrency();
-				final String basisAmount = currencyFormat(calc.getGrandTotal());
-				paymentTermsXml += "<ram:BasisAmount currencyID=\"" + currency + "\">" + basisAmount + "</ram:BasisAmount>";
-				paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toString()
-					+ "</ram:CalculationPercent>";
-
 				if (discountTerms.getBaseDate() != null) {
 					final Date baseDate = discountTerms.getBaseDate();
 					paymentTermsXml += "<ram:BasisDateTime>";
@@ -388,6 +385,12 @@ public class ZUGFeRD1PullProvider extends ZUGFeRD2PullProvider {
 					paymentTermsXml += "<ram:BasisPeriodMeasure unitCode=\"" + discountTerms.getBasePeriodUnitCode() + "\">"
 						+ discountTerms.getBasePeriodMeasure() + "</ram:BasisPeriodMeasure>";
 				}
+
+				final String currency = trans.getCurrency();
+				final String basisAmount = currencyFormat(calc.getGrandTotal());
+				paymentTermsXml += "<ram:BasisAmount currencyID=\"" + currency + "\">" + basisAmount + "</ram:BasisAmount>";
+				paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toPlainString()
+					+ "</ram:CalculationPercent>";
 
 				paymentTermsXml += "</ram:ApplicableTradePaymentDiscountTerms>";
 			}
