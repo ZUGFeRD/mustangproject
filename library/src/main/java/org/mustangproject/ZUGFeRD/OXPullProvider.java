@@ -46,6 +46,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 	public void generateXML(IExportableTransaction trans) {
 		this.trans = trans;
 		this.calc = new TransactionCalculator(trans);
+		paymentTermsDescription = null;
 
 		boolean hasDueDate = false;
 		final SimpleDateFormat germanDateFormat = new SimpleDateFormat("dd.MM.yyyy");
@@ -56,7 +57,7 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 			paymentTermsDescription = XMLTools.encodeXML(trans.getPaymentTermDescription());
 		}
 
-		if (paymentTermsDescription == null && !CORRECTEDINVOICE.equals(trans.getDocumentCode())/* && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)*/) {
+		if (paymentTermsDescription == null && trans.getDueDate() != null && !CORRECTEDINVOICE.equals(trans.getDocumentCode())/* && (trans.getDocumentCode() != DocumentCodeTypeConstants.CREDITNOTE)*/) {
 			paymentTermsDescription = "Zahlbar ohne Abzug bis " + germanDateFormat.format(trans.getDueDate());
 		}
 
@@ -253,11 +254,11 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 			for (final FileAttachment f : trans.getAdditionalReferencedDocuments()) {
 				final String documentContent = Base64.getEncoder().encodeToString(f.getData());
 				xml.append("<ram:AdditionalReferencedDocument>"
-						+ "<ram:IssuerAssignedID>" + f.getFilename() + "</ram:IssuerAssignedID>"
+						+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(f.getFilename()) + "</ram:IssuerAssignedID>"
 						+ "<ram:TypeCode>916</ram:TypeCode>"
-						+ "<ram:Name>" + f.getDescription() + "</ram:Name>"
-						+ "<ram:AttachmentBinaryObject mimeCode=\"" + f.getMimetype() + "\"\n"
-						+ "filename=\"" + f.getFilename() + "\">" + documentContent + "</ram:AttachmentBinaryObject>"
+						+ "<ram:Name>" + XMLTools.encodeXML(f.getDescription()) + "</ram:Name>"
+						+ "<ram:AttachmentBinaryObject mimeCode=\"" + XMLTools.encodeXML(f.getMimetype()) + "\"\n"
+						+ "filename=\"" + XMLTools.encodeXML(f.getFilename()) + "\">" + documentContent + "</ram:AttachmentBinaryObject>"
 						+ "</ram:AdditionalReferencedDocument>");
 			}
 		}
@@ -484,15 +485,9 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 			paymentTermsXml += "<ram:SpecifiedTradePaymentTerms>";
 
 			final IZUGFeRDPaymentDiscountTerms discountTerms = pt.getDiscountTerms();
-			paymentTermsXml += "<ram:Description>" + pt.getDescription() + "</ram:Description>";
+			paymentTermsXml += "<ram:Description>" + XMLTools.encodeXML(pt.getDescription()) + "</ram:Description>";
 			if (discountTerms != null) {
 				paymentTermsXml += "<ram:ApplicableTradePaymentDiscountTerms>";
-				final String currency = trans.getCurrency();
-				final String basisAmount = currencyFormat(calc.getGrandTotal());
-				paymentTermsXml += "<ram:BasisAmount currencyID=\"" + currency + "\">" + basisAmount + "</ram:BasisAmount>";
-				paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toString()
-					+ "</ram:CalculationPercent>";
-
 				if (discountTerms.getBaseDate() != null) {
 					final Date baseDate = discountTerms.getBaseDate();
 					paymentTermsXml += "<ram:BasisDateTime>";
@@ -502,6 +497,12 @@ public class OXPullProvider extends ZUGFeRD2PullProvider {
 					paymentTermsXml += "<ram:BasisPeriodMeasure unitCode=\"" + discountTerms.getBasePeriodUnitCode() + "\">"
 						+ discountTerms.getBasePeriodMeasure() + "</ram:BasisPeriodMeasure>";
 				}
+
+				final String currency = trans.getCurrency();
+				final String basisAmount = currencyFormat(calc.getGrandTotal());
+				paymentTermsXml += "<ram:BasisAmount currencyID=\"" + currency + "\">" + basisAmount + "</ram:BasisAmount>";
+				paymentTermsXml += "<ram:CalculationPercent>" + discountTerms.getCalculationPercentage().toPlainString()
+					+ "</ram:CalculationPercent>";
 
 				paymentTermsXml += "</ram:ApplicableTradePaymentDiscountTerms>";
 			}
