@@ -729,7 +729,8 @@ public class ZUGFeRDInvoiceImporter {
 		String creditorReferenceID = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"CreditorReferenceID\"]").trim(); //BT-90
 		if (creditorReferenceID == null || creditorReferenceID.isEmpty()) {
 			//maybe it's there in UBL?
-			creditorReferenceID = extractString("//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyIdentification\"]/*[local-name()=\"ID\"]").trim();
+			creditorReferenceID = extractString("//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyIdentification\"]/*[local-name()=\"ID\"][@schemeID=\"SEPA\"]"
+				+ "|//*[local-name()=\"PayeeParty\"]/*[local-name()=\"PartyIdentification\"]/*[local-name()=\"ID\"][@schemeID=\"SEPA\"]").trim();
 		}
 		if (creditorReferenceID != null && !creditorReferenceID.isEmpty()) {
 			zpp.setCreditorReferenceID(creditorReferenceID);
@@ -855,6 +856,7 @@ public class ZUGFeRDInvoiceImporter {
 					NodeList paymentMeansChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
 					IBAN = null;
 					BIC = null;
+					accountName = null;
 					paymentMeansCode = null;
 					paymentMeansInformation = null;
 					for (int paymentMeansChildIndex = 0; paymentMeansChildIndex < paymentMeansChilds.getLength(); paymentMeansChildIndex++) {
@@ -893,6 +895,9 @@ public class ZUGFeRDInvoiceImporter {
 						if (paymentMeansCode != null) {
 							bd.setPaymentMeansCode(paymentMeansCode);
 						}
+						if (paymentMeansInformation != null) {
+							bd.setPaymentMeansInformation(paymentMeansInformation);
+						}
 						if (BIC != null) {
 							bd.setBIC(BIC);
 						}
@@ -928,7 +933,7 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
-		xpr = xpath.compile("/*[local-name()=\"Invoice\"]/*[local-name()=\"InvoicePeriod\"]/*"); //UBL only
+		xpr = xpath.compile("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"InvoicePeriod\"]/*"); //UBL only
 		NodeList periodNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
 		for (int periodChildIndex = 0; periodChildIndex < periodNodes.getLength(); periodChildIndex++) {
@@ -956,6 +961,11 @@ public class ZUGFeRDInvoiceImporter {
 			// XMLTools.trimOrNull(nodes.item(i)))) {
 			Node paymentMeansNode = paymentMeansNodes.item(i);
 			NodeList paymentMeansChilds = paymentMeansNode.getChildNodes();
+			// the last IBAN found is used for the direct debit below
+			String previousIBAN = IBAN;
+			IBAN = null;
+			BIC = null;
+			accountName = null;
 			for (int meansChildIndex = 0; meansChildIndex < paymentMeansChilds.getLength(); meansChildIndex++) {
 				if (paymentMeansChilds.item(meansChildIndex).getLocalName() != null
 					&& paymentMeansChilds.item(meansChildIndex).getLocalName().equals("PayeeFinancialAccount")) {
@@ -1000,6 +1010,8 @@ public class ZUGFeRDInvoiceImporter {
 					bd.setAccountName(accountName);
 				}
 				bankDetails.add(bd);
+			} else {
+				IBAN = previousIBAN;
 			}
 
 
@@ -1309,7 +1321,8 @@ public class ZUGFeRDInvoiceImporter {
 					String chargeChildName = currentNode.getLocalName();
 					if (chargeChildName != null) {
 						if (chargeChildName.equals("BasisPeriodMeasure")) {
-							if (currentNode.getAttributes().getNamedItem("unitCode").getNodeValue().equals("DAY")) {
+							Node unitCode = currentNode.getAttributes().getNamedItem("unitCode");
+							if (unitCode != null && unitCode.getNodeValue().equals("DAY")) {
 								cd.setDays(Math.round(Float.valueOf(XMLTools.trimOrNull(currentNode))));
 								// in case someone writes 30.00 days (happens!) we still want 30 integer days
 							}
@@ -1475,7 +1488,6 @@ public class ZUGFeRDInvoiceImporter {
 		if (!containsMeta) {
 			throw new Exception("Not yet parsed");
 		}
-		final String head = getUTF8();
 		String rootNode = extractString("local-name(/*)");
 		if (rootNode.equals("CrossIndustryDocument")) {
 			return EStandard.ZUGFERD;
@@ -1487,7 +1499,7 @@ public class ZUGFeRDInvoiceImporter {
 			return EStandard.FACTUR_X;
 		} else if (rootNode.equals("SCRDMCCBDACIDAMessageStructure")) {
 			return EStandard.DELIVER_X;
-		} else if (head.contains("<rsm:SCRDMCCBDACIOMessageStructure")) {
+		} else if (rootNode.equals("SCRDMCCBDACIOMessageStructure")) {
 			return EStandard.ORDER_X;
 		}
 
