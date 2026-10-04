@@ -123,6 +123,20 @@ public class ValidationContext {
 	}
 
 	/***
+	 * clear the results and also forget the format, generation, profile, signature, PDF flag and filename
+	 * of the previous file, e.g. before validating the next file with the same context
+	 */
+	public void reset() {
+		clear();
+		format = "CII";
+		generation = null;
+		profile = null;
+		signature = null;
+		hasPDF = false;
+		filename = null;
+	}
+
+	/***
 	 * get the final result
 	 * @return the XML of the result
 	 */
