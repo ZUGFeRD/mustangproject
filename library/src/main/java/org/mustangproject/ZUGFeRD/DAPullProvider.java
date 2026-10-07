@@ -170,11 +170,11 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 			for (final FileAttachment f : trans.getAdditionalReferencedDocuments()) {
 				final String documentContent = Base64.getEncoder().encodeToString(f.getData());
 				xml.append("<ram:AdditionalReferencedDocument>"
-						+ "<ram:IssuerAssignedID>" + f.getFilename() + "</ram:IssuerAssignedID>"
+						+ "<ram:IssuerAssignedID>" + XMLTools.encodeXML(f.getFilename()) + "</ram:IssuerAssignedID>"
 						+ "<ram:TypeCode>916</ram:TypeCode>"
-						+ "<ram:Name>" + f.getDescription() + "</ram:Name>"
-						+ "<ram:AttachmentBinaryObject mimeCode=\"" + f.getMimetype() + "\"\n"
-						+ "filename=\"" + f.getFilename() + "\">" + documentContent + "</ram:AttachmentBinaryObject>"
+						+ "<ram:Name>" + XMLTools.encodeXML(f.getDescription()) + "</ram:Name>"
+						+ "<ram:AttachmentBinaryObject mimeCode=\"" + XMLTools.encodeXML(f.getMimetype()) + "\"\n"
+						+ "filename=\"" + XMLTools.encodeXML(f.getFilename()) + "\">" + documentContent + "</ram:AttachmentBinaryObject>"
 						+ "</ram:AdditionalReferencedDocument>");
 			}
 		}
@@ -195,12 +195,14 @@ public class DAPullProvider extends ZUGFeRD2PullProvider {
 					getTradePartyAsXML(this.trans.getDeliveryAddress(), false, true) +
 					"</ram:ShipToTradeParty>");
 		}
-		xml.append(" <ram:ActualDespatchSupplyChainEvent>\n" +
-				"                <ram:OccurrenceDateTime>\n" +
-				"                    <udt:DateTimeString\n" +
-				"                            format=\"102\">" + DATE.udtFormat(trans.getDeliveryDate() ) + "</udt:DateTimeString>\n" +
-				"                </ram:OccurrenceDateTime>\n" +
-				"            </ram:ActualDespatchSupplyChainEvent>");
+		if (trans.getDeliveryDate() != null) {
+			// udtFormat already returns the complete udt:DateTimeString element
+			xml.append(" <ram:ActualDespatchSupplyChainEvent>\n" +
+					"                <ram:OccurrenceDateTime>\n" +
+					"                    " + DATE.udtFormat(trans.getDeliveryDate()) + "\n" +
+					"                </ram:OccurrenceDateTime>\n" +
+					"            </ram:ActualDespatchSupplyChainEvent>");
+		}
 
 /*
 		xml += "<ram:ActualDeliverySupplyChainEvent>"
