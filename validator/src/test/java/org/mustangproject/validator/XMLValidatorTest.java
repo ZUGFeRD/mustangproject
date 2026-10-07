@@ -686,6 +686,41 @@ public class XMLValidatorTest extends ResourceCase {
 	}
 
 	@Test
+	public void testSuccessfulReportsUseTheirSvrlFlag() throws IrrecoverableValidationError {
+		ValidationContext ctx = new ValidationContext(null);
+		new XMLValidator(ctx).validateSchematron("<invoice><unused/><legacy/></invoice>",
+			"/svrl-findings.xslt", 24, ESeverity.error);
+		assertTrue(ctx.isValid(), "A warning report must not invalidate the document");
+		assertEquals(1, ctx.getResults().size(), "An unflagged legacy report is no finding");
+		ValidationResultItem warning = ctx.getResults().get(0);
+		assertEquals(ESeverity.warning, warning.getSeverity());
+		assertEquals("FX-SCH-R-000001", warning.getID());
+		assertEquals("/invoice/unused", warning.getLocation());
+		assertTrue(warning.getMessage().contains("marked as not used"));
+
+		ctx = new ValidationContext(null);
+		new XMLValidator(ctx).validateSchematron("<invoice><forbidden/></invoice>",
+			"/svrl-findings.xslt", 24, ESeverity.error);
+		assertFalse(ctx.isValid(), "A fatal report must invalidate the document");
+		assertEquals(ESeverity.error, ctx.getResults().get(0).getSeverity());
+		assertEquals("FX-SCH-R-000002", ctx.getResults().get(0).getID());
+	}
+
+	@Test
+	public void testFindingWithoutIdDoesNotInheritThePreviousId() throws IrrecoverableValidationError {
+		ValidationContext ctx = new ValidationContext(null);
+		new XMLValidator(ctx).validateSchematron("<invoice><mixed/></invoice>",
+			"/svrl-findings.xslt", 24, ESeverity.error);
+		assertEquals(2, ctx.getResults().size());
+		assertEquals("BR-01", ctx.getResults().get(0).getID());
+		assertEquals(ESeverity.error, ctx.getResults().get(0).getSeverity(),
+			"An unflagged failed assertion remains an error");
+		assertEquals("", ctx.getResults().get(1).getID());
+		assertFalse(ctx.getResults().get(1).getMessage().contains("[ID BR-01]"));
+		assertEquals(ESeverity.warning, ctx.getResults().get(1).getSeverity());
+	}
+
+	@Test
 	public void testLineTotalAmount() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);

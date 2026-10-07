@@ -608,21 +608,33 @@ public class XMLValidator extends Validator {
 			// SVRLHelper.getAllFailedAssertions (sout);
 			Document SVRLReport = new SVRLMarshaller().getAsDocument(sout);
 			XPath xPath = XPathFactory.newInstance().newXPath();
-			String expression = "//*[local-name() = 'failed-assert']";
+			// Failed assertions and successful reports are both findings. Their SVRL
+			// flag decides the severity, so a flagged warning or information never
+			// invalidates the document.
+			String expression = "//*[local-name() = 'failed-assert' or local-name() = 'successful-report']";
 			NodeList failedAsserts = null;
 			try {
 				failedAsserts = (NodeList) xPath.compile(expression).evaluate(SVRLReport, XPathConstants.NODESET);
 
-				String thisFailText = "";
-				String thisFailID = "";
-				String thisFailIDStr = "";
-				String thisFailTest = "";
-				String thisFailLocation = "";
 				if (failedAsserts.getLength() > 0) {
 
 					for (int nodeIndex = 0; nodeIndex < failedAsserts.getLength(); nodeIndex++) {
 						//nodes.item(i).getTextContent())) {
 						Node currentFailNode = failedAsserts.item(nodeIndex);
+						boolean successfulReport = "successful-report".equals(localName(currentFailNode));
+						Node failNode = currentFailNode.getAttributes().getNamedItem("flag");
+						String failVal = failNode == null ? null : failNode.getNodeValue();
+						if (successfulReport && failVal == null) {
+							// Older embedded stylesheets (e.g. ZUGFeRD 1.0 and 2.0) emit unflagged
+							// reports for components not used in a profile; they were never findings.
+							continue;
+						}
+						// Each finding carries only its own metadata.
+						String thisFailText = "";
+						String thisFailID = "";
+						String thisFailIDStr = "";
+						String thisFailTest = "";
+						String thisFailLocation = "";
 						if (currentFailNode.getAttributes().getNamedItem("id") != null) {
 							thisFailID = currentFailNode.getAttributes().getNamedItem("id").getNodeValue();
 							thisFailIDStr = " [ID " + thisFailID + "]";
@@ -635,8 +647,6 @@ public class XMLValidator extends Validator {
 						}
 
 						ESeverity severity;
-						Node failNode = currentFailNode.getAttributes().getNamedItem("flag");
-						String failVal = failNode == null ? null : failNode.getNodeValue();
 						if (defaultSeverity == ESeverity.notice) {
 							severity = defaultSeverity;
 						} else if ("warning".equals(failVal)) {
@@ -645,6 +655,8 @@ public class XMLValidator extends Validator {
 						} else if ("information".equals(failVal)) {
 							severity = ESeverity.notice;
 						} else {
+							// fatal, error, and a missing assertion flag invalidate the document;
+							// ESeverity.fatal would abort the validation instead
 							severity = ESeverity.error;
 						}
 
@@ -660,7 +672,7 @@ public class XMLValidator extends Validator {
 							}
 						}
 
-						LOGGER.info("FailedAssert {}", thisFailText);
+						LOGGER.info(successfulReport ? "SuccessfulReport {}" : "FailedAssert {}", thisFailText);
 
 						context.addResultItem(new ValidationResultItem(severity, thisFailText + thisFailIDStr + " from " + xsltFilename + ")")
 							.setLocation(thisFailLocation).setCriterion(thisFailTest).setSection(section).setID(thisFailID)
@@ -708,6 +720,14 @@ public class XMLValidator extends Validator {
 		}
 	}
 
+
+	private static String localName(Node node) {
+		if (node.getLocalName() != null) {
+			return node.getLocalName();
+		}
+		String name = node.getNodeName();
+		return name.substring(name.indexOf(':') + 1);
+	}
 
 	public int getFiredRules() {
 		return firedRules;
