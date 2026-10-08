@@ -772,4 +772,32 @@ public class XMLValidatorTest extends ResourceCase {
 			fail(e);
 		}
 	}
+
+	/***
+	 * a CII file validated after a UBL file with the same context, cleared in between,
+	 * gets the same errors as with a new context (#968)
+	 */
+	@Test
+	public void testCIIAfterUBLWithClearedContext() throws IrrecoverableValidationError {
+		final String ciiFile = getResourceAsFile("invalidXRV30.xml").getAbsolutePath();
+
+		ValidationContext ctx = new ValidationContext(null);
+		XMLValidator xv = new XMLValidator(ctx);
+		xv.setFilename(ciiFile);
+		xv.validate();
+		final String expected = "<validation>" + xv.getXMLResult() + "</validation>";
+
+		ctx = new ValidationContext(null);
+		xv = new XMLValidator(ctx);
+		xv.setFilename(getResourceAsFile("xrechnung-ubl.xml").getAbsolutePath());
+		xv.validate();
+		ctx.clear();
+		xv.setFilename(ciiFile);
+		xv.validate();
+		final String actual = "<validation>" + xv.getXMLResult() + "</validation>";
+
+		assertThat(expected).valueByXPath("count(//error)").asInt().isEqualTo(4);
+		assertThat(actual).valueByXPath("count(//error)").asInt().isEqualTo(4);
+		assertThat(actual).valueByXPath("/validation/summary/@status").isEqualTo("invalid");
+	}
 }

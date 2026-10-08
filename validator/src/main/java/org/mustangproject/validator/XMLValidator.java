@@ -220,6 +220,7 @@ public class XMLValidator extends Validator {
 				String contextProfile = context.getProfile();
 				if ("SCRDMCCBDACIOMessageStructure".equalsIgnoreCase(rootLocalName)) {
 					context.setGeneration("1");
+					context.setFormat("CII");
 					isOrderX = true;
 					isBasic = contextProfile.contains("basic");
 					isEN16931 = contextProfile.contains("comfort");
@@ -228,6 +229,7 @@ public class XMLValidator extends Validator {
 
 				} else if (root.getLocalName().equalsIgnoreCase("CrossIndustryInvoice")) { // ZUGFeRD 2.0 or Factur-X
 					context.setGeneration("2");
+					context.setFormat("CII");
 					final String sellerCountry = getXPathString(doc,
 						"//*[local-name() = 'CrossIndustryInvoice']//*[local-name() = 'SupplyChainTradeTransaction']//*[local-name() = 'ApplicableHeaderTradeAgreement']//*[local-name() = 'SellerTradeParty']//*[local-name() = 'PostalTradeAddress']/*[local-name() = 'CountryID']/text()");
 					final String buyerCountry = getXPathString(doc,
@@ -329,6 +331,7 @@ public class XMLValidator extends Validator {
 
 				} else if ("CrossIndustryDocument".equalsIgnoreCase(rootLocalName)) { // ZUGFeRD 1.0
 					context.setGeneration("1");
+					context.setFormat("CII");
 					//
 					List<String> validZF1Profiles = Arrays.asList(
 						"urn:ferd:CrossIndustryDocument:invoice:1p0:basic",
