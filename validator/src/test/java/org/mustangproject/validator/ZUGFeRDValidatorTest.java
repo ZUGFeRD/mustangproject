@@ -2,6 +2,8 @@ package org.mustangproject.validator;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -367,5 +369,27 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 		zfv.validate(xmlFile.getAbsolutePath());
 		zfv.validate("/does/not/exist");
 		assertTrue(zfv.hasOptionsError());
+	}
+
+	/***
+	 * a Schematron that fails to run on the XML makes the XML invalid, it is not skipped (#904)
+	 */
+	@Test
+	public void testSchematronExceptionIsInvalid() throws Exception {
+		File xmlFile = getResourceAsFile("roundingDifferenceIsInTolerance.xml");
+		String taxTotal = "<ram:TaxTotalAmount currencyID=\"EUR\">135.04</ram:TaxTotalAmount>";
+		String xml = new String(Files.readAllBytes(xmlFile.toPath()), StandardCharsets.UTF_8);
+		assertTrue(xml.contains(taxTotal));
+		byte[] twoTaxTotals = xml.replace(taxTotal, taxTotal + taxTotal).getBytes(StandardCharsets.UTF_8);
+
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+		String res = zfv.validate(twoTaxTotals, "twoTaxTotals.xml");
+		assertThat(res).valueByXPath("count(/validation/xml/messages/exception)")
+			.asInt()
+			.isEqualTo(1);
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+			.isEqualTo("invalid");
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.isEqualTo("invalid");
 	}
 }
