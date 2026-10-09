@@ -54,6 +54,7 @@ public class XMLValidator extends Validator {
 	private static final String ZUGEFERD_1_XSLT = "/xslt/ZUGFeRD_1p0.xslt";
 	private static final String EN16931_UBL_SCHEMATRON = "/xslt/en16931schematron/EN16931-UBL-validation.xslt";
 	private static final String OX10_COMFORT_XSLT = "/xslt/OX_10/comfort/SCRDMCCBDACIOMessageStructure_100pD20B_COMFORT.xslt";
+	private static final String BYTE_ORDER_MARK = "\uFEFF";
 
 	protected String zfXML = "";
 	protected String filename = "";
@@ -98,10 +99,14 @@ public class XMLValidator extends Validator {
 
 	/***
 	 * manually set the xml content
-	 * @param xml the xml to be checked
+	 * @param xml the xml to be checked, a leading UTF-8 byte order mark is removed like in setFilename (#190)
 	 */
 	public void setStringContent(String xml) {
-		zfXML = xml;
+		if (xml != null && xml.startsWith(BYTE_ORDER_MARK)) {
+			zfXML = xml.substring(1);
+		} else {
+			zfXML = xml;
+		}
 	}
 
 	/**

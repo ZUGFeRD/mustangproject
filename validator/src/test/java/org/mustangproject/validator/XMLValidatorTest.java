@@ -2,6 +2,7 @@ package org.mustangproject.validator;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import javax.xml.XMLConstants;
@@ -281,6 +282,25 @@ public class XMLValidatorTest extends ResourceCase {
 			// ignore, will be in XML output anyway
 		}
 
+	}
+
+	@Test
+	public void testStringContentWithBOM() throws Exception {
+		// #190 removed the BOM for files, the same XML passed as a string must validate as well
+		final byte[] xml = getResourceAsByteArray("validXRv2.xml");
+		final byte[] withBOM = new byte[xml.length + 3];
+		withBOM[0] = (byte) 0xEF;
+		withBOM[1] = (byte) 0xBB;
+		withBOM[2] = (byte) 0xBF;
+		System.arraycopy(xml, 0, withBOM, 3, xml.length);
+
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		xv.setStringContent(new String(withBOM, StandardCharsets.UTF_8));
+		xv.validate();
+
+		final Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
+		assertEquals("valid", new JAXPXPathEngine().evaluate("/validation/summary/@status", source));
 	}
 
 	@Test
