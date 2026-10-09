@@ -1,3 +1,7 @@
+2.27.0
+=======
+2026-10-09
+
 - #1244 Import all GrossPriceProductTradePrice/AppliedTradeAllowanceCharge elements.
 - #1247 Support the passing of CompressParameters.
 - #1248 / #1250 Support ReceivableSpecifiedTradeAccountingAccount (BT-19).
@@ -9,6 +13,7 @@
 - #1265 / #1269 Support a TaxPointDate (BT-7).
 - #1260 Skip unparseable #SKONTO# payment terms instead of aborting the whole import.
 - #1289 Invoiceimporter does not read payment typecode correctly
+- #1274 upgrade to schematron version 2.6 of XR 3.0
 
 
 2.26.0

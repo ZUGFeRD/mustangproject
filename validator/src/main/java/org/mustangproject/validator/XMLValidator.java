@@ -321,7 +321,7 @@ public class XMLValidator extends Validator {
 							throw new Exception("Unsupported XR version");
 						}
 						LOGGER.debug("is XRechnung v{}", xrVersion);
-						xsltFilename = "/xslt/XR_" + xrVersion + "/XRechnung-UBL-validation.xslt";
+						xsltFilename = "/xslt/XR_" + xrVersion + "/XRechnung-UBL-validation.xsl";
 						XrechnungSeverity = ESeverity.error;
 						mainSchematronSectionErrorTypeCode = 27;
 
@@ -575,7 +575,7 @@ public class XMLValidator extends Validator {
 		} else if (xml.contains(":xrechnung_2.3")) { // This is the default check which is also run on en16931 files to generate notices.
 			validateSchematron(xml, "/xslt/XR_23/XRechnung-CII-validation.xslt", 27, errorImpact);
 		} else { // This is the default check which is also run on en16931 files to generate notices.
-			validateSchematron(xml, "/xslt/XR_30/XRechnung-CII-validation.xslt", 27, errorImpact);
+			validateSchematron(xml, "/xslt/XR_30/XRechnung-CII-validation.xsl", 27, errorImpact);
 		}
 
 	}
