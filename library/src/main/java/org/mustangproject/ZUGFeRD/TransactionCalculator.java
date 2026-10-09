@@ -92,12 +92,24 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			.collect(Collectors.toSet());
 	}
 
+	/***
+	 * the amount of a document level allowance or charge (BT-92, BT-99) as it is written to the XML, i.e. rounded to
+	 * two decimals. Totals and the VAT breakdown have to add up these rounded amounts (BR-CO-11, BR-CO-12, BR-S-08),
+	 * otherwise e.g. a percentage allowance of 22.475 is written as 22.48 but subtracted as 22.475.
+	 *
+	 * @param allowanceCharge the document level allowance or charge
+	 * @return the amount, rounded to two decimals
+	 */
+	private BigDecimal getRoundedTotalAmount(IZUGFeRDAllowanceCharge allowanceCharge) {
+		return allowanceCharge.getTotalAmount(this).setScale(2, RoundingMode.HALF_UP);
+	}
+
 	private BigDecimal sumAllowanceCharge(BigDecimal percent, IZUGFeRDAllowanceCharge[] charges) {
 		BigDecimal res = BigDecimal.ZERO;
 		if (charges != null) {
 			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
 				if (percent == null || currentCharge.getTaxRateApplicablePercent().compareTo(percent) == 0) {
-					res = res.add(currentCharge.getTotalAmount(this));
+					res = res.add(getRoundedTotalAmount(currentCharge));
 				}
 			}
 		}
@@ -249,7 +261,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 							currentCharge.getTaxCategoryCode() != null ? currentCharge.getTaxCategoryCode() : "S",
 							vatDueDateTypeCode);
 					}
-					theAmount.setBasis(theAmount.getBasis().add(currentCharge.getTotalAmount(this)));
+					theAmount.setBasis(theAmount.getBasis().add(getRoundedTotalAmount(currentCharge)));
 					BigDecimal factor = taxPercent.divide(new BigDecimal(100));
 					theAmount.setCalculated(theAmount.getBasis().multiply(factor));
 					hm.put(taxPercent.stripTrailingZeros(), theAmount);
@@ -267,7 +279,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 							currentAllowance.getTaxCategoryCode() != null ? currentAllowance.getTaxCategoryCode() : "S",
 							vatDueDateTypeCode);
 					}
-					theAmount.setBasis(theAmount.getBasis().subtract(currentAllowance.getTotalAmount(this)));
+					theAmount.setBasis(theAmount.getBasis().subtract(getRoundedTotalAmount(currentAllowance)));
 					BigDecimal factor = taxPercent.divide(new BigDecimal(100));
 					theAmount.setCalculated(theAmount.getBasis().multiply(factor));
 
@@ -337,7 +349,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 				if (taxPercent != null) {
 					final String vatCategoryCode = currentCharge.getTaxCategoryCode() != null ? currentCharge.getTaxCategoryCode() : "S";
 					final Optional<VATAmount> currentChargeVatAmount = this.getCurrentVatAmount(vatAmounts, vatCategoryCode, taxPercent);
-					final BigDecimal chargeBasis = currentCharge.getTotalAmount(this);
+					final BigDecimal chargeBasis = getRoundedTotalAmount(currentCharge);
 					final VATAmount chargeVatAmount = new VATAmount(chargeBasis, chargeBasis.multiply(taxPercent.divide(new BigDecimal(100))), vatCategoryCode, vatDueDateTypeCode, taxPercent);
 					final String reasonText = currentCharge.getTaxExemptionReason();
 					if (reasonText != null) {
@@ -362,7 +374,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 				if (taxPercent != null) {
 					final String vatCategoryCode = currentAllowance.getTaxCategoryCode() != null ? currentAllowance.getTaxCategoryCode() : "S";
 					final Optional<VATAmount> currentAllowanceVatAmount = this.getCurrentVatAmount(vatAmounts, vatCategoryCode, taxPercent);
-					final BigDecimal allowanceNegativeBasis = currentAllowance.getTotalAmount(this).multiply(BigDecimal.valueOf(-1));
+					final BigDecimal allowanceNegativeBasis = getRoundedTotalAmount(currentAllowance).negate();
 					final VATAmount allowanceVATAmount = new VATAmount(allowanceNegativeBasis, allowanceNegativeBasis.multiply(taxPercent.divide(new BigDecimal(100))), currentAllowance.getTaxCategoryCode() != null ? currentAllowance.getTaxCategoryCode() : "S", vatDueDateTypeCode, taxPercent);
 					final String reasonText = currentAllowance.getTaxExemptionReason();
 					if (reasonText != null) {
