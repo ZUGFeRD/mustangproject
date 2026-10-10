@@ -611,6 +611,9 @@ public class XMLValidator extends Validator {
 				sout = aResSCH
 					.applySchematronValidationToSVRL(new StreamSource(new StringReader(xml)));
 			} catch (final Exception e) {
+				// report it, otherwise the XML would still count as valid
+				context.addResultItem(new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(section)
+					.setPart(EPart.fx));
 				throw new IrrecoverableValidationError(e.getMessage());
 			}
 			// SVRLHelper.getAllFailedAssertions (sout);
