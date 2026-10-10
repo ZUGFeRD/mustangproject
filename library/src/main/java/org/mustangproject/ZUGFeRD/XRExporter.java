@@ -23,7 +23,7 @@ package org.mustangproject.ZUGFeRD;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class XRExporter implements IExporter {
 	IXMLProvider xmlProvider;
@@ -37,7 +37,7 @@ public class XRExporter implements IExporter {
 
 	@Override
 	public void export(String ZUGFeRDfilename) throws IOException {
-		export(Files.newOutputStream(Path.of(ZUGFeRDfilename)));
+		export(Files.newOutputStream(Paths.get(ZUGFeRDfilename)));
 	}
 
 	@Override

@@ -26,7 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,7 @@ public class ResourceUtilities {
 	 * @throws IOException if the file cannot be read
 	 */
 	public static String readFile(Charset encoding, String path) throws IOException {
-		byte[] content = Files.readAllBytes(Path.of(path));
+		byte[] content = Files.readAllBytes(Paths.get(path));
 		return new String(content, encoding);
 	}
 
@@ -60,7 +60,7 @@ public class ResourceUtilities {
 	public static void saveFile(Charset encoding, String path, String content) throws IOException {
 
 		// resources will be released automatically
-		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(Files.newOutputStream(Path.of(path)), encoding), true)) {
+		try (PrintWriter out = new PrintWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(path)), encoding), true)) {
 			out.println(content);
 		}
 	}
@@ -137,7 +137,7 @@ public class ResourceUtilities {
 		} catch (URISyntaxException ex) {
 			LOGGER.error("Failed to parse URI", ex);
 		}
-		return Path.of(filepath).toFile();
+		return Paths.get(filepath).toFile();
 	}
 
 	/**
@@ -154,7 +154,7 @@ public class ResourceUtilities {
 	}
 
 	public static File getTempTestDirectory() {
-		File tempDir = Path.of(ResourceUtilities.getTestOutputFolder() + "temp").toFile();
+		File tempDir = Paths.get(ResourceUtilities.getTestOutputFolder() + "temp").toFile();
 		tempDir.mkdir(); // if it already exist no problem
 		return tempDir;
 	}

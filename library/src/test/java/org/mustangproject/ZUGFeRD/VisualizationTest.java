@@ -38,7 +38,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @TestMethodOrder(MethodOrderer.MethodName.class)
 public class VisualizationTest extends ResourceCase {
@@ -114,7 +114,7 @@ public class VisualizationTest extends ResourceCase {
 		String result = null;
 		try {
 			result = zvi.visualize(inputFile.getAbsolutePath(), lang);
-			Files.write(Path.of("./target/testout-" + resultFileName), result.getBytes(StandardCharsets.UTF_8));
+			Files.write(Paths.get("./target/testout-" + resultFileName), result.getBytes(StandardCharsets.UTF_8));
 
 			File expectedResult = getResourceAsFile(resultFileName);
 			expected = Files.readString(expectedResult.toPath());
@@ -159,8 +159,8 @@ public class VisualizationTest extends ResourceCase {
 		}
 
 		try {
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
-			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Path.of(TARGET_PDF_CII)), "<rdf:li>de</rdf:li>".getBytes()));
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), "<rdf:li>de</rdf:li>".getBytes()));
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}
@@ -180,8 +180,8 @@ public class VisualizationTest extends ResourceCase {
 		}
 
 		try {
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
-			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Path.of(TARGET_PDF_CII)), "<rdf:li>en</rdf:li>".getBytes()));
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), "<rdf:li>en</rdf:li>".getBytes()));
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}
@@ -201,8 +201,8 @@ public class VisualizationTest extends ResourceCase {
 		}
 
 		try {
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
-			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Path.of(TARGET_PDF_CII)), "<rdf:li>fr</rdf:li>".getBytes()));
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), "<rdf:li>fr</rdf:li>".getBytes()));
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}
@@ -224,7 +224,7 @@ public class VisualizationTest extends ResourceCase {
 
 
 		try {
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_UBL)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_UBL)), new byte[]{'%', 'P', 'D', 'F'}));
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}
@@ -247,7 +247,7 @@ public class VisualizationTest extends ResourceCase {
 
 
 		try {
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_UBL_CREDIT_NOTE)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_UBL_CREDIT_NOTE)), new byte[]{'%', 'P', 'D', 'F'}));
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}
@@ -273,14 +273,14 @@ public class VisualizationTest extends ResourceCase {
 
 
 		try {
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_UBL_CREDIT_NOTE)), new byte[]{'%', 'P', 'D', 'F'}));
-			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Path.of(TARGET_PDF_UBL_CREDIT_NOTE)), "<rdf:li>de</rdf:li>".getBytes()));
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_UBL_CREDIT_NOTE)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Paths.get(TARGET_PDF_UBL_CREDIT_NOTE)), "<rdf:li>de</rdf:li>".getBytes()));
 
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_UBL)), new byte[]{'%', 'P', 'D', 'F'}));
-			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Path.of(TARGET_PDF_UBL)), "<rdf:li>en</rdf:li>".getBytes()));
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_UBL)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Paths.get(TARGET_PDF_UBL)), "<rdf:li>en</rdf:li>".getBytes()));
 
-			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Path.of(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
-			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Path.of(TARGET_PDF_CII)), "<rdf:li>fr</rdf:li>".getBytes()));
+			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), "<rdf:li>fr</rdf:li>".getBytes()));
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}

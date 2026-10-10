@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -118,7 +118,7 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 	public OXExporterFromA3 load(String pdfFilename) throws IOException {
 
 		ensurePDFIsValid(new FileDataSource(pdfFilename));
-		try (InputStream pdf = Files.newInputStream(Path.of(pdfFilename))) {
+		try (InputStream pdf = Files.newInputStream(Paths.get(pdfFilename))) {
 			return load(readAllBytes(pdf));
 		}
 	}

@@ -38,7 +38,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -429,7 +429,7 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 
 		int version = -1;
 		try {
-			zii.fromXML(Files.readString(Path.of("./target/testout-XR-Edge.xml")));
+			zii.fromXML(Files.readString(Paths.get("./target/testout-XR-Edge.xml")));
 			version = zii.getVersion();
 		} catch (IOException e) {
 			hasExceptions = true;

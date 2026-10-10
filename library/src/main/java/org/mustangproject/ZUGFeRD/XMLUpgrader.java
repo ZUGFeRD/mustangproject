@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -55,7 +55,7 @@ public class XMLUpgrader {
 		mXsltTemplate = mFactory.newTemplates(new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/ZF1ToZF2.xsl")));
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		applySchematronXsl(Files.newInputStream(Path.of(xmlFilename)), baos);
+		applySchematronXsl(Files.newInputStream(Paths.get(xmlFilename)), baos);
 		String res = null;
 		res = baos.toString(StandardCharsets.UTF_8);
 		return res;

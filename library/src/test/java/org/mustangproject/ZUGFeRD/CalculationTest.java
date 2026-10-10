@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.xml.xpath.XPathExpressionException;
@@ -727,7 +728,7 @@ public class CalculationTest extends ResourceCase {
 	}
 
 	private static BigDecimal basisForCategory(Set<VATAmount> details, String categoryCode) {
-		return details.stream().filter(d -> categoryCode.equals(d.getCategoryCode())).findFirst().orElseThrow().getBasis();
+		return details.stream().filter(d -> categoryCode.equals(d.getCategoryCode())).findFirst().orElseThrow(NoSuchElementException::new).getBasis();
 	}
 
 }
