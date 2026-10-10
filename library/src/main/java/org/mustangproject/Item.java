@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.mustangproject.ZUGFeRD.IAbsoluteValueProvider;
 import org.mustangproject.ZUGFeRD.IReferencedDocument;
 import org.mustangproject.ZUGFeRD.IZUGFeRDAllowanceCharge;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableItem;
@@ -315,8 +316,7 @@ public class Item implements IZUGFeRDExportableItem {
 			if (recalcPrice && !BigDecimal.ZERO.equals(quantity)) {
 				icnm.getAsNodeMap("SpecifiedTradeSettlementLineMonetarySummation")
 					.flatMap(cnm -> cnm.getAsBigDecimal("LineTotalAmount"))
-					// minScale = 2 fits most currencies in practice. Possible improvement could be to determine the scale by the invoices currency dynamically
-					.ifPresent(lineTotal -> setPrice(BigDecimalUtils.divideReversible(lineTotal, quantity, 2)));
+					.ifPresent(this::setPriceFromLineTotal);
 			}
 			icnm.getAsNodeMap("SpecifiedTradeSettlementLineMonetarySummation")
 				.flatMap(cnm -> cnm.getAsBigDecimal("LineTotalAmount"))
@@ -399,6 +399,34 @@ public class Item implements IZUGFeRDExportableItem {
 			});
 			addNotes(in);
 		});
+	}
+
+	/***
+	 * sets the (gross) price so that the LineCalculator reproduces the given line total, i.e.
+	 * line total = quantity * (price - price allowances + price charges) / basis quantity - line allowances + line charges
+	 * @param lineTotal the LineTotalAmount of the item
+	 */
+	private void setPriceFromLineTotal(BigDecimal lineTotal) {
+		// imported allowances and charges have absolute amounts, the value provider only matters for percentages without amount
+		IAbsoluteValueProvider currentPrice = this::getPrice;
+		BigDecimal priceAdjustment = sumTotalAmounts(product.getAllowances(), currentPrice)
+			.subtract(sumTotalAmounts(product.getCharges(), currentPrice));
+		BigDecimal lineAdjustment = sumTotalAmounts(getItemAllowances(), currentPrice)
+			.subtract(sumTotalAmounts(getItemCharges(), currentPrice));
+		BigDecimal basis = basisQuantity.signum() == 0 ? BigDecimal.ONE : basisQuantity.stripTrailingZeros();
+		// minScale = 2 fits most currencies in practice. Possible improvement could be to determine the scale by the invoices currency dynamically
+		BigDecimal netPrice = BigDecimalUtils.divideReversible(lineTotal.add(lineAdjustment).multiply(basis), quantity, 2);
+		setPrice(netPrice.add(priceAdjustment));
+	}
+
+	private static BigDecimal sumTotalAmounts(IZUGFeRDAllowanceCharge[] allowanceCharges, IAbsoluteValueProvider valueProvider) {
+		BigDecimal sum = BigDecimal.ZERO;
+		if (allowanceCharges != null) {
+			for (IZUGFeRDAllowanceCharge allowanceCharge : allowanceCharges) {
+				sum = sum.add(allowanceCharge.getTotalAmount(valueProvider));
+			}
+		}
+		return sum;
 	}
 
 	/**
