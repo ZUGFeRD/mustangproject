@@ -82,4 +82,36 @@ public class IndustryAssignedIdCiiTest {
 			"XML output must not contain IndustryAssignedID when it has not been set."
 		);
 	}
+
+	@Test
+	void industryAssignedId_isNotEmitted_inEN16931Profile() {
+		TradeParty buyer = new TradeParty("Client X", "3 rue C", "33000", "Bordeaux", "FR");
+		TradeParty seller = new TradeParty("Mairie A", "1 rue A", "75001", "Paris", "FR");
+
+		Invoice invoice = new Invoice()
+			.setNumber("INV-TEST-003")
+			.setIssueDate(new Date())
+			.setDeliveryDate(new Date())
+			.setDueDate(new Date())
+			.setCurrency("EUR")
+			.setSender(seller)
+			.setRecipient(buyer);
+
+		Product service = new Product("Prestation", "Service intercommunal", "C62", new BigDecimal("20.00"))
+			.setIndustryAssignedID("PRODUCER-PART-999");
+
+		invoice.addItem(new Item(service, BigDecimal.ONE, BigDecimal.TEN).setTax(BigDecimal.valueOf(20)));
+
+		ZUGFeRD2PullProvider provider = new ZUGFeRD2PullProvider();
+		provider.setProfile(Profiles.getByName("EN16931"));
+		provider.generateXML(invoice);
+
+		String xml = new String(provider.getXML(), StandardCharsets.UTF_8);
+
+		assertFalse(
+			xml.contains("IndustryAssignedID"),
+			"IndustryAssignedID (BT-X-532) must NOT be emitted in the EN16931 standard profile."
+		);
+	}
+
 }
