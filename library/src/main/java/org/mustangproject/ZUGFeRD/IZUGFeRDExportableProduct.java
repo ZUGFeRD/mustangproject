@@ -101,6 +101,16 @@ public interface IZUGFeRDExportableProduct {
 	}
 
 	/**
+	 * Get the ID that had been assigned by the manufacturer/producer to
+	 * identify the product (Producer Part Number or Manufacturer Part Number - BT-X-532)
+	 *
+	 * @return industry assigned product ID
+	 */
+	default String getIndustryAssignedID() {
+		return null;
+	}
+
+	/**
 	 * VAT percent of the product (e.g. 19, or 5.1 if you like)
 	 *
 	 * @return VAT percent of the product
