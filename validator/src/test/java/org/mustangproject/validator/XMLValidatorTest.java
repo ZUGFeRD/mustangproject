@@ -20,6 +20,7 @@ import org.xmlunit.xpath.XPathEngine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
@@ -301,6 +302,29 @@ public class XMLValidatorTest extends ResourceCase {
 
 		final Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
 		assertEquals("valid", new JAXPXPathEngine().evaluate("/validation/summary/@status", source));
+	}
+
+	@Test
+	public void testFilenameFromValidationContext() throws Exception {
+		// #967 a filename set only in the ValidationContext must be read as well
+		final ValidationContext ctx = new ValidationContext(null);
+		ctx.setFilename(getResourceAsFile("validXRv2.xml").getAbsolutePath());
+		final XMLValidator xv = new XMLValidator(ctx);
+		xv.validate();
+
+		final Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
+		assertEquals("valid", new JAXPXPathEngine().evaluate("/validation/summary/@status", source));
+	}
+
+	@Test
+	public void testStringContentWinsOverContextFilename() {
+		// #967 content given explicitly, even empty (a PDF without XML), is not replaced by the context's file
+		final ValidationContext ctx = new ValidationContext(null);
+		ctx.setFilename(getResourceAsFile("validXRv2.xml").getAbsolutePath());
+		final XMLValidator xv = new XMLValidator(ctx);
+		xv.setStringContent("");
+		final IrrecoverableValidationError e = assertThrows(IrrecoverableValidationError.class, xv::validate);
+		assertTrue(e.getMessage().startsWith("XML data not found"));
 	}
 
 	@Test

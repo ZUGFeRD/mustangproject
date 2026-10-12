@@ -63,6 +63,7 @@ public class XMLValidator extends Validator {
 	boolean disableNotices;
 	boolean disableArithmeticCheck;
 	boolean disableXRechnungXSDValidation;
+	private boolean contentSet;
 
 	public XMLValidator(ValidationContext ctx) {
 		super(ctx);
@@ -102,6 +103,7 @@ public class XMLValidator extends Validator {
 	 * @param xml the xml to be checked, a leading UTF-8 byte order mark is removed like in setFilename (#190)
 	 */
 	public void setStringContent(String xml) {
+		contentSet = true;
 		if (xml != null && xml.startsWith(BYTE_ORDER_MARK)) {
 			zfXML = xml.substring(1);
 		} else {
@@ -146,6 +148,10 @@ public class XMLValidator extends Validator {
 		firedRules = 0;
 		failedRules = 0;
 
+		if (!contentSet && filename.isEmpty() && !context.getFilename().isEmpty()) {
+			// #967 fall back to the filename set in the ValidationContext, unless content was given
+			setFilename(context.getFilename());
+		}
 
 		if (zfXML.isEmpty()) {
 			final ValidationResultItem res = new ValidationResultItem(ESeverity.exception,
