@@ -458,16 +458,16 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 						+ XMLTools.encodeXML(currentItem.getProduct().getSellerAssignedID()) + "</ram:SellerAssignedID>");
 				}
 
+				if (currentItem.getProduct().getBuyerAssignedID() != null) {
+					xml.append("<ram:BuyerAssignedID>"
+						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>");
+				}
+
 				// BT-X-532:
 				if (profile == Profiles.getByName("EXTENDED") && currentItem.getProduct().getIndustryAssignedID() != null) {
 					xml.append("<ram:IndustryAssignedID>")
 						.append(XMLTools.encodeXML(currentItem.getProduct().getIndustryAssignedID()))
 						.append("</ram:IndustryAssignedID>");
-				}
-
-				if (currentItem.getProduct().getBuyerAssignedID() != null) {
-					xml.append("<ram:BuyerAssignedID>"
-						+ XMLTools.encodeXML(currentItem.getProduct().getBuyerAssignedID()) + "</ram:BuyerAssignedID>");
 				}
 
 				xml.append("<ram:Name>" + XMLTools.encodeXML(currentItem.getProduct().getName()) + "</ram:Name>");
