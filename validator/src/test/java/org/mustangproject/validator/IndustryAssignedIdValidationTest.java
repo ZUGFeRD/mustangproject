@@ -1,14 +1,18 @@
 package org.mustangproject.validator;
 
 import org.junit.jupiter.api.Test;
-import org.mustangproject.*;
+import org.mustangproject.Invoice;
+import org.mustangproject.Item;
+import org.mustangproject.Product;
+import org.mustangproject.TradeParty;
 import org.mustangproject.ZUGFeRD.Profiles;
 import org.mustangproject.ZUGFeRD.ZUGFeRD2PullProvider;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class IndustryAssignedIdValidationTest {
 
