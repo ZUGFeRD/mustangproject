@@ -34,6 +34,7 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.util.Date;
@@ -103,7 +104,7 @@ public class UBLTest extends ResourceCase {
 
 			final String theXML = baos.toString(StandardCharsets.UTF_8);
 			assertTrue(theXML.contains("<DespatchAdvice"));
-			Files.write(Path.of(TARGET_XML), theXML.getBytes(StandardCharsets.UTF_8));
+			Files.write(Paths.get(TARGET_XML), theXML.getBytes(StandardCharsets.UTF_8));
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}

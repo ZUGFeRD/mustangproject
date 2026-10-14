@@ -79,6 +79,10 @@ public class IncludedNote {
 		return new IncludedNote(content, SubjectCode.INV);
 	}
 
+	public static IncludedNote deliveryInstructions(String content) {
+		return new IncludedNote(content, SubjectCode.DIN);
+	}
+
 	public static IncludedNote unspecifiedNote(String content) {
 		return new IncludedNote(content, null);
 	}

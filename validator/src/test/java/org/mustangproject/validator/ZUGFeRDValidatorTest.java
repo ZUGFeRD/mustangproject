@@ -2,8 +2,11 @@ package org.mustangproject.validator;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 public class ZUGFeRDValidatorTest extends ResourceCase {
@@ -282,13 +285,13 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 			.isEqualTo(0);
 		assertThat(res).valueByXPath("count(//warning)")
 			.asInt()
-			.isEqualTo(12); // 3 empty-element warnings plus 9 French schematron warnings
+			.isEqualTo(0);
 		assertThat(res).valueByXPath("count(//notice)")
 			.asInt()
-			.isEqualTo(9); // 9 notices RE XRechnung 3.0
+			.isEqualTo(0);
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.asString()
-			.isEqualTo("valid"); // expect to be valid because XR notices are, well, only notices
+			.isEqualTo("valid");
 		assertThat(res).valueByXPath("/validation/xml/summary/@status")
 			.asString()
 			.isEqualTo("valid");
@@ -304,5 +307,89 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 		String res = zfv.validate(tempFile.getAbsolutePath());
 
 		assertThat(res).valueByXPath("/validation/xml/summary/@status").isEqualTo("invalid");
+	}
+
+	/***
+	 * a validator used for several files has to give each file the result of a new one (#968):
+	 * after a UBL file, CII files are validated as CII again
+	 */
+	@Test
+	public void testReusedValidatorAfterUBL() {
+		File ublFile = getResourceAsFile("xrechnung-ubl.xml");
+
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+		zfv.validate(ublFile.getAbsolutePath());
+		File tempFile = getResourceAsFile("validXRechnung.pdf");
+		String res = zfv.validate(tempFile.getAbsolutePath());
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.isEqualTo("valid");
+
+		zfv = new ZUGFeRDValidator();
+		zfv.validate(ublFile.getAbsolutePath());
+		tempFile = getResourceAsFile("invalidXRV30.xml");
+		res = zfv.validate(tempFile.getAbsolutePath());
+		assertThat(res).valueByXPath("count(//error)")
+			.asInt()
+			.isEqualTo(4);
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.isEqualTo("invalid");
+	}
+
+	/***
+	 * after a PDF, a UBL XML file is not taken for UBL embedded in a PDF (#968)
+	 */
+	@Test
+	public void testReusedValidatorAfterPDF() {
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+		File tempFile = getResourceAsFile("validXRechnung.pdf");
+		zfv.validate(tempFile.getAbsolutePath());
+		tempFile = getResourceAsFile("xrechnung-ubl.xml");
+		String res = zfv.validate(tempFile.getAbsolutePath());
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.isEqualTo("valid");
+	}
+
+	/***
+	 * after an XML file, a PDF whose XML cannot be extracted gets no XML section,
+	 * and a missing file is reported as an options error
+	 */
+	@Test
+	public void testReusedValidatorAfterXML() {
+		File xmlFile = getResourceAsFile("validV2.xml");
+
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+		zfv.validate(xmlFile.getAbsolutePath());
+		File tempFile = getResourceAsFile("corruptedV2PDF.pdf");
+		String res = zfv.validate(tempFile.getAbsolutePath());
+		assertThat(res).valueByXPath("count(/validation/xml)")
+			.asInt()
+			.isEqualTo(0);
+
+		zfv = new ZUGFeRDValidator();
+		zfv.validate(xmlFile.getAbsolutePath());
+		zfv.validate("/does/not/exist");
+		assertTrue(zfv.hasOptionsError());
+	}
+
+	/***
+	 * a Schematron that fails to run on the XML makes the XML invalid, it is not skipped (#904)
+	 */
+	@Test
+	public void testSchematronExceptionIsInvalid() throws Exception {
+		File xmlFile = getResourceAsFile("roundingDifferenceIsInTolerance.xml");
+		String taxTotal = "<ram:TaxTotalAmount currencyID=\"EUR\">135.04</ram:TaxTotalAmount>";
+		String xml = new String(Files.readAllBytes(xmlFile.toPath()), StandardCharsets.UTF_8);
+		assertTrue(xml.contains(taxTotal));
+		byte[] twoTaxTotals = xml.replace(taxTotal, taxTotal + taxTotal).getBytes(StandardCharsets.UTF_8);
+
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+		String res = zfv.validate(twoTaxTotals, "twoTaxTotals.xml");
+		assertThat(res).valueByXPath("count(/validation/xml/messages/exception)")
+			.asInt()
+			.isEqualTo(1);
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+			.isEqualTo("invalid");
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.isEqualTo("invalid");
 	}
 }

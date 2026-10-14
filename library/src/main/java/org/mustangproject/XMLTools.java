@@ -286,9 +286,11 @@ public class XMLTools extends XMLWriter {
 						case '<':
 							sb.append("&lt;");
 							break;
-						// Uncomment next two if encoding for an XML attribute
+						case '\"': // the result is also used for attribute values, which are enclosed in double quotes
+							sb.append("&quot;");
+							break;
+						// Uncomment next if encoding for an XML attribute in single quotes
 //	                  case '\''  sb.append("&apos;"); break;
-//	                  case '\"'  sb.append("&quot;"); break;
 						// Uncomment next three if you prefer, but not required
 //	                  case '\n'  sb.append("&#10;"); break;
 //	                  case '\r'  sb.append("&#13;"); break;

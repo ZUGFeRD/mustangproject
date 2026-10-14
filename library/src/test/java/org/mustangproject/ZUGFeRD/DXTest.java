@@ -31,7 +31,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -327,7 +326,7 @@ public class DXTest extends MustangReaderTestCase {
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
 		try {
-			BufferedWriter writer = Files.newBufferedWriter(Path.of(TARGET_XML));
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(TARGET_XML));
 			writer.write(theXML);
 			writer.close();
 		} catch (IOException e) {

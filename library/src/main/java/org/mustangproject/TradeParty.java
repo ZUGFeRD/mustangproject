@@ -468,9 +468,12 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 			return uriUniversalCommunicationId.getScheme();
 		}
 		return null;
-
 	}
 
+	public TradeParty setUriUniversalCommunicationIDScheme(SchemedID schemeID) {
+		this.uriUniversalCommunicationId = schemeID;
+		return this;
+	}
 
 	/***
 	 * 	sets the email of the organization (not the one of the contact person)

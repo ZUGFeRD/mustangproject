@@ -67,7 +67,7 @@ public class Product implements IZUGFeRDExportableProduct {
 		}
 	}
 
-	protected String unit, name, sellerAssignedID, buyerAssignedID;
+	protected String unit, name, sellerAssignedID, buyerAssignedID, industryAssignedID;
 	protected String description;
 	protected String taxExemptionReason;
 	protected String taxExemptionReasonCode;
@@ -95,6 +95,18 @@ public class Product implements IZUGFeRDExportableProduct {
 		this.name = name;
 		this.description = description;
 		this.vatPercent = VATPercent;
+	}
+
+	/***
+	 * special constructor for parent items without VAT (because of child items with diverging VAT)
+	 * @param name product short name
+	 * @param description product long name
+	 * @param unit a two/three letter UN/ECE rec 20 unit code, e.g. "C62" for piece
+	 */
+	public Product(String name, String description, String unit) {
+		this.unit = unit;
+		this.name = name;
+		this.description = description;
 	}
 
 	public Product(Node node) {
@@ -318,6 +330,21 @@ public class Product implements IZUGFeRDExportableProduct {
 	 */
 	public Product setSellerAssignedID(String sellerAssignedID) {
 		this.sellerAssignedID = sellerAssignedID;
+		return this;
+	}
+
+	@Override
+	public String getIndustryAssignedID() {
+		return industryAssignedID;
+	}
+
+	/***
+	 * how the manufacturer/producer identifies this type of product
+	 * @param industryAssignedID a unique String
+	 * @return fluent setter
+	 */
+	public Product setIndustryAssignedID(String industryAssignedID) {
+		this.industryAssignedID = industryAssignedID;
 		return this;
 	}
 
