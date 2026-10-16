@@ -337,7 +337,7 @@ public class ZUGFeRDValidator {
 			+ " Signature:" + signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
 			+ " Version:" + context.getGeneration() + " Took:" + duration + "ms Errors:[" + context.getCSVResult()
 			+ "] ErrorIDs: [" + context.getCSVIDResult() + "]" + toBeAppended);
-		wasCompletelyValid = xmlValidity && pdfValidity;
+		wasCompletelyValid = xmlValidity;
 		return sw.toString();
 	}
 
