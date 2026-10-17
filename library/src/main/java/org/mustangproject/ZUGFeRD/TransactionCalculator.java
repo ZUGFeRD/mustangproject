@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.mustangproject.ZUGFeRD.model.TaxCategoryCodeTypeConstants;
+
 /***
  * The Transactioncalculator e.g. adds the line totals and applies VAT on whole
  * invoices
@@ -104,11 +106,94 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		return allowanceCharge.getTotalAmount(this).setScale(2, RoundingMode.HALF_UP);
 	}
 
+	/***
+	 * Whether a document level allowance or charge (BG-20, BG-21) lacks a usable VAT rate: either none is set at all
+	 * (e.g. created with new Allowance(amount)), or it is 0% on standard rate category S, which is what the bean
+	 * constructor defaults to and which EN16931 does not allow (BR-S-06, BR-S-07).
+	 *
+	 * @param allowanceCharge the document level allowance or charge
+	 * @return true if no usable rate has been specified
+	 */
+	private static boolean hasUnspecifiedTaxRate(IZUGFeRDAllowanceCharge allowanceCharge) {
+		BigDecimal rate = allowanceCharge.getTaxRateApplicablePercent();
+		if (rate == null) {
+			return true;
+		}
+		String category = allowanceCharge.getTaxCategoryCode();
+		boolean standardRate = category == null || TaxCategoryCodeTypeConstants.STANDARDRATE.equals(category);
+		return standardRate && rate.signum() == 0;
+	}
+
+	/***
+	 * The one VAT category and rate shared by all calculation relevant items, or null if items use more than one
+	 * (or there are none). Used to fill in document level allowances and charges which do not specify a rate.
+	 *
+	 * @return the item's product carrying the common category and rate, or null if not unambiguous
+	 */
+	private IZUGFeRDExportableProduct getSingleItemTax() {
+		IZUGFeRDExportableProduct common = null;
+		if (trans.getZFItems() == null) {
+			return null;
+		}
+		for (IZUGFeRDExportableItem item : trans.getZFItems()) {
+			if (!item.isCalculationRelevant()) {
+				continue;
+			}
+			IZUGFeRDExportableProduct product = item.getProduct();
+			if (product == null || product.getVATPercent() == null) {
+				return null;
+			}
+			if (common == null) {
+				common = product;
+			} else if (common.getVATPercent().compareTo(product.getVATPercent()) != 0
+				|| !Objects.equals(common.getTaxCategoryCode(), product.getTaxCategoryCode())) {
+				return null;
+			}
+		}
+		return common;
+	}
+
+	/***
+	 * The VAT rate to use for a document level allowance or charge: its own rate, or, if it does not specify a
+	 * usable one and all items share a single rate, that rate (see issue #652: a 100% discount must also remove
+	 * the VAT of the discounted items).
+	 *
+	 * @param allowanceCharge the document level allowance or charge
+	 * @return the applicable percentage, may be null
+	 */
+	public BigDecimal getEffectiveTaxRate(IZUGFeRDAllowanceCharge allowanceCharge) {
+		if (hasUnspecifiedTaxRate(allowanceCharge)) {
+			IZUGFeRDExportableProduct common = getSingleItemTax();
+			if (common != null) {
+				return common.getVATPercent();
+			}
+		}
+		return allowanceCharge.getTaxRateApplicablePercent();
+	}
+
+	/***
+	 * The VAT category to use for a document level allowance or charge, consistent with
+	 * {@link #getEffectiveTaxRate(IZUGFeRDAllowanceCharge)}.
+	 *
+	 * @param allowanceCharge the document level allowance or charge
+	 * @return the category code, "S" if none is known
+	 */
+	public String getEffectiveTaxCategoryCode(IZUGFeRDAllowanceCharge allowanceCharge) {
+		if (hasUnspecifiedTaxRate(allowanceCharge)) {
+			IZUGFeRDExportableProduct common = getSingleItemTax();
+			if (common != null && common.getTaxCategoryCode() != null) {
+				return common.getTaxCategoryCode();
+			}
+		}
+		return allowanceCharge.getTaxCategoryCode() != null ? allowanceCharge.getTaxCategoryCode() : TaxCategoryCodeTypeConstants.STANDARDRATE;
+	}
+
 	private BigDecimal sumAllowanceCharge(BigDecimal percent, IZUGFeRDAllowanceCharge[] charges) {
 		BigDecimal res = BigDecimal.ZERO;
 		if (charges != null) {
 			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
-				if (percent == null || currentCharge.getTaxRateApplicablePercent().compareTo(percent) == 0) {
+				BigDecimal rate = getEffectiveTaxRate(currentCharge);
+				if (percent == null || (rate != null && rate.compareTo(percent) == 0)) {
 					res = res.add(getRoundedTotalAmount(currentCharge));
 				}
 			}
@@ -149,7 +234,10 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 			return "";
 		}
 		return Arrays.stream(charges)
-			.filter(currentCharge -> percent == null || currentCharge.getTaxRateApplicablePercent().compareTo(percent) == 0)
+			.filter(currentCharge -> {
+				BigDecimal rate = getEffectiveTaxRate(currentCharge);
+				return percent == null || (rate != null && rate.compareTo(percent) == 0);
+			})
 			.map(IZUGFeRDAllowanceCharge::getReason)
 			.filter(Objects::nonNull)
 			.collect(Collectors.joining(" "));
@@ -253,12 +341,12 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		IZUGFeRDAllowanceCharge[] charges = trans.getZFCharges();
 		if (charges != null) {
 			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
-				BigDecimal taxPercent = currentCharge.getTaxRateApplicablePercent();
+				BigDecimal taxPercent = getEffectiveTaxRate(currentCharge);
 				if (taxPercent != null) {
 					VATAmount theAmount = hm.get(taxPercent.stripTrailingZeros());
 					if (theAmount == null) {
 						theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO,
-							currentCharge.getTaxCategoryCode() != null ? currentCharge.getTaxCategoryCode() : "S",
+							getEffectiveTaxCategoryCode(currentCharge),
 							vatDueDateTypeCode);
 					}
 					theAmount.setBasis(theAmount.getBasis().add(getRoundedTotalAmount(currentCharge)));
@@ -271,12 +359,12 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		IZUGFeRDAllowanceCharge[] allowances = trans.getZFAllowances();
 		if (allowances != null) {
 			for (IZUGFeRDAllowanceCharge currentAllowance : allowances) {
-				BigDecimal taxPercent = currentAllowance.getTaxRateApplicablePercent();
+				BigDecimal taxPercent = getEffectiveTaxRate(currentAllowance);
 				if (taxPercent != null) {
 					VATAmount theAmount = hm.get(taxPercent.stripTrailingZeros());
 					if (theAmount == null) {
 						theAmount = new VATAmount(BigDecimal.ZERO, BigDecimal.ZERO,
-							currentAllowance.getTaxCategoryCode() != null ? currentAllowance.getTaxCategoryCode() : "S",
+							getEffectiveTaxCategoryCode(currentAllowance),
 							vatDueDateTypeCode);
 					}
 					theAmount.setBasis(theAmount.getBasis().subtract(getRoundedTotalAmount(currentAllowance)));
@@ -345,9 +433,9 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		final IZUGFeRDAllowanceCharge[] charges = this.trans.getZFCharges();
 		if (charges != null) {
 			for (final IZUGFeRDAllowanceCharge currentCharge : charges) {
-				final BigDecimal taxPercent = currentCharge.getTaxRateApplicablePercent();
+				final BigDecimal taxPercent = this.getEffectiveTaxRate(currentCharge);
 				if (taxPercent != null) {
-					final String vatCategoryCode = currentCharge.getTaxCategoryCode() != null ? currentCharge.getTaxCategoryCode() : "S";
+					final String vatCategoryCode = this.getEffectiveTaxCategoryCode(currentCharge);
 					final Optional<VATAmount> currentChargeVatAmount = this.getCurrentVatAmount(vatAmounts, vatCategoryCode, taxPercent);
 					final BigDecimal chargeBasis = getRoundedTotalAmount(currentCharge);
 					final VATAmount chargeVatAmount = new VATAmount(chargeBasis, chargeBasis.multiply(taxPercent.divide(new BigDecimal(100))), vatCategoryCode, vatDueDateTypeCode, taxPercent);
@@ -370,12 +458,12 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		final IZUGFeRDAllowanceCharge[] allowances = this.trans.getZFAllowances();
 		if (allowances != null) {
 			for (final IZUGFeRDAllowanceCharge currentAllowance : allowances) {
-				final BigDecimal taxPercent = currentAllowance.getTaxRateApplicablePercent();
+				final BigDecimal taxPercent = this.getEffectiveTaxRate(currentAllowance);
 				if (taxPercent != null) {
-					final String vatCategoryCode = currentAllowance.getTaxCategoryCode() != null ? currentAllowance.getTaxCategoryCode() : "S";
+					final String vatCategoryCode = this.getEffectiveTaxCategoryCode(currentAllowance);
 					final Optional<VATAmount> currentAllowanceVatAmount = this.getCurrentVatAmount(vatAmounts, vatCategoryCode, taxPercent);
 					final BigDecimal allowanceNegativeBasis = getRoundedTotalAmount(currentAllowance).negate();
-					final VATAmount allowanceVATAmount = new VATAmount(allowanceNegativeBasis, allowanceNegativeBasis.multiply(taxPercent.divide(new BigDecimal(100))), currentAllowance.getTaxCategoryCode() != null ? currentAllowance.getTaxCategoryCode() : "S", vatDueDateTypeCode, taxPercent);
+					final VATAmount allowanceVATAmount = new VATAmount(allowanceNegativeBasis, allowanceNegativeBasis.multiply(taxPercent.divide(new BigDecimal(100))), vatCategoryCode, vatDueDateTypeCode, taxPercent);
 					final String reasonText = currentAllowance.getTaxExemptionReason();
 					if (reasonText != null) {
 						allowanceVATAmount.setVatExemptionReasonText(reasonText);
