@@ -139,7 +139,10 @@ public class CalculationTest extends ResourceCase {
 		TransactionCalculator calculator = new TransactionCalculator(invoice);
 		assertEquals(valueOf(286.62).stripTrailingZeros(), calculator.getTotal()); // interestingly, EN16931-1 has 286.63 here?
 		assertEquals(valueOf(272.96).stripTrailingZeros(), calculator.getTaxBasis()); // and 272.97 here
-		assertEquals(valueOf(337.45).stripTrailingZeros(), calculator.getDuePayable()); // and 337.46 here???
+		// the freight charge above has no VAT rate of its own. Before #652 it was part of the tax basis (272.96) but
+		// missing from the VAT breakdown, so VAT was only charged on 257.96 (due 337.45). It now takes the items'
+		// single rate of 25%, so the breakdown matches the tax basis: 272.96 + 25% VAT = 341.20
+		assertEquals(valueOf(341.20).stripTrailingZeros(), calculator.getDuePayable().stripTrailingZeros());
 	}
 
 	@Test
