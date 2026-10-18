@@ -392,4 +392,19 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 		assertThat(res).valueByXPath("/validation/summary/@status")
 			.isEqualTo("invalid");
 	}
+
+	@Test
+	public void testSpecialCharactersInReport() {
+		byte[] fileBytes = getResourceAsByteArray("validV2.xml");
+		String filename = "Mueller & Soehne's \"invoice\".xml";
+		String res = new ZUGFeRDValidator().validate(fileBytes, filename);
+		assertThat(res).valueByXPath("/validation/@filename")
+			.isEqualTo(filename);
+
+		String xml = new String(fileBytes, StandardCharsets.UTF_8)
+			.replace("<ram:ID>urn:cen.eu:en16931:2017</ram:ID>", "<ram:ID>urn:cen.eu:en16931:2017&amp;&lt;test</ram:ID>");
+		res = new ZUGFeRDValidator().validate(xml.getBytes(StandardCharsets.UTF_8), "validV2.xml");
+		assertThat(res).valueByXPath("/validation/xml/info/profile")
+			.isEqualTo("urn:cen.eu:en16931:2017&<test");
+	}
 }

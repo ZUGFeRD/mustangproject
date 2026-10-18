@@ -1,6 +1,7 @@
 package org.mustangproject.validator;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -34,6 +35,8 @@ import org.verapdf.metadata.fixer.MetadataFixerConfig;
 import org.verapdf.pdfa.flavours.PDFAFlavour;
 import org.verapdf.pdfa.validation.validators.ValidatorConfig;
 import org.verapdf.pdfa.validation.validators.ValidatorFactory;
+import org.verapdf.processor.BatchProcessingHandler;
+import org.verapdf.processor.FormatOption;
 import org.verapdf.processor.ItemProcessor;
 import org.verapdf.processor.ProcessorConfig;
 import org.verapdf.processor.ProcessorFactory;
@@ -73,18 +76,6 @@ public class PDFValidator extends Validator {
 	 */
 	public PDFValidator(ValidationContext ctx) {
 		super(ctx);
-	}
-
-	private static String escapeXmlSpecialChars(String value) {
-		if (value == null || value.isEmpty()) {
-			return value;
-		}
-		return value
-			.replace("&", "&amp;")
-			.replace("<", "&lt;")
-			.replace(">", "&gt;")
-			.replace("\"", "&quot;")
-			.replace("'", "&apos;");
 	}
 
 	protected static boolean stringArrayContains(String[] arr, String targetValue) {
@@ -128,13 +119,17 @@ public class PDFValidator extends Validator {
 		try (ItemProcessor processor = ProcessorFactory.createProcessor(processorConfig)) {
 			// Generating list of files for processing
 			// starting the processor
-			ItemDetails itemDetails = ItemDetails.fromValues(pdfFilename);
+			ItemDetails itemDetails = ItemDetails.fromValues(pdfFilename, fileContents.length);
 			inputStream.mark(Integer.MAX_VALUE);
 			processorResult = processor.process(itemDetails, inputStream);
-			pdfReport = escapeXmlSpecialChars(processorResult.getValidationResults().get(0).toString().replace(
-				"<\\?xml version=\"1\\.0\" encoding=\"utf-8\"\\?>",
-				""
-			));
+			// write veraPDF's machine readable report (MRR) as XML
+			final ByteArrayOutputStream reportStream = new ByteArrayOutputStream();
+			// writeSingleResultReport closes the handler itself
+			final BatchProcessingHandler handler = ProcessorFactory.getHandler(FormatOption.MRR, false, reportStream,
+				processorConfig.getValidatorConfig().isRecordPasses());
+			ProcessorFactory.writeSingleResultReport(processorResult, handler, processorConfig);
+			// veraPDF always writes an XML declaration, which must not appear inside our report
+			pdfReport = reportStream.toString(StandardCharsets.UTF_8).replaceFirst("^\\s*<\\?xml[^>]*\\?>", "");
 			inputStream.reset();
 		} catch (final Exception excep) {
 			context.addResultItem(new ValidationResultItem(ESeverity.exception, excep.getMessage()).setSection(7)

@@ -1086,6 +1086,78 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 	}
 
 	@Test
+	public void testRecalcWithPriceAllowance() throws XPathExpressionException, ParseException, IOException {
+		Item item = importLineWithRecalc(
+			"<ram:GrossPriceProductTradePrice><ram:ChargeAmount>19.86</ram:ChargeAmount>"
+				+ "<ram:AppliedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>false</udt:Indicator></ram:ChargeIndicator>"
+				+ "<ram:ActualAmount>5.26</ram:ActualAmount></ram:AppliedTradeAllowanceCharge></ram:GrossPriceProductTradePrice>"
+				+ "<ram:NetPriceProductTradePrice><ram:ChargeAmount>14.60</ram:ChargeAmount></ram:NetPriceProductTradePrice>",
+			"6", "", "87.60");
+
+		assertEquals(new BigDecimal("19.86"), item.getPrice().setScale(2));
+		assertEquals(new BigDecimal("87.60"), new LineCalculator(item).getItemTotalNetAmount());
+	}
+
+	@Test
+	public void testRecalcWithLineAllowanceAndCharge() throws XPathExpressionException, ParseException, IOException {
+		Item item = importLineWithRecalc(
+			"<ram:NetPriceProductTradePrice><ram:ChargeAmount>10.00</ram:ChargeAmount></ram:NetPriceProductTradePrice>",
+			"3",
+			"<ram:SpecifiedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>false</udt:Indicator></ram:ChargeIndicator>"
+				+ "<ram:ActualAmount>2.00</ram:ActualAmount><ram:Reason>Discount</ram:Reason></ram:SpecifiedTradeAllowanceCharge>"
+				+ "<ram:SpecifiedTradeAllowanceCharge><ram:ChargeIndicator><udt:Indicator>true</udt:Indicator></ram:ChargeIndicator>"
+				+ "<ram:ActualAmount>1.00</ram:ActualAmount><ram:Reason>Packaging</ram:Reason></ram:SpecifiedTradeAllowanceCharge>",
+			"29.00");
+
+		assertEquals(new BigDecimal("10.00"), item.getPrice().setScale(2));
+		assertEquals(new BigDecimal("29.00"), new LineCalculator(item).getItemTotalNetAmount());
+	}
+
+	@Test
+	public void testRecalcWithBasisQuantity() throws XPathExpressionException, ParseException, IOException {
+		Item item = importLineWithRecalc(
+			"<ram:NetPriceProductTradePrice><ram:ChargeAmount>2.50</ram:ChargeAmount>"
+				+ "<ram:BasisQuantity unitCode=\"H87\">100</ram:BasisQuantity></ram:NetPriceProductTradePrice>",
+			"500", "", "12.50");
+
+		assertEquals(new BigDecimal("2.50"), item.getPrice().setScale(2));
+		assertEquals(new BigDecimal("12.50"), new LineCalculator(item).getItemTotalNetAmount());
+	}
+
+	/***
+	 * imports an invoice with a single 0% VAT line from the given parts using doRecalculateItemPricesFromLineTotals()
+	 * and without ignoring calculation errors
+	 */
+	private Item importLineWithRecalc(String lineTradeAgreement, String quantity, String lineAllowanceCharges, String lineTotal)
+		throws XPathExpressionException, ParseException, IOException {
+		String xml = String.join("\n",
+			"<rsm:CrossIndustryInvoice",
+			" xmlns:rsm=\"urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100\"",
+			" xmlns:ram=\"urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100\"",
+			" xmlns:udt=\"urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100\">",
+			"<rsm:ExchangedDocument><ram:ID>RECALC</ram:ID><ram:TypeCode>380</ram:TypeCode>",
+			"<ram:IssueDateTime><udt:DateTimeString format=\"102\">20261008</udt:DateTimeString></ram:IssueDateTime>",
+			"</rsm:ExchangedDocument><rsm:SupplyChainTradeTransaction>",
+			"<ram:IncludedSupplyChainTradeLineItem>",
+			"<ram:AssociatedDocumentLineDocument><ram:LineID>1</ram:LineID></ram:AssociatedDocumentLineDocument>",
+			"<ram:SpecifiedTradeProduct><ram:Name>Product</ram:Name></ram:SpecifiedTradeProduct>",
+			"<ram:SpecifiedLineTradeAgreement>" + lineTradeAgreement + "</ram:SpecifiedLineTradeAgreement>",
+			"<ram:SpecifiedLineTradeDelivery><ram:BilledQuantity unitCode=\"H87\">" + quantity + "</ram:BilledQuantity></ram:SpecifiedLineTradeDelivery>",
+			"<ram:SpecifiedLineTradeSettlement>",
+			"<ram:ApplicableTradeTax><ram:TypeCode>VAT</ram:TypeCode><ram:CategoryCode>Z</ram:CategoryCode><ram:RateApplicablePercent>0</ram:RateApplicablePercent></ram:ApplicableTradeTax>",
+			lineAllowanceCharges,
+			"<ram:SpecifiedTradeSettlementLineMonetarySummation><ram:LineTotalAmount>" + lineTotal + "</ram:LineTotalAmount></ram:SpecifiedTradeSettlementLineMonetarySummation>",
+			"</ram:SpecifiedLineTradeSettlement></ram:IncludedSupplyChainTradeLineItem>",
+			"<ram:ApplicableHeaderTradeSettlement><ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>",
+			"<ram:SpecifiedTradeSettlementHeaderMonetarySummation><ram:DuePayableAmount>" + lineTotal + "</ram:DuePayableAmount></ram:SpecifiedTradeSettlementHeaderMonetarySummation>",
+			"</ram:ApplicableHeaderTradeSettlement></rsm:SupplyChainTradeTransaction></rsm:CrossIndustryInvoice>");
+		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
+		zii.doRecalculateItemPricesFromLineTotals();
+		zii.setRawXML(xml.getBytes(StandardCharsets.UTF_8), false);
+		return (Item) zii.extractInvoice().getZFItems()[0];
+	}
+
+	@Test
 	public void testInvoiceNotes() throws XPathExpressionException, ParseException, IOException {
 		File inputFile = getResourceAsFile("test_invoice_note.xml");
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();

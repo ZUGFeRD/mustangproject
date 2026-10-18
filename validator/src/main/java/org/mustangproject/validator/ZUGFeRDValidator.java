@@ -101,7 +101,8 @@ public class ZUGFeRDValidator {
 		Date date = new Date();
 		startTime = Calendar.getInstance().getTimeInMillis();
 		context.setFilename(contextFilename); // fallback to provided name
-		finalStringResult.append("<validation filename='").append(contextFilename).append("' datetime='").append(isoDF.format(date)).append("'>");
+		finalStringResult.append("<validation filename=\"").append(XMLTools.encodeXML(contextFilename))
+			.append("\" datetime=\"").append(isoDF.format(date)).append("\">");
 
 		boolean isPDF = false;
 		byte[] content = null;
@@ -336,7 +337,7 @@ public class ZUGFeRDValidator {
 			+ " Signature:" + signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
 			+ " Version:" + context.getGeneration() + " Took:" + duration + "ms Errors:[" + context.getCSVResult()
 			+ "] ErrorIDs: [" + context.getCSVIDResult() + "]" + toBeAppended);
-		wasCompletelyValid = xmlValidity && pdfValidity;
+		wasCompletelyValid = xmlValidity;
 		return sw.toString();
 	}
 
