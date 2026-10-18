@@ -193,7 +193,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		if (charges != null) {
 			for (IZUGFeRDAllowanceCharge currentCharge : charges) {
 				BigDecimal rate = getEffectiveTaxRate(currentCharge);
-				if (percent == null || (rate != null && rate.compareTo(percent) == 0)) {
+				if (percent == null || rate != null && rate.compareTo(percent) == 0) {
 					res = res.add(getRoundedTotalAmount(currentCharge));
 				}
 			}
@@ -236,7 +236,7 @@ public class TransactionCalculator implements IAbsoluteValueProvider {
 		return Arrays.stream(charges)
 			.filter(currentCharge -> {
 				BigDecimal rate = getEffectiveTaxRate(currentCharge);
-				return percent == null || (rate != null && rate.compareTo(percent) == 0);
+				return percent == null || rate != null && rate.compareTo(percent) == 0;
 			})
 			.map(IZUGFeRDAllowanceCharge::getReason)
 			.filter(Objects::nonNull)
