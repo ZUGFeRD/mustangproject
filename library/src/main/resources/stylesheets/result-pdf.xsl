@@ -412,7 +412,19 @@
                 </fo:block>
             </fo:table-cell>
             <fo:table-cell>
-                <xsl:apply-templates select="./check"/>
+                <xsl:apply-templates select="./check[1]"/>
+                <xsl:if test="count(./check) &gt; 1">
+                    <fo:block font-size="8px"
+                              font-style="italic"
+                              margin="0mm"
+                              padding="0mm 1mm 1mm 1mm">
+                        <xsl:text>(und </xsl:text>
+                        <xsl:value-of select="count(./check) - 1"/>
+                        <xsl:text> weitere fehlerhafte Stelle</xsl:text>
+                        <xsl:if test="count(./check) &gt; 2">n</xsl:if>
+                        <xsl:text>)</xsl:text>
+                    </fo:block>
+                </xsl:if>
             </fo:table-cell>
         </fo:table-row>
     </xsl:template>
