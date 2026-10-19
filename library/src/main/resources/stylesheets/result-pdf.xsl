@@ -345,6 +345,105 @@
             <xsl:with-param name="color"
                             select="$pdf_result_color"/>
         </xsl:call-template>
+        <xsl:apply-templates select="./report/jobs/job/validationReport"/>
+    </xsl:template>
+    <xsl:template match="validationReport">
+        <fo:block font-size="12px"
+                  margin-bottom="5px">
+            <xsl:value-of select="@profileName"/>
+            <xsl:text>: </xsl:text>
+            <xsl:value-of select="@statement"/>
+        </fo:block>
+        <xsl:if test="./details/rule">
+            <fo:table>
+                <fo:table-column border-style="solid"
+                                 column-width="20%"/>
+                <fo:table-column border-style="solid"
+                                 column-width="30%"/>
+                <fo:table-column border-style="solid"
+                                 column-width="50%"/>
+                <fo:table-header>
+                    <fo:table-row background-color="#E0E0E0"
+                                  font-weight="bold"
+                                  border-style="solid">
+                        <fo:table-cell>
+                            <fo:block margin="0mm"
+                                      padding="1mm">Klausel</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                            <fo:block margin="0mm"
+                                      padding="1mm">Regel</fo:block>
+                        </fo:table-cell>
+                        <fo:table-cell>
+                            <fo:block margin="0mm"
+                                      padding="1mm">Fehlerhafte Stellen</fo:block>
+                        </fo:table-cell>
+                    </fo:table-row>
+                </fo:table-header>
+                <fo:table-body page-break-after="auto"
+                               page-break-before="auto"
+                               page-break-inside="avoid">
+                    <xsl:apply-templates select="./details/rule"/>
+                </fo:table-body>
+            </fo:table>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template match="rule">
+        <fo:table-row border-style="solid"
+                      font-size="11px"
+                      keep-with-previous="auto"
+                      keep-with-next="always">
+            <fo:table-cell>
+                <fo:block color="red"
+                          margin="0mm"
+                          padding="1mm">
+                    <xsl:value-of select="@specification"/>
+                    <xsl:text> </xsl:text>
+                    <xsl:value-of select="@clause"/>
+                    <xsl:text> (</xsl:text>
+                    <xsl:value-of select="@testNumber"/>
+                    <xsl:text>)</xsl:text>
+                </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+                <fo:block margin="0mm"
+                          padding="1mm">
+                    <xsl:value-of select="./description"/>
+                </fo:block>
+            </fo:table-cell>
+            <fo:table-cell>
+                <xsl:apply-templates select="./check[1]"/>
+                <xsl:if test="count(./check) &gt; 1">
+                    <fo:block font-size="8px"
+                              font-style="italic"
+                              margin="0mm"
+                              padding="0mm 1mm 1mm 1mm">
+                        <xsl:text>(und </xsl:text>
+                        <xsl:value-of select="count(./check) - 1"/>
+                        <xsl:text> weitere fehlerhafte Stelle</xsl:text>
+                        <xsl:if test="count(./check) &gt; 2">n</xsl:if>
+                        <xsl:text>)</xsl:text>
+                    </fo:block>
+                </xsl:if>
+            </fo:table-cell>
+        </fo:table-row>
+    </xsl:template>
+    <xsl:template match="check">
+        <fo:block color="red"
+                  margin="0mm"
+                  padding="1mm 1mm 0mm 1mm">
+            <xsl:value-of select="./errorMessage"/>
+        </fo:block>
+        <fo:block font-size="8px"
+                  margin="0mm"
+                  padding="0mm 1mm 2mm 1mm">
+            <xsl:call-template name="EnableLineBreaks">
+                <xsl:with-param name="text"
+                                select="./context"/>
+                <xsl:with-param name="separator"
+                                select="'/'"/>
+            </xsl:call-template>
+        </fo:block>
     </xsl:template>
     <xsl:template match="xml">
         <xsl:call-template name="SubHeader">
