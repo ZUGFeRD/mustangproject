@@ -623,93 +623,96 @@ public class XMLValidator extends Validator {
 				throw new IrrecoverableValidationError(e.getMessage());
 			}
 			// SVRLHelper.getAllFailedAssertions (sout);
-			Document SVRLReport = new SVRLMarshaller().getAsDocument(sout);
-			XPath xPath = XPathFactory.newInstance().newXPath();
-			// Failed assertions and successful reports are both findings. Their SVRL
-			// flag decides the severity, so a flagged warning or information never
-			// invalidates the document.
-			String expression = "//*[local-name() = 'failed-assert' or local-name() = 'successful-report']";
-			NodeList failedAsserts = null;
-			try {
-				failedAsserts = (NodeList) xPath.compile(expression).evaluate(SVRLReport, XPathConstants.NODESET);
+			if (sout!=null) {
 
-				if (failedAsserts.getLength() > 0) {
+				Document SVRLReport = new SVRLMarshaller().getAsDocument(sout);
+				XPath xPath = XPathFactory.newInstance().newXPath();
+				// Failed assertions and successful reports are both findings. Their SVRL
+				// flag decides the severity, so a flagged warning or information never
+				// invalidates the document.
+				String expression = "//*[local-name() = 'failed-assert' or local-name() = 'successful-report']";
+				NodeList failedAsserts = null;
+				try {
+					failedAsserts = (NodeList) xPath.compile(expression).evaluate(SVRLReport, XPathConstants.NODESET);
 
-					for (int nodeIndex = 0; nodeIndex < failedAsserts.getLength(); nodeIndex++) {
-						//nodes.item(i).getTextContent())) {
-						Node currentFailNode = failedAsserts.item(nodeIndex);
-						boolean successfulReport = "successful-report".equals(localName(currentFailNode));
-						Node failNode = currentFailNode.getAttributes().getNamedItem("flag");
-						String failVal = failNode == null ? null : failNode.getNodeValue();
-						if (successfulReport && failVal == null) {
-							// Older embedded stylesheets (e.g. ZUGFeRD 1.0 and 2.0) emit unflagged
-							// reports for components not used in a profile; they were never findings.
-							continue;
-						}
-						// Each finding carries only its own metadata.
-						String thisFailText = "";
-						String thisFailID = "";
-						String thisFailIDStr = "";
-						String thisFailTest = "";
-						String thisFailLocation = "";
-						if (currentFailNode.getAttributes().getNamedItem("id") != null) {
-							thisFailID = currentFailNode.getAttributes().getNamedItem("id").getNodeValue();
-							thisFailIDStr = " [ID " + thisFailID + "]";
-						}
-						if (currentFailNode.getAttributes().getNamedItem("test") != null) {
-							thisFailTest = currentFailNode.getAttributes().getNamedItem("test").getNodeValue();
-						}
-						if (currentFailNode.getAttributes().getNamedItem("location") != null) {
-							thisFailLocation = currentFailNode.getAttributes().getNamedItem("location").getNodeValue();
-						}
+					if (failedAsserts.getLength() > 0) {
 
-						ESeverity severity;
-						if (defaultSeverity == ESeverity.notice) {
-							severity = defaultSeverity;
-						} else if ("warning".equals(failVal)) {
-							// the XR issues warnings with flag=warning
-							severity = ESeverity.warning;
-						} else if ("information".equals(failVal)) {
-							severity = ESeverity.notice;
-						} else {
-							// fatal, error, and a missing assertion flag invalidate the document;
-							// ESeverity.fatal would abort the validation instead
-							severity = ESeverity.error;
-						}
+						for (int nodeIndex = 0; nodeIndex < failedAsserts.getLength(); nodeIndex++) {
+							//nodes.item(i).getTextContent())) {
+							Node currentFailNode = failedAsserts.item(nodeIndex);
+							boolean successfulReport = "successful-report".equals(localName(currentFailNode));
+							Node failNode = currentFailNode.getAttributes().getNamedItem("flag");
+							String failVal = failNode == null ? null : failNode.getNodeValue();
+							if (successfulReport && failVal == null) {
+								// Older embedded stylesheets (e.g. ZUGFeRD 1.0 and 2.0) emit unflagged
+								// reports for components not used in a profile; they were never findings.
+								continue;
+							}
+							// Each finding carries only its own metadata.
+							String thisFailText = "";
+							String thisFailID = "";
+							String thisFailIDStr = "";
+							String thisFailTest = "";
+							String thisFailLocation = "";
+							if (currentFailNode.getAttributes().getNamedItem("id") != null) {
+								thisFailID = currentFailNode.getAttributes().getNamedItem("id").getNodeValue();
+								thisFailIDStr = " [ID " + thisFailID + "]";
+							}
+							if (currentFailNode.getAttributes().getNamedItem("test") != null) {
+								thisFailTest = currentFailNode.getAttributes().getNamedItem("test").getNodeValue();
+							}
+							if (currentFailNode.getAttributes().getNamedItem("location") != null) {
+								thisFailLocation = currentFailNode.getAttributes().getNamedItem("location").getNodeValue();
+							}
 
-						NodeList failChilds = currentFailNode.getChildNodes();
-						for (int failChildIndex = 0; failChildIndex < failChilds.getLength(); failChildIndex++) {
-							if (failChilds.item(failChildIndex).getLocalName() != null) {
+							ESeverity severity;
+							if (defaultSeverity == ESeverity.notice) {
+								severity = defaultSeverity;
+							} else if ("warning".equals(failVal)) {
+								// the XR issues warnings with flag=warning
+								severity = ESeverity.warning;
+							} else if ("information".equals(failVal)) {
+								severity = ESeverity.notice;
+							} else {
+								// fatal, error, and a missing assertion flag invalidate the document;
+								// ESeverity.fatal would abort the validation instead
+								severity = ESeverity.error;
+							}
 
-								if (failChilds.item(failChildIndex).getLocalName().equals("text")) {
-									//	if (itemChilds.item(failChildIndex).getAttributes().getNamedItem("schemeID") != null) {
-									thisFailText = failChilds.item(failChildIndex).getTextContent();
+							NodeList failChilds = currentFailNode.getChildNodes();
+							for (int failChildIndex = 0; failChildIndex < failChilds.getLength(); failChildIndex++) {
+								if (failChilds.item(failChildIndex).getLocalName() != null) {
 
+									if (failChilds.item(failChildIndex).getLocalName().equals("text")) {
+										//	if (itemChilds.item(failChildIndex).getAttributes().getNamedItem("schemeID") != null) {
+										thisFailText = failChilds.item(failChildIndex).getTextContent();
+
+									}
 								}
 							}
+
+							LOGGER.info(successfulReport ? "SuccessfulReport {}" : "FailedAssert {}", thisFailText);
+
+							context.addResultItem(new ValidationResultItem(severity, thisFailText + thisFailIDStr + " from " + xsltFilename + ")")
+								.setLocation(thisFailLocation).setCriterion(thisFailTest).setSection(section).setID(thisFailID)
+								.setPart(EPart.fx));
+							failedRules++;
+
 						}
-
-						LOGGER.info(successfulReport ? "SuccessfulReport {}" : "FailedAssert {}", thisFailText);
-
-						context.addResultItem(new ValidationResultItem(severity, thisFailText + thisFailIDStr + " from " + xsltFilename + ")")
-							.setLocation(thisFailLocation).setCriterion(thisFailTest).setSection(section).setID(thisFailID)
-							.setPart(EPart.fx));
-						failedRules++;
 
 					}
 
+				} catch (XPathExpressionException e) {
+					LOGGER.error(e.getMessage(), e);
 				}
-
-			} catch (XPathExpressionException e) {
-				LOGGER.error(e.getMessage(), e);
-			}
-			expression = "//*[local-name() = 'fired-rule']";
-			NodeList firedAsserts = null;
-			try {
-				firedAsserts = (NodeList) xPath.compile(expression).evaluate(SVRLReport, XPathConstants.NODESET);
-				firedRules = firedAsserts.getLength();
-			} catch (XPathExpressionException e) {
-				LOGGER.error(e.getMessage(), e);
+				expression = "//*[local-name() = 'fired-rule']";
+				NodeList firedAsserts = null;
+				try {
+					firedAsserts = (NodeList) xPath.compile(expression).evaluate(SVRLReport, XPathConstants.NODESET);
+					firedRules = firedAsserts.getLength();
+				} catch (XPathExpressionException e) {
+					LOGGER.error(e.getMessage(), e);
+				}
 			}
 		/*	int activePatterns=0;
 			expression = "//*[local-name() = 'active-pattern']";
