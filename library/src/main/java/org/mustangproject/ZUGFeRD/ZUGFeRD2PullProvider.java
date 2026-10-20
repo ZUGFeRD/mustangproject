@@ -998,11 +998,18 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					if (charge.getSequenceNumeric() != null) {
 						xml.append("<ram:SequenceNumeric>" + charge.getSequenceNumeric() + "</ram:SequenceNumeric>");
 					}
-					if (charge.getPercent() != null && (profile == Profiles.getByName("EN16931") || profile == Profiles.getByName("EXTENDED") || profile == Profiles.getByName("EXTENDED-CTC-FR"))) {
-						xml.append("<ram:CalculationPercent>" + vatFormat(charge.getPercent()) + "</ram:CalculationPercent>");
-					}
-					if (charge.getBasisAmount() != null && (profile == Profiles.getByName("EN16931") || profile == Profiles.getByName("EXTENDED") || profile == Profiles.getByName("EXTENDED-CTC-FR"))) {
-						xml.append("<ram:BasisAmount>" + currencyFormat(charge.getBasisAmount()) + "</ram:BasisAmount>");
+					if (profile == Profiles.getByName("XRECHNUNG")) {
+						if (charge.getPercent() != null && charge.getBasisAmount() != null) {
+							xml.append("<ram:CalculationPercent>" + vatFormat(charge.getPercent()) + "</ram:CalculationPercent>");
+							xml.append("<ram:BasisAmount>" + currencyFormat(charge.getBasisAmount()) + "</ram:BasisAmount>");
+						}
+					} else {
+						if (charge.getPercent() != null) {
+							xml.append("<ram:CalculationPercent>" + vatFormat(charge.getPercent()) + "</ram:CalculationPercent>");
+						}
+						if (charge.getBasisAmount() != null) {
+							xml.append("<ram:BasisAmount>" + currencyFormat(charge.getBasisAmount()) + "</ram:BasisAmount>");
+						}
 					}
 					xml.append("<ram:ActualAmount>" + currencyFormat(charge.getTotalAmount(calc)) + "</ram:ActualAmount>");
 					if (charge.getReasonCode() != null) {
@@ -1062,11 +1069,18 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					if (allowance.getSequenceNumeric() != null) {
 						xml.append("<ram:SequenceNumeric>" + allowance.getSequenceNumeric() + "</ram:SequenceNumeric>");
 					}
-					if (allowance.getPercent() != null) {
-						xml.append("<ram:CalculationPercent>" + vatFormat(allowance.getPercent()) + "</ram:CalculationPercent>");
-					}
-					if (allowance.getBasisAmount() != null) {
-						xml.append("<ram:BasisAmount>" + currencyFormat(allowance.getBasisAmount()) + "</ram:BasisAmount>");
+					if (profile == Profiles.getByName("XRECHNUNG")) {
+						if (allowance.getPercent() != null && allowance.getBasisAmount() != null) {
+							xml.append("<ram:CalculationPercent>" + vatFormat(allowance.getPercent()) + "</ram:CalculationPercent>");
+							xml.append("<ram:BasisAmount>" + currencyFormat(allowance.getBasisAmount()) + "</ram:BasisAmount>");
+						}
+					} else {
+						if (allowance.getPercent() != null) {
+							xml.append("<ram:CalculationPercent>" + vatFormat(allowance.getPercent()) + "</ram:CalculationPercent>");
+						}
+						if (allowance.getBasisAmount() != null) {
+							xml.append("<ram:BasisAmount>" + currencyFormat(allowance.getBasisAmount()) + "</ram:BasisAmount>");
+						}
 					}
 					xml.append("<ram:ActualAmount>" + currencyFormat(allowance.getTotalAmount(calc)) + "</ram:ActualAmount>");
 					if (allowance.getReasonCode() != null) {
