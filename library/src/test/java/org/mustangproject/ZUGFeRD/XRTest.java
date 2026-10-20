@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -70,6 +70,7 @@ import org.xml.sax.SAXException;
 public class XRTest {
 	private static final String TARGET_XML = "./target/testout-XR.xml";
 	private static final String TARGET_EDGE_XML = "./target/testout-XR-Edge.xml";
+	private static final String TARGET_XML_BUYER_WITHOUT_STREET = "./target/testout-XR-BWS.xml";
 
 	private final SimpleDateFormat sdfISO = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -84,10 +85,14 @@ public class XRTest {
 		String sellerID = "aSellerTradePartyID";
 		i.getSender().setLegalOrganisation(new LegalOrganisation(legalOrgID));
 		i.getSender().setID(sellerID);
+		i.addAllowance(new Allowance().setPercent(new BigDecimal("10")).setTaxRateApplicablePercent(new BigDecimal("19")).setReason("Rabatt"));
+		i.addCharge(new Charge().setPercent(new BigDecimal("20")).setTaxRateApplicablePercent(new BigDecimal("19")).setReason("Express-Lieferung"));
+
 		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
 		zf2p.setProfile(Profiles.getByName("XRechnung"));
 		zf2p.generateXML(i);
 		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+
 		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 		assertTrue(theXML.contains("<ram:ID>" + sellerID + "</ram:ID>")); // must be possible without scheme #
 		assertTrue(theXML.contains("<ram:ID>" + legalOrgID + "</ram:ID>")); // must be possible without scheme #
@@ -97,10 +102,10 @@ public class XRTest {
 
 		assertThat(theXML).valueByXPath("//*[local-name()='DuePayableAmount']")
 			.asDouble()
-			.isEqualTo(1);
+			.isEqualTo(1.12);
 
 		try {
-			BufferedWriter writer = Files.newBufferedWriter(Path.of(TARGET_XML));
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(TARGET_XML));
 			writer.write(theXML);
 			writer.close();
 		} catch (IOException e) {
@@ -159,7 +164,7 @@ public class XRTest {
 			.isEqualTo(1);
 
 		try {
-			BufferedWriter writer = Files.newBufferedWriter(Path.of(TARGET_EDGE_XML));
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(TARGET_EDGE_XML));
 			writer.write(theXML);
 			writer.close();
 		} catch (IOException e) {
@@ -277,14 +282,14 @@ public class XRTest {
 		assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 		assertThat(theXML).valueByXPath("count(//*[local-name()='IncludedSupplyChainTradeLineItem'])")
 			.asInt()
-			.isEqualTo(1); //2 errors are OK because there is a known bug
+			.isEqualTo(1);
 
 
 		assertThat(theXML).valueByXPath("//*[local-name()='DuePayableAmount']")
 			.asDouble()
 			.isEqualTo(1);
 		try {
-			BufferedWriter writer = Files.newBufferedWriter(Path.of(TARGET_XML));
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(TARGET_XML_BUYER_WITHOUT_STREET));
 			writer.write(theXML);
 			writer.close();
 		} catch (IOException e) {

@@ -64,24 +64,24 @@
         <version.com.helger.maven>8.0.0</version.com.helger.maven>
         <version.org.sonatype.plugins>1.7.0</version.org.sonatype.plugins>
 
-        <version.ch.qos.logback>1.5.38</version.ch.qos.logback><!-- from 1.5.18 -->
-        <version.com.fasterxml.jackson.core>2.22.2</version.com.fasterxml.jackson.core>
+        <version.ch.qos.logback>1.5.38</version.ch.qos.logback>
+        <version.com.fasterxml.jackson.core>2.22.3</version.com.fasterxml.jackson.core>
         <version.com.helger.en16931-cii2ubl>2.3.1</version.com.helger.en16931-cii2ubl>
         <version.com.helger.schematron>8.0.6</version.com.helger.schematron>
-        <version.commons-cli>1.11.0</version.commons-cli><!-- from 1.10.0 -->
-        <version.commons-io>2.22.0</version.commons-io><!-- from 2.20.0 -->
-        <version.jakarta.xml.bind>4.0.5</version.jakarta.xml.bind><!-- from 4.0.2 -->
-        <version.net.sf.saxon>12.10</version.net.sf.saxon><!-- from 12.8 -->
-        <version.org.apache.pdfbox>3.0.8</version.org.apache.pdfbox><!-- from 3.0.7 -->
+        <version.commons-cli>1.11.0</version.commons-cli>
+        <version.commons-io>2.22.0</version.commons-io>
+        <version.jakarta.xml.bind>4.0.5</version.jakarta.xml.bind>
+        <version.net.sf.saxon>12.10</version.net.sf.saxon>
+        <version.org.apache.pdfbox>3.0.8</version.org.apache.pdfbox>
         <version.org.apache.xmlgraphics>2.11</version.org.apache.xmlgraphics>
         <version.org.codehaus.janino>3.1.12</version.org.codehaus.janino>
-        <version.org.dom4j>2.2.0</version.org.dom4j><!-- from 2.1.5 -->
-        <version.org.glassfish.jaxb>4.0.9</version.org.glassfish.jaxb><!-- from 4.0.5 -->
-        <version.org.junit>5.14.4</version.org.junit><!-- from 5.13.4 -->
+        <version.org.dom4j>2.2.0</version.org.dom4j>
+        <version.org.glassfish.jaxb>4.0.9</version.org.glassfish.jaxb>
+        <version.org.junit>5.14.4</version.org.junit>
         <version.org.skyscreamer>2.0-rc1</version.org.skyscreamer>
-        <version.org.slf4j>2.0.18</version.org.slf4j><!-- from 2.0.17 -->
-        <version.org.verapdf>1.30.2</version.org.verapdf>
-        <version.org.xmlunit>2.13.0</version.org.xmlunit>
+        <version.org.slf4j>2.0.20</version.org.slf4j>
+        <version.org.verapdf>1.30.3</version.org.verapdf>
+        <version.org.xmlunit>2.14.0</version.org.xmlunit>
         <version.com.puppycrawl.tools.checkstyle>10.26.1</version.com.puppycrawl.tools.checkstyle>
     </properties>
 

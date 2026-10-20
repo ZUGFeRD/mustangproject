@@ -61,7 +61,7 @@ public class UBLDAPullProvider implements IXMLProvider {
 				"  <cbc:IssueDate>" + ublDateFormat.format(trans.getIssueDate()) + "</cbc:IssueDate>\n" +
 				"  <cbc:DespatchAdviceTypeCode>900</cbc:DespatchAdviceTypeCode>\n");
 		if (trans.getReferenceNumber() != null) {
-			xml.append("<cac:OrderReference>  <cbc:ID>" + XMLTools.encodeXML(trans.getNumber()) + "</cbc:ID></cac:OrderReference>\n");
+			xml.append("<cac:OrderReference>  <cbc:ID>" + XMLTools.encodeXML(trans.getReferenceNumber()) + "</cbc:ID></cac:OrderReference>\n");
 
 		}
 		xml.append("  <cac:DespatchSupplierParty>" + getPartyXML(trans.getSender()) + "</cac:DespatchSupplierParty>\n" +

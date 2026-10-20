@@ -77,9 +77,12 @@ public class PDFValidatorTest extends ResourceCase {
 			xv.validate();
 			actual = vc.getXMLResult();
 
-			assertTrue(actual.contains("flavour=3u"));
-			assertTrue(actual.contains("flavour=3b"));
-			assertTrue(actual.contains("isCompliant=true"));
+			assertTrue(actual.contains("profileName=\"PDF/A-3u validation profile\""));
+			assertTrue(actual.contains("profileName=\"PDF/A-3b validation profile\""));
+			assertTrue(actual.contains("isCompliant=\"true\""));
+			assertTrue(actual.contains("batchSummary totalJobs=\"1\" failedToParse=\"0\" encrypted=\"0\""));
+			assertTrue(
+				actual.contains("validationReports compliant=\"1\" nonCompliant=\"0\" failedJobs=\"0\">"));
 			// test some xml
 			// assertEquals(true, actual.contains("<error
 			// location=\"/*:CrossIndustryInvoice[namespace-uri()='urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100'][1]/*:SupplyChainTradeTransaction[namespace-uri()='urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100'][1]/*:ApplicableHeaderTradeSettlement[namespace-uri()='urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100'][1]/*:SpecifiedTradeSettlementHeaderMonetarySummation[namespace-uri()='urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100'][1]/*:DuePayableAmount[namespace-uri()='urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100'][1]\"
@@ -95,7 +98,10 @@ public class PDFValidatorTest extends ResourceCase {
 			vc.clear();
 			pv.validate();
 			actual = pv.getXMLResult();
-			assertTrue(actual.contains("flavour=3u"));
+			assertTrue(actual.contains("profileName=\"PDF/A-3u validation profile\""));
+			assertTrue(actual.contains("batchSummary totalJobs=\"1\" failedToParse=\"0\" encrypted=\"0\""));
+			assertTrue(
+				actual.contains("validationReports compliant=\"1\" nonCompliant=\"0\" failedJobs=\"0\">"));
 			assertTrue(actual.contains("summary status=\"valid"));
 			assertFalse(actual.contains("summary status=\"invalid"));
 
@@ -108,14 +114,14 @@ public class PDFValidatorTest extends ResourceCase {
 
 	@Test
 	public void testPDFXMLValidation() {
-/*@todo		try {
+		try {
 			final ValidationContext vc = new ValidationContext(null);
 			final PDFValidator pv = new PDFValidator(vc);
 			// need a more
 			// invalid file here
-			byte [] contents = getResourceAsByteArray("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf");
+			byte [] contents = getResourceAsByteArray("XMLinvalidV2PDF.pdf");
 
-			pv.setFilenameAndContents("attributeBasedXMP_zugferd_2p0_EN16931_Einfach.pdf", contents);
+			pv.setFilenameAndContents("XMLinvalidV2PDF.pdf", contents);
 			pv.validate();
 			String pdfvres = pv.getXMLResult();
 
@@ -125,11 +131,11 @@ public class PDFValidatorTest extends ResourceCase {
 			xv.validate();
 			String xmlvres = xv.getXMLResult();
 
-			assertEquals(true, pdfvres.contains("valid") && !pdfvres.contains("invalid"));
-			assertEquals(true, xmlvres.contains("invalid"));
+			assertTrue(pdfvres.contains("valid") && !pdfvres.contains("\"invalid\""));
+			assertTrue(xmlvres.contains("\"invalid\""));
 
 			vc.clear();
-			contents = getResourceAsByteArray("validV1WithAdditionalData.pdf");// need a more invalid file here
+			contents = getResourceAsByteArray("validV1WithAdditionalData.pdf"); // need a more invalid file here
 
 			pv.setFilenameAndContents("validV1WithAdditionalData.pdf", contents);
 			pv.validate();
@@ -140,11 +146,11 @@ public class PDFValidatorTest extends ResourceCase {
 			xv.setStringContent(pv.getRawXML());
 			xv.validate();
 			xmlvres = xv.getXMLResult();
-			assertEquals(true, pdfvres.contains("valid") && !pdfvres.contains("invalid"));
-			assertEquals(true, xmlvres.contains("valid") && !xmlvres.contains("invalid"));
+			assertTrue(pdfvres.contains("valid") && !pdfvres.contains("invalid"));
+			assertTrue(xmlvres.contains("valid") && !xmlvres.contains("invalid"));
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
-		}*/
+		}
 
 	}
 

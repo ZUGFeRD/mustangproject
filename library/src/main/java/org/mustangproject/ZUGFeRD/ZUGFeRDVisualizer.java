@@ -66,7 +66,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.EnumMap;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
@@ -302,7 +302,7 @@ public class ZUGFeRDVisualizer {
 
 		toPDFfromFOP(fopInput, () -> {
 				try {
-					return Files.newOutputStream(Path.of(pdfFilename));
+					return Files.newOutputStream(Paths.get(pdfFilename));
 				} catch (IOException e) {
 					LOGGER.error("Failed to create PDF", e);
 				}

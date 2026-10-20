@@ -89,13 +89,20 @@ public class ZUGFeRDValidator {
 	}
 
 	private String internalValidate(String contextFilename, InputStream inputStream, long inputLength) {
-		context.clear();
+		// forget the previous file, a reused validator has to give the same result as a new one
+		context.reset();
+		pdfValidity = false;
+		displayXMLValidationOutput = false;
+		optionsRecognized = false;
+		signature = null;
+		sha1Checksum = null;
 		StringBuilder finalStringResult = new StringBuilder();
 		SimpleDateFormat isoDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date();
 		startTime = Calendar.getInstance().getTimeInMillis();
 		context.setFilename(contextFilename); // fallback to provided name
-		finalStringResult.append("<validation filename='").append(contextFilename).append("' datetime='").append(isoDF.format(date)).append("'>");
+		finalStringResult.append("<validation filename=\"").append(XMLTools.encodeXML(contextFilename))
+			.append("\" datetime=\"").append(isoDF.format(date)).append("\">");
 
 		boolean isPDF = false;
 		byte[] content = null;

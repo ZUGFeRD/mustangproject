@@ -2,6 +2,7 @@ package org.mustangproject.validator;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import javax.xml.XMLConstants;
@@ -19,6 +20,7 @@ import org.xmlunit.xpath.XPathEngine;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
@@ -281,6 +283,48 @@ public class XMLValidatorTest extends ResourceCase {
 			// ignore, will be in XML output anyway
 		}
 
+	}
+
+	@Test
+	public void testStringContentWithBOM() throws Exception {
+		// #190 removed the BOM for files, the same XML passed as a string must validate as well
+		final byte[] xml = getResourceAsByteArray("validXRv2.xml");
+		final byte[] withBOM = new byte[xml.length + 3];
+		withBOM[0] = (byte) 0xEF;
+		withBOM[1] = (byte) 0xBB;
+		withBOM[2] = (byte) 0xBF;
+		System.arraycopy(xml, 0, withBOM, 3, xml.length);
+
+		final ValidationContext ctx = new ValidationContext(null);
+		final XMLValidator xv = new XMLValidator(ctx);
+		xv.setStringContent(new String(withBOM, StandardCharsets.UTF_8));
+		xv.validate();
+
+		final Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
+		assertEquals("valid", new JAXPXPathEngine().evaluate("/validation/summary/@status", source));
+	}
+
+	@Test
+	public void testFilenameFromValidationContext() throws Exception {
+		// #967 a filename set only in the ValidationContext must be read as well
+		final ValidationContext ctx = new ValidationContext(null);
+		ctx.setFilename(getResourceAsFile("validXRv2.xml").getAbsolutePath());
+		final XMLValidator xv = new XMLValidator(ctx);
+		xv.validate();
+
+		final Source source = Input.fromString("<validation>" + xv.getXMLResult() + "</validation>").build();
+		assertEquals("valid", new JAXPXPathEngine().evaluate("/validation/summary/@status", source));
+	}
+
+	@Test
+	public void testStringContentWinsOverContextFilename() {
+		// #967 content given explicitly, even empty (a PDF without XML), is not replaced by the context's file
+		final ValidationContext ctx = new ValidationContext(null);
+		ctx.setFilename(getResourceAsFile("validXRv2.xml").getAbsolutePath());
+		final XMLValidator xv = new XMLValidator(ctx);
+		xv.setStringContent("");
+		final IrrecoverableValidationError e = assertThrows(IrrecoverableValidationError.class, xv::validate);
+		assertTrue(e.getMessage().startsWith("XML data not found"));
 	}
 
 	@Test
@@ -686,6 +730,41 @@ public class XMLValidatorTest extends ResourceCase {
 	}
 
 	@Test
+	public void testSuccessfulReportsUseTheirSvrlFlag() throws IrrecoverableValidationError {
+		ValidationContext ctx = new ValidationContext(null);
+		new XMLValidator(ctx).validateSchematron("<invoice><unused/><legacy/></invoice>",
+			"/svrl-findings.xslt", 24, ESeverity.error);
+		assertTrue(ctx.isValid(), "A warning report must not invalidate the document");
+		assertEquals(1, ctx.getResults().size(), "An unflagged legacy report is no finding");
+		ValidationResultItem warning = ctx.getResults().get(0);
+		assertEquals(ESeverity.warning, warning.getSeverity());
+		assertEquals("FX-SCH-R-000001", warning.getID());
+		assertEquals("/invoice/unused", warning.getLocation());
+		assertTrue(warning.getMessage().contains("marked as not used"));
+
+		ctx = new ValidationContext(null);
+		new XMLValidator(ctx).validateSchematron("<invoice><forbidden/></invoice>",
+			"/svrl-findings.xslt", 24, ESeverity.error);
+		assertFalse(ctx.isValid(), "A fatal report must invalidate the document");
+		assertEquals(ESeverity.error, ctx.getResults().get(0).getSeverity());
+		assertEquals("FX-SCH-R-000002", ctx.getResults().get(0).getID());
+	}
+
+	@Test
+	public void testFindingWithoutIdDoesNotInheritThePreviousId() throws IrrecoverableValidationError {
+		ValidationContext ctx = new ValidationContext(null);
+		new XMLValidator(ctx).validateSchematron("<invoice><mixed/></invoice>",
+			"/svrl-findings.xslt", 24, ESeverity.error);
+		assertEquals(2, ctx.getResults().size());
+		assertEquals("BR-01", ctx.getResults().get(0).getID());
+		assertEquals(ESeverity.error, ctx.getResults().get(0).getSeverity(),
+			"An unflagged failed assertion remains an error");
+		assertEquals("", ctx.getResults().get(1).getID());
+		assertFalse(ctx.getResults().get(1).getMessage().contains("[ID BR-01]"));
+		assertEquals(ESeverity.warning, ctx.getResults().get(1).getSeverity());
+	}
+
+	@Test
 	public void testLineTotalAmount() {
 		final ValidationContext ctx = new ValidationContext(null);
 		final XMLValidator xv = new XMLValidator(ctx);
@@ -736,5 +815,33 @@ public class XMLValidatorTest extends ResourceCase {
 			// ignore, will be in XML output anyway
 			fail(e);
 		}
+	}
+
+	/***
+	 * a CII file validated after a UBL file with the same context, cleared in between,
+	 * gets the same errors as with a new context (#968)
+	 */
+	@Test
+	public void testCIIAfterUBLWithClearedContext() throws IrrecoverableValidationError {
+		final String ciiFile = getResourceAsFile("invalidXRV30.xml").getAbsolutePath();
+
+		ValidationContext ctx = new ValidationContext(null);
+		XMLValidator xv = new XMLValidator(ctx);
+		xv.setFilename(ciiFile);
+		xv.validate();
+		final String expected = "<validation>" + xv.getXMLResult() + "</validation>";
+
+		ctx = new ValidationContext(null);
+		xv = new XMLValidator(ctx);
+		xv.setFilename(getResourceAsFile("xrechnung-ubl.xml").getAbsolutePath());
+		xv.validate();
+		ctx.clear();
+		xv.setFilename(ciiFile);
+		xv.validate();
+		final String actual = "<validation>" + xv.getXMLResult() + "</validation>";
+
+		assertThat(expected).valueByXPath("count(//error)").asInt().isEqualTo(4);
+		assertThat(actual).valueByXPath("count(//error)").asInt().isEqualTo(4);
+		assertThat(actual).valueByXPath("/validation/summary/@status").isEqualTo("invalid");
 	}
 }

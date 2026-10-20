@@ -222,7 +222,7 @@ public class ReferencedDocument implements IReferencedDocument {
 			xml.append("<ram:IssuerAssignedID>" + XMLTools.encodeXML(this.getIssuerAssignedID()) + "</ram:IssuerAssignedID>" );
 		}
 		if (StringUtils.isNotBlank(this.getUriID())) {
-			xml.append("<ram:URIID>" + XMLTools.encodeXML(this.getLineID()) + "</ram:URIID>" );
+			xml.append("<ram:URIID>" + XMLTools.encodeXML(this.getUriID()) + "</ram:URIID>" );
 		}
 		if (StringUtils.isNotBlank(this.getLineID())) {
 			xml.append("<ram:LineID>" + XMLTools.encodeXML(this.getLineID()) + "</ram:LineID>" );
@@ -236,7 +236,7 @@ public class ReferencedDocument implements IReferencedDocument {
 		if (this.getAttachmentBinaryObject() != null) {
 			FileAttachment f = this.getAttachmentBinaryObject();
 			String documentContent = Base64.getEncoder().encodeToString(f.getData());
-			xml.append("<ram:AttachmentBinaryObject mimeCode=\"" + f.getMimetype() + "\" " + " filename=\"" + f.getFilename() + "\">" + documentContent + "</ram:AttachmentBinaryObject>");
+			xml.append("<ram:AttachmentBinaryObject mimeCode=\"" + XMLTools.encodeXML(f.getMimetype()) + "\" " + " filename=\"" + XMLTools.encodeXML(f.getFilename()) + "\">" + documentContent + "</ram:AttachmentBinaryObject>");
 		}
 		if (StringUtils.isNotBlank(this.getReferenceTypeCode())) {
 			xml.append("<ram:ReferenceTypeCode>" + XMLTools.encodeXML(this.getReferenceTypeCode()) + "</ram:ReferenceTypeCode>");

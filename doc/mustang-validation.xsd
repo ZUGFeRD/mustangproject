@@ -3,12 +3,13 @@
     <xs:element name="validation">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="pdf"/>
-                <xs:element ref="messages"/>
+                <xs:element minOccurs="0" ref="pdf"/>
+                <xs:element minOccurs="0" ref="xml"/>
+                <xs:element minOccurs="0" ref="messages"/>
                 <xs:element ref="summary"/>
             </xs:sequence>
             <xs:attribute name="datetime" use="required"/>
-            <xs:attribute name="filename" use="required" type="xs:NCName"/>
+            <xs:attribute name="filename" use="required" type="xs:string"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="pdf">
@@ -16,8 +17,40 @@
             <xs:sequence>
                 <xs:element ref="report"/>
                 <xs:element ref="info"/>
-                <xs:element ref="messages"/>
+                <xs:element minOccurs="0" ref="messages"/>
                 <xs:element ref="summary"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="xml">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" name="info">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="version" type="xs:integer"/>
+                            <xs:element name="profile" type="xs:string"/>
+                            <xs:element ref="validator"/>
+                            <xs:element ref="rules"/>
+                            <xs:element ref="duration"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element minOccurs="0" ref="messages"/>
+                <xs:element ref="summary"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="validator">
+        <xs:complexType>
+            <xs:attribute name="version" use="required" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="rules">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="fired" type="xs:integer"/>
+                <xs:element name="failed" type="xs:integer"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -75,16 +108,45 @@
                 <xs:element ref="details"/>
             </xs:sequence>
             <xs:attribute name="isCompliant" use="required" type="xs:boolean"/>
+            <xs:attribute name="jobEndStatus" type="xs:string"/>
             <xs:attribute name="profileName" use="required"/>
             <xs:attribute name="statement" use="required"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="details">
         <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="rule"/>
+            </xs:sequence>
             <xs:attribute name="failedChecks" use="required" type="xs:integer"/>
             <xs:attribute name="failedRules" use="required" type="xs:integer"/>
             <xs:attribute name="passedChecks" use="required" type="xs:integer"/>
             <xs:attribute name="passedRules" use="required" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="rule">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="description" type="xs:string"/>
+                <xs:element name="object" type="xs:string"/>
+                <xs:element name="test" type="xs:string"/>
+                <xs:element maxOccurs="unbounded" ref="check"/>
+            </xs:sequence>
+            <xs:attribute name="clause" use="required" type="xs:string"/>
+            <xs:attribute name="failedChecks" use="required" type="xs:integer"/>
+            <xs:attribute name="passedChecks" type="xs:integer"/>
+            <xs:attribute name="specification" use="required" type="xs:string"/>
+            <xs:attribute name="status" use="required" type="xs:string"/>
+            <xs:attribute name="testNumber" use="required" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="check">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="context" type="xs:string"/>
+                <xs:element name="errorMessage" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute name="status" use="required" type="xs:string"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="batchSummary">
@@ -139,7 +201,7 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="signature" type="xs:NCName"/>
+    <xs:element name="signature" type="xs:string"/>
     <xs:element name="duration">
         <xs:complexType>
             <xs:simpleContent>
@@ -153,10 +215,11 @@
     </xs:element>
     <xs:element name="messages">
         <xs:complexType>
-            <xs:choice>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element ref="exception"/>
-                <xs:element minOccurs="0"  maxOccurs="unbounded" ref="error"/>
-                <xs:element minOccurs="0"  maxOccurs="unbounded" ref="notice"/>
+                <xs:element ref="error"/>
+                <xs:element ref="warning"/>
+                <xs:element ref="notice"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>
@@ -167,11 +230,22 @@
     </xs:element>
     <xs:element name="error">
         <xs:complexType mixed="true">
+            <xs:attribute name="criterion" type="xs:string"/>
+            <xs:attribute name="location" type="xs:string"/>
+            <xs:attribute name="type" use="required" type="xs:integer"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="warning">
+        <xs:complexType mixed="true">
+            <xs:attribute name="criterion" type="xs:string"/>
+            <xs:attribute name="location" type="xs:string"/>
             <xs:attribute name="type" use="required" type="xs:integer"/>
         </xs:complexType>
     </xs:element>
     <xs:element name="notice">
         <xs:complexType mixed="true">
+            <xs:attribute name="criterion" type="xs:string"/>
+            <xs:attribute name="location" type="xs:string"/>
             <xs:attribute name="type" use="required" type="xs:integer"/>
         </xs:complexType>
     </xs:element>

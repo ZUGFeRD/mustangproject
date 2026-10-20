@@ -37,7 +37,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1468,7 +1468,7 @@ public class ZF2PushTest extends ResourceCase {
 		assertTrue(theXML.contains("ConversionRate"));
 
 		try {
-			BufferedWriter writer = Files.newBufferedWriter(Path.of(TARGET_EXTENDED_XML));
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(TARGET_EXTENDED_XML));
 			writer.write(theXML);
 			writer.close();
 		} catch (IOException e) {
@@ -1494,7 +1494,7 @@ public class ZF2PushTest extends ResourceCase {
 		assertTrue(theXML.contains(">47.05<"));
 
 		try {
-			BufferedWriter writer = Files.newBufferedWriter(Path.of(TARGET_LINETOTAL_4DECIMALS_XML));
+			BufferedWriter writer = Files.newBufferedWriter(Paths.get(TARGET_LINETOTAL_4DECIMALS_XML));
 			writer.write(theXML);
 			writer.close();
 		} catch (IOException e) {
