@@ -37,8 +37,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import com.helger.schematron.ISchematronResource;
-import com.helger.schematron.svrl.SVRLMarshaller;
-import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 import com.helger.schematron.xslt.SchematronResourceXSLT;
 
 /****
@@ -334,7 +332,8 @@ public class XMLValidator extends Validator {
 							throw new Exception("Unsupported XR version");
 						}
 						LOGGER.debug("is XRechnung v{}", xrVersion);
-						xsltFilename = "/xslt/XR_" + xrVersion + "/XRechnung-UBL-validation.xsl";
+						// from XRechnung 3 on the published XSLT (.xsl) is used, older versions are compiled from the schematron (.xslt)
+						xsltFilename = "/xslt/XR_" + xrVersion + ("30".equals(xrVersion) ? "/XRechnung-UBL-validation.xsl" : "/XRechnung-UBL-validation.xslt");
 						XrechnungSeverity = ESeverity.error;
 						mainSchematronSectionErrorTypeCode = 27;
 
@@ -612,18 +611,23 @@ public class XMLValidator extends Validator {
 				throw new IllegalArgumentException(xsltFilename + " is invalid Schematron!");
 			}
 
-			final SchematronOutputType sout;
+			// Use the SVRL DOM directly: reading it into SchematronOutputType validates it against the SVRL XSD of
+			// ph-schematron, which rejects the svrl:metadata written by SchXslt compiled stylesheets such as XRechnung 3.
+			Document SVRLReport;
 			try {
-				sout = aResSCH
-					.applySchematronValidationToSVRL(new StreamSource(new StringReader(xml)));
+				SVRLReport = aResSCH.applySchematronValidation(new StreamSource(new StringReader(xml)));
 			} catch (final Exception e) {
 				// report it, otherwise the XML would still count as valid
 				context.addResultItem(new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(section)
 					.setPart(EPart.fx));
 				throw new IrrecoverableValidationError(e.getMessage());
 			}
-			// SVRLHelper.getAllFailedAssertions (sout);
-			Document SVRLReport = new SVRLMarshaller().getAsDocument(sout);
+			if (SVRLReport == null) {
+				String message = xsltFilename + " did not produce a validation report";
+				context.addResultItem(new ValidationResultItem(ESeverity.exception, message).setSection(section)
+					.setPart(EPart.fx));
+				throw new IrrecoverableValidationError(message);
+			}
 			XPath xPath = XPathFactory.newInstance().newXPath();
 			// Failed assertions and successful reports are both findings. Their SVRL
 			// flag decides the severity, so a flagged warning or information never

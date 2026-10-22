@@ -647,7 +647,8 @@ public class XMLValidatorTest extends ResourceCase {
 			Source source = Input.fromString(s).build();
 			String content = xpath.evaluate("/validation/summary/@status", source);
 			assertEquals("valid", content);
-			assertThat(s).valueByXPath("count(//warning)").asInt().isEqualTo(1);
+			// the arithmetic check, and PEPPOL-EN16931-R120 of the XRechnung 3 schematron for the same line
+			assertThat(s).valueByXPath("count(//warning)").asInt().isEqualTo(2);
 		} catch (final IrrecoverableValidationError e) {
 			// ignore, will be in XML output anyway
 		}
