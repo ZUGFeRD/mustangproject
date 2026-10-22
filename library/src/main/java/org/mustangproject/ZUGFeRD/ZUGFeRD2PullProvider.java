@@ -981,7 +981,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if (trans.getZFCharges() != null && trans.getZFCharges().length > 0) {
 			if (profile == Profiles.getByName("EN16931") || profile == Profiles.getByName("EXTENDED") || profile == Profiles.getByName("EXTENDED-CTC-FR") || profile == Profiles.getByName("XRECHNUNG")) {
 				for (IZUGFeRDAllowanceCharge charge : trans.getZFCharges()) {
-					final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(charge.getTaxCategoryCode());
+					// issue #652: an allowance/charge without its own VAT rate takes the items' single rate
+					final String chargeCategory = calc.getEffectiveTaxCategoryCode(charge);
+					final BigDecimal chargeRate = calc.getEffectiveTaxRate(charge);
+					final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(chargeCategory);
 					String exemptionReasonTextXML = "";
 					if (profile != Profiles.getByName("EN16931") && displayExemptionReason && charge.getTaxExemptionReason() != null) {
 						exemptionReasonTextXML = "<ram:ExemptionReason>" + XMLTools.encodeXML(charge.getTaxExemptionReason()) + "</ram:ExemptionReason>";
@@ -1021,10 +1024,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml.append("<ram:CategoryTradeTax>" +
 						"<ram:TypeCode>VAT</ram:TypeCode>" +
 						exemptionReasonTextXML +
-						"<ram:CategoryCode>" + charge.getTaxCategoryCode() + "</ram:CategoryCode>" +
+						"<ram:CategoryCode>" + chargeCategory + "</ram:CategoryCode>" +
 						exemptionReasonCodeXML);
-					if (charge.getTaxRateApplicablePercent() != null && !charge.getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
-						xml.append("<ram:RateApplicablePercent>" + vatFormat(charge.getTaxRateApplicablePercent()) + "</ram:RateApplicablePercent>");
+					if (chargeRate != null && !chargeCategory.equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
+						xml.append("<ram:RateApplicablePercent>" + vatFormat(chargeRate) + "</ram:RateApplicablePercent>");
 					}
 					xml.append("</ram:CategoryTradeTax>" +
 						"</ram:SpecifiedTradeAllowanceCharge>");
@@ -1052,7 +1055,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 		if (trans.getZFAllowances() != null && trans.getZFAllowances().length > 0) {
 			if (profile == Profiles.getByName("EN16931") || profile == Profiles.getByName("EXTENDED") || profile == Profiles.getByName("EXTENDED-CTC-FR") || profile == Profiles.getByName("XRECHNUNG")) {
 				for (IZUGFeRDAllowanceCharge allowance : trans.getZFAllowances()) {
-					final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(allowance.getTaxCategoryCode());
+					// issue #652: an allowance/charge without its own VAT rate takes the items' single rate
+					final String allowanceCategory = calc.getEffectiveTaxCategoryCode(allowance);
+					final BigDecimal allowanceRate = calc.getEffectiveTaxRate(allowance);
+					final boolean displayExemptionReason = CATEGORY_CODES_WITH_EXEMPTION_REASON.contains(allowanceCategory);
 					String exemptionReasonTextXML = "";
 					if (profile != Profiles.getByName("EN16931") && displayExemptionReason && allowance.getTaxExemptionReason() != null) {
 						exemptionReasonTextXML = "<ram:ExemptionReason>" + XMLTools.encodeXML(allowance.getTaxExemptionReason()) + "</ram:ExemptionReason>";
@@ -1092,10 +1098,10 @@ public class ZUGFeRD2PullProvider implements IXMLProvider {
 					xml.append("<ram:CategoryTradeTax>" +
 							"<ram:TypeCode>VAT</ram:TypeCode>" +
 							exemptionReasonTextXML +
-							"<ram:CategoryCode>" + allowance.getTaxCategoryCode() + "</ram:CategoryCode>" +
+							"<ram:CategoryCode>" + allowanceCategory + "</ram:CategoryCode>" +
 							exemptionReasonCodeXML);
-					if (allowance.getTaxRateApplicablePercent() != null && !allowance.getTaxCategoryCode().equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
-						xml.append("<ram:RateApplicablePercent>" + vatFormat(allowance.getTaxRateApplicablePercent()) + "</ram:RateApplicablePercent>");
+					if (allowanceRate != null && !allowanceCategory.equals(TaxCategoryCodeTypeConstants.UNTAXEDSERVICE)) {
+						xml.append("<ram:RateApplicablePercent>" + vatFormat(allowanceRate) + "</ram:RateApplicablePercent>");
 					}
 					xml.append("</ram:CategoryTradeTax>" +
 						"</ram:SpecifiedTradeAllowanceCharge>");
