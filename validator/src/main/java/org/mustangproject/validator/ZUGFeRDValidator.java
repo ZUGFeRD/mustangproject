@@ -51,6 +51,7 @@ public class ZUGFeRDValidator {
 	protected boolean optionsRecognized;
 	protected boolean disableNotices;
 	protected boolean disableArithmeticCheck;
+	protected boolean enableUseOfPdfValidityForCompleteValidity;
 	protected String signature;
 	protected boolean wasCompletelyValid; // overall result
 	protected String logAppend;
@@ -77,7 +78,15 @@ public class ZUGFeRDValidator {
 	 */
 	public boolean wasCompletelyValid() {
 		return wasCompletelyValid;
+	}
 
+	/***
+	 * Returns the pdfValidity after validating an invoice.
+	 *
+	 * @return true if the pdf is valid (contained no errors, notices are ignored), false otherwise
+	 */
+	public boolean getPdfValidity() {
+		return pdfValidity;
 	}
 
 	/***
@@ -337,7 +346,11 @@ public class ZUGFeRDValidator {
 			+ " Signature:" + signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
 			+ " Version:" + context.getGeneration() + " Took:" + duration + "ms Errors:[" + context.getCSVResult()
 			+ "] ErrorIDs: [" + context.getCSVIDResult() + "]" + toBeAppended);
-		wasCompletelyValid = xmlValidity;
+		if (enableUseOfPdfValidityForCompleteValidity) {
+			wasCompletelyValid = xmlValidity & pdfValidity;
+		} else {
+			wasCompletelyValid = xmlValidity;
+		}
 		return sw.toString();
 	}
 
@@ -353,6 +366,13 @@ public class ZUGFeRDValidator {
 	 */
 	public void disableArithmeticCheck() {
 		disableArithmeticCheck = true;
+	}
+
+	/***
+	 * use the {@link pdfValidity} also for determining the value for {@link wasCompletelyValid}
+	 */
+	public void enableUseOfPdfValidityForCompleteValidity() {
+		enableUseOfPdfValidityForCompleteValidity = true;
 	}
 
 	/**
