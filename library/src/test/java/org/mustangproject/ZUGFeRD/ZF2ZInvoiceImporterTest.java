@@ -346,7 +346,9 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 			hasExceptions = true;
 		}
 		assertFalse(hasExceptions);
+		assertEquals(3, invoice.getExtendedPaymentTerms().length);
 		assertEquals(2, invoice.getCashDiscounts().length);
+		assertEquals("2018-09-05", sdfISO.format(invoice.getDueDate()));
 		assertEquals(new BigDecimal("100.00"), invoice.getZFItems()[0].getLineTotalAmount());
 
 		TransactionCalculator tc = new TransactionCalculator(invoice);

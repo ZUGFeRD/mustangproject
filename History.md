@@ -17,13 +17,16 @@
 - #1274 upgrade to schematron version 2.6 of XR 3.0
 - #1303 Respect allowances, charges and basis quantity when recalculating item prices from line totals.
 - #1305 Minor component updates (jackson, slf4j, verapdf, xmlunit).
-- #904 / 1306 Report a Schematron that fails to run as an exception.
+- #904 / #1306 Report a Schematron that fails to run as an exception.
 - #967 / #1307 Read the filename set in the ValidationContext in XMLValidator.
 - #1308 Add native support for IndustryAssignedID (BT-X-532 / Producer Part Number).
 - #521 / #1310 Validation report contains all results as XML again.
 - #1314 Add pdf-errors to the pdf-validation result visualization.
 - #1316 / #1318 XRechnung: write CalculationPercent / BasisAmount only if both value are present.
 - #1319 Update EN16931 Validation artefacts to v1.3.17.
+- #1321 Importer: fix payment means, UBL period and creditor reference, Order-X detection.
+- Minor component updates (jackson, apache-fop).
+- #1325 Invoice.getDueDate() does no longer return a cash discount date.
 
 
 2.26.0
