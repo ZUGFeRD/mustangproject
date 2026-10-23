@@ -459,20 +459,32 @@ WEEE-Reg-Nr.: DE87654321
           <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
         </ram:AppliedTradeTax>
       </ram:SpecifiedLogisticsServiceCharge>
-        <ram:SpecifiedTradePaymentTerms>
-            <ram:Description>Bei Zahlung innerhalb 14 Tagen gewähren wir 2,0% Skonto.</ram:Description>
-            <ram:ApplicableTradePaymentDiscountTerms>
-                <ram:BasisPeriodMeasure unitCode="DAY">14</ram:BasisPeriodMeasure>
-                <ram:CalculationPercent>2.00</ram:CalculationPercent>
-            </ram:ApplicableTradePaymentDiscountTerms>
-        </ram:SpecifiedTradePaymentTerms>
-        <ram:SpecifiedTradePaymentTerms>
-            <ram:Description>Bei Zahlung innerhalb 7 Tagen gewähren wir 1,0% Skonto.</ram:Description>
-            <ram:ApplicableTradePaymentDiscountTerms>
-                <ram:BasisPeriodMeasure unitCode="DAY">7</ram:BasisPeriodMeasure>
-                <ram:CalculationPercent>1.00</ram:CalculationPercent>
-            </ram:ApplicableTradePaymentDiscountTerms>
-        </ram:SpecifiedTradePaymentTerms>
+      <ram:SpecifiedTradePaymentTerms>
+        <ram:Description>Zahlbar bis zum 05.09.2018 ohne Abzüge</ram:Description>
+        <ram:DueDateDateTime>  
+          <udt:DateTimeString format="102">20180905</udt:DateTimeString> 
+        </ram:DueDateDateTime> 
+      </ram:SpecifiedTradePaymentTerms>
+      <ram:SpecifiedTradePaymentTerms>
+        <ram:Description>Bei Zahlung innerhalb von 14 Tagen gewähren wir 1,0% Skonto.</ram:Description>
+        <ram:DueDateDateTime>  
+          <udt:DateTimeString format="102">20180820</udt:DateTimeString> 
+        </ram:DueDateDateTime> 
+        <ram:ApplicableTradePaymentDiscountTerms>
+          <ram:BasisPeriodMeasure unitCode="DAY">14</ram:BasisPeriodMeasure>
+          <ram:CalculationPercent>1.00</ram:CalculationPercent>
+        </ram:ApplicableTradePaymentDiscountTerms>
+      </ram:SpecifiedTradePaymentTerms>
+      <ram:SpecifiedTradePaymentTerms>
+        <ram:Description>Bei Zahlung innerhalb von 7 Tagen gewähren wir 2,0% Skonto.</ram:Description>
+        <ram:DueDateDateTime>  
+          <udt:DateTimeString format="102">20180813</udt:DateTimeString> 
+        </ram:DueDateDateTime> 
+        <ram:ApplicableTradePaymentDiscountTerms>
+          <ram:BasisPeriodMeasure unitCode="DAY">7</ram:BasisPeriodMeasure>
+          <ram:CalculationPercent>2.00</ram:CalculationPercent>
+        </ram:ApplicableTradePaymentDiscountTerms>
+      </ram:SpecifiedTradePaymentTerms>
       <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
         <ram:LineTotalAmount>457.20</ram:LineTotalAmount>
         <ram:ChargeTotalAmount>3.00</ram:ChargeTotalAmount>
