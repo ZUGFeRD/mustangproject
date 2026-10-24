@@ -24,6 +24,9 @@
     <xsl:variable name="i18n.bt56" select="'Name'"/>
     <xsl:variable name="i18n.bt57" select="'Telefon'"/>
     <xsl:variable name="i18n.bt58" select="'E-Mail-Adresse'"/>
+    <xsl:variable name="i18n.bgx36" select="'Abweichender Rechnungsempfänger'"/>
+    <xsl:variable name="i18n.btx225" select="'Globale Kennung'"/>
+    <xsl:variable name="i18n.btx225-id" select="'Schema der globalen Kennung'"/>
     <xsl:variable name="i18n.bt27" select="'Firmenname'"/>
     <xsl:variable name="i18n.bt35" select="'Straße / Haus-Nr.'"/>
     <xsl:variable name="i18n.bt36" select="'Adresszusatz'"/>
