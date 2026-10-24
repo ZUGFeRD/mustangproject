@@ -460,17 +460,14 @@ WEEE-Reg-Nr.: DE87654321
         </ram:AppliedTradeTax>
       </ram:SpecifiedLogisticsServiceCharge>
       <ram:SpecifiedTradePaymentTerms>
-        <ram:Description>Zahlbar bis zum 05.09.2018 ohne Abzüge</ram:Description>
-        <ram:DueDateDateTime>  
-          <udt:DateTimeString format="102">20180905</udt:DateTimeString> 
-        </ram:DueDateDateTime> 
-      </ram:SpecifiedTradePaymentTerms>
-      <ram:SpecifiedTradePaymentTerms>
         <ram:Description>Bei Zahlung innerhalb von 14 Tagen gewähren wir 1,0% Skonto.</ram:Description>
         <ram:DueDateDateTime>  
           <udt:DateTimeString format="102">20180820</udt:DateTimeString> 
         </ram:DueDateDateTime> 
         <ram:ApplicableTradePaymentDiscountTerms>
+          <ram:BasisDateTime>
+            <udt:DateTimeString format="102">20180905</udt:DateTimeString>
+          </ram:BasisDateTime>
           <ram:BasisPeriodMeasure unitCode="DAY">14</ram:BasisPeriodMeasure>
           <ram:CalculationPercent>1.00</ram:CalculationPercent>
         </ram:ApplicableTradePaymentDiscountTerms>
@@ -481,6 +478,9 @@ WEEE-Reg-Nr.: DE87654321
           <udt:DateTimeString format="102">20180813</udt:DateTimeString> 
         </ram:DueDateDateTime> 
         <ram:ApplicableTradePaymentDiscountTerms>
+          <ram:BasisDateTime>
+            <udt:DateTimeString format="102">20180905</udt:DateTimeString>
+          </ram:BasisDateTime>
           <ram:BasisPeriodMeasure unitCode="DAY">7</ram:BasisPeriodMeasure>
           <ram:CalculationPercent>2.00</ram:CalculationPercent>
         </ram:ApplicableTradePaymentDiscountTerms>

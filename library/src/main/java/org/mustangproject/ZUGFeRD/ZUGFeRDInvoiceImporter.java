@@ -829,6 +829,7 @@ public class ZUGFeRDInvoiceImporter {
 					NodeList paymentTermChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
 					PaymentTerms pt = new PaymentTerms();
 					Date ptDueDate = null;
+					Date cdBasisDate = null;
 					boolean hasDiscountTerms = false;
 					for (int paymentTermChildIndex = 0; paymentTermChildIndex < paymentTermChilds.getLength(); paymentTermChildIndex++) {
 						if (paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null && paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("Description")) {
@@ -845,6 +846,18 @@ public class ZUGFeRDInvoiceImporter {
 						}
 						if (paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null && paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("ApplicableTradePaymentDiscountTerms")) {
 							hasDiscountTerms = true;
+							NodeList cashDiscountChilds = paymentTermChilds.item(paymentTermChildIndex).getChildNodes();
+							for (int cashDiscountChildIndex = 0; cashDiscountChildIndex < cashDiscountChilds.getLength(); cashDiscountChildIndex++) {
+								if (cashDiscountChilds.item(cashDiscountChildIndex).getLocalName() != null && cashDiscountChilds.item(cashDiscountChildIndex).getLocalName().equals("BasisDateTime")) {
+									NodeList basisDateChilds = cashDiscountChilds.item(cashDiscountChildIndex).getChildNodes();
+									for (int dueDateChildIndex = 0; dueDateChildIndex < basisDateChilds.getLength(); dueDateChildIndex++) {
+										if (basisDateChilds.item(dueDateChildIndex).getLocalName() != null && basisDateChilds.item(dueDateChildIndex).getLocalName().equals("DateTimeString")) {
+											String dueDateString = XMLTools.trimOrNull(basisDateChilds.item(dueDateChildIndex));
+											cdBasisDate = parseDate(dueDateString, "yyyyMMdd");
+										}
+									}
+								}
+							}
 						}
 						if (paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null && paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("DirectDebitMandateID")) {
 							directDebitMandateID = paymentTermChilds.item(paymentTermChildIndex).getTextContent();
@@ -852,7 +865,12 @@ public class ZUGFeRDInvoiceImporter {
 					}
 					pt.setDueDate(ptDueDate);
 					zpp.addPaymentTerms(pt);
-					if (!hasDiscountTerms) {
+
+					if (hasDiscountTerms) {
+						if (cdBasisDate != null) {
+							dueDate = cdBasisDate;
+						}
+					} else {
 						dueDate = ptDueDate;
 					}
 				}
