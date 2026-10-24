@@ -110,17 +110,20 @@ public class Main {
 				+ "        --action validate  validate XML or PDF file \n"
 				+ "                [--no-notices]: refrain from reporting notices\n"
 				+ "                [--no-arithmetic-check]: skip the arithmetic recalculation check\n"
+				+ "                [--fail-on-warnings]: treat warnings as errors\n"
 				+ "                [--logAppend <text>]: text to be added to log line\n"
 				+ "                Additional parameters (optional - user will be prompted if not defined)\n"
 				+ "                [--source <filename>]: input PDF or XML file\n"
 				+ "                [--log-as-pdf]: save log output as pdf\n"
 				+ "        --action validateExpectInvalid  validate directory recursively expecting negative results \n"
 				+ "                [--no-notices]: refrain from reporting notices\n"
+				+ "                [--fail-on-warnings]: treat warnings as errors\n"
 				+ "                Additional parameters (user will be prompted if not defined)\n"
 				+ "                -d, --directory to check recursively\n"
 				+ "                --exclude: comma-separated list of filenames to ignore\n"
 				+ "        --action validateExpectValid  validate directory recursively expecting positive results \n"
 				+ "                [--no-notices]: refrain from reporting notices\n"
+				+ "                [--fail-on-warnings]: treat warnings as errors\n"
 				+ "                Additional parameters (user will be prompted if not defined)\n"
 				+ "                -d, --directory to check recursively \n"
 				+ "                --exclude: comma-separated list of filenames to ignore\n"
@@ -398,6 +401,7 @@ public class Main {
 			options.addOption(new Option("out", "out", true, "which output file to write to"));
 			options.addOption(new Option("no-notices", "no-notices", false, "suppress non-fatal errors"));
 			options.addOption(new Option("no-arithmetic-check", "no-arithmetic-check", false, "skip the arithmetic recalculation check during validation"));
+			options.addOption(new Option("fail-on-warnings", "fail-on-warnings", false, "treat validation warnings as errors"));
 			options.addOption(
 					new Option("logAppend", "logAppend", true, "freeform text to be appended to log messages"));
 			options.addOption(
@@ -432,6 +436,7 @@ public class Main {
 				String lang = cmd.getOptionValue("language");
 				boolean noNotices = cmd.hasOption("no-notices");
 				boolean noArithmeticCheck = cmd.hasOption("no-arithmetic-check");
+				boolean failOnWarnings = cmd.hasOption("fail-on-warnings");
 				boolean LogAsPDF = cmd.hasOption("log-as-pdf");
 				String profileID = cmd.getOptionValue("profileID");
 				String customizationID = cmd.getOptionValue("customizationID");
@@ -480,11 +485,11 @@ public class Main {
 					performUBL(sourceName, outName, profileID, customizationID);
 					optionsRecognized = true;
 				} else if (action != null && action.equals("validate")) {
-					optionsRecognized = performValidate(sourceName, noNotices, noArithmeticCheck, cmd.getOptionValue("logAppend"), LogAsPDF);
+					optionsRecognized = performValidate(sourceName, noNotices, noArithmeticCheck, failOnWarnings, cmd.getOptionValue("logAppend"), LogAsPDF);
 				} else if (action != null && action.equals("validateExpectValid")) {
-					optionsRecognized = performValidateExpect(true, directoryName, excludedFilenames);
+					optionsRecognized = performValidateExpect(true, directoryName, excludedFilenames, failOnWarnings);
 				} else if (action != null && action.equals("validateExpectInvalid")) {
-					optionsRecognized = performValidateExpect(false, directoryName, excludedFilenames);
+					optionsRecognized = performValidateExpect(false, directoryName, excludedFilenames, failOnWarnings);
 				}
 
 			} catch (UnrecognizedOptionException ex) {
@@ -507,7 +512,7 @@ public class Main {
 
 	}
 
-	private static boolean performValidate(String sourceName, boolean noNotices, boolean noArithmeticCheck, String logAppend, boolean createLogAsPDF) {
+	private static boolean performValidate(String sourceName, boolean noNotices, boolean noArithmeticCheck, boolean failOnWarnings, String logAppend, boolean createLogAsPDF) {
 		boolean optionsRecognized;
 		if (sourceName == null) {
 			sourceName = getFilenameFromUser("Source PDF or XML", "invoice.pdf", "pdf|xml", true, false);
@@ -521,6 +526,9 @@ public class Main {
 		}
 		if (noArithmeticCheck) {
 			zfv.disableArithmeticCheck();
+		}
+		if (failOnWarnings) {
+			zfv.enableFailOnWarnings();
 		}
 
 		String validationResultXML = zfv.validate(sourceName);
@@ -539,8 +547,11 @@ public class Main {
 		return optionsRecognized;
 	}
 
-	private static boolean performValidateExpect(boolean valid, String dirName, String[] excludedFiles) {
+	private static boolean performValidateExpect(boolean valid, String dirName, String[] excludedFiles, boolean failOnWarnings) {
 		ValidatorFileWalker zfWalk = new ValidatorFileWalker(valid, excludedFiles);
+		if (failOnWarnings) {
+			zfWalk.enableFailOnWarnings();
+		}
 		Path startingDir = Paths.get(dirName);
 		try {
 			Files.walkFileTree(startingDir, zfWalk);

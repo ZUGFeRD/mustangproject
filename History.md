@@ -24,6 +24,7 @@
 - #1314 Add pdf-errors to the pdf-validation result visualization.
 - #1316 / #1318 XRechnung: write CalculationPercent / BasisAmount only if both value are present.
 - #1319 Update EN16931 Validation artefacts to v1.3.17.
+- #1036 Option to treat validation warnings as errors (--fail-on-warnings).
 
 
 2.26.0
