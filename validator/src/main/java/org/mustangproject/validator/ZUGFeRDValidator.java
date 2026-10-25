@@ -52,6 +52,7 @@ public class ZUGFeRDValidator {
 	protected boolean disableNotices;
 	protected boolean disableArithmeticCheck;
 	protected boolean enableUseOfPdfValidityForCompleteValidity;
+	protected boolean failOnWarnings;
 	protected String signature;
 	protected boolean wasCompletelyValid; // overall result
 	protected String logAppend;
@@ -100,6 +101,9 @@ public class ZUGFeRDValidator {
 	private String internalValidate(String contextFilename, InputStream inputStream, long inputLength) {
 		// forget the previous file, a reused validator has to give the same result as a new one
 		context.reset();
+		if (failOnWarnings) {
+			context.setFailOnWarnings(true);
+		}
 		pdfValidity = false;
 		displayXMLValidationOutput = false;
 		optionsRecognized = false;
@@ -373,6 +377,13 @@ public class ZUGFeRDValidator {
 	 */
 	public void enableUseOfPdfValidityForCompleteValidity() {
 		enableUseOfPdfValidityForCompleteValidity = true;
+	}
+
+	/***
+	 * treat warnings like errors, i.e. report a validation with warnings as invalid
+	 */
+	public void enableFailOnWarnings() {
+		failOnWarnings = true;
 	}
 
 	/**
