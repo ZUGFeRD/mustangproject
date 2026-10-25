@@ -18,6 +18,7 @@
 - #1303 Respect allowances, charges and basis quantity when recalculating item prices from line totals.
 - #1305 Minor component updates (jackson, slf4j, verapdf, xmlunit).
 - #904 / #1306 Report a Schematron that fails to run as an exception.
+- #937 Display the invoicee (InvoiceeTradeParty) in the visualization.
 - #967 / #1307 Read the filename set in the ValidationContext in XMLValidator.
 - #1308 Add native support for IndustryAssignedID (BT-X-532 / Producer Part Number).
 - #521 / #1310 Validation report contains all results as XML again.
