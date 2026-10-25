@@ -134,8 +134,8 @@ public class ImportFixesTest {
 
 		CashDiscount[] cashDiscounts = importer(xml).extractInvoice().getCashDiscounts();
 
-		assertEquals(1, cashDiscounts.length);
-		assertEquals(7, cashDiscounts[0].getDays());
+		assertEquals(2, cashDiscounts.length);
+		assertEquals(7, cashDiscounts[1].getDays());
 	}
 
 	/**
