@@ -820,7 +820,6 @@ public class ZF2PushTest extends ResourceCase {
 			ze.setTransaction(i);
 
 			String theXML = new String(ze.getProvider().getXML(), StandardCharsets.UTF_8);
-			System.out.println(theXML);
 			assertTrue(theXML.contains("<rsm:CrossIndustryInvoice"));
 			assertTrue(theXML.contains("<ram:TestIndicator"));
 			ze.export(TARGET_PUSHEDGE);
