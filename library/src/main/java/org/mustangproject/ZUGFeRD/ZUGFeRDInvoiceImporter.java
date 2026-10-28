@@ -1344,29 +1344,41 @@ public class ZUGFeRDInvoiceImporter {
 					Node currentNode = cashDiscountNodeChilds.item(cashDiscountChildIndex);
 					String chargeChildName = currentNode.getLocalName();
 					if (chargeChildName != null) {
-						if (chargeChildName.equals("BasisPeriodMeasure")) {
+						if (chargeChildName.equals("BasisDateTime")) {
+							NodeList basisDateChilds = currentNode.getChildNodes();
+							for (int basisDateChildIndex = 0; basisDateChildIndex < basisDateChilds.getLength(); basisDateChildIndex++) {
+								if (basisDateChilds.item(basisDateChildIndex).getLocalName() != null && basisDateChilds.item(basisDateChildIndex).getLocalName().equals("DateTimeString")) {
+									String basisDateString = XMLTools.trimOrNull(basisDateChilds.item(basisDateChildIndex));
+									dueDate = parseDate(basisDateString, "yyyyMMdd");
+									cd.setBasisDateTime(dueDate);
+								}
+							}
+						} else if (chargeChildName.equals("BasisPeriodMeasure")) {
 							Node unitCode = currentNode.getAttributes().getNamedItem("unitCode");
 							if (unitCode != null && unitCode.getNodeValue().equals("DAY")) {
 								cd.setDays(Math.round(Float.valueOf(XMLTools.trimOrNull(currentNode))));
 								// in case someone writes 30.00 days (happens!) we still want 30 integer days
 							}
+						} else if (chargeChildName.equals("BasisAmount")) {
+							cd.setBasisAmount(new BigDecimal(XMLTools.trimOrNull(currentNode)));
 						} else if (chargeChildName.equals("CalculationPercent")) {
 							cd.setPercent(new BigDecimal(XMLTools.trimOrNull(currentNode)));
+						} else if (chargeChildName.equals("ActualDiscountAmount")) {
+							cd.setActualAmount(new BigDecimal(XMLTools.trimOrNull(currentNode)));
 						}
 					}
-					//appliedAmount
-					//AppliedTradeTax
 				}
 
-				if (cd.getDays() == null) {
-					NodeList siblingNodes = cashdiscountNodes.item(i).getParentNode().getChildNodes();
-					for (int siblingIndex = 0; siblingIndex < siblingNodes.getLength(); siblingIndex++) {
-						if (siblingNodes.item(siblingIndex).getLocalName() != null && siblingNodes.item(siblingIndex).getLocalName().equals("DueDateDateTime")) {
-							NodeList dueDateChilds = siblingNodes.item(siblingIndex).getChildNodes();
-							for (int dueDateChildIndex = 0; dueDateChildIndex < dueDateChilds.getLength(); dueDateChildIndex++) {
-								if (dueDateChilds.item(dueDateChildIndex).getLocalName() != null && dueDateChilds.item(dueDateChildIndex).getLocalName().equals("DateTimeString")) {
-									String dueDateString = XMLTools.trimOrNull(dueDateChilds.item(dueDateChildIndex));
-									dueDate = parseDate(dueDateString, "yyyyMMdd");
+				NodeList siblingNodes = cashdiscountNodes.item(i).getParentNode().getChildNodes();
+				for (int siblingIndex = 0; siblingIndex < siblingNodes.getLength(); siblingIndex++) {
+					if (siblingNodes.item(siblingIndex).getLocalName() != null && siblingNodes.item(siblingIndex).getLocalName().equals("DueDateDateTime")) {
+						NodeList dueDateChilds = siblingNodes.item(siblingIndex).getChildNodes();
+						for (int dueDateChildIndex = 0; dueDateChildIndex < dueDateChilds.getLength(); dueDateChildIndex++) {
+							if (dueDateChilds.item(dueDateChildIndex).getLocalName() != null && dueDateChilds.item(dueDateChildIndex).getLocalName().equals("DateTimeString")) {
+								String dueDateString = XMLTools.trimOrNull(dueDateChilds.item(dueDateChildIndex));
+								dueDate = parseDate(dueDateString, "yyyyMMdd");
+								cd.setDueDate(dueDate);
+								if (cd.getDays() == null) {
 									long diffInMillies = Math.abs(dueDate.getTime() - zpp.getIssueDate().getTime());
 									long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 									cd.setDays((int) diffInDays);

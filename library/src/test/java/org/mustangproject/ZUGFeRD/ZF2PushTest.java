@@ -43,6 +43,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -771,6 +772,14 @@ public class ZF2PushTest extends ResourceCase {
 
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
+			Calendar dueDate = Calendar.getInstance();
+			dueDate.setTime(new Date());
+			dueDate.add(Calendar.DAY_OF_MONTH, 30);
+
+			Calendar cashDiscountDate = Calendar.getInstance();
+			cashDiscountDate.setTime(dueDate.getTime());
+			cashDiscountDate.add(Calendar.DAY_OF_MONTH, -14);
+
 			SchemedID gtin = new SchemedID("0160", "2001015001325");
 			SchemedID gln = new SchemedID("0088", "4304171000002");
 			ReferencedDocument dr1 = new ReferencedDocument("90-kl-98798-C", sdf.parse("2025-10-12"));
@@ -778,7 +787,7 @@ public class ZF2PushTest extends ResourceCase {
 			ReferencedDocument dr3 = new ReferencedDocument("orderId").setLineID("xxx");
 			ReferencedDocument dr4 = new ReferencedDocument("deliverynote123", new SimpleDateFormat("dd.MM.yyyy").parse("14.01.2026")).setLineID("deliverypos456");
 
-			Invoice i = new Invoice().setTestIndicator().setCurrency("EUR").addNote("document level 1/2").addNote("document level 2/2").setDueDate(new Date()).setIssueDate(new Date()).setDeliveryDate(new Date()).setPaymentReference("Verwendungszweck").setDocumentName("Rechnung")
+			Invoice i = new Invoice().setTestIndicator().setCurrency("EUR").addNote("document level 1/2").addNote("document level 2/2").setDueDate(dueDate.getTime()).setIssueDate(new Date()).setDeliveryDate(new Date()).setPaymentReference("Verwendungszweck").setDocumentName("Rechnung")
 				.setSellerOrderReferencedDocument(new ReferencedDocument("9384")).setBuyerOrderReferencedDocument(new ReferencedDocument("28934"))
 				.setDetailedDeliveryPeriod(new SimpleDateFormat("yyyyMMdd").parse(occurrenceFrom), new SimpleDateFormat("yyyyMMdd").parse(occurrenceTo))
 				.setSender(new TradeParty(orgname, "teststr", "55232", "teststadt", "DE").addTaxID(taxID).setEmail("sender@test.org").setID(orgID).addVATID("DE0815"))
@@ -800,7 +809,7 @@ public class ZF2PushTest extends ResourceCase {
 				)
 				.addCharge(charge)
 				.addAllowance(allowance)
-				.addCashDiscount(new CashDiscount(new BigDecimal(2), 14))
+				.addCashDiscount(new CashDiscount(new BigDecimal(2), 14).setBasisDateTime(dueDate.getTime()).setDueDate(cashDiscountDate.getTime()).setBasisAmount(new BigDecimal("1.48")).setActualAmount(new BigDecimal("0.03")))
 				.setTenderReferencedDocument(dr1)
 				.setDeliveryDate(sdf.parse("2020-11-02")).setNumber(number).setVATDueDateTypeCode(EventTimeCodeTypeConstants.PAYMENT_DATE)
 				.addInvoiceReferencedDocument(new ReferencedDocument("abc123"))
