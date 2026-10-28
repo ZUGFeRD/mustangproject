@@ -2,12 +2,17 @@ package org.mustangproject.validator;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 public class ZUGFeRDValidatorTest extends ResourceCase {
@@ -445,5 +450,35 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 		res = new ZUGFeRDValidator().validate(xml.getBytes(StandardCharsets.UTF_8), "validV2.xml");
 		assertThat(res).valueByXPath("/validation/xml/info/profile")
 			.isEqualTo("urn:cen.eu:en16931:2017&<test");
+	}
+
+	@Test
+	public void testBeispiele() {
+		try {
+			Files.list(Paths.get("../library/src/test/resources/ZF252_Beispiele")).forEach(profileDir -> {
+					try {
+						Files.list(profileDir).forEachOrdered(profileSubDir -> {
+							try {
+								Files.list(profileSubDir).forEachOrdered(file -> {
+									if (file.getFileName().toFile().getName().endsWith(".pdf")) {
+										ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+										String res = zfv.validate(file.toFile().getAbsolutePath());
+										assertEquals(true, zfv.wasCompletelyValid());
+										assertThat(res).valueByXPath("/validation/xml/summary/@status").isEqualTo("valid");
+										assertThat(res).valueByXPath("/validation/summary/@status").isEqualTo("valid");
+									}
+								});
+							} catch (IOException e) {
+								fail(e);
+							}
+						});
+					} catch (IOException e) {
+						fail(e);
+					}
+				}
+			);
+		} catch (IOException e) {
+			fail(e);
+		}
 	}
 }

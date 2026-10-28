@@ -1,0 +1,359 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--English disclaimer below.-->
+<!--
+Nutzungsrechte 
+ZUGFeRD Datenformat Version 2.5.0, 30.06.2026
+Beispiel Version 30.06.2026
+ 
+Zweck des Forums elektronische Rechnung Deutschland FeRD, welches am 31. März 2010 unter der Arbeitsgemeinschaft für 
+wirtschaftliche Verwaltung e. V. gegründet wurde, ist u. a. die Schaffung und Spezifizierung eines offenen Datenformats 
+für strukturierten elektronischen Datenaustausch auf der Grundlage offener und nicht diskriminierender, standardisierter 
+Technologien („ZUGFeRD Datenformat“).
+ 
+Das ZUGFeRD Datenformat wird nach Maßgabe des FeRD sowohl Unternehmen als auch der öffentlichen Verwaltung 
+frei zugänglich gemacht. Hierfür bietet FeRD allen Unternehmen und Organisationen der öffentlichen Verwaltung eine 
+Lizenz für die Nutzung des urheberrechtlich geschützten ZUGFeRD-Datenformats zu fairen, sachgerechten und nicht 
+diskriminierenden Bedingungen an.
+ 
+Die Spezifikation des FeRD zur Implementierung des ZUGFeRD Datenformats ist in ihrer jeweils geltenden Fassung 
+abrufbar unter www.ferd-net.de.
+ 
+Im Einzelnen schließt die Nutzungsgewährung ein: 
+================================================
+ 
+FeRD räumt eine Lizenz für die Nutzung des urheberrechtlich geschützten ZUGFeRD Datenformats in der jeweils 
+geltenden und akzeptierten Fassung (www.ferd-net.de) ein. 
+Die Lizenz beinhaltet ein unwiderrufliches Nutzungsrecht einschließlich des Rechts der Weiterentwicklung, 
+Weiterbearbeitung und Verbindung mit anderen Produkten.
+Die Lizenz gilt insbesondere für die Entwicklung, die Gestaltung, die Herstellung, den Verkauf, die Nutzung oder 
+anderweitige Verwendung des ZUGFeRD Datenformats für Hardware- und/oder Softwareprodukte sowie sonstige 
+Anwendungen und Dienste. 
+Diese Lizenz schließt nicht die wesentlichen Patente der Mitglieder von FeRD ein. Als wesentliche Patente sind Patente 
+und Patentanmeldungen weltweit zu verstehen, die einen oder mehrere Patentansprüche beinhalten, bei denen es sich um 
+notwendige Ansprüche handelt. Notwendige Ansprüche sind lediglich jene Ansprüche der Wesentlichen Patente, die durch 
+die Implementierung des ZUGFeRD Datenformats notwendigerweise verletzt würden. 
+Der Lizenznehmer ist berechtigt, seinen jeweiligen Konzerngesellschaften ein unbefristetes, weltweites, nicht übertragbares, 
+unwiderrufliches Nutzungsrecht einschließlich des Rechts der Weiterentwicklung, Weiterbearbeitung und Verbindung mit 
+anderen Produkten einzuräumen. 
+ 
+Die Lizenz wird kostenfrei zur Verfügung gestellt. 
+ 
+Außer im Falle vorsätzlichen Verschuldens oder grober Fahrlässigkeit haftet FeRD weder für Nutzungsausfall, entgangenen 
+Gewinn, Datenverlust, Kommunikationsverlust, Einnahmeausfall, Vertragseinbußen, Geschäftsausfall oder für Kosten, 
+Schäden, Verluste oder Haftpflichten im Zusammenhang mit einer Unterbrechung der Geschäftstätigkeit, noch für konkrete, 
+beiläufig entstandene, mittelbare Schäden, Straf- oder Folgeschäden und zwar auch dann nicht, wenn die Möglichkeit der 
+Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können.
+-->
+<!--
+Right of use 
+ZUGFeRD Data format version 2.5.0, June 30th, 2026
+ 
+The purpose of the Forum elektronische Rechnung Deutschland (FeRD), which was founded on March 31, 2010 under the 
+umbrella of Arbeitsgemeinschaft für wirtschaftliche Verwaltung e. V., is, among other things, to create and specify an 
+open data format for structured electronic data exchange on the basis of open and non discriminatory, standardised 
+technologies ("ZUGFeRD data format").
+ 
+The ZUGFeRD data format is used by both companies and public administration according to the FeRD 
+made freely accessible. For this purpose FeRD offers all companies and organisations of the public administration a 
+License to use the copyrighted ZUGFeRD data format in a fair, appropriate and non 
+discriminatory conditions.
+ 
+The specification of the FeRD for the implementation of the ZUGFeRD data format is, in its currently valid version 
+available at www.ferd-net.de.
+ 
+In detail, the grant of use includes 
+=====================================
+ 
+FeRD grants a license for the use of the copyrighted ZUGFeRD data format in the respective 
+valid and accepted version (www.ferd-net.de). 
+The license includes an irrevocable right of use including the right of further development, 
+Further processing and connection with other products.
+The license applies in particular to the development, design, production, sale, use or 
+other use of the ZUGFeRD data format for hardware and/or software products and other 
+applications and services. 
+This license does not include the essential patents of the members of FeRD. The essential patents are patents 
+and patent applications worldwide which contain one or more claims that are 
+necessary claims. Necessary claims are only those claims of the essential patents which are 
+the implementation of the ZUGFeRD data format would necessarily be violated. 
+The Licensee is entitled to provide its respective group companies with an unlimited, worldwide, non-transferable, 
+irrevocable right of use including the right of further development, further processing and connection with 
+other products. 
+ 
+The license is provided free of charge. 
+ 
+Except in the case of intentional fault or gross negligence, FeRD is not liable for loss of use, loss of 
+Profit, loss of data, loss of communication, loss of revenue, loss of contracts, loss of business or for costs 
+damages, losses or liabilities in connection with an interruption of business, nor for concrete, 
+incidental, indirect, punitive or consequential damages, even if the possibility of 
+costs, losses or damages could normally have been foreseen.
+-->
+<rsm:CrossIndustryInvoice xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <rsm:ExchangedDocumentContext>
+    <ram:GuidelineSpecifiedDocumentContextParameter>
+      <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended</ram:ID>
+    </ram:GuidelineSpecifiedDocumentContextParameter>
+  </rsm:ExchangedDocumentContext>
+  <rsm:ExchangedDocument>
+    <ram:ID>600700800900</ram:ID>
+    <ram:Name>DAUER_MIETRECHNUNG UNBEFRISTET</ram:Name>
+    <ram:TypeCode>387</ram:TypeCode>
+    <ram:IssueDateTime>
+      <udt:DateTimeString format="102">20260301</udt:DateTimeString>
+    </ram:IssueDateTime>
+    <ram:IncludedNote>
+      <ram:Content>Bank: Musterbank IBAN: DE89 3704 0044 0532 0130 00 BIC / Swift-Code: COBADEFFXXX</ram:Content>
+      <ram:SubjectCode>REG</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Wohnungsvermieter GmbH Geschäftsführer: Michael Mustermann </ram:Content>
+      <ram:SubjectCode>REG</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Dauermietrechnung: Diese Rechnung wird nur zum Beginn des Mietverhältnisses einmalig ausgestellt und ist gültig bis zur Änderung oder Beendigung des Mietvertrages! </ram:Content>
+      <ram:SubjectCode>AAI</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Dieser Rechnung ist der Mietvertrag als rechnungsbegründende Unterlage beigefügt! </ram:Content>
+      <ram:SubjectCode>AAI</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Wenn nicht anders angegeben entspricht das Leistungsdatum dem Rechnungsdatum.</ram:Content>
+      <ram:SubjectCode>AAI</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>ZUGFeRD vers 2.5.0 Extended</ram:Content>
+      <ram:SubjectCode>ACB</ram:SubjectCode>
+    </ram:IncludedNote>
+  </rsm:ExchangedDocument>
+  <rsm:SupplyChainTradeTransaction>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000001</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:Name>Nettomiete</ram:Name>
+        <ram:Description>Nettomiete Büro Nr. 123 - 100 m²</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260301</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>1150.00</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="MON">1.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="MON">1.00</ram:BilledQuantity>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:StartDateTime>
+            <udt:DateTimeString format="102">20260401</udt:DateTimeString>
+          </ram:StartDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>1150.00</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000002</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:Name>Nebenkostenvorauszahlung /-pauschale</ram:Name>
+        <ram:Description>Nebenkosten Büro Nr. 123 - 100 m²</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260301</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>85.00</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="MON">1.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="MON">1.00</ram:BilledQuantity>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:StartDateTime>
+            <udt:DateTimeString format="102">20260401</udt:DateTimeString>
+          </ram:StartDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>85.00</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000003</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:Name>Heizkostenvorauszahlung /-pauschale</ram:Name>
+        <ram:Description>Heizkosten Büro Nr. 123 - 100 m²</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260301</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>125.00</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="MON">1.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="MON">1.00</ram:BilledQuantity>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:StartDateTime>
+            <udt:DateTimeString format="102">20260401</udt:DateTimeString>
+          </ram:StartDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>125.00</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:ApplicableHeaderTradeAgreement>
+      <ram:BuyerReference>Käuferreferenz</ram:BuyerReference>
+      <ram:SellerTradeParty>
+        <ram:GlobalID schemeID="0088">4000000000000</ram:GlobalID>
+        <ram:Name>Wohnungsvermieter GmbH</ram:Name>
+        <ram:DefinedTradeContact>
+          <ram:PersonName>Otto Vermieter</ram:PersonName>
+          <ram:TelephoneUniversalCommunication>
+            <ram:CompleteNumber>0160 123456789</ram:CompleteNumber>
+          </ram:TelephoneUniversalCommunication>
+          <ram:EmailURIUniversalCommunication>
+            <ram:URIID>o.vermieter@wohnung.de</ram:URIID>
+          </ram:EmailURIUniversalCommunication>
+        </ram:DefinedTradeContact>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>12345</ram:PostcodeCode>
+          <ram:LineOne>Vermieterstrasse 11</ram:LineOne>
+          <ram:CityName>Musterstadt</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+        <ram:URIUniversalCommunication>
+          <ram:URIID schemeID="0088">info@vermieter.com</ram:URIID>
+        </ram:URIUniversalCommunication>
+        <ram:SpecifiedTaxRegistration>
+          <ram:ID schemeID="FC">70000/09999</ram:ID>
+        </ram:SpecifiedTaxRegistration>
+        <ram:SpecifiedTaxRegistration>
+          <ram:ID schemeID="VA">DE106008386</ram:ID>
+        </ram:SpecifiedTaxRegistration>
+      </ram:SellerTradeParty>
+      <ram:BuyerTradeParty>
+        <ram:ID>0000999999</ram:ID>
+        <ram:Name>Max u Monica Mieter GbR</ram:Name>
+        <ram:DefinedTradeContact>
+          <ram:PersonName>Max u Monica Mieter</ram:PersonName>
+        </ram:DefinedTradeContact>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>12346</ram:PostcodeCode>
+          <ram:LineOne>Mieterstrasse 5</ram:LineOne>
+          <ram:LineTwo>2. OG</ram:LineTwo>
+          <ram:CityName>Musterstadt</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+      </ram:BuyerTradeParty>
+      <ram:SellerOrderReferencedDocument>
+        <ram:IssuerAssignedID>2159999999</ram:IssuerAssignedID>
+        <ram:FormattedIssueDateTime>
+          <qdt:DateTimeString format="102">20260301</qdt:DateTimeString>
+        </ram:FormattedIssueDateTime>
+      </ram:SellerOrderReferencedDocument>
+      <ram:ContractReferencedDocument>
+        <ram:IssuerAssignedID>Vertragsnr. 0815-123456789</ram:IssuerAssignedID>
+      </ram:ContractReferencedDocument>
+      <ram:AdditionalReferencedDocument>
+        <ram:IssuerAssignedID>0815-123456789</ram:IssuerAssignedID>
+        <ram:TypeCode>916</ram:TypeCode>
+        <ram:Name>Mietvertrag</ram:Name>
+        <ram:AttachmentBinaryObject mimeCode="application/pdf" filename="Mietvertrag.pdf">JVBERi0xLjQKJZOMi54gUmVwb3J0TGFiIEdlbmVyYXRlZCBQREYgZG9jdW1lbnQgaHR0cDovL3d3dy5yZXBvcnRsYWIuY29tCjEgMCBvYmoKPDwKL0YxIDIgMCBSIC9GMiAzIDAgUiAvRjMgNCAwIFIKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL0Jhc2VGb250IC9IZWx2ZXRpY2EgL0VuY29kaW5nIC9XaW5BbnNpRW5jb2RpbmcgL05hbWUgL0YxIC9TdWJ0eXBlIC9UeXBlMSAvVHlwZSAvRm9udAo+PgplbmRvYmoKMyAwIG9iago8PAovQmFzZUZvbnQgL0hlbHZldGljYS1Cb2xkIC9FbmNvZGluZyAvV2luQW5zaUVuY29kaW5nIC9OYW1lIC9GMiAvU3VidHlwZSAvVHlwZTEgL1R5cGUgL0ZvbnQKPj4KZW5kb2JqCjQgMCBvYmoKPDwKL0Jhc2VGb250IC9aYXBmRGluZ2JhdHMgL05hbWUgL0YzIC9TdWJ0eXBlIC9UeXBlMSAvVHlwZSAvRm9udAo+PgplbmRvYmoKNSAwIG9iago8PAovQ29udGVudHMgMTAgMCBSIC9NZWRpYUJveCBbIDAgMCA1OTUuMjc1NiA4NDEuODg5OCBdIC9QYXJlbnQgOSAwIFIgL1Jlc291cmNlcyA8PAovRm9udCAxIDAgUiAvUHJvY1NldCBbIC9QREYgL1RleHQgL0ltYWdlQiAvSW1hZ2VDIC9JbWFnZUkgXQo+PiAvUm90YXRlIDAgL1RyYW5zIDw8Cgo+PiAKICAvVHlwZSAvUGFnZQo+PgplbmRvYmoKNiAwIG9iago8PAovQ29udGVudHMgMTEgMCBSIC9NZWRpYUJveCBbIDAgMCA1OTUuMjc1NiA4NDEuODg5OCBdIC9QYXJlbnQgOSAwIFIgL1Jlc291cmNlcyA8PAovRm9udCAxIDAgUiAvUHJvY1NldCBbIC9QREYgL1RleHQgL0ltYWdlQiAvSW1hZ2VDIC9JbWFnZUkgXQo+PiAvUm90YXRlIDAgL1RyYW5zIDw8Cgo+PiAKICAvVHlwZSAvUGFnZQo+PgplbmRvYmoKNyAwIG9iago8PAovUGFnZU1vZGUgL1VzZU5vbmUgL1BhZ2VzIDkgMCBSIC9UeXBlIC9DYXRhbG9nCj4+CmVuZG9iago4IDAgb2JqCjw8Ci9BdXRob3IgKFwoYW5vbnltb3VzXCkpIC9DcmVhdGlvbkRhdGUgKEQ6MjAyNjAyMjUwOTIwMDkrMDAnMDAnKSAvQ3JlYXRvciAoXCh1bnNwZWNpZmllZFwpKSAvS2V5d29yZHMgKCkgL01vZERhdGUgKEQ6MjAyNjAyMjUwOTIwMDkrMDAnMDAnKSAvUHJvZHVjZXIgKFJlcG9ydExhYiBQREYgTGlicmFyeSAtIHd3dy5yZXBvcnRsYWIuY29tKSAKICAvU3ViamVjdCAoXCh1bnNwZWNpZmllZFwpKSAvVGl0bGUgKFwoYW5vbnltb3VzXCkpIC9UcmFwcGVkIC9GYWxzZQo+PgplbmRvYmoKOSAwIG9iago8PAovQ291bnQgMiAvS2lkcyBbIDUgMCBSIDYgMCBSIF0gL1R5cGUgL1BhZ2VzCj4+CmVuZG9iagoxMCAwIG9iago8PAovRmlsdGVyIFsgL0FTQ0lJODVEZWNvZGUgL0ZsYXRlRGVjb2RlIF0gL0xlbmd0aCAxMjc0Cj4+CnN0cmVhbQpHYXQ9KjsvYjJLJSJAWktpKyUndTRqLyM9VWkuaW4lUltHPWgpL0RmXzglMjZOMitAWEhdbS8qcjlLRSxTXSJbczFnJ21VS2Q5UDw1Q09mdV5vJmksXlBgYF9INEQkNyhwRiMmOTQza3VfPkkrKDFkQ20zTi0tS3E7al10c1JuZFRwWkNoWmFENWRBa0N0W0FbKTQnPjUhJmg2Zksic0YpQi0oUiFQZF1gbU46KEZ0OmRHXXMxIyonbGNfdWZeXFw+U1U8TzphaWYub1JHcSttQ1ghPmcqWyJSJ2UjbVhra2AvWjwkYmldLTtgaDFJYF0vUGJIVFxcTldPRnFZTUBYJSs2OEMpZlZJUjZZSjpmMzBoLkt0bnJCLVxZWyhKLzksPThMQ0V1UjlgKWY/LSdGdCEwcCUmKGcqUHAtb1ouK1N1XFU0LTQtRzxBZzBhdV5YbVApZ3AlKjg/aV8qazRoTT1rQyJzXkFya1RRXiFpRFQpXE1hYEVeUDlkRCxvKlcsRXAmSGBLbkxfQTZuKlsxajQ4ajdSbkFyTTVZXEErPWViT0guclVPbE8sKGhpUDlLS0dtdFx0KzBiOyFATidEO246aW5mWz5kUyFONiQzSnVoWUhNc21aK1s8Q2tlXFctVVo6QWEwVklRX3MtLG4iNC0pPzhxNWpTbGxdWUgkRlJsYDBGcFUjVis7cXQ9L3U/N2BuUlpPbV1zKD4sOCJiPDVhX2FwY3RDX0phIl9LYl82JjNzJCtqVSFpJ3QiVkIpQmJqTWFdb2M6LEAyTUFHJm9AZSF0K0hSOVBaQyRJTSRCTVo2WTtRLjFQW1g1PCU1T0dMcChDZiFNYHFjc2VmWGJdbSFLcDhhY0ksbS9icj4zaUteNlpWL2VCcjhjUHBuPk5UVj8kbjJubi45NjdWVkMxbSFbLSc9TzppTUxwK1hcXU9YalN0ZC9CaV0xSiNPIzdDV28sUC8jVVNJVCo7aj9VKjZMISR1PkAmMEA5X3RFXWclZGdyUS9vKyFtUzxMXT5eV1ROOyFXaz5NSS5GalRfMnJuKVZzNz5YP0NVY2F1aCQ2N3AxPj5SbzZEKig4LlgiKzpVSy49clgmV14jUkRsQlBNTls9QjVTX1YyUTEuLnF1JCxTWDIiXT04MGBOV0l0JDsjTiVzMCk9NkRQWz9AZCJcJUZWbmw9R2VKXGtEJW9oMS0zIVpLM191WT80RmUtMyk7RE9BXXBoW0dJXVstS2UsKFVmI2w9V0RYLEYkWnBmQWdIXSE6J1c6ITxackEuNlYtdUw9OTEoVzpoODBfTUUqbypTJTRrSjJEOzpRbmNAJWFiJUtSR0tiO1ZuWlZLTz5VKEw0JGopSCZuPTghaylsZmsqS2dZLmROblo8YHMobVNcLTptRFtzcyFZVCh0aW09cHNpanJiZChUOkJRWic1MyVLYyFoK2xkVkc8LSZEcDlMI2MiXlouTWdZXCY2XFdtWHIoQ2EkW0JIaWtdKnJUIiQtaDQ9ak4pKHJwWk5LIV43aC9vYWY/Q2c0W2tDLy8jRypNcEguRz0lcmVQY1VkWmMqOGtAXSQ3WDc4bkhFYz9TKFReWVc8bm5JazskSDEmRFZRSWtWbEVKdVlwbmN1VlxWZ0VGJ0c0I19kQlVzNGZmbWpTcHIsLTBJZFRxQgotWTl0MV1iNk9SOSYkQTlnY2l+PmVuZHN0cmVhbQplbmRvYmoKMTEgMCBvYmoKPDwKL0ZpbHRlciBbIC9BU0NJSTg1RGVjb2RlIC9GbGF0ZURlY29kZSBdIC9MZW5ndGggNDY3Cj4+CnN0cmVhbQpHYXRtN2Q3VjsxJ1Jlaz9TQiEnVlMjMElxKzMxNzEpXjg9VCQ8I0tXTWxtcEVXSWVMR0Q1WE5VRzAlJVdMNi5tTzM5VCc5IysncCFsYDo1RCN1OGVhUiJvMl5qdVliaSQtI1IqVjhrYzxMKFFgbjQmSFxePCdeZz9AR2BKbCRIZjVuWjNHPmIrTF9ZX1RIPzIoYlVUc0lcWi9WS0tdRUcxTm1TcT9kN3VxRk1rTWdfO24zV2BNLUxCNCUuOGhYM1wrbEZXPm9oU2tCTDl0UXFDZUA3XShpZmNCUFYwIiYtNUNyLlxbTV1zaEZiUnJYLUtLdUZQKTtCR1phUU5bW0xGJW06I2cqZHBbJ09qWChbMi5JN0BHZERsW1wvOEYkTCgkSkVvMFlRJiE7MGU9VDhYbjUvWmwhXDYlVDIlXztjUUskTVllS0Riaz5sZWxyX04wVCpxcV1NXFxiVlYlbE1nUk1acV9zSGQ7dUZxRCVzWl9ealwsLSg0MS4nZj5Ma18qWUktTzAuJ2xwIUwtSk4rX0c0aHMzMDtqYlUpLjZNJFNDUE1ESEdMUk9bJTY4NDMmaCxIMDg7c1Q7akszZSksNjUrck5lXTcyITlFWT80P1p+PmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDEyCjAwMDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAwMDA3MyAwMDAwMCBuIAowMDAwMDAwMTI0IDAwMDAwIG4gCjAwMDAwMDAyMzEgMDAwMDAgbiAKMDAwMDAwMDM0MyAwMDAwMCBuIAowMDAwMDAwNDI2IDAwMDAwIG4gCjAwMDAwMDA2MzAgMDAwMDAgbiAKMDAwMDAwMDgzNCAwMDAwMCBuIAowMDAwMDAwOTAyIDAwMDAwIG4gCjAwMDAwMDExODUgMDAwMDAgbiAKMDAwMDAwMTI1MCAwMDAwMCBuIAowMDAwMDAyNjE2IDAwMDAwIG4gCnRyYWlsZXIKPDwKL0lEIApbPGQwMjYzNmJlYjc0YWE4ODAwODE0YjU2YjcxYzUwNmEzPjxkMDI2MzZiZWI3NGFhODgwMDgxNGI1NmI3MWM1MDZhMz5dCiUgUmVwb3J0TGFiIGdlbmVyYXRlZCBQREYgZG9jdW1lbnQgLS0gZGlnZXN0IChodHRwOi8vd3d3LnJlcG9ydGxhYi5jb20pCgovSW5mbyA4IDAgUgovUm9vdCA3IDAgUgovU2l6ZSAxMgo+PgpzdGFydHhyZWYKMzE3NAolJUVPRgo=</ram:AttachmentBinaryObject>
+      </ram:AdditionalReferencedDocument>
+    </ram:ApplicableHeaderTradeAgreement>
+    <ram:ApplicableHeaderTradeDelivery>
+      <ram:ShipToTradeParty>
+        <ram:Name>Max u Monica Mieter GbR</ram:Name>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>12346</ram:PostcodeCode>
+          <ram:LineOne>Mieterstrasse 5</ram:LineOne>
+          <ram:LineTwo>2. OG</ram:LineTwo>
+          <ram:CityName>Musterstadt</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+      </ram:ShipToTradeParty>
+    </ram:ApplicableHeaderTradeDelivery>
+    <ram:ApplicableHeaderTradeSettlement>
+      <ram:CreditorReferenceID>DE78ZZZ00000099999</ram:CreditorReferenceID>
+      <ram:PaymentReference>Miete Max u Monica Mieter</ram:PaymentReference>
+      <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
+      <ram:SpecifiedTradeSettlementPaymentMeans>
+        <ram:TypeCode>59</ram:TypeCode>
+        <ram:Information>Bezahlung per SEPA-Lastschrift *** Den Rechnungsbetrag ziehen wir mit der SEPA-Lastschrift von Ihrem Konto frühestens zum Fälligkeitstag ein.</ram:Information>
+        <ram:PayerPartyDebtorFinancialAccount>
+          <ram:IBANID>DE75512108001245126199</ram:IBANID>
+        </ram:PayerPartyDebtorFinancialAccount>
+        <ram:PayeePartyCreditorFinancialAccount>
+          <ram:IBANID>DE89370400440532013000</ram:IBANID>
+        </ram:PayeePartyCreditorFinancialAccount>
+        <ram:PayeeSpecifiedCreditorFinancialInstitution>
+          <ram:BICID>COBADEFFXXX</ram:BICID>
+        </ram:PayeeSpecifiedCreditorFinancialInstitution>
+      </ram:SpecifiedTradeSettlementPaymentMeans>
+      <ram:ApplicableTradeTax>
+        <ram:CalculatedAmount>258.40</ram:CalculatedAmount>
+        <ram:TypeCode>VAT</ram:TypeCode>
+        <ram:BasisAmount>1360.00</ram:BasisAmount>
+        <ram:CategoryCode>S</ram:CategoryCode>
+        <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+      </ram:ApplicableTradeTax>
+      <ram:SpecifiedTradePaymentTerms>
+        <ram:Description>SEPA-Lastschrift monatlich zum Ersten beginnend ab 01.04.2026 ohne Abzug</ram:Description>
+        <ram:DueDateDateTime>
+          <udt:DateTimeString format="102">20260401</udt:DateTimeString>
+        </ram:DueDateDateTime>
+        <ram:DirectDebitMandateID>Miete Max u Monica Mieter GbR</ram:DirectDebitMandateID>
+      </ram:SpecifiedTradePaymentTerms>
+      <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+        <ram:LineTotalAmount>1360.00</ram:LineTotalAmount>
+        <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>
+        <ram:TaxBasisTotalAmount>1360.00</ram:TaxBasisTotalAmount>
+        <ram:TaxTotalAmount currencyID="EUR">258.40</ram:TaxTotalAmount>
+        <ram:GrandTotalAmount>1618.40</ram:GrandTotalAmount>
+        <ram:DuePayableAmount>1618.40</ram:DuePayableAmount>
+      </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+    </ram:ApplicableHeaderTradeSettlement>
+  </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>

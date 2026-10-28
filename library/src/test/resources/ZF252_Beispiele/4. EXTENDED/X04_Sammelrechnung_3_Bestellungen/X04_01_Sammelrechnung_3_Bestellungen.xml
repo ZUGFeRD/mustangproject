@@ -1,0 +1,704 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--English disclaimer below.-->
+<!--
+Nutzungsrechte 
+ZUGFeRD Datenformat Version 2.5.0, 30.06.2026
+Beispiel Version 30.06.2026
+ 
+Zweck des Forums elektronische Rechnung Deutschland FeRD, welches am 31. März 2010 unter der Arbeitsgemeinschaft für 
+wirtschaftliche Verwaltung e. V. gegründet wurde, ist u. a. die Schaffung und Spezifizierung eines offenen Datenformats 
+für strukturierten elektronischen Datenaustausch auf der Grundlage offener und nicht diskriminierender, standardisierter 
+Technologien („ZUGFeRD Datenformat“).
+ 
+Das ZUGFeRD Datenformat wird nach Maßgabe des FeRD sowohl Unternehmen als auch der öffentlichen Verwaltung 
+frei zugänglich gemacht. Hierfür bietet FeRD allen Unternehmen und Organisationen der öffentlichen Verwaltung eine 
+Lizenz für die Nutzung des urheberrechtlich geschützten ZUGFeRD-Datenformats zu fairen, sachgerechten und nicht 
+diskriminierenden Bedingungen an.
+ 
+Die Spezifikation des FeRD zur Implementierung des ZUGFeRD Datenformats ist in ihrer jeweils geltenden Fassung 
+abrufbar unter www.ferd-net.de.
+ 
+Im Einzelnen schließt die Nutzungsgewährung ein: 
+================================================
+ 
+FeRD räumt eine Lizenz für die Nutzung des urheberrechtlich geschützten ZUGFeRD Datenformats in der jeweils 
+geltenden und akzeptierten Fassung (www.ferd-net.de) ein. 
+Die Lizenz beinhaltet ein unwiderrufliches Nutzungsrecht einschließlich des Rechts der Weiterentwicklung, 
+Weiterbearbeitung und Verbindung mit anderen Produkten.
+Die Lizenz gilt insbesondere für die Entwicklung, die Gestaltung, die Herstellung, den Verkauf, die Nutzung oder 
+anderweitige Verwendung des ZUGFeRD Datenformats für Hardware- und/oder Softwareprodukte sowie sonstige 
+Anwendungen und Dienste. 
+Diese Lizenz schließt nicht die wesentlichen Patente der Mitglieder von FeRD ein. Als wesentliche Patente sind Patente 
+und Patentanmeldungen weltweit zu verstehen, die einen oder mehrere Patentansprüche beinhalten, bei denen es sich um 
+notwendige Ansprüche handelt. Notwendige Ansprüche sind lediglich jene Ansprüche der Wesentlichen Patente, die durch 
+die Implementierung des ZUGFeRD Datenformats notwendigerweise verletzt würden. 
+Der Lizenznehmer ist berechtigt, seinen jeweiligen Konzerngesellschaften ein unbefristetes, weltweites, nicht übertragbares, 
+unwiderrufliches Nutzungsrecht einschließlich des Rechts der Weiterentwicklung, Weiterbearbeitung und Verbindung mit 
+anderen Produkten einzuräumen. 
+ 
+Die Lizenz wird kostenfrei zur Verfügung gestellt. 
+ 
+Außer im Falle vorsätzlichen Verschuldens oder grober Fahrlässigkeit haftet FeRD weder für Nutzungsausfall, entgangenen 
+Gewinn, Datenverlust, Kommunikationsverlust, Einnahmeausfall, Vertragseinbußen, Geschäftsausfall oder für Kosten, 
+Schäden, Verluste oder Haftpflichten im Zusammenhang mit einer Unterbrechung der Geschäftstätigkeit, noch für konkrete, 
+beiläufig entstandene, mittelbare Schäden, Straf- oder Folgeschäden und zwar auch dann nicht, wenn die Möglichkeit der 
+Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können.
+-->
+<!--
+Right of use 
+ZUGFeRD Data format version 2.5.0, June 30th, 2026
+ 
+The purpose of the Forum elektronische Rechnung Deutschland (FeRD), which was founded on March 31, 2010 under the 
+umbrella of Arbeitsgemeinschaft für wirtschaftliche Verwaltung e. V., is, among other things, to create and specify an 
+open data format for structured electronic data exchange on the basis of open and non discriminatory, standardised 
+technologies ("ZUGFeRD data format").
+ 
+The ZUGFeRD data format is used by both companies and public administration according to the FeRD 
+made freely accessible. For this purpose FeRD offers all companies and organisations of the public administration a 
+License to use the copyrighted ZUGFeRD data format in a fair, appropriate and non 
+discriminatory conditions.
+ 
+The specification of the FeRD for the implementation of the ZUGFeRD data format is, in its currently valid version 
+available at www.ferd-net.de.
+ 
+In detail, the grant of use includes 
+=====================================
+ 
+FeRD grants a license for the use of the copyrighted ZUGFeRD data format in the respective 
+valid and accepted version (www.ferd-net.de). 
+The license includes an irrevocable right of use including the right of further development, 
+Further processing and connection with other products.
+The license applies in particular to the development, design, production, sale, use or 
+other use of the ZUGFeRD data format for hardware and/or software products and other 
+applications and services. 
+This license does not include the essential patents of the members of FeRD. The essential patents are patents 
+and patent applications worldwide which contain one or more claims that are 
+necessary claims. Necessary claims are only those claims of the essential patents which are 
+the implementation of the ZUGFeRD data format would necessarily be violated. 
+The Licensee is entitled to provide its respective group companies with an unlimited, worldwide, non-transferable, 
+irrevocable right of use including the right of further development, further processing and connection with 
+other products. 
+ 
+The license is provided free of charge. 
+ 
+Except in the case of intentional fault or gross negligence, FeRD is not liable for loss of use, loss of 
+Profit, loss of data, loss of communication, loss of revenue, loss of contracts, loss of business or for costs 
+damages, losses or liabilities in connection with an interruption of business, nor for concrete, 
+incidental, indirect, punitive or consequential damages, even if the possibility of 
+costs, losses or damages could normally have been foreseen.
+-->
+<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100">
+  <rsm:ExchangedDocumentContext>
+    <ram:GuidelineSpecifiedDocumentContextParameter>
+      <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended</ram:ID>
+    </ram:GuidelineSpecifiedDocumentContextParameter>
+  </rsm:ExchangedDocumentContext>
+  <rsm:ExchangedDocument>
+    <ram:ID>6063636771001</ram:ID>
+    <ram:Name>RECHNUNG</ram:Name>
+    <ram:TypeCode>380</ram:TypeCode>
+    <ram:IssueDateTime>
+      <udt:DateTimeString format="102">20260827</udt:DateTimeString>
+    </ram:IssueDateTime>
+    <ram:IncludedNote>
+      <ram:Content>Bank: LBBW Stuttgart IBAN: DE75512108001245126199 BIC / Swift-Code: SOLADEST600</ram:Content>
+      <ram:SubjectCode>REG</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Lieferant GmbH &amp; Co. KG - 98765 Lieferantenstadt - T +49 (0)7891 11-0 - F +49(0)7891 11-1000 - info@lieferant.com - www.lieferant.com Hausanschrift: Lieferanten-Strasse 12-17 - 98765 Lieferantenstadt - Sitz Lieferantenstadt, Amtsgericht Stuttgart HRA 123456 Geschäftsführer: </ram:Content>
+      <ram:SubjectCode>REG</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Wenn nicht anders angegeben entspricht das Leistungsdatum dem Rechnungsdatum.</ram:Content>
+      <ram:SubjectCode>AAI</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Haben Sie Fragen zur Rechnung? Gerne hilft Ihnen Ihr zuständiger Lieferant Verkäufer weiter. Die Lieferung erfolgte zu unseren bekannten Verkaufs- und Lieferbedingungen. Bitte beachten Sie hierzu unsere allgemeinen Geschäftsbedingungen unter www.lieferant.de/agb.</ram:Content>
+      <ram:SubjectCode>AAI</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Zahlungsavis/Aufstellung/Auflistung zur Zahlung bitte an: E-mail: zahlungseingang@lieferant.com oder Fax +49 7891 11-59333</ram:Content>
+      <ram:SubjectCode>PMT</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>ZUGFeRD vers 2.5.0 Extended</ram:Content>
+      <ram:SubjectCode>ACB</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Collective Invoice</ram:Content>
+      <ram:SubjectCode>ACB</ram:SubjectCode>
+    </ram:IncludedNote>
+  </rsm:ExchangedDocument>
+  <rsm:SupplyChainTradeTransaction>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000001</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:GlobalID schemeID="0160">7711231873598</ram:GlobalID>
+        <ram:SellerAssignedID>9999999 25</ram:SellerAssignedID>
+        <ram:Name>GWDSTG-DIN976-A-4.8 M4</ram:Name>
+        <ram:Description>Gewindestange</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:IssuerAssignedID>Abholung 1</ram:IssuerAssignedID>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260827</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:GrossPriceProductTradePrice>
+          <ram:ChargeAmount>2.06</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">1.0000</ram:BasisQuantity>
+        </ram:GrossPriceProductTradePrice>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>2.06</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">1.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="H87">25.00</ram:BilledQuantity>
+        <ram:ShipToTradeParty>
+          <ram:ID>9900880077</ram:ID>
+          <ram:Name>Musterkunde GmbH &amp; Co Name 2 Musterkunde</ram:Name>
+          <ram:PostalTradeAddress>
+            <ram:PostcodeCode>40789</ram:PostcodeCode>
+            <ram:LineOne>Musterstrasse 44</ram:LineOne>
+            <ram:CityName>Musterstadt</ram:CityName>
+            <ram:CountryID>DE</ram:CountryID>
+          </ram:PostalTradeAddress>
+        </ram:ShipToTradeParty>
+        <ram:DeliveryNoteReferencedDocument>
+          <ram:IssuerAssignedID>8408230045</ram:IssuerAssignedID>
+          <ram:LineID>000010</ram:LineID>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260827</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:DeliveryNoteReferencedDocument>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:EndDateTime>
+            <udt:DateTimeString format="102">20260827</udt:DateTimeString>
+          </ram:EndDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>51.50</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+        <ram:AdditionalReferencedDocument>
+          <ram:IssuerAssignedID>2156307416</ram:IssuerAssignedID>
+          <ram:TypeCode>130</ram:TypeCode>
+          <ram:ReferenceTypeCode>VN</ram:ReferenceTypeCode>
+        </ram:AdditionalReferencedDocument>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000002</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:GlobalID schemeID="0160">7748539263943</ram:GlobalID>
+        <ram:SellerAssignedID>88888888888 150</ram:SellerAssignedID>
+        <ram:BuyerAssignedID>KD-MAT POS 1 BT-156</ram:BuyerAssignedID>
+        <ram:Name>MUELLSACK-EXTRASTARK</ram:Name>
+        <ram:Description>Müllsack, -beutel</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:IssuerAssignedID>Abholung 1</ram:IssuerAssignedID>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260827</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:GrossPriceProductTradePrice>
+          <ram:ChargeAmount>49.29</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">100.0000</ram:BasisQuantity>
+        </ram:GrossPriceProductTradePrice>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>49.29</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">100.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="H87">150.00</ram:BilledQuantity>
+        <ram:DeliveryNoteReferencedDocument>
+          <ram:IssuerAssignedID>8408230045</ram:IssuerAssignedID>
+          <ram:LineID>000020</ram:LineID>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260827</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:DeliveryNoteReferencedDocument>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:EndDateTime>
+            <udt:DateTimeString format="102">20260827</udt:DateTimeString>
+          </ram:EndDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>73.94</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+        <ram:AdditionalReferencedDocument>
+          <ram:IssuerAssignedID>2156307416</ram:IssuerAssignedID>
+          <ram:TypeCode>130</ram:TypeCode>
+          <ram:ReferenceTypeCode>VN</ram:ReferenceTypeCode>
+        </ram:AdditionalReferencedDocument>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000003</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:GlobalID schemeID="0160">7738898142591</ram:GlobalID>
+        <ram:SellerAssignedID>77777777777 200</ram:SellerAssignedID>
+        <ram:Name>Schraube spezial 10 x 100</ram:Name>
+        <ram:Description>Schraube Rahmen</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:IssuerAssignedID>Abholung 2</ram:IssuerAssignedID>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260827</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:GrossPriceProductTradePrice>
+          <ram:ChargeAmount>32.76</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">100.0000</ram:BasisQuantity>
+        </ram:GrossPriceProductTradePrice>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>32.76</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">100.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="H87">400.00</ram:BilledQuantity>
+        <ram:ShipToTradeParty>
+          <ram:ID>9900880077</ram:ID>
+          <ram:Name>Musterkunde GmbH &amp; Co Name 2 Musterkunde</ram:Name>
+          <ram:PostalTradeAddress>
+            <ram:PostcodeCode>40789</ram:PostcodeCode>
+            <ram:LineOne>Muster-Chaussee 77</ram:LineOne>
+            <ram:CityName>Musterstadt</ram:CityName>
+            <ram:CountryID>DE</ram:CountryID>
+          </ram:PostalTradeAddress>
+        </ram:ShipToTradeParty>
+        <ram:DeliveryNoteReferencedDocument>
+          <ram:IssuerAssignedID>8408230046</ram:IssuerAssignedID>
+          <ram:LineID>000010</ram:LineID>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260827</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:DeliveryNoteReferencedDocument>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:EndDateTime>
+            <udt:DateTimeString format="102">20260827</udt:DateTimeString>
+          </ram:EndDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>131.04</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+        <ram:AdditionalReferencedDocument>
+          <ram:IssuerAssignedID>2156307417</ram:IssuerAssignedID>
+          <ram:TypeCode>130</ram:TypeCode>
+          <ram:ReferenceTypeCode>VN</ram:ReferenceTypeCode>
+        </ram:AdditionalReferencedDocument>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000004</ram:LineID>
+        <ram:IncludedNote>
+          <ram:Content>Test</ram:Content>
+        </ram:IncludedNote>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:GlobalID schemeID="0160">7711231333337</ram:GlobalID>
+        <ram:SellerAssignedID>6666666 100</ram:SellerAssignedID>
+        <ram:BuyerAssignedID>KD-MAT POS 1 BT-156</ram:BuyerAssignedID>
+        <ram:Name>MUTTER-6KT-DIN934-M6</ram:Name>
+        <ram:Description>Sechskantmutter</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:IssuerAssignedID>Abholung 2</ram:IssuerAssignedID>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260827</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:GrossPriceProductTradePrice>
+          <ram:ChargeAmount>9.16</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">100.0000</ram:BasisQuantity>
+        </ram:GrossPriceProductTradePrice>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>9.16</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">100.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="H87">500.00</ram:BilledQuantity>
+        <ram:DeliveryNoteReferencedDocument>
+          <ram:IssuerAssignedID>8408230046</ram:IssuerAssignedID>
+          <ram:LineID>000020</ram:LineID>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260827</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:DeliveryNoteReferencedDocument>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:EndDateTime>
+            <udt:DateTimeString format="102">20260827</udt:DateTimeString>
+          </ram:EndDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>45.80</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+        <ram:AdditionalReferencedDocument>
+          <ram:IssuerAssignedID>2156307417</ram:IssuerAssignedID>
+          <ram:TypeCode>130</ram:TypeCode>
+          <ram:ReferenceTypeCode>VN</ram:ReferenceTypeCode>
+        </ram:AdditionalReferencedDocument>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000005</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:GlobalID schemeID="0160">7711231333498</ram:GlobalID>
+        <ram:SellerAssignedID>5555555 100</ram:SellerAssignedID>
+        <ram:BuyerAssignedID>KD-MAT POS 2 BT-156</ram:BuyerAssignedID>
+        <ram:Name>MUTTER-6KT-DIN934-M8</ram:Name>
+        <ram:Description>Sechskantmutter</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:IssuerAssignedID>Abholung 2</ram:IssuerAssignedID>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260827</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:GrossPriceProductTradePrice>
+          <ram:ChargeAmount>13.32</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">100.0000</ram:BasisQuantity>
+        </ram:GrossPriceProductTradePrice>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>13.32</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">100.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="H87">500.00</ram:BilledQuantity>
+        <ram:DeliveryNoteReferencedDocument>
+          <ram:IssuerAssignedID>8408230046</ram:IssuerAssignedID>
+          <ram:LineID>000030</ram:LineID>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260827</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:DeliveryNoteReferencedDocument>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:EndDateTime>
+            <udt:DateTimeString format="102">20260827</udt:DateTimeString>
+          </ram:EndDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>66.60</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+        <ram:AdditionalReferencedDocument>
+          <ram:IssuerAssignedID>2156307417</ram:IssuerAssignedID>
+          <ram:TypeCode>130</ram:TypeCode>
+          <ram:ReferenceTypeCode>VN</ram:ReferenceTypeCode>
+        </ram:AdditionalReferencedDocument>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000006</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:GlobalID schemeID="0160">7748539263943</ram:GlobalID>
+        <ram:SellerAssignedID>88888888888 150</ram:SellerAssignedID>
+        <ram:BuyerAssignedID>KD-MAT POS 1 BT-156</ram:BuyerAssignedID>
+        <ram:Name>MUELLSACK-EXTRASTARK</ram:Name>
+        <ram:Description>Müllsack, -beutel</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:IssuerAssignedID>Abholung 3</ram:IssuerAssignedID>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260827</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:GrossPriceProductTradePrice>
+          <ram:ChargeAmount>49.29</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">100.0000</ram:BasisQuantity>
+        </ram:GrossPriceProductTradePrice>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>49.29</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">100.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="H87">300.00</ram:BilledQuantity>
+        <ram:ShipToTradeParty>
+          <ram:ID>9900880077</ram:ID>
+          <ram:Name>Musterkunde GmbH &amp; Co Name 2 Musterkunde</ram:Name>
+          <ram:PostalTradeAddress>
+            <ram:PostcodeCode>40789</ram:PostcodeCode>
+            <ram:LineOne>Musterstrasse 44</ram:LineOne>
+            <ram:CityName>Musterstadt</ram:CityName>
+            <ram:CountryID>DE</ram:CountryID>
+          </ram:PostalTradeAddress>
+        </ram:ShipToTradeParty>
+        <ram:DeliveryNoteReferencedDocument>
+          <ram:IssuerAssignedID>8408230047</ram:IssuerAssignedID>
+          <ram:LineID>000010</ram:LineID>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260827</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:DeliveryNoteReferencedDocument>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:EndDateTime>
+            <udt:DateTimeString format="102">20260827</udt:DateTimeString>
+          </ram:EndDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>147.87</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+        <ram:AdditionalReferencedDocument>
+          <ram:IssuerAssignedID>2156307418</ram:IssuerAssignedID>
+          <ram:TypeCode>130</ram:TypeCode>
+          <ram:ReferenceTypeCode>VN</ram:ReferenceTypeCode>
+        </ram:AdditionalReferencedDocument>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000007</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:GlobalID schemeID="0160">7765233128651</ram:GlobalID>
+        <ram:SellerAssignedID>44444444444 10</ram:SellerAssignedID>
+        <ram:Name>KAFFEE-1KG</ram:Name>
+        <ram:Description>Kaffee</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:IssuerAssignedID>Abholung 3</ram:IssuerAssignedID>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260827</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:GrossPriceProductTradePrice>
+          <ram:ChargeAmount>18.90</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">1.0000</ram:BasisQuantity>
+        </ram:GrossPriceProductTradePrice>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>18.90</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">1.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="H87">2.00</ram:BilledQuantity>
+        <ram:DeliveryNoteReferencedDocument>
+          <ram:IssuerAssignedID>8408230047</ram:IssuerAssignedID>
+          <ram:LineID>000020</ram:LineID>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260827</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:DeliveryNoteReferencedDocument>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>7.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:EndDateTime>
+            <udt:DateTimeString format="102">20260827</udt:DateTimeString>
+          </ram:EndDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>37.80</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+        <ram:AdditionalReferencedDocument>
+          <ram:IssuerAssignedID>2156307418</ram:IssuerAssignedID>
+          <ram:TypeCode>130</ram:TypeCode>
+          <ram:ReferenceTypeCode>VN</ram:ReferenceTypeCode>
+        </ram:AdditionalReferencedDocument>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:ApplicableHeaderTradeAgreement>
+      <ram:BuyerReference>BUYERREFERENCE BT-10</ram:BuyerReference>
+      <ram:SellerTradeParty>
+        <ram:ID>10737</ram:ID>
+        <ram:GlobalID schemeID="0088">0001231000000</ram:GlobalID>
+        <ram:Name>Lieferant GmbH &amp; Co. KG</ram:Name>
+        <ram:DefinedTradeContact>
+          <ram:PersonName>Tim Mustermann</ram:PersonName>
+          <ram:TelephoneUniversalCommunication>
+            <ram:CompleteNumber>0170 66677788</ram:CompleteNumber>
+          </ram:TelephoneUniversalCommunication>
+          <ram:EmailURIUniversalCommunication>
+            <ram:URIID>tim.Mustermann@lieferant.com</ram:URIID>
+          </ram:EmailURIUniversalCommunication>
+        </ram:DefinedTradeContact>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>98765</ram:PostcodeCode>
+          <ram:LineOne>Lieferanten-Strasse.12-17</ram:LineOne>
+          <ram:CityName>Lieferantenstadt</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+        <ram:URIUniversalCommunication>
+          <ram:URIID schemeID="EM">info@lieferant.com</ram:URIID>
+        </ram:URIUniversalCommunication>
+        <ram:SpecifiedTaxRegistration>
+          <ram:ID schemeID="FC">88888/00072</ram:ID>
+        </ram:SpecifiedTaxRegistration>
+        <ram:SpecifiedTaxRegistration>
+          <ram:ID schemeID="VA">DE727081482</ram:ID>
+        </ram:SpecifiedTaxRegistration>
+      </ram:SellerTradeParty>
+      <ram:BuyerTradeParty>
+        <ram:ID>9900880077</ram:ID>
+        <ram:Name>Musterkunde GmbH &amp; Co Name 2 Musterkunde</ram:Name>
+        <ram:DefinedTradeContact>
+          <ram:PersonName>Herr Test Monteur</ram:PersonName>
+          <ram:TelephoneUniversalCommunication>
+            <ram:CompleteNumber>02173 9364</ram:CompleteNumber>
+          </ram:TelephoneUniversalCommunication>
+          <ram:EmailURIUniversalCommunication>
+            <ram:URIID>mike.maier@lieferant.com</ram:URIID>
+          </ram:EmailURIUniversalCommunication>
+        </ram:DefinedTradeContact>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>40789</ram:PostcodeCode>
+          <ram:LineOne>Musterstrasse 44</ram:LineOne>
+          <ram:CityName>Musterstadt</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+        <ram:SpecifiedTaxRegistration>
+          <ram:ID schemeID="VA">DE727081482</ram:ID>
+        </ram:SpecifiedTaxRegistration>
+      </ram:BuyerTradeParty>
+    </ram:ApplicableHeaderTradeAgreement>
+    <ram:ApplicableHeaderTradeDelivery>
+      <ram:ShipToTradeParty>
+        <ram:Name>Musterkunde GmbH &amp; Co Name 2 Musterkunde</ram:Name>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>40789</ram:PostcodeCode>
+          <ram:LineOne>Musterstrasse 44</ram:LineOne>
+          <ram:CityName>Musterstadt</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+        <ram:SpecifiedTaxRegistration>
+          <ram:ID schemeID="VA">DE106008386</ram:ID>
+        </ram:SpecifiedTaxRegistration>
+      </ram:ShipToTradeParty>
+      <ram:ActualDeliverySupplyChainEvent>
+        <ram:OccurrenceDateTime>
+          <udt:DateTimeString format="102">20260827</udt:DateTimeString>
+        </ram:OccurrenceDateTime>
+      </ram:ActualDeliverySupplyChainEvent>
+    </ram:ApplicableHeaderTradeDelivery>
+    <ram:ApplicableHeaderTradeSettlement>
+      <ram:PaymentReference>Kundennummer:. 9900880077 Rechnungsnummer:. 6063636771001</ram:PaymentReference>
+      <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
+      <ram:SpecifiedTradeSettlementPaymentMeans>
+        <ram:TypeCode>58</ram:TypeCode>
+        <ram:Information>Bezahlung per SEPA Überweisung</ram:Information>
+        <ram:PayeePartyCreditorFinancialAccount>
+          <ram:IBANID>DE75512108001245126199</ram:IBANID>
+        </ram:PayeePartyCreditorFinancialAccount>
+        <ram:PayeeSpecifiedCreditorFinancialInstitution>
+          <ram:BICID>SOLADEST600</ram:BICID>
+        </ram:PayeeSpecifiedCreditorFinancialInstitution>
+      </ram:SpecifiedTradeSettlementPaymentMeans>
+      <ram:ApplicableTradeTax>
+        <ram:CalculatedAmount>98.18</ram:CalculatedAmount>
+        <ram:TypeCode>VAT</ram:TypeCode>
+        <ram:BasisAmount>516.75</ram:BasisAmount>
+        <ram:CategoryCode>S</ram:CategoryCode>
+        <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+      </ram:ApplicableTradeTax>
+      <ram:ApplicableTradeTax>
+        <ram:CalculatedAmount>2.65</ram:CalculatedAmount>
+        <ram:TypeCode>VAT</ram:TypeCode>
+        <ram:BasisAmount>37.80</ram:BasisAmount>
+        <ram:CategoryCode>S</ram:CategoryCode>
+        <ram:RateApplicablePercent>7.00</ram:RateApplicablePercent>
+      </ram:ApplicableTradeTax>
+      <ram:SpecifiedTradePaymentTerms>
+        <ram:Description>Bis zum 06.09.2026 erhalten Sie 2,000 % Skonto</ram:Description>
+        <ram:ApplicableTradePaymentDiscountTerms>
+          <ram:BasisDateTime>
+            <udt:DateTimeString format="102">20260827</udt:DateTimeString>
+          </ram:BasisDateTime>
+          <ram:BasisPeriodMeasure unitCode="DAY">10</ram:BasisPeriodMeasure>
+          <ram:BasisAmount>655.38</ram:BasisAmount>
+          <ram:CalculationPercent>2.000</ram:CalculationPercent>
+          <ram:ActualDiscountAmount>13.11</ram:ActualDiscountAmount>
+        </ram:ApplicableTradePaymentDiscountTerms>
+      </ram:SpecifiedTradePaymentTerms>
+      <ram:SpecifiedTradePaymentTerms>
+        <ram:Description>Bis zum 16.09.2026 ohne Abzug</ram:Description>
+        <ram:DueDateDateTime>
+          <udt:DateTimeString format="102">20260916</udt:DateTimeString>
+        </ram:DueDateDateTime>
+      </ram:SpecifiedTradePaymentTerms>
+      <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+        <ram:LineTotalAmount>554.55</ram:LineTotalAmount>
+        <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>
+        <ram:TaxBasisTotalAmount>554.55</ram:TaxBasisTotalAmount>
+        <ram:TaxTotalAmount currencyID="EUR">100.83</ram:TaxTotalAmount>
+        <ram:GrandTotalAmount>655.38</ram:GrandTotalAmount>
+        <ram:DuePayableAmount>655.38</ram:DuePayableAmount>
+      </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+    </ram:ApplicableHeaderTradeSettlement>
+  </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>
