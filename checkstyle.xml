@@ -47,6 +47,11 @@
 		<module name="OneStatementPerLine"/>
 		<module name="StringLiteralEquality"/>
 		<module name="UnnecessaryParentheses"/>
+		<!-- allow parentheses around mixed and/or expressions -->
+		<module name="SuppressionXpathSingleFilter">
+			<property name="checks" value="UnnecessaryParentheses"/>
+			<property name="query" value="//LOR/LPAREN[following-sibling::*[1][self::LAND]] | //LAND/LPAREN[following-sibling::*[1][self::LOR]]"/>
+		</module>
 		<module name="UnnecessarySemicolonAfterOuterTypeDeclaration"/>
 		<module name="UnnecessarySemicolonAfterTypeMemberDeclaration"/>
 		<module name="UnnecessarySemicolonInEnumeration"/>
