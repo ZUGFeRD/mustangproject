@@ -1369,15 +1369,16 @@ public class ZUGFeRDInvoiceImporter {
 					}
 				}
 
-				if (cd.getDays() == null) {
-					NodeList siblingNodes = cashdiscountNodes.item(i).getParentNode().getChildNodes();
-					for (int siblingIndex = 0; siblingIndex < siblingNodes.getLength(); siblingIndex++) {
-						if (siblingNodes.item(siblingIndex).getLocalName() != null && siblingNodes.item(siblingIndex).getLocalName().equals("DueDateDateTime")) {
-							NodeList dueDateChilds = siblingNodes.item(siblingIndex).getChildNodes();
-							for (int dueDateChildIndex = 0; dueDateChildIndex < dueDateChilds.getLength(); dueDateChildIndex++) {
-								if (dueDateChilds.item(dueDateChildIndex).getLocalName() != null && dueDateChilds.item(dueDateChildIndex).getLocalName().equals("DateTimeString")) {
-									String dueDateString = XMLTools.trimOrNull(dueDateChilds.item(dueDateChildIndex));
-									dueDate = parseDate(dueDateString, "yyyyMMdd");
+				NodeList siblingNodes = cashdiscountNodes.item(i).getParentNode().getChildNodes();
+				for (int siblingIndex = 0; siblingIndex < siblingNodes.getLength(); siblingIndex++) {
+					if (siblingNodes.item(siblingIndex).getLocalName() != null && siblingNodes.item(siblingIndex).getLocalName().equals("DueDateDateTime")) {
+						NodeList dueDateChilds = siblingNodes.item(siblingIndex).getChildNodes();
+						for (int dueDateChildIndex = 0; dueDateChildIndex < dueDateChilds.getLength(); dueDateChildIndex++) {
+							if (dueDateChilds.item(dueDateChildIndex).getLocalName() != null && dueDateChilds.item(dueDateChildIndex).getLocalName().equals("DateTimeString")) {
+								String dueDateString = XMLTools.trimOrNull(dueDateChilds.item(dueDateChildIndex));
+								dueDate = parseDate(dueDateString, "yyyyMMdd");
+								cd.setDueDate(dueDate);
+								if (cd.getDays() == null) {
 									long diffInMillies = Math.abs(dueDate.getTime() - zpp.getIssueDate().getTime());
 									long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 									cd.setDays((int) diffInDays);

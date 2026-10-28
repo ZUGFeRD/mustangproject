@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -212,6 +213,14 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("sender@test.org", invoice.getSender().getEmail());
 		assertEquals("recipient@test.org", invoice.getRecipient().getEmail());
 		assertEquals("28934", invoice.getBuyerOrderReferencedDocument().getIssuerAssignedID());
+
+		assertEquals(1, invoice.getCashDiscounts().length);
+		assertNotNull(invoice.getCashDiscounts()[0].getDueDate());
+		assertNotNull(invoice.getCashDiscounts()[0].getBasisDateTime());
+		assertNotNull(invoice.getCashDiscounts()[0].getDays());
+		assertNotNull(invoice.getCashDiscounts()[0].getBasisAmount());
+		assertNotNull(invoice.getCashDiscounts()[0].getPercent());
+		assertNotNull(invoice.getCashDiscounts()[0].getActualAmount());
 	}
 
 
