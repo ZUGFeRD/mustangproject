@@ -201,6 +201,21 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		return getExporter().setProducer(producer);
 	}
 
+	@Override
+	public IZUGFeRDExporter setTitle(String title) {
+		return getExporter().setTitle(title);
+	}
+
+	@Override
+	public IZUGFeRDExporter setSubject(String subject) {
+		return getExporter().setSubject(subject);
+	}
+
+	@Override
+	public IZUGFeRDExporter setKeywords(String keywords) {
+		return getExporter().setKeywords(keywords);
+	}
+
 	public IZUGFeRDExporter setZUGFeRDVersion(int version) {
 
 		return getExporter().setZUGFeRDVersion(version);

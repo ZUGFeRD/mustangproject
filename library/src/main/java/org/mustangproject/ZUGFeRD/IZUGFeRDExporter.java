@@ -71,6 +71,9 @@ public interface IZUGFeRDExporter extends Closeable, IExporter {
 	 * @return fluent setter
 	 */
 	IZUGFeRDExporter setProducer(String producer);
+	IZUGFeRDExporter setTitle(String title);
+	IZUGFeRDExporter setSubject(String subject);
+	IZUGFeRDExporter setKeywords(String keywords);
 	IZUGFeRDExporter setZUGFeRDVersion(int version);
 	boolean ensurePDFIsValid(DataSource dataSource) throws IOException;
 

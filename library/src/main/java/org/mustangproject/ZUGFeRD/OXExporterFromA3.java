@@ -399,6 +399,21 @@ public class OXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		return this;
 	}
 
+	@Override
+	public OXExporterFromA3 setTitle(String title) {
+		return (OXExporterFromA3) super.setTitle(title);
+	}
+
+	@Override
+	public OXExporterFromA3 setSubject(String subject) {
+		return (OXExporterFromA3) super.setSubject(subject);
+	}
+
+	@Override
+	public OXExporterFromA3 setKeywords(String keywords) {
+		return (OXExporterFromA3) super.setKeywords(keywords);
+	}
+
 	/**
 	 * Sets the property orderXDocumentType.
 	 *
