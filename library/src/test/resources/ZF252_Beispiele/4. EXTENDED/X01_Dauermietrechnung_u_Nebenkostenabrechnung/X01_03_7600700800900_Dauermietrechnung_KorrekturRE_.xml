@@ -1,0 +1,283 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--English disclaimer below.-->
+<!--
+Nutzungsrechte 
+ZUGFeRD Datenformat Version 2.5.0, 30.06.2026
+Beispiel Version 30.06.2026
+ 
+Zweck des Forums elektronische Rechnung Deutschland FeRD, welches am 31. März 2010 unter der Arbeitsgemeinschaft für 
+wirtschaftliche Verwaltung e. V. gegründet wurde, ist u. a. die Schaffung und Spezifizierung eines offenen Datenformats 
+für strukturierten elektronischen Datenaustausch auf der Grundlage offener und nicht diskriminierender, standardisierter 
+Technologien („ZUGFeRD Datenformat“).
+ 
+Das ZUGFeRD Datenformat wird nach Maßgabe des FeRD sowohl Unternehmen als auch der öffentlichen Verwaltung 
+frei zugänglich gemacht. Hierfür bietet FeRD allen Unternehmen und Organisationen der öffentlichen Verwaltung eine 
+Lizenz für die Nutzung des urheberrechtlich geschützten ZUGFeRD-Datenformats zu fairen, sachgerechten und nicht 
+diskriminierenden Bedingungen an.
+ 
+Die Spezifikation des FeRD zur Implementierung des ZUGFeRD Datenformats ist in ihrer jeweils geltenden Fassung 
+abrufbar unter www.ferd-net.de.
+ 
+Im Einzelnen schließt die Nutzungsgewährung ein: 
+================================================
+ 
+FeRD räumt eine Lizenz für die Nutzung des urheberrechtlich geschützten ZUGFeRD Datenformats in der jeweils 
+geltenden und akzeptierten Fassung (www.ferd-net.de) ein. 
+Die Lizenz beinhaltet ein unwiderrufliches Nutzungsrecht einschließlich des Rechts der Weiterentwicklung, 
+Weiterbearbeitung und Verbindung mit anderen Produkten.
+Die Lizenz gilt insbesondere für die Entwicklung, die Gestaltung, die Herstellung, den Verkauf, die Nutzung oder 
+anderweitige Verwendung des ZUGFeRD Datenformats für Hardware- und/oder Softwareprodukte sowie sonstige 
+Anwendungen und Dienste. 
+Diese Lizenz schließt nicht die wesentlichen Patente der Mitglieder von FeRD ein. Als wesentliche Patente sind Patente 
+und Patentanmeldungen weltweit zu verstehen, die einen oder mehrere Patentansprüche beinhalten, bei denen es sich um 
+notwendige Ansprüche handelt. Notwendige Ansprüche sind lediglich jene Ansprüche der Wesentlichen Patente, die durch 
+die Implementierung des ZUGFeRD Datenformats notwendigerweise verletzt würden. 
+Der Lizenznehmer ist berechtigt, seinen jeweiligen Konzerngesellschaften ein unbefristetes, weltweites, nicht übertragbares, 
+unwiderrufliches Nutzungsrecht einschließlich des Rechts der Weiterentwicklung, Weiterbearbeitung und Verbindung mit 
+anderen Produkten einzuräumen. 
+ 
+Die Lizenz wird kostenfrei zur Verfügung gestellt. 
+ 
+Außer im Falle vorsätzlichen Verschuldens oder grober Fahrlässigkeit haftet FeRD weder für Nutzungsausfall, entgangenen 
+Gewinn, Datenverlust, Kommunikationsverlust, Einnahmeausfall, Vertragseinbußen, Geschäftsausfall oder für Kosten, 
+Schäden, Verluste oder Haftpflichten im Zusammenhang mit einer Unterbrechung der Geschäftstätigkeit, noch für konkrete, 
+beiläufig entstandene, mittelbare Schäden, Straf- oder Folgeschäden und zwar auch dann nicht, wenn die Möglichkeit der 
+Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können.
+-->
+<!--
+Right of use 
+ZUGFeRD Data format version 2.5.0, June 30th, 2026
+ 
+The purpose of the Forum elektronische Rechnung Deutschland (FeRD), which was founded on March 31, 2010 under the 
+umbrella of Arbeitsgemeinschaft für wirtschaftliche Verwaltung e. V., is, among other things, to create and specify an 
+open data format for structured electronic data exchange on the basis of open and non discriminatory, standardised 
+technologies ("ZUGFeRD data format").
+ 
+The ZUGFeRD data format is used by both companies and public administration according to the FeRD 
+made freely accessible. For this purpose FeRD offers all companies and organisations of the public administration a 
+License to use the copyrighted ZUGFeRD data format in a fair, appropriate and non 
+discriminatory conditions.
+ 
+The specification of the FeRD for the implementation of the ZUGFeRD data format is, in its currently valid version 
+available at www.ferd-net.de.
+ 
+In detail, the grant of use includes 
+=====================================
+ 
+FeRD grants a license for the use of the copyrighted ZUGFeRD data format in the respective 
+valid and accepted version (www.ferd-net.de). 
+The license includes an irrevocable right of use including the right of further development, 
+Further processing and connection with other products.
+The license applies in particular to the development, design, production, sale, use or 
+other use of the ZUGFeRD data format for hardware and/or software products and other 
+applications and services. 
+This license does not include the essential patents of the members of FeRD. The essential patents are patents 
+and patent applications worldwide which contain one or more claims that are 
+necessary claims. Necessary claims are only those claims of the essential patents which are 
+the implementation of the ZUGFeRD data format would necessarily be violated. 
+The Licensee is entitled to provide its respective group companies with an unlimited, worldwide, non-transferable, 
+irrevocable right of use including the right of further development, further processing and connection with 
+other products. 
+ 
+The license is provided free of charge. 
+ 
+Except in the case of intentional fault or gross negligence, FeRD is not liable for loss of use, loss of 
+Profit, loss of data, loss of communication, loss of revenue, loss of contracts, loss of business or for costs 
+damages, losses or liabilities in connection with an interruption of business, nor for concrete, 
+incidental, indirect, punitive or consequential damages, even if the possibility of 
+costs, losses or damages could normally have been foreseen.
+-->
+<rsm:CrossIndustryInvoice xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <rsm:ExchangedDocumentContext>
+    <ram:GuidelineSpecifiedDocumentContextParameter>
+      <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended</ram:ID>
+    </ram:GuidelineSpecifiedDocumentContextParameter>
+  </rsm:ExchangedDocumentContext>
+  <rsm:ExchangedDocument>
+    <ram:ID>7600700800900</ram:ID>
+    <ram:Name>DAUER_MIETRECHNUNG Erstattung VPI</ram:Name>
+    <ram:TypeCode>384</ram:TypeCode>
+    <ram:IssueDateTime>
+      <udt:DateTimeString format="102">20270601</udt:DateTimeString>
+    </ram:IssueDateTime>
+    <ram:IncludedNote>
+      <ram:Content>Bank: Musterbank IBAN: DE89 3704 0044 0532 0130 00 BIC / Swift-Code: COBADEFFXXX</ram:Content>
+      <ram:SubjectCode>REG</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Wohnungsvermieter GmbH Geschäftsführer: Michael Mustermann </ram:Content>
+      <ram:SubjectCode>REG</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Dieser Rechnung  werden Details zur VPI-Anpassung als rechnungsbegründende Unterlage beigefügt! </ram:Content>
+      <ram:SubjectCode>AAI</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Wenn nicht anders angegeben entspricht das Leistungsdatum dem Rechnungsdatum.</ram:Content>
+      <ram:SubjectCode>AAI</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>ZUGFeRD vers 2.5.0 Extended</ram:Content>
+      <ram:SubjectCode>ACB</ram:SubjectCode>
+    </ram:IncludedNote>
+  </rsm:ExchangedDocument>
+  <rsm:SupplyChainTradeTransaction>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000001</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:Name>Erstattung Nettomiete</ram:Name>
+        <ram:Description>Erstattung Nettomiete Büro Nr. 123 - 100 m²</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260301</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>25.00</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="MON">1.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="MON">-2.00</ram:BilledQuantity>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:StartDateTime>
+            <udt:DateTimeString format="102">20270401</udt:DateTimeString>
+          </ram:StartDateTime>
+          <ram:EndDateTime>
+            <udt:DateTimeString format="102">20270530</udt:DateTimeString>
+          </ram:EndDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>-50.00</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:ApplicableHeaderTradeAgreement>
+      <ram:BuyerReference>Käuferreferenz</ram:BuyerReference>
+      <ram:SellerTradeParty>
+        <ram:GlobalID schemeID="0088">4000000000000</ram:GlobalID>
+        <ram:Name>Wohnungsvermieter GmbH</ram:Name>
+        <ram:DefinedTradeContact>
+          <ram:PersonName>Otto Vermieter</ram:PersonName>
+          <ram:TelephoneUniversalCommunication>
+            <ram:CompleteNumber>0160 123456789</ram:CompleteNumber>
+          </ram:TelephoneUniversalCommunication>
+          <ram:EmailURIUniversalCommunication>
+            <ram:URIID>o.vermieter@wohnung.de</ram:URIID>
+          </ram:EmailURIUniversalCommunication>
+        </ram:DefinedTradeContact>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>12345</ram:PostcodeCode>
+          <ram:LineOne>Vermieterstrasse 11</ram:LineOne>
+          <ram:CityName>Musterstadt</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+        <ram:URIUniversalCommunication>
+          <ram:URIID schemeID="0088">info@vermieter.com</ram:URIID>
+        </ram:URIUniversalCommunication>
+        <ram:SpecifiedTaxRegistration>
+          <ram:ID schemeID="FC">70000/09999</ram:ID>
+        </ram:SpecifiedTaxRegistration>
+        <ram:SpecifiedTaxRegistration>
+          <ram:ID schemeID="VA">DE106008386</ram:ID>
+        </ram:SpecifiedTaxRegistration>
+      </ram:SellerTradeParty>
+      <ram:BuyerTradeParty>
+        <ram:ID>0000999999</ram:ID>
+        <ram:Name>Max u Monica Mieter GbR</ram:Name>
+        <ram:DefinedTradeContact>
+          <ram:PersonName>Max u Monica Mieter</ram:PersonName>
+        </ram:DefinedTradeContact>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>12346</ram:PostcodeCode>
+          <ram:LineOne>Mieterstrasse 5</ram:LineOne>
+          <ram:LineTwo>2. OG</ram:LineTwo>
+          <ram:CityName>Musterstadt</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+      </ram:BuyerTradeParty>
+      <ram:SellerOrderReferencedDocument>
+        <ram:IssuerAssignedID>2159999999</ram:IssuerAssignedID>
+        <ram:FormattedIssueDateTime>
+          <qdt:DateTimeString format="102">20260301</qdt:DateTimeString>
+        </ram:FormattedIssueDateTime>
+      </ram:SellerOrderReferencedDocument>
+      <ram:ContractReferencedDocument>
+        <ram:IssuerAssignedID>Vertragsnr. 0815-123456789</ram:IssuerAssignedID>
+      </ram:ContractReferencedDocument>
+      <ram:AdditionalReferencedDocument>
+        <ram:IssuerAssignedID>0815-123456789</ram:IssuerAssignedID>
+        <ram:TypeCode>916</ram:TypeCode>
+        <ram:Name>Details VPI Anpassung</ram:Name>
+        <ram:AttachmentBinaryObject mimeCode="application/pdf" filename="VIP_2026.pdf">JVBERi0xLjcNCiW1tbW1DQoxIDAgb2JqDQo8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFIvTGFuZyhkZSkgL1N0cnVjdFRyZWVSb290IDE1IDAgUi9NYXJrSW5mbzw8L01hcmtlZCB0cnVlPj4vTWV0YWRhdGEgMzEgMCBSL1ZpZXdlclByZWZlcmVuY2VzIDMyIDAgUj4+DQplbmRvYmoNCjIgMCBvYmoNCjw8L1R5cGUvUGFnZXMvQ291bnQgMS9LaWRzWyAzIDAgUl0gPj4NCmVuZG9iag0KMyAwIG9iag0KPDwvVHlwZS9QYWdlL1BhcmVudCAyIDAgUi9SZXNvdXJjZXM8PC9Gb250PDwvRjEgNSAwIFIvRjIgOSAwIFI+Pi9FeHRHU3RhdGU8PC9HUzcgNyAwIFIvR1M4IDggMCBSPj4vUHJvY1NldFsvUERGL1RleHQvSW1hZ2VCL0ltYWdlQy9JbWFnZUldID4+L01lZGlhQm94WyAwIDAgNTk1LjMyIDg0MS45Ml0gL0NvbnRlbnRzIDQgMCBSL0dyb3VwPDwvVHlwZS9Hcm91cC9TL1RyYW5zcGFyZW5jeS9DUy9EZXZpY2VSR0I+Pi9UYWJzL1MvU3RydWN0UGFyZW50cyAwPj4NCmVuZG9iag0KNCAwIG9iag0KPDwvRmlsdGVyL0ZsYXRlRGVjb2RlL0xlbmd0aCA0NDc+Pg0Kc3RyZWFtDQp4nLWUTWvjMBCG7wb/hzm2C1ZGoxlJBmOonaR02R5KA3tY9lDYNqeGfvx/WMmSk5Q6S7tNDMLWaDx6Ne9jw+z26W4DTTO77q/mgLMfd5s1nP25r+aL87aFbt7Dc1mgwnh57zQgSC3KEHjWqiZ4uS+Ln99gUxbdqixmSw2aYPVQFjEVQYMjhcTgxCr2sHoMSZe3DtavoS6sh5nPs8uy+HUG579h9b0sFqHcTVnA4roHeKtTH0EnATlV20mp2iiyg9RBYRLWIJIgsg+jRxQbhmkrbtJ8iC/DcCFO4b5oKwlrEuKCbUVNyhEdhmvfnPHTLX4vncQpcQekf6SndBTvD/bUWlZM/yPMnNZsq0W5Ca8NZu/s4FdlRv8CAz54yDLO01rM4z7nxecuxwMPsVisF9e3HIQ4c6ojI1fDe5kRn3LjM1/EGl9i5h8dEMeqnugABiXUZwUuq+72aO7Hk+xOdQKVhEYZc1BlR8f/lnStqJ7e8SPE8mmJFbIKzRSy9Q7RLVacMGabTep2OWL20Mto7mO8Mz795qL5kWNN6b6Fo861l3k/t1eDMs521JP3yUBhf3T72Ev8B063adK/v3ImYs8NCmVuZHN0cmVhbQ0KZW5kb2JqDQo1IDAgb2JqDQo8PC9UeXBlL0ZvbnQvU3VidHlwZS9UcnVlVHlwZS9OYW1lL0YxL0Jhc2VGb250L0JDREVFRStXdWVydGgtQm9vay9FbmNvZGluZy9XaW5BbnNpRW5jb2RpbmcvRm9udERlc2NyaXB0b3IgNiAwIFIvRmlyc3RDaGFyIDMyL0xhc3RDaGFyIDMyL1dpZHRocyAzMCAwIFI+Pg0KZW5kb2JqDQo2IDAgb2JqDQo8PC9UeXBlL0ZvbnREZXNjcmlwdG9yL0ZvbnROYW1lL0JDREVFRStXdWVydGgtQm9vay9GbGFncyAzMi9JdGFsaWNBbmdsZSAwL0FzY2VudCA5NjYvRGVzY2VudCAtMjM0L0NhcEhlaWdodCA3NjYvQXZnV2lkdGggMzc5L01heFdpZHRoIDEzMzUvRm9udFdlaWdodCAzMDAvWEhlaWdodCAyNTAvTGVhZGluZyAyMjAvU3RlbVYgMzcvRm9udEJCb3hbIC0xNDggLTIzNCAxMTg3IDc2Nl0gL0ZvbnRGaWxlMiAyOCAwIFI+Pg0KZW5kb2JqDQo3IDAgb2JqDQo8PC9UeXBlL0V4dEdTdGF0ZS9CTS9Ob3JtYWwvY2EgMT4+DQplbmRvYmoNCjggMCBvYmoNCjw8L1R5cGUvRXh0R1N0YXRlL0JNL05vcm1hbC9DQSAxPj4NCmVuZG9iag0KOSAwIG9iag0KPDwvVHlwZS9Gb250L1N1YnR5cGUvVHlwZTAvQmFzZUZvbnQvQkNERkVFK1d1ZXJ0aC1Cb29rL0VuY29kaW5nL0lkZW50aXR5LUgvRGVzY2VuZGFudEZvbnRzIDEwIDAgUi9Ub1VuaWNvZGUgMjcgMCBSPj4NCmVuZG9iag0KMTAgMCBvYmoNClsgMTEgMCBSXSANCmVuZG9iag0KMTEgMCBvYmoNCjw8L0Jhc2VGb250L0JDREZFRStXdWVydGgtQm9vay9TdWJ0eXBlL0NJREZvbnRUeXBlMi9UeXBlL0ZvbnQvQ0lEVG9HSURNYXAv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cmcvZGMvZWxlbWVudHMvMS4xLyI+CjxkYzpjcmVhdG9yPjxyZGY6U2VxPjxyZGY6bGk+SG9mZm1hbm4sIE1pa2U8L3JkZjpsaT48L3JkZjpTZXE+PC9kYzpjcmVhdG9yPjwvcmRmOkRlc2NyaXB0aW9uPgo8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIj4KPHhtcDpDcmVhdG9yVG9vbD5NaWNyb3NvZnTCriBXb3JkIGbDvHIgTWljcm9zb2Z0IDM2NTwveG1wOkNyZWF0b3JUb29sPjx4bXA6Q3JlYXRlRGF0ZT4yMDI2LTAzLTA5VDA4OjE5OjM5KzAxOjAwPC94bXA6Q3JlYXRlRGF0ZT48eG1wOk1vZGlmeURhdGU+MjAyNi0wMy0wOVQwODoxOTozOSswMTowMDwveG1wOk1vZGlmeURhdGU+PC9yZGY6RGVzY3JpcHRpb24+CjxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiICB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyI+Cjx4bXBNTTpEb2N1bWVudElEPnV1aWQ6OTBGNTU3MzYtRjcxQy00MzhELTgyQUEtNDY4ODIzOTlDNzhGPC94bXBNTTpEb2N1bWVudElEPjx4bXBNTTpJbnN0YW5jZUlEPnV1aWQ6OTBGNTU3MzYtRjcxQy00MzhELTgyQUEtNDY4ODIzOTlDNzhGPC94bXBNTTpJbnN0YW5jZUlEPjwvcmRmOkRlc2NyaXB0aW9uPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKPC9yZGY6UkRGPjwveDp4bXBtZXRhPjw/eHBhY2tldCBlbmQ9InciPz4NCmVuZHN0cmVhbQ0KZW5kb2JqDQozMiAwIG9iag0KPDwvRGlzcGxheURvY1RpdGxlIHRydWU+Pg0KZW5kb2JqDQozMyAwIG9iag0KPDwvVHlwZS9YUmVmL1NpemUgMzMvV1sgMSA0IDJdIC9Sb290IDEgMCBSL0luZm8gMTQgMCBSL0lEWzwzNjU3RjU5MDFDRjc4RDQzODJBQTQ2ODgyMzk5Qzc4Rj48MzY1N0Y1OTAxQ0Y3OEQ0MzgyQUE0Njg4MjM5OUM3OEY+XSAvRmlsdGVyL0ZsYXRlRGVjb2RlL0xlbmd0aCAxMTk+Pg0Kc3RyZWFtDQp4nDXNsQ2DQAwFUN9xwBGEojRpgBVgABZhp/QMAIIJUmUUqFghLQWY/8GFnyx92yJa+260v0ROBrIA8wfBBtwEwpHMIHqSjnxB3JIeeMXqzbdEJCaeJCQkV/Khe8nvngyxJCBOI+kHH7ICVDmoLSlBs4ocowYPhw0KZW5kc3RyZWFtDQplbmRvYmoNCnhyZWYNCjAgMzQNCjAwMDAwMDAwMTUgNjU1MzUgZg0KMDAwMDAwMDAxNyAwMDAwMCBuDQowMDAwMDAwMTYzIDAwMDAwIG4NCjAwMDAwMDAyMTkgMDAwMDAgbg0KMDAwMDAwMDQ5OCAwMDAwMCBuDQowMDAwMDAxMDE5IDAwMDAwIG4NCjAwMDAwMDExOTAgMDAwMDAgbg0KMDAwMDAwMTQ0NSAwMDAwMCBuDQowMDAwMDAxNDk4IDAwMDAwIG4NCjAwMDAwMDE1NTEgMDAwMDAgbg0KMDAwMDAwMTY4NiAwMDAwMCBuDQowMDAwMDAxNzE2IDAwMDAwIG4NCjAwMDAwMDE4ODAgMDAwMDAgbg0KMDAwMDAwMTk1NCAwMDAwMCBuDQowMDAwMDAyMjEwIDAwMDAwIG4NCjAwMDAwMDAwMTYgNjU1MzUgZg0KMDAwMDAwMDAxNyA2NTUzNSBmDQowMDAwMDAwMDE4IDY1NTM1IGYNCjAwMDAwMDAwMTkgNjU1MzUgZg0KMDAwMDAwMDAyMCA2NTUzNSBmDQowMDAwMDAwMDIxIDY1NTM1IGYNCjAwMDAwMDAwMjIgNjU1MzUgZg0KMDAwMDAwMDAyMyA2NTUzNSBmDQowMDAwMDAwMDI0IDY1NTM1IGYNCjAwMDAwMDAwMjUgNjU1MzUgZg0KMDAwMDAwMDAyNiA2NTUzNSBmDQowMDAwMDAwMDAwIDY1NTM1IGYNCjAwMDAwMDI5NTUgMDAwMDAgbg0KMDAwMDAwMzM1NiAwMDAwMCBuDQowMDAwMDExODAzIDAwMDAwIG4NCjAwMDAwMTIwMzQgMDAwMDAgbg0KMDAwMDAxMjA2MSAwMDAwMCBuDQowMDAwMDE1MzI5IDAwMDAwIG4NCjAwMDAwMTUzNzQgMDAwMDAgbg0KdHJhaWxlcg0KPDwvU2l6ZSAzNC9Sb290IDEgMCBSL0luZm8gMTQgMCBSL0lEWzwzNjU3RjU5MDFDRjc4RDQzODJBQTQ2ODgyMzk5Qzc4Rj48MzY1N0Y1OTAxQ0Y3OEQ0MzgyQUE0Njg4MjM5OUM3OEY+XSA+Pg0Kc3RhcnR4cmVmDQoxNTY5NA0KJSVFT0YNCnhyZWYNCjAgMA0KdHJhaWxlcg0KPDwvU2l6ZSAzNC9Sb290IDEgMCBSL0luZm8gMTQgMCBSL0lEWzwzNjU3RjU5MDFDRjc4RDQzODJBQTQ2ODgyMzk5Qzc4Rj48MzY1N0Y1OTAxQ0Y3OEQ0MzgyQUE0Njg4MjM5OUM3OEY+XSAvUHJldiAxNTY5NC9YUmVmU3RtIDE1Mzc0Pj4NCnN0YXJ0eHJlZg0KMTY1MzENCiUlRU9G</ram:AttachmentBinaryObject>
+      </ram:AdditionalReferencedDocument>
+    </ram:ApplicableHeaderTradeAgreement>
+    <ram:ApplicableHeaderTradeDelivery>
+      <ram:ShipToTradeParty>
+        <ram:Name>Max u Monica Mieter GbR</ram:Name>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>12346</ram:PostcodeCode>
+          <ram:LineOne>Mieterstrasse 5</ram:LineOne>
+          <ram:LineTwo>2. OG</ram:LineTwo>
+          <ram:CityName>Musterstadt</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+      </ram:ShipToTradeParty>
+    </ram:ApplicableHeaderTradeDelivery>
+    <ram:ApplicableHeaderTradeSettlement>
+      <ram:CreditorReferenceID>DE78ZZZ00000099999</ram:CreditorReferenceID>
+      <ram:PaymentReference>Miete Max u Monica Mieter</ram:PaymentReference>
+      <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
+      <ram:SpecifiedTradeSettlementPaymentMeans>
+        <ram:TypeCode>59</ram:TypeCode>
+        <ram:Information>Bezahlung per SEPA-Lastschrift *** Den Rechnungsbetrag ziehen wir mit der SEPA-Lastschrift von Ihrem Konto frühestens zum Fälligkeitstag ein.</ram:Information>
+        <ram:PayerPartyDebtorFinancialAccount>
+          <ram:IBANID>DE75512108001245126199</ram:IBANID>
+        </ram:PayerPartyDebtorFinancialAccount>
+        <ram:PayeePartyCreditorFinancialAccount>
+          <ram:IBANID>DE89370400440532013000</ram:IBANID>
+        </ram:PayeePartyCreditorFinancialAccount>
+        <ram:PayeeSpecifiedCreditorFinancialInstitution>
+          <ram:BICID>COBADEFFXXX</ram:BICID>
+        </ram:PayeeSpecifiedCreditorFinancialInstitution>
+      </ram:SpecifiedTradeSettlementPaymentMeans>
+      <ram:ApplicableTradeTax>
+        <ram:CalculatedAmount>-9.50</ram:CalculatedAmount>
+        <ram:TypeCode>VAT</ram:TypeCode>
+        <ram:BasisAmount>-50.00</ram:BasisAmount>
+        <ram:CategoryCode>S</ram:CategoryCode>
+        <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+      </ram:ApplicableTradeTax>
+      <ram:SpecifiedTradePaymentTerms>
+        <ram:Description>SEPA-Lastschrift Der Betrag wird Ihnen zum 01.06.2027 erstattet</ram:Description>
+        <ram:DueDateDateTime>
+          <udt:DateTimeString format="102">20270601</udt:DateTimeString>
+        </ram:DueDateDateTime>
+        <ram:DirectDebitMandateID>Miete Max u Monica Mieter GbR</ram:DirectDebitMandateID>
+      </ram:SpecifiedTradePaymentTerms>
+      <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+        <ram:LineTotalAmount>-50.00</ram:LineTotalAmount>
+        <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>
+        <ram:TaxBasisTotalAmount>-50.00</ram:TaxBasisTotalAmount>
+        <ram:TaxTotalAmount currencyID="EUR">-9.50</ram:TaxTotalAmount>
+        <ram:GrandTotalAmount>-59.50</ram:GrandTotalAmount>
+        <ram:DuePayableAmount>-59.50</ram:DuePayableAmount>
+      </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+      <ram:InvoiceReferencedDocument>
+        <ram:IssuerAssignedID>600700800900</ram:IssuerAssignedID>
+      </ram:InvoiceReferencedDocument>
+    </ram:ApplicableHeaderTradeSettlement>
+  </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>

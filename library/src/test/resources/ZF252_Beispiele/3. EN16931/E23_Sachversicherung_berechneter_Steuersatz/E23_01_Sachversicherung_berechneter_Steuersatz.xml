@@ -1,0 +1,227 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--English disclaimer below.-->
+<!--
+Nutzungsrechte 
+ZUGFeRD Datenformat Version 2.5.0, 30.06.2026
+Beispiel Version 30.06.2026
+ 
+Zweck des Forums elektronische Rechnung Deutschland FeRD, welches am 31. März 2010 unter der Arbeitsgemeinschaft für 
+wirtschaftliche Verwaltung e. V. gegründet wurde, ist u. a. die Schaffung und Spezifizierung eines offenen Datenformats 
+für strukturierten elektronischen Datenaustausch auf der Grundlage offener und nicht diskriminierender, standardisierter 
+Technologien („ZUGFeRD Datenformat“).
+ 
+Das ZUGFeRD Datenformat wird nach Maßgabe des FeRD sowohl Unternehmen als auch der öffentlichen Verwaltung 
+frei zugänglich gemacht. Hierfür bietet FeRD allen Unternehmen und Organisationen der öffentlichen Verwaltung eine 
+Lizenz für die Nutzung des urheberrechtlich geschützten ZUGFeRD-Datenformats zu fairen, sachgerechten und nicht 
+diskriminierenden Bedingungen an.
+ 
+Die Spezifikation des FeRD zur Implementierung des ZUGFeRD Datenformats ist in ihrer jeweils geltenden Fassung 
+abrufbar unter www.ferd-net.de.
+ 
+Im Einzelnen schließt die Nutzungsgewährung ein: 
+================================================
+ 
+FeRD räumt eine Lizenz für die Nutzung des urheberrechtlich geschützten ZUGFeRD Datenformats in der jeweils 
+geltenden und akzeptierten Fassung (www.ferd-net.de) ein. 
+Die Lizenz beinhaltet ein unwiderrufliches Nutzungsrecht einschließlich des Rechts der Weiterentwicklung, 
+Weiterbearbeitung und Verbindung mit anderen Produkten.
+Die Lizenz gilt insbesondere für die Entwicklung, die Gestaltung, die Herstellung, den Verkauf, die Nutzung oder 
+anderweitige Verwendung des ZUGFeRD Datenformats für Hardware- und/oder Softwareprodukte sowie sonstige 
+Anwendungen und Dienste. 
+Diese Lizenz schließt nicht die wesentlichen Patente der Mitglieder von FeRD ein. Als wesentliche Patente sind Patente 
+und Patentanmeldungen weltweit zu verstehen, die einen oder mehrere Patentansprüche beinhalten, bei denen es sich um 
+notwendige Ansprüche handelt. Notwendige Ansprüche sind lediglich jene Ansprüche der Wesentlichen Patente, die durch 
+die Implementierung des ZUGFeRD Datenformats notwendigerweise verletzt würden. 
+Der Lizenznehmer ist berechtigt, seinen jeweiligen Konzerngesellschaften ein unbefristetes, weltweites, nicht übertragbares, 
+unwiderrufliches Nutzungsrecht einschließlich des Rechts der Weiterentwicklung, Weiterbearbeitung und Verbindung mit 
+anderen Produkten einzuräumen. 
+ 
+Die Lizenz wird kostenfrei zur Verfügung gestellt. 
+ 
+Außer im Falle vorsätzlichen Verschuldens oder grober Fahrlässigkeit haftet FeRD weder für Nutzungsausfall, entgangenen 
+Gewinn, Datenverlust, Kommunikationsverlust, Einnahmeausfall, Vertragseinbußen, Geschäftsausfall oder für Kosten, 
+Schäden, Verluste oder Haftpflichten im Zusammenhang mit einer Unterbrechung der Geschäftstätigkeit, noch für konkrete, 
+beiläufig entstandene, mittelbare Schäden, Straf- oder Folgeschäden und zwar auch dann nicht, wenn die Möglichkeit der 
+Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können.
+-->
+<!--
+Right of use 
+ZUGFeRD Data format version 2.5.0, June 30th, 2026
+ 
+The purpose of the Forum elektronische Rechnung Deutschland (FeRD), which was founded on March 31, 2010 under the 
+umbrella of Arbeitsgemeinschaft für wirtschaftliche Verwaltung e. V., is, among other things, to create and specify an 
+open data format for structured electronic data exchange on the basis of open and non discriminatory, standardised 
+technologies ("ZUGFeRD data format").
+ 
+The ZUGFeRD data format is used by both companies and public administration according to the FeRD 
+made freely accessible. For this purpose FeRD offers all companies and organisations of the public administration a 
+License to use the copyrighted ZUGFeRD data format in a fair, appropriate and non 
+discriminatory conditions.
+ 
+The specification of the FeRD for the implementation of the ZUGFeRD data format is, in its currently valid version 
+available at www.ferd-net.de.
+ 
+In detail, the grant of use includes 
+=====================================
+ 
+FeRD grants a license for the use of the copyrighted ZUGFeRD data format in the respective 
+valid and accepted version (www.ferd-net.de). 
+The license includes an irrevocable right of use including the right of further development, 
+Further processing and connection with other products.
+The license applies in particular to the development, design, production, sale, use or 
+other use of the ZUGFeRD data format for hardware and/or software products and other 
+applications and services. 
+This license does not include the essential patents of the members of FeRD. The essential patents are patents 
+and patent applications worldwide which contain one or more claims that are 
+necessary claims. Necessary claims are only those claims of the essential patents which are 
+the implementation of the ZUGFeRD data format would necessarily be violated. 
+The Licensee is entitled to provide its respective group companies with an unlimited, worldwide, non-transferable, 
+irrevocable right of use including the right of further development, further processing and connection with 
+other products. 
+ 
+The license is provided free of charge. 
+ 
+Except in the case of intentional fault or gross negligence, FeRD is not liable for loss of use, loss of 
+Profit, loss of data, loss of communication, loss of revenue, loss of contracts, loss of business or for costs 
+damages, losses or liabilities in connection with an interruption of business, nor for concrete, 
+incidental, indirect, punitive or consequential damages, even if the possibility of 
+costs, losses or damages could normally have been foreseen.
+-->
+<rsm:CrossIndustryInvoice xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100">
+  <rsm:ExchangedDocumentContext>
+    <ram:GuidelineSpecifiedDocumentContextParameter>
+      <ram:ID>urn:cen.eu:en16931:2017</ram:ID>
+    </ram:GuidelineSpecifiedDocumentContextParameter>
+  </rsm:ExchangedDocumentContext>
+  <rsm:ExchangedDocument>
+    <ram:ID>00.123.456.7-2018-1</ram:ID>
+    <ram:TypeCode>575</ram:TypeCode>
+    <ram:IssueDateTime>
+      <udt:DateTimeString format="102">20260417</udt:DateTimeString>
+    </ram:IssueDateTime>
+    <ram:IncludedNote>
+      <ram:Content>Sachversicherungsvertrag Nr: 00.123.456.7
+(Bei Schriftwechsel und Zahlung bitte angeben.)
+      </ram:Content>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>MVM Musterhafter
+Versicherungsverein Musterstadt a.G.
+Versicherungsbüro
+Muster
+Musterstr. 12
+12345 Musterstadt
+Tel.: 0123/45678
+Fax.: 01231/99 45678
+Mo.-Fr. 08.30 - 12.30 Uhr
+Mo.-Fr. 14.00 - 17.00 Uhr
+Mo-Fr 8.00-20.00 Uhr, Sa 8.00-14.00 Uhr
+
+      </ram:Content>
+      <ram:SubjectCode>REG</ram:SubjectCode>
+    </ram:IncludedNote>
+  </rsm:ExchangedDocument>
+  <rsm:SupplyChainTradeTransaction>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>1</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:Name>Verbundene Wohngebäudeversicherung</ram:Name>
+        <ram:Description>- Feuerversicherung - Teil A § 2 62.000 MK1914
+- Leitungswasserversicherung - Teil A § 3 62.000 MK1914
+- Sturm- und Hagelversicherung - Teil A § 4 Ziff. 2 62.000 MK1914
+- WohngebäudePlus und zusätzliche Einschlüsse gemäß Antrag
+- Weitere Elementargefahren - Teil A § 4 Ziff. 3 62.000 MK1914
+
+Enthält 16,34 % Versicherungssteuer = 163,40 €
+        </ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:GrossPriceProductTradePrice>
+          <ram:ChargeAmount>1163.4000</ram:ChargeAmount>
+        </ram:GrossPriceProductTradePrice>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>1000.0000</ram:ChargeAmount>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="H87">1.0000</ram:BilledQuantity>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>E</ram:CategoryCode>
+          <ram:RateApplicablePercent>0.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>1163.40</ram:LineTotalAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:ApplicableHeaderTradeAgreement>
+      <ram:SellerTradeParty>
+        <ram:ID>549910</ram:ID>
+        <ram:GlobalID schemeID="0088">1234567890128</ram:GlobalID>
+        <ram:Name>MVM Musterhafter
+Versicherungsverein Musterstadt a.G.
+        </ram:Name>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>12345</ram:PostcodeCode>
+          <ram:LineOne>Musterstr. 12</ram:LineOne>
+          <ram:CityName>Musterstadt</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+        <ram:SpecifiedTaxRegistration>
+          <ram:ID schemeID="VA">DE234567891</ram:ID>
+        </ram:SpecifiedTaxRegistration>
+      </ram:SellerTradeParty>
+      <ram:BuyerTradeParty>
+        <ram:Name>Herrn
+Max Mustermann
+        </ram:Name>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>12346</ram:PostcodeCode>
+          <ram:LineOne>Musterstr. 11</ram:LineOne>
+          <ram:CityName>Bad Musterhausen</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+      </ram:BuyerTradeParty>
+    </ram:ApplicableHeaderTradeAgreement>
+    <ram:ApplicableHeaderTradeDelivery>
+      <ram:ActualDeliverySupplyChainEvent>
+        <ram:OccurrenceDateTime>
+          <udt:DateTimeString format="102">20260521</udt:DateTimeString>
+        </ram:OccurrenceDateTime>
+      </ram:ActualDeliverySupplyChainEvent>
+    </ram:ApplicableHeaderTradeDelivery>
+    <ram:ApplicableHeaderTradeSettlement>
+      <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
+      <ram:ApplicableTradeTax>
+        <ram:CalculatedAmount>0</ram:CalculatedAmount>
+        <ram:TypeCode>VAT</ram:TypeCode>
+        <ram:ExemptionReason>Umsatzsteuerbefreit nach §4 Nr. 10a UStG</ram:ExemptionReason>
+        <ram:BasisAmount>1163.40</ram:BasisAmount>
+        <ram:CategoryCode>E</ram:CategoryCode>
+        <ram:RateApplicablePercent>0.00</ram:RateApplicablePercent>
+      </ram:ApplicableTradeTax>
+      <ram:SpecifiedTradePaymentTerms>
+        <ram:Description>Einen zu zahlenden Beitrag überweisen Sie bitte auf folgende Bankverbindung: IBAN DE75123456780000001234, BIC WELADED1MST, Sparkasse Musterstadt Ost.
+Einfacher für Sie ist es, wenn Sie uns ein SEPA-Lastschriftmandat erteilen. Wir würden dann zu der Fälligkeit 21.05.2026 den Beitrag von dem uns bekannten Konto abbuchen. In diesem Fall würden Sie, sofern sich keine Beitragsänderung ergibt, zukünftig keine Zwischenrechnung erhalten.
+Beitragsgutschriften aus Ihrem Vertrag erstatten wir per Scheck.
+
+        </ram:Description>
+      </ram:SpecifiedTradePaymentTerms>
+      <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+        <ram:LineTotalAmount>1163.40</ram:LineTotalAmount>
+        <ram:ChargeTotalAmount>0.00</ram:ChargeTotalAmount>
+        <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>
+        <ram:TaxBasisTotalAmount>1163.40</ram:TaxBasisTotalAmount>
+        <ram:TaxTotalAmount currencyID="EUR">0.00</ram:TaxTotalAmount>
+        <ram:GrandTotalAmount>1163.40</ram:GrandTotalAmount>
+        <ram:TotalPrepaidAmount>0.00</ram:TotalPrepaidAmount>
+        <ram:DuePayableAmount>1163.40</ram:DuePayableAmount>
+      </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+    </ram:ApplicableHeaderTradeSettlement>
+  </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>

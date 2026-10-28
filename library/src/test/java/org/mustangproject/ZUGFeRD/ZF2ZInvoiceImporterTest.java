@@ -889,7 +889,6 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals(0, invoice.getRecipient().getBankDetails().size());
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void testItemsBillingSpecifiedPeriod() throws XPathExpressionException, ParseException, IOException {
 		File inputFile = getResourceAsFile("factur-x_invoicingPeriod.xml");
@@ -1321,5 +1320,39 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("20260230", importer.getTaxPointDate());
 		assertNotNull(invoice.getDeliveryDate());
 		assertEquals("2026-03-02", sdfISO.format(invoice.getDeliveryDate()));
+	}
+
+	@Test
+	public void testBeispiele() {
+		try {
+			Files.list(Paths.get("../library/src/test/resources/ZF252_Beispiele")).forEach(profileDir -> {
+					try {
+						Files.list(profileDir).forEachOrdered(profileSubDir -> {
+							try {
+								Files.list(profileSubDir).forEachOrdered(file -> {
+									if (file.getFileName().toFile().getName().endsWith(".pdf")) {
+										ZUGFeRDImporter importer = new ZUGFeRDImporter();
+										importer.doIgnoreCalculationErrors(); // required for example file "3. EN16931\E23_Sachversicherung_berechneter_Steuersatz\E23_01_Sachversicherung_berechneter_Steuersatz_fx.pdf"
+										importer.setPDFFilename(file.toFile().getAbsolutePath());
+										try {
+											Invoice invoice = importer.extractInvoice();
+											assertNotNull(invoice.getIssueDate());
+										} catch (XPathExpressionException | ParseException e) {
+											fail(e);
+										}
+									}
+								});
+							} catch (IOException e) {
+								fail(e);
+							}
+						});
+					} catch (IOException e) {
+						fail(e);
+					}
+				}
+			);
+		} catch (IOException e) {
+			fail(e);
+		}
 	}
 }

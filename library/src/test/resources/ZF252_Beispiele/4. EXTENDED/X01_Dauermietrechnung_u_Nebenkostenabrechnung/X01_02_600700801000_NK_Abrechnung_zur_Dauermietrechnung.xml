@@ -1,0 +1,417 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--English disclaimer below.-->
+<!--
+Nutzungsrechte 
+ZUGFeRD Datenformat Version 2.5.0, 30.06.2026
+Beispiel Version 30.06.2026
+ 
+Zweck des Forums elektronische Rechnung Deutschland FeRD, welches am 31. März 2010 unter der Arbeitsgemeinschaft für 
+wirtschaftliche Verwaltung e. V. gegründet wurde, ist u. a. die Schaffung und Spezifizierung eines offenen Datenformats 
+für strukturierten elektronischen Datenaustausch auf der Grundlage offener und nicht diskriminierender, standardisierter 
+Technologien („ZUGFeRD Datenformat“).
+ 
+Das ZUGFeRD Datenformat wird nach Maßgabe des FeRD sowohl Unternehmen als auch der öffentlichen Verwaltung 
+frei zugänglich gemacht. Hierfür bietet FeRD allen Unternehmen und Organisationen der öffentlichen Verwaltung eine 
+Lizenz für die Nutzung des urheberrechtlich geschützten ZUGFeRD-Datenformats zu fairen, sachgerechten und nicht 
+diskriminierenden Bedingungen an.
+ 
+Die Spezifikation des FeRD zur Implementierung des ZUGFeRD Datenformats ist in ihrer jeweils geltenden Fassung 
+abrufbar unter www.ferd-net.de.
+ 
+Im Einzelnen schließt die Nutzungsgewährung ein: 
+================================================
+ 
+FeRD räumt eine Lizenz für die Nutzung des urheberrechtlich geschützten ZUGFeRD Datenformats in der jeweils 
+geltenden und akzeptierten Fassung (www.ferd-net.de) ein. 
+Die Lizenz beinhaltet ein unwiderrufliches Nutzungsrecht einschließlich des Rechts der Weiterentwicklung, 
+Weiterbearbeitung und Verbindung mit anderen Produkten.
+Die Lizenz gilt insbesondere für die Entwicklung, die Gestaltung, die Herstellung, den Verkauf, die Nutzung oder 
+anderweitige Verwendung des ZUGFeRD Datenformats für Hardware- und/oder Softwareprodukte sowie sonstige 
+Anwendungen und Dienste. 
+Diese Lizenz schließt nicht die wesentlichen Patente der Mitglieder von FeRD ein. Als wesentliche Patente sind Patente 
+und Patentanmeldungen weltweit zu verstehen, die einen oder mehrere Patentansprüche beinhalten, bei denen es sich um 
+notwendige Ansprüche handelt. Notwendige Ansprüche sind lediglich jene Ansprüche der Wesentlichen Patente, die durch 
+die Implementierung des ZUGFeRD Datenformats notwendigerweise verletzt würden. 
+Der Lizenznehmer ist berechtigt, seinen jeweiligen Konzerngesellschaften ein unbefristetes, weltweites, nicht übertragbares, 
+unwiderrufliches Nutzungsrecht einschließlich des Rechts der Weiterentwicklung, Weiterbearbeitung und Verbindung mit 
+anderen Produkten einzuräumen. 
+ 
+Die Lizenz wird kostenfrei zur Verfügung gestellt. 
+ 
+Außer im Falle vorsätzlichen Verschuldens oder grober Fahrlässigkeit haftet FeRD weder für Nutzungsausfall, entgangenen 
+Gewinn, Datenverlust, Kommunikationsverlust, Einnahmeausfall, Vertragseinbußen, Geschäftsausfall oder für Kosten, 
+Schäden, Verluste oder Haftpflichten im Zusammenhang mit einer Unterbrechung der Geschäftstätigkeit, noch für konkrete, 
+beiläufig entstandene, mittelbare Schäden, Straf- oder Folgeschäden und zwar auch dann nicht, wenn die Möglichkeit der 
+Kosten, Verluste bzw. Schäden hätte normalerweise vorhergesehen werden können.
+-->
+<!--
+Right of use 
+ZUGFeRD Data format version 2.5.0, June 30th, 2026
+ 
+The purpose of the Forum elektronische Rechnung Deutschland (FeRD), which was founded on March 31, 2010 under the 
+umbrella of Arbeitsgemeinschaft für wirtschaftliche Verwaltung e. V., is, among other things, to create and specify an 
+open data format for structured electronic data exchange on the basis of open and non discriminatory, standardised 
+technologies ("ZUGFeRD data format").
+ 
+The ZUGFeRD data format is used by both companies and public administration according to the FeRD 
+made freely accessible. For this purpose FeRD offers all companies and organisations of the public administration a 
+License to use the copyrighted ZUGFeRD data format in a fair, appropriate and non 
+discriminatory conditions.
+ 
+The specification of the FeRD for the implementation of the ZUGFeRD data format is, in its currently valid version 
+available at www.ferd-net.de.
+ 
+In detail, the grant of use includes 
+=====================================
+ 
+FeRD grants a license for the use of the copyrighted ZUGFeRD data format in the respective 
+valid and accepted version (www.ferd-net.de). 
+The license includes an irrevocable right of use including the right of further development, 
+Further processing and connection with other products.
+The license applies in particular to the development, design, production, sale, use or 
+other use of the ZUGFeRD data format for hardware and/or software products and other 
+applications and services. 
+This license does not include the essential patents of the members of FeRD. The essential patents are patents 
+and patent applications worldwide which contain one or more claims that are 
+necessary claims. Necessary claims are only those claims of the essential patents which are 
+the implementation of the ZUGFeRD data format would necessarily be violated. 
+The Licensee is entitled to provide its respective group companies with an unlimited, worldwide, non-transferable, 
+irrevocable right of use including the right of further development, further processing and connection with 
+other products. 
+ 
+The license is provided free of charge. 
+ 
+Except in the case of intentional fault or gross negligence, FeRD is not liable for loss of use, loss of 
+Profit, loss of data, loss of communication, loss of revenue, loss of contracts, loss of business or for costs 
+damages, losses or liabilities in connection with an interruption of business, nor for concrete, 
+incidental, indirect, punitive or consequential damages, even if the possibility of 
+costs, losses or damages could normally have been foreseen.
+-->
+<rsm:CrossIndustryInvoice xmlns:qdt="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" xmlns:ram="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" xmlns:rsm="urn:un:unece:uncefact:data:standard:CrossIndustryInvoice:100" xmlns:udt="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <rsm:ExchangedDocumentContext>
+    <ram:GuidelineSpecifiedDocumentContextParameter>
+      <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended</ram:ID>
+    </ram:GuidelineSpecifiedDocumentContextParameter>
+  </rsm:ExchangedDocumentContext>
+  <rsm:ExchangedDocument>
+    <ram:ID>600700801000</ram:ID>
+    <ram:Name>Nebenkostenabrechnung</ram:Name>
+    <ram:TypeCode>380</ram:TypeCode>
+    <ram:IssueDateTime>
+      <udt:DateTimeString format="102">20261231</udt:DateTimeString>
+    </ram:IssueDateTime>
+    <ram:IncludedNote>
+      <ram:Content>Bank: Musterbank IBAN: DE89 3704 0044 0532 0130 00 BIC / Swift-Code: COBADEFFXXX</ram:Content>
+      <ram:SubjectCode>REG</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Wohnungsvermieter GmbH Geschäftsführer: Michael Mustermann </ram:Content>
+      <ram:SubjectCode>REG</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Nebenkostenabrechnung 2026</ram:Content>
+      <ram:SubjectCode>AAI</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Sehr geehrter Mieter, wir erlauben uns Ihnen die Nebenkostenabrechnung, gemäß den gültigen Vereinbarungen, zu übersenden.</ram:Content>
+      <ram:SubjectCode>AAI</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Dieser Rechnung sind die Nebenkostendetails als rechnungsbegründende Unterlage beigefügt! </ram:Content>
+      <ram:SubjectCode>AAI</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>Wenn nicht anders angegeben entspricht das Leistungsdatum dem Rechnungsdatum.</ram:Content>
+      <ram:SubjectCode>AAI</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>ZUGFeRD vers 2.5.0 Extended</ram:Content>
+      <ram:SubjectCode>ACB</ram:SubjectCode>
+    </ram:IncludedNote>
+  </rsm:ExchangedDocument>
+  <rsm:SupplyChainTradeTransaction>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000001</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:Name>Nebenkosten Abrechnung 2026</ram:Name>
+        <ram:Description>Nebenkosten Büro Nr. 123 - 100 m²</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260301</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>900.00</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">1.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="H87">1.00</ram:BilledQuantity>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:StartDateTime>
+            <udt:DateTimeString format="102">20260401</udt:DateTimeString>
+          </ram:StartDateTime>
+          <ram:EndDateTime>
+            <udt:DateTimeString format="102">20261231</udt:DateTimeString>
+          </ram:EndDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>900.00</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000002</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:Name>Nebenkostenvorauszahlung</ram:Name>
+        <ram:Description>geleistete Nebenkostenvorauszahlung Büro Nr. 123 - 100 m²</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260301</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>85.00</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="MON">1.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="MON">-8.00</ram:BilledQuantity>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:StartDateTime>
+            <udt:DateTimeString format="102">20260401</udt:DateTimeString>
+          </ram:StartDateTime>
+          <ram:EndDateTime>
+            <udt:DateTimeString format="102">20261231</udt:DateTimeString>
+          </ram:EndDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>-680.00</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000003</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:Name>HeizkostenAbrechnung 2026</ram:Name>
+        <ram:Description>Heizkosten Büro Nr. 123 - 100 m²</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260301</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>950.00</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="H87">1.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="H87">1.00</ram:BilledQuantity>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:StartDateTime>
+            <udt:DateTimeString format="102">20260401</udt:DateTimeString>
+          </ram:StartDateTime>
+          <ram:EndDateTime>
+            <udt:DateTimeString format="102">20261231</udt:DateTimeString>
+          </ram:EndDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>950.00</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:IncludedSupplyChainTradeLineItem>
+      <ram:AssociatedDocumentLineDocument>
+        <ram:LineID>000004</ram:LineID>
+      </ram:AssociatedDocumentLineDocument>
+      <ram:SpecifiedTradeProduct>
+        <ram:Name>Heizkostenvorauszahlung</ram:Name>
+        <ram:Description>geleistetete Heizkostenvoorauszahlung  Büro Nr. 123 - 100 m²</ram:Description>
+      </ram:SpecifiedTradeProduct>
+      <ram:SpecifiedLineTradeAgreement>
+        <ram:BuyerOrderReferencedDocument>
+          <ram:FormattedIssueDateTime>
+            <qdt:DateTimeString format="102">20260301</qdt:DateTimeString>
+          </ram:FormattedIssueDateTime>
+        </ram:BuyerOrderReferencedDocument>
+        <ram:NetPriceProductTradePrice>
+          <ram:ChargeAmount>125.00</ram:ChargeAmount>
+          <ram:BasisQuantity unitCode="MON">1.0000</ram:BasisQuantity>
+        </ram:NetPriceProductTradePrice>
+      </ram:SpecifiedLineTradeAgreement>
+      <ram:SpecifiedLineTradeDelivery>
+        <ram:BilledQuantity unitCode="MON">-8.00</ram:BilledQuantity>
+      </ram:SpecifiedLineTradeDelivery>
+      <ram:SpecifiedLineTradeSettlement>
+        <ram:ApplicableTradeTax>
+          <ram:TypeCode>VAT</ram:TypeCode>
+          <ram:CategoryCode>S</ram:CategoryCode>
+          <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+        </ram:ApplicableTradeTax>
+        <ram:BillingSpecifiedPeriod>
+          <ram:StartDateTime>
+            <udt:DateTimeString format="102">20260401</udt:DateTimeString>
+          </ram:StartDateTime>
+          <ram:EndDateTime>
+            <udt:DateTimeString format="102">20261231</udt:DateTimeString>
+          </ram:EndDateTime>
+        </ram:BillingSpecifiedPeriod>
+        <ram:SpecifiedTradeSettlementLineMonetarySummation>
+          <ram:LineTotalAmount>-1000.00</ram:LineTotalAmount>
+          <ram:TotalAllowanceChargeAmount>0.00</ram:TotalAllowanceChargeAmount>
+        </ram:SpecifiedTradeSettlementLineMonetarySummation>
+      </ram:SpecifiedLineTradeSettlement>
+    </ram:IncludedSupplyChainTradeLineItem>
+    <ram:ApplicableHeaderTradeAgreement>
+      <ram:BuyerReference>Käuferreferenz</ram:BuyerReference>
+      <ram:SellerTradeParty>
+        <ram:GlobalID schemeID="0088">4000000000000</ram:GlobalID>
+        <ram:Name>Wohnungsvermieter GmbH</ram:Name>
+        <ram:DefinedTradeContact>
+          <ram:PersonName>Otto Vermieter</ram:PersonName>
+          <ram:TelephoneUniversalCommunication>
+            <ram:CompleteNumber>0160 123456789</ram:CompleteNumber>
+          </ram:TelephoneUniversalCommunication>
+          <ram:EmailURIUniversalCommunication>
+            <ram:URIID>o.vermieter@wohnung.de</ram:URIID>
+          </ram:EmailURIUniversalCommunication>
+        </ram:DefinedTradeContact>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>12345</ram:PostcodeCode>
+          <ram:LineOne>Vermieterstrasse 11</ram:LineOne>
+          <ram:CityName>Musterstadt</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+        <ram:URIUniversalCommunication>
+          <ram:URIID schemeID="0088">info@vermieter.com</ram:URIID>
+        </ram:URIUniversalCommunication>
+        <ram:SpecifiedTaxRegistration>
+          <ram:ID schemeID="FC">70000/09999</ram:ID>
+        </ram:SpecifiedTaxRegistration>
+        <ram:SpecifiedTaxRegistration>
+          <ram:ID schemeID="VA">DE106008386</ram:ID>
+        </ram:SpecifiedTaxRegistration>
+      </ram:SellerTradeParty>
+      <ram:BuyerTradeParty>
+        <ram:ID>0000999999</ram:ID>
+        <ram:Name>Max u Monica Mieter GbR</ram:Name>
+        <ram:DefinedTradeContact>
+          <ram:PersonName>Max u Monica Mieter</ram:PersonName>
+        </ram:DefinedTradeContact>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>12346</ram:PostcodeCode>
+          <ram:LineOne>Mieterstrasse 5</ram:LineOne>
+          <ram:LineTwo>2. OG</ram:LineTwo>
+          <ram:CityName>Musterstadt</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+      </ram:BuyerTradeParty>
+      <ram:SellerOrderReferencedDocument>
+        <ram:IssuerAssignedID>2159999999</ram:IssuerAssignedID>
+        <ram:FormattedIssueDateTime>
+          <qdt:DateTimeString format="102">20260301</qdt:DateTimeString>
+        </ram:FormattedIssueDateTime>
+      </ram:SellerOrderReferencedDocument>
+      <ram:ContractReferencedDocument>
+        <ram:IssuerAssignedID>Vertragsnr. 0815-123456789</ram:IssuerAssignedID>
+      </ram:ContractReferencedDocument>
+      <ram:AdditionalReferencedDocument>
+        <ram:IssuerAssignedID>0815-123456789</ram:IssuerAssignedID>
+        <ram:TypeCode>916</ram:TypeCode>
+        <ram:Name>Nebenkostendetails</ram:Name>
+        <ram:AttachmentBinaryObject mimeCode="application/pdf" filename="NKD_2026.pdf">JVBERi0xLjcNCiW1tbW1DQoxIDAgb2JqDQo8PC9UeXBlL0NhdGFsb2cvUGFnZXMgMiAwIFIvTGFuZyhkZSkgL1N0cnVjdFRyZWVSb290IDE1IDAgUi9NYXJrSW5mbzw8L01hcmtlZCB0cnVlPj4vTWV0YWRhdGEgMzAgMCBSL1ZpZXdlclByZWZlcmVuY2VzIDMxIDAgUj4+DQplbmRvYmoNCjIgMCBvYmoNCjw8L1R5cGUvUGFnZXMvQ291bnQgMS9LaWRzWyAzIDAgUl0gPj4NCmVuZG9iag0KMyAwIG9iag0KPDwvVHlwZS9QYWdlL1BhcmVudCAyIDAgUi9SZXNvdXJjZXM8PC9Gb250PDwvRjEgNSAwIFIvRjIgOSAwIFI+Pi9FeHRHU3RhdGU8PC9HUzcgNyAwIFIvR1M4IDggMCBSPj4vUHJvY1NldFsvUERGL1RleHQvSW1hZ2VCL0ltYWdlQy9JbWFnZUldID4+L01lZGlhQm94WyAwIDAgNTk1LjMyIDg0MS45Ml0gL0NvbnRlbnRzIDQgMCBSL0dyb3VwPDwvVHlwZS9Hcm91cC9TL1RyYW5zcGFyZW5jeS9DUy9EZXZpY2VSR0I+Pi9UYWJzL1MvU3RydWN0UGFyZW50cyAwPj4NCmVuZG9iag0KNCAwIG9iag0KPDwvRmlsdGVyL0ZsYXRlRGVjb2RlL0xlbmd0aCAzNTM+Pg0Kc3RyZWFtDQp4nLWUS2vDMAzH7wZ/Bx3bQRxJfgZCDk3TsrEdRgM7jB3K1vW0ssf3hzkPxsqSsUcaEEaykX7W3wqkm+ftAfI8vSrPl4Dp5fawh9nDLllW86KAxbKEFylQYfOF4AkQbGaVZgiGVMbwupPi5gwOUixqKdIVATHUj1I0RxEIPCtkA946ZQLUT/HQeuNh/xbzwr71Qu+tpbidwfwO6gspqpjuWgqorkqAY06agJOBvcrcICppxa5FbQk7sByRLaIJ0UpE66LpIjF557fxVTQf4xzXqkhs3LMxbrFIOO/OWIrmi6M7/rrFX9HZemX9CPpPesqTaD/aU+eMMvwXMH1asR1Z5Qe01tRrao+1M1Wnb6u/LxL9sfcvTYcImYxiO0pIeIKKmeJstCL7T72I79yY5u33M7BqejI9UUbfEaE+QcWgtB+sCDE3BYL6vu1//BuQ7tds8onWDpWm4ZsPzs0771IhvA0KZW5kc3RyZWFtDQplbmRvYmoNCjUgMCBvYmoNCjw8L1R5cGUvRm9udC9TdWJ0eXBlL1RydWVUeXBlL05hbWUvRjEvQmFzZUZvbnQvQkNERUVFK1d1ZXJ0aC1Cb29rL0VuY29kaW5nL1dpbkFuc2lFbmNvZGluZy9Gb250RGVzY3JpcHRvciA2IDAgUi9GaXJzdENoYXIgMzIvTGFzdENoYXIgMzIvV2lkdGhzIDI5IDAgUj4+DQplbmRvYmoNCjYgMCBvYmoNCjw8L1R5cGUvRm9udERlc2NyaXB0b3IvRm9udE5hbWUvQkNERUVFK1d1ZXJ0aC1Cb29rL0ZsYWdzIDMyL0l0YWxpY0FuZ2xlIDAvQXNjZW50IDk2Ni9EZXNjZW50IC0yMzQvQ2FwSGVpZ2h0IDc2Ni9BdmdXaWR0aCAzNzkvTWF4V2lkdGggMTMzNS9Gb250V2VpZ2h0IDMwMC9YSGVpZ2h0IDI1MC9MZWFkaW5nIDIyMC9TdGVtViAzNy9Gb250QkJveFsgLTE0OCAtMjM0IDExODcgNzY2XSAvRm9udEZpbGUyIDI3IDAgUj4+DQplbmRvYmoNCjcgMCBvYmoNCjw8L1R5cGUvRXh0R1N0YXRlL0JNL05vcm1hbC9jYSAxPj4NCmVuZG9iag0KOCAwIG9iag0KPDwvVHlwZS9FeHRHU3RhdGUvQk0vTm9ybWFsL0NBIDE+Pg0KZW5kb2JqDQo5IDAgb2JqDQo8PC9UeXBlL0ZvbnQvU3VidHlwZS9UeXBlMC9CYXNlRm9udC9CQ0RGRUUrV3VlcnRoLUJvb2svRW5jb2RpbmcvSWRlbnRpdHktSC9EZXNjZW5kYW50Rm9udHMgMTAgMCBSL1RvVW5pY29kZSAyNiAwIFI+Pg0KZW5kb2JqDQoxMCAwIG9iag0KWyAxMSAwIFJdIA0KZW5kb2JqDQoxMSAwIG9iag0KPDwvQmFzZUZvbnQvQkNERkVFK1d1ZXJ0aC1Cb29rL1N1YnR5cGUvQ0lERm9udFR5cGUyL1R5cGUvRm9udC9DSURUb0dJRE1hcC9JZGVudGl0eS9EVyAxMDAwL0NJRFN5c3RlbUluZm8gMTIgMCBSL0ZvbnREZXNjcmlwdG9yIDEzIDAgUi9XIDI4IDAgUj4+DQplbmRvYmoNCjEyIDAgb2JqDQo8PC9P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Widso5la6c0+VZw9oZmX3DU2a2rskile1qlUvmqnumouzAcX9Yf+lwcm8/n/FH2x6M+w4mDNQXeGt8N9X6boz2jPT5srZ3o9rT/ly853N09/mg/9GfyUxhn/N/P/8fk0C2jOH4bm/iG1Xffw9rU7NJWeG3xH4+J1aI7cYFuwUl3y5+JtpsyUmTJTZspM+d+U/w9EaYoEDQplbmRzdHJlYW0NCmVuZG9iag0KMjggMCBvYmoNClsgMFsgMjUwXSAgM1sgMjUwXSAgMTZbIDE4MV0gIDE5WyA1NTNdICAyMVsgNTUzXSAgMjVbIDU1M10gIDM3WyA1MTZdICAzOVsgNjE5XSAgNDlbIDc1NF0gIDY4WyA1MTMgNTEzXSAgNzFbIDUxMyA0NjhdICA3NlsgMTk5XSAgNzhbIDQxMiAxOTkgNjcyIDQ2MCA1MDggNTEzXSAgODZbIDM1MSAyMTggNDU4XSBdIA0KZW5kb2JqDQoyOSAwIG9iag0KWyAyNTBdIA0KZW5kb2JqDQozMCAwIG9iag0KPDwvVHlwZS9NZXRhZGF0YS9TdWJ0eXBlL1hNTC9MZW5ndGggMzE4NT4+DQpzdHJlYW0NCjw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+PHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iMy4xLTcwMSI+CjxyZGY6UkRGIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+CjxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiICB4bWxuczpwZGY9Imh0dHA6Ly9ucy5hZG9iZS5jb20vcGRmLzEuMy8iPgo8cGRmOlByb2R1Y2VyPk1pY3Jvc29mdMKuIFdvcmQgZsO8ciBNaWNyb3NvZnQgMzY1PC9wZGY6UHJvZHVjZXI+PC9yZGY6RGVzY3JpcHRpb24+CjxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiIHhtbG5zOnBkZng9Imh0dHA6Ly9ucy5hZG9iZS5jb20vcGRmeC8xLjMvIj4KPC9yZGY6RGVzY3JpcHRpb24+CjxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiICB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iPgo8ZGM6Y3JlYXRvcj48cmRmOlNlcT48cmRmOmxpPkhvZmZtYW5uLCBNaWtlPC9yZGY6bGk+PC9yZGY6U2VxPjwvZGM6Y3JlYXRvcj48L3JkZjpEZXNjcmlwdGlvbj4KPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyI+Cjx4bXA6Q3JlYXRvclRvb2w+TWljcm9zb2Z0wq4gV29yZCBmw7xyIE1pY3Jvc29mdCAzNjU8L3htcDpDcmVhdG9yVG9vbD48eG1wOkNyZWF0ZURhdGU+MjAyNi0wMy0wOVQwODozMDoyNCswMTowMDwveG1wOkNyZWF0ZURhdGU+PHhtcDpNb2RpZnlEYXRlPjIwMjYtMDMtMDlUMDg6MzA6MjQrMDE6MDA8L3htcDpNb2RpZnlEYXRlPjwvcmRmOkRlc2NyaXB0aW9uPgo8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiAgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iPgo8eG1wTU06RG9jdW1lbnRJRD51dWlkOjVFODNCRDVGLUYxQkEtNEJGQS04NkYzLTkxQTZFRkEwMzU5NzwveG1wTU06RG9jdW1lbnRJRD48eG1wTU06SW5zdGFuY2VJRD51dWlkOjVFODNCRDVGLUYxQkEtNEJGQS04NkYzLTkxQTZFRkEwMzU5NzwveG1wTU06SW5zdGFuY2VJRD48L3JkZjpEZXNjcmlwdGlvbj4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCjwvcmRmOlJERj48L3g6eG1wbWV0YT48P3hwYWNrZXQgZW5kPSJ3Ij8+DQplbmRzdHJlYW0NCmVuZG9iag0KMzEgMCBvYmoNCjw8L0Rpc3BsYXlEb2NUaXRsZSB0cnVlPj4NCmVuZG9iag0KMzIgMCBvYmoNCjw8L1R5cGUvWFJlZi9TaXplIDMyL1dbIDEgNCAyXSAvUm9vdCAxIDAgUi9JbmZvIDE0IDAgUi9JRFs8NUZCRDgzNUVCQUYxRkE0Qjg2RjM5MUE2RUZBMDM1OTc+PDVGQkQ4MzVFQkFGMUZBNEI4NkYzOTFBNkVGQTAzNTk3Pl0gL0ZpbHRlci9GbGF0ZURlY29kZS9MZW5ndGggMTE5Pj4NCnN0cmVhbQ0KeJxjYACC//8ZgaQgAwOIWgyhboMpxk9ginkumGLxAFOs7hCqBkJtBFNsFhAqDEL9AlPsLmCKA0gxAc0UY2CFUGwQih1CcUAoFggFVckJ1McZA+MxQigmCMUMlONWAxvNsxpMqYeDKQ0ZCGUOpkx+MzAAACO9DfANCmVuZHN0cmVhbQ0KZW5kb2JqDQp4cmVmDQowIDMzDQowMDAwMDAwMDE1IDY1NTM1IGYNCjAwMDAwMDAwMTcgMDAwMDAgbg0KMDAwMDAwMDE2MyAwMDAwMCBuDQowMDAwMDAwMjE5IDAwMDAwIG4NCjAwMDAwMDA0OTggMDAwMDAgbg0KMDAwMDAwMDkyNSAwMDAwMCBuDQowMDAwMDAxMDk2IDAwMDAwIG4NCjAwMDAwMDEzNTEgMDAwMDAgbg0KMDAwMDAwMTQwNCAwMDAwMCBuDQowMDAwMDAxNDU3IDAwMDAwIG4NCjAwMDAwMDE1OTIgMDAwMDAgbg0KMDAwMDAwMTYyMiAwMDAwMCBuDQowMDAwMDAxNzg2IDAwMDAwIG4NCjAwMDAwMDE4NjAgMDAwMDAgbg0KMDAwMDAwMjExNiAwMDAwMCBuDQowMDAwMDAwMDE2IDY1NTM1IGYNCjAwMDAwMDAwMTcgNjU1MzUgZg0KMDAwMDAwMDAxOCA2NTUzNSBmDQowMDAwMDAwMDE5IDY1NTM1IGYNCjAwMDAwMDAwMjAgNjU1MzUgZg0KMDAwMDAwMDAyMSA2NTUzNSBmDQowMDAwMDAwMDIyIDY1NTM1IGYNCjAwMDAwMDAwMjMgNjU1MzUgZg0KMDAwMDAwMDAyNCA2NTUzNSBmDQowMDAwMDAwMDI1IDY1NTM1IGYNCjAwMDAwMDAwMDAgNjU1MzUgZg0KMDAwMDAwMjg1NCAwMDAwMCBuDQowMDAwMDAzMjQzIDAwMDAwIG4NCjAwMDAwMTAwNzEgMDAwMDAgbg0KMDAwMDAxMDI2OCAwMDAwMCBuDQowMDAwMDEwMjk1IDAwMDAwIG4NCjAwMDAwMTM1NjMgMDAwMDAgbg0KMDAwMDAxMzYwOCAwMDAwMCBuDQp0cmFpbGVyDQo8PC9TaXplIDMzL1Jvb3QgMSAwIFIvSW5mbyAxNCAwIFIvSURbPDVGQkQ4MzVFQkFGMUZBNEI4NkYzOTFBNkVGQTAzNTk3Pjw1RkJEODM1RUJBRjFGQTRCODZGMzkxQTZFRkEwMzU5Nz5dID4+DQpzdGFydHhyZWYNCjEzOTI4DQolJUVPRg0KeHJlZg0KMCAwDQp0cmFpbGVyDQo8PC9TaXplIDMzL1Jvb3QgMSAwIFIvSW5mbyAxNCAwIFIvSURbPDVGQkQ4MzVFQkFGMUZBNEI4NkYzOTFBNkVGQTAzNTk3Pjw1RkJEODM1RUJBRjFGQTRCODZGMzkxQTZFRkEwMzU5Nz5dIC9QcmV2IDEzOTI4L1hSZWZTdG0gMTM2MDg+Pg0Kc3RhcnR4cmVmDQoxNDc0NQ0KJSVFT0Y=</ram:AttachmentBinaryObject>
+      </ram:AdditionalReferencedDocument>
+    </ram:ApplicableHeaderTradeAgreement>
+    <ram:ApplicableHeaderTradeDelivery>
+      <ram:ShipToTradeParty>
+        <ram:Name>Max u Monica Mieter GbR</ram:Name>
+        <ram:PostalTradeAddress>
+          <ram:PostcodeCode>12346</ram:PostcodeCode>
+          <ram:LineOne>Mieterstrasse 5</ram:LineOne>
+          <ram:LineTwo>2. OG</ram:LineTwo>
+          <ram:CityName>Musterstadt</ram:CityName>
+          <ram:CountryID>DE</ram:CountryID>
+        </ram:PostalTradeAddress>
+      </ram:ShipToTradeParty>
+    </ram:ApplicableHeaderTradeDelivery>
+    <ram:ApplicableHeaderTradeSettlement>
+      <ram:CreditorReferenceID>DE78ZZZ00000099999</ram:CreditorReferenceID>
+      <ram:PaymentReference>Miete Max u Monica Mieter</ram:PaymentReference>
+      <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
+      <ram:SpecifiedTradeSettlementPaymentMeans>
+        <ram:TypeCode>59</ram:TypeCode>
+        <ram:Information>Bezahlung per SEPA-Lastschrift *** Den Rechnungsbetrag ziehen wir mit der SEPA-Lastschrift von Ihrem Konto frühestens zum Fälligkeitstag ein.</ram:Information>
+        <ram:PayerPartyDebtorFinancialAccount>
+          <ram:IBANID>DE75512108001245126199</ram:IBANID>
+        </ram:PayerPartyDebtorFinancialAccount>
+        <ram:PayeePartyCreditorFinancialAccount>
+          <ram:IBANID>DE89370400440532013000</ram:IBANID>
+        </ram:PayeePartyCreditorFinancialAccount>
+        <ram:PayeeSpecifiedCreditorFinancialInstitution>
+          <ram:BICID>COBADEFFXXX</ram:BICID>
+        </ram:PayeeSpecifiedCreditorFinancialInstitution>
+      </ram:SpecifiedTradeSettlementPaymentMeans>
+      <ram:ApplicableTradeTax>
+        <ram:CalculatedAmount>32.30</ram:CalculatedAmount>
+        <ram:TypeCode>VAT</ram:TypeCode>
+        <ram:BasisAmount>170.00</ram:BasisAmount>
+        <ram:CategoryCode>S</ram:CategoryCode>
+        <ram:RateApplicablePercent>19.00</ram:RateApplicablePercent>
+      </ram:ApplicableTradeTax>
+      <ram:SpecifiedTradePaymentTerms>
+        <ram:Description>SEPA-Lastschrift zum 31.12.2026 ohne Abzug</ram:Description>
+        <ram:DueDateDateTime>
+          <udt:DateTimeString format="102">20261231</udt:DateTimeString>
+        </ram:DueDateDateTime>
+        <ram:DirectDebitMandateID>Miete Max u Monica Mieter GbR</ram:DirectDebitMandateID>
+      </ram:SpecifiedTradePaymentTerms>
+      <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+        <ram:LineTotalAmount>170.00</ram:LineTotalAmount>
+        <ram:AllowanceTotalAmount>0.00</ram:AllowanceTotalAmount>
+        <ram:TaxBasisTotalAmount>170.00</ram:TaxBasisTotalAmount>
+        <ram:TaxTotalAmount currencyID="EUR">32.30</ram:TaxTotalAmount>
+        <ram:GrandTotalAmount>202.30</ram:GrandTotalAmount>
+        <ram:DuePayableAmount>202.30</ram:DuePayableAmount>
+      </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+      <ram:InvoiceReferencedDocument>
+        <ram:IssuerAssignedID>600700800900</ram:IssuerAssignedID>
+      </ram:InvoiceReferencedDocument>
+    </ram:ApplicableHeaderTradeSettlement>
+  </rsm:SupplyChainTradeTransaction>
+</rsm:CrossIndustryInvoice>
