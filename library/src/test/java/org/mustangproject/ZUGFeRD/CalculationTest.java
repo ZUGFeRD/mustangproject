@@ -139,7 +139,10 @@ public class CalculationTest extends ResourceCase {
 		TransactionCalculator calculator = new TransactionCalculator(invoice);
 		assertEquals(valueOf(286.62).stripTrailingZeros(), calculator.getTotal()); // interestingly, EN16931-1 has 286.63 here?
 		assertEquals(valueOf(272.96).stripTrailingZeros(), calculator.getTaxBasis()); // and 272.97 here
-		assertEquals(valueOf(337.45).stripTrailingZeros(), calculator.getDuePayable()); // and 337.46 here???
+		// the freight charge above has no VAT rate of its own. Before #652 it was part of the tax basis (272.96) but
+		// missing from the VAT breakdown, so VAT was only charged on 257.96 (due 337.45). It now takes the items'
+		// single rate of 25%, so the breakdown matches the tax basis: 272.96 + 25% VAT = 341.20
+		assertEquals(valueOf(341.20).stripTrailingZeros(), calculator.getDuePayable().stripTrailingZeros());
 	}
 
 	@Test
@@ -725,6 +728,96 @@ public class CalculationTest extends ResourceCase {
 		assertEquals(0, new BigDecimal("30.00").compareTo(basisForCategory(details, "Z")));
 		assertEquals(0, new BigDecimal("100.00").compareTo(basisForCategory(details, "S")));
 		assertEquals(new BigDecimal("199.00"), tc.getGrandTotal());
+	}
+
+	/***
+	 * issue #652: an invoice with one 19% item and a 100% document level discount must not leave VAT payable, also
+	 * when the discount does not state its own VAT rate
+	 */
+	private Invoice singleRateInvoiceWith(IZUGFeRDAllowanceCharge allowance) {
+		Invoice invoice = new Invoice();
+		invoice.setDocumentName("Rechnung");
+		invoice.setNumber("652");
+		invoice.setIssueDate(new Date());
+		invoice.setDueDate(new Date());
+		TradeParty sender = new TradeParty("Sender GmbH", "Hauptstr. 1", "10115", "Berlin", "DE");
+		sender.addVATID("DE123456789");
+		invoice.setSender(sender);
+		TradeParty recipient = new TradeParty("Recipient GmbH", "Nebenstr. 2", "10116", "Berlin", "DE");
+		recipient.addVATID("DE987654321");
+		invoice.setRecipient(recipient);
+		invoice.addItem(new Item(new Product("Testartikel", "", "H87", new BigDecimal(19)), new BigDecimal("100.00"), BigDecimal.ONE));
+		invoice.addAllowance(allowance);
+		return invoice;
+	}
+
+	@Test
+	public void testFullPercentDiscountWithoutRateRemovesVAT() {
+		// bean constructor: rate defaults to 0% on category S, which EN16931 does not allow
+		Allowance discount = new Allowance().setPercent(new BigDecimal(100)).setReason("Rabatt");
+		TransactionCalculator calc = new TransactionCalculator(singleRateInvoiceWith(discount));
+
+		assertEquals(0, BigDecimal.ZERO.compareTo(calc.getTaxBasis()));
+		assertEquals(0, BigDecimal.ZERO.compareTo(calc.getGrandTotal()));
+		assertEquals(0, BigDecimal.ZERO.compareTo(calc.getDuePayable()));
+		assertEquals(0, new BigDecimal(19).compareTo(calc.getEffectiveTaxRate(discount)));
+		assertEquals("S", calc.getEffectiveTaxCategoryCode(discount));
+	}
+
+	@Test
+	public void testFullAbsoluteDiscountWithoutRateRemovesVAT() {
+		// amount constructor: no rate at all
+		Allowance discount = new Allowance(new BigDecimal("100.00")).setReason("Rabatt");
+		TransactionCalculator calc = new TransactionCalculator(singleRateInvoiceWith(discount));
+
+		assertEquals(0, BigDecimal.ZERO.compareTo(calc.getGrandTotal()));
+		assertEquals(0, BigDecimal.ZERO.compareTo(calc.getDuePayable()));
+	}
+
+	@Test
+	public void testFullDiscountWithExplicitRateUnchanged() {
+		Allowance discount = new Allowance().setPercent(new BigDecimal(100)).setReason("Rabatt");
+		discount.setTaxRateApplicablePercent(new BigDecimal(19));
+		TransactionCalculator calc = new TransactionCalculator(singleRateInvoiceWith(discount));
+
+		assertEquals(0, BigDecimal.ZERO.compareTo(calc.getGrandTotal()));
+	}
+
+	@Test
+	public void testExplicitZeroRatedDiscountIsKept() {
+		// 0% on a non standard category (here Z) is a deliberate choice and must not be overridden
+		Allowance discount = new Allowance(new BigDecimal("10.00")).setReason("Rabatt");
+		discount.setTaxRateApplicablePercent(BigDecimal.ZERO);
+		discount.setTaxCategoryCode("Z");
+		TransactionCalculator calc = new TransactionCalculator(singleRateInvoiceWith(discount));
+
+		assertEquals(0, BigDecimal.ZERO.compareTo(calc.getEffectiveTaxRate(discount)));
+		assertEquals("Z", calc.getEffectiveTaxCategoryCode(discount));
+	}
+
+	@Test
+	public void testDiscountWithoutRateOnMixedRatesIsNotGuessed() {
+		// with 19% and 7% items the rate is ambiguous, so the allowance keeps what it has
+		Allowance discount = new Allowance(new BigDecimal("10.00")).setReason("Rabatt");
+		Invoice invoice = singleRateInvoiceWith(discount);
+		invoice.addItem(new Item(new Product("Buch", "", "H87", new BigDecimal(7)), new BigDecimal("20.00"), BigDecimal.ONE));
+		TransactionCalculator calc = new TransactionCalculator(invoice);
+
+		assertEquals(null, calc.getEffectiveTaxRate(discount));
+	}
+
+	@Test
+	public void testFullDiscountWithoutRateWritesItemRateToXML() {
+		Allowance discount = new Allowance().setPercent(new BigDecimal(100)).setReason("Rabatt");
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("EN16931"));
+		zf2p.generateXML(singleRateInvoiceWith(discount));
+
+		String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+		String allowanceTax = "//*[local-name()='SpecifiedTradeAllowanceCharge'][*[local-name()='ChargeIndicator']/*[local-name()='Indicator']='false']/*[local-name()='CategoryTradeTax']";
+		assertThat(theXML).valueByXPath(allowanceTax + "/*[local-name()='CategoryCode']").asString().isEqualTo("S");
+		assertThat(theXML).valueByXPath(allowanceTax + "/*[local-name()='RateApplicablePercent']").asString().isEqualTo("19.00");
+		assertThat(theXML).valueByXPath("//*[local-name()='DuePayableAmount']").asString().isEqualTo("0.00");
 	}
 
 	private static BigDecimal basisForCategory(Set<VATAmount> details, String categoryCode) {
