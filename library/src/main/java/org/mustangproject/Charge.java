@@ -106,7 +106,8 @@ public class Charge extends TradeTax<Charge> implements IZUGFeRDAllowanceCharge 
 	}
 
 	/***
-	 * if relative charge: percent to increase the item
+	 * If relative charge: percent to increase the item
+	 * For XRechnung: it's mandatory to set also the basisAmount, otherwise both values will not appear in the invoice xml.
 	 * @param percent as bigdecimal
 	 * @return fluid setter
 	 */
@@ -121,8 +122,9 @@ public class Charge extends TradeTax<Charge> implements IZUGFeRDAllowanceCharge 
 	}
 
 	/***
-	 * sets a potential basis for the potential percentage
-	 * @param basis the basis amount
+	 * If relative allowance: basisAmount the percent value is applied to.
+	 * For XRechnung: it's mandatory to set also the percent, otherwise both values will not appear in the invoice xml.
+	 * @param basis as bigdecimal
 	 * @return fluid setter
 	 */
 	public Charge setBasisAmount(BigDecimal basis) {

@@ -51,6 +51,8 @@ public class ZUGFeRDValidator {
 	protected boolean optionsRecognized;
 	protected boolean disableNotices;
 	protected boolean disableArithmeticCheck;
+	protected boolean enableUseOfPdfValidityForCompleteValidity;
+	protected boolean failOnWarnings;
 	protected String signature;
 	protected boolean wasCompletelyValid; // overall result
 	protected String logAppend;
@@ -77,7 +79,15 @@ public class ZUGFeRDValidator {
 	 */
 	public boolean wasCompletelyValid() {
 		return wasCompletelyValid;
+	}
 
+	/***
+	 * Returns the pdfValidity after validating an invoice.
+	 *
+	 * @return true if the pdf is valid (contained no errors, notices are ignored), false otherwise
+	 */
+	public boolean getPdfValidity() {
+		return pdfValidity;
 	}
 
 	/***
@@ -91,6 +101,9 @@ public class ZUGFeRDValidator {
 	private String internalValidate(String contextFilename, InputStream inputStream, long inputLength) {
 		// forget the previous file, a reused validator has to give the same result as a new one
 		context.reset();
+		if (failOnWarnings) {
+			context.setFailOnWarnings(true);
+		}
 		pdfValidity = false;
 		displayXMLValidationOutput = false;
 		optionsRecognized = false;
@@ -337,7 +350,11 @@ public class ZUGFeRDValidator {
 			+ " Signature:" + signature + " Checksum:" + sha1Checksum + " Profile:" + context.getProfile()
 			+ " Version:" + context.getGeneration() + " Took:" + duration + "ms Errors:[" + context.getCSVResult()
 			+ "] ErrorIDs: [" + context.getCSVIDResult() + "]" + toBeAppended);
-		wasCompletelyValid = xmlValidity;
+		if (enableUseOfPdfValidityForCompleteValidity) {
+			wasCompletelyValid = xmlValidity & pdfValidity;
+		} else {
+			wasCompletelyValid = xmlValidity;
+		}
 		return sw.toString();
 	}
 
@@ -353,6 +370,20 @@ public class ZUGFeRDValidator {
 	 */
 	public void disableArithmeticCheck() {
 		disableArithmeticCheck = true;
+	}
+
+	/***
+	 * use the {@link pdfValidity} also for determining the value for {@link wasCompletelyValid}
+	 */
+	public void enableUseOfPdfValidityForCompleteValidity() {
+		enableUseOfPdfValidityForCompleteValidity = true;
+	}
+
+	/***
+	 * treat warnings like errors, i.e. report a validation with warnings as invalid
+	 */
+	public void enableFailOnWarnings() {
+		failOnWarnings = true;
 	}
 
 	/**

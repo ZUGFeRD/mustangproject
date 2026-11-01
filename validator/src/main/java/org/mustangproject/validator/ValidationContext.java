@@ -25,6 +25,7 @@ public class ValidationContext {
 	private String profile;
 	private String signature;
 	private boolean isValid = true;
+	private boolean failOnWarnings;
 	private boolean hasPDF;
 	private String filename;
 
@@ -45,6 +46,9 @@ public class ValidationContext {
 		results.add(vr);
 
 		if (vr.getSeverity() == ESeverity.fatal || vr.getSeverity() == ESeverity.exception || vr.getSeverity() == ESeverity.error) {
+			isValid = false;
+		}
+		if (failOnWarnings && vr.getSeverity() == ESeverity.warning) {
 			isValid = false;
 		}
 		if (logger != null) {
@@ -185,6 +189,10 @@ public class ValidationContext {
 
 	public void setInvalid() {
 		isValid = false;
+	}
+
+	public void setFailOnWarnings(boolean failOnWarnings) {
+		this.failOnWarnings = failOnWarnings;
 	}
 
 	public void setFilename(String filename) {

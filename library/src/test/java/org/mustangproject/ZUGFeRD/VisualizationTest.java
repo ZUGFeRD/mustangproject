@@ -58,6 +58,33 @@ public class VisualizationTest extends ResourceCase {
 	}
 
 	@Test
+	public void testCIIVisualizationInvoicee() {
+		File CIIinputFile = getResourceAsFile("migration/reference/ZUGFeRD2_EXTENDED_Warenrechnung.xml");
+		String result = null;
+		try {
+			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+			result = zvi.visualize(CIIinputFile.getAbsolutePath(), Language.DE);
+		} catch (UnsupportedOperationException e) {
+			fail("UnsupportedOperationException should not happen: " + e.getMessage());
+		} catch (IllegalArgumentException e) {
+			fail("IllegalArgumentException should not happen: " + e.getMessage());
+		} catch (TransformerException e) {
+			fail("TransformerException should not happen: " + e.getMessage());
+		} catch (IOException e) {
+			fail("IOException should not happen: " + e.getMessage());
+		} catch (ParserConfigurationException e) {
+			fail("ParserConfigurationException should not happen: " + e.getMessage());
+		}
+
+		assertNotNull(result);
+		// regression for https://github.com/ZUGFeRD/mustangproject/issues/937:
+		// the invoicee (InvoiceeTradeParty, BG-X-36) must be displayed with name and city
+		assertTrue(result.contains("id=\"BG-X-36\" title=\"BG-X-36\" class=\"boxtitel\">Abweichender Rechnungsempf\u00e4nger</div>"));
+		assertTrue(result.contains("id=\"BT-X-226\" title=\"BT-X-226\" class=\"boxdaten wert\">MUSTER-KUNDE GMBH</div>"));
+		assertTrue(result.contains("id=\"BT-X-238\" title=\"BT-X-238\" class=\"boxdaten wert\">DUESSELDORF</div>"));
+	}
+
+	@Test
 	public void testCIIVisualizationMultiplePaymentMeansBIC() {
 		File CIIinputFile = getResourceAsFile("multiple-payment-means.cii.xml");
 		String result = null;

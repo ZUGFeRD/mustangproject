@@ -67,12 +67,24 @@ public class Allowance extends Charge {
 	 * covariant overrides of the inherited fluid setters, see class javadoc
 	 */
 
+	/***
+	 * If relative allowance: percent to decrease the item
+	 * For XRechnung: it's mandatory to set also the basisAmount, otherwise both values will not appear in the invoice xml.
+	 * @param percent as bigdecimal
+	 * @return fluid setter
+	 */
 	@Override
 	public Allowance setPercent(BigDecimal percent) {
 		super.setPercent(percent);
 		return this;
 	}
 
+	/***
+	 * If relative allowance: basisAmount the percent value is applied to.
+	 * For XRechnung: it's mandatory to set also the percent, otherwise both values will not appear in the invoice xml.
+	 * @param basis as bigdecimal
+	 * @return fluid setter
+	 */
 	@Override
 	public Allowance setBasisAmount(BigDecimal basis) {
 		super.setBasisAmount(basis);

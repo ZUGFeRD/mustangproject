@@ -125,6 +125,8 @@
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:SellerTradeParty"/>
             <xsl:apply-templates mode="BG-7"
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeAgreement/ram:BuyerTradeParty"/>
+            <xsl:apply-templates mode="BG-X-36"
+                                 select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty"/>
             <xsl:apply-templates mode="BG-10"
                                  select="./rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty"/>
             <xsl:apply-templates mode="BG-11"
@@ -960,6 +962,195 @@
             <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
             <xsl:call-template name="text"/>
         </xr:Buyer_contact_email_address>
+    </xsl:template>
+    <xsl:template mode="BG-X-36"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty">
+        <xsl:variable name="bg-contents"
+                      as="item()*"><!--Der Pfad /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty der Instanz in konkreter Syntax wird auf 7 Objekte abgebildet. -->
+            <xsl:apply-templates mode="BT-X-226" select="./ram:Name"/>
+            <xsl:apply-templates mode="BT-X-224" select="./ram:ID"/>
+            <xsl:apply-templates mode="BT-X-225" select="./ram:GlobalID"/>
+            <xsl:apply-templates mode="BT-X-227" select="./ram:SpecifiedLegalOrganization/ram:ID"/>
+            <xsl:apply-templates mode="BT-X-242"
+                                 select="./ram:SpecifiedTaxRegistration/ram:ID[@schemeID=('VA', 'VAT')]"/>
+            <xsl:apply-templates mode="BG-X-37" select="./ram:DefinedTradeContact"/>
+            <xsl:apply-templates mode="BG-X-38" select="./ram:PostalTradeAddress"/>
+        </xsl:variable>
+        <xsl:if test="$bg-contents">
+            <xr:INVOICEE>
+                <xsl:attribute name="xr:id" select="'BG-X-36'"/>
+                <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+                <xsl:sequence select="$bg-contents"/>
+            </xr:INVOICEE>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template mode="BT-X-226"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:Name">
+        <xr:Invoicee_name>
+            <xsl:attribute name="xr:id" select="'BT-X-226'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="text"/>
+        </xr:Invoicee_name>
+    </xsl:template>
+    <xsl:template mode="BT-X-224"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:ID">
+        <xr:Invoicee_identifier>
+            <xsl:attribute name="xr:id" select="'BT-X-224'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="identifier-with-scheme.6523"/>
+        </xr:Invoicee_identifier>
+    </xsl:template>
+    <xsl:template mode="BT-X-225"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:GlobalID">
+        <xr:Invoicee_global_identifier>
+            <xsl:attribute name="xr:id" select="'BT-X-225'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="identifier-with-scheme.6523"/>
+        </xr:Invoicee_global_identifier>
+    </xsl:template>
+    <xsl:template mode="BT-X-227"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:SpecifiedLegalOrganization/ram:ID">
+        <xr:Invoicee_legal_registration_identifier>
+            <xsl:attribute name="xr:id" select="'BT-X-227'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="identifier-with-scheme.6523"/>
+        </xr:Invoicee_legal_registration_identifier>
+    </xsl:template>
+    <xsl:template mode="BT-X-242"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:SpecifiedTaxRegistration/ram:ID[@schemeID=('VA', 'VAT')]">
+        <xr:Invoicee_VAT_identifier>
+            <xsl:attribute name="xr:id" select="'BT-X-242'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="identifier"/>
+        </xr:Invoicee_VAT_identifier>
+    </xsl:template>
+    <xsl:template mode="BG-X-37"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:DefinedTradeContact">
+        <xsl:variable name="bg-contents"
+                      as="item()*"><!--Der Pfad /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:DefinedTradeContact der Instanz in konkreter Syntax wird auf 3 Objekte abgebildet. -->
+            <xsl:apply-templates mode="BT-X-230" select="./ram:DepartmentName"/>
+            <xsl:apply-templates mode="BT-X-229" select="./ram:PersonName"/>
+            <xsl:apply-templates mode="BT-X-231"
+                                 select="./ram:TelephoneUniversalCommunication/ram:CompleteNumber"/>
+            <xsl:apply-templates mode="BT-X-233" select="./ram:EmailURIUniversalCommunication/ram:URIID"/>
+        </xsl:variable>
+        <xsl:if test="$bg-contents">
+            <xr:INVOICEE_CONTACT>
+                <xsl:attribute name="xr:id" select="'BG-X-37'"/>
+                <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+                <xsl:sequence select="$bg-contents"/>
+            </xr:INVOICEE_CONTACT>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template mode="BT-X-230"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:DefinedTradeContact/ram:DepartmentName">
+        <xr:Invoicee_contact_point>
+            <xsl:attribute name="xr:id" select="'BT-X-230'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="text"/>
+        </xr:Invoicee_contact_point>
+    </xsl:template>
+    <xsl:template mode="BT-X-229"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:DefinedTradeContact/ram:PersonName">
+        <xr:Invoicee_contact_point>
+            <xsl:attribute name="xr:id" select="'BT-X-229'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="text"/>
+        </xr:Invoicee_contact_point>
+    </xsl:template>
+    <xsl:template mode="BT-X-231"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:DefinedTradeContact/ram:TelephoneUniversalCommunication/ram:CompleteNumber">
+        <xr:Invoicee_contact_telephone_number>
+            <xsl:attribute name="xr:id" select="'BT-X-231'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="text"/>
+        </xr:Invoicee_contact_telephone_number>
+    </xsl:template>
+    <xsl:template mode="BT-X-233"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:DefinedTradeContact/ram:EmailURIUniversalCommunication/ram:URIID">
+        <xr:Invoicee_contact_email_address>
+            <xsl:attribute name="xr:id" select="'BT-X-233'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="text"/>
+        </xr:Invoicee_contact_email_address>
+    </xsl:template>
+    <xsl:template mode="BG-X-38"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:PostalTradeAddress">
+        <xsl:variable name="bg-contents"
+                      as="item()*"><!--Der Pfad /rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:PostalTradeAddress der Instanz in konkreter Syntax wird auf 7 Objekte abgebildet. -->
+            <xsl:apply-templates mode="BT-X-235" select="./ram:LineOne"/>
+            <xsl:apply-templates mode="BT-X-236" select="./ram:LineTwo"/>
+            <xsl:apply-templates mode="BT-X-237" select="./ram:LineThree"/>
+            <xsl:apply-templates mode="BT-X-238" select="./ram:CityName"/>
+            <xsl:apply-templates mode="BT-X-234" select="./ram:PostcodeCode"/>
+            <xsl:apply-templates mode="BT-X-240" select="./ram:CountrySubDivisionName"/>
+            <xsl:apply-templates mode="BT-X-239" select="./ram:CountryID"/>
+        </xsl:variable>
+        <xsl:if test="$bg-contents">
+            <xr:INVOICEE_POSTAL_ADDRESS>
+                <xsl:attribute name="xr:id" select="'BG-X-38'"/>
+                <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+                <xsl:sequence select="$bg-contents"/>
+            </xr:INVOICEE_POSTAL_ADDRESS>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template mode="BT-X-235"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:PostalTradeAddress/ram:LineOne">
+        <xr:Invoicee_address_line_1>
+            <xsl:attribute name="xr:id" select="'BT-X-235'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="text"/>
+        </xr:Invoicee_address_line_1>
+    </xsl:template>
+    <xsl:template mode="BT-X-236"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:PostalTradeAddress/ram:LineTwo">
+        <xr:Invoicee_address_line_2>
+            <xsl:attribute name="xr:id" select="'BT-X-236'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="text"/>
+        </xr:Invoicee_address_line_2>
+    </xsl:template>
+    <xsl:template mode="BT-X-237"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:PostalTradeAddress/ram:LineThree">
+        <xr:Invoicee_address_line_3>
+            <xsl:attribute name="xr:id" select="'BT-X-237'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="text"/>
+        </xr:Invoicee_address_line_3>
+    </xsl:template>
+    <xsl:template mode="BT-X-238"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:PostalTradeAddress/ram:CityName">
+        <xr:Invoicee_city>
+            <xsl:attribute name="xr:id" select="'BT-X-238'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="text"/>
+        </xr:Invoicee_city>
+    </xsl:template>
+    <xsl:template mode="BT-X-234"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:PostalTradeAddress/ram:PostcodeCode">
+        <xr:Invoicee_post_code>
+            <xsl:attribute name="xr:id" select="'BT-X-234'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="text"/>
+        </xr:Invoicee_post_code>
+    </xsl:template>
+    <xsl:template mode="BT-X-240"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:PostalTradeAddress/ram:CountrySubDivisionName">
+        <xr:Invoicee_country_subdivision>
+            <xsl:attribute name="xr:id" select="'BT-X-240'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="text"/>
+        </xr:Invoicee_country_subdivision>
+    </xsl:template>
+    <xsl:template mode="BT-X-239"
+                  match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:InvoiceeTradeParty/ram:PostalTradeAddress/ram:CountryID">
+        <xr:Invoicee_country_code>
+            <xsl:attribute name="xr:id" select="'BT-X-239'"/>
+            <xsl:attribute name="xr:src" select="xr:src-path(.)"/>
+            <xsl:call-template name="code.Country-Codes">
+                <xsl:with-param name="myparam" select="."/>
+            </xsl:call-template>
+        </xr:Invoicee_country_code>
     </xsl:template>
     <xsl:template mode="BG-10"
                   match="/rsm:CrossIndustryInvoice/rsm:SupplyChainTradeTransaction/ram:ApplicableHeaderTradeSettlement/ram:PayeeTradeParty">

@@ -24,6 +24,9 @@
     <xsl:variable name="i18n.bt56" select="'Name'"/>
     <xsl:variable name="i18n.bt57" select="'Phone'"/>
     <xsl:variable name="i18n.bt58" select="'E-mail address'"/>
+    <xsl:variable name="i18n.bgx36" select="'Invoicee'"/>
+    <xsl:variable name="i18n.btx225" select="'Global identifier'"/>
+    <xsl:variable name="i18n.btx225-id" select="'Global identifier scheme'"/>
     <xsl:variable name="i18n.bt27" select="'Company name'"/>
     <xsl:variable name="i18n.bt35" select="'Street / house number'"/>
     <xsl:variable name="i18n.bt36" select="'PO Box'"/>

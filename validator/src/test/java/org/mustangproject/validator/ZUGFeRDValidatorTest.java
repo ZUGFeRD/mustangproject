@@ -2,11 +2,17 @@ package org.mustangproject.validator;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 public class ZUGFeRDValidatorTest extends ResourceCase {
@@ -394,6 +400,44 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 	}
 
 	@Test
+	public void testFailOnWarnings() {
+		File tempFile = getResourceAsFile("validV2.xml"); // 3 warnings, no errors
+		ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+		String res = zfv.validate(tempFile.getAbsolutePath());
+		assertThat(res).valueByXPath("count(//error)")
+			.asInt()
+			.isEqualTo(0);
+		assertThat(res).valueByXPath("count(//warning)")
+			.asInt()
+			.isGreaterThan(0);
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.isEqualTo("valid");
+		assertTrue(zfv.wasCompletelyValid());
+
+		zfv = new ZUGFeRDValidator();
+		zfv.enableFailOnWarnings();
+		res = zfv.validate(tempFile.getAbsolutePath());
+		assertThat(res).valueByXPath("count(//error)")
+			.asInt()
+			.isEqualTo(0);
+		assertThat(res).valueByXPath("/validation/xml/summary/@status")
+			.isEqualTo("invalid");
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.isEqualTo("invalid");
+		assertFalse(zfv.wasCompletelyValid());
+
+		// a file without warnings stays valid, also when reusing the validator
+		tempFile = getResourceAsFile("validV2FR.xml");
+		res = zfv.validate(tempFile.getAbsolutePath());
+		assertThat(res).valueByXPath("count(//warning)")
+			.asInt()
+			.isEqualTo(0);
+		assertThat(res).valueByXPath("/validation/summary/@status")
+			.isEqualTo("valid");
+		assertTrue(zfv.wasCompletelyValid());
+	}
+
+	@Test
 	public void testSpecialCharactersInReport() {
 		byte[] fileBytes = getResourceAsByteArray("validV2.xml");
 		String filename = "Mueller & Soehne's \"invoice\".xml";
@@ -406,5 +450,35 @@ public class ZUGFeRDValidatorTest extends ResourceCase {
 		res = new ZUGFeRDValidator().validate(xml.getBytes(StandardCharsets.UTF_8), "validV2.xml");
 		assertThat(res).valueByXPath("/validation/xml/info/profile")
 			.isEqualTo("urn:cen.eu:en16931:2017&<test");
+	}
+
+	@Test
+	public void testBeispiele() {
+		try {
+			Files.list(Paths.get("../library/src/test/resources/ZF252_Beispiele")).forEach(profileDir -> {
+					try {
+						Files.list(profileDir).forEachOrdered(profileSubDir -> {
+							try {
+								Files.list(profileSubDir).forEachOrdered(file -> {
+									if (file.getFileName().toFile().getName().endsWith(".pdf")) {
+										ZUGFeRDValidator zfv = new ZUGFeRDValidator();
+										String res = zfv.validate(file.toFile().getAbsolutePath());
+										assertEquals(true, zfv.wasCompletelyValid());
+										assertThat(res).valueByXPath("/validation/xml/summary/@status").isEqualTo("valid");
+										assertThat(res).valueByXPath("/validation/summary/@status").isEqualTo("valid");
+									}
+								});
+							} catch (IOException e) {
+								fail(e);
+							}
+						});
+					} catch (IOException e) {
+						fail(e);
+					}
+				}
+			);
+		} catch (IOException e) {
+			fail(e);
+		}
 	}
 }

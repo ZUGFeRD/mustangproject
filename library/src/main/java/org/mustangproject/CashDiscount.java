@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.mustangproject.ZUGFeRD.IZUGFeRDCashDiscount;
 
+import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
+
 import java.math.BigDecimal;
+import java.util.Date;
 
 /***
  * A class to represent discounts for early payments ("Skonto")
@@ -23,10 +26,22 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	 */
 	protected Integer days;
 
+	protected Date dueDate;
+
+	/**
+	 * The actual discount amount
+	 */
+	protected BigDecimal actualAmount;
+
 	/**
 	 * The original payment amount
 	 */
 	protected BigDecimal basisAmount;
+
+	/**
+	 * The original payment date
+	 */
+	protected Date basisDateTime;
 
 	/***
 	 * Create a cash discount (skonto) with the specified height in the specified period.
@@ -79,6 +94,33 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 		return this;
 	}
 
+	public CashDiscount setDueDate(Date dueDate) {
+		this.dueDate = dueDate;
+		return this;
+	}
+
+	public Date getDueDate() {
+		return dueDate;
+	}
+
+	/***
+	 * get the amount of this cash discount
+	 * @return amount
+	 */
+	public BigDecimal getActualAmount() {
+		return actualAmount;
+	}
+
+	/***
+	 * set the amount of this cash discount
+	 * @param actualAmount the amount
+	 * @return fluent setter
+	 */
+	public CashDiscount setActualAmount(BigDecimal actualAmount) {
+		this.actualAmount = actualAmount;
+		return this;
+	}
+
 	/***
 	 * get the amount upon which the cash discount is applied
 	 * @return money amount
@@ -98,21 +140,49 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	}
 
 	/***
+	 * get the date upon which the cash discount date is calculated
+	 * @return the base date
+	 */
+	public Date getBasisDateTime() {
+		return basisDateTime;
+	}
+
+	/***
+	 * set the date on which the cash discount date is calculated
+	 * @param basisDateTime the date value
+	 * @return fluent setter
+	 */
+	public CashDiscount setBasisDateTime(Date basisDateTime) {
+		this.basisDateTime = basisDateTime;
+		return this;
+	}
+
+	/***
 	 * @return this particular cash discount as cross industry invoice XML
 	 */
 	@JsonIgnore
 	public String getAsCII() {
-		String s = "<ram:SpecifiedTradePaymentTerms>"
-				+ "<ram:Description>Cash Discount</ram:Description>"
-				+ "<ram:ApplicableTradePaymentDiscountTerms>"
-				+ "<ram:BasisPeriodMeasure unitCode=\"DAY\">" + days + "</ram:BasisPeriodMeasure>";
-		if (basisAmount != null) {
-			s += "<ram:BasisAmount>" + XMLTools.nDigitFormat(basisAmount, 2) + "</ram:BasisAmount>";
+		StringBuilder sb = new StringBuilder();
+		sb.append("<ram:SpecifiedTradePaymentTerms>");
+		sb.append("<ram:Description>Cash Discount</ram:Description>");
+		if (dueDate != null) {
+			sb.append("<ram:DueDateDateTime>" + DATE.udtFormat(dueDate) + "</ram:DueDateDateTime>");
 		}
-		s += "<ram:CalculationPercent>" + XMLTools.nDigitFormat(percent, 3) + "</ram:CalculationPercent>"
-				+ "</ram:ApplicableTradePaymentDiscountTerms>"
-				+ "</ram:SpecifiedTradePaymentTerms>";
-		return s;
+		sb.append("<ram:ApplicableTradePaymentDiscountTerms>");
+		if (basisDateTime != null) {
+			sb.append("<ram:BasisDateTime>" + DATE.udtFormat(basisDateTime) + "</ram:BasisDateTime>");
+		}
+		sb.append("<ram:BasisPeriodMeasure unitCode=\"DAY\">" + days + "</ram:BasisPeriodMeasure>");
+		if (basisAmount != null) {
+			sb.append("<ram:BasisAmount>" + XMLTools.nDigitFormat(basisAmount, 2) + "</ram:BasisAmount>");
+		}
+		sb.append("<ram:CalculationPercent>" + XMLTools.nDigitFormat(percent, 3) + "</ram:CalculationPercent>");
+		if (actualAmount != null) {
+			sb.append("<ram:ActualDiscountAmount>" + XMLTools.nDigitFormat(actualAmount, 2) + "</ram:ActualDiscountAmount>");
+		}
+		sb.append("</ram:ApplicableTradePaymentDiscountTerms>");
+		sb.append("</ram:SpecifiedTradePaymentTerms>");
+		return sb.toString();
 	}
 
 	/***

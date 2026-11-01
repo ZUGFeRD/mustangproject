@@ -22,6 +22,7 @@
 
   <xsl:template name="uebersicht_Content">
     <xsl:call-template name="uebersichtKaeufer"/>
+    <xsl:call-template name="uebersichtRechnungsempfaenger"/>
     <xsl:call-template name="uebersichtVerkaeufer"/>
     <xsl:call-template name="uebersichtRechnungsInfo"/>
     <xsl:call-template name="uebersichtFremdleistungen"/>
@@ -55,6 +56,36 @@
             <xsl:apply-templates mode="list-entry" select="xr:BUYER/xr:BUYER_CONTACT/xr:Buyer_contact_point"/>
             <xsl:apply-templates mode="list-entry" select="xr:BUYER/xr:BUYER_CONTACT/xr:Buyer_contact_telephone_number"/>
             <xsl:apply-templates mode="list-entry" select="xr:BUYER/xr:BUYER_CONTACT/xr:Buyer_contact_email_address"/>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template name="uebersichtRechnungsempfaenger">
+    <xsl:call-template name="box">
+      <xsl:with-param name="identifier" select="'uebersichtRechnungsempfaenger'"/>
+      <xsl:with-param name="content">
+        <xsl:call-template name="list">
+          <xsl:with-param name="content">
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:Invoicee_name"/>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:INVOICEE_POSTAL_ADDRESS/xr:Invoicee_address_line_1"/>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:INVOICEE_POSTAL_ADDRESS/xr:Invoicee_address_line_2"/>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:INVOICEE_POSTAL_ADDRESS/xr:Invoicee_address_line_3"/>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:INVOICEE_POSTAL_ADDRESS/xr:Invoicee_post_code"/>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:INVOICEE_POSTAL_ADDRESS/xr:Invoicee_city"/>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:INVOICEE_POSTAL_ADDRESS/xr:Invoicee_country_subdivision"/>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:INVOICEE_POSTAL_ADDRESS/xr:Invoicee_country_code"/>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:Invoicee_identifier"/>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:Invoicee_global_identifier"/>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:Invoicee_global_identifier/@scheme_identifier">
+              <xsl:with-param name="field-mapping-identifier" select="'xr:Invoicee_global_identifier/@scheme_identifier'"/>
+            </xsl:apply-templates>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:Invoicee_legal_registration_identifier"/>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:Invoicee_VAT_identifier"/>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:INVOICEE_CONTACT/xr:Invoicee_contact_point"/>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:INVOICEE_CONTACT/xr:Invoicee_contact_telephone_number"/>
+            <xsl:apply-templates mode="list-entry" select="xr:INVOICEE/xr:INVOICEE_CONTACT/xr:Invoicee_contact_email_address"/>
           </xsl:with-param>
         </xsl:call-template>
       </xsl:with-param>

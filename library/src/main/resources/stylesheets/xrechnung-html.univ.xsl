@@ -1132,6 +1132,14 @@ function downloadData (element_id) {
                 </div>
             </div>
 
+            <xsl:choose>
+                <xsl:when test="./xr:INVOICEE">
+                    <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
+                        <xsl:apply-templates select="./xr:INVOICEE"/>
+                    </div>
+                </xsl:when>
+            </xsl:choose>
+
             <div class="boxtabelle boxabstandtop boxtabelleZweispaltig">
                 <xsl:call-template name="uebersichtRechnungsinfo"/>
             </div>
@@ -1250,6 +1258,81 @@ function downloadData (element_id) {
                 <div class="boxzeile">
                     <div class="boxdaten legende"><xsl:value-of select="$i18n.bt58"/>:</div>
                     <div id="BT-58" title="BT-58" class="boxdaten wert"><xsl:value-of select="xr:BUYER_CONTACT/xr:Buyer_contact_email_address"/></div>
+                </div>
+            </div>
+        </div>
+    </xsl:template>
+
+
+    <xsl:template name="uebersichtRechnungsempfaenger" match="xr:INVOICEE">
+        <div class="boxzeile">
+            <div id="uebersichtRechnungsempfaenger" class="box">
+                <div id="BG-X-36" title="BG-X-36" class="boxtitel"><xsl:value-of select="$i18n.bgx36"/></div>
+                <div class="boxtabelle boxinhalt borderSpacing">
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.bt44"/>:</div>
+                        <div id="BT-X-226" title="BT-X-226" class="boxdaten wert"><xsl:value-of select="xr:Invoicee_name"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.bt50"/>:</div>
+                        <div id="BT-X-235" title="BT-X-235" class="boxdaten wert"><xsl:value-of select="xr:INVOICEE_POSTAL_ADDRESS/xr:Invoicee_address_line_1"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.bt51"/>:</div>
+                        <div id="BT-X-236" title="BT-X-236" class="boxdaten wert"><xsl:value-of select="xr:INVOICEE_POSTAL_ADDRESS/xr:Invoicee_address_line_2"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.bt163"/>:</div>
+                        <div id="BT-X-237" title="BT-X-237" class="boxdaten wert"><xsl:value-of select="xr:INVOICEE_POSTAL_ADDRESS/xr:Invoicee_address_line_3"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.bt53"/>:</div>
+                        <div id="BT-X-234" title="BT-X-234" class="boxdaten wert"><xsl:value-of select="xr:INVOICEE_POSTAL_ADDRESS/xr:Invoicee_post_code"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.bt52"/>:</div>
+                        <div id="BT-X-238" title="BT-X-238" class="boxdaten wert"><xsl:value-of select="xr:INVOICEE_POSTAL_ADDRESS/xr:Invoicee_city"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.bt54"/>:</div>
+                        <div id="BT-X-240" title="BT-X-240" class="boxdaten wert"><xsl:value-of select="xr:INVOICEE_POSTAL_ADDRESS/xr:Invoicee_country_subdivision"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.bt55"/>:</div>
+                        <div id="BT-X-239" title="BT-X-239" class="boxdaten wert"><xsl:value-of select="xr:INVOICEE_POSTAL_ADDRESS/xr:Invoicee_country_code"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.bt46"/>:</div>
+                        <div id="BT-X-224" title="BT-X-224" class="boxdaten wert"><xsl:value-of select="xr:Invoicee_identifier"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.btx225"/>:</div>
+                        <div id="BT-X-225" title="BT-X-225" class="boxdaten wert"><xsl:value-of select="xr:Invoicee_global_identifier"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.btx225-id"/>:</div>
+                        <div id="BT-X-225-scheme-id" title="BT-X-225-scheme-id" class="boxdaten wert"><xsl:value-of select="xr:Invoicee_global_identifier/@scheme_identifier"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.bt47"/>:</div>
+                        <div id="BT-X-227" title="BT-X-227" class="boxdaten wert"><xsl:value-of select="xr:Invoicee_legal_registration_identifier"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.bt48"/>:</div>
+                        <div id="BT-X-242" title="BT-X-242" class="boxdaten wert"><xsl:value-of select="xr:Invoicee_VAT_identifier"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.bt56"/>:</div>
+                        <div id="BT-X-229" title="BT-X-229" class="boxdaten wert"><xsl:value-of select="xr:INVOICEE_CONTACT/xr:Invoicee_contact_point"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.bt57"/>:</div>
+                        <div id="BT-X-231" title="BT-X-231" class="boxdaten wert"><xsl:value-of select="xr:INVOICEE_CONTACT/xr:Invoicee_contact_telephone_number"/></div>
+                    </div>
+                    <div class="boxzeile">
+                        <div class="boxdaten legende"><xsl:value-of select="$i18n.bt58"/>:</div>
+                        <div id="BT-X-233" title="BT-X-233" class="boxdaten wert"><xsl:value-of select="xr:INVOICEE_CONTACT/xr:Invoicee_contact_email_address"/></div>
+                    </div>
                 </div>
             </div>
         </div>

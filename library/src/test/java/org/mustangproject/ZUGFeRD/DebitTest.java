@@ -77,12 +77,6 @@ public class DebitTest extends ResourceCase {
 		CalculatedInvoice ci = new CalculatedInvoice();
 		try {
 			zii.extractInto(ci);
-			/*			for (BankDetails cbd: ci.getRecipient().getBankDetails()) {
-
-				System.out.println(theXML);
-				System.out.println("Means : "+cbd.getPaymentMeansCode());
-				System.out.println("recipient IBAN: "+cbd.getIBAN());
-			}*/
 			assertEquals(1, ci.getRecipient().getBankDetails().size());
 			assertEquals(0, ci.getSender().getBankDetails().size());
 			assertEquals("59", ci.getRecipient().getBankDetails().get(0).getPaymentMeansCode());

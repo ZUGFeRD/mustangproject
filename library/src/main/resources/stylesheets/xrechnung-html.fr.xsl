@@ -24,6 +24,9 @@
     <xsl:variable name="i18n.bt56" select="'Nom'"/>
     <xsl:variable name="i18n.bt57" select="'Téléphone'"/>
     <xsl:variable name="i18n.bt58" select="'Adresse électronique'"/>
+    <xsl:variable name="i18n.bgx36" select="'Destinataire de la facture'"/>
+    <xsl:variable name="i18n.btx225" select="'Identifiant global'"/>
+    <xsl:variable name="i18n.btx225-id" select="'Schéma de l''identifiant global'"/>
     <xsl:variable name="i18n.bt27" select="'Nom de la société'"/>
     <xsl:variable name="i18n.bt35" select="'Rue / Numéro de maison'"/>
     <xsl:variable name="i18n.bt36" select="'Boîte postale'"/>

@@ -8,6 +8,7 @@
 package org.mustangproject.ZUGFeRD;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 /**
  * Mustangproject's ZUGFeRD implementation ZUGFeRD importer Licensed under the APLv2
  *
@@ -491,7 +492,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 */
 	public void setMeta(String meta) throws IOException {
 		try {
-			setRawXML(meta.getBytes());
+			setRawXML(meta.getBytes(StandardCharsets.UTF_8));
 		} catch (ParseException e) {
 			LOGGER.error("Failed to parse", e);
 		}
@@ -742,8 +743,8 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 							node = getNodeByName(nn.getChildNodes(), "BilledQuantity");
 							if (node != null) {
 								lineItem.setQuantity(XMLTools.tryBigDecimal(node));
-								new NodeMap(node.getChildNodes()).getNode("DespatchAdviceReferencedDocument").map(ReferencedDocument::fromNode).ifPresent(rd -> lineItem.setDespatchAdviceReferencedDocument(rd));
-								new NodeMap(node.getChildNodes()).getNode("DeliveryNoteReferencedDocument").map(ReferencedDocument::fromNode).ifPresent(rd -> lineItem.setDeliveryNoteReferencedDocument(rd));
+								new NodeMap(nn.getChildNodes()).getNode("DespatchAdviceReferencedDocument").map(ReferencedDocument::fromNode).ifPresent(rd -> lineItem.setDespatchAdviceReferencedDocument(rd));
+								new NodeMap(nn.getChildNodes()).getNode("DeliveryNoteReferencedDocument").map(ReferencedDocument::fromNode).ifPresent(rd -> lineItem.setDeliveryNoteReferencedDocument(rd));
 							}
 							break;
 

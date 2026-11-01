@@ -49,6 +49,10 @@ public class ValidatorFileWalker
 		return allValid;
 	}
 
+	public void enableFailOnWarnings() {
+		zul.enableFailOnWarnings();
+	}
+
 	// Print information about
 	// each type of file.
 	@Override

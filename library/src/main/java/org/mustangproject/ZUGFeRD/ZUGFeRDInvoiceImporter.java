@@ -729,7 +729,8 @@ public class ZUGFeRDInvoiceImporter {
 		String creditorReferenceID = extractString("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"CreditorReferenceID\"]").trim(); //BT-90
 		if (creditorReferenceID == null || creditorReferenceID.isEmpty()) {
 			//maybe it's there in UBL?
-			creditorReferenceID = extractString("//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyIdentification\"]/*[local-name()=\"ID\"]").trim();
+			creditorReferenceID = extractString("//*[local-name()=\"AccountingSupplierParty\"]/*[local-name()=\"Party\"]/*[local-name()=\"PartyIdentification\"]/*[local-name()=\"ID\"][@schemeID=\"SEPA\"]"
+				+ "|//*[local-name()=\"PayeeParty\"]/*[local-name()=\"PartyIdentification\"]/*[local-name()=\"ID\"][@schemeID=\"SEPA\"]").trim();
 		}
 		if (creditorReferenceID != null && !creditorReferenceID.isEmpty()) {
 			zpp.setCreditorReferenceID(creditorReferenceID);
@@ -828,6 +829,8 @@ public class ZUGFeRDInvoiceImporter {
 					NodeList paymentTermChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
 					PaymentTerms pt = new PaymentTerms();
 					Date ptDueDate = null;
+					Date cdBasisDate = null;
+					boolean hasDiscountTerms = false;
 					for (int paymentTermChildIndex = 0; paymentTermChildIndex < paymentTermChilds.getLength(); paymentTermChildIndex++) {
 						if (paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null && paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("Description")) {
 							pt.setDescription(paymentTermChilds.item(paymentTermChildIndex).getTextContent());
@@ -838,7 +841,21 @@ public class ZUGFeRDInvoiceImporter {
 								if (dueDateChilds.item(dueDateChildIndex).getLocalName() != null && dueDateChilds.item(dueDateChildIndex).getLocalName().equals("DateTimeString")) {
 									String dueDateString = XMLTools.trimOrNull(dueDateChilds.item(dueDateChildIndex));
 									ptDueDate = parseDate(dueDateString, "yyyyMMdd");
-									dueDate = ptDueDate;
+								}
+							}
+						}
+						if (paymentTermChilds.item(paymentTermChildIndex).getLocalName() != null && paymentTermChilds.item(paymentTermChildIndex).getLocalName().equals("ApplicableTradePaymentDiscountTerms")) {
+							hasDiscountTerms = true;
+							NodeList cashDiscountChilds = paymentTermChilds.item(paymentTermChildIndex).getChildNodes();
+							for (int cashDiscountChildIndex = 0; cashDiscountChildIndex < cashDiscountChilds.getLength(); cashDiscountChildIndex++) {
+								if (cashDiscountChilds.item(cashDiscountChildIndex).getLocalName() != null && cashDiscountChilds.item(cashDiscountChildIndex).getLocalName().equals("BasisDateTime")) {
+									NodeList basisDateChilds = cashDiscountChilds.item(cashDiscountChildIndex).getChildNodes();
+									for (int dueDateChildIndex = 0; dueDateChildIndex < basisDateChilds.getLength(); dueDateChildIndex++) {
+										if (basisDateChilds.item(dueDateChildIndex).getLocalName() != null && basisDateChilds.item(dueDateChildIndex).getLocalName().equals("DateTimeString")) {
+											String dueDateString = XMLTools.trimOrNull(basisDateChilds.item(dueDateChildIndex));
+											cdBasisDate = parseDate(dueDateString, "yyyyMMdd");
+										}
+									}
 								}
 							}
 						}
@@ -848,6 +865,14 @@ public class ZUGFeRDInvoiceImporter {
 					}
 					pt.setDueDate(ptDueDate);
 					zpp.addPaymentTerms(pt);
+
+					if (hasDiscountTerms) {
+						if (cdBasisDate != null) {
+							dueDate = cdBasisDate;
+						}
+					} else {
+						dueDate = ptDueDate;
+					}
 				}
 
 				if (headerTradeSettlementChilds.item(settlementChildIndex).getLocalName() != null
@@ -855,6 +880,7 @@ public class ZUGFeRDInvoiceImporter {
 					NodeList paymentMeansChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
 					IBAN = null;
 					BIC = null;
+					accountName = null;
 					paymentMeansCode = null;
 					paymentMeansInformation = null;
 					for (int paymentMeansChildIndex = 0; paymentMeansChildIndex < paymentMeansChilds.getLength(); paymentMeansChildIndex++) {
@@ -893,6 +919,9 @@ public class ZUGFeRDInvoiceImporter {
 						if (paymentMeansCode != null) {
 							bd.setPaymentMeansCode(paymentMeansCode);
 						}
+						if (paymentMeansInformation != null) {
+							bd.setPaymentMeansInformation(paymentMeansInformation);
+						}
 						if (BIC != null) {
 							bd.setBIC(BIC);
 						}
@@ -928,7 +957,7 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
-		xpr = xpath.compile("/*[local-name()=\"Invoice\"]/*[local-name()=\"InvoicePeriod\"]/*"); //UBL only
+		xpr = xpath.compile("/*[local-name()=\"Invoice\" or local-name()=\"CreditNote\"]/*[local-name()=\"InvoicePeriod\"]/*"); //UBL only
 		NodeList periodNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 
 		for (int periodChildIndex = 0; periodChildIndex < periodNodes.getLength(); periodChildIndex++) {
@@ -956,6 +985,11 @@ public class ZUGFeRDInvoiceImporter {
 			// XMLTools.trimOrNull(nodes.item(i)))) {
 			Node paymentMeansNode = paymentMeansNodes.item(i);
 			NodeList paymentMeansChilds = paymentMeansNode.getChildNodes();
+			// the last IBAN found is used for the direct debit below
+			String previousIBAN = IBAN;
+			IBAN = null;
+			BIC = null;
+			accountName = null;
 			for (int meansChildIndex = 0; meansChildIndex < paymentMeansChilds.getLength(); meansChildIndex++) {
 				if (paymentMeansChilds.item(meansChildIndex).getLocalName() != null
 					&& paymentMeansChilds.item(meansChildIndex).getLocalName().equals("PayeeFinancialAccount")) {
@@ -1000,6 +1034,8 @@ public class ZUGFeRDInvoiceImporter {
 					bd.setAccountName(accountName);
 				}
 				bankDetails.add(bd);
+			} else {
+				IBAN = previousIBAN;
 			}
 
 
@@ -1308,28 +1344,41 @@ public class ZUGFeRDInvoiceImporter {
 					Node currentNode = cashDiscountNodeChilds.item(cashDiscountChildIndex);
 					String chargeChildName = currentNode.getLocalName();
 					if (chargeChildName != null) {
-						if (chargeChildName.equals("BasisPeriodMeasure")) {
-							if (currentNode.getAttributes().getNamedItem("unitCode").getNodeValue().equals("DAY")) {
+						if (chargeChildName.equals("BasisDateTime")) {
+							NodeList basisDateChilds = currentNode.getChildNodes();
+							for (int basisDateChildIndex = 0; basisDateChildIndex < basisDateChilds.getLength(); basisDateChildIndex++) {
+								if (basisDateChilds.item(basisDateChildIndex).getLocalName() != null && basisDateChilds.item(basisDateChildIndex).getLocalName().equals("DateTimeString")) {
+									String basisDateString = XMLTools.trimOrNull(basisDateChilds.item(basisDateChildIndex));
+									dueDate = parseDate(basisDateString, "yyyyMMdd");
+									cd.setBasisDateTime(dueDate);
+								}
+							}
+						} else if (chargeChildName.equals("BasisPeriodMeasure")) {
+							Node unitCode = currentNode.getAttributes().getNamedItem("unitCode");
+							if (unitCode != null && unitCode.getNodeValue().equals("DAY")) {
 								cd.setDays(Math.round(Float.valueOf(XMLTools.trimOrNull(currentNode))));
 								// in case someone writes 30.00 days (happens!) we still want 30 integer days
 							}
+						} else if (chargeChildName.equals("BasisAmount")) {
+							cd.setBasisAmount(new BigDecimal(XMLTools.trimOrNull(currentNode)));
 						} else if (chargeChildName.equals("CalculationPercent")) {
 							cd.setPercent(new BigDecimal(XMLTools.trimOrNull(currentNode)));
+						} else if (chargeChildName.equals("ActualDiscountAmount")) {
+							cd.setActualAmount(new BigDecimal(XMLTools.trimOrNull(currentNode)));
 						}
 					}
-					//appliedAmount
-					//AppliedTradeTax
 				}
 
-				if (cd.getDays() == null) {
-					NodeList siblingNodes = cashdiscountNodes.item(i).getParentNode().getChildNodes();
-					for (int siblingIndex = 0; siblingIndex < siblingNodes.getLength(); siblingIndex++) {
-						if (siblingNodes.item(siblingIndex).getLocalName() != null && siblingNodes.item(siblingIndex).getLocalName().equals("DueDateDateTime")) {
-							NodeList dueDateChilds = siblingNodes.item(siblingIndex).getChildNodes();
-							for (int dueDateChildIndex = 0; dueDateChildIndex < dueDateChilds.getLength(); dueDateChildIndex++) {
-								if (dueDateChilds.item(dueDateChildIndex).getLocalName() != null && dueDateChilds.item(dueDateChildIndex).getLocalName().equals("DateTimeString")) {
-									String dueDateString = XMLTools.trimOrNull(dueDateChilds.item(dueDateChildIndex));
-									dueDate = parseDate(dueDateString, "yyyyMMdd");
+				NodeList siblingNodes = cashdiscountNodes.item(i).getParentNode().getChildNodes();
+				for (int siblingIndex = 0; siblingIndex < siblingNodes.getLength(); siblingIndex++) {
+					if (siblingNodes.item(siblingIndex).getLocalName() != null && siblingNodes.item(siblingIndex).getLocalName().equals("DueDateDateTime")) {
+						NodeList dueDateChilds = siblingNodes.item(siblingIndex).getChildNodes();
+						for (int dueDateChildIndex = 0; dueDateChildIndex < dueDateChilds.getLength(); dueDateChildIndex++) {
+							if (dueDateChilds.item(dueDateChildIndex).getLocalName() != null && dueDateChilds.item(dueDateChildIndex).getLocalName().equals("DateTimeString")) {
+								String dueDateString = XMLTools.trimOrNull(dueDateChilds.item(dueDateChildIndex));
+								dueDate = parseDate(dueDateString, "yyyyMMdd");
+								cd.setDueDate(dueDate);
+								if (cd.getDays() == null) {
 									long diffInMillies = Math.abs(dueDate.getTime() - zpp.getIssueDate().getTime());
 									long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 									cd.setDays((int) diffInDays);
@@ -1475,7 +1524,6 @@ public class ZUGFeRDInvoiceImporter {
 		if (!containsMeta) {
 			throw new Exception("Not yet parsed");
 		}
-		final String head = getUTF8();
 		String rootNode = extractString("local-name(/*)");
 		if (rootNode.equals("CrossIndustryDocument")) {
 			return EStandard.ZUGFERD;
@@ -1487,7 +1535,7 @@ public class ZUGFeRDInvoiceImporter {
 			return EStandard.FACTUR_X;
 		} else if (rootNode.equals("SCRDMCCBDACIDAMessageStructure")) {
 			return EStandard.DELIVER_X;
-		} else if (head.contains("<rsm:SCRDMCCBDACIOMessageStructure")) {
+		} else if (rootNode.equals("SCRDMCCBDACIOMessageStructure")) {
 			return EStandard.ORDER_X;
 		}
 

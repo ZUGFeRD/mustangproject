@@ -13,6 +13,22 @@
   <entry key="xr:Buyer_contact_point" id="BT-56">Contact point</entry>
   <entry key="xr:Buyer_contact_telephone_number" id="BT-57">Contact point phone</entry>
   <entry key="xr:Buyer_contact_email_address" id="BT-58">Contact point email</entry>
+  <entry key="xr:Invoicee_name" id="BT-X-226">Name</entry>
+  <entry key="xr:Invoicee_address_line_1" id="BT-X-235">Address line 1</entry>
+  <entry key="xr:Invoicee_address_line_2" id="BT-X-236">Address line 2</entry>
+  <entry key="xr:Invoicee_address_line_3" id="BT-X-237">Address line 3</entry>
+  <entry key="xr:Invoicee_post_code" id="BT-X-234">ZIP</entry>
+  <entry key="xr:Invoicee_city" id="BT-X-238">Location</entry>
+  <entry key="xr:Invoicee_country_subdivision" id="BT-X-240">State</entry>
+  <entry key="xr:Invoicee_country_code" id="BT-X-239">Country code</entry>
+  <entry key="xr:Invoicee_identifier" id="BT-X-224">Identifier</entry>
+  <entry key="xr:Invoicee_global_identifier" id="BT-X-225">Global identifier</entry>
+  <entry key="xr:Invoicee_global_identifier/@scheme_identifier" id="BT-X-225_scheme">Global identifier scheme</entry>
+  <entry key="xr:Invoicee_legal_registration_identifier" id="BT-X-227">Legal registration identifier</entry>
+  <entry key="xr:Invoicee_VAT_identifier" id="BT-X-242">VAT ID</entry>
+  <entry key="xr:Invoicee_contact_point" id="BT-X-229">Contact point</entry>
+  <entry key="xr:Invoicee_contact_telephone_number" id="BT-X-231">Contact point phone</entry>
+  <entry key="xr:Invoicee_contact_email_address" id="BT-X-233">Contact point email</entry>
   <entry key="xr:Seller_name" id="BT-27">Company name</entry>
   <entry key="xr:Seller_address_line_1" id="BT-35">Address line 1</entry>
   <entry key="xr:Seller_address_line_2" id="BT-36">Address line 2</entry>
@@ -198,6 +214,7 @@
   <entry key="xr:Third_party_payment_description" id="BT-DEX-003">Third party payment description</entry>
   <entry key="uebersicht">Overview</entry>
   <entry key="uebersichtKaeufer" id="BG-7">Information about the buyer</entry>
+  <entry key="uebersichtRechnungsempfaenger" id="BG-X-36">Invoicee</entry>
   <entry key="uebersichtVerkaeufer" id="BG-4">Information about the seller</entry>
   <entry key="uebersichtRechnungsInfo" id="invoice-data">Invoice data</entry>
   <entry key="uebersichtRechnungsuebersicht" id="BG-22">Invoice totals</entry>

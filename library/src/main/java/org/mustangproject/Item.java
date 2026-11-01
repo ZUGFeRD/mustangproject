@@ -313,7 +313,7 @@ public class Item implements IZUGFeRDExportableItem {
 					}
 				})
 			);
-			if (recalcPrice && !BigDecimal.ZERO.equals(quantity)) {
+			if (recalcPrice && quantity != null && quantity.signum() != 0) {
 				icnm.getAsNodeMap("SpecifiedTradeSettlementLineMonetarySummation")
 					.flatMap(cnm -> cnm.getAsBigDecimal("LineTotalAmount"))
 					.ifPresent(this::setPriceFromLineTotal);
