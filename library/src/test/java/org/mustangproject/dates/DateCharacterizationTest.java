@@ -444,11 +444,17 @@ class DateCharacterizationTest {
 	@ParameterizedTest(name = "{0}")
 	@MethodSource("zones")
 	void importIsLenient(ZoneId zone) throws Exception {
+		// the importer parses most dates with its own SimpleDateFormat instead of
+		// XMLTools.tryDate, with the same leniency as tryDateRollsOverInvalidDates and
+		// tryDateIgnoresTrailingText
 		runInZone(zone, () -> {
-			String source = replaceOnce(exportAsString(zf2("EXTENDED"), allDatesInvoice()),
-				"format=\"102\">20240101<", "format=\"102\">20240231<");
+			String valid = exportAsString(zf2("EXTENDED"), allDatesInvoice());
+			String invalidDay = replaceOnce(valid, "format=\"102\">20240101<", "format=\"102\">20240231<");
+			String trailingText = replaceOnce(valid, "format=\"102\">20240101<", "format=\"102\">20240101xyz<");
 			// CURRENT BEHAVIOUR: the invalid 31 February rolls over to 2 March instead of failing
-			assertEquals(date(2024, 3, 2), importInvoice(source).getIssueDate());
+			assertEquals(date(2024, 3, 2), importInvoice(invalidDay).getIssueDate(), "invalid day");
+			// CURRENT BEHAVIOUR: trailing text (=garbage) is ignored instead of failing
+			assertEquals(date(2024, 1, 1), importInvoice(trailingText).getIssueDate(), "trailing text");
 		});
 	}
 
