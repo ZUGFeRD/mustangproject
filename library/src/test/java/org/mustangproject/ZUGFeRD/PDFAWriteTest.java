@@ -23,6 +23,7 @@ package org.mustangproject.ZUGFeRD;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +32,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
 
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.xmpbox.XMPMetadata;
+import org.apache.xmpbox.xml.DomXmpParser;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -125,6 +131,54 @@ public class PDFAWriteTest extends ResourceCase {
 			exceptions++;
 		}
 		assertEquals(0, exceptions);
+	}
+
+	@Test
+	public void testDescriptiveMetadataIsPassedToExporter() throws Exception {
+		TradeParty recipient = new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE");
+		Invoice i = createInvoice(recipient);
+		File tempFile = getResourceAsFile("MustangGnuaccountingBeispielRE-20201121_508blankoA3.pdf");
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try (IZUGFeRDExporter zea = new ZUGFeRDExporterFromPDFA()) {
+			zea.load(tempFile.getAbsolutePath());
+			zea.setTitle("My Invoice").setSubject("My Subject").setKeywords("Invoice, ZUGFeRD");
+			zea.setTransaction(i);
+			zea.export(bos);
+		}
+
+		assertDescriptiveMetadata(bos.toByteArray(), "My Invoice", "My Subject", "Invoice, ZUGFeRD");
+	}
+
+	@Test
+	public void testDescriptiveMetadataOfSourcePDFIsRetained() throws Exception {
+		TradeParty recipient = new TradeParty("Franz Müller", "teststr.12", "55232", "Entenhausen", "DE");
+		Invoice i = createInvoice(recipient);
+		File tempFile = getResourceAsFile("EN16931_Einfach.pdf");
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try (IZUGFeRDExporter zea = new ZUGFeRDExporterFromPDFA()) {
+			zea.load(tempFile.getAbsolutePath());
+			zea.setTransaction(i);
+			zea.export(bos);
+		}
+
+		assertDescriptiveMetadata(bos.toByteArray(), "Lieferant GmbH: Invoice 471102",
+			"Invoice 471102 dated 2024-11-15 issued by Lieferant GmbH", "Invoice, Factur-X");
+	}
+
+	private void assertDescriptiveMetadata(byte[] pdf, String title, String subject, String keywords) throws Exception {
+		try (PDDocument doc = Loader.loadPDF(pdf)) {
+			PDDocumentInformation info = doc.getDocumentInformation();
+			assertEquals(title, info.getTitle());
+			assertEquals(subject, info.getSubject());
+			assertEquals(keywords, info.getKeywords());
+
+			XMPMetadata xmp = new DomXmpParser().parse(doc.getDocumentCatalog().getMetadata().toByteArray());
+			assertEquals(title, xmp.getDublinCoreSchema().getTitle());
+			assertEquals(subject, xmp.getDublinCoreSchema().getDescription());
+			assertEquals(keywords, xmp.getAdobePDFSchema().getKeywords());
+		}
 	}
 
 	private Invoice createInvoice(TradeParty recipient) {

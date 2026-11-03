@@ -124,6 +124,22 @@ public class DXExporterFromA1 extends DXExporterFromA3 {
 	public DXExporterFromA1 setProducer(String producer) {
 		return (DXExporterFromA1) super.setProducer(producer);
 	}
+
+	@Override
+	public DXExporterFromA1 setTitle(String title) {
+		return (DXExporterFromA1) super.setTitle(title);
+	}
+
+	@Override
+	public DXExporterFromA1 setSubject(String subject) {
+		return (DXExporterFromA1) super.setSubject(subject);
+	}
+
+	@Override
+	public DXExporterFromA1 setKeywords(String keywords) {
+		return (DXExporterFromA1) super.setKeywords(keywords);
+	}
+
 	@Override
 	public DXExporterFromA1 setZUGFeRDVersion(int version) {
 		return (DXExporterFromA1) super.setZUGFeRDVersion(version);

@@ -76,6 +76,18 @@ public class OXExporterFromA1 extends OXExporterFromA3 {
 		return (OXExporterFromA1) super.setProducer(producer);
 	}
 	@Override
+	public OXExporterFromA1 setTitle(String title) {
+		return (OXExporterFromA1) super.setTitle(title);
+	}
+	@Override
+	public OXExporterFromA1 setSubject(String subject) {
+		return (OXExporterFromA1) super.setSubject(subject);
+	}
+	@Override
+	public OXExporterFromA1 setKeywords(String keywords) {
+		return (OXExporterFromA1) super.setKeywords(keywords);
+	}
+	@Override
 	public OXExporterFromA1 setZUGFeRDVersion(int version) {
 		return (OXExporterFromA1) super.setZUGFeRDVersion(version);
 	}

@@ -105,6 +105,18 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * CreatorTool
 	 */
 	protected String creatorTool = "mustangproject";
+	/**
+	 * Title attribute for PDF
+	 */
+	protected String title;
+	/**
+	 * Subject attribute for PDF
+	 */
+	protected String subject;
+	/**
+	 * Keywords attribute for PDF
+	 */
+	protected String keywords;
 
 	protected PDDocument doc;
 
@@ -550,6 +562,24 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
+	@Override
+	public ZUGFeRDExporterFromA3 setTitle(String title) {
+		this.title = title;
+		return this;
+	}
+
+	@Override
+	public ZUGFeRDExporterFromA3 setSubject(String subject) {
+		this.subject = subject;
+		return this;
+	}
+
+	@Override
+	public ZUGFeRDExporterFromA3 setKeywords(String keywords) {
+		this.keywords = keywords;
+		return this;
+	}
+
 	/***
 	 * Add most of the required Factur-X/ZUGFeRD XMPs into the PDF/A file
 	 * @param attachHeaders
@@ -638,6 +668,8 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	protected void prepareDocument() throws IOException {
 
 		PDDocumentCatalog cat = doc.getDocumentCatalog();
+		// read input metadata before it gets modified
+		DescriptiveMetadata inputMetadata = readInputMetadata();
 		PDMetadata existingMetadata = cat.getMetadata();
 		if (overwrite || existingMetadata == null || existingMetadata.getLength() == 0) {
 			metadata = new PDMetadata(doc);
@@ -653,6 +685,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		writeDublinCoreSchema(xmp);
 		writeXMLBasicSchema(xmp);
 		writeDocumentInformation();
+		writeDescriptiveMetadata(xmp, inputMetadata);
 
 		// the following three lines are intended to make the pdf more PDF/A conformant if it isn't already
 		addSRGBOutputIntend();
@@ -828,6 +861,84 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		}
 	}
 
+	/**
+	 * Reads title, subject and keywords of the input PDF from its XMP metadata or, if absent there,
+	 * from its document information. Ghostscript's "Untitled" default title is ignored.
+	 *
+	 * @return the descriptive metadata of the input PDF
+	 */
+	protected DescriptiveMetadata readInputMetadata() {
+		String inputTitle = null;
+		String inputSubject = null;
+		String inputKeywords = null;
+		try {
+			XMPMetadata inputXmp = getXmpMetadata();
+			DublinCoreSchema dc = inputXmp.getDublinCoreSchema();
+			if (dc != null) {
+				inputTitle = dc.getTitle();
+				inputSubject = dc.getDescription();
+			}
+			AdobePDFSchema pdf = inputXmp.getAdobePDFSchema();
+			if (pdf != null) {
+				inputKeywords = pdf.getKeywords();
+			}
+		} catch (IOException | BadFieldValueException e) {
+			// unparsable XMP, fall back to document information
+		}
+		PDDocumentInformation info = doc.getDocumentInformation();
+		if (isBlank(inputTitle) || "Untitled".equalsIgnoreCase(inputTitle)) {
+			String infoTitle = info.getTitle();
+			inputTitle = "Untitled".equalsIgnoreCase(infoTitle) ? null : infoTitle;
+		}
+		if (isBlank(inputSubject)) {
+			inputSubject = info.getSubject();
+		}
+		if (isBlank(inputKeywords)) {
+			inputKeywords = info.getKeywords();
+		}
+		return new DescriptiveMetadata(inputTitle, inputSubject, inputKeywords);
+	}
+
+	/**
+	 * Writes title, subject and keywords consistently to XMP and document information.
+	 * Values set via the setters take precedence over those of the input PDF if the overwrite flag is set,
+	 * otherwise they are only used if the input PDF has no value.
+	 *
+	 * @param xmp the metadata as XML
+	 * @param inputMetadata the descriptive metadata of the input PDF
+	 */
+	protected void writeDescriptiveMetadata(XMPMetadata xmp, DescriptiveMetadata inputMetadata) {
+		String effectiveTitle = chooseBetweenSetterAndInputValue(title, inputMetadata.title);
+		String effectiveSubject = chooseBetweenSetterAndInputValue(subject, inputMetadata.subject);
+		String effectiveKeywords = chooseBetweenSetterAndInputValue(keywords, inputMetadata.keywords);
+
+		// xmpbox cannot take null, so null values are not written.
+		// The XMP holds no value then anyway: it was either freshly created (when overwrite=true) or the value is already blank.
+		DublinCoreSchema dc = xmp.getDublinCoreSchema();
+		if (effectiveTitle != null) {
+			dc.setTitle(effectiveTitle);
+		}
+		if (effectiveSubject != null) {
+			dc.setDescription(effectiveSubject);
+		}
+		if (effectiveKeywords != null) {
+			xmp.getAdobePDFSchema().setKeywords(effectiveKeywords);
+		}
+
+		PDDocumentInformation info = doc.getDocumentInformation();
+		info.setTitle(effectiveTitle);
+		info.setSubject(effectiveSubject);
+		info.setKeywords(effectiveKeywords);
+	}
+
+	/**
+	 * @return the value to write, or null if it is blank
+	 */
+	private String chooseBetweenSetterAndInputValue(String setterValue, String inputValue) {
+		String value = setterValue == null || (!overwrite && isNotBlank(inputValue)) ? inputValue : setterValue;
+		return isBlank(value) ? null : value;
+	}
+
 	protected DublinCoreSchema getDublinCoreSchema(XMPMetadata xmp) {
 		DublinCoreSchema dc = xmp.getDublinCoreSchema();
 		if (dc != null) {
@@ -981,5 +1092,17 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		}
 
 		return this;
+	}
+
+	protected static class DescriptiveMetadata {
+		private final String title;
+		private final String subject;
+		private final String keywords;
+
+		protected DescriptiveMetadata(String title, String subject, String keywords) {
+			this.title = title;
+			this.subject = subject;
+			this.keywords = keywords;
+		}
 	}
 }

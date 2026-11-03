@@ -418,6 +418,21 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 		return this;
 	}
 
+	@Override
+	public DXExporterFromA3 setTitle(String title) {
+		return (DXExporterFromA3) super.setTitle(title);
+	}
+
+	@Override
+	public DXExporterFromA3 setSubject(String subject) {
+		return (DXExporterFromA3) super.setSubject(subject);
+	}
+
+	@Override
+	public DXExporterFromA3 setKeywords(String keywords) {
+		return (DXExporterFromA3) super.setKeywords(keywords);
+	}
+
 	/**
 	 * Sets the property for DocumentType.
 	 *

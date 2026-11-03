@@ -109,6 +109,18 @@ public class ZUGFeRDExporterFromA1 extends ZUGFeRDExporterFromA3 {
 		return (ZUGFeRDExporterFromA1) super.setProducer(producer);
 	}
 	@Override
+	public ZUGFeRDExporterFromA1 setTitle(String title) {
+		return (ZUGFeRDExporterFromA1) super.setTitle(title);
+	}
+	@Override
+	public ZUGFeRDExporterFromA1 setSubject(String subject) {
+		return (ZUGFeRDExporterFromA1) super.setSubject(subject);
+	}
+	@Override
+	public ZUGFeRDExporterFromA1 setKeywords(String keywords) {
+		return (ZUGFeRDExporterFromA1) super.setKeywords(keywords);
+	}
+	@Override
 	public ZUGFeRDExporterFromA1 setZUGFeRDVersion(EStandard est, int version) {
 		return (ZUGFeRDExporterFromA1) super.setZUGFeRDVersion(est, version);
 	}
