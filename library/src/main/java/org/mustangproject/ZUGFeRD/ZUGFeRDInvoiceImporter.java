@@ -792,9 +792,9 @@ public class ZUGFeRDInvoiceImporter {
 			headerTradeAgreementNodesMap.getNode("BuyerOrderReferencedDocument").map(ReferencedDocument::fromNode).ifPresent(rd -> zpp.setBuyerOrderReferencedDocument(rd));
 			headerTradeAgreementNodesMap.getNode("SellerOrderReferencedDocument").map(ReferencedDocument::fromNode).ifPresent(rd -> zpp.setSellerOrderReferencedDocument(rd));
 			headerTradeAgreementNodesMap.getNode("ContractReferencedDocument").map(ReferencedDocument::fromNode).ifPresent(rd -> zpp.setContractReferencedDocument(rd));
-			headerTradeAgreementNodesMap.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).filter(rd -> "50".equals(rd.getTypeCode())).findFirst().ifPresent(rd -> zpp.setTenderReferencedDocument(rd));
-			headerTradeAgreementNodesMap.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).filter(rd -> "130".equals(rd.getTypeCode())).findFirst().ifPresent(rd -> zpp.setObjectIdentifierReferencedDocument(rd));
-			headerTradeAgreementNodesMap.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).filter(rd -> "916".equals(rd.getTypeCode())).filter(rd -> !isPlainEmbeddedAttachment(rd)).findFirst().ifPresent(rd -> zpp.setRelatedReferencedDocument(rd));
+			headerTradeAgreementNodesMap.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).filter(Objects::nonNull).filter(rd -> "50".equals(rd.getTypeCode())).findFirst().ifPresent(rd -> zpp.setTenderReferencedDocument(rd));
+			headerTradeAgreementNodesMap.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).filter(Objects::nonNull).filter(rd -> "130".equals(rd.getTypeCode())).findFirst().ifPresent(rd -> zpp.setObjectIdentifierReferencedDocument(rd));
+			headerTradeAgreementNodesMap.getAllNodes("AdditionalReferencedDocument").map(ReferencedDocument::fromNode).filter(Objects::nonNull).filter(rd -> "916".equals(rd.getTypeCode())).filter(rd -> !isPlainEmbeddedAttachment(rd)).findFirst().ifPresent(rd -> zpp.setRelatedReferencedDocument(rd));
 		}
 
 
