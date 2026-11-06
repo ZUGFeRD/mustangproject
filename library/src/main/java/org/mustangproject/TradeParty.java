@@ -11,6 +11,7 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDExportableContact;
 import org.mustangproject.ZUGFeRD.IZUGFeRDExportableTradeParty;
 import org.mustangproject.ZUGFeRD.IZUGFeRDLegalOrganisation;
 import org.mustangproject.ZUGFeRD.IZUGFeRDTradeSettlement;
+import org.mustangproject.util.StringUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -338,6 +339,8 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 												if (legal.item(legalChildIndex).getAttributes().getNamedItem("schemeID") != null) {
 													SchemedID sid = new SchemedID(legal.item(legalChildIndex).getAttributes().getNamedItem("schemeID").getNodeValue(), legal.item(legalChildIndex).getTextContent());
 													lo.setSchemedID(sid);
+												} else if (StringUtils.isNotBlank(legal.item(legalChildIndex).getTextContent())) {
+													lo.setSchemedID(new SchemedID(null, legal.item(legalChildIndex).getTextContent()));
 												}
 											}
 											// we dont have that attribute yet in the legalorganisation: CompanyLegalForm

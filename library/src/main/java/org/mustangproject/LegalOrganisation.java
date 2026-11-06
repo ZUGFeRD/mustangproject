@@ -1,6 +1,7 @@
 package org.mustangproject;
 
 import org.mustangproject.ZUGFeRD.IZUGFeRDLegalOrganisation;
+import org.mustangproject.util.StringUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -53,6 +54,8 @@ public class LegalOrganisation implements IZUGFeRDLegalOrganisation {
 						if (currentItemNode.getAttributes().getNamedItem("schemeID") != null) {
 							SchemedID gid = new SchemedID().setScheme(currentItemNode.getAttributes().getNamedItem("schemeID").getNodeValue()).setId(currentItemNode.getTextContent());
 							this.setSchemedID(gid);
+						} else if (StringUtils.isNotBlank(currentItemNode.getTextContent())) {
+							this.setSchemedID(new SchemedID(null, currentItemNode.getTextContent()));
 						}
 					}
 					if (currentItemNode.getLocalName().equals("TradingBusinessName") && currentItemNode.getFirstChild() != null) {
