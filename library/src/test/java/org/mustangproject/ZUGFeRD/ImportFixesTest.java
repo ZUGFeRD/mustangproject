@@ -5,6 +5,7 @@ import org.mustangproject.BankDetails;
 import org.mustangproject.CashDiscount;
 import org.mustangproject.EStandard;
 import org.mustangproject.Invoice;
+import org.mustangproject.SchemedID;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 /**
  * Regression tests for defects in ZUGFeRDInvoiceImporter and the item parsing.
@@ -40,6 +42,18 @@ public class ImportFixesTest {
 		zii.doIgnoreCalculationErrors();
 		zii.fromXML(xml);
 		return zii;
+	}
+
+	private static String generate(Invoice invoice) {
+		ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+		zf2p.setProfile(Profiles.getByName("XRechnung"));
+		zf2p.generateXML(invoice);
+		return new String(zf2p.getXML(), StandardCharsets.UTF_8);
+	}
+
+	private static String withUBLLegalOrganisationID(String companyID) throws IOException {
+		String name = "<cbc:RegistrationName>Lieferant GmbH</cbc:RegistrationName>";
+		return replaceOnce(readResource("ubl/XRECHNUNG_Einfach.ubl.xml"), name, name + companyID);
 	}
 
 	/**
@@ -154,5 +168,82 @@ public class ImportFixesTest {
 		zii.fromXML(xml);
 
 		assertEquals(0, zii.extractInvoice().getZFItems()[0].getQuantity().signum());
+	}
+
+	/**
+	 * CII: the scheme of a legal organisation ID is optional, an ID without schemeID was dropped.
+	 */
+	@Test
+	public void testCIILegalOrganisationIDWithoutScheme() throws Exception {
+		Invoice invoice = importer(readResource("test_invoice_note.xml")).extractInvoice();
+
+		SchemedID id = invoice.getSender().getLegalOrganisation().getSchemedID();
+		assertEquals("VR 98765 Nx", id.getID());
+		assertNull(id.getScheme());
+
+		String sellerID = "//*[local-name()='SellerTradeParty']/*[local-name()='SpecifiedLegalOrganization']/*[local-name()='ID']";
+		String xml = generate(invoice);
+		assertThat(xml).valueByXPath("string(" + sellerID + ")").isEqualTo("VR 98765 Nx");
+		assertThat(xml).valueByXPath("count(" + sellerID + "/@schemeID)").asInt().isEqualTo(0);
+	}
+
+	@Test
+	public void testCIILegalOrganisationIDWithScheme() throws Exception {
+		String xml = replaceOnce(readResource("test_invoice_note.xml"),
+			"<ram:ID>VR 98765 Nx</ram:ID>", "<ram:ID schemeID=\"0002\">VR 98765 Nx</ram:ID>");
+
+		SchemedID id = importer(xml).extractInvoice().getSender().getLegalOrganisation().getSchemedID();
+
+		assertEquals("VR 98765 Nx", id.getID());
+		assertEquals("0002", id.getScheme());
+	}
+
+	/**
+	 * A blank ID without schemeID stays unset, so no empty ID is generated.
+	 */
+	@Test
+	public void testCIIBlankLegalOrganisationIDWithoutScheme() throws Exception {
+		for (String blank : new String[]{"<ram:ID/>", "<ram:ID>  </ram:ID>"}) {
+			String xml = replaceOnce(readResource("test_invoice_note.xml"), "<ram:ID>VR 98765 Nx</ram:ID>", blank);
+
+			Invoice invoice = importer(xml).extractInvoice();
+
+			IZUGFeRDLegalOrganisation legalOrganisation = invoice.getSender().getLegalOrganisation();
+			assertNull(legalOrganisation.getSchemedID());
+			assertEquals("Seller Ltd.", legalOrganisation.getTradingBusinessName());
+			assertThat(generate(invoice))
+				.valueByXPath("count(//*[local-name()='SellerTradeParty']/*[local-name()='SpecifiedLegalOrganization']/*[local-name()='ID'])")
+				.asInt().isEqualTo(0);
+		}
+	}
+
+	/**
+	 * UBL: the same for the CompanyID of a PartyLegalEntity.
+	 */
+	@Test
+	public void testUBLLegalOrganisationIDWithoutScheme() throws Exception {
+		Invoice invoice = importer(withUBLLegalOrganisationID("<cbc:CompanyID>HRB 1234</cbc:CompanyID>")).extractInvoice();
+
+		SchemedID id = invoice.getSender().getLegalOrganisation().getSchemedID();
+		assertEquals("HRB 1234", id.getID());
+		assertNull(id.getScheme());
+	}
+
+	@Test
+	public void testUBLLegalOrganisationIDWithScheme() throws Exception {
+		Invoice invoice = importer(withUBLLegalOrganisationID("<cbc:CompanyID schemeID=\"0002\">HRB 1234</cbc:CompanyID>")).extractInvoice();
+
+		SchemedID id = invoice.getSender().getLegalOrganisation().getSchemedID();
+		assertEquals("HRB 1234", id.getID());
+		assertEquals("0002", id.getScheme());
+	}
+
+	@Test
+	public void testUBLBlankLegalOrganisationIDWithoutScheme() throws Exception {
+		for (String blank : new String[]{"<cbc:CompanyID/>", "<cbc:CompanyID>  </cbc:CompanyID>"}) {
+			Invoice invoice = importer(withUBLLegalOrganisationID(blank)).extractInvoice();
+
+			assertNull(invoice.getSender().getLegalOrganisation().getSchemedID());
+		}
 	}
 }
