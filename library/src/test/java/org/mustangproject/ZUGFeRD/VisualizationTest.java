@@ -46,6 +46,7 @@ public class VisualizationTest extends ResourceCase {
 	private static final String TARGET_PDF_CII = "./target/testout-Visualization-cii.pdf";
 	private static final String TARGET_PDF_UBL = "./target/testout-Visualization-ubl.pdf";
 	private static final String TARGET_PDF_UBL_CREDIT_NOTE = "./target/testout-Visualization-ubl-credit-note.pdf";
+	private static final String TARGET_PDF_CII_EMPTY_TAX_POINT_DATE = "./target/testout-Visualization-cii-empty-tax-point-date.pdf";
 
 	@Test
 	public void testCIIVisualizationBasic() {
@@ -114,6 +115,41 @@ public class VisualizationTest extends ResourceCase {
 		assertTrue(result.contains("HYVEDEMM419"));
 		assertTrue(result.contains("OBKLDEMXXXX"));
 		assertTrue(result.contains("SOLADEST600"));
+	}
+
+	@Test
+	public void testCIIVisualizationEmptyTaxPointDate() {
+		// regression for https://github.com/ZUGFeRD/mustangproject/issues/727:
+		// an empty TaxPointDate DateString (BT-7) must not abort the visualization
+		String result = visualizeCII("cii/empty-tax-point-date.cii.xml");
+
+		assertNotNull(result);
+		assertFalse(result.contains("ILLEGAL DATE FORMAT"));
+		assertTrue(result.contains("<div id=\"BT-7\" title=\"BT-7\" class=\"boxdaten wert\"></div>"));
+	}
+
+	@Test
+	public void testCIIVisualizationTaxPointDate() {
+		String result = visualizeCII("cii/02.03a-INVOICE_uncefact.xml");
+
+		assertNotNull(result);
+		assertTrue(result.contains("<div id=\"BT-7\" title=\"BT-7\" class=\"boxdaten wert\">13.4.2018</div>"));
+	}
+
+	private String visualizeCII(String resourceName) {
+		File CIIinputFile = getResourceAsFile(resourceName);
+		String result = null;
+		try {
+			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+			result = zvi.visualize(CIIinputFile.getAbsolutePath(), Language.DE);
+		} catch (TransformerException e) {
+			fail("TransformerException should not happen: " + e.getMessage());
+		} catch (IOException e) {
+			fail("IOException should not happen: " + e.getMessage());
+		} catch (ParserConfigurationException e) {
+			fail("ParserConfigurationException should not happen: " + e.getMessage());
+		}
+		return result;
 	}
 
 	@Test
@@ -308,6 +344,24 @@ public class VisualizationTest extends ResourceCase {
 
 			assertTrue(ByteArraySearcher.startsWith(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), new byte[]{'%', 'P', 'D', 'F'}));
 			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), "<rdf:li>fr</rdf:li>".getBytes()));
+		} catch (IOException e) {
+			fail("IOException should not occur");
+		}
+	}
+
+	@Test
+	public void testPDFVisualizationCIIEmptyTaxPointDate() {
+		// regression for https://github.com/ZUGFeRD/mustangproject/issues/727:
+		// with an empty TaxPointDate DateString, toPDF must still write a complete PDF
+		File CIIinputFile = getResourceAsFile("cii/empty-tax-point-date.cii.xml");
+
+		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+		zvi.toPDF(CIIinputFile.getAbsolutePath(), TARGET_PDF_CII_EMPTY_TAX_POINT_DATE);
+
+		try {
+			byte[] pdf = Files.readAllBytes(Paths.get(TARGET_PDF_CII_EMPTY_TAX_POINT_DATE));
+			assertTrue(ByteArraySearcher.startsWith(pdf, new byte[]{'%', 'P', 'D', 'F'}));
+			assertTrue(ByteArraySearcher.contains(pdf, "%%EOF".getBytes()));
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}
