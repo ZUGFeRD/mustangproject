@@ -85,6 +85,79 @@ public class VisualizationTest extends ResourceCase {
 	}
 
 	@Test
+	public void testExtendedVisualization() {
+		String result = visualizeExtended("Extended_fremdwaehrung.xml", Language.DE);
+
+		assertTrue(result.contains("<html lang=\"de\">"));
+		assertTrue(result.contains("Rechnung Nr.&nbsp;47110815"));
+		assertTrue(result.contains("Rohstoff AG Salzgitter"));
+		assertTrue(result.contains("Stahlcoil"));
+		assertTrue(result.contains("Umsatzsteueraufschlüsselung"));
+		assertTrue(result.contains("Zahlbetrag"));
+		// German number format
+		assertTrue(result.contains("850,00"));
+		// German date format
+		assertTrue(result.contains("15.11.2024"));
+		// the tax total is also given in the tax currency
+		assertTrue(result.contains("Steuerbetrag in GBP"));
+	}
+
+	@Test
+	public void testExtendedVisualizationEnglish() {
+		String result = visualizeExtended("Extended_fremdwaehrung.xml", Language.EN);
+
+		assertTrue(result.contains("<html lang=\"en\">"));
+		assertTrue(result.contains("Invoice No.&nbsp;47110815"));
+		assertTrue(result.contains("Seller"));
+		assertTrue(result.contains("Line items"));
+		assertTrue(result.contains("VAT breakdown"));
+		assertTrue(result.contains("Amount due for payment"));
+		assertTrue(result.contains("850.00"));
+		assertTrue(result.contains("2024-11-15"));
+		// code lists are resolved with the English UN/CEFACT names
+		assertTrue(result.contains("REG (Regulatory information)"));
+		assertFalse(result.contains("Verkäufer"));
+		assertFalse(result.contains("Umsatzsteuer"));
+	}
+
+	@Test
+	public void testExtendedVisualizationFrench() {
+		String result = visualizeExtended("Extended_fremdwaehrung.xml", Language.FR);
+
+		assertTrue(result.contains("<html lang=\"fr\">"));
+		assertTrue(result.contains("Facture N°&nbsp;47110815"));
+		assertTrue(result.contains("Vendeur"));
+		assertTrue(result.contains("Lignes de facture"));
+		assertTrue(result.contains("Ventilation de la TVA"));
+		assertTrue(result.contains("Montant à payer"));
+		assertTrue(result.contains("850,00"));
+		assertTrue(result.contains("15/11/2024"));
+		assertFalse(result.contains("Verkäufer"));
+	}
+
+	private String visualizeExtended(String inputFilename, Language lang) {
+		File CIIinputFile = getResourceAsFile(inputFilename);
+		String result = null;
+		try {
+			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+			result = zvi.visualize(CIIinputFile.getAbsolutePath(), lang);
+			Files.writeString(Paths.get("./target/testout-extended-" + lang.name().toLowerCase() + ".html"), result);
+		} catch (UnsupportedOperationException e) {
+			fail("UnsupportedOperationException should not happen: " + e.getMessage());
+		} catch (IllegalArgumentException e) {
+			fail("IllegalArgumentException should not happen: " + e.getMessage());
+		} catch (TransformerException e) {
+			fail("TransformerException should not happen: " + e.getMessage());
+		} catch (IOException e) {
+			fail("IOException should not happen: " + e.getMessage());
+		} catch (ParserConfigurationException e) {
+			fail("ParserConfigurationException should not happen: " + e.getMessage());
+		}
+		assertNotNull(result);
+		return result;
+	}
+
+	@Test
 	public void testCIIVisualizationMultiplePaymentMeansBIC() {
 		File CIIinputFile = getResourceAsFile("multiple-payment-means.cii.xml");
 		String result = null;

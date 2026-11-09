@@ -21,7 +21,9 @@
 package org.mustangproject.ZUGFeRD;
 
 import com.helger.commons.io.stream.StreamHelper;
+
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -64,6 +66,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -96,7 +100,8 @@ public class ZUGFeRDVisualizer {
 	// return result;
 	// }
 	private TransformerFactory mFactory;
-	private Templates mXsltXRTemplate;
+	private Templates mXsltExtendedTemplate; //Extended visualization
+	private Templates mXsltXRTemplate; //EN16931 visualization
 	private Templates mXsltUBLTemplate;
 	private Templates mXsltUBLCreditNoteTemplate;
 	private Templates mXsltCIOTemplate;
@@ -109,40 +114,6 @@ public class ZUGFeRDVisualizer {
 		mFactory.setURIResolver(new ClasspathResourceURIResolver());
 	}
 
-	/***
-	 * returns which standard is used, CII or UBL
-	 * @param fis inputstream (will be consumed)
-	 * @return (facturx = cii)
-	 */
-	private EStandard findOutStandardFromRootNode(InputStream fis)
-		throws ParserConfigurationException {
-
-		String zf1Signature = "CrossIndustryDocument";
-		String zf2Signature = "CrossIndustryInvoice";
-		String ublSignature = "Invoice";
-		String ublCreditNoteSignature = "CreditNote";
-		String cioSignature = "SCRDMCCBDACIOMessageStructure";
-
-		try {
-			DocumentBuilder db = XMLTools.getDocumentBuilder(true);
-			Document doc = db.parse(new InputSource(fis));
-			Element root = doc.getDocumentElement();
-			if (root.getLocalName().equals(zf1Signature)) {
-				return EStandard.ZUGFERD;
-			} else if (root.getLocalName().equals(zf2Signature)) {
-				return EStandard.FACTUR_X;
-			} else if (root.getLocalName().equals(ublSignature)) {
-				return EStandard.UBL;
-			} else if (root.getLocalName().equals(ublCreditNoteSignature)) {
-				return EStandard.UBL_CREDITNOTE;
-			} else if (root.getLocalName().equals(cioSignature)) {
-				return EStandard.ORDER_X;
-			}
-		} catch (Exception e) {
-			LOGGER.error("Failed to recognize standard", e);
-		}
-		return null;
-	}
 
 	public String visualize(String xmlFilename, Language lang)
 		throws IOException, TransformerException, ParserConfigurationException {
@@ -156,37 +127,62 @@ public class ZUGFeRDVisualizer {
 		initTemplates(lang);
 
 		String fileContent = new String(inputXml.readAllBytes(), StandardCharsets.UTF_8);
-		EStandard thestandard = findOutStandardFromRootNode(new ByteArrayInputStream(fileContent.getBytes(StandardCharsets.UTF_8)));
-		ByteArrayOutputStream htmlOutput = new ByteArrayOutputStream();
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(fileContent);
 
 
-		ByteArrayInputStream xmlContentStream = new ByteArrayInputStream(fileContent.getBytes(StandardCharsets.UTF_8));
+		try {
+			EStandard thestandard = zi.getStandard();
+			Profile theprofile = Profiles.getByName(zi.getZUGFeRDProfil());
 
-		if (thestandard == EStandard.ZUGFERD) {
-			applyZF1XSLT(xmlContentStream, htmlOutput);
-			return htmlOutput.toString(StandardCharsets.UTF_8);
-		} else if (thestandard == EStandard.FACTUR_X) {
-			//zf2 or fx
-			applyZF2XSLT(xmlContentStream, htmlOutput);
-		} else if (thestandard == EStandard.UBL) {
-			//zf2 or fx
-			applyUBL2XSLT(xmlContentStream, htmlOutput);
-		} else if (thestandard == EStandard.UBL_CREDITNOTE) {
-			//zf2 or fx
-			applyUBLCreditNote2XSLT(xmlContentStream, htmlOutput);
-		} else if (thestandard == EStandard.ORDER_X) {
-			//zf2 or fx
-			applyCIO2XSLT(xmlContentStream, htmlOutput);
-		} else {
-			throw new IllegalArgumentException("File does not look like CII or UBL");
+			ByteArrayOutputStream htmlOutput = new ByteArrayOutputStream();
+
+			boolean needsTwoSteps = true;
+
+			ByteArrayInputStream xmlContentStream = new ByteArrayInputStream(fileContent.getBytes(StandardCharsets.UTF_8));
+
+
+			if (thestandard == EStandard.ZUGFERD) {
+				applyZF1XSLT(xmlContentStream, htmlOutput);
+				return htmlOutput.toString(StandardCharsets.UTF_8);
+			} else if (thestandard == EStandard.FACTUR_X) {
+				//zf2 or fx: the extended visualization creates the HTML in one step
+				if (theprofile == Profiles.getByName("Extended")) {
+					applyZF2ExtendedXSLT(xmlContentStream, htmlOutput, lang);
+					needsTwoSteps = false;
+				} else {
+					applyZF2XSLT(xmlContentStream, htmlOutput);
+				}
+			} else if (thestandard == EStandard.UBL) {
+				//zf2 or fx
+				applyUBL2XSLT(xmlContentStream, htmlOutput);
+			} else if (thestandard == EStandard.UBL_CREDITNOTE) {
+				//zf2 or fx
+				applyUBLCreditNote2XSLT(xmlContentStream, htmlOutput);
+			} else if (thestandard == EStandard.ORDER_X) {
+				//zf2 or fx
+				applyCIO2XSLT(xmlContentStream, htmlOutput);
+			} else {
+				throw new IllegalArgumentException("File does not look like CII or UBL");
+			}
+			Optional<InputStream> in = copyStream(htmlOutput);
+			ByteArrayOutputStream htmlOutStream = new ByteArrayOutputStream();
+			if (needsTwoSteps) {
+
+				if (in.isPresent()) {
+					applyXSLTToHTML(in.get(), htmlOutStream, lang);
+				}
+
+			} else {
+				htmlOutStream = htmlOutput;
+			}
+
+			return htmlOutStream.toString(StandardCharsets.UTF_8);
+
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return null;
 		}
-		Optional<InputStream> in = copyStream(htmlOutput);
-		ByteArrayOutputStream htmlOutStream = new ByteArrayOutputStream();
-		if (in.isPresent()) {
-			applyXSLTToHTML(in.get(), htmlOutStream, lang);
-		}
 
-		return htmlOutStream.toString(StandardCharsets.UTF_8);
 	}
 
 	/**
@@ -225,6 +221,9 @@ public class ZUGFeRDVisualizer {
 			mXsltXRTemplate = mFactory.newTemplates(
 				new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/cii-xr.xsl")));
 		}
+		if (mXsltExtendedTemplate == null) {
+			mXsltExtendedTemplate = mFactory.newTemplates(getExtendedStylesheetSource());
+		}
 
 		if (mXsltHTMLTemplates == null) {
 			mXsltHTMLTemplates = new EnumMap<>(Language.class);
@@ -238,14 +237,20 @@ public class ZUGFeRDVisualizer {
 
 	protected String toFOP(String xmlFilename, Language lang)
 		throws IOException, TransformerException, ParserConfigurationException {
-		EStandard theStandard;
-		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
-			theStandard = findOutStandardFromRootNode(fis);
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(xmlFilename);
+
+
+		try {
+			EStandard theStandard = zi.getStandard();
+			try (FileInputStream fis = new FileInputStream(xmlFilename)) {
+				return toFOP(fis, theStandard, lang);
+			}
+
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return null;
 		}
 
-		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
-			return toFOP(fis, theStandard, lang);
-		}
 	}
 
 	protected String toFOP(InputStream is, EStandard theStandard, Language lang)
@@ -301,13 +306,14 @@ public class ZUGFeRDVisualizer {
 		}
 
 		toPDFfromFOP(fopInput, () -> {
-				try {
-					return Files.newOutputStream(Paths.get(pdfFilename));
-				} catch (IOException e) {
-					LOGGER.error("Failed to create PDF", e);
-				}
+			try {
+				return Files.newOutputStream(Paths.get(pdfFilename));
+			} catch (IOException e) {
+				LOGGER.error("Failed to create PDF", e);
+			}
 			return null;
-		}, (OutputStream out) -> { });
+		}, (OutputStream out) -> {
+		});
 	}
 
 	public byte[] toPDF(String xmlContent) {
@@ -317,33 +323,43 @@ public class ZUGFeRDVisualizer {
 	public byte[] toPDF(String xmlContent, Language lang) {
 
 		String fopInput = null;
+		ZUGFeRDImporter zi = new ZUGFeRDImporter(xmlContent);
+
+
+		try {
+			EStandard theStandard = zi.getStandard();
+
 
 			/* remove file endings so that tests can also pass after checking
 			   out from git with arbitrary options (which may include CSRF changes)
 			 */
-		try {
-			ByteArrayInputStream fis = new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8));
-			EStandard theStandard = findOutStandardFromRootNode(fis);
-			fis = new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8)); //rewind :-(
+			try {
+				ByteArrayInputStream fis = new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8));
+				fis = new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8)); //rewind :-(
 
-			fopInput = toFOP(fis, theStandard, lang);
-		} catch (TransformerException | IOException | ParserConfigurationException e) {
-			LOGGER.error("Failed to apply FOP", e);
+				fopInput = toFOP(fis, theStandard, lang);
+			} catch (TransformerException | IOException e) {
+				LOGGER.error("Failed to apply FOP", e);
+			}
+
+			AtomicReference<byte[]> byteHolder = new AtomicReference<>();
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			toPDFfromFOP(fopInput, () -> new BufferedOutputStream(os), (OutputStream out) -> {
+
+				try {
+					out.flush();
+				} catch (IOException e) {
+					LOGGER.error("Failed to create PDF", e);
+				}
+				byteHolder.set(os.toByteArray());
+			});
+
+			return byteHolder.get();
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return null;
 		}
 
-		AtomicReference<byte[]> byteHolder = new AtomicReference<>();
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		toPDFfromFOP(fopInput, () -> new BufferedOutputStream(os), (OutputStream out) -> {
-
-			try {
-				out.flush();
-			} catch (IOException e) {
-				LOGGER.error("Failed to create PDF", e);
-			}
-			byteHolder.set(os.toByteArray());
-		});
-
-		return byteHolder.get();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -414,6 +430,24 @@ public class ZUGFeRDVisualizer {
 		transformer.transform(new StreamSource(xmlFile), new StreamResult(htmlOutStream));
 	}
 
+	/***
+	 * transforms a CII (ZUGFeRD 2/Factur-X, all profiles including EXTENDED) directly into HTML
+	 * @param xmlFile the CII XML
+	 * @param htmlOutStream where the HTML is written to
+	 * @param lang language of the labels, null defaults to German
+	 * @throws TransformerException if the transformation fails
+	 */
+	protected void applyZF2ExtendedXSLT(final InputStream xmlFile, final OutputStream htmlOutStream, Language lang)
+		throws TransformerException {
+		if (mXsltExtendedTemplate == null) {
+			mXsltExtendedTemplate = mFactory.newTemplates(getExtendedStylesheetSource());
+		}
+		Transformer transformer = mXsltExtendedTemplate.newTransformer();
+		transformer.setParameter("lang", (lang == null ? Language.DE : lang).name().toLowerCase());
+
+		transformer.transform(new StreamSource(xmlFile), new StreamResult(htmlOutStream));
+	}
+
 	protected void applyCIO2XSLT(final InputStream xmlFile, final OutputStream htmlOutstream)
 		throws TransformerException {
 		if (mXsltCIOTemplate == null) {
@@ -471,13 +505,33 @@ public class ZUGFeRDVisualizer {
 		xmlFile.close();
 	}
 
+	/***
+	 * the extended stylesheet includes further stylesheets from its own directory, so it needs a
+	 * systemId for the relative hrefs to be resolved against
+	 */
+	private static StreamSource getExtendedStylesheetSource() {
+		String path = RESOURCE_PATH + "stylesheets/visualization-extended/ZUGFeRD_EXTENDED_html.xsl";
+		URL url = CLASS_LOADER.getResource(path);
+		return new StreamSource(CLASS_LOADER.getResourceAsStream(path), url != null ? url.toExternalForm() : null);
+	}
+
 	private static class ClasspathResourceURIResolver implements URIResolver {
 		ClasspathResourceURIResolver() {
 			// Do nothing, just prevents synthetic access warning.
 		}
 
 		@Override
-		public Source resolve(String href, String base) {
+		public Source resolve(String href, String base) throws TransformerException {
+			boolean hasBase = base != null && !base.isEmpty();
+			if (hasBase || URI.create(href).isAbsolute()) {
+				// resolve relative to the including stylesheet, e.g. within stylesheets/visualization-extended/
+				try {
+					URL url = hasBase ? new URL(new URL(base), href) : new URL(href);
+					return new StreamSource(url.openStream(), url.toExternalForm());
+				} catch (IOException e) {
+					throw new TransformerException("Could not resolve " + href + " relative to " + base, e);
+				}
+			}
 			return new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/" + href));
 		}
 	}
