@@ -63,6 +63,15 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 
 	}
 
+
+	public CashDiscount calculate() {
+		if ((this.percent!=null) && (this.basisAmount!=null)) {
+			BigDecimal factor = this.percent.divide(new BigDecimal(100));
+			this.actualAmount = this.basisAmount.multiply(factor).setScale(2, BigDecimal.ROUND_HALF_UP);
+		}
+		return this;
+	}
+
 	/***
 	 * how much this discount removed from the original dept
 	 * @return the percent
@@ -103,11 +112,23 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 		return dueDate;
 	}
 
+
+	/***
+	 * if a specific actual amount has been set - otherwise getActualAmount will return a calculated one
+	 * @return boolean if available
+	 */
+	public boolean hasSetActualAmount() {
+		return actualAmount!=null;
+	}
+
 	/***
 	 * get the amount of this cash discount
 	 * @return amount
 	 */
 	public BigDecimal getActualAmount() {
+		if (!hasSetActualAmount()) {
+			calculate();
+		}
 		return actualAmount;
 	}
 
@@ -158,6 +179,7 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	}
 
 	/***
+	 * this mehods name spells get-As-CII not get-Ascii ;-)
 	 * @return this particular cash discount as cross industry invoice XML
 	 */
 	@JsonIgnore

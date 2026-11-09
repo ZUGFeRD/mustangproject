@@ -471,6 +471,42 @@ public class ZF2PushTest extends ResourceCase {
 		}
 	}
 
+	@Test
+	public void testBasisAmount() {
+		Invoice invoice = new Invoice().setNumber("1").setIssueDate(new Date()).setDueDate(new Date())
+			.setSender(new TradeParty("Seller", "Street", "12345", "City", "DE").addVATID("DE123456789"))
+			.setRecipient(new TradeParty("Buyer", "Street", "12345", "City", "DE").setVATID("DE123456789"))
+			.addItem(new Item(new Product("Item", "", "C62", new BigDecimal("19")), new BigDecimal("80.00"), new BigDecimal("5"))
+				.addAllowance(new Allowance(new BigDecimal("40.00"))
+					.setPercent(new BigDecimal("10.00"))
+					.setBasisAmount(new BigDecimal("400.00"))
+					.setReasonCode("95").setReason("Volume discount"))
+				.addCharge(new Charge(new BigDecimal("20.00"))
+					.setPercent(new BigDecimal("5.00"))
+					.setBasisAmount(new BigDecimal("400.00"))
+					.setReasonCode("ABK").setReason("Handling")));
+
+		for (String profileName : new String[]{"EN16931", "XRechnung"}) {
+			ZUGFeRD2PullProvider pp = new ZUGFeRD2PullProvider();
+			pp.setProfile(Profiles.getByName(profileName));
+			pp.generateXML(invoice);
+			String theXML = new String(pp.getXML(), StandardCharsets.UTF_8);
+
+			assertTrue(theXML.contains("<ram:CalculationPercent>10.00</ram:CalculationPercent>"),
+				profileName + ": missing line-level allowance CalculationPercent");
+			assertTrue(theXML.contains("<ram:CalculationPercent>5.00</ram:CalculationPercent>"),
+				profileName + ": missing line-level charge CalculationPercent");
+			assertTrue(theXML.contains("<ram:BasisAmount>400.00</ram:BasisAmount>"),
+				profileName + ": BasisAmount must use the caller-supplied value, not a derivation");
+
+			int percentIdx = theXML.indexOf("<ram:CalculationPercent>10.00");
+			int basisIdx = theXML.indexOf("<ram:BasisAmount>400.00", percentIdx);
+			int actualIdx = theXML.indexOf("<ram:ActualAmount>40.00", percentIdx);
+			assertTrue(percentIdx >= 0 && basisIdx > percentIdx && actualIdx > basisIdx,
+				profileName + ": CalculationPercent/BasisAmount must precede ActualAmount");
+		}
+	}
+
 
 	/***
 	 * A line-level allowance without percent/basis must not emit empty CalculationPercent/BasisAmount.
