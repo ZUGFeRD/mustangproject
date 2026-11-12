@@ -127,10 +127,11 @@ public class ZUGFeRDVisualizer {
 		initTemplates(lang);
 
 		String fileContent = new String(inputXml.readAllBytes(), StandardCharsets.UTF_8);
-		ZUGFeRDImporter zi = new ZUGFeRDImporter(fileContent);
-
 
 		try {
+			ZUGFeRDImporter zi = new ZUGFeRDImporter();
+			// only standard and profile are needed here, so don't parse the whole invoice
+			zi.setRawXML(fileContent.getBytes(StandardCharsets.UTF_8), false);
 			EStandard thestandard = zi.getStandard();
 			Profile theprofile = Profiles.getByName(zi.getZUGFeRDProfil());
 
