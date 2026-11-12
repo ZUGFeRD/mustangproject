@@ -214,13 +214,18 @@ public class ZF2ZInvoiceImporterTest extends ResourceCase {
 		assertEquals("recipient@test.org", invoice.getRecipient().getEmail());
 		assertEquals("28934", invoice.getBuyerOrderReferencedDocument().getIssuerAssignedID());
 
-		assertEquals(1, invoice.getCashDiscounts().length);
+		assertEquals(2, invoice.getCashDiscounts().length);
 		assertNotNull(invoice.getCashDiscounts()[0].getDueDate());
 		assertNotNull(invoice.getCashDiscounts()[0].getBasisDateTime());
 		assertNotNull(invoice.getCashDiscounts()[0].getDays());
 		assertNotNull(invoice.getCashDiscounts()[0].getBasisAmount());
 		assertNotNull(invoice.getCashDiscounts()[0].getPercent());
 		assertNotNull(invoice.getCashDiscounts()[0].getActualAmount());
+
+		assertEquals(new BigDecimal("1.48"), invoice.getCashDiscounts()[1].getBasisAmount()); // this has been set
+		assertEquals(false, invoice.getCashDiscounts()[1].hasSetActualAmount());
+		assertEquals(new BigDecimal("0.01"), invoice.getCashDiscounts()[1].getActualAmount()); // this is calculated (issue #1341)
+
 	}
 
 

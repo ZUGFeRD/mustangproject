@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.mustangproject.CashDiscount;
 import org.mustangproject.Invoice;
 
 import java.io.ByteArrayInputStream;
@@ -410,6 +411,7 @@ public class CashDiscountFacturXTest {
 		assertEquals("TEST-1260", invoice.getNumber(),
 			"The rest of the invoice must still be imported");
 	}
+
 
 	/**
 	 * Guard against over-correcting: a well-formed skonto line must keep working.
