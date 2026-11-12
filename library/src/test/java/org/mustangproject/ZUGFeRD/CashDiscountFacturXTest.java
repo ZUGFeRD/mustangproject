@@ -413,22 +413,6 @@ public class CashDiscountFacturXTest {
 	}
 
 
-	/***
-	 * 1341
-	 * @throws XPathExpressionException
-	 * @throws ParseException
-	 */
-	@Test
-	public void testSkontoBasisAmount() throws XPathExpressionException, ParseException {
-
-
-
-		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter("C:\\Users\\jstaerk\\workspace\\XMLExamples\\zfdiverses\\20261109\\skontofaehigerBetrag.xml");
-		Invoice invoice = zii.extractInvoice();
-		assertEquals(new BigDecimal("3182.5300"), invoice.getCashDiscounts()[0].getBasisAmount());
-		assertEquals(new BigDecimal("95.48"), invoice.getCashDiscounts()[0].getActualAmount());
-	}
-
 	/**
 	 * Guard against over-correcting: a well-formed skonto line must keep working.
 	 */

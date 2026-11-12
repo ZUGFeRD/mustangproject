@@ -846,6 +846,7 @@ public class ZF2PushTest extends ResourceCase {
 				.addCharge(charge)
 				.addAllowance(allowance)
 				.addCashDiscount(new CashDiscount(new BigDecimal(2), 14).setBasisDateTime(dueDate.getTime()).setDueDate(cashDiscountDate.getTime()).setBasisAmount(new BigDecimal("1.48")).setActualAmount(new BigDecimal("0.03")))
+				.addCashDiscount(new CashDiscount(new BigDecimal(1), 7).setBasisDateTime(dueDate.getTime()).setDueDate(cashDiscountDate.getTime()).setBasisAmount(new BigDecimal("1.48")).setPercent(BigDecimal.ONE))
 				.setTenderReferencedDocument(dr1)
 				.setDeliveryDate(sdf.parse("2020-11-02")).setNumber(number).setVATDueDateTypeCode(EventTimeCodeTypeConstants.PAYMENT_DATE)
 				.addInvoiceReferencedDocument(new ReferencedDocument("abc123"))
