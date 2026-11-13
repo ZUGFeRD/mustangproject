@@ -3,6 +3,7 @@ package org.mustangproject;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -777,6 +778,16 @@ public class Item implements IZUGFeRDExportableItem {
 			additionalReference = new ArrayList<>();
 		}
 		additionalReference.add(doc);
+		return this;
+	}
+
+	/***
+	 * sets all item level references at once, replacing previously added ones (also used for JSON deserialization)
+	 * @param docs the ReferencedDocuments, may be null
+	 * @return fluent setter
+	 */
+	public Item setAdditionalReferences(ReferencedDocument[] docs) {
+		additionalReference = docs == null ? null : new ArrayList<>(Arrays.asList(docs));
 		return this;
 	}
 

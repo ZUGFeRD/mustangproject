@@ -252,6 +252,478 @@ public class DeSerializationTest extends ResourceCase {
 
 	}
 
+
+	@Test
+	public void testItemAddReferencesDeSerialization() {
+
+		String json = "{\n" +
+			"  \"documentName\": \"RECHNUNG\",\n" +
+			"  \"documentCode\": \"380\",\n" +
+			"  \"number\": \"6063636771001\",\n" +
+			"  \"referenceNumber\": \"BUYERREFERENCE BT-10\",\n" +
+			"  \"currency\": \"EUR\",\n" +
+			"  \"paymentTermDescription\": \"Bis zum 06.09.2026 erhalten Sie 2,000 % Skonto\",\n" +
+			"  \"issueDate\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"  \"dueDate\": \"2026-09-15T22:00:00.000+00:00\",\n" +
+			"  \"deliveryDate\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"  \"sender\": {\n" +
+			"    \"name\": \"Lieferant GmbH & Co. KG\",\n" +
+			"    \"zip\": \"98765\",\n" +
+			"    \"street\": \"Lieferanten-Strasse.12-17\",\n" +
+			"    \"location\": \"Lieferantenstadt\",\n" +
+			"    \"country\": \"DE\",\n" +
+			"    \"taxID\": \"88888/00072\",\n" +
+			"    \"vatID\": \"DE727081482\",\n" +
+			"    \"id\": \"10737\",\n" +
+			"    \"bankDetails\": [\n" +
+			"      {\n" +
+			"        \"paymentMeansCode\": \"58\",\n" +
+			"        \"paymentMeansInformation\": \"SEPA credit transfer\",\n" +
+			"        \"bic\": \"SOLADEST600\",\n" +
+			"        \"iban\": \"DE75512108001245126199\"\n" +
+			"      }\n" +
+			"    ],\n" +
+			"    \"contact\": {\n" +
+			"      \"name\": \"Tim Mustermann\",\n" +
+			"      \"phone\": \"0170 66677788\",\n" +
+			"      \"email\": \"tim.Mustermann@lieferant.com\"\n" +
+			"    },\n" +
+			"    \"globalIDScheme\": \"0088\",\n" +
+			"    \"globalID\": \"0001231000000\",\n" +
+			"    \"vatid\": \"DE727081482\",\n" +
+			"    \"email\": \"info@lieferant.com\"\n" +
+			"  },\n" +
+			"  \"recipient\": {\n" +
+			"    \"name\": \"Musterkunde GmbH & Co Name 2 Musterkunde\",\n" +
+			"    \"zip\": \"40789\",\n" +
+			"    \"street\": \"Musterstrasse 44\",\n" +
+			"    \"location\": \"Musterstadt\",\n" +
+			"    \"country\": \"DE\",\n" +
+			"    \"vatID\": \"DE727081482\",\n" +
+			"    \"id\": \"9900880077\",\n" +
+			"    \"contact\": {\n" +
+			"      \"name\": \"Herr Test Monteur\",\n" +
+			"      \"phone\": \"02173 9364\",\n" +
+			"      \"email\": \"mike.maier@lieferant.com\"\n" +
+			"    },\n" +
+			"    \"vatid\": \"DE727081482\"\n" +
+			"  },\n" +
+			"  \"deliveryAddress\": {\n" +
+			"    \"name\": \"Musterkunde GmbH & Co Name 2 Musterkunde\",\n" +
+			"    \"zip\": \"40789\",\n" +
+			"    \"street\": \"Musterstrasse 44\",\n" +
+			"    \"location\": \"Musterstadt\",\n" +
+			"    \"country\": \"DE\",\n" +
+			"    \"vatID\": \"DE106008386\",\n" +
+			"    \"id\": \"9900880077\",\n" +
+			"    \"vatid\": \"DE106008386\"\n" +
+			"  },\n" +
+			"  \"cashDiscounts\": [\n" +
+			"    {\n" +
+			"      \"percent\": 2,\n" +
+			"      \"days\": 10\n" +
+			"    }\n" +
+			"  ],\n" +
+			"  \"paymentReference\": \"Kundennummer:. 9900880077 Rechnungsnummer:. 6063636771001\",\n" +
+			"  \"lineTotalAmount\": 554.55,\n" +
+			"  \"duePayable\": 655.38,\n" +
+			"  \"grandTotal\": 655.38,\n" +
+			"  \"taxBasis\": 554.55,\n" +
+			"  \"vattotal\": 100.83,\n" +
+			"  \"notesWithSubjectCode\": [\n" +
+			"    {\n" +
+			"      \"content\": \"Bank: LBBW Stuttgart; IBAN: DE75512108001245126199; BIC: SOLADEST600\",\n" +
+			"      \"subjectCode\": \"REG\"\n" +
+			"    },\n" +
+			"    {\n" +
+			"      \"content\": \"Lieferant GmbH & Co. KG\\nAdresse: 98765 Lieferantenstadt\\nTelefon: +49 (0)7891 11-0\\nFax: +49(0)7891 11-1000\\nE-Mail: info@lieferant.com\\nWebsite: www.lieferant.com\\nHausanschrift: Lieferanten-Strasse 12-17, 98765 Lieferantenstadt\\nSitz: Lieferantenstadt\\nRegisterID: Stuttgart, HRA, 123456\\nGeschäftsführer:\",\n" +
+			"      \"subjectCode\": \"REG\"\n" +
+			"    },\n" +
+			"    {\n" +
+			"      \"content\": \"Wenn nicht anders angegeben entspricht das Leistungsdatum dem Rechnungsdatum.\",\n" +
+			"      \"subjectCode\": \"AAI\"\n" +
+			"    },\n" +
+			"    {\n" +
+			"      \"content\": \"Haben Sie Fragen zur Rechnung? Gerne hilft Ihnen Ihr zuständiger Lieferant Verkäufer weiter. Die Lieferung erfolgte zu unseren bekannten Verkaufs- und Lieferbedingungen. Bitte beachten Sie hierzu unsere allgemeinen Geschäftsbedingungen unter www.lieferant.de/agb.\",\n" +
+			"      \"subjectCode\": \"AAI\"\n" +
+			"    },\n" +
+			"    {\n" +
+			"      \"content\": \"Zahlungsavis/Aufstellung/Auflistung zur Zahlung bitte an: E-Mail: zahlungseingang@lieferant.com; Fax: +49 7891 11-59333\"\n" +
+			"    },\n" +
+			"    {\n" +
+			"      \"content\": \"ZUGFeRD vers 2.5.0 Extended\",\n" +
+			"      \"subjectCode\": \"ACB\"\n" +
+			"    },\n" +
+			"    {\n" +
+			"      \"content\": \"Collective Invoice\",\n" +
+			"      \"subjectCode\": \"ACB\"\n" +
+			"    }\n" +
+			"  ],\n" +
+			"  \"tradeSettlement\": [\n" +
+			"    {\n" +
+			"      \"paymentMeansCode\": \"58\",\n" +
+			"      \"paymentMeansInformation\": \"SEPA credit transfer\",\n" +
+			"      \"bic\": \"SOLADEST600\",\n" +
+			"      \"iban\": \"DE75512108001245126199\"\n" +
+			"    }\n" +
+			"  ],\n" +
+			"  \"zfitems\": [\n" +
+			"    {\n" +
+			"      \"price\": 2.06,\n" +
+			"      \"quantity\": 25,\n" +
+			"      \"lineTotalAmount\": 51.5,\n" +
+			"      \"basisQuantity\": 1,\n" +
+			"      \"detailedDeliveryPeriodTo\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"      \"id\": \"000001\",\n" +
+			"      \"buyerOrderReferencedDocument\": {\n" +
+			"        \"issuerAssignedID\": \"Abholung 1\",\n" +
+			"        \"formattedIssueDateTime\": \"2026-08-26T22:00:00.000+00:00\"\n" +
+			"      },\n" +
+			"      \"product\": {\n" +
+			"        \"unit\": \"H87\",\n" +
+			"        \"name\": \"GWDSTG-DIN976-A-4.8 M4\",\n" +
+			"        \"sellerAssignedID\": \"9999999 25\",\n" +
+			"        \"description\": \"Gewindestange\",\n" +
+			"        \"taxCategoryCode\": \"S\",\n" +
+			"        \"globalIDScheme\": \"0160\",\n" +
+			"        \"globalID\": \"7711231873598\",\n" +
+			"        \"vatpercent\": 19\n" +
+			"      },\n" +
+			"      \"deliveryNoteReferencedDocument\": {\n" +
+			"        \"issuerAssignedID\": \"8408230045\",\n" +
+			"        \"lineID\": \"000010\",\n" +
+			"        \"formattedIssueDateTime\": \"2026-08-26T22:00:00.000+00:00\"\n" +
+			"      },\n" +
+			"      \"additionalReferences\": [\n" +
+			"        {\n" +
+			"          \"issuerAssignedID\": \"2156307416\",\n" +
+			"          \"typeCode\": \"130\",\n" +
+			"          \"referenceTypeCode\": \"VN\"\n" +
+			"        }\n" +
+			"      ],\n" +
+			"      \"deliveryNoteReferencedDocumentLineID\": \"000010\",\n" +
+			"      \"buyerOrderReferencedDocumentID\": \"Abholung 1\",\n" +
+			"      \"deliveryNoteReferencedDocumentID\": \"8408230045\",\n" +
+			"      \"deliveryNoteReferencedDocumentDate\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"      \"value\": 2.06,\n" +
+			"      \"calculation\": {\n" +
+			"        \"price\": 2.06,\n" +
+			"        \"priceGross\": 2.06,\n" +
+			"        \"itemTotalNetAmount\": 51.5,\n" +
+			"        \"itemTotalVATAmount\": 9.785,\n" +
+			"        \"itemTotalGrossAmount\": 51.5\n" +
+			"      }\n" +
+			"    },\n" +
+			"    {\n" +
+			"      \"price\": 49.29,\n" +
+			"      \"quantity\": 150,\n" +
+			"      \"lineTotalAmount\": 73.94,\n" +
+			"      \"basisQuantity\": 100,\n" +
+			"      \"detailedDeliveryPeriodTo\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"      \"id\": \"000002\",\n" +
+			"      \"buyerOrderReferencedDocument\": {\n" +
+			"        \"issuerAssignedID\": \"Abholung 1\",\n" +
+			"        \"formattedIssueDateTime\": \"2026-08-26T22:00:00.000+00:00\"\n" +
+			"      },\n" +
+			"      \"product\": {\n" +
+			"        \"unit\": \"H87\",\n" +
+			"        \"name\": \"MUELLSACK-EXTRASTARK\",\n" +
+			"        \"sellerAssignedID\": \"88888888888 150\",\n" +
+			"        \"buyerAssignedID\": \"KD-MAT POS 1 BT-156\",\n" +
+			"        \"description\": \"Müllsack, -beutel\",\n" +
+			"        \"taxCategoryCode\": \"S\",\n" +
+			"        \"globalIDScheme\": \"0160\",\n" +
+			"        \"globalID\": \"7748539263943\",\n" +
+			"        \"vatpercent\": 19\n" +
+			"      },\n" +
+			"      \"deliveryNoteReferencedDocument\": {\n" +
+			"        \"issuerAssignedID\": \"8408230045\",\n" +
+			"        \"lineID\": \"000020\",\n" +
+			"        \"formattedIssueDateTime\": \"2026-08-26T22:00:00.000+00:00\"\n" +
+			"      },\n" +
+			"      \"additionalReferences\": [\n" +
+			"        {\n" +
+			"          \"issuerAssignedID\": \"2156307416\",\n" +
+			"          \"typeCode\": \"130\",\n" +
+			"          \"referenceTypeCode\": \"VN\"\n" +
+			"        }\n" +
+			"      ],\n" +
+			"      \"deliveryNoteReferencedDocumentLineID\": \"000020\",\n" +
+			"      \"buyerOrderReferencedDocumentID\": \"Abholung 1\",\n" +
+			"      \"deliveryNoteReferencedDocumentID\": \"8408230045\",\n" +
+			"      \"deliveryNoteReferencedDocumentDate\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"      \"value\": 49.29,\n" +
+			"      \"calculation\": {\n" +
+			"        \"price\": 49.29,\n" +
+			"        \"priceGross\": 49.29,\n" +
+			"        \"itemTotalNetAmount\": 73.94,\n" +
+			"        \"itemTotalVATAmount\": 14.0486,\n" +
+			"        \"itemTotalGrossAmount\": 73.94\n" +
+			"      }\n" +
+			"    },\n" +
+			"    {\n" +
+			"      \"price\": 32.76,\n" +
+			"      \"quantity\": 400,\n" +
+			"      \"lineTotalAmount\": 131.04,\n" +
+			"      \"basisQuantity\": 100,\n" +
+			"      \"detailedDeliveryPeriodTo\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"      \"id\": \"000003\",\n" +
+			"      \"buyerOrderReferencedDocument\": {\n" +
+			"        \"issuerAssignedID\": \"Abholung 2\",\n" +
+			"        \"formattedIssueDateTime\": \"2026-08-26T22:00:00.000+00:00\"\n" +
+			"      },\n" +
+			"      \"product\": {\n" +
+			"        \"unit\": \"H87\",\n" +
+			"        \"name\": \"Schraube spezial 10 x 100\",\n" +
+			"        \"sellerAssignedID\": \"77777777777 200\",\n" +
+			"        \"description\": \"Schraube Rahmen\",\n" +
+			"        \"taxCategoryCode\": \"S\",\n" +
+			"        \"globalIDScheme\": \"0160\",\n" +
+			"        \"globalID\": \"7738898142591\",\n" +
+			"        \"vatpercent\": 19\n" +
+			"      },\n" +
+			"      \"deliveryNoteReferencedDocument\": {\n" +
+			"        \"issuerAssignedID\": \"8408230046\",\n" +
+			"        \"lineID\": \"000010\",\n" +
+			"        \"formattedIssueDateTime\": \"2026-08-26T22:00:00.000+00:00\"\n" +
+			"      },\n" +
+			"      \"additionalReferences\": [\n" +
+			"        {\n" +
+			"          \"issuerAssignedID\": \"2156307417\",\n" +
+			"          \"typeCode\": \"130\",\n" +
+			"          \"referenceTypeCode\": \"VN\"\n" +
+			"        }\n" +
+			"      ],\n" +
+			"      \"deliveryNoteReferencedDocumentLineID\": \"000010\",\n" +
+			"      \"buyerOrderReferencedDocumentID\": \"Abholung 2\",\n" +
+			"      \"deliveryNoteReferencedDocumentID\": \"8408230046\",\n" +
+			"      \"deliveryNoteReferencedDocumentDate\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"      \"value\": 32.76,\n" +
+			"      \"calculation\": {\n" +
+			"        \"price\": 32.76,\n" +
+			"        \"priceGross\": 32.76,\n" +
+			"        \"itemTotalNetAmount\": 131.04,\n" +
+			"        \"itemTotalVATAmount\": 24.8976,\n" +
+			"        \"itemTotalGrossAmount\": 131.04\n" +
+			"      }\n" +
+			"    },\n" +
+			"    {\n" +
+			"      \"price\": 9.16,\n" +
+			"      \"quantity\": 500,\n" +
+			"      \"lineTotalAmount\": 45.8,\n" +
+			"      \"basisQuantity\": 100,\n" +
+			"      \"detailedDeliveryPeriodTo\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"      \"id\": \"000004\",\n" +
+			"      \"buyerOrderReferencedDocument\": {\n" +
+			"        \"issuerAssignedID\": \"Abholung 2\",\n" +
+			"        \"formattedIssueDateTime\": \"2026-08-26T22:00:00.000+00:00\"\n" +
+			"      },\n" +
+			"      \"product\": {\n" +
+			"        \"unit\": \"H87\",\n" +
+			"        \"name\": \"MUTTER-6KT-DIN934-M6\",\n" +
+			"        \"sellerAssignedID\": \"6666666 100\",\n" +
+			"        \"buyerAssignedID\": \"KD-MAT POS 1 BT-156\",\n" +
+			"        \"description\": \"Sechskantmutter\",\n" +
+			"        \"taxCategoryCode\": \"S\",\n" +
+			"        \"globalIDScheme\": \"0160\",\n" +
+			"        \"globalID\": \"7711231333337\",\n" +
+			"        \"vatpercent\": 19\n" +
+			"      },\n" +
+			"      \"deliveryNoteReferencedDocument\": {\n" +
+			"        \"issuerAssignedID\": \"8408230046\",\n" +
+			"        \"lineID\": \"000020\",\n" +
+			"        \"formattedIssueDateTime\": \"2026-08-26T22:00:00.000+00:00\"\n" +
+			"      },\n" +
+			"      \"additionalReferences\": [\n" +
+			"        {\n" +
+			"          \"issuerAssignedID\": \"2156307417\",\n" +
+			"          \"typeCode\": \"130\",\n" +
+			"          \"referenceTypeCode\": \"VN\"\n" +
+			"        }\n" +
+			"      ],\n" +
+			"      \"deliveryNoteReferencedDocumentLineID\": \"000020\",\n" +
+			"      \"buyerOrderReferencedDocumentID\": \"Abholung 2\",\n" +
+			"      \"notesWithSubjectCode\": [\n" +
+			"        {\n" +
+			"          \"content\": \"Test\"\n" +
+			"        }\n" +
+			"      ],\n" +
+			"      \"deliveryNoteReferencedDocumentID\": \"8408230046\",\n" +
+			"      \"deliveryNoteReferencedDocumentDate\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"      \"value\": 9.16,\n" +
+			"      \"calculation\": {\n" +
+			"        \"price\": 9.16,\n" +
+			"        \"priceGross\": 9.16,\n" +
+			"        \"itemTotalNetAmount\": 45.8,\n" +
+			"        \"itemTotalVATAmount\": 8.702,\n" +
+			"        \"itemTotalGrossAmount\": 45.8\n" +
+			"      }\n" +
+			"    },\n" +
+			"    {\n" +
+			"      \"price\": 13.32,\n" +
+			"      \"quantity\": 500,\n" +
+			"      \"lineTotalAmount\": 66.6,\n" +
+			"      \"basisQuantity\": 100,\n" +
+			"      \"detailedDeliveryPeriodTo\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"      \"id\": \"000005\",\n" +
+			"      \"buyerOrderReferencedDocument\": {\n" +
+			"        \"issuerAssignedID\": \"Abholung 2\",\n" +
+			"        \"formattedIssueDateTime\": \"2026-08-26T22:00:00.000+00:00\"\n" +
+			"      },\n" +
+			"      \"product\": {\n" +
+			"        \"unit\": \"H87\",\n" +
+			"        \"name\": \"MUTTER-6KT-DIN934-M8\",\n" +
+			"        \"sellerAssignedID\": \"5555555 100\",\n" +
+			"        \"buyerAssignedID\": \"KD-MAT POS 2 BT-156\",\n" +
+			"        \"description\": \"Sechskantmutter\",\n" +
+			"        \"taxCategoryCode\": \"S\",\n" +
+			"        \"globalIDScheme\": \"0160\",\n" +
+			"        \"globalID\": \"7711231333498\",\n" +
+			"        \"vatpercent\": 19\n" +
+			"      },\n" +
+			"      \"deliveryNoteReferencedDocument\": {\n" +
+			"        \"issuerAssignedID\": \"8408230046\",\n" +
+			"        \"lineID\": \"000030\",\n" +
+			"        \"formattedIssueDateTime\": \"2026-08-26T22:00:00.000+00:00\"\n" +
+			"      },\n" +
+			"      \"additionalReferences\": [\n" +
+			"        {\n" +
+			"          \"issuerAssignedID\": \"2156307417\",\n" +
+			"          \"typeCode\": \"130\",\n" +
+			"          \"referenceTypeCode\": \"VN\"\n" +
+			"        }\n" +
+			"      ],\n" +
+			"      \"deliveryNoteReferencedDocumentLineID\": \"000030\",\n" +
+			"      \"buyerOrderReferencedDocumentID\": \"Abholung 2\",\n" +
+			"      \"deliveryNoteReferencedDocumentID\": \"8408230046\",\n" +
+			"      \"deliveryNoteReferencedDocumentDate\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"      \"value\": 13.32,\n" +
+			"      \"calculation\": {\n" +
+			"        \"price\": 13.32,\n" +
+			"        \"priceGross\": 13.32,\n" +
+			"        \"itemTotalNetAmount\": 66.6,\n" +
+			"        \"itemTotalVATAmount\": 12.654,\n" +
+			"        \"itemTotalGrossAmount\": 66.6\n" +
+			"      }\n" +
+			"    },\n" +
+			"    {\n" +
+			"      \"price\": 49.29,\n" +
+			"      \"quantity\": 300,\n" +
+			"      \"lineTotalAmount\": 147.87,\n" +
+			"      \"basisQuantity\": 100,\n" +
+			"      \"detailedDeliveryPeriodTo\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"      \"id\": \"000006\",\n" +
+			"      \"buyerOrderReferencedDocument\": {\n" +
+			"        \"issuerAssignedID\": \"Abholung 3\",\n" +
+			"        \"formattedIssueDateTime\": \"2026-08-26T22:00:00.000+00:00\"\n" +
+			"      },\n" +
+			"      \"product\": {\n" +
+			"        \"unit\": \"H87\",\n" +
+			"        \"name\": \"MUELLSACK-EXTRASTARK\",\n" +
+			"        \"sellerAssignedID\": \"88888888888 150\",\n" +
+			"        \"buyerAssignedID\": \"KD-MAT POS 1 BT-156\",\n" +
+			"        \"description\": \"Müllsack, -beutel\",\n" +
+			"        \"taxCategoryCode\": \"S\",\n" +
+			"        \"globalIDScheme\": \"0160\",\n" +
+			"        \"globalID\": \"7748539263943\",\n" +
+			"        \"vatpercent\": 19\n" +
+			"      },\n" +
+			"      \"deliveryNoteReferencedDocument\": {\n" +
+			"        \"issuerAssignedID\": \"8408230047\",\n" +
+			"        \"lineID\": \"000010\",\n" +
+			"        \"formattedIssueDateTime\": \"2026-08-26T22:00:00.000+00:00\"\n" +
+			"      },\n" +
+			"      \"additionalReferences\": [\n" +
+			"        {\n" +
+			"          \"issuerAssignedID\": \"2156307418\",\n" +
+			"          \"typeCode\": \"130\",\n" +
+			"          \"referenceTypeCode\": \"VN\"\n" +
+			"        }\n" +
+			"      ],\n" +
+			"      \"deliveryNoteReferencedDocumentLineID\": \"000010\",\n" +
+			"      \"buyerOrderReferencedDocumentID\": \"Abholung 3\",\n" +
+			"      \"deliveryNoteReferencedDocumentID\": \"8408230047\",\n" +
+			"      \"deliveryNoteReferencedDocumentDate\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"      \"value\": 49.29,\n" +
+			"      \"calculation\": {\n" +
+			"        \"price\": 49.29,\n" +
+			"        \"priceGross\": 49.29,\n" +
+			"        \"itemTotalNetAmount\": 147.87,\n" +
+			"        \"itemTotalVATAmount\": 28.0953,\n" +
+			"        \"itemTotalGrossAmount\": 147.87\n" +
+			"      }\n" +
+			"    },\n" +
+			"    {\n" +
+			"      \"price\": 18.9,\n" +
+			"      \"quantity\": 2,\n" +
+			"      \"lineTotalAmount\": 37.8,\n" +
+			"      \"basisQuantity\": 1,\n" +
+			"      \"detailedDeliveryPeriodTo\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"      \"id\": \"000007\",\n" +
+			"      \"buyerOrderReferencedDocument\": {\n" +
+			"        \"issuerAssignedID\": \"Abholung 3\",\n" +
+			"        \"formattedIssueDateTime\": \"2026-08-26T22:00:00.000+00:00\"\n" +
+			"      },\n" +
+			"      \"product\": {\n" +
+			"        \"unit\": \"H87\",\n" +
+			"        \"name\": \"KAFFEE-1KG\",\n" +
+			"        \"sellerAssignedID\": \"44444444444 10\",\n" +
+			"        \"description\": \"Kaffee\",\n" +
+			"        \"taxCategoryCode\": \"S\",\n" +
+			"        \"globalIDScheme\": \"0160\",\n" +
+			"        \"globalID\": \"7765233128651\",\n" +
+			"        \"vatpercent\": 7\n" +
+			"      },\n" +
+			"      \"deliveryNoteReferencedDocument\": {\n" +
+			"        \"issuerAssignedID\": \"8408230047\",\n" +
+			"        \"lineID\": \"000020\",\n" +
+			"        \"formattedIssueDateTime\": \"2026-08-26T22:00:00.000+00:00\"\n" +
+			"      },\n" +
+			"      \"additionalReferences\": [\n" +
+			"        {\n" +
+			"          \"issuerAssignedID\": \"2156307418\",\n" +
+			"          \"typeCode\": \"130\",\n" +
+			"          \"referenceTypeCode\": \"VN\"\n" +
+			"        }\n" +
+			"      ],\n" +
+			"      \"deliveryNoteReferencedDocumentLineID\": \"000020\",\n" +
+			"      \"buyerOrderReferencedDocumentID\": \"Abholung 3\",\n" +
+			"      \"deliveryNoteReferencedDocumentID\": \"8408230047\",\n" +
+			"      \"deliveryNoteReferencedDocumentDate\": \"2026-08-26T22:00:00.000+00:00\",\n" +
+			"      \"value\": 18.9,\n" +
+			"      \"calculation\": {\n" +
+			"        \"price\": 18.9,\n" +
+			"        \"priceGross\": 18.9,\n" +
+			"        \"itemTotalNetAmount\": 37.8,\n" +
+			"        \"itemTotalVATAmount\": 2.646,\n" +
+			"        \"itemTotalGrossAmount\": 37.8\n" +
+			"      }\n" +
+			"    }\n" +
+			"  ]\n" +
+			"}";
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			Invoice newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
+			IReferencedDocument firstRef = newInvoiceFromJSON.getZFItems()[0].getAdditionalReferences()[0];
+			assertEquals("2156307416", firstRef.getIssuerAssignedID()); // issue 
+			assertEquals("130", firstRef.getTypeCode());
+			assertEquals("VN", firstRef.getReferenceTypeCode());
+			assertEquals("2156307418", newInvoiceFromJSON.getZFItems()[newInvoiceFromJSON.getZFItems().length - 1].getAdditionalReferences()[0].getIssuerAssignedID());
+			ZUGFeRD2PullProvider zf2p = new ZUGFeRD2PullProvider();
+			zf2p.setProfile(Profiles.getByName("Extended"));
+			zf2p.generateXML(newInvoiceFromJSON);
+			String theXML = new String(zf2p.getXML(), StandardCharsets.UTF_8);
+			assertTrue(theXML.contains("<ram:IssuerAssignedID>2156307416</ram:IssuerAssignedID>"));
+
+
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+
+	}
+
 	@Test
 	public void testFileSerialization() {
 

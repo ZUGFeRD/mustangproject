@@ -65,7 +65,7 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 
 
 	public CashDiscount calculate() {
-		if ((this.percent!=null) && (this.basisAmount!=null)) {
+		if (this.percent != null && this.basisAmount != null) {
 			BigDecimal factor = this.percent.divide(new BigDecimal(100));
 			this.actualAmount = this.basisAmount.multiply(factor).setScale(2, BigDecimal.ROUND_HALF_UP);
 		}
@@ -118,7 +118,7 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	 * @return boolean if available
 	 */
 	public boolean hasSetActualAmount() {
-		return actualAmount!=null;
+		return actualAmount != null;
 	}
 
 	/***
