@@ -707,7 +707,7 @@ public class DeSerializationTest extends ResourceCase {
 		try {
 			Invoice newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
 			IReferencedDocument firstRef = newInvoiceFromJSON.getZFItems()[0].getAdditionalReferences()[0];
-			assertEquals("2156307416", firstRef.getIssuerAssignedID()); // issue 
+			assertEquals("2156307416", firstRef.getIssuerAssignedID()); // issue
 			assertEquals("130", firstRef.getTypeCode());
 			assertEquals("VN", firstRef.getReferenceTypeCode());
 			assertEquals("2156307418", newInvoiceFromJSON.getZFItems()[newInvoiceFromJSON.getZFItems().length - 1].getAdditionalReferences()[0].getIssuerAssignedID());
