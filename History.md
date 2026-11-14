@@ -31,7 +31,7 @@
 - #1319 Update EN16931 Validation artefacts to v1.3.17.
 - #1036 Option to treat validation warnings as errors (--fail-on-warnings).
 - #1321 Importer: fix payment means, UBL period and creditor reference, Order-X detection.
-- Minor component updates (jackson, apache-fop).
+- Minor component updates (jackson, apache-fop, verapdf).
 - #1325 Invoice.getDueDate() does no longer return a cash discount date.
 
 
