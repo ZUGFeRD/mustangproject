@@ -17,9 +17,11 @@ import java.util.List;
 import javax.xml.xpath.XPathExpressionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 /**
@@ -113,6 +115,77 @@ public class ImportFixesTest {
 		assertEquals("Acct One", bankDetails.get(0).getAccountName());
 		assertNull(bankDetails.get(1).getAccountName());
 		assertEquals("Zahlung durch Überweisung", bankDetails.get(1).getPaymentMeansInformation());
+	}
+
+	@Test
+	public void testCIIProprietaryAccountRoundTrips() throws Exception {
+		String xml = replaceOnce(readResource("test_invoice_note.xml"),
+			"<ram:TypeCode>58</ram:TypeCode>", "<ram:TypeCode>30</ram:TypeCode>");
+		xml = replaceOnce(xml, "<ram:IBANID>DE89370400440532013000</ram:IBANID>",
+			"<ram:ProprietaryID>EXAMPLE-ACCOUNT</ram:ProprietaryID>");
+
+		Invoice invoice = importer(xml).extractInvoice();
+		BankDetails bankDetails = invoice.getSender().getBankDetails().get(0);
+		assertNull(bankDetails.getIBAN());
+		assertEquals("EXAMPLE-ACCOUNT", bankDetails.getProprietaryID());
+		assertEquals("30", bankDetails.getPaymentMeansCode());
+
+		String generated = generate(invoice);
+		assertThat(generated)
+			.valueByXPath("//*[local-name()='PayeePartyCreditorFinancialAccount']/*[local-name()='ProprietaryID']")
+			.isEqualTo("EXAMPLE-ACCOUNT");
+		assertThat(generated)
+			.valueByXPath("count(//*[local-name()='PayeePartyCreditorFinancialAccount']/*[local-name()='IBANID'])")
+			.asInt().isEqualTo(0);
+		assertTrue(bankDetails.getSettlementXML(Profiles.getByName("Basic", 2))
+			.contains("<ram:ProprietaryID>EXAMPLE-ACCOUNT</ram:ProprietaryID>"));
+
+		BankDetails roundTripped = importer(generated).extractInvoice().getSender().getBankDetails().get(0);
+		assertEquals("EXAMPLE-ACCOUNT", roundTripped.getProprietaryID());
+		assertEquals("30", roundTripped.getPaymentMeansCode());
+	}
+
+	@Test
+	public void testCIIIBANTakesPrecedenceOverProprietaryID() {
+		String xml = new BankDetails("DE89370400440532013000")
+			.setProprietaryID("EXAMPLE-ACCOUNT")
+			.getSettlementXML(Profiles.getByName("EN16931"));
+
+		assertTrue(xml.contains("<ram:IBANID>DE89370400440532013000</ram:IBANID>"));
+		assertFalse(xml.contains("<ram:ProprietaryID>"));
+	}
+
+	@Test
+	public void testCIIPayerProprietaryAccountIsNotImportedAsBankDetails() throws Exception {
+		String xml = replaceOnce(readResource("cii/minimalDebit.xml"),
+			"<ram:IBANID>DE21860000000086001055</ram:IBANID>",
+			"<ram:ProprietaryID>EXAMPLE-PAYER-ACCOUNT</ram:ProprietaryID>");
+
+		Invoice invoice = importer(xml).extractInvoice();
+
+		assertTrue(xml.contains("<ram:DirectDebitMandateID>REF A-123</ram:DirectDebitMandateID>"));
+		assertTrue(invoice.getSender().getBankDetails().isEmpty());
+		assertTrue(invoice.getRecipient().getBankDetails().isEmpty());
+	}
+
+	@Test
+	public void testCIIIBANAndBICStillRoundTrip() throws Exception {
+		String xml = replaceOnce(readResource("test_invoice_note.xml"), "</ram:SpecifiedTradeSettlementPaymentMeans>",
+			"<ram:PayeeSpecifiedCreditorFinancialInstitution><ram:BICID>GENODEF1S04</ram:BICID></ram:PayeeSpecifiedCreditorFinancialInstitution>"
+				+ "</ram:SpecifiedTradeSettlementPaymentMeans>");
+		Invoice invoice = importer(xml).extractInvoice();
+
+		BankDetails bankDetails = invoice.getSender().getBankDetails().get(0);
+		assertEquals("DE89370400440532013000", bankDetails.getIBAN());
+		assertEquals("GENODEF1S04", bankDetails.getBIC());
+
+		String generated = generate(invoice);
+		assertThat(generated)
+			.valueByXPath("//*[local-name()='PayeePartyCreditorFinancialAccount']/*[local-name()='IBANID']")
+			.isEqualTo("DE89370400440532013000");
+		assertThat(generated)
+			.valueByXPath("//*[local-name()='PayeeSpecifiedCreditorFinancialInstitution']/*[local-name()='BICID']")
+			.isEqualTo("GENODEF1S04");
 	}
 
 	/**

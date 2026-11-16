@@ -24,6 +24,10 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	 */
 	protected String accountName;
 	/**
+	 * Proprietary account identifier used when the account is not identified by an IBAN
+	 */
+	protected String proprietaryID;
+	/**
 	 * payment means code
 	 */
 	protected String paymentMeansCode = "58";
@@ -129,6 +133,22 @@ public class BankDetails implements IZUGFeRDTradeSettlementPayment {
 	@Override
 	public String getAccountName() {
 		return accountName;
+	}
+
+	/**
+	 * Sets a proprietary account identifier.
+	 *
+	 * @param proprietaryID the account identifier
+	 * @return fluent setter
+	 */
+	public BankDetails setProprietaryID(String proprietaryID) {
+		this.proprietaryID = proprietaryID;
+		return this;
+	}
+
+	@Override
+	public String getProprietaryID() {
+		return proprietaryID;
 	}
 
 	/**
