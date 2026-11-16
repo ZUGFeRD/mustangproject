@@ -64,6 +64,13 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 		return null;
 	}
 
+	/**
+	 * @return proprietary account identifier when the payee account has no IBAN
+	 */
+	default String getProprietaryID() {
+		return null;
+	}
+
 	/***
 	 * @return payment means code (BT-81 / UNTDID 4461)
 	 */
@@ -93,10 +100,11 @@ public interface IZUGFeRDTradeSettlementPayment extends IZUGFeRDTradeSettlement 
 		if (!basicProfiles.contains(profile) && getPaymentMeansInformation() != null) {
 			xml += "<ram:Information>" + XMLTools.encodeXML(getPaymentMeansInformation()) + "</ram:Information>";
 		}
-		if (getOwnIBAN() != null) {
+		if (getOwnIBAN() != null || getProprietaryID() != null) {
 			xml += "<ram:PayeePartyCreditorFinancialAccount>"
-				+ "<ram:IBANID>" + XMLTools.encodeXML(getOwnIBAN()) + "</ram:IBANID>"
+				+ (getOwnIBAN() != null ? "<ram:IBANID>" + XMLTools.encodeXML(getOwnIBAN()) + "</ram:IBANID>" : "")
 				+ accountNameStr
+				+ (getOwnIBAN() == null && getProprietaryID() != null ? "<ram:ProprietaryID>" + XMLTools.encodeXML(getProprietaryID()) + "</ram:ProprietaryID>" : "")
 				+ "</ram:PayeePartyCreditorFinancialAccount>";
 		}
 		if (!basicProfiles.contains(profile) && getOwnBIC() != null) {

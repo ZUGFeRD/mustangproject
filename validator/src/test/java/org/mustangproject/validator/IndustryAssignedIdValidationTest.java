@@ -1,6 +1,7 @@
 package org.mustangproject.validator;
 
 import org.junit.jupiter.api.Test;
+import org.mustangproject.BankDetails;
 import org.mustangproject.Invoice;
 import org.mustangproject.Item;
 import org.mustangproject.Product;
@@ -50,5 +51,40 @@ class IndustryAssignedIdValidationTest {
 			validator.wasCompletelyValid(),
 			"The generated EXTENDED profile invoice with IndustryAssignedID must pass full schema validation:\n" + report
 		);
+	}
+
+	@Test
+	void testProprietaryPaymentAccountValidatesAgainstSchema() {
+		TradeParty buyer = new TradeParty("Buyer Corp", "Street 1", "12345", "City", "DE");
+		TradeParty seller = new TradeParty("Seller GmbH", "Street 2", "54321", "Town", "DE")
+			.setVATID("DE123456789")
+			.addBankDetails(new BankDetails().setProprietaryID("EXAMPLE-ACCOUNT").setPaymentMeansCode("30"));
+
+		Invoice invoice = new Invoice()
+			.setNumber("INV-2026-VAL")
+			.setIssueDate(new Date())
+			.setDeliveryDate(new Date())
+			.setDueDate(new Date())
+			.setCurrency("EUR")
+			.setSender(seller)
+			.setRecipient(buyer);
+
+		Product product = new Product("Widget", "High-tech widget", "H87", new BigDecimal("19.00"))
+			.setIndustryAssignedID("PRODUCER-PART-123");
+
+		invoice.addItem(new Item(product, BigDecimal.ONE, BigDecimal.TEN).setTax(BigDecimal.valueOf(19)));
+
+		ZUGFeRD2PullProvider provider = new ZUGFeRD2PullProvider();
+		provider.setProfile(Profiles.getByName("EN16931"));
+		provider.generateXML(invoice);
+
+		byte[] xmlData = provider.getXML();
+		assertNotNull(xmlData);
+
+		ZUGFeRDValidator validator = new ZUGFeRDValidator();
+		String report = validator.validate(xmlData, "invoice.xml");
+
+		assertTrue(validator.wasCompletelyValid(),
+			"The generated EN16931 invoice with a proprietary account ID must pass full schema validation:\n" + report);
 	}
 }

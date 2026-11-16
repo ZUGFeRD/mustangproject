@@ -809,7 +809,7 @@ public class ZUGFeRDInvoiceImporter {
 		NodeList headerTradeSettlementNodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		List<BankDetails> bankDetails = new ArrayList<>();
 		String directDebitMandateID = null;
-		String IBAN = null, BIC = null, paymentMeansCode = null, paymentMeansInformation = null;
+		String IBAN = null, proprietaryID = null, BIC = null, paymentMeansCode = null, paymentMeansInformation = null;
 		String accountName = null;
 
 		for (int i = 0; i < headerTradeSettlementNodes.getLength(); i++) {
@@ -879,6 +879,7 @@ public class ZUGFeRDInvoiceImporter {
 					&& headerTradeSettlementChilds.item(settlementChildIndex).getLocalName().equals("SpecifiedTradeSettlementPaymentMeans")) {
 					NodeList paymentMeansChilds = headerTradeSettlementChilds.item(settlementChildIndex).getChildNodes();
 					IBAN = null;
+					proprietaryID = null;
 					BIC = null;
 					accountName = null;
 					paymentMeansCode = null;
@@ -899,6 +900,10 @@ public class ZUGFeRDInvoiceImporter {
 								if (accountChilds.item(accountChildIndex).getLocalName() != null && accountChilds.item(accountChildIndex).getLocalName().equals("IBANID")) { //CII
 									IBAN = XMLTools.trimOrNull(accountChilds.item(accountChildIndex));
 								}
+								if (paymentMeansChilds.item(paymentMeansChildIndex).getLocalName().equals("PayeePartyCreditorFinancialAccount")
+									&& accountChilds.item(accountChildIndex).getLocalName() != null && accountChilds.item(accountChildIndex).getLocalName().equals("ProprietaryID")) { //CII
+									proprietaryID = XMLTools.trimOrNull(accountChilds.item(accountChildIndex));
+								}
 								if (accountChilds.item(accountChildIndex).getLocalName() != null && accountChilds.item(accountChildIndex).getLocalName().equals("AccountName")) { //CII
 									accountName = XMLTools.trimOrNull(accountChilds.item(accountChildIndex));
 								}
@@ -914,8 +919,8 @@ public class ZUGFeRDInvoiceImporter {
 						}
 
 					}
-					if (IBAN != null) {
-						BankDetails bd = new BankDetails(IBAN);
+					if (IBAN != null || proprietaryID != null) {
+						BankDetails bd = new BankDetails(IBAN).setProprietaryID(proprietaryID);
 						if (paymentMeansCode != null) {
 							bd.setPaymentMeansCode(paymentMeansCode);
 						}
