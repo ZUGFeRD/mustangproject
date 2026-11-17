@@ -914,6 +914,7 @@ public class Main {
 
 		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
 		String xml = null;
+		boolean success = false;
 		try {
 			ZUGFeRDVisualizer.Language langCode = ZUGFeRDVisualizer.Language.EN;
 			if (lang.equalsIgnoreCase("de")) {
@@ -924,13 +925,23 @@ public class Main {
 			}
 			if (!intoPDF) {
 				xml = zvi.visualize(sourceName, langCode);
+				if (xml == null) {
+					throw new IOException("Visualization of " + sourceName + " failed");
+				}
 				Files.write(Paths.get(outName), xml.getBytes());
 			} else {
 				zvi.toPDF(sourceName, outName, langCode);
+				if (!Files.exists(Paths.get(outName)) || Files.size(Paths.get(outName)) == 0) {
+					throw new IOException("PDF visualization of " + sourceName + " failed, no PDF written");
+				}
 			}
+			success = true;
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			System.err.println(e.getMessage());
+		}
+		if (!success) {
+			System.exit(-1);
 		}
 		System.out.println("Written to " + outName);
 

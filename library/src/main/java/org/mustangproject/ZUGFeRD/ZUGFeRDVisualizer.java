@@ -39,11 +39,7 @@ import org.mustangproject.EStandard;
 import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
@@ -100,8 +96,8 @@ public class ZUGFeRDVisualizer {
 	// return result;
 	// }
 	private TransformerFactory mFactory;
-	private Templates mXsltExtendedTemplate; //Extended visualization
-	private Templates mXsltXRTemplate; //EN16931 visualization
+	private Templates mXsltCIITemplate;
+	private Templates mXsltCIIFOPTemplate;
 	private Templates mXsltUBLTemplate;
 	private Templates mXsltUBLCreditNoteTemplate;
 	private Templates mXsltCIOTemplate;
@@ -109,9 +105,19 @@ public class ZUGFeRDVisualizer {
 	private Templates mXsltPDFTemplate;
 	private Templates mXsltZF1HTMLTemplate;
 
+	private boolean showBTs;
+
 	public ZUGFeRDVisualizer() {
 		mFactory = XMLTools.getTransformerFactory();
 		mFactory.setURIResolver(new ClasspathResourceURIResolver());
+	}
+
+	/***
+	 * display business term IDs next to field names
+	 * */
+	public ZUGFeRDVisualizer setShowBTs(boolean showBTs) {
+		this.showBTs = showBTs;
+		return this;
 	}
 
 
@@ -133,7 +139,6 @@ public class ZUGFeRDVisualizer {
 			// only standard and profile are needed here, so don't parse the whole invoice
 			zi.setRawXML(fileContent.getBytes(StandardCharsets.UTF_8), false);
 			EStandard thestandard = zi.getStandard();
-			Profile theprofile = Profiles.getByName(zi.getZUGFeRDProfil());
 
 			ByteArrayOutputStream htmlOutput = new ByteArrayOutputStream();
 
@@ -147,12 +152,8 @@ public class ZUGFeRDVisualizer {
 				return htmlOutput.toString(StandardCharsets.UTF_8);
 			} else if (thestandard == EStandard.FACTUR_X) {
 				//zf2 or fx: the extended visualization creates the HTML in one step
-				if (theprofile == Profiles.getByName("Extended")) {
-					applyZF2ExtendedXSLT(xmlContentStream, htmlOutput, lang);
+					applyCIIXSLT(xmlContentStream, htmlOutput, lang);
 					needsTwoSteps = false;
-				} else {
-					applyZF2XSLT(xmlContentStream, htmlOutput);
-				}
 			} else if (thestandard == EStandard.UBL) {
 				//zf2 or fx
 				applyUBL2XSLT(xmlContentStream, htmlOutput);
@@ -218,12 +219,16 @@ public class ZUGFeRDVisualizer {
 
 
 	private void initTemplates(Language lang) throws TransformerConfigurationException {
-		if (mXsltXRTemplate == null) {
-			mXsltXRTemplate = mFactory.newTemplates(
-				new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/cii-xr.xsl")));
+		if (mXsltUBLTemplate == null) {
+			mXsltUBLTemplate = mFactory.newTemplates(
+				new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/ubl-invoice-xr.xsl")));
 		}
-		if (mXsltExtendedTemplate == null) {
-			mXsltExtendedTemplate = mFactory.newTemplates(getExtendedStylesheetSource());
+
+		if (mXsltCIITemplate == null) {
+			mXsltCIITemplate = mFactory.newTemplates(getCIIStylesheetSource());
+		}
+		if (mXsltCIIFOPTemplate == null) {
+			mXsltCIIFOPTemplate = mFactory.newTemplates(getCIIFOPStylesheetSource());
 		}
 
 		if (mXsltHTMLTemplates == null) {
@@ -238,10 +243,12 @@ public class ZUGFeRDVisualizer {
 
 	protected String toFOP(String xmlFilename, Language lang)
 		throws IOException, TransformerException, ParserConfigurationException {
-		ZUGFeRDImporter zi = new ZUGFeRDImporter(xmlFilename);
+		ZUGFeRDImporter zi = new ZUGFeRDImporter();
+		zi.doIgnoreCalculationErrors();
 
 
 		try {
+			zi.setRawXML(Files.readAllBytes(Paths.get(xmlFilename)));
 			EStandard theStandard = zi.getStandard();
 			try (FileInputStream fis = new FileInputStream(xmlFilename)) {
 				return toFOP(fis, theStandard, lang);
@@ -268,9 +275,10 @@ public class ZUGFeRDVisualizer {
 
 		ByteArrayOutputStream iaos = new ByteArrayOutputStream();
 
-		//zf2 or fx
+		//zf2 or fx: the extended FO stylesheet already creates the final XSL-FO in one step
 		if (theStandard == EStandard.FACTUR_X) {
-			applyZF2XSLT(is, iaos);
+			applyCIIFOPXSLT(is, iaos, lang);
+			return iaos.toString(StandardCharsets.UTF_8);
 		} else if (theStandard == EStandard.UBL) {
 			applyUBL2XSLT(is, iaos);
 		} else if (theStandard == EStandard.UBL_CREDITNOTE) {
@@ -305,6 +313,11 @@ public class ZUGFeRDVisualizer {
 		} catch (TransformerException | IOException | ParserConfigurationException e) {
 			LOGGER.error("Failed to apply FOP", e);
 		}
+		if (fopInput == null) {
+			// don't leave a truncated PDF behind
+			LOGGER.error("Could not create the FO input for {}, no PDF written", xmlFilename);
+			return;
+		}
 
 		toPDFfromFOP(fopInput, () -> {
 			try {
@@ -324,10 +337,11 @@ public class ZUGFeRDVisualizer {
 	public byte[] toPDF(String xmlContent, Language lang) {
 
 		String fopInput = null;
-		ZUGFeRDImporter zi = new ZUGFeRDImporter(xmlContent);
-
 
 		try {
+			ZUGFeRDImporter zi = new ZUGFeRDImporter();
+			// only the standard is needed here, so don't parse the whole invoice
+			zi.setRawXML(xmlContent.getBytes(StandardCharsets.UTF_8), false);
 			EStandard theStandard = zi.getStandard();
 
 
@@ -341,6 +355,10 @@ public class ZUGFeRDVisualizer {
 				fopInput = toFOP(fis, theStandard, lang);
 			} catch (TransformerException | IOException e) {
 				LOGGER.error("Failed to apply FOP", e);
+			}
+			if (fopInput == null) {
+				LOGGER.error("Could not create the FO input, no PDF written");
+				return null;
 			}
 
 			AtomicReference<byte[]> byteHolder = new AtomicReference<>();
@@ -419,14 +437,15 @@ public class ZUGFeRDVisualizer {
 		}
 	}
 
-	protected void applyZF2XSLT(final InputStream xmlFile, final OutputStream htmlOutStream)
+	protected void applyCIIFOPXSLT(final InputStream xmlFile, final OutputStream htmlOutStream, Language lang)
 		throws TransformerException {
-		if (mXsltXRTemplate == null) {
-			mXsltXRTemplate = mFactory.newTemplates(
-				new StreamSource(CLASS_LOADER.getResourceAsStream(RESOURCE_PATH + "stylesheets/cii-xr.xsl")));
-
+		if (mXsltCIIFOPTemplate == null) {
+			mXsltCIIFOPTemplate = mFactory.newTemplates(getCIIFOPStylesheetSource());
 		}
-		Transformer transformer = mXsltXRTemplate.newTransformer();
+
+		Transformer transformer = mXsltCIIFOPTemplate.newTransformer();
+		transformer.setParameter("lang", (lang == null ? Language.DE : lang).name().toLowerCase());
+		transformer.setParameter("showBT", showBTs ? "true" : "false");
 
 		transformer.transform(new StreamSource(xmlFile), new StreamResult(htmlOutStream));
 	}
@@ -438,13 +457,14 @@ public class ZUGFeRDVisualizer {
 	 * @param lang language of the labels, null defaults to German
 	 * @throws TransformerException if the transformation fails
 	 */
-	protected void applyZF2ExtendedXSLT(final InputStream xmlFile, final OutputStream htmlOutStream, Language lang)
+	protected void applyCIIXSLT(final InputStream xmlFile, final OutputStream htmlOutStream, Language lang)
 		throws TransformerException {
-		if (mXsltExtendedTemplate == null) {
-			mXsltExtendedTemplate = mFactory.newTemplates(getExtendedStylesheetSource());
+		if (mXsltCIITemplate == null) {
+			mXsltCIITemplate = mFactory.newTemplates(getCIIStylesheetSource());
 		}
-		Transformer transformer = mXsltExtendedTemplate.newTransformer();
+		Transformer transformer = mXsltCIITemplate.newTransformer();
 		transformer.setParameter("lang", (lang == null ? Language.DE : lang).name().toLowerCase());
+		transformer.setParameter("showBT", showBTs ? "true" : "false");
 
 		transformer.transform(new StreamSource(xmlFile), new StreamResult(htmlOutStream));
 	}
@@ -501,6 +521,7 @@ public class ZUGFeRDVisualizer {
 		throws TransformerException, IOException {
 		Transformer transformer = mXsltPDFTemplate.newTransformer();
 		transformer.setParameter("lang", lang.name().toLowerCase());
+		transformer.setParameter("showBT", showBTs ? "true" : "false");
 
 		transformer.transform(new StreamSource(xmlFile), new StreamResult(PDFOutstream));
 		xmlFile.close();
@@ -510,8 +531,19 @@ public class ZUGFeRDVisualizer {
 	 * the extended stylesheet includes further stylesheets from its own directory, so it needs a
 	 * systemId for the relative hrefs to be resolved against
 	 */
-	private static StreamSource getExtendedStylesheetSource() {
-		String path = RESOURCE_PATH + "stylesheets/visualization-extended/ZUGFeRD_EXTENDED_html.xsl";
+	private static StreamSource getCIIStylesheetSource() {
+		return getStylesheetSourceWithSystemId(RESOURCE_PATH + "stylesheets/visualization-extended/ZUGFeRD_EXTENDED_html.xsl");
+	}
+
+	/***
+	 * the FO stylesheet reads its embedded labels and code lists via document(''), so it needs a
+	 * systemId pointing to itself
+	 */
+	private static StreamSource getCIIFOPStylesheetSource() {
+		return getStylesheetSourceWithSystemId(RESOURCE_PATH + "stylesheets/visualization-extended/ZUGFeRD_EXTENDED_fo.xsl");
+	}
+
+	private static StreamSource getStylesheetSourceWithSystemId(String path) {
 		URL url = CLASS_LOADER.getResource(path);
 		return new StreamSource(CLASS_LOADER.getResourceAsStream(path), url != null ? url.toExternalForm() : null);
 	}
@@ -527,7 +559,14 @@ public class ZUGFeRDVisualizer {
 			if (hasBase || URI.create(href).isAbsolute()) {
 				// resolve relative to the including stylesheet, e.g. within stylesheets/visualization-extended/
 				try {
-					URL url = hasBase ? new URL(new URL(base), href) : new URL(href);
+					URL url;
+					if (hasBase && href.isEmpty()) {
+						// document('') refers to the stylesheet itself. new URL(jarURL, "") would resolve to
+						// the enclosing directory within a jar (e.g. in the CLI), so use the base directly
+						url = new URL(base);
+					} else {
+						url = hasBase ? new URL(new URL(base), href) : new URL(href);
+					}
 					return new StreamSource(url.openStream(), url.toExternalForm());
 				} catch (IOException e) {
 					throw new TransformerException("Could not resolve " + href + " relative to " + base, e);

@@ -86,10 +86,11 @@ public class VisualizationTest extends ResourceCase {
 
 	@Test
 	public void testExtendedVisualization() {
-		String result = visualizeExtended("Extended_fremdwaehrung.xml", Language.DE);
+		String result = visualizeCII("Extended_fremdwaehrung.xml", Language.DE);
 
 		assertTrue(result.contains("<html lang=\"de\">"));
-		assertTrue(result.contains("Rechnung Nr.&nbsp;47110815"));
+		assertTrue(result.contains("<title>Rechnung 47110815</title>"));
+		assertTrue(result.contains("Nr. <strong>47110815</strong>"));
 		assertTrue(result.contains("Rohstoff AG Salzgitter"));
 		assertTrue(result.contains("Stahlcoil"));
 		assertTrue(result.contains("Umsatzsteueraufschlüsselung"));
@@ -98,13 +99,15 @@ public class VisualizationTest extends ResourceCase {
 		assertTrue(result.contains("850,00"));
 		// German date format
 		assertTrue(result.contains("15.11.2024"));
-		// the tax total is also given in the tax currency
-		assertTrue(result.contains("Steuerbetrag in GBP"));
+		// the tax total is given in the invoice currency (GBP, BT-110) and also in the tax currency (EUR, BT-111)
+		assertTrue(result.contains("163,16&nbsp;GBP"));
+		assertTrue(result.contains("Umsatzsteuer (EUR)<span class=\"bt\">BT-111</span>"));
+		assertTrue(result.contains("183,14&nbsp;EUR"));
 	}
 
 	@Test
 	public void testExtendedVisualizationEnglish() {
-		String result = visualizeExtended("Extended_fremdwaehrung.xml", Language.EN);
+		String result = visualizeCII("Extended_fremdwaehrung.xml", Language.EN);
 
 		assertTrue(result.contains("<html lang=\"en\">"));
 		assertTrue(result.contains("Invoice No.&nbsp;47110815"));
@@ -122,7 +125,7 @@ public class VisualizationTest extends ResourceCase {
 
 	@Test
 	public void testExtendedVisualizationFrench() {
-		String result = visualizeExtended("Extended_fremdwaehrung.xml", Language.FR);
+		String result = visualizeCII("Extended_fremdwaehrung.xml", Language.FR);
 
 		assertTrue(result.contains("<html lang=\"fr\">"));
 		assertTrue(result.contains("Facture N°&nbsp;47110815"));
@@ -135,7 +138,7 @@ public class VisualizationTest extends ResourceCase {
 		assertFalse(result.contains("Verkäufer"));
 	}
 
-	private String visualizeExtended(String inputFilename, Language lang) {
+	private String visualizeCII(String inputFilename, Language lang) {
 		File CIIinputFile = getResourceAsFile(inputFilename);
 		String result = null;
 		try {
@@ -285,6 +288,19 @@ public class VisualizationTest extends ResourceCase {
 		} catch (IOException e) {
 			fail("IOException should not occur");
 		}
+	}
+
+	@Test
+	public void testPDFVisualizationCIIFromXMLString() throws IOException {
+		// the XML content (not a filename) is passed, it must not be mistaken for a PDF filename
+		File CIIinputFile = getResourceAsFile("cii/01.01a-INVOICE.cii.xml");
+		String xml = Files.readString(CIIinputFile.toPath());
+
+		byte[] pdf = new ZUGFeRDVisualizer().toPDF(xml, Language.EN);
+
+		assertNotNull(pdf);
+		assertTrue(ByteArraySearcher.startsWith(pdf, new byte[]{'%', 'P', 'D', 'F'}));
+		assertTrue(ByteArraySearcher.contains(pdf, "<rdf:li>en</rdf:li>".getBytes()));
 	}
 
 	@Test

@@ -8,11 +8,20 @@
   Detailbereichen).
 
   Parameter
-    lang   de | en | fr     Sprache der Beschriftungen (Standard: de)
+    lang     de | en | fr   Sprache der Beschriftungen (Standard: de)
+    showBT   (leer) | true  Falls gesetzt (nicht leer und nicht false/0/no/nein),
+                            werden die BT-/BG-/BT-X-Kennungen der EN 16931 bzw.
+                            von Factur-X/ZUGFeRD neben den Feldnamen angezeigt.
+                            Ohne Parameter sind sie ausgeblendet und lassen sich
+                            über den Schalter oben rechts einblenden.
+
+  Profile
+    Verarbeitet alle Profile (MINIMUM, BASIC WL, BASIC, EN 16931, EXTENDED,
+    XRECHNUNG); nicht vorhandene Angaben bzw. Abschnitte werden ausgelassen.
 
   Aufruf (Beispiele)
-    java -jar saxon-he.jar -s:rechnung.xml -xsl:ZUGFeRD_EXTENDED_html.xsl -o:rechnung.html lang=en
-    xsltproc (mit stringparam lang fr) ZUGFeRD_EXTENDED_html.xsl rechnung.xml
+    java -jar saxon-he.jar -s:rechnung.xml -xsl:ZUGFeRD_EXTENDED_html.xsl -o:rechnung.html lang=en showBT=true
+    xsltproc (mit stringparam lang fr und stringparam showBT true) ZUGFeRD_EXTENDED_html.xsl rechnung.xml
 
   XSLT 1.0, keine Erweiterungsfunktionen. Die Beschriftungen, Codelisten und
   BT-Zuordnungen sind in diesem Stylesheet eingebettet (zv:data) und werden
@@ -20,7 +29,7 @@
   (Datei-/URL-Pfad) geladen werden.
 
   Diese Datei wird von build/build_xsl.py erzeugt - Änderungen bitte in
-  build/template.xsl bzw. build/build_xsl.py vornehmen.
+  build/template_html.xsl, build/common.xsl bzw. build/build_xsl.py vornehmen.
 -->
 <xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -34,6 +43,10 @@
   <xsl:output method="html" encoding="UTF-8" indent="no" doctype-system="about:legacy-compat"/>
 
   <xsl:param name="lang" select="'de'"/>
+  <xsl:param name="showBT" select="''"/>
+
+  <xsl:variable name="btNorm" select="translate(normalize-space($showBT),'FALSENOI','falsenoi')"/>
+  <xsl:variable name="BTON" select="$btNorm!='' and $btNorm!='false' and $btNorm!='0' and $btNorm!='no' and $btNorm!='nein' and $btNorm!='off'"/>
 
   <xsl:variable name="langNorm" select="translate(substring(normalize-space($lang),1,2),'DEFNR','defnr')"/>
   <xsl:variable name="L">
@@ -50,6 +63,7 @@
   <xsl:key name="lbl"  match="zv:l" use="@k"/>
   <xsl:key name="code" match="zv:c" use="concat(@l,'|',@k)"/>
   <xsl:key name="bt"   match="zv:b" use="@p"/>
+  <xsl:key name="btv"  match="zv:v" use="concat(@p,'|',@k)"/>
   <xsl:key name="line" match="ram:IncludedSupplyChainTradeLineItem" use="normalize-space(ram:AssociatedDocumentLineDocument/ram:LineID)"/>
 
   <xsl:variable name="dictDoc" select="document('')"/>
@@ -70,6 +84,474 @@
   <xsl:variable name="P_AMT" select="'#,##0.00######'"/>
   <xsl:variable name="P_QTY" select="'#,##0.######'"/>
   <xsl:variable name="P_PCT" select="'#,##0.####'"/>
+
+  <!-- ================================================================== -->
+  <!--  Gemeinsame Templates (common.xsl)                                  -->
+  <!-- ================================================================== -->
+
+  <xsl:template name="profileName">
+    <xsl:variable name="g" select="translate(normalize-space($CTX/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID),$UC,$LC)"/>
+    <xsl:choose>
+      <xsl:when test="contains($g,'extended')">EXTENDED</xsl:when>
+      <xsl:when test="contains($g,'xrechnung')">XRECHNUNG</xsl:when>
+      <xsl:when test="contains($g,'basicwl')">BASIC WL</xsl:when>
+      <xsl:when test="contains($g,'basic')">BASIC</xsl:when>
+      <xsl:when test="contains($g,'minimum')">MINIMUM</xsl:when>
+      <xsl:when test="contains($g,'en16931')">EN 16931</xsl:when>
+      <xsl:otherwise><xsl:value-of select="$CTX/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="depth">
+    <xsl:param name="li"/>
+    <xsl:param name="n" select="0"/>
+    <xsl:variable name="p" select="normalize-space($li/ram:AssociatedDocumentLineDocument/ram:ParentLineID)"/>
+    <xsl:choose>
+      <xsl:when test="$p!='' and $n &lt; 8 and key('line',$p)">
+        <xsl:call-template name="depth">
+          <xsl:with-param name="li" select="key('line',$p)[1]"/>
+          <xsl:with-param name="n" select="$n + 1"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="$p!=''"><xsl:value-of select="$n + 1"/></xsl:when>
+      <xsl:otherwise><xsl:value-of select="$n"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="perBasis">
+    <xsl:if test="ram:BasisQuantity and number(ram:BasisQuantity) != 1">
+      <xsl:call-template name="w">
+        <xsl:with-param name="c" select="'cd'"/>
+        <xsl:with-param name="x">
+          <xsl:text> / </xsl:text>
+          <xsl:call-template name="num"><xsl:with-param name="v" select="ram:BasisQuantity"/><xsl:with-param name="p" select="$P_QTY"/></xsl:call-template>
+          <xsl:text> </xsl:text>
+          <xsl:call-template name="unitName"><xsl:with-param name="u" select="ram:BasisQuantity/@unitCode"/></xsl:call-template>
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <!-- Grund eines Zu-/Abschlags: Text und/oder Code -->
+  <xsl:template name="acReason">
+    <xsl:choose>
+      <xsl:when test="ram:Reason">
+        <xsl:value-of select="ram:Reason"/>
+        <xsl:if test="ram:ReasonCode"><xsl:call-template name="w"><xsl:with-param name="c" select="'cd'"/><xsl:with-param name="x"> (<xsl:value-of select="ram:ReasonCode"/>)</xsl:with-param></xsl:call-template></xsl:if>
+      </xsl:when>
+      <xsl:when test="ram:ReasonCode"><xsl:apply-templates select="ram:ReasonCode" mode="v"/></xsl:when>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="period">
+    <xsl:for-each select="ram:StartDateTime"><xsl:apply-templates select="." mode="v"/></xsl:for-each>
+    <xsl:if test="ram:StartDateTime or ram:EndDateTime"><xsl:text> &#8211; </xsl:text></xsl:if>
+    <xsl:for-each select="ram:EndDateTime"><xsl:apply-templates select="." mode="v"/></xsl:for-each>
+    <xsl:for-each select="ram:CompleteDateTime"><xsl:apply-templates select="." mode="v"/></xsl:for-each>
+    <xsl:if test="ram:Description"><xsl:call-template name="w"><xsl:with-param name="c" select="'cd'"/><xsl:with-param name="x"><xsl:text> </xsl:text><xsl:value-of select="ram:Description"/></xsl:with-param></xsl:call-template></xsl:if>
+  </xsl:template>
+
+  <xsl:template match="*" mode="v">
+    <xsl:variable name="ln" select="local-name()"/>
+    <xsl:variable name="pn" select="local-name(..)"/>
+    <xsl:choose>
+      <xsl:when test="udt:DateTimeString | qdt:DateTimeString | udt:DateString">
+        <xsl:call-template name="date">
+          <xsl:with-param name="s" select="normalize-space(*[1])"/>
+          <xsl:with-param name="f" select="normalize-space(*[1]/@format)"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="udt:Indicator">
+        <xsl:call-template name="yesno"><xsl:with-param name="v" select="udt:Indicator"/></xsl:call-template>
+      </xsl:when>
+      <xsl:when test="$ln = 'AttachmentBinaryObject'">
+        <xsl:call-template name="attachment"/>
+      </xsl:when>
+      <xsl:when test="$ln = 'ChargeIndicator'">
+        <xsl:call-template name="yesno"><xsl:with-param name="v" select="."/></xsl:call-template>
+      </xsl:when>
+      <xsl:when test="contains($ln,'Amount')">
+        <xsl:call-template name="amt"><xsl:with-param name="n" select="."/><xsl:with-param name="cur" select="true()"/></xsl:call-template>
+      </xsl:when>
+      <xsl:when test="contains($ln,'Quantity') or $ln = 'ValueMeasure' or $ln = 'BasisPeriodMeasure'">
+        <xsl:call-template name="num"><xsl:with-param name="v" select="."/><xsl:with-param name="p" select="$P_QTY"/></xsl:call-template>
+        <xsl:if test="@unitCode">
+          <xsl:text> </xsl:text>
+          <xsl:call-template name="unitName"><xsl:with-param name="u" select="@unitCode"/></xsl:call-template>
+        </xsl:if>
+      </xsl:when>
+      <xsl:when test="contains($ln,'Percent')">
+        <xsl:call-template name="num"><xsl:with-param name="v" select="."/><xsl:with-param name="p" select="$P_PCT"/></xsl:call-template>
+        <xsl:text>&#160;%</xsl:text>
+      </xsl:when>
+      <xsl:when test="$ln = 'ConversionRate' or $ln = 'SequenceNumeric'">
+        <xsl:call-template name="num"><xsl:with-param name="v" select="."/><xsl:with-param name="p" select="'#,##0.##########'"/></xsl:call-template>
+      </xsl:when>
+      <xsl:when test="$ln = 'IBANID'">
+        <xsl:call-template name="w"><xsl:with-param name="c" select="'mono'"/><xsl:with-param name="x"><xsl:call-template name="iban"><xsl:with-param name="s" select="normalize-space(.)"/></xsl:call-template></xsl:with-param></xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:variable name="list"><xsl:call-template name="listFor"/></xsl:variable>
+        <xsl:choose>
+          <xsl:when test="string($list) != ''">
+            <xsl:call-template name="codeDisp">
+              <xsl:with-param name="list" select="string($list)"/>
+              <xsl:with-param name="list2">
+                <xsl:choose>
+                  <xsl:when test="$ln='ReasonCode'">nonvat</xsl:when>
+                  <xsl:when test="$ln='DueDateTypeCode'">2475</xsl:when>
+                  <xsl:when test="$ln='LanguageID'">lang2</xsl:when>
+                </xsl:choose>
+              </xsl:with-param>
+              <xsl:with-param name="v" select="."/>
+            </xsl:call-template>
+          </xsl:when>
+          <xsl:when test="starts-with(normalize-space(.),'http://') or starts-with(normalize-space(.),'https://')">
+            <xsl:call-template name="lnk"><xsl:with-param name="href" select="normalize-space(.)"/></xsl:call-template>
+          </xsl:when>
+          <xsl:when test="($pn = 'EmailURIUniversalCommunication' or @schemeID = 'EM') and contains(.,'@')">
+            <xsl:call-template name="lnk"><xsl:with-param name="href" select="concat('mailto:',normalize-space(.))"/></xsl:call-template>
+          </xsl:when>
+          <xsl:otherwise><xsl:call-template name="txt"/></xsl:otherwise>
+        </xsl:choose>
+        <xsl:call-template name="scheme"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- Codeliste für ein Element ermitteln -->
+  <xsl:template name="listFor">
+    <xsl:variable name="ln" select="local-name()"/>
+    <xsl:variable name="pn" select="local-name(..)"/>
+    <xsl:choose>
+      <xsl:when test="$ln = 'TypeCode'">
+        <xsl:choose>
+          <xsl:when test="$pn = 'ExchangedDocument' or substring($pn, string-length($pn) - 17) = 'ReferencedDocument'">1001</xsl:when>
+          <xsl:when test="$pn = 'SpecifiedTradeSettlementPaymentMeans'">4461</xsl:when>
+          <xsl:when test="$pn = 'ApplicableTradeTax' or $pn = 'IncludedTradeTax' or $pn = 'CategoryTradeTax' or $pn = 'AppliedTradeTax'">5153</xsl:when>
+          <xsl:when test="$pn = 'ApplicableProductCharacteristic'">6313</xsl:when>
+          <xsl:when test="$pn = 'ReceivableSpecifiedTradeAccountingAccount'">acc</xsl:when>
+          <xsl:when test="$pn = 'DefinedTradeContact'">3139</xsl:when>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:when test="$ln = 'CategoryCode'">5305</xsl:when>
+      <xsl:when test="$ln = 'ExemptionReasonCode'">vatex</xsl:when>
+      <xsl:when test="$ln = 'DueDateTypeCode'">2005</xsl:when>
+      <xsl:when test="$ln = 'SubjectCode'">4451</xsl:when>
+      <xsl:when test="$ln = 'ReasonCode'">
+        <xsl:choose>
+          <xsl:when test="normalize-space(../ram:ChargeIndicator/udt:Indicator) = 'true'">7161</xsl:when>
+          <xsl:otherwise>5189</xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:when test="$ln = 'ReferenceTypeCode'">1153</xsl:when>
+      <xsl:when test="$ln = 'DeliveryTypeCode'">incoterms</xsl:when>
+      <xsl:when test="$ln = 'ModeCode'">8067</xsl:when>
+      <xsl:when test="$ln = 'LineStatusCode'">1229</xsl:when>
+      <xsl:when test="$ln = 'LineStatusReasonCode'">linereason</xsl:when>
+      <xsl:when test="$ln = 'LanguageID'">lang</xsl:when>
+      <xsl:when test="$ln = 'RoleCode'">3035</xsl:when>
+      <xsl:when test="$ln = 'CountryID'">country</xsl:when>
+      <xsl:when test="$ln = 'InvoiceCurrencyCode' or $ln = 'TaxCurrencyCode' or $ln = 'SourceCurrencyCode' or $ln = 'TargetCurrencyCode'">currency</xsl:when>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- Zusatz für schemeID / listID -->
+  <xsl:template name="scheme">
+    <xsl:variable name="pn" select="local-name(..)"/>
+    <xsl:choose>
+      <xsl:when test="@schemeID and $pn = 'SpecifiedTaxRegistration'"/>
+      <xsl:when test="@schemeID and local-name() = 'URIID'">
+        <xsl:call-template name="w">
+          <xsl:with-param name="c" select="'cd'"/>
+          <xsl:with-param name="x">
+          <xsl:text> (</xsl:text>
+          <xsl:call-template name="codeOrRaw"><xsl:with-param name="list" select="'eas'"/><xsl:with-param name="v" select="@schemeID"/></xsl:call-template>
+          <xsl:text>)</xsl:text>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="@schemeID">
+        <xsl:call-template name="w">
+          <xsl:with-param name="c" select="'cd'"/>
+          <xsl:with-param name="x">
+          <xsl:text> (</xsl:text>
+          <xsl:call-template name="codeOrRaw"><xsl:with-param name="list" select="'icd'"/><xsl:with-param name="v" select="@schemeID"/></xsl:call-template>
+          <xsl:text>)</xsl:text>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="@listID">
+        <xsl:call-template name="w">
+          <xsl:with-param name="c" select="'cd'"/>
+          <xsl:with-param name="x">
+          <xsl:text> (</xsl:text>
+          <xsl:call-template name="codeOrRaw"><xsl:with-param name="list" select="'7143'"/><xsl:with-param name="v" select="@listID"/></xsl:call-template>
+          <xsl:if test="@listVersionID"><xsl:text> </xsl:text><xsl:value-of select="@listVersionID"/></xsl:if>
+          <xsl:text>)</xsl:text>
+          </xsl:with-param>
+        </xsl:call-template>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- Datum: Formate 102, 203, 205, 610, 616 -->
+  <xsl:template name="date">
+    <xsl:param name="s"/>
+    <xsl:param name="f" select="'102'"/>
+    <xsl:choose>
+      <xsl:when test="($f = '102' or $f = '') and string-length($s) = 8">
+        <xsl:call-template name="ymd">
+          <xsl:with-param name="y" select="substring($s,1,4)"/>
+          <xsl:with-param name="m" select="substring($s,5,2)"/>
+          <xsl:with-param name="d" select="substring($s,7,2)"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:when test="$f = '610' and string-length($s) = 6">
+        <xsl:choose>
+          <xsl:when test="$L = 'en'"><xsl:value-of select="concat(substring($s,1,4),'-',substring($s,5,2))"/></xsl:when>
+          <xsl:when test="$L = 'fr'"><xsl:value-of select="concat(substring($s,5,2),'/',substring($s,1,4))"/></xsl:when>
+          <xsl:otherwise><xsl:value-of select="concat(substring($s,5,2),'.',substring($s,1,4))"/></xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:when test="$f = '616' and string-length($s) = 6">
+        <xsl:call-template name="t"><xsl:with-param name="k" select="'ui.week'"/></xsl:call-template>
+        <xsl:value-of select="concat(' ',substring($s,5,2),'/',substring($s,1,4))"/>
+      </xsl:when>
+      <xsl:when test="($f = '203' or $f = '205') and string-length($s) &gt;= 12">
+        <xsl:call-template name="ymd">
+          <xsl:with-param name="y" select="substring($s,1,4)"/>
+          <xsl:with-param name="m" select="substring($s,5,2)"/>
+          <xsl:with-param name="d" select="substring($s,7,2)"/>
+        </xsl:call-template>
+        <xsl:value-of select="concat(' ',substring($s,9,2),':',substring($s,11,2))"/>
+        <xsl:if test="string-length($s) &gt; 12"><xsl:value-of select="concat(' ',substring($s,13))"/></xsl:if>
+      </xsl:when>
+      <xsl:when test="string-length($s) &gt;= 10 and substring($s,5,1) = '-' and substring($s,8,1) = '-'">
+        <xsl:call-template name="ymd">
+          <xsl:with-param name="y" select="substring($s,1,4)"/>
+          <xsl:with-param name="m" select="substring($s,6,2)"/>
+          <xsl:with-param name="d" select="substring($s,9,2)"/>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise><xsl:value-of select="$s"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="ymd">
+    <xsl:param name="y"/><xsl:param name="m"/><xsl:param name="d"/>
+    <xsl:choose>
+      <xsl:when test="$L = 'en'"><xsl:value-of select="concat($y,'-',$m,'-',$d)"/></xsl:when>
+      <xsl:when test="$L = 'fr'"><xsl:value-of select="concat($d,'/',$m,'/',$y)"/></xsl:when>
+      <xsl:otherwise><xsl:value-of select="concat($d,'.',$m,'.',$y)"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="yesno">
+    <xsl:param name="v"/>
+    <xsl:variable name="x" select="translate(normalize-space($v),$UC,$LC)"/>
+    <xsl:choose>
+      <xsl:when test="$x = 'true' or $x = '1'"><xsl:call-template name="t"><xsl:with-param name="k" select="'ui.true'"/></xsl:call-template></xsl:when>
+      <xsl:when test="$x = 'false' or $x = '0'"><xsl:call-template name="t"><xsl:with-param name="k" select="'ui.false'"/></xsl:call-template></xsl:when>
+      <xsl:otherwise><xsl:value-of select="$v"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- Zahl im Sprachformat; Muster in en-Schreibweise -->
+  <xsl:template name="num">
+    <xsl:param name="v"/>
+    <xsl:param name="p" select="$P_AMT"/>
+    <xsl:variable name="x" select="normalize-space($v)"/>
+    <xsl:choose>
+      <xsl:when test="$x = '' or string(number($x)) = 'NaN'"><xsl:value-of select="$x"/></xsl:when>
+      <xsl:when test="$L = 'en'"><xsl:value-of select="format-number(number($x), $p, 'en')"/></xsl:when>
+      <xsl:when test="$L = 'fr'"><xsl:value-of select="format-number(number($x), translate($p, ',.', '&#x202F;,'), 'fr')"/></xsl:when>
+      <xsl:otherwise><xsl:value-of select="format-number(number($x), translate($p, ',.', '.,'), 'de')"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="amt">
+    <xsl:param name="n"/>
+    <xsl:param name="cur" select="false()"/>
+    <xsl:if test="$n">
+      <xsl:call-template name="w">
+        <xsl:with-param name="c" select="'nw'"/>
+        <xsl:with-param name="x">
+        <xsl:call-template name="num"><xsl:with-param name="v" select="$n"/></xsl:call-template>
+        <xsl:if test="$cur">
+          <xsl:text>&#160;</xsl:text>
+          <xsl:choose>
+            <xsl:when test="$n/@currencyID"><xsl:value-of select="$n/@currencyID"/></xsl:when>
+            <xsl:otherwise><xsl:value-of select="$S/ram:InvoiceCurrencyCode"/></xsl:otherwise>
+          </xsl:choose>
+        </xsl:if>
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="iban">
+    <xsl:param name="s"/>
+    <xsl:variable name="x" select="translate($s,' ','')"/>
+    <xsl:value-of select="substring($x,1,4)"/>
+    <xsl:if test="string-length($x) &gt; 4">
+      <xsl:text>&#160;</xsl:text>
+      <xsl:call-template name="iban"><xsl:with-param name="s" select="substring($x,5)"/></xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template name="unitName">
+    <xsl:param name="u"/>
+    <xsl:if test="normalize-space($u) != ''">
+      <xsl:variable name="n"><xsl:call-template name="codeName"><xsl:with-param name="list" select="'rec20'"/><xsl:with-param name="v" select="$u"/></xsl:call-template></xsl:variable>
+      <xsl:call-template name="w">
+        <xsl:with-param name="c" select="''"/>
+        <xsl:with-param name="title" select="string($u)"/>
+        <xsl:with-param name="x">
+        <xsl:choose>
+          <xsl:when test="string($n) != ''"><xsl:value-of select="$n"/></xsl:when>
+          <xsl:otherwise><xsl:value-of select="$u"/></xsl:otherwise>
+        </xsl:choose>
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
+
+  <!-- UI-Text -->
+  <xsl:template name="t">
+    <xsl:param name="k"/>
+    <xsl:for-each select="$dictDoc">
+      <xsl:choose>
+        <xsl:when test="key('lbl',$k)"><xsl:apply-templates select="key('lbl',$k)[1]" mode="txt"/></xsl:when>
+        <xsl:otherwise><xsl:value-of select="$k"/></xsl:otherwise>
+      </xsl:choose>
+    </xsl:for-each>
+  </xsl:template>
+
+  <!-- Beschriftung eines Elements: kontextabhängig -->
+  <xsl:template name="lbl">
+    <xsl:param name="n" select="."/>
+    <xsl:variable name="ln" select="local-name($n)"/>
+    <xsl:variable name="pn" select="local-name($n/..)"/>
+    <xsl:variable name="pg">
+      <xsl:choose>
+        <xsl:when test="substring($pn, string-length($pn) - 9) = 'TradeParty'">TradeParty</xsl:when>
+        <xsl:when test="substring($pn, string-length($pn) - 17) = 'ReferencedDocument'">ReferencedDocument</xsl:when>
+        <xsl:when test="$pn = 'ApplicableTradeTax' or $pn = 'IncludedTradeTax' or $pn = 'CategoryTradeTax' or $pn = 'AppliedTradeTax'">TradeTax</xsl:when>
+        <xsl:when test="substring($pn, string-length($pn) - 16) = 'ProductTradePrice'">ProductTradePrice</xsl:when>
+        <xsl:otherwise><xsl:value-of select="$pn"/></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="k1" select="concat($pn,'/',$ln)"/>
+    <xsl:variable name="kg" select="concat($pg,'/',$ln)"/>
+    <xsl:variable name="ks" select="concat($k1,'@',normalize-space($n/@schemeID))"/>
+    <xsl:variable name="kc" select="concat($ln,'#',normalize-space($n/ram:ChargeIndicator/udt:Indicator))"/>
+    <xsl:for-each select="$dictDoc">
+      <xsl:choose>
+        <xsl:when test="$n/@schemeID and key('lbl',$ks)"><xsl:apply-templates select="key('lbl',$ks)[1]" mode="txt"/></xsl:when>
+        <xsl:when test="key('lbl',$kc)"><xsl:apply-templates select="key('lbl',$kc)[1]" mode="txt"/></xsl:when>
+        <xsl:when test="key('lbl',$k1)"><xsl:apply-templates select="key('lbl',$k1)[1]" mode="txt"/></xsl:when>
+        <xsl:when test="key('lbl',$kg)"><xsl:apply-templates select="key('lbl',$kg)[1]" mode="txt"/></xsl:when>
+        <xsl:when test="key('lbl',$ln)"><xsl:apply-templates select="key('lbl',$ln)[1]" mode="txt"/></xsl:when>
+        <xsl:otherwise><xsl:value-of select="$ln"/></xsl:otherwise>
+      </xsl:choose>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="zv:l | zv:c" mode="txt">
+    <xsl:choose>
+      <xsl:when test="string(@*[local-name() = $L]) != ''"><xsl:value-of select="@*[local-name() = $L]"/></xsl:when>
+      <xsl:otherwise><xsl:value-of select="@en"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- Codebezeichnung (leer, wenn unbekannt) -->
+  <xsl:template name="codeName">
+    <xsl:param name="list"/>
+    <xsl:param name="v"/>
+    <xsl:variable name="vv" select="normalize-space($v)"/>
+    <xsl:for-each select="$dictDoc">
+      <xsl:apply-templates select="key('code',concat($list,'|',$vv))[1]" mode="txt"/>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template name="codeOrRaw">
+    <xsl:param name="list"/>
+    <xsl:param name="v"/>
+    <xsl:variable name="n"><xsl:call-template name="codeName"><xsl:with-param name="list" select="$list"/><xsl:with-param name="v" select="$v"/></xsl:call-template></xsl:variable>
+    <xsl:choose>
+      <xsl:when test="string($n) != ''"><xsl:value-of select="$n"/></xsl:when>
+      <xsl:otherwise><xsl:value-of select="$v"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- "Bezeichnung (Code)" -->
+  <xsl:template name="codeDisp">
+    <xsl:param name="list"/>
+    <xsl:param name="list2" select="''"/>
+    <xsl:param name="v"/>
+    <xsl:variable name="n1"><xsl:call-template name="codeName"><xsl:with-param name="list" select="$list"/><xsl:with-param name="v" select="$v"/></xsl:call-template></xsl:variable>
+    <xsl:variable name="n">
+      <xsl:choose>
+        <xsl:when test="string($n1) != '' or string($list2) = ''"><xsl:value-of select="$n1"/></xsl:when>
+        <xsl:otherwise><xsl:call-template name="codeName"><xsl:with-param name="list" select="string($list2)"/><xsl:with-param name="v" select="$v"/></xsl:call-template></xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+    <xsl:choose>
+      <xsl:when test="string($n) != ''">
+        <xsl:value-of select="$n"/>
+        <xsl:call-template name="w"><xsl:with-param name="c" select="'cd'"/><xsl:with-param name="x"><xsl:text> (</xsl:text><xsl:value-of select="normalize-space($v)"/><xsl:text>)</xsl:text></xsl:with-param></xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise><xsl:value-of select="$v"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="bt">
+    <xsl:param name="n" select="."/>
+    <xsl:if test="$n and $btEmit">
+      <xsl:variable name="x" select="$n[1]"/>
+      <xsl:variable name="p">
+        <xsl:for-each select="$x/ancestor-or-self::*[parent::*]">
+          <xsl:if test="position() &gt; 1">/</xsl:if>
+          <xsl:value-of select="local-name()"/>
+        </xsl:for-each>
+      </xsl:variable>
+      <xsl:variable name="ac" select="$x/ancestor-or-self::*[ram:ChargeIndicator][1]"/>
+      <xsl:variable name="tr" select="$x/ancestor-or-self::ram:SpecifiedTaxRegistration[1]"/>
+      <xsl:variable name="rd" select="$x/ancestor-or-self::ram:AdditionalReferencedDocument[1]"/>
+      <xsl:variable name="c">
+        <xsl:choose>
+          <xsl:when test="count($n) &gt; 1"/>
+          <xsl:when test="$ac">
+            <xsl:choose>
+              <xsl:when test="normalize-space($ac/ram:ChargeIndicator/udt:Indicator)='true'">true</xsl:when>
+              <xsl:otherwise>false</xsl:otherwise>
+            </xsl:choose>
+          </xsl:when>
+          <xsl:when test="$tr"><xsl:value-of select="normalize-space($tr/ram:ID/@schemeID)"/></xsl:when>
+          <xsl:when test="$rd"><xsl:value-of select="normalize-space($rd/ram:TypeCode)"/></xsl:when>
+          <xsl:when test="$x/self::ram:TaxTotalAmount">
+            <xsl:choose>
+              <xsl:when test="not($x/@currencyID) or normalize-space($x/@currencyID)=normalize-space($S/ram:InvoiceCurrencyCode)">inv</xsl:when>
+              <xsl:otherwise>acc</xsl:otherwise>
+            </xsl:choose>
+          </xsl:when>
+        </xsl:choose>
+      </xsl:variable>
+      <xsl:for-each select="$dictDoc">
+        <xsl:variable name="v" select="key('btv',concat($p,'/DateTimeString|',$c)) | key('btv',concat($p,'/DateString|',$c)) | key('btv',concat($p,'/Indicator|',$c))"/>
+        <xsl:variable name="b" select="key('bt',concat($p,'/DateTimeString')) | key('bt',concat($p,'/DateString')) | key('bt',concat($p,'/Indicator'))"/>
+        <xsl:choose>
+          <xsl:when test="string($c)!='' and $v"><xsl:call-template name="btOut"><xsl:with-param name="id" select="string($v[1]/@id)"/></xsl:call-template></xsl:when>
+          <xsl:when test="$b"><xsl:call-template name="btOut"><xsl:with-param name="id" select="string($b[1]/@id)"/></xsl:call-template></xsl:when>
+          <xsl:when test="string($c)!='' and key('btv',concat($p,'|',$c))"><xsl:call-template name="btOut"><xsl:with-param name="id" select="string(key('btv',concat($p,'|',$c))[1]/@id)"/></xsl:call-template></xsl:when>
+          <xsl:when test="key('bt',$p)"><xsl:call-template name="btOut"><xsl:with-param name="id" select="string(key('bt',$p)[1]/@id)"/></xsl:call-template></xsl:when>
+        </xsl:choose>
+      </xsl:for-each>
+    </xsl:if>
+  </xsl:template>
+
+  
 
   <!-- ================================================================== -->
   <!--  Einstieg                                                           -->
@@ -111,7 +593,9 @@
         <style><xsl:call-template name="css"/></style>
       </head>
       <body>
-        <input type="checkbox" id="zv-bt" class="bt-cb"/>
+        <input type="checkbox" id="zv-bt" class="bt-cb">
+          <xsl:if test="$BTON"><xsl:attribute name="checked">checked</xsl:attribute></xsl:if>
+        </input>
         <label for="zv-bt" class="bt-switch" title="BT / BG"><xsl:call-template name="t"><xsl:with-param name="k" select="'ui.showbt'"/></xsl:call-template></label>
         <div class="page">
           <xsl:if test="$CTX/ram:TestIndicator/udt:Indicator='true'">
@@ -233,19 +717,6 @@
         <xsl:apply-templates select="$info" mode="f"/>
       </div>
     </details>
-  </xsl:template>
-
-  <xsl:template name="profileName">
-    <xsl:variable name="g" select="translate(normalize-space($CTX/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID),$UC,$LC)"/>
-    <xsl:choose>
-      <xsl:when test="contains($g,'extended')">EXTENDED</xsl:when>
-      <xsl:when test="contains($g,'xrechnung')">XRECHNUNG</xsl:when>
-      <xsl:when test="contains($g,'basicwl')">BASIC WL</xsl:when>
-      <xsl:when test="contains($g,'basic')">BASIC</xsl:when>
-      <xsl:when test="contains($g,'minimum')">MINIMUM</xsl:when>
-      <xsl:when test="contains($g,'en16931')">EN 16931</xsl:when>
-      <xsl:otherwise><xsl:value-of select="$CTX/ram:GuidelineSpecifiedDocumentContextParameter/ram:ID"/></xsl:otherwise>
-    </xsl:choose>
   </xsl:template>
 
   <!-- ================================================================== -->
@@ -424,6 +895,7 @@
   <!-- ================================================================== -->
 
   <xsl:template name="lines">
+    <xsl:if test="$T/ram:IncludedSupplyChainTradeLineItem">
     <section>
       <h2><xsl:call-template name="t"><xsl:with-param name="k" select="'ui.lines'"/></xsl:call-template><xsl:call-template name="bt"><xsl:with-param name="n" select="$T/ram:IncludedSupplyChainTradeLineItem"/></xsl:call-template></h2>
       <div class="tw">
@@ -445,22 +917,8 @@
         </table>
       </div>
     </section>
-  </xsl:template>
-
-  <xsl:template name="depth">
-    <xsl:param name="li"/>
-    <xsl:param name="n" select="0"/>
-    <xsl:variable name="p" select="normalize-space($li/ram:AssociatedDocumentLineDocument/ram:ParentLineID)"/>
-    <xsl:choose>
-      <xsl:when test="$p!='' and $n &lt; 8 and key('line',$p)">
-        <xsl:call-template name="depth">
-          <xsl:with-param name="li" select="key('line',$p)[1]"/>
-          <xsl:with-param name="n" select="$n + 1"/>
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:when test="$p!=''"><xsl:value-of select="$n + 1"/></xsl:when>
-      <xsl:otherwise><xsl:value-of select="$n"/></xsl:otherwise>
-    </xsl:choose>
+    </xsl:if>
+  
   </xsl:template>
 
   <xsl:template match="ram:IncludedSupplyChainTradeLineItem">
@@ -582,28 +1040,6 @@
         </xsl:for-each>
       </td>
     </tr>
-  </xsl:template>
-
-  <xsl:template name="perBasis">
-    <xsl:if test="ram:BasisQuantity and number(ram:BasisQuantity) != 1">
-      <span class="cd">
-        <xsl:text> / </xsl:text>
-        <xsl:call-template name="num"><xsl:with-param name="v" select="ram:BasisQuantity"/><xsl:with-param name="p" select="$P_QTY"/></xsl:call-template>
-        <xsl:text> </xsl:text>
-        <xsl:call-template name="unitName"><xsl:with-param name="u" select="ram:BasisQuantity/@unitCode"/></xsl:call-template>
-      </span>
-    </xsl:if>
-  </xsl:template>
-
-  <!-- Grund eines Zu-/Abschlags: Text und/oder Code -->
-  <xsl:template name="acReason">
-    <xsl:choose>
-      <xsl:when test="ram:Reason">
-        <xsl:value-of select="ram:Reason"/>
-        <xsl:if test="ram:ReasonCode"><span class="cd"> (<xsl:value-of select="ram:ReasonCode"/>)</span></xsl:if>
-      </xsl:when>
-      <xsl:when test="ram:ReasonCode"><xsl:apply-templates select="ram:ReasonCode" mode="v"/></xsl:when>
-    </xsl:choose>
   </xsl:template>
 
   <!-- ================================================================== -->
@@ -927,32 +1363,42 @@
     </div>
   </xsl:template>
 
-  <xsl:template name="period">
-    <xsl:for-each select="ram:StartDateTime"><xsl:apply-templates select="." mode="v"/></xsl:for-each>
-    <xsl:if test="ram:StartDateTime or ram:EndDateTime"><xsl:text> &#8211; </xsl:text></xsl:if>
-    <xsl:for-each select="ram:EndDateTime"><xsl:apply-templates select="." mode="v"/></xsl:for-each>
-    <xsl:for-each select="ram:CompleteDateTime"><xsl:apply-templates select="." mode="v"/></xsl:for-each>
-    <xsl:if test="ram:Description"><span class="cd"><xsl:text> </xsl:text><xsl:value-of select="ram:Description"/></span></xsl:if>
-  </xsl:template>
-
   <!-- ================================================================== -->
   <!--  Wertformatierung                                                   -->
   <!-- ================================================================== -->
 
-  <xsl:template match="*" mode="v">
-    <xsl:variable name="ln" select="local-name()"/>
-    <xsl:variable name="pn" select="local-name(..)"/>
-    <xsl:choose>
-      <xsl:when test="udt:DateTimeString | qdt:DateTimeString | udt:DateString">
-        <xsl:call-template name="date">
-          <xsl:with-param name="s" select="normalize-space(*[1])"/>
-          <xsl:with-param name="f" select="normalize-space(*[1]/@format)"/>
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:when test="udt:Indicator">
-        <xsl:call-template name="yesno"><xsl:with-param name="v" select="udt:Indicator"/></xsl:call-template>
-      </xsl:when>
-      <xsl:when test="$ln = 'AttachmentBinaryObject'">
+  <!-- ================================================================== -->
+  <!--  Wörterbuch-Zugriff                                                 -->
+  <!-- ================================================================== -->
+
+  <!-- BT/BG-Kennung zum Element (Parameter showBT bzw. Schalter oben rechts).
+       Mehrdeutige Pfade werden über den Kontext aufgelöst: Zu-/Abschlag
+       (ChargeIndicator), Steuerregistrierung (schemeID VA/FC), weitere
+       Referenzdokumente (TypeCode 916/50/130), Steuergesamtbetrag (currencyID). -->
+
+  <!-- ================================================================== -->
+  <!--  Ausgabe-Primitive für den gemeinsamen Teil (common.xsl)            -->
+  <!-- ================================================================== -->
+
+  <xsl:variable name="btEmit" select="true()"/>
+
+  <xsl:template name="w">
+    <xsl:param name="c" select="''"/>
+    <xsl:param name="x"/>
+    <xsl:param name="title" select="''"/>
+    <span>
+      <xsl:if test="$c != ''"><xsl:attribute name="class"><xsl:value-of select="$c"/></xsl:attribute></xsl:if>
+      <xsl:if test="$title != ''"><xsl:attribute name="title"><xsl:value-of select="$title"/></xsl:attribute></xsl:if>
+      <xsl:copy-of select="$x"/>
+    </span>
+  </xsl:template>
+
+  <xsl:template name="lnk">
+    <xsl:param name="href"/>
+    <a href="{$href}"><xsl:value-of select="."/></a>
+  </xsl:template>
+
+  <xsl:template name="attachment">
         <a class="att" download="{@filename}" href="data:{@mimeCode};base64,{translate(.,' &#9;&#10;&#13;','')}">
           <xsl:call-template name="t"><xsl:with-param name="k" select="'ui.download'"/></xsl:call-template>
           <xsl:text>: </xsl:text>
@@ -962,352 +1408,15 @@
           </xsl:choose>
         </a>
         <span class="cd"><xsl:text> (</xsl:text><xsl:value-of select="@mimeCode"/><xsl:text>)</xsl:text></span>
-      </xsl:when>
-      <xsl:when test="$ln = 'ChargeIndicator'">
-        <xsl:call-template name="yesno"><xsl:with-param name="v" select="."/></xsl:call-template>
-      </xsl:when>
-      <xsl:when test="contains($ln,'Amount')">
-        <xsl:call-template name="amt"><xsl:with-param name="n" select="."/><xsl:with-param name="cur" select="true()"/></xsl:call-template>
-      </xsl:when>
-      <xsl:when test="contains($ln,'Quantity') or $ln = 'ValueMeasure' or $ln = 'BasisPeriodMeasure'">
-        <xsl:call-template name="num"><xsl:with-param name="v" select="."/><xsl:with-param name="p" select="$P_QTY"/></xsl:call-template>
-        <xsl:if test="@unitCode">
-          <xsl:text> </xsl:text>
-          <xsl:call-template name="unitName"><xsl:with-param name="u" select="@unitCode"/></xsl:call-template>
-        </xsl:if>
-      </xsl:when>
-      <xsl:when test="contains($ln,'Percent')">
-        <xsl:call-template name="num"><xsl:with-param name="v" select="."/><xsl:with-param name="p" select="$P_PCT"/></xsl:call-template>
-        <xsl:text>&#160;%</xsl:text>
-      </xsl:when>
-      <xsl:when test="$ln = 'ConversionRate' or $ln = 'SequenceNumeric'">
-        <xsl:call-template name="num"><xsl:with-param name="v" select="."/><xsl:with-param name="p" select="'#,##0.##########'"/></xsl:call-template>
-      </xsl:when>
-      <xsl:when test="$ln = 'IBANID'">
-        <span class="mono"><xsl:call-template name="iban"><xsl:with-param name="s" select="normalize-space(.)"/></xsl:call-template></span>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:variable name="list"><xsl:call-template name="listFor"/></xsl:variable>
-        <xsl:choose>
-          <xsl:when test="string($list) != ''">
-            <xsl:call-template name="codeDisp">
-              <xsl:with-param name="list" select="string($list)"/>
-              <xsl:with-param name="list2">
-                <xsl:choose>
-                  <xsl:when test="$ln='ReasonCode'">nonvat</xsl:when>
-                  <xsl:when test="$ln='DueDateTypeCode'">2475</xsl:when>
-                  <xsl:when test="$ln='LanguageID'">lang2</xsl:when>
-                </xsl:choose>
-              </xsl:with-param>
-              <xsl:with-param name="v" select="."/>
-            </xsl:call-template>
-          </xsl:when>
-          <xsl:when test="starts-with(normalize-space(.),'http://') or starts-with(normalize-space(.),'https://')">
-            <a href="{normalize-space(.)}"><xsl:value-of select="."/></a>
-          </xsl:when>
-          <xsl:when test="($pn = 'EmailURIUniversalCommunication' or @schemeID = 'EM') and contains(.,'@')">
-            <a href="mailto:{normalize-space(.)}"><xsl:value-of select="."/></a>
-          </xsl:when>
-          <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
-        </xsl:choose>
-        <xsl:call-template name="scheme"/>
-      </xsl:otherwise>
-    </xsl:choose>
   </xsl:template>
 
-  <!-- Codeliste für ein Element ermitteln -->
-  <xsl:template name="listFor">
-    <xsl:variable name="ln" select="local-name()"/>
-    <xsl:variable name="pn" select="local-name(..)"/>
-    <xsl:choose>
-      <xsl:when test="$ln = 'TypeCode'">
-        <xsl:choose>
-          <xsl:when test="$pn = 'ExchangedDocument' or substring($pn, string-length($pn) - 17) = 'ReferencedDocument'">1001</xsl:when>
-          <xsl:when test="$pn = 'SpecifiedTradeSettlementPaymentMeans'">4461</xsl:when>
-          <xsl:when test="$pn = 'ApplicableTradeTax' or $pn = 'IncludedTradeTax' or $pn = 'CategoryTradeTax' or $pn = 'AppliedTradeTax'">5153</xsl:when>
-          <xsl:when test="$pn = 'ApplicableProductCharacteristic'">6313</xsl:when>
-          <xsl:when test="$pn = 'ReceivableSpecifiedTradeAccountingAccount'">acc</xsl:when>
-          <xsl:when test="$pn = 'DefinedTradeContact'">3139</xsl:when>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:when test="$ln = 'CategoryCode'">5305</xsl:when>
-      <xsl:when test="$ln = 'ExemptionReasonCode'">vatex</xsl:when>
-      <xsl:when test="$ln = 'DueDateTypeCode'">2005</xsl:when>
-      <xsl:when test="$ln = 'SubjectCode'">4451</xsl:when>
-      <xsl:when test="$ln = 'ReasonCode'">
-        <xsl:choose>
-          <xsl:when test="normalize-space(../ram:ChargeIndicator/udt:Indicator) = 'true'">7161</xsl:when>
-          <xsl:otherwise>5189</xsl:otherwise>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:when test="$ln = 'ReferenceTypeCode'">1153</xsl:when>
-      <xsl:when test="$ln = 'DeliveryTypeCode'">incoterms</xsl:when>
-      <xsl:when test="$ln = 'ModeCode'">8067</xsl:when>
-      <xsl:when test="$ln = 'LineStatusCode'">1229</xsl:when>
-      <xsl:when test="$ln = 'LineStatusReasonCode'">linereason</xsl:when>
-      <xsl:when test="$ln = 'LanguageID'">lang</xsl:when>
-      <xsl:when test="$ln = 'RoleCode'">3035</xsl:when>
-      <xsl:when test="$ln = 'CountryID'">country</xsl:when>
-      <xsl:when test="$ln = 'InvoiceCurrencyCode' or $ln = 'TaxCurrencyCode' or $ln = 'SourceCurrencyCode' or $ln = 'TargetCurrencyCode'">currency</xsl:when>
-    </xsl:choose>
+  <xsl:template name="txt">
+    <xsl:value-of select="."/>
   </xsl:template>
 
-  <!-- Zusatz für schemeID / listID -->
-  <xsl:template name="scheme">
-    <xsl:variable name="pn" select="local-name(..)"/>
-    <xsl:choose>
-      <xsl:when test="@schemeID and $pn = 'SpecifiedTaxRegistration'"/>
-      <xsl:when test="@schemeID and local-name() = 'URIID'">
-        <span class="cd">
-          <xsl:text> (</xsl:text>
-          <xsl:call-template name="codeOrRaw"><xsl:with-param name="list" select="'eas'"/><xsl:with-param name="v" select="@schemeID"/></xsl:call-template>
-          <xsl:text>)</xsl:text>
-        </span>
-      </xsl:when>
-      <xsl:when test="@schemeID">
-        <span class="cd">
-          <xsl:text> (</xsl:text>
-          <xsl:call-template name="codeOrRaw"><xsl:with-param name="list" select="'icd'"/><xsl:with-param name="v" select="@schemeID"/></xsl:call-template>
-          <xsl:text>)</xsl:text>
-        </span>
-      </xsl:when>
-      <xsl:when test="@listID">
-        <span class="cd">
-          <xsl:text> (</xsl:text>
-          <xsl:call-template name="codeOrRaw"><xsl:with-param name="list" select="'7143'"/><xsl:with-param name="v" select="@listID"/></xsl:call-template>
-          <xsl:if test="@listVersionID"><xsl:text> </xsl:text><xsl:value-of select="@listVersionID"/></xsl:if>
-          <xsl:text>)</xsl:text>
-        </span>
-      </xsl:when>
-    </xsl:choose>
-  </xsl:template>
-
-  <!-- Datum: Formate 102, 203, 205, 610, 616 -->
-  <xsl:template name="date">
-    <xsl:param name="s"/>
-    <xsl:param name="f" select="'102'"/>
-    <xsl:choose>
-      <xsl:when test="($f = '102' or $f = '') and string-length($s) = 8">
-        <xsl:call-template name="ymd">
-          <xsl:with-param name="y" select="substring($s,1,4)"/>
-          <xsl:with-param name="m" select="substring($s,5,2)"/>
-          <xsl:with-param name="d" select="substring($s,7,2)"/>
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:when test="$f = '610' and string-length($s) = 6">
-        <xsl:choose>
-          <xsl:when test="$L = 'en'"><xsl:value-of select="concat(substring($s,1,4),'-',substring($s,5,2))"/></xsl:when>
-          <xsl:when test="$L = 'fr'"><xsl:value-of select="concat(substring($s,5,2),'/',substring($s,1,4))"/></xsl:when>
-          <xsl:otherwise><xsl:value-of select="concat(substring($s,5,2),'.',substring($s,1,4))"/></xsl:otherwise>
-        </xsl:choose>
-      </xsl:when>
-      <xsl:when test="$f = '616' and string-length($s) = 6">
-        <xsl:call-template name="t"><xsl:with-param name="k" select="'ui.week'"/></xsl:call-template>
-        <xsl:value-of select="concat(' ',substring($s,5,2),'/',substring($s,1,4))"/>
-      </xsl:when>
-      <xsl:when test="($f = '203' or $f = '205') and string-length($s) &gt;= 12">
-        <xsl:call-template name="ymd">
-          <xsl:with-param name="y" select="substring($s,1,4)"/>
-          <xsl:with-param name="m" select="substring($s,5,2)"/>
-          <xsl:with-param name="d" select="substring($s,7,2)"/>
-        </xsl:call-template>
-        <xsl:value-of select="concat(' ',substring($s,9,2),':',substring($s,11,2))"/>
-        <xsl:if test="string-length($s) &gt; 12"><xsl:value-of select="concat(' ',substring($s,13))"/></xsl:if>
-      </xsl:when>
-      <xsl:when test="string-length($s) &gt;= 10 and substring($s,5,1) = '-' and substring($s,8,1) = '-'">
-        <xsl:call-template name="ymd">
-          <xsl:with-param name="y" select="substring($s,1,4)"/>
-          <xsl:with-param name="m" select="substring($s,6,2)"/>
-          <xsl:with-param name="d" select="substring($s,9,2)"/>
-        </xsl:call-template>
-      </xsl:when>
-      <xsl:otherwise><xsl:value-of select="$s"/></xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template name="ymd">
-    <xsl:param name="y"/><xsl:param name="m"/><xsl:param name="d"/>
-    <xsl:choose>
-      <xsl:when test="$L = 'en'"><xsl:value-of select="concat($y,'-',$m,'-',$d)"/></xsl:when>
-      <xsl:when test="$L = 'fr'"><xsl:value-of select="concat($d,'/',$m,'/',$y)"/></xsl:when>
-      <xsl:otherwise><xsl:value-of select="concat($d,'.',$m,'.',$y)"/></xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template name="yesno">
-    <xsl:param name="v"/>
-    <xsl:variable name="x" select="translate(normalize-space($v),$UC,$LC)"/>
-    <xsl:choose>
-      <xsl:when test="$x = 'true' or $x = '1'"><xsl:call-template name="t"><xsl:with-param name="k" select="'ui.true'"/></xsl:call-template></xsl:when>
-      <xsl:when test="$x = 'false' or $x = '0'"><xsl:call-template name="t"><xsl:with-param name="k" select="'ui.false'"/></xsl:call-template></xsl:when>
-      <xsl:otherwise><xsl:value-of select="$v"/></xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <!-- Zahl im Sprachformat; Muster in en-Schreibweise -->
-  <xsl:template name="num">
-    <xsl:param name="v"/>
-    <xsl:param name="p" select="$P_AMT"/>
-    <xsl:variable name="x" select="normalize-space($v)"/>
-    <xsl:choose>
-      <xsl:when test="$x = '' or string(number($x)) = 'NaN'"><xsl:value-of select="$x"/></xsl:when>
-      <xsl:when test="$L = 'en'"><xsl:value-of select="format-number(number($x), $p, 'en')"/></xsl:when>
-      <xsl:when test="$L = 'fr'"><xsl:value-of select="format-number(number($x), translate($p, ',.', '&#x202F;,'), 'fr')"/></xsl:when>
-      <xsl:otherwise><xsl:value-of select="format-number(number($x), translate($p, ',.', '.,'), 'de')"/></xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <xsl:template name="amt">
-    <xsl:param name="n"/>
-    <xsl:param name="cur" select="false()"/>
-    <xsl:if test="$n">
-      <span class="nw">
-        <xsl:call-template name="num"><xsl:with-param name="v" select="$n"/></xsl:call-template>
-        <xsl:if test="$cur">
-          <xsl:text>&#160;</xsl:text>
-          <xsl:choose>
-            <xsl:when test="$n/@currencyID"><xsl:value-of select="$n/@currencyID"/></xsl:when>
-            <xsl:otherwise><xsl:value-of select="$S/ram:InvoiceCurrencyCode"/></xsl:otherwise>
-          </xsl:choose>
-        </xsl:if>
-      </span>
-    </xsl:if>
-  </xsl:template>
-
-  <xsl:template name="iban">
-    <xsl:param name="s"/>
-    <xsl:variable name="x" select="translate($s,' ','')"/>
-    <xsl:value-of select="substring($x,1,4)"/>
-    <xsl:if test="string-length($x) &gt; 4">
-      <xsl:text>&#160;</xsl:text>
-      <xsl:call-template name="iban"><xsl:with-param name="s" select="substring($x,5)"/></xsl:call-template>
-    </xsl:if>
-  </xsl:template>
-
-  <xsl:template name="unitName">
-    <xsl:param name="u"/>
-    <xsl:if test="normalize-space($u) != ''">
-      <xsl:variable name="n"><xsl:call-template name="codeName"><xsl:with-param name="list" select="'rec20'"/><xsl:with-param name="v" select="$u"/></xsl:call-template></xsl:variable>
-      <span title="{$u}">
-        <xsl:choose>
-          <xsl:when test="string($n) != ''"><xsl:value-of select="$n"/></xsl:when>
-          <xsl:otherwise><xsl:value-of select="$u"/></xsl:otherwise>
-        </xsl:choose>
-      </span>
-    </xsl:if>
-  </xsl:template>
-
-  <!-- ================================================================== -->
-  <!--  Wörterbuch-Zugriff                                                 -->
-  <!-- ================================================================== -->
-
-  <!-- UI-Text -->
-  <xsl:template name="t">
-    <xsl:param name="k"/>
-    <xsl:for-each select="$dictDoc">
-      <xsl:choose>
-        <xsl:when test="key('lbl',$k)"><xsl:apply-templates select="key('lbl',$k)[1]" mode="txt"/></xsl:when>
-        <xsl:otherwise><xsl:value-of select="$k"/></xsl:otherwise>
-      </xsl:choose>
-    </xsl:for-each>
-  </xsl:template>
-
-  <!-- Beschriftung eines Elements: kontextabhängig -->
-  <xsl:template name="lbl">
-    <xsl:param name="n" select="."/>
-    <xsl:variable name="ln" select="local-name($n)"/>
-    <xsl:variable name="pn" select="local-name($n/..)"/>
-    <xsl:variable name="pg">
-      <xsl:choose>
-        <xsl:when test="substring($pn, string-length($pn) - 9) = 'TradeParty'">TradeParty</xsl:when>
-        <xsl:when test="substring($pn, string-length($pn) - 17) = 'ReferencedDocument'">ReferencedDocument</xsl:when>
-        <xsl:when test="$pn = 'ApplicableTradeTax' or $pn = 'IncludedTradeTax' or $pn = 'CategoryTradeTax' or $pn = 'AppliedTradeTax'">TradeTax</xsl:when>
-        <xsl:when test="substring($pn, string-length($pn) - 16) = 'ProductTradePrice'">ProductTradePrice</xsl:when>
-        <xsl:otherwise><xsl:value-of select="$pn"/></xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:variable name="k1" select="concat($pn,'/',$ln)"/>
-    <xsl:variable name="kg" select="concat($pg,'/',$ln)"/>
-    <xsl:variable name="ks" select="concat($k1,'@',normalize-space($n/@schemeID))"/>
-    <xsl:variable name="kc" select="concat($ln,'#',normalize-space($n/ram:ChargeIndicator/udt:Indicator))"/>
-    <xsl:for-each select="$dictDoc">
-      <xsl:choose>
-        <xsl:when test="$n/@schemeID and key('lbl',$ks)"><xsl:apply-templates select="key('lbl',$ks)[1]" mode="txt"/></xsl:when>
-        <xsl:when test="key('lbl',$kc)"><xsl:apply-templates select="key('lbl',$kc)[1]" mode="txt"/></xsl:when>
-        <xsl:when test="key('lbl',$k1)"><xsl:apply-templates select="key('lbl',$k1)[1]" mode="txt"/></xsl:when>
-        <xsl:when test="key('lbl',$kg)"><xsl:apply-templates select="key('lbl',$kg)[1]" mode="txt"/></xsl:when>
-        <xsl:when test="key('lbl',$ln)"><xsl:apply-templates select="key('lbl',$ln)[1]" mode="txt"/></xsl:when>
-        <xsl:otherwise><xsl:value-of select="$ln"/></xsl:otherwise>
-      </xsl:choose>
-    </xsl:for-each>
-  </xsl:template>
-
-  <xsl:template match="zv:l | zv:c" mode="txt">
-    <xsl:choose>
-      <xsl:when test="string(@*[local-name() = $L]) != ''"><xsl:value-of select="@*[local-name() = $L]"/></xsl:when>
-      <xsl:otherwise><xsl:value-of select="@en"/></xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <!-- Codebezeichnung (leer, wenn unbekannt) -->
-  <xsl:template name="codeName">
-    <xsl:param name="list"/>
-    <xsl:param name="v"/>
-    <xsl:variable name="vv" select="normalize-space($v)"/>
-    <xsl:for-each select="$dictDoc">
-      <xsl:apply-templates select="key('code',concat($list,'|',$vv))[1]" mode="txt"/>
-    </xsl:for-each>
-  </xsl:template>
-
-  <xsl:template name="codeOrRaw">
-    <xsl:param name="list"/>
-    <xsl:param name="v"/>
-    <xsl:variable name="n"><xsl:call-template name="codeName"><xsl:with-param name="list" select="$list"/><xsl:with-param name="v" select="$v"/></xsl:call-template></xsl:variable>
-    <xsl:choose>
-      <xsl:when test="string($n) != ''"><xsl:value-of select="$n"/></xsl:when>
-      <xsl:otherwise><xsl:value-of select="$v"/></xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <!-- "Bezeichnung (Code)" -->
-  <xsl:template name="codeDisp">
-    <xsl:param name="list"/>
-    <xsl:param name="list2" select="''"/>
-    <xsl:param name="v"/>
-    <xsl:variable name="n1"><xsl:call-template name="codeName"><xsl:with-param name="list" select="$list"/><xsl:with-param name="v" select="$v"/></xsl:call-template></xsl:variable>
-    <xsl:variable name="n">
-      <xsl:choose>
-        <xsl:when test="string($n1) != '' or string($list2) = ''"><xsl:value-of select="$n1"/></xsl:when>
-        <xsl:otherwise><xsl:call-template name="codeName"><xsl:with-param name="list" select="string($list2)"/><xsl:with-param name="v" select="$v"/></xsl:call-template></xsl:otherwise>
-      </xsl:choose>
-    </xsl:variable>
-    <xsl:choose>
-      <xsl:when test="string($n) != ''">
-        <xsl:value-of select="$n"/>
-        <span class="cd"><xsl:text> (</xsl:text><xsl:value-of select="normalize-space($v)"/><xsl:text>)</xsl:text></span>
-      </xsl:when>
-      <xsl:otherwise><xsl:value-of select="$v"/></xsl:otherwise>
-    </xsl:choose>
-  </xsl:template>
-
-  <!-- BT/BG-Kennung zum Element (eingeblendet über Schalter oben rechts) -->
-  <xsl:template name="bt">
-    <xsl:param name="n" select="."/>
-    <xsl:if test="$n">
-      <xsl:variable name="p">
-        <xsl:for-each select="$n[1]/ancestor-or-self::*[parent::*]">
-          <xsl:if test="position() &gt; 1">/</xsl:if>
-          <xsl:value-of select="local-name()"/>
-        </xsl:for-each>
-      </xsl:variable>
-      <xsl:for-each select="$dictDoc">
-        <xsl:variable name="b" select="key('bt',concat($p,'/DateTimeString')) | key('bt',concat($p,'/DateString')) | key('bt',concat($p,'/Indicator'))"/>
-        <xsl:choose>
-          <xsl:when test="$b"><span class="bt"><xsl:value-of select="$b[1]/@id"/></span></xsl:when>
-          <xsl:when test="key('bt',$p)"><span class="bt"><xsl:value-of select="key('bt',$p)[1]/@id"/></span></xsl:when>
-        </xsl:choose>
-      </xsl:for-each>
-    </xsl:if>
+  <xsl:template name="btOut">
+    <xsl:param name="id"/>
+    <span class="bt"><xsl:value-of select="$id"/></span>
   </xsl:template>
 
   <!-- ================================================================== -->
@@ -1471,6 +1580,9 @@ tr.information .iname{font-weight:500;font-style:italic}
     <zv:l k="ui.showbt" de="BT-Kennungen" en="BT IDs" fr="ID BT"/>
     <zv:l k="ui.testbanner" de="Testrechnung – nicht zur Zahlung" en="Test invoice – not for payment" fr="Facture de test – ne pas payer"/>
     <zv:l k="ui.copybanner" de="Kopie" en="Copy" fr="Copie"/>
+    <zv:l k="ui.page" de="Seite" en="Page" fr="Page"/>
+    <zv:l k="ui.pageof" de="von" en="of" fr="sur"/>
+    <zv:l k="ui.embedded" de="im PDF eingebettet" en="embedded in this PDF" fr="intégré à ce PDF"/>
     <zv:l k="ui.footer" de="Automatisch erzeugte Darstellung der strukturierten Rechnungsdaten" en="Automatically generated view of the structured invoice data" fr="Représentation générée automatiquement des données structurées de la facture"/>
     <zv:l k="ui.nocii" de="Das Dokument ist keine ZUGFeRD/Factur-X-Rechnung (rsm:CrossIndustryInvoice)." en="The document is not a ZUGFeRD/Factur-X invoice (rsm:CrossIndustryInvoice)." fr="Le document n'est pas une facture ZUGFeRD/Factur-X (rsm:CrossIndustryInvoice)."/>
     <zv:l k="ExchangedDocumentContext" de="Dokumentkontext" en="Document context" fr="Contexte du document"/>
@@ -7417,7 +7529,7 @@ tr.information .iname{font-weight:500;font-style:italic}
     <zv:b p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument/TypeCode" id="BT-122-0 / BT-17-0 / BT-18-0"/>
     <zv:b p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument/URIID" id="BT-124"/>
     <zv:b p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/ApplicableTradeDeliveryTerms" id="BG-X-22"/>
-    <zv:b p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/ApplicableTradeDeliveryTerms/DeliveryTypeCode" id="BT-X-562 / BT-X-145"/>
+    <zv:b p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/ApplicableTradeDeliveryTerms/DeliveryTypeCode" id="BT-X-145"/>
     <zv:b p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/ApplicableTradeDeliveryTerms/RelevantTradeLocation" id="BG-X-88"/>
     <zv:b p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/ApplicableTradeDeliveryTerms/RelevantTradeLocation/CountryID" id="BT-X-563"/>
     <zv:b p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/ApplicableTradeDeliveryTerms/RelevantTradeLocation/Name" id="BT-X-564"/>
@@ -8459,6 +8571,100 @@ tr.information .iname{font-weight:500;font-style:italic}
     <zv:b p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedTradeProduct/OriginTradeCountry" id="BT-159-00"/>
     <zv:b p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedTradeProduct/OriginTradeCountry/ID" id="BT-159"/>
     <zv:b p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedTradeProduct/SellerAssignedID" id="BT-155"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument" k="130" id="BT-18-00"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument" k="50" id="BT-17-00"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument" k="916" id="BG-24"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument/FormattedIssueDateTime" k="130" id="BT-X-557-00"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument/FormattedIssueDateTime" k="50" id="BT-X-556-00"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument/FormattedIssueDateTime" k="916" id="BT-X-149-00"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument/FormattedIssueDateTime/DateTimeString" k="130" id="BT-X-557"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument/FormattedIssueDateTime/DateTimeString" k="50" id="BT-X-556"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument/FormattedIssueDateTime/DateTimeString" k="916" id="BT-X-149"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument/IssuerAssignedID" k="130" id="BT-18"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument/IssuerAssignedID" k="50" id="BT-17"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument/IssuerAssignedID" k="916" id="BT-122"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument/TypeCode" k="130" id="BT-18-0"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument/TypeCode" k="50" id="BT-17-0"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/AdditionalReferencedDocument/TypeCode" k="916" id="BT-122-0"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/SellerTradeParty/SpecifiedTaxRegistration" k="FC" id="BT-32-00"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/SellerTradeParty/SpecifiedTaxRegistration" k="VA" id="BT-31-00"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/SellerTradeParty/SpecifiedTaxRegistration/ID" k="FC" id="BT-32"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeAgreement/SellerTradeParty/SpecifiedTaxRegistration/ID" k="VA" id="BT-31"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge" k="false" id="BG-20"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge" k="true" id="BG-21"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/ActualAmount" k="false" id="BT-92"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/ActualAmount" k="true" id="BT-99"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/BasisAmount" k="false" id="BT-93"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/BasisAmount" k="true" id="BT-100"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/BasisQuantity" k="false" id="BT-X-266"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/BasisQuantity" k="true" id="BT-X-269"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/CalculationPercent" k="false" id="BT-94"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/CalculationPercent" k="true" id="BT-101"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/CategoryTradeTax" k="false" id="BT-95-00"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/CategoryTradeTax" k="true" id="BT-102-00"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/CategoryTradeTax/CategoryCode" k="false" id="BT-95"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/CategoryTradeTax/CategoryCode" k="true" id="BT-102"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/CategoryTradeTax/ExemptionReason" k="false" id="BT-173"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/CategoryTradeTax/ExemptionReason" k="true" id="BT-175"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/CategoryTradeTax/ExemptionReasonCode" k="false" id="BT-174"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/CategoryTradeTax/ExemptionReasonCode" k="true" id="BT-176"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/CategoryTradeTax/RateApplicablePercent" k="false" id="BT-96"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/CategoryTradeTax/RateApplicablePercent" k="true" id="BT-103"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/CategoryTradeTax/TypeCode" k="false" id="BT-95-0"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/CategoryTradeTax/TypeCode" k="true" id="BT-102-0"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/ChargeIndicator" k="false" id="BG-20-0"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/ChargeIndicator" k="true" id="BG-21-0"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/ChargeIndicator/Indicator" k="false" id="BG-20-1"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/ChargeIndicator/Indicator" k="true" id="BG-21-1"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/Reason" k="false" id="BT-97"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/Reason" k="true" id="BT-104"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/ReasonCode" k="false" id="BT-98"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/ReasonCode" k="true" id="BT-105 / BT-177"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/SequenceNumeric" k="false" id="BT-X-265"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeAllowanceCharge/SequenceNumeric" k="true" id="BT-X-268"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeSettlementHeaderMonetarySummation/TaxTotalAmount" k="acc" id="BT-111"/>
+    <zv:v p="SupplyChainTradeTransaction/ApplicableHeaderTradeSettlement/SpecifiedTradeSettlementHeaderMonetarySummation/TaxTotalAmount" k="inv" id="BT-110"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge" k="false" id="BT-147-00"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge" k="true" id="BT-X-302-00"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge/ActualAmount" k="false" id="BT-147"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge/ActualAmount" k="true" id="BT-X-302"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge/BasisAmount" k="false" id="BT-X-35"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge/BasisAmount" k="true" id="BT-X-301"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge/CalculationPercent" k="false" id="BT-X-34"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge/CalculationPercent" k="true" id="BT-X-300"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge/ChargeIndicator" k="false" id="BT-147-01"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge/ChargeIndicator" k="true" id="BT-X-302-01"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge/ChargeIndicator/Indicator" k="false" id="BT-147-02"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge/ChargeIndicator/Indicator" k="true" id="BT-X-302-02"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge/Reason" k="false" id="BT-X-36"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge/Reason" k="true" id="BT-X-303"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge/ReasonCode" k="false" id="BT-X-313"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/GrossPriceProductTradePrice/AppliedTradeAllowanceCharge/ReasonCode" k="true" id="BT-X-314 / BT-X-616"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/ItemSellerTradeParty/SpecifiedTaxRegistration" k="FC" id="BT-X-588-00"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/ItemSellerTradeParty/SpecifiedTaxRegistration" k="VA" id="BT-X-587-00"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/ItemSellerTradeParty/SpecifiedTaxRegistration/ID" k="FC" id="BT-X-588"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeAgreement/ItemSellerTradeParty/SpecifiedTaxRegistration/ID" k="VA" id="BT-X-587"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge" k="false" id="BG-27"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge" k="true" id="BG-28"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge/ActualAmount" k="false" id="BT-136"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge/ActualAmount" k="true" id="BT-141"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge/BasisAmount" k="false" id="BT-137"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge/BasisAmount" k="true" id="BT-142"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge/CalculationPercent" k="false" id="BT-138"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge/CalculationPercent" k="true" id="BT-143"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge/ChargeIndicator" k="false" id="BG-27-0"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge/ChargeIndicator" k="true" id="BG-28-0"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge/ChargeIndicator/Indicator" k="false" id="BG-27-1"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge/ChargeIndicator/Indicator" k="true" id="BG-28-1"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge/Reason" k="false" id="BT-139"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge/Reason" k="true" id="BT-144"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge/ReasonCode" k="false" id="BT-140"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeAllowanceCharge/ReasonCode" k="true" id="BT-145 / BT-193"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeSettlementLineMonetarySummation/TaxTotalAmount" k="acc" id="BT-X-590"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedLineTradeSettlement/SpecifiedTradeSettlementLineMonetarySummation/TaxTotalAmount" k="inv" id="BT-X-329"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedTradeProduct/ManufacturerTradeParty/SpecifiedTaxRegistration" k="VA" id="BT-X-615-00"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedTradeProduct/ManufacturerTradeParty/SpecifiedTaxRegistration/ID" k="FC" id="BT-X-615"/>
+    <zv:v p="SupplyChainTradeTransaction/IncludedSupplyChainTradeLineItem/SpecifiedTradeProduct/ManufacturerTradeParty/SpecifiedTaxRegistration/ID" k="VA" id="BT-X-614"/>
   </zv:data>
 
 </xsl:stylesheet>

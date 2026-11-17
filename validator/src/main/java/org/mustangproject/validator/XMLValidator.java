@@ -619,13 +619,13 @@ public class XMLValidator extends Validator {
 			} catch (final Exception e) {
 				// report it, otherwise the XML would still count as valid
 				context.addResultItem(new ValidationResultItem(ESeverity.exception, e.getMessage()).setSection(section)
-					.setPart(EPart.fx));
+						.setPart(EPart.fx));
 				throw new IrrecoverableValidationError(e.getMessage());
 			}
 			if (SVRLReport == null) {
 				String message = xsltFilename + " did not produce a validation report";
 				context.addResultItem(new ValidationResultItem(ESeverity.exception, message).setSection(section)
-					.setPart(EPart.fx));
+						.setPart(EPart.fx));
 				throw new IrrecoverableValidationError(message);
 			}
 			XPath xPath = XPathFactory.newInstance().newXPath();
@@ -637,85 +637,85 @@ public class XMLValidator extends Validator {
 			try {
 				failedAsserts = (NodeList) xPath.compile(expression).evaluate(SVRLReport, XPathConstants.NODESET);
 
-					if (failedAsserts.getLength() > 0) {
+				if (failedAsserts.getLength() > 0) {
 
-						for (int nodeIndex = 0; nodeIndex < failedAsserts.getLength(); nodeIndex++) {
-							//nodes.item(i).getTextContent())) {
-							Node currentFailNode = failedAsserts.item(nodeIndex);
-							boolean successfulReport = "successful-report".equals(localName(currentFailNode));
-							Node failNode = currentFailNode.getAttributes().getNamedItem("flag");
-							String failVal = failNode == null ? null : failNode.getNodeValue();
-							if (successfulReport && failVal == null) {
-								// Older embedded stylesheets (e.g. ZUGFeRD 1.0 and 2.0) emit unflagged
-								// reports for components not used in a profile; they were never findings.
-								continue;
-							}
-							// Each finding carries only its own metadata.
-							String thisFailText = "";
-							String thisFailID = "";
-							String thisFailIDStr = "";
-							String thisFailTest = "";
-							String thisFailLocation = "";
-							if (currentFailNode.getAttributes().getNamedItem("id") != null) {
-								thisFailID = currentFailNode.getAttributes().getNamedItem("id").getNodeValue();
-								thisFailIDStr = " [ID " + thisFailID + "]";
-							}
-							if (currentFailNode.getAttributes().getNamedItem("test") != null) {
-								thisFailTest = currentFailNode.getAttributes().getNamedItem("test").getNodeValue();
-							}
-							if (currentFailNode.getAttributes().getNamedItem("location") != null) {
-								thisFailLocation = currentFailNode.getAttributes().getNamedItem("location").getNodeValue();
-							}
+					for (int nodeIndex = 0; nodeIndex < failedAsserts.getLength(); nodeIndex++) {
+						//nodes.item(i).getTextContent())) {
+						Node currentFailNode = failedAsserts.item(nodeIndex);
+						boolean successfulReport = "successful-report".equals(localName(currentFailNode));
+						Node failNode = currentFailNode.getAttributes().getNamedItem("flag");
+						String failVal = failNode == null ? null : failNode.getNodeValue();
+						if (successfulReport && failVal == null) {
+							// Older embedded stylesheets (e.g. ZUGFeRD 1.0 and 2.0) emit unflagged
+							// reports for components not used in a profile; they were never findings.
+							continue;
+						}
+						// Each finding carries only its own metadata.
+						String thisFailText = "";
+						String thisFailID = "";
+						String thisFailIDStr = "";
+						String thisFailTest = "";
+						String thisFailLocation = "";
+						if (currentFailNode.getAttributes().getNamedItem("id") != null) {
+							thisFailID = currentFailNode.getAttributes().getNamedItem("id").getNodeValue();
+							thisFailIDStr = " [ID " + thisFailID + "]";
+						}
+						if (currentFailNode.getAttributes().getNamedItem("test") != null) {
+							thisFailTest = currentFailNode.getAttributes().getNamedItem("test").getNodeValue();
+						}
+						if (currentFailNode.getAttributes().getNamedItem("location") != null) {
+							thisFailLocation = currentFailNode.getAttributes().getNamedItem("location").getNodeValue();
+						}
 
-							ESeverity severity;
-							if (defaultSeverity == ESeverity.notice) {
-								severity = defaultSeverity;
-							} else if ("warning".equals(failVal)) {
-								// the XR issues warnings with flag=warning
-								severity = ESeverity.warning;
-							} else if ("information".equals(failVal)) {
-								severity = ESeverity.notice;
-							} else {
-								// fatal, error, and a missing assertion flag invalidate the document;
-								// ESeverity.fatal would abort the validation instead
-								severity = ESeverity.error;
-							}
+						ESeverity severity;
+						if (defaultSeverity == ESeverity.notice) {
+							severity = defaultSeverity;
+						} else if ("warning".equals(failVal)) {
+							// the XR issues warnings with flag=warning
+							severity = ESeverity.warning;
+						} else if ("information".equals(failVal)) {
+							severity = ESeverity.notice;
+						} else {
+							// fatal, error, and a missing assertion flag invalidate the document;
+							// ESeverity.fatal would abort the validation instead
+							severity = ESeverity.error;
+						}
 
-							NodeList failChilds = currentFailNode.getChildNodes();
-							for (int failChildIndex = 0; failChildIndex < failChilds.getLength(); failChildIndex++) {
-								if (failChilds.item(failChildIndex).getLocalName() != null) {
+						NodeList failChilds = currentFailNode.getChildNodes();
+						for (int failChildIndex = 0; failChildIndex < failChilds.getLength(); failChildIndex++) {
+							if (failChilds.item(failChildIndex).getLocalName() != null) {
 
-									if (failChilds.item(failChildIndex).getLocalName().equals("text")) {
-										//	if (itemChilds.item(failChildIndex).getAttributes().getNamedItem("schemeID") != null) {
-										thisFailText = failChilds.item(failChildIndex).getTextContent();
+								if (failChilds.item(failChildIndex).getLocalName().equals("text")) {
+									//	if (itemChilds.item(failChildIndex).getAttributes().getNamedItem("schemeID") != null) {
+									thisFailText = failChilds.item(failChildIndex).getTextContent();
 
-									}
 								}
 							}
+						}
 
-							LOGGER.info(successfulReport ? "SuccessfulReport {}" : "FailedAssert {}", thisFailText);
+						LOGGER.info(successfulReport ? "SuccessfulReport {}" : "FailedAssert {}", thisFailText);
 
-							context.addResultItem(new ValidationResultItem(severity, thisFailText + thisFailIDStr + " from " + xsltFilename + ")")
+						context.addResultItem(new ValidationResultItem(severity, thisFailText + thisFailIDStr + " from " + xsltFilename + ")")
 								.setLocation(thisFailLocation).setCriterion(thisFailTest).setSection(section).setID(thisFailID)
 								.setPart(EPart.fx));
-							failedRules++;
-
-						}
+						failedRules++;
 
 					}
 
-				} catch (XPathExpressionException e) {
-					LOGGER.error(e.getMessage(), e);
 				}
-				expression = "//*[local-name() = 'fired-rule']";
-				NodeList firedAsserts = null;
-				try {
-					firedAsserts = (NodeList) xPath.compile(expression).evaluate(SVRLReport, XPathConstants.NODESET);
-					firedRules = firedAsserts.getLength();
-				} catch (XPathExpressionException e) {
-					LOGGER.error(e.getMessage(), e);
-				}
+
+			} catch (XPathExpressionException e) {
+				LOGGER.error(e.getMessage(), e);
 			}
+			expression = "//*[local-name() = 'fired-rule']";
+			NodeList firedAsserts = null;
+			try {
+				firedAsserts = (NodeList) xPath.compile(expression).evaluate(SVRLReport, XPathConstants.NODESET);
+				firedRules = firedAsserts.getLength();
+			} catch (XPathExpressionException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+		}
 		/*	int activePatterns=0;
 			expression = "//*[local-name() = 'active-pattern']";
 			 firedAsserts = null;
@@ -727,19 +727,18 @@ public class XMLValidator extends Validator {
 			}*/
 
 
-			if (firedRules == 0) {
-				context.addResultItem(new ValidationResultItem(ESeverity.error, "No rules matched, XML too minimal?").setSection(26)
+		if (firedRules == 0) {
+			context.addResultItem(new ValidationResultItem(ESeverity.error, "No rules matched, XML too minimal?").setSection(26)
 					.setPart(EPart.fx));
 
-			}
-			//  for (String currentString : sout.getText()) {
-			// schematronValidationString += "<output>" + currentString + "</output>";
-			// }
-
-			// schematronValidationString += new SVRLMarshaller ().getAsString (sout);
-			// returns the complete SVRL
-
 		}
+		//  for (String currentString : sout.getText()) {
+		// schematronValidationString += "<output>" + currentString + "</output>";
+		// }
+
+		// schematronValidationString += new SVRLMarshaller ().getAsString (sout);
+		// returns the complete SVRL
+
 	}
 
 
