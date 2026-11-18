@@ -20,7 +20,6 @@
  */
 package org.mustangproject.ZUGFeRD;
 
-import com.helger.commons.io.stream.StreamHelper;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -60,8 +59,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -188,33 +185,12 @@ public class ZUGFeRDVisualizer {
 	}
 
 	/**
-	 * TODO: jstaerk: why not copy with that simple call: new ByteArrayInputStream(byteArrayOutputStream.toByteArray()) ?
+	 * makes the result of the first transformation step readable for the second one.
+	 * A plain copy, no piped stream: a writer thread blocked on a pipe nobody reads
+	 * (e.g. if the second step is skipped) would keep the JVM from exiting.
 	 */
 	private Optional<InputStream> copyStream(ByteArrayOutputStream byteArrayOutputStream) {
-		// take the copy of the stream and re-write it to an InputStream
-		PipedInputStream in = new PipedInputStream();
-		try {
-			PipedOutputStream out = new PipedOutputStream(in);
-			new Thread(() -> {
-				try {
-					// write the original OutputStream to the PipedOutputStream
-					// note that in order for the below method to work, you need
-					// to ensure that the data has finished writing to the
-					// ByteArrayOutputStream
-					byteArrayOutputStream.writeTo(out);
-				} catch (IOException e) {
-					LOGGER.error("Failed to write to stream", e);
-				} finally {
-					// close the PipedOutputStream here because we're done writing data
-					// once this thread has completed its run
-					StreamHelper.close(out);
-				}
-			}).start();
-		} catch (IOException e1) {
-			LOGGER.error("Failed to create HTML", e1);
-			return Optional.empty();
-		}
-		return Optional.of(in);
+		return Optional.of(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
 	}
 
 

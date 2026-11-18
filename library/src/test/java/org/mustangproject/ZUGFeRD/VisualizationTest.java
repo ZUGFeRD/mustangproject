@@ -27,6 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -303,6 +306,48 @@ public class VisualizationTest extends ResourceCase {
 		assertNotNull(pdf);
 		assertTrue(ByteArraySearcher.startsWith(pdf, new byte[]{'%', 'P', 'D', 'F'}));
 		assertTrue(ByteArraySearcher.contains(pdf, "<rdf:li>en</rdf:li>".getBytes()));
+	}
+
+	@Test
+	public void testHTMLVisualizationShowBT() throws IOException, TransformerException, ParserConfigurationException {
+		String source = getResourceAsFile("Extended_fremdwaehrung.xml").getAbsolutePath();
+
+		String withoutBT = new ZUGFeRDVisualizer().visualize(source, Language.DE);
+		String withBT = new ZUGFeRDVisualizer().setShowBTs(true).visualize(source, Language.DE);
+
+		// the HTML always contains the BT/BG IDs (e.g. BT-1 next to the invoice number), showBT only
+		// pre-selects the switch which makes them visible
+		for (String html : new String[]{withoutBT, withBT}) {
+			assertNotNull(html);
+			assertTrue(html.contains("<strong>47110815</strong><span class=\"bt\">BT-1</span>"));
+		}
+		assertTrue(withBT.contains("id=\"zv-bt\" class=\"bt-cb\" checked"));
+		assertFalse(withoutBT.contains("id=\"zv-bt\" class=\"bt-cb\" checked"));
+		assertTrue(withoutBT.contains("<input type=\"checkbox\" id=\"zv-bt\" class=\"bt-cb\">"));
+	}
+
+	@Test
+	public void testPDFVisualizationShowBT() throws IOException {
+		String xml = Files.readString(getResourceAsFile("Extended_fremdwaehrung.xml").toPath());
+
+		String withoutBT = pdfText(new ZUGFeRDVisualizer().toPDF(xml, Language.DE));
+		String withBT = pdfText(new ZUGFeRDVisualizer().setShowBTs(true).toPDF(xml, Language.DE));
+
+		// the invoice number is shown in both cases, the BT/BG IDs only with showBT
+		assertTrue(withoutBT.contains("47110815"));
+		assertTrue(withBT.contains("47110815"));
+		assertFalse(withoutBT.contains("BT-1"));
+		assertFalse(withoutBT.contains("BG-"));
+		assertTrue(withBT.contains("BT-1"));
+		assertTrue(withBT.contains("BG-4"));
+	}
+
+	private static String pdfText(byte[] pdf) throws IOException {
+		assertNotNull(pdf);
+		assertTrue(ByteArraySearcher.startsWith(pdf, new byte[]{'%', 'P', 'D', 'F'}));
+		try (PDDocument doc = Loader.loadPDF(pdf)) {
+			return new PDFTextStripper().getText(doc);
+		}
 	}
 
 	@Test
