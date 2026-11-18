@@ -9,6 +9,12 @@ Eingebettet werden
   * Zuordnung XPath -> BT/BG-Kennung (aus dem Blatt "Factur-X CII D22B EXTENDED").
 
 Aufruf:  python build_xsl.py   (benötigt openpyxl)
+
+OriginalPrompt: referenz ist in "ZUGFeRD_2.5.2_DE\Dokumentation\7_ZUGFeRD_2.5.2_Technischer_Anhang_Profil_EXTENDED.pdf"
+schema und schematron in ZUGFeRD_2.5.2_DE\Schema\4_Factur-X_1.09.2_EXTENDED beispiele in
+ZUGFeRD_2.5.2_DE\Beispiele\4. EXTENDED erstelle eine XSLT-Visualisierung die zugferd extended xml in deutsches,
+englisches oder französisches HTML umwandelt
+
 """
 import os
 import re
@@ -87,6 +93,7 @@ ui.page|Seite|Page|Page
 ui.pageof|von|of|sur
 ui.embedded|im PDF eingebettet|embedded in this PDF|intégré à ce PDF
 ui.footer|Automatisch erzeugte Darstellung der strukturierten Rechnungsdaten|Automatically generated view of the structured invoice data|Représentation générée automatiquement des données structurées de la facture
+ui.version|Extended-Visualisierung Version 1.0|Extended visualization version 1.0|Visualisation Extended version 1.0
 ui.nocii|Das Dokument ist keine ZUGFeRD/Factur-X-Rechnung (rsm:CrossIndustryInvoice).|The document is not a ZUGFeRD/Factur-X invoice (rsm:CrossIndustryInvoice).|Le document n'est pas une facture ZUGFeRD/Factur-X (rsm:CrossIndustryInvoice).
 
 ExchangedDocumentContext|Dokumentkontext|Document context|Contexte du document

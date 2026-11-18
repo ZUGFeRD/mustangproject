@@ -79,9 +79,9 @@ public class VisualizationTest extends ResourceCase {
 		assertNotNull(result);
 		// regression for https://github.com/ZUGFeRD/mustangproject/issues/937:
 		// the invoicee (InvoiceeTradeParty, BG-X-36) must be displayed with name and city
-		assertTrue(result.contains("id=\"BG-X-36\" title=\"BG-X-36\" class=\"boxtitel\">Abweichender Rechnungsempf\u00e4nger</div>"));
-		assertTrue(result.contains("id=\"BT-X-226\" title=\"BT-X-226\" class=\"boxdaten wert\">MUSTER-KUNDE GMBH</div>"));
-		assertTrue(result.contains("id=\"BT-X-238\" title=\"BT-X-238\" class=\"boxdaten wert\">DUESSELDORF</div>"));
+		assertTrue(result.contains("<div class=\"ph\">Rechnungsempf\u00e4nger<span class=\"bt\">BG-X-36</span></div>"));
+		assertTrue(result.contains("<div class=\"pn\">MUSTER-KUNDE GMBH<span class=\"bt\">BT-X-226</span></div>"));
+		assertTrue(result.contains("DUESSELDORF<span class=\"bt\">BT-X-238</span>"));
 	}
 
 	@Test
@@ -110,15 +110,16 @@ public class VisualizationTest extends ResourceCase {
 		String result = visualizeCII("Extended_fremdwaehrung.xml", Language.EN);
 
 		assertTrue(result.contains("<html lang=\"en\">"));
-		assertTrue(result.contains("Invoice No.&nbsp;47110815"));
+		assertTrue(result.contains("<title>Commercial invoice 47110815</title>"));
+		assertTrue(result.contains("No. <strong>47110815</strong>"));
 		assertTrue(result.contains("Seller"));
-		assertTrue(result.contains("Line items"));
+		assertTrue(result.contains("Invoice lines"));
 		assertTrue(result.contains("VAT breakdown"));
 		assertTrue(result.contains("Amount due for payment"));
 		assertTrue(result.contains("850.00"));
 		assertTrue(result.contains("2024-11-15"));
 		// code lists are resolved with the English UN/CEFACT names
-		assertTrue(result.contains("REG (Regulatory information)"));
+		assertTrue(result.contains("Regulatory information<span class=\"cd\"> (REG)</span>"));
 		assertFalse(result.contains("Verkäufer"));
 		assertFalse(result.contains("Umsatzsteuer"));
 	}
@@ -128,7 +129,8 @@ public class VisualizationTest extends ResourceCase {
 		String result = visualizeCII("Extended_fremdwaehrung.xml", Language.FR);
 
 		assertTrue(result.contains("<html lang=\"fr\">"));
-		assertTrue(result.contains("Facture N°&nbsp;47110815"));
+		assertTrue(result.contains("<title>Facture 47110815</title>"));
+		assertTrue(result.contains("N° <strong>47110815</strong>"));
 		assertTrue(result.contains("Vendeur"));
 		assertTrue(result.contains("Lignes de facture"));
 		assertTrue(result.contains("Ventilation de la TVA"));

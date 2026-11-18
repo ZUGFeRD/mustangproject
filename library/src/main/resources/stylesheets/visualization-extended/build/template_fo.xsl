@@ -1124,6 +1124,8 @@
       <xsl:call-template name="t"><xsl:with-param name="k" select="'ui.footer'"/></xsl:call-template>
       <xsl:text> · ZUGFeRD 2.5.2 / Factur-X 1.09.2 · </xsl:text>
       <xsl:call-template name="profileName"/>
+      <xsl:text> · </xsl:text>
+      <xsl:call-template name="t"><xsl:with-param name="k" select="'ui.version'"/></xsl:call-template>
     </fo:block>
   </xsl:template>
 
