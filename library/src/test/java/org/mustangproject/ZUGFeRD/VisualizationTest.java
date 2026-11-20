@@ -106,6 +106,9 @@ public class VisualizationTest extends ResourceCase {
 		assertTrue(result.contains("163,16&nbsp;GBP"));
 		assertTrue(result.contains("Umsatzsteuer (EUR)<span class=\"bt\">BT-111</span>"));
 		assertTrue(result.contains("183,14&nbsp;EUR"));
+		// footer: name/version of the visualization and disclaimer
+		assertTrue(result.contains("Mustang-Visualisierung Version 1.0"));
+		assertTrue(result.contains("Keine Haftung für Richtigkeit oder Vollständigkeit dieser Visualisierung."));
 	}
 
 	@Test
@@ -125,6 +128,8 @@ public class VisualizationTest extends ResourceCase {
 		assertTrue(result.contains("Regulatory information<span class=\"cd\"> (REG)</span>"));
 		assertFalse(result.contains("Verkäufer"));
 		assertFalse(result.contains("Umsatzsteuer"));
+		assertTrue(result.contains("Mustang visualization version 1.0"));
+		assertTrue(result.contains("No liability is accepted for the correctness or completeness of this visualization."));
 	}
 
 	@Test
@@ -140,6 +145,8 @@ public class VisualizationTest extends ResourceCase {
 		assertTrue(result.contains("Montant à payer"));
 		assertTrue(result.contains("850,00"));
 		assertTrue(result.contains("15/11/2024"));
+		assertTrue(result.contains("Visualisation Mustang version 1.0"));
+		assertTrue(result.contains("Aucune responsabilité n'est assumée quant à l'exactitude ou l'exhaustivité de cette visualisation."));
 		assertFalse(result.contains("Verkäufer"));
 	}
 

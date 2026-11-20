@@ -789,6 +789,7 @@
       <xsl:call-template name="profileName"/>
       <xsl:text> · </xsl:text>
       <xsl:call-template name="t"><xsl:with-param name="k" select="'ui.version'"/></xsl:call-template>
+      <div class="disclaimer"><xsl:call-template name="t"><xsl:with-param name="k" select="'ui.disclaimer'"/></xsl:call-template></div>
     </footer>
   </xsl:template>
 
@@ -996,6 +997,7 @@ tr.information .iname{font-weight:500;font-style:italic}
 .totals tr.due td{font-weight:700;font-size:16px;background:var(--accsoft);color:var(--acc)}
 .att{font-weight:600}
 .foot{margin-top:36px;border-top:1px solid var(--line);padding-top:8px;font-size:11.5px;color:var(--muted)}
+.foot .disclaimer{margin-top:4px}
 .bt{display:none;font:600 10.5px/1.3 ui-monospace,Consolas,monospace;color:#8a5300;background:#fff3d9;border-radius:3px;padding:0 4px;margin-left:5px;vertical-align:1px;text-transform:none;letter-spacing:0;white-space:nowrap}
 .bt-cb{position:absolute;opacity:0;width:1px;height:1px}
 .bt-switch{position:fixed;top:10px;right:12px;z-index:5;font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:3px 10px;cursor:pointer;color:var(--muted);box-shadow:0 1px 3px rgba(0,0,0,.08)}

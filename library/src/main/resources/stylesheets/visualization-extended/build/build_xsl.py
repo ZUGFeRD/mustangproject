@@ -93,7 +93,8 @@ ui.page|Seite|Page|Page
 ui.pageof|von|of|sur
 ui.embedded|im PDF eingebettet|embedded in this PDF|intégré à ce PDF
 ui.footer|Automatisch erzeugte Darstellung der strukturierten Rechnungsdaten|Automatically generated view of the structured invoice data|Représentation générée automatiquement des données structurées de la facture
-ui.version|Extended-Visualisierung Version 1.0|Extended visualization version 1.0|Visualisation Extended version 1.0
+ui.version|Mustang-Visualisierung Version 1.0|Mustang visualization version 1.0|Visualisation Mustang version 1.0
+ui.disclaimer|Keine Haftung für Richtigkeit oder Vollständigkeit dieser Visualisierung.|No liability is accepted for the correctness or completeness of this visualization.|Aucune responsabilité n'est assumée quant à l'exactitude ou l'exhaustivité de cette visualisation.
 ui.nocii|Das Dokument ist keine ZUGFeRD/Factur-X-Rechnung (rsm:CrossIndustryInvoice).|The document is not a ZUGFeRD/Factur-X invoice (rsm:CrossIndustryInvoice).|Le document n'est pas une facture ZUGFeRD/Factur-X (rsm:CrossIndustryInvoice).
 
 ExchangedDocumentContext|Dokumentkontext|Document context|Contexte du document

@@ -1635,6 +1635,7 @@
       <xsl:call-template name="profileName"/>
       <xsl:text> · </xsl:text>
       <xsl:call-template name="t"><xsl:with-param name="k" select="'ui.version'"/></xsl:call-template>
+      <fo:block space-before="2pt"><xsl:call-template name="t"><xsl:with-param name="k" select="'ui.disclaimer'"/></xsl:call-template></fo:block>
     </fo:block>
   </xsl:template>
 
@@ -2026,7 +2027,8 @@
     <zv:l k="ui.pageof" de="von" en="of" fr="sur"/>
     <zv:l k="ui.embedded" de="im PDF eingebettet" en="embedded in this PDF" fr="intégré à ce PDF"/>
     <zv:l k="ui.footer" de="Automatisch erzeugte Darstellung der strukturierten Rechnungsdaten" en="Automatically generated view of the structured invoice data" fr="Représentation générée automatiquement des données structurées de la facture"/>
-    <zv:l k="ui.version" de="Extended-Visualisierung Version 1.0" en="Extended visualization version 1.0" fr="Visualisation Extended version 1.0"/>
+    <zv:l k="ui.version" de="Mustang-Visualisierung Version 1.0" en="Mustang visualization version 1.0" fr="Visualisation Mustang version 1.0"/>
+    <zv:l k="ui.disclaimer" de="Keine Haftung für Richtigkeit oder Vollständigkeit dieser Visualisierung." en="No liability is accepted for the correctness or completeness of this visualization." fr="Aucune responsabilité n'est assumée quant à l'exactitude ou l'exhaustivité de cette visualisation."/>
     <zv:l k="ui.nocii" de="Das Dokument ist keine ZUGFeRD/Factur-X-Rechnung (rsm:CrossIndustryInvoice)." en="The document is not a ZUGFeRD/Factur-X invoice (rsm:CrossIndustryInvoice)." fr="Le document n'est pas une facture ZUGFeRD/Factur-X (rsm:CrossIndustryInvoice)."/>
     <zv:l k="ExchangedDocumentContext" de="Dokumentkontext" en="Document context" fr="Contexte du document"/>
     <zv:l k="TestIndicator" de="Testkennzeichen" en="Test indicator" fr="Indicateur de test"/>

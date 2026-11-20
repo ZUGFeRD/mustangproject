@@ -1126,6 +1126,7 @@
       <xsl:call-template name="profileName"/>
       <xsl:text> · </xsl:text>
       <xsl:call-template name="t"><xsl:with-param name="k" select="'ui.version'"/></xsl:call-template>
+      <fo:block space-before="2pt"><xsl:call-template name="t"><xsl:with-param name="k" select="'ui.disclaimer'"/></xsl:call-template></fo:block>
     </fo:block>
   </xsl:template>
 
