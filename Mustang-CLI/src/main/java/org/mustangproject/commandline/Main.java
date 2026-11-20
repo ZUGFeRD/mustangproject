@@ -131,9 +131,12 @@ public class Main {
 				+ "                [--language <lang>]: set output lang (en, fr or de)\n"
 				+ "                [--source <filename>]: set input XML file\n"
 				+ "                [--out <filename>]: set output HTML file\n"
+				+ "                [--show-bt]: show the BT/BG IDs (default: off, asked if other parameters are asked)\n"
 				+ "        --action pdf  convert XML to PDF \n"
+				+ "                [--language <lang>]: set output lang (en, fr or de)\n"
 				+ "                [--source <filename>]: set input XML file\n"
-				+ "                [--out <filename>]: set output PDF file\n";
+				+ "                [--out <filename>]: set output PDF file\n"
+				+ "                [--show-bt]: show the BT/BG IDs (default: off, asked if other parameters are asked)\n";
 	}
 
 	private static void printHelp() {
@@ -398,6 +401,7 @@ public class Main {
 			options.addOption(new Option("source", "source", true, "which source file to use"));
 			options.addOption(new Option("source-xml", "source-xml", true, "which source file to use"));
 			options.addOption(new Option("language", "language", true, "output language (en, de or fr)"));
+			options.addOption(new Option("show-bt", "show-bt", false, "show the BT/BG IDs (business term identifiers) in the visualization"));
 			options.addOption(new Option("out", "out", true, "which output file to write to"));
 			options.addOption(new Option("no-notices", "no-notices", false, "suppress non-fatal errors"));
 			options.addOption(new Option("no-arithmetic-check", "no-arithmetic-check", false, "skip the arithmetic recalculation check during validation"));
@@ -434,6 +438,7 @@ public class Main {
 				String outName = cmd.getOptionValue("out");
 				String format = cmd.getOptionValue("format");
 				String lang = cmd.getOptionValue("language");
+				Boolean showBT = cmd.hasOption("show-bt") ? Boolean.TRUE : null;
 				boolean noNotices = cmd.hasOption("no-notices");
 				boolean noArithmeticCheck = cmd.hasOption("no-arithmetic-check");
 				boolean failOnWarnings = cmd.hasOption("fail-on-warnings");
@@ -473,10 +478,10 @@ public class Main {
 					performConvert(sourceName, outName);
 					optionsRecognized = true;
 				} else if (action != null && action.equals("pdf")) {
-					performVisualization(sourceName, lang, outName, true);
+					performVisualization(sourceName, lang, outName, true, showBT);
 					optionsRecognized = true;
 				} else if (action != null && action.equals("visualize")) {
-					performVisualization(sourceName, lang, outName, false);
+					performVisualization(sourceName, lang, outName, false, showBT);
 					optionsRecognized = true;
 				} else if (action != null && action.equals("upgrade")) {
 					performUpgrade(sourceName, outName);
@@ -873,7 +878,13 @@ public class Main {
 		System.out.println(sr.getSummaryLine());
 	}
 
-	private static void performVisualization(String sourceName, String lang, String outName, boolean intoPDF) {
+	/***
+	 * @param showBT true if --show-bt was given, null if not: then the user is asked if other parameters
+	 *               are asked interactively as well, otherwise BT/BG IDs are not shown
+	 */
+	private static void performVisualization(String sourceName, String lang, String outName, boolean intoPDF, Boolean showBT) {
+		// interactive if the user has to be prompted for any of the other parameters
+		boolean interactive = sourceName == null || lang == null || outName == null;
 		// Get params from user if not already defined
 		if (sourceName == null) {
 			sourceName = getFilenameFromUser("ZUGFeRD XML source", "factur-x.xml", "xml", true, false);
@@ -902,6 +913,20 @@ public class Main {
 			System.out.println("Target set to " + outName);
 		}
 
+		if (showBT == null) {
+			showBT = Boolean.FALSE;
+			if (interactive) {
+				try {
+					String answer = getStringFromUser("Show BT/BG IDs (business term identifiers)", "false", "(?i)true|false|yes|no|y|n");
+					showBT = answer.equalsIgnoreCase("true") || answer.equalsIgnoreCase("yes") || answer.equalsIgnoreCase("y");
+				} catch (Exception e) {
+					LOGGER.error(e.getMessage(), e);
+				}
+			}
+		} else {
+			System.out.println("Show BT/BG IDs set to " + showBT);
+		}
+
 		// Verify params
 		try {
 			ensureFileExists(sourceName);
@@ -912,8 +937,9 @@ public class Main {
 			LOGGER.error(e.getMessage(), e);
 		}
 
-		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+		ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer().setShowBTs(showBT);
 		String xml = null;
+		boolean success = false;
 		try {
 			ZUGFeRDVisualizer.Language langCode = ZUGFeRDVisualizer.Language.EN;
 			if (lang.equalsIgnoreCase("de")) {
@@ -924,13 +950,23 @@ public class Main {
 			}
 			if (!intoPDF) {
 				xml = zvi.visualize(sourceName, langCode);
+				if (xml == null) {
+					throw new IOException("Visualization of " + sourceName + " failed");
+				}
 				Files.write(Paths.get(outName), xml.getBytes());
 			} else {
 				zvi.toPDF(sourceName, outName, langCode);
+				if (!Files.exists(Paths.get(outName)) || Files.size(Paths.get(outName)) == 0) {
+					throw new IOException("PDF visualization of " + sourceName + " failed, no PDF written");
+				}
 			}
+			success = true;
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 			System.err.println(e.getMessage());
+		}
+		if (!success) {
+			System.exit(-1);
 		}
 		System.out.println("Written to " + outName);
 

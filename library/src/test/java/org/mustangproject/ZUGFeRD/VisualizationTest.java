@@ -27,6 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -79,9 +82,94 @@ public class VisualizationTest extends ResourceCase {
 		assertNotNull(result);
 		// regression for https://github.com/ZUGFeRD/mustangproject/issues/937:
 		// the invoicee (InvoiceeTradeParty, BG-X-36) must be displayed with name and city
-		assertTrue(result.contains("id=\"BG-X-36\" title=\"BG-X-36\" class=\"boxtitel\">Abweichender Rechnungsempf\u00e4nger</div>"));
-		assertTrue(result.contains("id=\"BT-X-226\" title=\"BT-X-226\" class=\"boxdaten wert\">MUSTER-KUNDE GMBH</div>"));
-		assertTrue(result.contains("id=\"BT-X-238\" title=\"BT-X-238\" class=\"boxdaten wert\">DUESSELDORF</div>"));
+		assertTrue(result.contains("<div class=\"ph\">Rechnungsempf\u00e4nger<span class=\"bt\">BG-X-36</span></div>"));
+		assertTrue(result.contains("<div class=\"pn\">MUSTER-KUNDE GMBH<span class=\"bt\">BT-X-226</span></div>"));
+		assertTrue(result.contains("DUESSELDORF<span class=\"bt\">BT-X-238</span>"));
+	}
+
+	@Test
+	public void testExtendedVisualization() {
+		String result = visualizeCII("Extended_fremdwaehrung.xml", Language.DE);
+
+		assertTrue(result.contains("<html lang=\"de\">"));
+		assertTrue(result.contains("<title>Rechnung 47110815</title>"));
+		assertTrue(result.contains("Nr. <strong>47110815</strong>"));
+		assertTrue(result.contains("Rohstoff AG Salzgitter"));
+		assertTrue(result.contains("Stahlcoil"));
+		assertTrue(result.contains("Umsatzsteueraufschlüsselung"));
+		assertTrue(result.contains("Zahlbetrag"));
+		// German number format
+		assertTrue(result.contains("850,00"));
+		// German date format
+		assertTrue(result.contains("15.11.2024"));
+		// the tax total is given in the invoice currency (GBP, BT-110) and also in the tax currency (EUR, BT-111)
+		assertTrue(result.contains("163,16&nbsp;GBP"));
+		assertTrue(result.contains("Umsatzsteuer (EUR)<span class=\"bt\">BT-111</span>"));
+		assertTrue(result.contains("183,14&nbsp;EUR"));
+		// footer: name/version of the visualization and disclaimer
+		assertTrue(result.contains("Mustang-Visualisierung Version 1.0"));
+		assertTrue(result.contains("Keine Haftung für Richtigkeit oder Vollständigkeit dieser Visualisierung."));
+	}
+
+	@Test
+	public void testExtendedVisualizationEnglish() {
+		String result = visualizeCII("Extended_fremdwaehrung.xml", Language.EN);
+
+		assertTrue(result.contains("<html lang=\"en\">"));
+		assertTrue(result.contains("<title>Commercial invoice 47110815</title>"));
+		assertTrue(result.contains("No. <strong>47110815</strong>"));
+		assertTrue(result.contains("Seller"));
+		assertTrue(result.contains("Invoice lines"));
+		assertTrue(result.contains("VAT breakdown"));
+		assertTrue(result.contains("Amount due for payment"));
+		assertTrue(result.contains("850.00"));
+		assertTrue(result.contains("2024-11-15"));
+		// code lists are resolved with the English UN/CEFACT names
+		assertTrue(result.contains("Regulatory information<span class=\"cd\"> (REG)</span>"));
+		assertFalse(result.contains("Verkäufer"));
+		assertFalse(result.contains("Umsatzsteuer"));
+		assertTrue(result.contains("Mustang visualization version 1.0"));
+		assertTrue(result.contains("No liability is accepted for the correctness or completeness of this visualization."));
+	}
+
+	@Test
+	public void testExtendedVisualizationFrench() {
+		String result = visualizeCII("Extended_fremdwaehrung.xml", Language.FR);
+
+		assertTrue(result.contains("<html lang=\"fr\">"));
+		assertTrue(result.contains("<title>Facture 47110815</title>"));
+		assertTrue(result.contains("N° <strong>47110815</strong>"));
+		assertTrue(result.contains("Vendeur"));
+		assertTrue(result.contains("Lignes de facture"));
+		assertTrue(result.contains("Ventilation de la TVA"));
+		assertTrue(result.contains("Montant à payer"));
+		assertTrue(result.contains("850,00"));
+		assertTrue(result.contains("15/11/2024"));
+		assertTrue(result.contains("Visualisation Mustang version 1.0"));
+		assertTrue(result.contains("Aucune responsabilité n'est assumée quant à l'exactitude ou l'exhaustivité de cette visualisation."));
+		assertFalse(result.contains("Verkäufer"));
+	}
+
+	private String visualizeCII(String inputFilename, Language lang) {
+		File CIIinputFile = getResourceAsFile(inputFilename);
+		String result = null;
+		try {
+			ZUGFeRDVisualizer zvi = new ZUGFeRDVisualizer();
+			result = zvi.visualize(CIIinputFile.getAbsolutePath(), lang);
+			Files.writeString(Paths.get("./target/testout-extended-" + lang.name().toLowerCase() + ".html"), result);
+		} catch (UnsupportedOperationException e) {
+			fail("UnsupportedOperationException should not happen: " + e.getMessage());
+		} catch (IllegalArgumentException e) {
+			fail("IllegalArgumentException should not happen: " + e.getMessage());
+		} catch (TransformerException e) {
+			fail("TransformerException should not happen: " + e.getMessage());
+		} catch (IOException e) {
+			fail("IOException should not happen: " + e.getMessage());
+		} catch (ParserConfigurationException e) {
+			fail("ParserConfigurationException should not happen: " + e.getMessage());
+		}
+		assertNotNull(result);
+		return result;
 	}
 
 	@Test
@@ -211,6 +299,61 @@ public class VisualizationTest extends ResourceCase {
 			assertTrue(ByteArraySearcher.contains(Files.readAllBytes(Paths.get(TARGET_PDF_CII)), "<rdf:li>en</rdf:li>".getBytes()));
 		} catch (IOException e) {
 			fail("IOException should not occur");
+		}
+	}
+
+	@Test
+	public void testPDFVisualizationCIIFromXMLString() throws IOException {
+		// the XML content (not a filename) is passed, it must not be mistaken for a PDF filename
+		File CIIinputFile = getResourceAsFile("cii/01.01a-INVOICE.cii.xml");
+		String xml = Files.readString(CIIinputFile.toPath());
+
+		byte[] pdf = new ZUGFeRDVisualizer().toPDF(xml, Language.EN);
+
+		assertNotNull(pdf);
+		assertTrue(ByteArraySearcher.startsWith(pdf, new byte[]{'%', 'P', 'D', 'F'}));
+		assertTrue(ByteArraySearcher.contains(pdf, "<rdf:li>en</rdf:li>".getBytes()));
+	}
+
+	@Test
+	public void testHTMLVisualizationShowBT() throws IOException, TransformerException, ParserConfigurationException {
+		String source = getResourceAsFile("Extended_fremdwaehrung.xml").getAbsolutePath();
+
+		String withoutBT = new ZUGFeRDVisualizer().visualize(source, Language.DE);
+		String withBT = new ZUGFeRDVisualizer().setShowBTs(true).visualize(source, Language.DE);
+
+		// the HTML always contains the BT/BG IDs (e.g. BT-1 next to the invoice number), showBT only
+		// pre-selects the switch which makes them visible
+		for (String html : new String[]{withoutBT, withBT}) {
+			assertNotNull(html);
+			assertTrue(html.contains("<strong>47110815</strong><span class=\"bt\">BT-1</span>"));
+		}
+		assertTrue(withBT.contains("id=\"zv-bt\" class=\"bt-cb\" checked"));
+		assertFalse(withoutBT.contains("id=\"zv-bt\" class=\"bt-cb\" checked"));
+		assertTrue(withoutBT.contains("<input type=\"checkbox\" id=\"zv-bt\" class=\"bt-cb\">"));
+	}
+
+	@Test
+	public void testPDFVisualizationShowBT() throws IOException {
+		String xml = Files.readString(getResourceAsFile("Extended_fremdwaehrung.xml").toPath());
+
+		String withoutBT = pdfText(new ZUGFeRDVisualizer().toPDF(xml, Language.DE));
+		String withBT = pdfText(new ZUGFeRDVisualizer().setShowBTs(true).toPDF(xml, Language.DE));
+
+		// the invoice number is shown in both cases, the BT/BG IDs only with showBT
+		assertTrue(withoutBT.contains("47110815"));
+		assertTrue(withBT.contains("47110815"));
+		assertFalse(withoutBT.contains("BT-1"));
+		assertFalse(withoutBT.contains("BG-"));
+		assertTrue(withBT.contains("BT-1"));
+		assertTrue(withBT.contains("BG-4"));
+	}
+
+	private static String pdfText(byte[] pdf) throws IOException {
+		assertNotNull(pdf);
+		assertTrue(ByteArraySearcher.startsWith(pdf, new byte[]{'%', 'P', 'D', 'F'}));
+		try (PDDocument doc = Loader.loadPDF(pdf)) {
+			return new PDFTextStripper().getText(doc);
 		}
 	}
 
