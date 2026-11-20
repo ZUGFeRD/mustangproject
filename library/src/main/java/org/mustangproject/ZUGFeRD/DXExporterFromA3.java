@@ -580,7 +580,7 @@ public class DXExporterFromA3 extends ZUGFeRDExporterFromA3 {
 				throw new RuntimeException(ex);
 			}
 		}
-		pdfaid.setPart(3);
+		pdfaid.setPart(Integer.valueOf(3));
 	}
 
 	@Override

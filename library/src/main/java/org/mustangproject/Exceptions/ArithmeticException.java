@@ -5,6 +5,8 @@ package org.mustangproject.Exceptions;
  * ArithmetricException for backwards compatibility, was a spelling error
  */
 public class ArithmeticException extends ArithmetricException {
+	private static final long serialVersionUID = 1L;
+
 	/***
 	 *  will be thrown if an invoice cant be reproduced numerically
 	 */

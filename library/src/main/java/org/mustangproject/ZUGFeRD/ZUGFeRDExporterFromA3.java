@@ -175,6 +175,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 *
 	 * @param pdfFilename filename of an PDF/A1 compliant document
 	 */
+	@Override
 	public ZUGFeRDExporterFromA3 load(String pdfFilename) throws IOException {
 
 		ensurePDFIsValid(new FileDataSource(pdfFilename));
@@ -183,6 +184,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		}
 	}
 
+	@Override
 	public IXMLProvider getProvider() {
 		return xmlProvider;
 	}
@@ -192,6 +194,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * @param p the profile
 	 * @return fluent setter
 	 */
+	@Override
 	public ZUGFeRDExporterFromA3 setProfile(Profile p) {
 		this.profile = p;
 		if (xmlProvider != null) {
@@ -230,6 +233,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * @param ver the ZUGFeRD version
 	 * @return the URN of the namespace
 	 */
+	@Override
 	public String getNamespaceForVersion(int ver) {
 		if (isFacturX) {
 			return "urn:factur-x:pdfa:CrossIndustryDocument:invoice:1p0#";
@@ -247,6 +251,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * @param ver the zf/fx version
 	 * @return the namespace prefix as string, without colon
 	 */
+	@Override
 	public String getPrefixForVersion(int ver) {
 		if (isFacturX) {
 			return "fx";
@@ -306,6 +311,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	/***
 	 * Generate ZF2.0/2.1 files with filename zugferd-invoice.xml instead of factur-x.xml
 	 */
+	@Override
 	public IZUGFeRDExporter disableFacturX() {
 		isFacturX = false;
 		return this;
@@ -318,16 +324,19 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 *
 	 * @param pdfBinary binary of a PDF/A1 compliant document
 	 */
+	@Override
 	public ZUGFeRDExporterFromA3 load(byte[] pdfBinary) throws IOException {
 		ensurePDFIsValid(new ByteArrayDataSource(new ByteArrayInputStream(pdfBinary)));
 		doc = Loader.loadPDF(pdfBinary);
 		return this;
 	}
 
+	@Override
 	public void attachFile(FileAttachment file) {
 		fileAttachments.add(file);
 	}
 
+	@Override
 	public void attachFile(String filename, byte[] data, String mimetype, String relation) {
 		FileAttachment fa = new FileAttachment(filename, mimetype, relation, data);
 		fileAttachments.add(fa);
@@ -484,6 +493,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * @param zugferdData XML data to be set as a byte array (XML file in raw form).
 	 * @throws IOException (should not happen)
 	 */
+	@Override
 	public ZUGFeRDExporterFromA3 setXML(byte[] zugferdData) throws IOException {
 		CustomXMLProvider cus = new CustomXMLProvider();
 		cus.setXML(zugferdData);
@@ -499,10 +509,12 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 *
 	 * @param pdfSource source to read a PDF/A1 compliant document from
 	 */
+	@Override
 	public ZUGFeRDExporterFromA3 load(InputStream pdfSource) throws IOException {
 		return load(readAllBytes(pdfSource));
 	}
 
+	@Override
 	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
 		return true;
 	}
@@ -526,6 +538,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	 * <p>
 	 * Feel free to pass "A" as new level if you know what you are doing :-)
 	 */
+	@Override
 	public ZUGFeRDExporterFromA3 setConformanceLevel(PDFAConformanceLevel newLevel) {
 		conformanceLevel = newLevel;
 		return this;
@@ -547,6 +560,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
+	@Override
 	public ZUGFeRDExporterFromA3 setCreator(String creator) {
 		this.creator = creator;
 		return this;
@@ -557,6 +571,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		return this;
 	}
 
+	@Override
 	public ZUGFeRDExporterFromA3 setProducer(String producer) {
 		this.producer = producer;
 		return this;
@@ -620,8 +635,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		metadata.addSchema(pdfaex);
 	}
 
-	private void removeCidSet(PDDocument doc)
-		throws IOException {
+	private static void removeCidSet(PDDocument doc) throws IOException {
 		// https://github.com/ZUGFeRD/mustangproject/issues/249
 
 		COSName cidSet = COSName.getPDFName("CIDSet");
@@ -650,7 +664,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 		}
 	}
 
-	private void removeCIDSetFromPDResources(COSName cidSet, PDResources res) throws IOException {
+	private static void removeCIDSetFromPDResources(COSName cidSet, PDResources res) throws IOException {
 		for (COSName fontName : res.getFontNames()) {
 			PDFont pdFont = res.getFont(fontName);
 			if (pdFont instanceof PDType0Font) {
@@ -825,7 +839,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 				throw new Error(ex);
 			}
 		}
-		pdfaid.setPart(3);
+		pdfaid.setPart(Integer.valueOf(3));
 	}
 
 	protected PDFAIdentificationSchema getPDFAIdentificationSchema(XMPMetadata xmp) {
@@ -1043,6 +1057,7 @@ public class ZUGFeRDExporterFromA3 extends XRExporter implements IZUGFeRDExporte
 	/**
 	 * @param disableAutoClose prevent PDF file from being closed after adding ZF
 	 */
+	@Override
 	public ZUGFeRDExporterFromA3 disableAutoClose(boolean disableAutoClose) {
 		this.disableAutoClose = disableAutoClose;
 		return this;

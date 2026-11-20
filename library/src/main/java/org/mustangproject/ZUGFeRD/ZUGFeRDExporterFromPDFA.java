@@ -82,13 +82,13 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		return theExporter;
 	}
 
-	protected byte[] filenameToByteArray(String pdfFilename) throws IOException {
+	protected static byte[] filenameToByteArray(String pdfFilename) throws IOException {
 		try (FileInputStream fileInputStream = new FileInputStream(pdfFilename)) {
 			return inputstreamToByteArray(fileInputStream);
 		}
 	}
 
-	protected byte[] inputstreamToByteArray(InputStream fileInputStream) throws IOException {
+	protected static byte[] inputstreamToByteArray(InputStream fileInputStream) throws IOException {
 		byte[] bytes = new byte[fileInputStream.available()];
 		try (DataInputStream dataInputStream = new DataInputStream(fileInputStream)) {
 			dataInputStream.readFully(bytes);
@@ -102,7 +102,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	 * @return 0 if unknown, 1 for PDF/A-1 or 3 for PDF/A-3
 	 * @throws IOException
 	 */
-	private int getPDFAVersion(byte[] byteArrayInputStream) throws IOException {
+	private static int getPDFAVersion(byte[] byteArrayInputStream) throws IOException {
 		PDDocument document = Loader.loadPDF(byteArrayInputStream);
 		PDDocumentCatalog catalog = document.getDocumentCatalog();
 		PDMetadata metadata = catalog.getMetadata();
@@ -116,7 +116,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 
 				PDFAIdentificationSchema pdfaSchema = xmp.getPDFAIdentificationSchema();
 				if (pdfaSchema != null) {
-					return pdfaSchema.getPart();
+					return pdfaSchema.getPart().intValue();
 				}
 			} catch (XmpParsingException e) {
 				LOGGER.error("XmpParsingException", e);
@@ -133,6 +133,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	 * @return the A1 or A3 exporter
 	 * @throws IOException e.g. on read error
 	 */
+	@Override
 	public IZUGFeRDExporter load(String pdfFilename) throws IOException {
 		determineAndSetExporter(getPDFAVersion(filenameToByteArray(pdfFilename)));
 		return theExporter.load(pdfFilename);
@@ -147,6 +148,7 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	 * @return the generated exporter
 	 * @throws IOException (should not happen at all)
 	 */
+	@Override
 	public IZUGFeRDExporter load(byte[] pdfBinary) throws IOException {
 		determineAndSetExporter(getPDFAVersion(pdfBinary));
 		return theExporter.load(pdfBinary);
@@ -161,17 +163,20 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 	 * @return the generated ZUGFeRDExporter
 	 * @throws IOException if anything is wrong with inputstream
 	 */
+	@Override
 	public IZUGFeRDExporter load(InputStream pdfSource) throws IOException {
 		byte[] byteArray = inputstreamToByteArray(pdfSource);
 		determineAndSetExporter(getPDFAVersion(byteArray));
 		return theExporter.load(byteArray);
 	}
 
+	@Override
 	public IZUGFeRDExporter setCreator(String creator) {
 
 		return getExporter().setCreator(creator);
 	}
 
+	@Override
 	public IZUGFeRDExporter setProfile(Profile p) {
 		return getExporter().setProfile(p);
 	}
@@ -184,18 +189,22 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		return getExporter().setProfile(p);
 	}
 
+	@Override
 	public IZUGFeRDExporter setConformanceLevel(PDFAConformanceLevel newLevel) {
 		return getExporter().setConformanceLevel(newLevel);
 	}
 
+	@Override
 	public IZUGFeRDExporter setEnablePDFAttachmentCompression(boolean compressionEnabled) {
 		return getExporter().setEnablePDFAttachmentCompression(compressionEnabled);
 	}
 
+	@Override
 	public IZUGFeRDExporter setEnablePDFCompression(boolean compressionEnabled) {
 		return getExporter().setEnablePDFCompression(compressionEnabled);
 	}
 
+	@Override
 	public IZUGFeRDExporter setProducer(String producer) {
 
 		return getExporter().setProducer(producer);
@@ -216,42 +225,50 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		return getExporter().setKeywords(keywords);
 	}
 
+	@Override
 	public IZUGFeRDExporter setZUGFeRDVersion(int version) {
 
 		return getExporter().setZUGFeRDVersion(version);
 
 	}
 
+	@Override
 	public boolean ensurePDFIsValid(final DataSource dataSource) throws IOException {
 
 		return getExporter().ensurePDFIsValid(dataSource);
 	}
 
+	@Override
 	public IZUGFeRDExporter setXML(byte[] zugferdData) throws IOException {
 
 		return getExporter().setXML(zugferdData);
 	}
 
+	@Override
 	public IZUGFeRDExporter disableFacturX() {
 
 		return getExporter().disableFacturX();
 	}
 
 	//	public IZUGFeRDExporter setProfile(Profile zugferdConformanceLevel);
+	@Override
 	public String getNamespaceForVersion(int ver) {
 
 		return getExporter().getNamespaceForVersion(ver);
 	}
 
+	@Override
 	public String getPrefixForVersion(int ver) {
 
 		return getExporter().getPrefixForVersion(ver);
 	}
 
+	@Override
 	public IZUGFeRDExporter disableAutoClose(boolean disableAutoClose) {
 		return getExporter().disableAutoClose(disableAutoClose);
 	}
 
+	@Override
 	public IXMLProvider getProvider() {
 		return getExporter().getProvider();
 	}
@@ -276,10 +293,12 @@ public class ZUGFeRDExporterFromPDFA implements IZUGFeRDExporter {
 		getExporter().export(output);
 	}
 
+	@Override
 	public void attachFile(FileAttachment file) {
 		theExporter.attachFile(file);
 	}
 
+	@Override
 	public void attachFile(String filename, byte[] data, String mimetype, String relation) {
 		theExporter.attachFile(filename, data, mimetype, relation);
 	}

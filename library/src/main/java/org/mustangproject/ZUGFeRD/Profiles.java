@@ -26,10 +26,10 @@ import java.util.Map;
 import org.mustangproject.EStandard;
 
 public final class Profiles {
-	private static final Map<String, Profile> zf1Map = new HashMap<String, Profile>();
-	private static final Map<String, Profile> dx1Map = new HashMap<String, Profile>();
-	private static final Map<String, Profile> ox1Map = new HashMap<String, Profile>();
-	private static final Map<String, Profile> zf2Map = new HashMap<String, Profile>();
+	private static final Map<String, Profile> zf1Map = new HashMap<>();
+	private static final Map<String, Profile> dx1Map = new HashMap<>();
+	private static final Map<String, Profile> ox1Map = new HashMap<>();
+	private static final Map<String, Profile> zf2Map = new HashMap<>();
 	static {
 		zf1Map.put("BASIC", new Profile("BASIC", "urn:ferd:CrossIndustryDocument:invoice:1p0:basic"));
 		zf1Map.put("COMFORT", new Profile("COMFORT", "urn:ferd:CrossIndustryDocument:invoice:1p0:comfort"));

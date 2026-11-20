@@ -64,6 +64,7 @@ public class CustomXMLProvider implements IXMLProvider {
 		return profile;
 	}
 
+	@Override
 	public void setProfile(Profile level) {
 		profile = level;
 	}

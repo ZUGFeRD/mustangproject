@@ -8,6 +8,7 @@ import org.mustangproject.ZUGFeRD.IZUGFeRDCashDiscount;
 import static org.mustangproject.ZUGFeRD.ZUGFeRDDateFormat.DATE;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 /***
@@ -53,7 +54,7 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	 */
 	public CashDiscount(BigDecimal percent, int days) {
 		this.percent = percent;
-		this.days = days;
+		this.days = Integer.valueOf(days);
 	}
 
 	/***
@@ -67,7 +68,7 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	public CashDiscount calculate() {
 		if (this.percent != null && this.basisAmount != null) {
 			BigDecimal factor = this.percent.divide(new BigDecimal(100));
-			this.actualAmount = this.basisAmount.multiply(factor).setScale(2, BigDecimal.ROUND_HALF_UP);
+			this.actualAmount = this.basisAmount.multiply(factor).setScale(2, RoundingMode.HALF_UP);
 		}
 		return this;
 	}
@@ -182,6 +183,7 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	 * this mehods name spells get-As-CII not get-Ascii ;-)
 	 * @return this particular cash discount as cross industry invoice XML
 	 */
+	@Override
 	@JsonIgnore
 	public String getAsCII() {
 		StringBuilder sb = new StringBuilder();
@@ -212,6 +214,7 @@ public class CashDiscount implements IZUGFeRDCashDiscount {
 	 * XRechnung CIUS defined it's own proprietary format for a freetext field
 	 * @return this particular cash discount in proprietary xrechnung format
 	 */
+	@Override
 	@JsonIgnore
 	public String getAsXRechnung() {
 		return "#SKONTO#TAGE=" + days + "#PROZENT=" + XMLTools.nDigitFormat(percent, 2) + "#\n";

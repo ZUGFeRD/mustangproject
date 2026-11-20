@@ -7,6 +7,8 @@ import java.text.ParseException;
  * (deprecated, because of typo)
  */
 public class ArithmetricException extends ParseException {
+	private static final long serialVersionUID = 1L;
+
 	/***
 	 * will be thrown if an invoice cant be reproduced numerically
 	 */

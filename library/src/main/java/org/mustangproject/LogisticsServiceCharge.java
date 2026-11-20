@@ -45,6 +45,7 @@ public class LogisticsServiceCharge extends TradeTax<LogisticsServiceCharge> imp
 		return this;
 	}
 
+	@Override
 	public BigDecimal getAppliedAmount() {
 		return appliedAmount;
 	}

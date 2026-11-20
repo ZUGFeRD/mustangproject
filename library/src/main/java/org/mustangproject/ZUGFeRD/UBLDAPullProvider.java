@@ -91,7 +91,7 @@ public class UBLDAPullProvider implements IXMLProvider {
 		ublData = XMLTools.removeBOM(ublRaw);
 	}
 
-	public String getPartyXML(IZUGFeRDExportableTradeParty tp) {
+	public static String getPartyXML(IZUGFeRDExportableTradeParty tp) {
 		return "<cac:Party>\n" +
 				"      <cac:PostalAddress>\n" +
 				"        <cbc:CityName>" + XMLTools.encodeXML(tp.getLocation()) + "</cbc:CityName>\n" +

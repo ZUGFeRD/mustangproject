@@ -75,8 +75,6 @@ public class VisualizationTest extends ResourceCase {
 			fail("TransformerException should not happen: " + e.getMessage());
 		} catch (IOException e) {
 			fail("IOException should not happen: " + e.getMessage());
-		} catch (ParserConfigurationException e) {
-			fail("ParserConfigurationException should not happen: " + e.getMessage());
 		}
 
 		assertNotNull(result);
@@ -165,8 +163,6 @@ public class VisualizationTest extends ResourceCase {
 			fail("TransformerException should not happen: " + e.getMessage());
 		} catch (IOException e) {
 			fail("IOException should not happen: " + e.getMessage());
-		} catch (ParserConfigurationException e) {
-			fail("ParserConfigurationException should not happen: " + e.getMessage());
 		}
 		assertNotNull(result);
 		return result;
@@ -187,8 +183,6 @@ public class VisualizationTest extends ResourceCase {
 			fail("TransformerException should not happen: " + e.getMessage());
 		} catch (IOException e) {
 			fail("IOException should not happen: " + e.getMessage());
-		} catch (ParserConfigurationException e) {
-			fail("ParserConfigurationException should not happen: " + e.getMessage());
 		}
 
 		assertNotNull(result);
@@ -234,6 +228,16 @@ public class VisualizationTest extends ResourceCase {
 			File expectedResult = getResourceAsFile(resultFileName);
 			expected = Files.readString(expectedResult.toPath());
 
+			/* remove file endings so that tests can also pass after checking
+			   out from git with arbitrary options (which may include CSRF changes)
+			 */
+			assertEquals(expected.replace("\r", "")
+					.replace("\n", "")
+					.replace("\t", "")
+					.replace(" ", ""), result.replace("\r", "")
+					.replace("\n", "")
+					.replace("\t", "")
+					.replace(" ", ""));
 		} catch (UnsupportedOperationException e) {
 			fail("UnsupportedOperationException should not happen: " + e.getMessage());
 		} catch (IllegalArgumentException e) {
@@ -242,21 +246,9 @@ public class VisualizationTest extends ResourceCase {
 			fail("TransformerException should not happen: " + e.getMessage());
 		} catch (IOException e) {
 			fail("IOException should not happen: " + e.getMessage());
-		} catch (ParserConfigurationException e) {
-			fail("ParserConfigurationException should not happen: " + e.getMessage());
 		}
 
 		assertNotNull(result);
-        /* remove file endings so that tests can also pass after checking
-		   out from git with arbitrary options (which may include CSRF changes)
-		 */
-		assertEquals(expected.replace("\r", "")
-			.replace("\n", "")
-			.replace("\t", "")
-			.replace(" ", ""), result.replace("\r", "")
-			.replace("\n", "")
-			.replace("\t", "")
-			.replace(" ", ""));
 	}
 
 

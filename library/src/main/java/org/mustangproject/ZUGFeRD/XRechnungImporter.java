@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.ParseException;
 
 import org.mustangproject.XMLTools;
 import org.slf4j.Logger;
@@ -19,7 +18,7 @@ public class XRechnungImporter extends ZUGFeRDImporter {
 		try {
 			setRawXML(rawXml);
 			containsMeta = true;
-		} catch (final IOException | ParseException e) {
+		} catch (final IOException e) {
 			LOGGER.error ("Failed to set raw XML", e);
 			throw new ZUGFeRDExportException(e);
 		}
@@ -31,7 +30,7 @@ public class XRechnungImporter extends ZUGFeRDImporter {
 		try {
 			setRawXML(Files.readAllBytes(Paths.get(filename)));
 			containsMeta = true;
-		} catch (final IOException | ParseException e) {
+		} catch (final IOException e) {
       		LOGGER.error ("Failed to set raw XML", e);
 			throw new ZUGFeRDExportException(e);
 		}
@@ -42,7 +41,7 @@ public class XRechnungImporter extends ZUGFeRDImporter {
 		try {
 			setRawXML(XMLTools.getBytesFromStream(fileinput));
 			containsMeta = true;
-		} catch (final IOException | ParseException e) {
+		} catch (final IOException e) {
       		LOGGER.error ("Failed to set raw XML", e);
 			throw new ZUGFeRDExportException(e);
 		}

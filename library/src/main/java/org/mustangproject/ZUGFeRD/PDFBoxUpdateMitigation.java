@@ -25,6 +25,7 @@ final class ByteArrayDataSource implements DataSource {
 		IOUtils.closeQuietly(is);
 	}
 
+	@Override
 	public String getContentType() {
 		return this.type;
 	}
@@ -45,14 +46,17 @@ final class ByteArrayDataSource implements DataSource {
 		this.name = name;
 	}
 
+	@Override
 	public InputStream getInputStream() throws IOException {
 		return new ByteArrayInputStream(data.toByteArray());
 	}
 
+	@Override
 	public String getName() {
 		return this.name;
 	}
 
+	@Override
 	public OutputStream getOutputStream() throws IOException {
 		this.data = new ByteArrayOutputStream();
 		return data;

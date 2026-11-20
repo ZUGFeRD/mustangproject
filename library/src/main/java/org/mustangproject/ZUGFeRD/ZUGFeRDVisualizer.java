@@ -21,8 +21,6 @@
 package org.mustangproject.ZUGFeRD;
 
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
@@ -119,14 +117,14 @@ public class ZUGFeRDVisualizer {
 
 
 	public String visualize(String xmlFilename, Language lang)
-		throws IOException, TransformerException, ParserConfigurationException {
+		throws IOException, TransformerException {
 		try (FileInputStream fis = new FileInputStream(xmlFilename)) {
 			return visualize(fis, lang);
 		}
 	}
 
 	public String visualize(InputStream inputXml, Language lang)
-		throws IOException, TransformerException, ParserConfigurationException {
+		throws IOException, TransformerException {
 		initTemplates(lang);
 
 		String fileContent = new String(inputXml.readAllBytes(), StandardCharsets.UTF_8);
@@ -217,8 +215,7 @@ public class ZUGFeRDVisualizer {
 		}
 	}
 
-	protected String toFOP(String xmlFilename, Language lang)
-		throws IOException, TransformerException, ParserConfigurationException {
+	protected String toFOP(String xmlFilename, Language lang) {
 		ZUGFeRDImporter zi = new ZUGFeRDImporter();
 		zi.doIgnoreCalculationErrors();
 
@@ -284,11 +281,7 @@ public class ZUGFeRDVisualizer {
 			/* remove file endings so that tests can also pass after checking
 			   out from git with arbitrary options (which may include CSRF changes)
 			 */
-		try {
-			fopInput = this.toFOP(XMLinputFile.getAbsolutePath(), lang);
-		} catch (TransformerException | IOException | ParserConfigurationException e) {
-			LOGGER.error("Failed to apply FOP", e);
-		}
+		fopInput = this.toFOP(XMLinputFile.getAbsolutePath(), lang);
 		if (fopInput == null) {
 			// don't leave a truncated PDF behind
 			LOGGER.error("Could not create the FO input for {}, no PDF written", xmlFilename);

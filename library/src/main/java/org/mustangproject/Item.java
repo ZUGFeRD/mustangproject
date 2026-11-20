@@ -508,7 +508,6 @@ public class Item implements IZUGFeRDExportableItem {
 	 * @deprecated	use getBuyerOrderReferencedDocument().getLineID()
 	 * @return the line ID of the order (BT132)
 	 */
-	@SuppressWarnings("removal")
 	@Override
 	@Deprecated(forRemoval = true, since = "2.24.1")
 	public String getBuyerOrderReferencedDocumentLineID() {
@@ -914,7 +913,6 @@ public class Item implements IZUGFeRDExportableItem {
 	/**
 	 * @deprecated use getDeliveryNoteReferencedDocument.getIssuerAssignedID
 	 */
-	@SuppressWarnings("removal")
 	@Override
 	@Deprecated(forRemoval = true, since = "2.24.1")
 	public String getDeliveryNoteReferencedDocumentID() {
@@ -940,7 +938,6 @@ public class Item implements IZUGFeRDExportableItem {
 	/**
 	 * @deprecated use getDeliveryNoteReferencedDocument.getIssuerAssignedID
 	 */
-	@SuppressWarnings("removal")
 	@Override
 	@Deprecated(forRemoval = true, since = "2.24.1")
 	public Date getDeliveryNoteReferencedDocumentDate() {
@@ -967,7 +964,6 @@ public class Item implements IZUGFeRDExportableItem {
 	/**
 	 * @deprecated use getDeliveryNoteReferencedDocument.getLineID
 	 */
-	@SuppressWarnings("removal")
 	@Override
 	@Deprecated(forRemoval = true, since = "2.24.1")
 	public String getDeliveryNoteReferencedDocumentLineID() {

@@ -647,6 +647,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 		return this;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -684,6 +685,7 @@ public class TradeParty implements IZUGFeRDExportableTradeParty {
 	}
 
 
+	@Override
 	public String getZIP() {
 		return zip;
 	}

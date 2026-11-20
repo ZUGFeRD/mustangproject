@@ -118,7 +118,7 @@ public class DeSerializationTest extends ResourceCase {
 		try {
 			zii.fromXML(Files.readString(inputCII.toPath()));
 
-		} catch (IOException | ParseException e) {
+		} catch (IOException e) {
 			hasExceptions = true;
 		}
 
@@ -961,10 +961,10 @@ public class DeSerializationTest extends ResourceCase {
 			ObjectMapper mapper = new ObjectMapper();
 			String json = mapper.writeValueAsString(i);
 			newInvoiceFromJSON = mapper.readValue(json, Invoice.class);
+			assertEquals("28934", newInvoiceFromJSON.getBuyerOrderReferencedDocument().getIssuerAssignedID());
 		} catch (JsonProcessingException | ParseException e) {
 			hasExceptions = true;
 		}
-		assertEquals("28934", newInvoiceFromJSON.getBuyerOrderReferencedDocument().getIssuerAssignedID());
 		assertFalse(hasExceptions);
 	}
 

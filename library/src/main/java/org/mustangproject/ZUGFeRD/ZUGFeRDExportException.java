@@ -19,9 +19,6 @@
 package org.mustangproject.ZUGFeRD;
 
 public class ZUGFeRDExportException extends RuntimeException {
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public ZUGFeRDExportException() {

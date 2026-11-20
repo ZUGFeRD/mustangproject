@@ -229,13 +229,7 @@ public class ZUGFeRDInvoiceImporter {
 		} else {
 			// no PDF probably XML
 			containsMeta = true;
-			try {
-				setRawXML(XMLTools.getBytesFromStream(pdfStream));
-			} catch (ParseException e) {
-				LOGGER.error("Failed to parse PDF", e);
-			}
-
-
+			setRawXML(XMLTools.getBytesFromStream(pdfStream));
 		}
 	}
 
@@ -294,12 +288,7 @@ public class ZUGFeRDInvoiceImporter {
 
 			if (validFilenames.contains(filename)) {
 				containsMeta = true;
-
-				try {
-					setRawXML(embeddedFile.toByteArray());
-				} catch (ParseException e) {
-					LOGGER.error("Failed to parse XML", e);
-				}
+				setRawXML(embeddedFile.toByteArray());
 			}
 			if (filename.startsWith("additional_data")) {
 				additionalXMLs.put(filename, embeddedFile.toByteArray());
@@ -314,7 +303,7 @@ public class ZUGFeRDInvoiceImporter {
 	 * @param doParse automatically parse input for zugferdImporter (not ZUGFeRDInvoiceImporter)
 	 * @throws IOException if parsing xml throws it (unlikely its string based)
 	 */
-	public void setRawXML(byte[] rawXML, boolean doParse) throws IOException, ParseException {
+	public void setRawXML(byte[] rawXML, boolean doParse) throws IOException {
 		this.containsMeta = true;
 		this.rawXML = rawXML;
 		this.version = null;
@@ -334,7 +323,7 @@ public class ZUGFeRDInvoiceImporter {
 	 * @param rawXML the cii(?) as a string
 	 * @throws IOException  if parsing xml throws it (unlikely its string based)
 	 */
-	public void setRawXML(byte[] rawXML) throws IOException, ParseException {
+	public void setRawXML(byte[] rawXML) throws IOException {
 		setRawXML(rawXML, true);
 	}
 
@@ -582,7 +571,7 @@ public class ZUGFeRDInvoiceImporter {
 				String currencyID = XMLTools.trimOrNull(taxTotalNodes.item(i).getAttributes().getNamedItem("currencyID"));
 				if (zpp.getCurrency() != null && zpp.getCurrency().equalsIgnoreCase(currencyID)) {
 					((CalculatedInvoice) zpp).setVATtotal(new BigDecimal(taxTotalStr));
-				} else if (taxCurrency != null && taxCurrency.equalsIgnoreCase(currencyID)) {
+				} else if (taxCurrency.equalsIgnoreCase(currencyID)) {
 					((CalculatedInvoice) zpp).setVATTotalInTaxCurrency(new BigDecimal(taxTotalStr));
 				} else if (taxTotalNodes.getLength() == 1) {
 					// try to be lenient if the currencyID doesn't match or is missing, yet this is the only value provided
@@ -592,24 +581,22 @@ public class ZUGFeRDInvoiceImporter {
 			}
 		}
 
-		if (taxCurrency != null) {
-			xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"TaxApplicableTradeCurrencyExchange\"]");
-			NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
-			if (nodes.getLength() > 0 ) {
-				NodeList children = nodes.item(0).getChildNodes();
-				for (int index = 0; index < children.getLength(); index++) {
-					Node item = children.item(index);
-					if (item.getLocalName() != null && item.getLocalName().equals("ConversionRate")) {
-						String s = XMLTools.trimOrNull(item);
-						zpp.setTaxConversionRate(new BigDecimal(s));
-					}
-					if (item.getLocalName() != null && item.getLocalName().equals("ConversionRateDateTime")) {
-						NodeList dateTimeChilds = item.getChildNodes();
-						for (int dateChildIndex = 0; dateChildIndex < dateTimeChilds.getLength(); dateChildIndex++) {
-							if (dateTimeChilds.item(dateChildIndex).getLocalName() != null && dateTimeChilds.item(dateChildIndex).getLocalName().equals("DateTimeString")) {
-								String dateString = XMLTools.trimOrNull(dateTimeChilds.item(dateChildIndex));
-								zpp.setTaxConversionRateDateTime(parseDate(dateString, "yyyyMMdd"));
-							}
+		xpr = xpath.compile("//*[local-name()=\"ApplicableHeaderTradeSettlement\"]/*[local-name()=\"TaxApplicableTradeCurrencyExchange\"]");
+		NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		if (nodes.getLength() > 0 ) {
+			NodeList children = nodes.item(0).getChildNodes();
+			for (int index = 0; index < children.getLength(); index++) {
+				Node item = children.item(index);
+				if (item.getLocalName() != null && item.getLocalName().equals("ConversionRate")) {
+					String s = XMLTools.trimOrNull(item);
+					zpp.setTaxConversionRate(new BigDecimal(s));
+				}
+				if (item.getLocalName() != null && item.getLocalName().equals("ConversionRateDateTime")) {
+					NodeList dateTimeChilds = item.getChildNodes();
+					for (int dateChildIndex = 0; dateChildIndex < dateTimeChilds.getLength(); dateChildIndex++) {
+						if (dateTimeChilds.item(dateChildIndex).getLocalName() != null && dateTimeChilds.item(dateChildIndex).getLocalName().equals("DateTimeString")) {
+							String dateString = XMLTools.trimOrNull(dateTimeChilds.item(dateChildIndex));
+							zpp.setTaxConversionRateDateTime(parseDate(dateString, "yyyyMMdd"));
 						}
 					}
 				}
@@ -1091,7 +1078,7 @@ public class ZUGFeRDInvoiceImporter {
 
 		if (zpp.getDespatchAdviceReferencedDocument() == null) {
 			xpr = xpath.compile("//*[local-name()=\"DespatchDocumentReference\"]");
-			NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+			nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 			if (nodes != null && nodes.getLength() > 0) {
 				ReferencedDocument doc = ReferencedDocument.fromNode(nodes.item(0));
 				zpp.setDespatchAdviceReferencedDocument(doc);
@@ -1100,7 +1087,7 @@ public class ZUGFeRDInvoiceImporter {
 
 		// UBL
 		xpr = xpath.compile("//*[local-name()=\"BillingReference\"]/*[local-name()=\"InvoiceDocumentReference\"]|//*[local-name()=\"BillingReference\"]/*[local-name()=\"CreditNoteDocumentReference\"]");
-		NodeList nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
+		nodes = (NodeList) xpr.evaluate(getDocument(), XPathConstants.NODESET);
 		if (nodes.getLength() != 0) {
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Node currentItemNode = nodes.item(i);
@@ -1361,7 +1348,7 @@ public class ZUGFeRDInvoiceImporter {
 						} else if (chargeChildName.equals("BasisPeriodMeasure")) {
 							Node unitCode = currentNode.getAttributes().getNamedItem("unitCode");
 							if (unitCode != null && unitCode.getNodeValue().equals("DAY")) {
-								cd.setDays(Math.round(Float.valueOf(XMLTools.trimOrNull(currentNode))));
+								cd.setDays(Integer.valueOf(Math.round(Float.parseFloat(XMLTools.trimOrNull(currentNode)))));
 								// in case someone writes 30.00 days (happens!) we still want 30 integer days
 							}
 						} else if (chargeChildName.equals("BasisAmount")) {
@@ -1385,8 +1372,8 @@ public class ZUGFeRDInvoiceImporter {
 								cd.setDueDate(dueDate);
 								if (cd.getDays() == null) {
 									long diffInMillies = Math.abs(dueDate.getTime() - zpp.getIssueDate().getTime());
-									long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-									cd.setDays((int) diffInDays);
+									int diffInDays = (int) TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+									cd.setDays(Integer.valueOf(diffInDays));
 								}
 							}
 						}
@@ -1492,7 +1479,7 @@ public class ZUGFeRDInvoiceImporter {
 			&& rd.getFormattedIssueDateTime() == null;
 	}
 
-	private Date parseDate(String issueDateString, String datePattern) throws ParseException {
+	private static Date parseDate(String issueDateString, String datePattern) {
 		Date parsedDate = null;
 		if (issueDateString != null) {
 			try {
@@ -1609,7 +1596,7 @@ public class ZUGFeRDInvoiceImporter {
 	 * sets the XML for the importer to parse
 	 * @param XML the UBL or CII
 	 */
-	public void fromXML(String XML) throws ParseException {
+	public void fromXML(String XML) {
 		try {
 			containsMeta = true;
 			setRawXML(XML.getBytes(StandardCharsets.UTF_8));

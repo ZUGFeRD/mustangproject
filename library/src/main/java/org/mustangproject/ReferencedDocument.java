@@ -215,6 +215,7 @@ public class ReferencedDocument implements IReferencedDocument {
 	/***
 	 * @return this particular ReferencedDocument industry invoice XML
 	 */
+	@Override
 	@JsonIgnore
 	public String getAsCII(Profile profile) {
 		StringBuilder xml = new StringBuilder();

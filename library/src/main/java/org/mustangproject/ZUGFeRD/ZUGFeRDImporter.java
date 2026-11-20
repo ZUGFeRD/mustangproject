@@ -16,7 +16,6 @@ import java.nio.charset.StandardCharsets;
  * @version 1.1.0
  * @author jstaerk
  */
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -491,11 +490,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 	 * @throws IOException if raw can not be set
 	 */
 	public void setMeta(String meta) throws IOException {
-		try {
-			setRawXML(meta.getBytes(StandardCharsets.UTF_8));
-		} catch (ParseException e) {
-			LOGGER.error("Failed to parse", e);
-		}
+		setRawXML(meta.getBytes(StandardCharsets.UTF_8));
 	}
 
 
@@ -505,7 +500,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 			throw new Exception("Not yet parsed");
 		}
 		if (version != null) {
-			return version;
+			return version.intValue();
 		}
 
 		final String head = getUTF8();
@@ -513,13 +508,13 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 			|| head.contains("CrossIndustryDocument") //
 			|| head.contains("SCRDMCCBDACIDAMessageStructure") //
 			|| head.contains("SCRDMCCBDACIOMessageStructure")) { //
-			version = 1;
+			version = Integer.valueOf(1);
 		} else if (head.contains("CrossIndustryInvoice")) {
-			version = 2;
+			version = Integer.valueOf(2);
 		} else {
 			throw new Exception("ZUGFeRD version could not be determined");
 		}
-		return version;
+		return version.intValue();
 	}
 
 
@@ -601,7 +596,7 @@ public class ZUGFeRDImporter extends ZUGFeRDInvoiceImporter {
 		return getAddressFromNodeList(nl);
 	}
 
-	private PostalTradeAddress getAddressFromNodeList(NodeList nl) {
+	private static PostalTradeAddress getAddressFromNodeList(NodeList nl) {
 		final PostalTradeAddress address = new PostalTradeAddress();
 
 		if (nl != null) {

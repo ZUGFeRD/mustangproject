@@ -118,7 +118,7 @@ public class Contact implements IZUGFeRDExportableContact {
 				if (localName != null) {
 
 					List<String> nameElements = Arrays.asList("PersonName"/*CII*/, "Name"/*UBL*/);
-					if (localName != null && nameElements.contains(localName)
+					if (nameElements.contains(localName)
 						&& currentItemNode.getFirstChild() != null) {
 							setName(currentItemNode.getFirstChild().getNodeValue());
 						}

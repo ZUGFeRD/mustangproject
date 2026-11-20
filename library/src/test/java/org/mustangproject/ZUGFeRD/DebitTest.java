@@ -67,12 +67,7 @@ public class DebitTest extends ResourceCase {
 		String theXML = new String(ze.getXML(), StandardCharsets.UTF_8);
 
 		ZUGFeRDInvoiceImporter zii = new ZUGFeRDInvoiceImporter();
-		try {
-			zii.fromXML(theXML);
-
-		} catch (ParseException e) {
-			hasExceptions = true;
-		}
+		zii.fromXML(theXML);
 
 		CalculatedInvoice ci = new CalculatedInvoice();
 		try {
