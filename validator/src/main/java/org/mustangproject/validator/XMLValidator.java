@@ -416,7 +416,7 @@ public class XMLValidator extends Validator {
 
 				}
 
-				if ("CII".equals(context.getFormat()) && ("2".equals(context.getGeneration()))) {
+				if ("CII".equals(context.getFormat()) && "2".equals(context.getGeneration())) {
 
 					if (isXRechnung || isBasic || isEN16931) {
 						validateSchematron(zfXML, "/xslt/en16931schematron/EN16931-CII-validation.xslt", 24, ESeverity.error);
@@ -604,7 +604,7 @@ public class XMLValidator extends Validator {
 	 */
 	public void validateSchematron(String xml, String xsltFilename, int section, ESeverity defaultSeverity) throws IrrecoverableValidationError {
 		ISchematronResource aResSCH = null;
-		aResSCH = SchematronResourceXSLT.fromClassPath(xsltFilename);
+		aResSCH = SchematronResourceXSLT.builderFromClassPath(xsltFilename).build();
 
 		if (aResSCH != null) {
 			if (!aResSCH.isValidSchematron()) {

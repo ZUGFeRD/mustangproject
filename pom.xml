@@ -60,30 +60,50 @@
         <version.org.apache.maven.plugins.maven-surefire-plugin>3.5.3</version.org.apache.maven.plugins.maven-surefire-plugin>
         <version.org.apache.maven.plugins.maven-toolchains-plugin>3.1.0</version.org.apache.maven.plugins.maven-toolchains-plugin>
         <version.org.apache.maven.plugins.maven-checkstyle-plugin>3.6.0</version.org.apache.maven.plugins.maven-checkstyle-plugin>
-        <version.org.apache.maven.scm>1.9.5</version.org.apache.maven.scm>
+        <version.org.apache.maven.scm>2.2.1</version.org.apache.maven.scm>
         <version.com.helger.maven>8.0.0</version.com.helger.maven>
         <version.org.sonatype.plugins>1.7.0</version.org.sonatype.plugins>
 
-        <version.ch.qos.logback>1.5.38</version.ch.qos.logback>
+        <version.ch.qos.logback>1.6.8</version.ch.qos.logback>
         <version.com.fasterxml.jackson.core>2.23.0</version.com.fasterxml.jackson.core>
-        <version.com.helger.en16931-cii2ubl>2.3.1</version.com.helger.en16931-cii2ubl>
-        <version.com.helger.schematron>8.0.6</version.com.helger.schematron>
+        <version.com.helger.en16931-cii2ubl>4.0.3</version.com.helger.en16931-cii2ubl>
+        <version.com.helger.schematron>11.0.0</version.com.helger.schematron>
         <version.commons-cli>1.11.0</version.commons-cli>
         <version.commons-io>2.22.0</version.commons-io>
         <version.jakarta.xml.bind>4.0.5</version.jakarta.xml.bind>
-        <version.net.sf.saxon>12.10</version.net.sf.saxon>
+        <version.net.sf.saxon>13.1</version.net.sf.saxon>
         <version.org.apache.pdfbox>3.0.8</version.org.apache.pdfbox>
         <version.org.apache.xmlgraphics>2.12</version.org.apache.xmlgraphics>
         <version.org.codehaus.janino>3.1.12</version.org.codehaus.janino>
         <version.org.dom4j>2.2.0</version.org.dom4j>
         <version.org.glassfish.jaxb>4.0.9</version.org.glassfish.jaxb>
-        <version.org.junit>5.14.4</version.org.junit>
+        <version.org.junit>6.1.3</version.org.junit>
         <version.org.skyscreamer>2.0-rc1</version.org.skyscreamer>
         <version.org.slf4j>2.0.20</version.org.slf4j>
         <version.org.verapdf>1.30.4</version.org.verapdf>
         <version.org.xmlunit>2.14.0</version.org.xmlunit>
-        <version.com.puppycrawl.tools.checkstyle>10.26.1</version.com.puppycrawl.tools.checkstyle>
+        <version.com.puppycrawl.tools.checkstyle>14.4.0</version.com.puppycrawl.tools.checkstyle>
+        <version.com.helger.commons>12.8.0</version.com.helger.commons>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.helger.commons</groupId>
+                <artifactId>ph-commons-bom</artifactId>
+                <version>${version.com.helger.commons}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.helger.schematron</groupId>
+                <artifactId>ph-schematron-saxon</artifactId>
+                <version>${version.com.helger.schematron}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <pluginManagement>
