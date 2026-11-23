@@ -1561,7 +1561,7 @@ tr.information .iname{font-weight:500;font-style:italic}
     <zv:l k="ui.linenet" de="Gesamt netto" en="Net amount" fr="Montant HT"/>
     <zv:l k="ui.linedetails" de="Alle Angaben zur Position" en="All line details" fr="Tous les détails de la ligne"/>
     <zv:l k="ui.partof" de="Unterposition von Pos." en="Sub-line of line" fr="Sous-ligne de la ligne"/>
-    <zv:l k="ui.gross" de="Brutto" en="Gross" fr="Brut"/>
+    <zv:l k="ui.gross" de="Nettolistenpreis" en="Gross price excl. VAT" fr="Prix brut HT"/>
     <zv:l k="ui.of" de="von" en="of" fr="de"/>
     <zv:l k="ui.allowances" de="Zu- und Abschläge auf Dokumentebene" en="Document level allowances and charges" fr="Remises et charges au niveau du document"/>
     <zv:l k="ui.kind" de="Art" en="Type" fr="Type"/>
@@ -1675,10 +1675,10 @@ tr.information .iname{font-weight:500;font-style:italic}
     <zv:l k="AttachmentBinaryObject" de="Anhang" en="Attachment" fr="Pièce jointe"/>
     <zv:l k="ReferenceTypeCode" de="Referenzart" en="Reference type" fr="Type de référence"/>
     <zv:l k="FormattedIssueDateTime" de="Dokumentdatum" en="Document date" fr="Date du document"/>
-    <zv:l k="GrossPriceProductTradePrice" de="Bruttopreis" en="Gross price" fr="Prix brut"/>
+    <zv:l k="GrossPriceProductTradePrice" de="Nettolistenpreis" en="Gross price (excl. VAT)" fr="Prix brut HT"/>
     <zv:l k="NetPriceProductTradePrice" de="Nettopreis" en="Net price" fr="Prix net"/>
     <zv:l k="ChargeAmount" de="Preis" en="Price" fr="Prix"/>
-    <zv:l k="GrossPriceProductTradePrice/ChargeAmount" de="Bruttopreis" en="Item gross price" fr="Prix brut"/>
+    <zv:l k="GrossPriceProductTradePrice/ChargeAmount" de="Nettolistenpreis" en="Item gross price (excl. VAT)" fr="Prix brut HT"/>
     <zv:l k="NetPriceProductTradePrice/ChargeAmount" de="Nettopreis" en="Item net price" fr="Prix net"/>
     <zv:l k="BasisQuantity" de="Basismenge" en="Base quantity" fr="Quantité de base"/>
     <zv:l k="ProductTradePrice/BasisQuantity" de="Preisbasismenge" en="Item price base quantity" fr="Quantité de base du prix"/>

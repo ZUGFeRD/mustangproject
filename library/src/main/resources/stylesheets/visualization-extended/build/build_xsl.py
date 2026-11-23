@@ -66,7 +66,7 @@ ui.vat|USt.|VAT|TVA
 ui.linenet|Gesamt netto|Net amount|Montant HT
 ui.linedetails|Alle Angaben zur Position|All line details|Tous les détails de la ligne
 ui.partof|Unterposition von Pos.|Sub-line of line|Sous-ligne de la ligne
-ui.gross|Brutto|Gross|Brut
+ui.gross|Nettolistenpreis|Gross price excl. VAT|Prix brut HT
 ui.of|von|of|de
 ui.allowances|Zu- und Abschläge auf Dokumentebene|Document level allowances and charges|Remises et charges au niveau du document
 ui.kind|Art|Type|Type
@@ -184,10 +184,10 @@ AttachmentBinaryObject|Anhang|Attachment|Pièce jointe
 ReferenceTypeCode|Referenzart|Reference type|Type de référence
 FormattedIssueDateTime|Dokumentdatum|Document date|Date du document
 
-GrossPriceProductTradePrice|Bruttopreis|Gross price|Prix brut
+GrossPriceProductTradePrice|Nettolistenpreis|Gross price (excl. VAT)|Prix brut HT
 NetPriceProductTradePrice|Nettopreis|Net price|Prix net
 ChargeAmount|Preis|Price|Prix
-GrossPriceProductTradePrice/ChargeAmount|Bruttopreis|Item gross price|Prix brut
+GrossPriceProductTradePrice/ChargeAmount|Nettolistenpreis|Item gross price (excl. VAT)|Prix brut HT
 NetPriceProductTradePrice/ChargeAmount|Nettopreis|Item net price|Prix net
 BasisQuantity|Basismenge|Base quantity|Quantité de base
 ProductTradePrice/BasisQuantity|Preisbasismenge|Item price base quantity|Quantité de base du prix
