@@ -57,6 +57,9 @@ to validate the XML part of the invoices.
 
 ![Architecture of the validator](ZUV-Architektur.svg "Graph of the architecture of the validator component")
 
+The visualizer embeds Kosit-Visualization XSLT for UBL, and custom XSLT for CII. In both cases visualization to PDF runs as XSLT to XML:FO and conversion to PDF/A via Apache FOP. The CII XSLTs have been build by a Python tool build_xsl.py authored by Claude in  library/src/main/resources/stylesheets/visualization-extended/build
+ based on the contents of the ZUGFeRD Infopaket https://www.ferd-net.de/ZUGFeRD-Download
+
 ## Aspects
 Apart from the fact that apart from 
 * the code
