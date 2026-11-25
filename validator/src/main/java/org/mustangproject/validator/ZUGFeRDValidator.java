@@ -19,6 +19,7 @@ import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilder;
 
+import com.helger.base.io.stream.StreamHelper;
 import org.apache.commons.io.IOUtils;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -30,8 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-
-import com.helger.commons.io.stream.StreamHelper;
 
 import jakarta.xml.bind.DatatypeConverter;
 

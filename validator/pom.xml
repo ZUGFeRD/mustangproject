@@ -64,8 +64,16 @@
         <dependency>
             <groupId>com.helger.schematron</groupId>
             <artifactId>ph-schematron-xslt</artifactId>
-            <version>${version.com.helger.schematron}</version>
         </dependency>
+        <dependency>
+            <groupId>com.helger.schematron</groupId>
+            <artifactId>ph-schematron-saxon</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.helger.commons</groupId>
+            <artifactId>ph-base</artifactId>
+        </dependency>
+
 
         <!-- test dependencies -->
         <dependency>

@@ -1,0 +1,18 @@
+version: 2
+
+multi-ecosystem-groups:
+  default:
+    schedule:
+      interval: "weekly"
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 15
+    multi-ecosystem-group: "default"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    multi-ecosystem-group: "default"

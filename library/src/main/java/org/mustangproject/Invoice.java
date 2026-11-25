@@ -493,7 +493,7 @@ public class Invoice implements IExportableTransaction {
 		return this;
 	}
 
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	@Override
 	public String getInvoiceReferencedDocumentID() {
 		if (this.invoiceReferencedDocuments == null || this.invoiceReferencedDocuments.isEmpty() ) {
@@ -503,7 +503,7 @@ public class Invoice implements IExportableTransaction {
 		}
 	}
 
-	@Deprecated
+	@Deprecated(forRemoval = true, since = "2.24.1")
 	@Override
 	public Date getInvoiceReferencedIssueDate() {
 		if (this.invoiceReferencedDocuments == null || this.invoiceReferencedDocuments.isEmpty() ) {
